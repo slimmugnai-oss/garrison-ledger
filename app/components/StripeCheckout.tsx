@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { redirectToCheckout } from '@stripe/stripe-js';
 
 interface StripeCheckoutProps {
   priceId: string;
@@ -35,14 +36,12 @@ export default function StripeCheckout({
       const { sessionId } = await response.json();
 
       if (sessionId) {
-        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+        const { error } = await redirectToCheckout({
+          sessionId: sessionId,
+        });
         
-        if (stripe) {
-          const { error } = await stripe.redirectToCheckout({ sessionId });
-          
-          if (error) {
-            console.error('Stripe checkout error:', error);
-          }
+        if (error) {
+          console.error('Stripe checkout error:', error);
         }
       }
     } catch (error) {
