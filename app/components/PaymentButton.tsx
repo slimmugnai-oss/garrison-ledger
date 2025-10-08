@@ -34,8 +34,18 @@ export default function PaymentButton({
       const { sessionId } = await response.json();
 
       if (sessionId) {
-        // Redirect to Stripe Checkout
-        window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
+        // Redirect to Stripe Checkout using the session URL
+        const stripe = await import('@stripe/stripe-js').then(mod => mod.loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!));
+        
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: sessionId,
+          });
+          
+          if (error) {
+            console.error('Stripe checkout error:', error);
+          }
+        }
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);
