@@ -34,7 +34,7 @@ export default function StripeCheckout({
       const { sessionId } = await response.json();
 
       if (sessionId) {
-        // Redirect to Stripe Checkout
+        // Redirect to Stripe Checkout using direct URL
         window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
     } catch (error) {
