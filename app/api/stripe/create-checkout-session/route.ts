@@ -52,7 +52,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ sessionId: session.id });
+    console.log('Checkout session created successfully:', {
+      sessionId: session.id,
+      url: session.url
+    });
+
+    return NextResponse.json({ 
+      sessionId: session.id,
+      url: session.url 
+    });
   } catch (error) {
     console.error('Error creating checkout session:', error);
     console.error('Error details:', JSON.stringify(error, null, 2));
