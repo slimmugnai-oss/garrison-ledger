@@ -22,7 +22,7 @@ export default async function Dashboard() {
               Welcome back, {user.firstName || 'User'}!
             </h1>
             <p className="mt-2 text-gray-600">
-              Here's an overview of your financial dashboard.
+              Here&apos;s an overview of your financial dashboard.
             </p>
           </div>
 

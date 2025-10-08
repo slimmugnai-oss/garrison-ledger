@@ -10,11 +10,10 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware((auth, req) => {
   // If the current route is protected and user is not authenticated
   if (isProtectedRoute(req)) {
-    auth().protect();
+    auth.protect();
   }
 });
 
-// Configure which paths the middleware should run on
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
