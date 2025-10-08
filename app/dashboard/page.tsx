@@ -1,6 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import Header from '../components/Header';
 import { redirect } from 'next/navigation';
+import StripeCheckout from '../components/StripeCheckout';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
@@ -81,6 +82,28 @@ export default async function Dashboard() {
                 <p className="text-sm mt-1">
                   Start by adding your first transaction
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Premium Features */}
+          <div className="mt-8">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white">
+              <h2 className="text-2xl font-bold mb-4">
+                🚀 Upgrade to Premium
+              </h2>
+              <p className="text-lg mb-6 opacity-90">
+                Unlock advanced features like budgeting, detailed reports, and priority support.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <StripeCheckout 
+                  priceId="price_1234567890" // Replace with your actual Stripe price ID
+                  buttonText="Subscribe for $9.99/month"
+                  className="bg-white text-purple-600 hover:bg-gray-100"
+                />
+                <button className="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-purple-600 transition-colors">
+                  Learn More
+                </button>
               </div>
             </div>
           </div>
