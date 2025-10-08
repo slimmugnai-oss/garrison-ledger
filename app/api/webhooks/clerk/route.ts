@@ -45,28 +45,17 @@ export async function POST(req: NextRequest) {
     }) as WebhookEvent;
   } catch (err) {
     console.error('Error verifying webhook:', err);
-    // Temporarily disable verification for debugging
-    console.log('Webhook verification failed, parsing payload directly...');
-    try {
-      evt = JSON.parse(payload) as WebhookEvent;
-    } catch (parseErr) {
-      console.error('Error parsing payload:', parseErr);
-      return new Response('Error occurred', {
-        status: 400,
-      });
-    }
+    return new Response('Error occurred', {
+      status: 400,
+    });
   }
 
   // Handle the webhook
   const eventType = evt.type;
-  console.log(`Webhook with type ${eventType} received`);
-  console.log('Webhook data:', JSON.stringify(evt.data, null, 2));
 
   if (eventType === 'user.created') {
     const { id, email_addresses } = evt.data;
     const email = email_addresses[0]?.email_address;
-
-    console.log('Processing user.created event:', { id, email });
 
     if (!email) {
       console.error('No email found in webhook data');
@@ -75,30 +64,24 @@ export async function POST(req: NextRequest) {
 
     try {
       // Insert the new user into the profiles table
-      console.log('Attempting to insert profile:', { id, email });
-      
-      const { data, error } = await supabaseAdmin
+      const { error } = await supabaseAdmin
         .from('profiles')
         .insert([
           {
             id: id,
             email: email,
           },
-        ])
-        .select();
+        ]);
 
       if (error) {
         console.error('Error inserting profile:', error);
-        console.error('Error details:', JSON.stringify(error, null, 2));
-        return new Response(`Database error: ${error.message}`, { status: 500 });
+        return new Response('Database error', { status: 500 });
       }
 
-      console.log('Profile created successfully:', data);
-      console.log(`Profile created for user ${id} with email ${email}`);
       return new Response('Profile created successfully', { status: 200 });
     } catch (error) {
       console.error('Unexpected error:', error);
-      return new Response(`Internal server error: ${error}`, { status: 500 });
+      return new Response('Internal server error', { status: 500 });
     }
   }
 
