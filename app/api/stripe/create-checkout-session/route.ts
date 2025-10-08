@@ -11,6 +11,30 @@ export async function POST(req: NextRequest) {
     }
 
     const { priceId, successUrl, cancelUrl } = await req.json();
+    
+    // Log the request for debugging
+    console.log('Creating checkout session with:', {
+      priceId,
+      userEmail: user.emailAddresses[0]?.emailAddress,
+      userId: user.id
+    });
+
+    // Test if the price ID exists
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      console.log('Price found:', {
+        id: price.id,
+        amount: price.unit_amount,
+        currency: price.currency,
+        active: price.active
+      });
+    } catch (priceError) {
+      console.error('Price ID error:', priceError);
+      return NextResponse.json({
+        error: 'Invalid price ID',
+        details: priceError instanceof Error ? priceError.message : 'Unknown error'
+      }, { status: 400 });
+    }
 
     const session = await stripe.checkout.sessions.create({
       customer_email: user.emailAddresses[0]?.emailAddress,
