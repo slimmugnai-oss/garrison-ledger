@@ -90,7 +90,7 @@ export default async function Dashboard() {
           <div className="mt-8">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white">
               <h2 className="text-2xl font-bold mb-4">
-                🚀 Upgrade to Premium - Fixed Build
+                🚀 Upgrade to Premium - Force Deploy
               </h2>
               <p className="text-lg mb-6 opacity-90">
                 Unlock advanced features like budgeting, detailed reports, and priority support.
