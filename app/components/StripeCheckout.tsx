@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { redirectToCheckout } from '@stripe/stripe-js';
 
 interface StripeCheckoutProps {
   priceId: string;
@@ -36,13 +34,8 @@ export default function StripeCheckout({
       const { sessionId } = await response.json();
 
       if (sessionId) {
-        const { error } = await redirectToCheckout({
-          sessionId: sessionId,
-        });
-        
-        if (error) {
-          console.error('Stripe checkout error:', error);
-        }
+        // Redirect to Stripe Checkout
+        window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);
