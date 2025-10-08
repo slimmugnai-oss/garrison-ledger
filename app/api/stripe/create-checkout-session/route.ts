@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      mode: 'subscription', // or 'payment' for one-time payments
-      success_url: successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?canceled=true`,
+      mode: 'subscription',
+      success_url: successUrl || 'https://garrison-ledger.vercel.app/dashboard?success=true',
+      cancel_url: cancelUrl || 'https://garrison-ledger.vercel.app/dashboard?canceled=true',
       metadata: {
         userId: user.id,
       },
@@ -31,8 +31,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ sessionId: session.id });
   } catch (error) {
     console.error('Error creating checkout session:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { 
+        error: 'Failed to create checkout session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
