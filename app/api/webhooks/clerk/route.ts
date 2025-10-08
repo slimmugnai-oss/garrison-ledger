@@ -66,6 +66,8 @@ export async function POST(req: NextRequest) {
     const { id, email_addresses } = evt.data;
     const email = email_addresses[0]?.email_address;
 
+    console.log('Processing user.created event:', { id, email });
+
     if (!email) {
       console.error('No email found in webhook data');
       return new Response('No email found', { status: 400 });
@@ -73,25 +75,30 @@ export async function POST(req: NextRequest) {
 
     try {
       // Insert the new user into the profiles table
-      const { error } = await supabaseAdmin
+      console.log('Attempting to insert profile:', { id, email });
+      
+      const { data, error } = await supabaseAdmin
         .from('profiles')
         .insert([
           {
             id: id,
             email: email,
           },
-        ]);
+        ])
+        .select();
 
       if (error) {
         console.error('Error inserting profile:', error);
-        return new Response('Database error', { status: 500 });
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        return new Response(`Database error: ${error.message}`, { status: 500 });
       }
 
+      console.log('Profile created successfully:', data);
       console.log(`Profile created for user ${id} with email ${email}`);
       return new Response('Profile created successfully', { status: 200 });
     } catch (error) {
       console.error('Unexpected error:', error);
-      return new Response('Internal server error', { status: 500 });
+      return new Response(`Internal server error: ${error}`, { status: 500 });
     }
   }
 
