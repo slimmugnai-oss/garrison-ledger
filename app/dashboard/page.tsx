@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import Header from '../components/Header';
 import { redirect } from 'next/navigation';
-import StripeCheckout from '../components/StripeCheckout';
+import PaymentButton from '../components/PaymentButton';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
@@ -96,12 +96,12 @@ export default async function Dashboard() {
                 Unlock advanced features like budgeting, detailed reports, and priority support.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <StripeCheckout 
+                <PaymentButton 
                   priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
                   buttonText="Monthly - $15/month"
                   className="bg-white text-purple-600 hover:bg-gray-100"
                 />
-                <StripeCheckout 
+                <PaymentButton 
                   priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
                   buttonText="Annual - $150/year (Save $30!)"
                   className="bg-green-500 text-white hover:bg-green-600"

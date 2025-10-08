@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 
-interface StripeCheckoutProps {
+interface PaymentButtonProps {
   priceId: string;
   buttonText?: string;
   className?: string;
 }
 
-export default function StripeCheckout({ 
+export default function PaymentButton({ 
   priceId, 
   buttonText = 'Subscribe Now',
   className = ''
-}: StripeCheckoutProps) {
+}: PaymentButtonProps) {
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
@@ -34,7 +34,7 @@ export default function StripeCheckout({
       const { sessionId } = await response.json();
 
       if (sessionId) {
-        // Redirect to Stripe Checkout using direct URL
+        // Redirect to Stripe Checkout
         window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
     } catch (error) {

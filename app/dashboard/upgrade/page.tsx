@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Header from '../../components/Header';
-import StripeCheckout from '../../components/StripeCheckout';
+import PaymentButton from '../../components/PaymentButton';
 
 export default async function UpgradePage() {
   const user = await currentUser();
@@ -55,7 +55,7 @@ export default async function UpgradePage() {
                     Export data to CSV/PDF
                   </li>
                 </ul>
-                <StripeCheckout 
+                <PaymentButton 
                   priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
                   buttonText="Start Monthly Plan"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold"
@@ -101,7 +101,7 @@ export default async function UpgradePage() {
                     Priority feature requests
                   </li>
                 </ul>
-                <StripeCheckout 
+                <PaymentButton 
                   priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
                   buttonText="Start Annual Plan"
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
