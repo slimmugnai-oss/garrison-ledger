@@ -4,6 +4,18 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, svix-id, svix-timestamp, svix-signature',
+      },
+    });
+  }
+
   // Get the headers
   const svix_id = req.headers.get('svix-id');
   const svix_timestamp = req.headers.get('svix-timestamp');
@@ -41,6 +53,7 @@ export async function POST(req: NextRequest) {
   // Handle the webhook
   const eventType = evt.type;
   console.log(`Webhook with type ${eventType} received`);
+  console.log('Webhook data:', JSON.stringify(evt.data, null, 2));
 
   if (eventType === 'user.created') {
     const { id, email_addresses } = evt.data;
