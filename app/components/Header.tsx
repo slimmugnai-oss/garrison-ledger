@@ -30,6 +30,12 @@ export default function Header() {
               >
                 Dashboard
               </Link>
+              <Link 
+                href="/dashboard/upgrade" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Upgrade
+              </Link>
             </SignedIn>
           </nav>
 
