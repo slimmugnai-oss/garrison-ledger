@@ -56,7 +56,7 @@ export default async function UpgradePage() {
                   </li>
                 </ul>
                 <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
+                  priceId="price_1SG5O6QnBqVFfU8h13gbu3rd"
                   buttonText="Start Monthly Plan"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold"
                 />
@@ -102,7 +102,7 @@ export default async function UpgradePage() {
                   </li>
                 </ul>
                 <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
+                  priceId="price_1SG5O6QnBqVFfU8hpUBOAfPe"
                   buttonText="Start Annual Plan"
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
                 />

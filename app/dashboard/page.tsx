@@ -97,12 +97,12 @@ export default async function Dashboard() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
+                  priceId="price_1SG5O6QnBqVFfU8h13gbu3rd"
                   buttonText="Monthly - $15/month"
                   className="bg-white text-purple-600 hover:bg-gray-100"
                 />
                 <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
+                  priceId="price_1SG5O6QnBqVFfU8hpUBOAfPe"
                   buttonText="Annual - $150/year (Save $30!)"
                   className="bg-green-500 text-white hover:bg-green-600"
                 />
