@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export default function PremiumDebug() {
   const { isPremium, loading } = usePremiumStatus();
-  const [testResult, setTestResult] = useState<any>(null);
+  const [testResult, setTestResult] = useState<Record<string, unknown> | null>(null);
   const [testing, setTesting] = useState(false);
 
   const testPremiumAPI = async () => {
