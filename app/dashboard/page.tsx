@@ -15,122 +15,111 @@ export default async function Dashboard() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Welcome back, {user.firstName || 'User'}!
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Welcome back, {user.firstName || 'User'}! 👋
             </h1>
-            <p className="mt-2 text-gray-600">
-              Here&apos;s an overview of your financial dashboard.
+            <p className="text-xl text-gray-600">
+              Here&apos;s an overview of your financial dashboard and tools.
             </p>
           </div>
 
-          {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Balance Card */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Current Balance
+          {/* Quick Tools Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {/* House Hacking Tool */}
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+              <div className="text-4xl mb-4">🏠</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                House Hacking Calculator
               </h3>
-              <p className="text-3xl font-bold text-green-600">
-                $0.00
+              <p className="text-gray-600 mb-6">
+                Analyze multi-unit property investments with BAH and rental income.
               </p>
-              <p className="text-sm text-gray-500 mt-1">
-                No transactions yet
-              </p>
+              <Link 
+                href="/dashboard/tools/house-hacking"
+                className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Open Tool →
+              </Link>
             </div>
 
-            {/* Monthly Income Card */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Monthly Income
+            {/* TSP Modeler Tool */}
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+              <div className="text-4xl mb-4">📈</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                TSP Modeler
               </h3>
-              <p className="text-3xl font-bold text-blue-600">
-                $0.00
+              <p className="text-gray-600 mb-6">
+                Optimize your Thrift Savings Plan allocation for maximum growth.
               </p>
-              <p className="text-sm text-gray-500 mt-1">
-                This month
-              </p>
+              <Link 
+                href="/dashboard/tools/tsp-modeler"
+                className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Open Tool →
+              </Link>
             </div>
 
-            {/* Monthly Expenses Card */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Monthly Expenses
+            {/* SDP Strategist Tool */}
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+              <div className="text-4xl mb-4">💰</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                SDP Strategist
               </h3>
-              <p className="text-3xl font-bold text-red-600">
-                $0.00
+              <p className="text-gray-600 mb-6">
+                Maximize your Savings Deposit Program returns strategically.
               </p>
-              <p className="text-sm text-gray-500 mt-1">
-                This month
-              </p>
+              <Link 
+                href="/dashboard/tools/sdp-strategist"
+                className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Open Tool →
+              </Link>
             </div>
           </div>
 
-          {/* Recent Transactions */}
-          <div className="mt-8">
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Recent Transactions
-                </h2>
-              </div>
-              <div className="px-6 py-8 text-center text-gray-500">
-                <p className="text-lg">No transactions yet</p>
-                <p className="text-sm mt-1">
-                  Start by adding your first transaction
-                </p>
-              </div>
+          {/* Assessment Section */}
+          <div className="mb-12">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white">
+              <h2 className="text-3xl font-bold mb-4">
+                🎯 Take Your Financial Assessment
+              </h2>
+              <p className="text-xl mb-6 opacity-90">
+                Get personalized recommendations based on your military service stage and financial goals.
+              </p>
+              <Link 
+                href="/dashboard/assessment"
+                className="inline-flex items-center bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg"
+              >
+                Start Assessment →
+              </Link>
             </div>
           </div>
 
           {/* Premium Features */}
-          <div className="mt-8">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white">
-              <h2 className="text-2xl font-bold mb-4">
-                🚀 Upgrade to Premium - Force Deploy
+          <div className="mb-12">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+              <h2 className="text-3xl font-bold mb-4">
+                🚀 Upgrade to Premium
               </h2>
-              <p className="text-lg mb-6 opacity-90">
-                Unlock advanced features like budgeting, detailed reports, and priority support.
+              <p className="text-xl mb-6 opacity-90">
+                Unlock advanced features, detailed explanations, and priority support for all your financial tools.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <PaymentButton 
-                  priceId="price_1SG5O6QnBqVFfU8h13gbu3rd"
+                  priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
                   buttonText="Monthly - $15/month"
-                  className="bg-white text-purple-600 hover:bg-gray-100"
+                  className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors"
                 />
                 <PaymentButton 
-                  priceId="price_1SG5O6QnBqVFfU8hpUBOAfPe"
+                  priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
                   buttonText="Annual - $150/year (Save $30!)"
-                  className="bg-green-500 text-white hover:bg-green-600"
+                  className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-lg font-semibold transition-colors"
                 />
-                <button className="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-purple-600 transition-colors">
-                  Learn More
-                </button>
               </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-                Add Income
-              </button>
-              <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-                Add Expense
-              </button>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-                Add Transfer
-              </button>
-              <button className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-                View Reports
-              </button>
             </div>
           </div>
         </div>
