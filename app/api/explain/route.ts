@@ -96,12 +96,15 @@ export async function POST(req: NextRequest) {
 
   const { tool, inputs, outputs } = await req.json().catch(() => ({}));
   const text = formatDeterministic(String(tool || ""), inputs || {}, outputs || {});
+  
+  // Replace newlines with HTML breaks for proper rendering
+  const htmlText = text.replace(/\n/g, '<br/>');
 
   // Stream the text in chunks
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
-      const parts = text.match(/.{1,220}/g) || [];
+      const parts = htmlText.match(/.{1,220}/g) || [];
       let i = 0;
       const push = () => {
         if (i >= parts.length) { 
@@ -118,7 +121,7 @@ export async function POST(req: NextRequest) {
   
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
     }
   });
