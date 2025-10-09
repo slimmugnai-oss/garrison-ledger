@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import PaymentButton from '../components/PaymentButton';
 import Link from 'next/link';
 import PremiumStatusIndicator from '../components/PremiumStatusIndicator';
-import PremiumDebug from '../components/PremiumDebug';
 import { createClient } from '@supabase/supabase-js';
 
 export default async function Dashboard() {
@@ -39,9 +38,6 @@ export default async function Dashboard() {
   }
   
   console.log('Dashboard premium check:', { userId: user.id, isPremium });
-  
-  // TEMPORARY: Force premium for testing
-  isPremium = true;
 
   return (
     <>
@@ -133,10 +129,6 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* Premium Debug - Temporary - FORCE DEPLOY */}
-          <div className="mb-12">
-            <PremiumDebug />
-          </div>
 
           {/* Premium Features - Only show for non-premium users */}
           {!isPremium && (
