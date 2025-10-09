@@ -15,7 +15,7 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Navigation - Desktop */}
+          {/* Navigation - Desktop - Updated with all tools */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link 
               href="/" 
