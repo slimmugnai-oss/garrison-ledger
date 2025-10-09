@@ -6,7 +6,7 @@ export const runtime = "edge";
 const pmt = (rateMo:number, nper:number, pv:number)=> (pv*rateMo)/(1 - Math.pow(1+rateMo, -nper));
 
 export async function POST(req: NextRequest) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { price, rate, tax, ins, bah, rent } = await req.json();

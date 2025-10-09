@@ -6,7 +6,7 @@ export const runtime = "edge";
 const fv = (pv:number, r:number, years:number)=> pv * Math.pow(1+r, years);
 
 export async function POST(req: NextRequest) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { amount } = await req.json();
   const years = 15;
