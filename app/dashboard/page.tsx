@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import Header from '../components/Header';
 import { redirect } from 'next/navigation';
 import PaymentButton from '../components/PaymentButton';
+import Link from 'next/link';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
