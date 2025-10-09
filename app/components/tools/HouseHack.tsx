@@ -66,6 +66,38 @@ export default function HouseHack() {
             </div>
           </div>
 
+          <PremiumGate
+            placeholder={
+              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                <div className="text-center">
+                  <div className="text-6xl mb-4">🔒</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Monthly Breakdown</h3>
+                  <p className="text-lg text-gray-600 mb-6">
+                    See detailed monthly costs and income breakdown with PITI calculations.
+                  </p>
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
+                    Upgrade to Premium
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-red-50 rounded-lg border border-red-200">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
+                  <p className="text-3xl font-bold text-red-600">{fmt(costs)}</p>
+                  <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+                </div>
+                <div className="p-6 bg-green-50 rounded-lg border border-green-200">
+                  <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
+                  <p className="text-3xl font-bold text-green-600">{fmt(income)}</p>
+                  <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+                </div>
+              </div>
+            </div>
+          </PremiumGate>
 
           <PremiumGate
             placeholder={
