@@ -163,7 +163,7 @@ export default function HouseHack() {
                 </div>
               )}
             </div>
-          </PremiumGate>
+          )}
 
           {!isPremium && (
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">

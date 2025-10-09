@@ -169,8 +169,10 @@ export default function SdpStrategist() {
             </div>
           )}
           {isPremium && (
-            {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
-            <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
+            <div>
+              {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
+              <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
+            </div>
           )}
         </div>
       </div>
