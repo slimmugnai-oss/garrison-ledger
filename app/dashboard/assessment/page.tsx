@@ -98,7 +98,28 @@ export default function Assessment() {
 
               <div className="pt-6">
                 <button
-                  onClick={() => r.push(`/dashboard/plan?stage=${stage}&housing=${housing}&kids=${kids}&tsp=${goalTsp}&house=${goalHouse}&sdp=${sdp}`)}
+                  onClick={async () => {
+                    // Save assessment to API
+                    const answers = {
+                      stage,
+                      housing,
+                      kids,
+                      goals: { tsp: goalTsp, house: goalHouse, sdp }
+                    };
+                    
+                    try {
+                      await fetch('/api/assessment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ answers })
+                      });
+                    } catch (error) {
+                      console.error('Error saving assessment:', error);
+                    }
+                    
+                    // Navigate to plan page
+                    r.push('/dashboard/plan');
+                  }}
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
                 >
                   Generate My Personalized Plan 🚀
