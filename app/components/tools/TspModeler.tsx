@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';

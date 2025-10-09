@@ -1,4 +1,4 @@
-export async function track(name: string, props: Record<string, any> = {}) {
+export async function track(name: string, props: Record<string, unknown> = {}) {
   try {
     await fetch("/api/track", {
       method: "POST",

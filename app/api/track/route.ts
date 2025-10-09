@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth(); // ok if null
-  let payload: any = {};
+  let payload: { name?: string; path?: string; props?: Record<string, unknown> } = {};
   try { payload = await req.json(); } catch {}
   const name = String(payload?.name || "").slice(0, 120);
   if (!name) return NextResponse.json({ ok: true });
