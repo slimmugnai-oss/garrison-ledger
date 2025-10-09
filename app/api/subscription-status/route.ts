@@ -11,6 +11,7 @@ export async function GET() {
     }
 
     console.log('Checking premium status for user:', user.id);
+    console.log('User object:', { id: user.id, email: user.emailAddresses[0]?.emailAddress });
 
     // Query the v_user_access view to check premium status
     const { data, error } = await supabaseAdmin
@@ -19,10 +20,30 @@ export async function GET() {
       .eq('user_id', user.id)
       .single();
 
+    console.log('v_user_access query result:', { data, error });
+
     if (error) {
       console.log('Error querying v_user_access:', error);
-      // If no row found, user is free tier
-      return NextResponse.json({ isPremium: false });
+      console.log('Falling back to entitlements table...');
+      
+      // Fallback: check entitlements table directly
+      const { data: entitlementsData, error: entitlementsError } = await supabaseAdmin
+        .from('entitlements')
+        .select('tier, status')
+        .eq('user_id', user.id)
+        .single();
+      
+      console.log('Entitlements fallback result:', { entitlementsData, entitlementsError });
+      
+      if (entitlementsError) {
+        console.log('Error querying entitlements:', entitlementsError);
+        return NextResponse.json({ isPremium: false });
+      }
+      
+      const isPremium = entitlementsData?.tier === 'premium' && entitlementsData?.status === 'active';
+      console.log('Premium status from entitlements:', { userId: user.id, isPremium, entitlementsData });
+      
+      return NextResponse.json({ isPremium });
     }
 
     const isPremium = !!data?.is_premium;
