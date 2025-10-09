@@ -1,28 +1,24 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-
-type Rates = { C: number; S: number; I: number; F: number; G: number };
-const DEFAULT_RATES: Rates = { C: 0.10, S: 0.11, I: 0.07, F: 0.04, G: 0.02 };
-
-function fvSeries(start: number, monthly: number, years: number, annual: number) {
-  const out: number[] = [start];
-  let b = start;
-  const rmo = Math.pow(1 + annual, 1 / 12) - 1;
-  for (let i = 0; i < years * 12; i++) {
-    b = b * (1 + rmo) + monthly;
-    if (i % 12 === 11) out.push(b);
-  }
-  return out;
-}
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
   currency: 'USD', 
   maximumFractionDigits: 0 
 });
+
+type ApiResponse = {
+  partial: boolean;
+  yearsVisible: number;
+  seriesDefault: number[];
+  seriesCustom: number[];
+  endDefault?: number;
+  endCustom?: number;
+  diff?: number;
+};
 
 export default function TspModeler() {
   const { isPremium } = usePremiumStatus();
@@ -38,7 +34,35 @@ export default function TspModeler() {
   const [wF, setWF] = useState(0);
   const [wG, setWG] = useState(0);
 
-  // optional prefill via query
+  // API response state
+  const [apiData, setApiData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=tsp')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input) {
+            setAge(data.input.age || 30);
+            setRet(data.input.retire || 50);
+            setBal(data.input.balance || 50000);
+            setCont(data.input.monthly || 500);
+            if (data.input.mix) {
+              setWC(data.input.mix.C || 70);
+              setWS(data.input.mix.S || 30);
+              setWI(data.input.mix.I || 0);
+              setWF(data.input.mix.F || 0);
+              setWG(data.input.mix.G || 0);
+            }
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
+
+  // Optional prefill via query
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const n = (k: string, def: number) => Number(p.get(k) ?? def);
@@ -61,32 +85,54 @@ export default function TspModeler() {
     }
   }, []);
 
-  const years = Math.max(0, ret - age);
+  // Debounced save function
+  const debouncedSave = useCallback(
+    debounce((data: ApiResponse) => {
+      if (isPremium && data) {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'tsp',
+            input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
+            output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
+          })
+        }).catch(console.error);
+      }
+    }, 1000),
+    [isPremium, age, ret, bal, cont, wC, wS, wI, wF, wG]
+  );
 
-  // proxy rates (could move to Supabase later)
-  const r = DEFAULT_RATES;
+  // Calculate on input change
+  useEffect(() => {
+    const calculate = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/tools/tsp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            age,
+            retire: ret,
+            balance: bal,
+            monthly: cont,
+            mix: { C: wC, S: wS, I: wI, F: wF, G: wG }
+          })
+        });
+        const data = await response.json();
+        setApiData(data);
+        debouncedSave(data);
+      } catch (error) {
+        console.error('Error calculating TSP:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // L2050 rough default mix (you can expand later)
-  const mixDefault = { C: 0.45, S: 0.25, I: 0.15, F: 0.10, G: 0.05 };
+    calculate();
+  }, [age, ret, bal, cont, wC, wS, wI, wF, wG, debouncedSave]);
 
-  const weights = useMemo(() => {
-    const arr = [wC, wS, wI, wF, wG];
-    const sum = arr.reduce((a, b) => a + b, 0) || 1;
-    return arr.map(v => v / sum);
-  }, [wC, wS, wI, wF, wG]);
-
-  const rDefault = mixDefault.C * r.C + mixDefault.S * r.S + mixDefault.I * r.I + mixDefault.F * r.F + mixDefault.G * r.G;
-  const rCustom = weights[0] * r.C + weights[1] * r.S + weights[2] * r.I + weights[3] * r.F + weights[4] * r.G;
-
-  const A = useMemo(() => fvSeries(bal, cont, years, rDefault), [bal, cont, years, rDefault]);
-  const B = useMemo(() => fvSeries(bal, cont, years, rCustom), [bal, cont, years, rCustom]);
-
-  // secure preview: trim series BEFORE render if not premium
-  const visLen = isPremium ? A.length : Math.max(2, Math.ceil(A.length * 0.33));
-  const Atrim = A.slice(0, visLen);
-  const Btrim = B.slice(0, visLen);
-
-  // lightweight SVG line plot (no external lib)
+  // Lightweight SVG line plot
   const Chart = ({ seriesA, seriesB }: { seriesA: number[]; seriesB: number[] }) => {
     const w = 560, h = 240, pad = 24;
     const all = [...seriesA, ...seriesB];
@@ -106,10 +152,14 @@ export default function TspModeler() {
     );
   };
 
-  // final values computed but NOT rendered if not premium
-  const endA = A[A.length - 1];
-  const endB = B[B.length - 1];
-  const diff = endB - endA;
+  // Debounce utility
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }) as T;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -178,12 +228,24 @@ export default function TspModeler() {
 
           <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Growth Projection</h2>
-            <Chart seriesA={Atrim} seriesB={Btrim} />
-            {!isPremium && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-blue-800 font-medium">
-                  📊 Preview shows the first third of the timeline. Unlock to view full projection and ROI analysis.
-                </p>
+            {loading ? (
+              <div className="flex items-center justify-center h-60">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : apiData ? (
+              <>
+                <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
+                {apiData.partial && (
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-blue-800 font-medium">
+                      📊 Preview shows {apiData.yearsVisible} years. Unlock to view full {Math.max(0, ret - age)}-year projection and ROI analysis.
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-60 text-gray-500">
+                Enter your information above to see projections
               </div>
             )}
           </div>
@@ -206,28 +268,36 @@ export default function TspModeler() {
           >
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Mix (L2050)</h3>
-                  <p className="text-3xl font-bold text-gray-900">{fmt(endA)}</p>
+              {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Mix (L2050)</h3>
+                      <p className="text-3xl font-bold text-gray-900">{fmt(apiData.endDefault)}</p>
+                    </div>
+                    <div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
+                      <h3 className="text-lg font-semibold text-blue-800 mb-2">Custom Mix</h3>
+                      <p className="text-3xl font-bold text-blue-900">{fmt(apiData.endCustom)}</p>
+                    </div>
+                  </div>
+                  <div className={`p-6 rounded-lg border-2 ${apiData.diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                    <div className={`text-3xl font-bold mb-2 ${apiData.diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                      {apiData.diff >= 0 ? '💰 Potential Gain' : '📉 Potential Loss'}
+                    </div>
+                    <div className={`text-4xl font-bold mb-4 ${apiData.diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {apiData.diff >= 0 ? '+' : ''}{fmt(apiData.diff)}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
+                      Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Complete the form above to see detailed retirement projections
                 </div>
-                <div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="text-lg font-semibold text-blue-800 mb-2">Custom Mix</h3>
-                  <p className="text-3xl font-bold text-blue-900">{fmt(endB)}</p>
-                </div>
-              </div>
-              <div className={`p-6 rounded-lg border-2 ${diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                <div className={`text-3xl font-bold mb-2 ${diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                  {diff >= 0 ? '💰 Potential Gain' : '📉 Potential Loss'}
-                </div>
-                <div className={`text-4xl font-bold mb-4 ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {diff >= 0 ? '+' : ''}{fmt(diff)}
-                </div>
-                <div className="text-sm text-gray-600">
-                  <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
-                  Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
-                </div>
-              </div>
+              )}
             </div>
           </PremiumGate>
         </div>

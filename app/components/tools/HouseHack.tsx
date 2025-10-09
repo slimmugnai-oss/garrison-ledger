@@ -1,17 +1,21 @@
 'use client';
 
 import PremiumGate from '@/app/components/premium/PremiumGate';
-import { useEffect, useState, useMemo } from 'react';
-
-function pmt(rateMo: number, nper: number, pv: number) {
-  return (pv * rateMo) / (1 - Math.pow(1 + rateMo, -nper));
-}
+import { useEffect, useState, useCallback } from 'react';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
   currency: 'USD', 
   maximumFractionDigits: 0 
 });
+
+type ApiResponse = {
+  partial: boolean;
+  costs: number;
+  income: number;
+  verdict?: number;
+};
 
 export default function HouseHack() {
   const [price, setPrice] = useState(400000);
@@ -20,6 +24,28 @@ export default function HouseHack() {
   const [ins, setIns] = useState(1600);
   const [bah, setBah] = useState(2400);
   const [rent, setRent] = useState(2200);
+  const { isPremium } = usePremiumStatus();
+  const [apiData, setApiData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=house')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input) {
+            setPrice(data.input.price || 400000);
+            setRate(data.input.rate || 6.5);
+            setTax(data.input.tax || 4800);
+            setIns(data.input.ins || 1600);
+            setBah(data.input.bah || 2400);
+            setRent(data.input.rent || 2200);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
 
   // prefill via query
   useEffect(() => {
@@ -33,14 +59,55 @@ export default function HouseHack() {
     setRent(n('rent', 2200));
   }, []);
 
-  const costs = useMemo(() => {
-    const rMo = (rate / 100) / 12;
-    const piti = pmt(rMo, 360, price) + tax / 12 + ins / 12;
-    return piti;
-  }, [price, rate, tax, ins]);
+  // Debounced save function
+  const debouncedSave = useCallback(
+    debounce((data: ApiResponse) => {
+      if (isPremium && data) {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'house',
+            input: { price, rate, tax, ins, bah, rent },
+            output: { costs: data.costs, income: data.income, verdict: data.verdict }
+          })
+        }).catch(console.error);
+      }
+    }, 1000),
+    [isPremium, price, rate, tax, ins, bah, rent]
+  );
 
-  const income = bah + rent;
-  const verdict = income - costs; // do not render if not premium
+  // Calculate on input change
+  useEffect(() => {
+    const calculate = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/tools/house', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ price, rate, tax, ins, bah, rent })
+        });
+        const data = await response.json();
+        setApiData(data);
+        debouncedSave(data);
+      } catch (error) {
+        console.error('Error calculating house hack:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculate();
+  }, [price, rate, tax, ins, bah, rent, debouncedSave]);
+
+  // Debounce utility
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }) as T;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -84,18 +151,28 @@ export default function HouseHack() {
           >
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 bg-red-50 rounded-lg border border-red-200">
-                  <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
-                  <p className="text-3xl font-bold text-red-600">{fmt(costs)}</p>
-                  <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
-                <div className="p-6 bg-green-50 rounded-lg border border-green-200">
-                  <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
-                  <p className="text-3xl font-bold text-green-600">{fmt(income)}</p>
-                  <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+              ) : apiData ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-red-50 rounded-lg border border-red-200">
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
+                    <p className="text-3xl font-bold text-red-600">{fmt(apiData.costs)}</p>
+                    <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+                  </div>
+                  <div className="p-6 bg-green-50 rounded-lg border border-green-200">
+                    <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
+                    <p className="text-3xl font-bold text-green-600">{fmt(apiData.income)}</p>
+                    <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Enter property details above to see monthly summary
+                </div>
+              )}
             </div>
           </PremiumGate>
 
@@ -117,18 +194,24 @@ export default function HouseHack() {
           >
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
-              <div className={`p-6 rounded-lg border-2 ${verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                <div className={`text-3xl font-bold mb-2 ${verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                  {verdict >= 0 ? '💰 Positive Cash Flow' : '📉 Negative Cash Flow'}
+              {apiData && apiData.verdict !== undefined ? (
+                <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                  <div className={`text-3xl font-bold mb-2 ${apiData.verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                    {apiData.verdict >= 0 ? '💰 Positive Cash Flow' : '📉 Negative Cash Flow'}
+                  </div>
+                  <div className={`text-4xl font-bold mb-4 ${apiData.verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {fmt(apiData.verdict)}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
+                    Consult with financial and real estate professionals for actual investment decisions.
+                  </div>
                 </div>
-                <div className={`text-4xl font-bold mb-4 ${verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {fmt(verdict)}
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Complete the form above to see cash flow analysis
                 </div>
-                <div className="text-sm text-gray-600">
-                  <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
-                  Consult with financial and real estate professionals for actual investment decisions.
-                </div>
-              </div>
+              )}
             </div>
           </PremiumGate>
         </div>

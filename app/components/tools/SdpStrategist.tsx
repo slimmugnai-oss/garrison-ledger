@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
@@ -9,6 +9,7 @@ type Scenario = {
   title: string;
   rate: number; // annual
   desc: string;
+  value?: number;
 };
 
 const SCENARIOS: Scenario[] = [
@@ -17,20 +18,90 @@ const SCENARIOS: Scenario[] = [
   { key: 'C', title: 'Moderate Growth (8%)', rate: 0.08, desc: 'Stock-heavy mix for long horizons.' }
 ];
 
-function fv(pv: number, r: number, years: number) {
-  return pv * Math.pow(1 + r, years);
-}
+type ApiResponse = {
+  partial: boolean;
+  hy: number;
+  cons?: number;
+  mod?: number;
+};
 
 export default function SdpStrategist() {
   const [amount, setAmount] = useState<number>(10000);
-  const years = 15;
   const { isPremium } = usePremiumStatus();
+  const [apiData, setApiData] = useState<ApiResponse | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const results = useMemo(() => {
-    const amt = Number.isFinite(amount) ? Math.max(0, amount) : 0;
-    // compute all results, but do not render premium-only numbers when not premium
-    return SCENARIOS.map(s => ({ ...s, value: fv(amt, s.rate, years) }));
-  }, [amount]);
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=sdp')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input && data.input.amount) {
+            setAmount(data.input.amount);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
+
+  // Debounced save function
+  const debouncedSave = useCallback(
+    debounce((data: ApiResponse) => {
+      if (isPremium && data) {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'sdp',
+            input: { amount },
+            output: { hy: data.hy, cons: data.cons, mod: data.mod }
+          })
+        }).catch(console.error);
+      }
+    }, 1000),
+    [isPremium, amount]
+  );
+
+  // Calculate on amount change
+  useEffect(() => {
+    const calculate = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/tools/sdp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+        const data = await response.json();
+        setApiData(data);
+        debouncedSave(data);
+      } catch (error) {
+        console.error('Error calculating SDP:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculate();
+  }, [amount, debouncedSave]);
+
+  // Debounce utility
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }) as T;
+  }
+
+  // Create results array with API data
+  const results = SCENARIOS.map(s => ({
+    ...s,
+    value: s.key === 'A' ? apiData?.hy : 
+           s.key === 'B' ? apiData?.cons : 
+           s.key === 'C' ? apiData?.mod : undefined
+  }));
 
   const fmt = (v: number) => v.toLocaleString(undefined, { 
     style: 'currency', 
@@ -75,7 +146,11 @@ export default function SdpStrategist() {
               {results.map((r) => (
                 <div key={r.key} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="text-lg font-semibold text-gray-900 mb-3">{r.title}</div>
-                  {isPremium ? (
+                  {loading ? (
+                    <div className="text-3xl font-bold mb-2">
+                      <span className="inline-block h-8 w-32 bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  ) : r.value !== undefined ? (
                     <div className="text-3xl font-bold text-green-600 mb-2">{fmt(r.value)}</div>
                   ) : (
                     <div className="text-3xl font-bold mb-2">
@@ -106,7 +181,7 @@ export default function SdpStrategist() {
             }
           >
             {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
-            <RoiBox results={results} fmt={fmt} amount={amount} />
+            <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
           </PremiumGate>
         </div>
       </div>
@@ -115,17 +190,25 @@ export default function SdpStrategist() {
 }
 
 function RoiBox({ 
-  results, 
+  apiData,
   fmt,
   amount
 }: { 
-  results: (Scenario & { value: number })[]; 
+  apiData: ApiResponse | null;
   fmt: (n: number) => string;
   amount: number;
 }) {
-  const hy = results.find(r => r.key === 'A')!.value;
-  const mod = results.find(r => r.key === 'C')!.value;
-  const diff = mod - hy;
+  if (!apiData || apiData.partial || !apiData.mod) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+        <div className="text-center text-gray-500 py-8">
+          Enter an amount above to see ROI analysis
+        </div>
+      </div>
+    );
+  }
+
+  const diff = apiData.mod - apiData.hy;
   
   return (
     <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
