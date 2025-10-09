@@ -49,8 +49,8 @@ const ruleDefs = [
 
 export async function runPlanRules(facts: AssessmentFacts): Promise<Set<string>> {
   const engine = new Engine([], { allowUndefinedFacts: true });
-  ruleDefs.forEach(r => engine.addRule(r as any));
-  const { events } = await engine.run(facts as any);
+  ruleDefs.forEach(r => engine.addRule(r as unknown as Parameters<typeof engine.addRule>[0]));
+  const { events } = await engine.run(facts);
   const tags = new Set<string>();
   for (const e of events as RuleEvent[]) tags.add(e.params.tag);
   // Always add a general audience tag

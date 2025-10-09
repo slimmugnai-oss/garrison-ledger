@@ -57,8 +57,6 @@ function formatDeterministic(tool: string, inputs: Record<string, unknown>, outp
     }
     case "house": {
       const price = Number(inputs.price) || 0;
-      const bah = Number(inputs.bah) || 0;
-      const rent = Number(inputs.rent) || 0;
       const costs = Number(outputs.costs) || 0;
       const income = Number(outputs.income) || 0;
       const verdict = Number(outputs.verdict);
