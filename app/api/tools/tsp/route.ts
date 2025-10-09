@@ -49,7 +49,15 @@ export async function POST(req: NextRequest) {
   const B = fvSeries(body.balance, body.monthly, years, rCustom);
 
   const visible = isPremium ? A.length : Math.max(2, Math.ceil(A.length*0.33));
-  const payload:any = {
+  const payload: {
+    partial: boolean;
+    yearsVisible: number;
+    seriesDefault: number[];
+    seriesCustom: number[];
+    endDefault?: number;
+    endCustom?: number;
+    diff?: number;
+  } = {
     partial: !isPremium,
     yearsVisible: visible-1,
     seriesDefault: A.slice(0, visible),
