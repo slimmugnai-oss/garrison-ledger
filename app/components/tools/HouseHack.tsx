@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -27,6 +28,11 @@ export default function HouseHack() {
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track page view on mount
+  useEffect(() => {
+    track('house_view');
+  }, []);
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -63,6 +69,7 @@ export default function HouseHack() {
   useEffect(() => {
     const calculate = async () => {
       setLoading(true);
+      track('house_input_change');
       try {
         const response = await fetch('/api/tools/house', {
           method: 'POST',
@@ -71,6 +78,13 @@ export default function HouseHack() {
         });
         const data = await response.json();
         setApiData(data);
+        
+        // Track analytics based on premium status
+        if (data.partial && !isPremium) {
+          track('house_preview_gate_view');
+        } else if (isPremium && data.verdict !== undefined) {
+          track('house_verdict_view');
+        }
         
         // Debounced save for premium users
         if (isPremium && data) {

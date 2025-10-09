@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 type Scenario = {
   key: 'A' | 'B' | 'C';
@@ -32,6 +33,11 @@ export default function SdpStrategist() {
   const [loading, setLoading] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Track page view on mount
+  useEffect(() => {
+    track('sdp_view');
+  }, []);
+
   // Load saved model on mount (premium only)
   useEffect(() => {
     if (isPremium) {
@@ -50,6 +56,7 @@ export default function SdpStrategist() {
   useEffect(() => {
     const calculate = async () => {
       setLoading(true);
+      track('sdp_input_change');
       try {
         const response = await fetch('/api/tools/sdp', {
           method: 'POST',
@@ -58,6 +65,13 @@ export default function SdpStrategist() {
         });
         const data = await response.json();
         setApiData(data);
+        
+        // Track analytics based on premium status
+        if (data.partial && !isPremium) {
+          track('sdp_preview_gate_view');
+        } else if (isPremium && data.mod) {
+          track('sdp_roi_view');
+        }
         
         // Debounced save for premium users
         if (isPremium && data) {

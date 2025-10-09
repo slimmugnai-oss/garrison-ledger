@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Garrison Ledger",
   description: "Personal finance tracking and management application",
+  ...(process.env.NEXT_PUBLIC_ENV !== "production"
+    ? { robots: { index: false, follow: false } }
+    : {}),
 };
 
 export default function RootLayout({

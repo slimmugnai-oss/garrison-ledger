@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -38,6 +39,11 @@ export default function TspModeler() {
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Track page view on mount
+  useEffect(() => {
+    track('tsp_view');
+  }, []);
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -90,6 +96,7 @@ export default function TspModeler() {
   useEffect(() => {
     const calculate = async () => {
       setLoading(true);
+      track('tsp_input_change');
       try {
         const response = await fetch('/api/tools/tsp', {
           method: 'POST',
@@ -104,6 +111,13 @@ export default function TspModeler() {
         });
         const data = await response.json();
         setApiData(data);
+        
+        // Track analytics based on premium status
+        if (data.partial && !isPremium) {
+          track('tsp_preview_gate_view');
+        } else if (isPremium && data.endDefault) {
+          track('tsp_roi_view');
+        }
         
         // Debounced save for premium users
         if (isPremium && data) {
