@@ -1,7 +1,6 @@
 'use client';
 
-import PremiumGate from '@/app/components/premium/PremiumGate';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
@@ -27,7 +26,7 @@ export default function HouseHack() {
   const { isPremium } = usePremiumStatus();
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const saveTimeoutRef = useState<NodeJS.Timeout | null>(null)[0];
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -75,7 +74,7 @@ export default function HouseHack() {
         
         // Debounced save for premium users
         if (isPremium && data) {
-          if (saveTimeoutRef) clearTimeout(saveTimeoutRef);
+          if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
           const timeout = setTimeout(() => {
             fetch('/api/saved-models', {
               method: 'POST',
@@ -87,7 +86,7 @@ export default function HouseHack() {
               })
             }).catch(console.error);
           }, 1000);
-          Object.assign(saveTimeoutRef as object, timeout);
+          saveTimeoutRef.current = timeout;
         }
       } catch (error) {
         console.error('Error calculating house hack:', error);

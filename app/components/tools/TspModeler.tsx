@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
@@ -37,7 +37,7 @@ export default function TspModeler() {
   // API response state
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const saveTimeoutRef = useState<NodeJS.Timeout | null>(null)[0];
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -107,7 +107,7 @@ export default function TspModeler() {
         
         // Debounced save for premium users
         if (isPremium && data) {
-          if (saveTimeoutRef) clearTimeout(saveTimeoutRef);
+          if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
           const timeout = setTimeout(() => {
             fetch('/api/saved-models', {
               method: 'POST',
@@ -119,7 +119,7 @@ export default function TspModeler() {
               })
             }).catch(console.error);
           }, 1000);
-          Object.assign(saveTimeoutRef as object, timeout);
+          saveTimeoutRef.current = timeout;
         }
       } catch (error) {
         console.error('Error calculating TSP:', error);
