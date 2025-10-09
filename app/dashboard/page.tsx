@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import PaymentButton from '../components/PaymentButton';
 import Link from 'next/link';
 import PremiumStatusIndicator from '../components/PremiumStatusIndicator';
+import PremiumDebug from '../components/PremiumDebug';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
@@ -102,6 +103,11 @@ export default async function Dashboard() {
                 Start Assessment →
               </Link>
             </div>
+          </div>
+
+          {/* Premium Debug - Temporary */}
+          <div className="mb-12">
+            <PremiumDebug />
           </div>
 
           {/* Premium Features */}
