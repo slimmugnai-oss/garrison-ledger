@@ -105,7 +105,7 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* Premium Debug - Temporary */}
+          {/* Premium Debug - Temporary - FORCE DEPLOY */}
           <div className="mb-12">
             <PremiumDebug />
           </div>
