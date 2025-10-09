@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: successUrl || 'https://garrison-ledger.vercel.app/dashboard?success=true',
-      cancel_url: cancelUrl || 'https://garrison-ledger.vercel.app/dashboard?canceled=true',
+      success_url: successUrl || `${process.env.NEXT_PUBLIC_SITE_URL || 'https://garrison-ledger.vercel.app'}/dashboard/upgrade/success`,
+      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_SITE_URL || 'https://garrison-ledger.vercel.app'}/dashboard/upgrade?canceled=true`,
       metadata: {
         userId: user.id,
       },
