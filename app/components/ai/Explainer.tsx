@@ -53,8 +53,12 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
         {loading ? "✨ Generating explanation..." : "✨ Explain these results"}
       </button>
       {text && (
-        <div className="mt-4 whitespace-pre-line text-sm leading-relaxed rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md text-gray-800">
-          {text}
+        <div className="mt-4 text-sm leading-relaxed rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md text-gray-800">
+          {text.split('\n').map((line, i) => (
+            <div key={i}>
+              {line || <br />}
+            </div>
+          ))}
         </div>
       )}
     </div>
