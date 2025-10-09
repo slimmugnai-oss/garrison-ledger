@@ -167,15 +167,15 @@ export default function TspModeler() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">📈 TSP Allocation Modeler</h1>
-          <p className="text-xl text-gray-600">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">📈 TSP Allocation Modeler</h1>
+          <p className="text-lg text-gray-600">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
@@ -217,7 +217,7 @@ export default function TspModeler() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Custom Allocation Mix</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <Range label="C Fund" v={wC} set={setWC} />
@@ -261,14 +261,14 @@ export default function TspModeler() {
                   }
                 }}
                 disabled={loading}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '🔄 Calculating...' : '🚀 Generate TSP Analysis'}
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Growth Projection</h2>
             {loading ? (
               <div className="flex items-center justify-center h-60">
@@ -293,7 +293,7 @@ export default function TspModeler() {
           </div>
 
           {!isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
@@ -307,7 +307,7 @@ export default function TspModeler() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
                 <>

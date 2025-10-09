@@ -115,7 +115,7 @@ export default function HouseHack() {
   }, [price, rate, tax, ins, bah, rent, isPremium, saveTimeoutRef]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">🏠 House Hacking Calculator</h1>
@@ -123,7 +123,7 @@ export default function HouseHack() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Property Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Num label="Property Price" v={price} set={setPrice} />
@@ -162,7 +162,7 @@ export default function HouseHack() {
                   }
                 }}
                 disabled={loading}
-                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '🔄 Calculating...' : '🚀 Generate House Analysis'}
               </button>
@@ -170,7 +170,7 @@ export default function HouseHack() {
           </div>
 
           {!isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Monthly Breakdown</h3>
@@ -184,7 +184,7 @@ export default function HouseHack() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
@@ -212,7 +212,7 @@ export default function HouseHack() {
           )}
 
           {!isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Cash Flow Analysis</h3>
@@ -226,7 +226,7 @@ export default function HouseHack() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
               {apiData && apiData.verdict !== undefined ? (
                 <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>

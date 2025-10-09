@@ -16,7 +16,7 @@ export default function Assessment() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-gray-900 mb-4">🎯 Readiness Assessment</h1>
@@ -25,7 +25,7 @@ export default function Assessment() {
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <div className="space-y-8">
               <Field label="Current Stage">
                 <select 
