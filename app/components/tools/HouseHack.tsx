@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
+import Explainer from '@/app/components/ai/Explainer';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -239,6 +240,11 @@ export default function HouseHack() {
                     <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
                     Consult with financial and real estate professionals for actual investment decisions.
                   </div>
+                  <Explainer payload={{ 
+                    tool: "house", 
+                    inputs: { price, rate, tax, ins, bah, rent }, 
+                    outputs: { costs: apiData.costs, income: apiData.income, verdict: apiData.verdict } 
+                  }} />
                   <FootNote />
                 </div>
               ) : (

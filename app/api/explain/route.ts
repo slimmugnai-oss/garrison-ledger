@@ -1,66 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
+import { NextRequest } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
-export async function POST(req: NextRequest) {
-  try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+export const runtime = "edge";
 
-    const { tool, inputs, outputs } = await req.json();
-
-    // Simple template (no external API): keep it deterministic now
-    // Later you can swap to OpenAI with your chosen model.
-    const text = makeExplanation(tool, inputs, outputs);
-    return NextResponse.json({ text });
-  } catch (error) {
-    console.error('Error in explain API:', error);
-    return NextResponse.json({ error: 'Failed to generate explanation' }, { status: 500 });
+function formatDeterministic(tool: string, inputs: Record<string, unknown>, outputs: Record<string, unknown>) {
+  // Trim giant payloads
+  const trunc = (o: unknown) => JSON.stringify(o).slice(0, 1200);
+  
+  switch (tool) {
+    case "sdp":
+      return [
+        "Here's what your SDP projection means:\n\n",
+        "- We model three paths over 15 years.\n",
+        "- The baseline (4%) represents a high-yield savings account—low risk, liquid.\n",
+        "- The conservative (6%) and moderate (8%) scenarios reflect diversified index portfolios.\n\n",
+        `Inputs: ${trunc(inputs)}\n`,
+        `Outputs: ${trunc(outputs)}\n\n`,
+        "Rule of thumb: if you have <6 months emergency savings, keep part in cash; otherwise, consider tax-advantaged accounts (e.g., spousal Roth IRA) for long-term growth.\n"
+      ].join("");
+    case "tsp":
+      return [
+        "About your TSP projection:\n\n",
+        "- We compared your default mix vs. your custom allocation.\n",
+        "- Small allocation changes compound over decades; focus on contribution rate first, then mix.\n\n",
+        `Inputs: ${trunc(inputs)}\n`,
+        `Outputs: ${trunc(outputs)}\n\n`,
+        "Reminder: projections are illustrative; rebalance annually and increase contributions when possible.\n"
+      ].join("");
+    case "house":
+      return [
+        "House-hacking analysis:\n\n",
+        "- We calculated PITI using a 30-year fixed VA structure and compared to BAH + tenant rent.\n",
+        "- Positive cash flow doesn't include vacancy/maintenance; bake in reserves.\n\n",
+        `Inputs: ${trunc(inputs)}\n`,
+        `Outputs: ${trunc(outputs)}\n\n`,
+        "Next steps: request quotes for taxes/insurance; sanity-check rents; consider a 5–10% maintenance/vacancy buffer.\n"
+      ].join("");
+    default:
+      return "This explanation is currently unavailable for the selected tool.";
   }
 }
 
-function makeExplanation(
-  tool: string, 
-  inputs: Record<string, number | string | boolean | null | undefined>, 
-  outputs: Record<string, number | string | boolean | null | undefined>
-) {
-  if (tool === 'sdp') {
-    const amt = Number(inputs?.amount) || 0;
-    const hy = Number(outputs?.hy) || 0;
-    const mod = Number(outputs?.mod) || 0;
-    const diff = mod - hy;
-    return [
-      `You entered $${amt.toLocaleString()} for your SDP payout.`,
-      `At ~4% over 15 years, that grows to about $${Math.round(hy).toLocaleString()}.`,
-      `At ~8%, it's about $${Math.round(mod).toLocaleString()}.`,
-      `The illustrative gap is ~$${Math.round(diff).toLocaleString()}.`,
-      `Next steps: consider opening/using a Spousal Roth IRA or similar diversified index approach if eligible; build an emergency buffer before investing; confirm contribution limits and timelines.`
-    ].join(' ');
-  }
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return new Response("Unauthorized", { status: 401 });
+
+  const { tool, inputs, outputs } = await req.json().catch(() => ({}));
+  const text = formatDeterministic(String(tool || ""), inputs || {}, outputs || {});
+
+  // Stream the text in chunks
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    start(controller) {
+      const parts = text.match(/.{1,220}/g) || [];
+      let i = 0;
+      const push = () => {
+        if (i >= parts.length) { 
+          controller.close(); 
+          return; 
+        }
+        controller.enqueue(encoder.encode(parts[i]));
+        i += 1;
+        setTimeout(push, 20); // smooth stream
+      };
+      push();
+    }
+  });
   
-  if (tool === 'tsp') {
-    const age = Number(inputs?.age) || 30;
-    const retire = Number(inputs?.retire) || 50;
-    const bal = Number(inputs?.bal) || 50000;
-    const diff = Number(outputs?.diff) || 0;
-    return [
-      `At age ${age}, retiring at ${retire}, with a current balance of $${bal.toLocaleString()},`,
-      `your custom allocation could potentially generate $${Math.round(diff).toLocaleString()} more than the default mix.`,
-      `Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.`,
-      `This is illustrative only - past performance doesn't predict future results.`
-    ].join(' ');
-  }
-  
-  if (tool === 'house') {
-    const price = Number(inputs?.price) || 400000;
-    const verdict = Number(outputs?.verdict) || 0;
-    return [
-      `For a $${price.toLocaleString()} property, your estimated monthly cash flow is $${Math.round(verdict).toLocaleString()}.`,
-      `Remember to factor in vacancy rates, maintenance costs, property management fees, and potential rent increases.`,
-      `This is a simplified calculation for educational purposes - consult with financial and real estate professionals for actual investment decisions.`
-    ].join(' ');
-  }
-  
-  return 'This explanation will reference your inputs and outputs. Education only.';
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+    }
+  });
 }

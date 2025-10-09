@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
+import Explainer from '@/app/components/ai/Explainer';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -332,6 +333,11 @@ export default function TspModeler() {
                       Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
                     </div>
                   </div>
+                  <Explainer payload={{ 
+                    tool: "tsp", 
+                    inputs: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } }, 
+                    outputs: { endDefault: apiData.endDefault, endCustom: apiData.endCustom, diff: apiData.diff } 
+                  }} />
                   <FootNote />
                 </>
               ) : (

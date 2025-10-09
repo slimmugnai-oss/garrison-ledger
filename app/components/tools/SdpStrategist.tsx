@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
+import Explainer from '@/app/components/ai/Explainer';
 
 type Scenario = {
   key: 'A' | 'B' | 'C';
@@ -258,34 +259,15 @@ function RoiBox({
         <div className={`text-4xl font-bold mb-4 ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {diff >= 0 ? '+' : ''}{fmt(diff)}
         </div>
-        <div className="text-sm text-gray-600 mb-6">
+        <div className="text-sm text-gray-600 mb-4">
           <strong>15-year comparison:</strong> Moderate Growth (8%) vs High-Yield Savings (4%)
         </div>
-        <button
-          onClick={async () => {
-            if (!apiData || !apiData.hy || !apiData.mod) return;
-            try {
-              const res = await fetch('/api/explain', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                  tool: 'sdp', 
-                  inputs: { amount }, 
-                  outputs: { hy: apiData.hy, mod: apiData.mod } 
-                })
-              });
-              const json = await res.json();
-              alert(json.text);
-            } catch (error) {
-              console.error('Error getting explanation:', error);
-              alert('Unable to generate explanation at this time.');
-            }
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-        >
-          📊 Explain This Result
-        </button>
       </div>
+      <Explainer payload={{ 
+        tool: "sdp", 
+        inputs: { amount }, 
+        outputs: { hy: apiData.hy, cons: apiData.cons, mod: apiData.mod } 
+      }} />
       <div className="text-sm text-gray-600 mt-4 p-4 bg-gray-50 rounded-lg">
         <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
         Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.

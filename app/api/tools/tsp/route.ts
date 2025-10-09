@@ -1,16 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "edge";
 
-type Body = {
-  age: number;
-  retire: number;
-  balance: number;
-  monthly: number;
-  mix: { C:number; S:number; I:number; F:number; G:number };
-};
+const schema = z.object({
+  age: z.number().int().min(16).max(80),
+  retire: z.number().int().min(20).max(85),
+  balance: z.number().min(0).max(10_000_000),
+  monthly: z.number().min(0).max(100_000),
+  mix: z.object({
+    C: z.number().min(0).max(100),
+    S: z.number().min(0).max(100),
+    I: z.number().min(0).max(100),
+    F: z.number().min(0).max(100),
+    G: z.number().min(0).max(100),
+  })
+});
 
 // Proxy returns (move to Supabase later if desired)
 const R = { C:.10, S:.11, I:.07, F:.04, G:.02 };
@@ -31,10 +39,18 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  let body: Body;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Bad JSON" }, { status: 400 }); }
+  // Rate limiting
+  const { allowed } = await checkAndIncrement(userId, "/api/tools/tsp", 200);
+  if (!allowed) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
-  const years = Math.max(0, Math.min(60, (body.retire|0) - (body.age|0)));
+  let bodyRaw: unknown;
+  try { bodyRaw = await req.json(); } catch { return NextResponse.json({ error: "Bad JSON" }, { status: 400 }); }
+  
+  const parsed = schema.safeParse(bodyRaw);
+  if (!parsed.success) return NextResponse.json({ error: "Invalid input", details: parsed.error }, { status: 400 });
+  
+  const body = parsed.data;
+  const years = Math.max(0, Math.min(60, body.retire - body.age));
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   let isPremium = false;

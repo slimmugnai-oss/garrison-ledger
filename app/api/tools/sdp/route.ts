@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "edge";
+
+const schema = z.object({ 
+  amount: z.number().min(0).max(1_000_000) 
+});
+
 const fv = (pv:number, r:number, years:number)=> pv * Math.pow(1+r, years);
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { amount } = await req.json();
+  
+  // Rate limiting
+  const { allowed } = await checkAndIncrement(userId, "/api/tools/sdp", 200);
+  if (!allowed) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  
+  const raw = await req.json().catch(() => null);
+  const parsed = schema.safeParse(raw);
+  if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  
+  const { amount } = parsed.data;
   const years = 15;
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
