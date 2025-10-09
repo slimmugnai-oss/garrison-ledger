@@ -86,21 +86,23 @@ export default function TspModeler() {
   }, []);
 
   // Debounced save function
+  const saveModel = useCallback((data: ApiResponse) => {
+    if (isPremium && data) {
+      fetch('/api/saved-models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'tsp',
+          input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
+          output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
+        })
+      }).catch(console.error);
+    }
+  }, [isPremium, age, ret, bal, cont, wC, wS, wI, wF, wG]);
+
   const debouncedSave = useCallback(
-    debounce((data: ApiResponse) => {
-      if (isPremium && data) {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tool: 'tsp',
-            input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
-            output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
-          })
-        }).catch(console.error);
-      }
-    }, 1000),
-    [isPremium, age, ret, bal, cont, wC, wS, wI, wF, wG]
+    debounce(saveModel, 1000),
+    [saveModel]
   );
 
   // Calculate on input change

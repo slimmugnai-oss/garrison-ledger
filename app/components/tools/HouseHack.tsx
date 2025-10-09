@@ -60,21 +60,23 @@ export default function HouseHack() {
   }, []);
 
   // Debounced save function
+  const saveModel = useCallback((data: ApiResponse) => {
+    if (isPremium && data) {
+      fetch('/api/saved-models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'house',
+          input: { price, rate, tax, ins, bah, rent },
+          output: { costs: data.costs, income: data.income, verdict: data.verdict }
+        })
+      }).catch(console.error);
+    }
+  }, [isPremium, price, rate, tax, ins, bah, rent]);
+
   const debouncedSave = useCallback(
-    debounce((data: ApiResponse) => {
-      if (isPremium && data) {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tool: 'house',
-            input: { price, rate, tax, ins, bah, rent },
-            output: { costs: data.costs, income: data.income, verdict: data.verdict }
-          })
-        }).catch(console.error);
-      }
-    }, 1000),
-    [isPremium, price, rate, tax, ins, bah, rent]
+    debounce(saveModel, 1000),
+    [saveModel]
   );
 
   // Calculate on input change

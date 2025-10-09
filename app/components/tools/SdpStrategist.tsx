@@ -46,21 +46,23 @@ export default function SdpStrategist() {
   }, [isPremium]);
 
   // Debounced save function
+  const saveModel = useCallback((data: ApiResponse) => {
+    if (isPremium && data) {
+      fetch('/api/saved-models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'sdp',
+          input: { amount },
+          output: { hy: data.hy, cons: data.cons, mod: data.mod }
+        })
+      }).catch(console.error);
+    }
+  }, [isPremium, amount]);
+
   const debouncedSave = useCallback(
-    debounce((data: ApiResponse) => {
-      if (isPremium && data) {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tool: 'sdp',
-            input: { amount },
-            output: { hy: data.hy, cons: data.cons, mod: data.mod }
-          })
-        }).catch(console.error);
-      }
-    }, 1000),
-    [isPremium, amount]
+    debounce(saveModel, 1000),
+    [saveModel]
   );
 
   // Calculate on amount change
