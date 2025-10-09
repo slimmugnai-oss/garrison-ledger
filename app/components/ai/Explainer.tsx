@@ -53,38 +53,42 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
         {loading ? "✨ Generating explanation..." : "✨ Explain these results"}
       </button>
       {text && (
-        <div className="mt-4 rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md space-y-1">
-          {text.split('\n').map((line, i) => {
-            // Empty line = spacing
-            if (!line.trim()) {
-              return <div key={i} className="h-2"></div>;
-            }
-            
-            // Section headers (lines ending with :)
-            if (line.trim().endsWith(':')) {
+        <div className="mt-4 rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md">
+          <div className="space-y-2">
+            {text.split('\n').map((line, i) => {
+              const trimmed = line.trim();
+              
+              // Empty line = vertical spacing
+              if (!trimmed) {
+                return <div key={i} style={{ height: '12px' }}></div>;
+              }
+              
+              // Section headers (lines ending with :)
+              if (trimmed.endsWith(':')) {
+                return (
+                  <p key={i} className="font-bold text-gray-900 text-base mb-2" style={{ marginTop: i > 0 ? '16px' : '0' }}>
+                    {line}
+                  </p>
+                );
+              }
+              
+              // Bullet points
+              if (trimmed.startsWith('•')) {
+                return (
+                  <p key={i} className="ml-4 text-gray-700 text-sm mb-1">
+                    {line}
+                  </p>
+                );
+              }
+              
+              // Regular lines
               return (
-                <div key={i} className="font-bold text-gray-900 mt-3 mb-1 text-base block">
+                <p key={i} className="text-gray-700 text-sm leading-relaxed mb-2">
                   {line}
-                </div>
+                </p>
               );
-            }
-            
-            // Bullet points
-            if (line.trim().startsWith('•')) {
-              return (
-                <div key={i} className="ml-4 text-gray-700 text-sm block">
-                  {line}
-                </div>
-              );
-            }
-            
-            // Regular lines
-            return (
-              <div key={i} className="text-gray-700 text-sm leading-relaxed block">
-                {line}
-              </div>
-            );
-          })}
+            })}
+          </div>
         </div>
       )}
     </div>
