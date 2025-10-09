@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 
-export async function GET() {
+export async function GET(_req: NextRequest) {
   try {
     // Test the specific price IDs we're using
     const monthlyPriceId = 'price_1SG1IMQnBqVFfU8hOxI25Axu';

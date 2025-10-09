@@ -1,7 +1,6 @@
 'use client';
 
 import PremiumGate from '@/app/components/premium/PremiumGate';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { useEffect, useState, useMemo } from 'react';
 
 function pmt(rateMo: number, nper: number, pv: number) {
@@ -15,7 +14,6 @@ const fmt = (v: number) => v.toLocaleString(undefined, {
 });
 
 export default function HouseHack() {
-  usePremiumStatus(); // Check premium status for component behavior
   const [price, setPrice] = useState(400000);
   const [rate, setRate] = useState(6.5);
   const [tax, setTax] = useState(4800);
