@@ -15,7 +15,7 @@ const fmt = (v: number) => v.toLocaleString(undefined, {
 });
 
 export default function HouseHack() {
-  const { isPremium } = usePremiumStatus();
+  usePremiumStatus(); // Check premium status for component behavior
   const [price, setPrice] = useState(400000);
   const [rate, setRate] = useState(6.5);
   const [tax, setTax] = useState(4800);

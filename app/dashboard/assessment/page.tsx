@@ -88,7 +88,7 @@ export default function Assessment() {
   );
 }
 
-function Field({ label, children }: { label: string; children: any }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <div className="text-sm font-medium mb-1">{label}</div>

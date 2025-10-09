@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function makeExplanation(tool: string, inputs: any, outputs: any) {
+function makeExplanation(tool: string, inputs: Record<string, unknown>, outputs: Record<string, unknown>) {
   if (tool === 'sdp') {
     const amt = inputs?.amount ?? 0;
     const hy = outputs?.hy ?? 0;
