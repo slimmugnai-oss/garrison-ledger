@@ -153,12 +153,12 @@ export default function TspModeler() {
   };
 
   // Debounce utility
-  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+  function debounce<T extends (...args: unknown[]) => unknown>(func: T, wait: number): (...args: Parameters<T>) => void {
     let timeout: NodeJS.Timeout;
-    return ((...args: any[]) => {
+    return (...args: Parameters<T>) => {
       clearTimeout(timeout);
       timeout = setTimeout(() => func(...args), wait);
-    }) as T;
+    };
   }
 
   return (
