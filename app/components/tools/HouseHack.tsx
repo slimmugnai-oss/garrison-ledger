@@ -27,6 +27,7 @@ export default function HouseHack() {
   const { isPremium } = usePremiumStatus();
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const saveTimeoutRef = useState<NodeJS.Timeout | null>(null)[0];
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -59,26 +60,6 @@ export default function HouseHack() {
     setRent(n('rent', 2200));
   }, []);
 
-  // Debounced save function
-  const saveModel = useCallback((data: ApiResponse) => {
-    if (isPremium && data) {
-      fetch('/api/saved-models', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'house',
-          input: { price, rate, tax, ins, bah, rent },
-          output: { costs: data.costs, income: data.income, verdict: data.verdict }
-        })
-      }).catch(console.error);
-    }
-  }, [isPremium, price, rate, tax, ins, bah, rent]);
-
-  const debouncedSave = useCallback(
-    debounce(saveModel, 1000),
-    [saveModel]
-  );
-
   // Calculate on input change
   useEffect(() => {
     const calculate = async () => {
@@ -91,7 +72,23 @@ export default function HouseHack() {
         });
         const data = await response.json();
         setApiData(data);
-        debouncedSave(data);
+        
+        // Debounced save for premium users
+        if (isPremium && data) {
+          if (saveTimeoutRef) clearTimeout(saveTimeoutRef);
+          const timeout = setTimeout(() => {
+            fetch('/api/saved-models', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                tool: 'house',
+                input: { price, rate, tax, ins, bah, rent },
+                output: { costs: data.costs, income: data.income, verdict: data.verdict }
+              })
+            }).catch(console.error);
+          }, 1000);
+          Object.assign(saveTimeoutRef as object, timeout);
+        }
       } catch (error) {
         console.error('Error calculating house hack:', error);
       } finally {
@@ -100,16 +97,7 @@ export default function HouseHack() {
     };
 
     calculate();
-  }, [price, rate, tax, ins, bah, rent, debouncedSave]);
-
-  // Debounce utility
-  function debounce<T extends (...args: unknown[]) => unknown>(func: T, wait: number): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
+  }, [price, rate, tax, ins, bah, rent, isPremium, saveTimeoutRef]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

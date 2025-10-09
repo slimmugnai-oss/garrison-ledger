@@ -37,6 +37,7 @@ export default function TspModeler() {
   // API response state
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const saveTimeoutRef = useState<NodeJS.Timeout | null>(null)[0];
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -85,26 +86,6 @@ export default function TspModeler() {
     }
   }, []);
 
-  // Debounced save function
-  const saveModel = useCallback((data: ApiResponse) => {
-    if (isPremium && data) {
-      fetch('/api/saved-models', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'tsp',
-          input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
-          output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
-        })
-      }).catch(console.error);
-    }
-  }, [isPremium, age, ret, bal, cont, wC, wS, wI, wF, wG]);
-
-  const debouncedSave = useCallback(
-    debounce(saveModel, 1000),
-    [saveModel]
-  );
-
   // Calculate on input change
   useEffect(() => {
     const calculate = async () => {
@@ -123,7 +104,23 @@ export default function TspModeler() {
         });
         const data = await response.json();
         setApiData(data);
-        debouncedSave(data);
+        
+        // Debounced save for premium users
+        if (isPremium && data) {
+          if (saveTimeoutRef) clearTimeout(saveTimeoutRef);
+          const timeout = setTimeout(() => {
+            fetch('/api/saved-models', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                tool: 'tsp',
+                input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
+                output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
+              })
+            }).catch(console.error);
+          }, 1000);
+          Object.assign(saveTimeoutRef as object, timeout);
+        }
       } catch (error) {
         console.error('Error calculating TSP:', error);
       } finally {
@@ -132,7 +129,7 @@ export default function TspModeler() {
     };
 
     calculate();
-  }, [age, ret, bal, cont, wC, wS, wI, wF, wG, debouncedSave]);
+  }, [age, ret, bal, cont, wC, wS, wI, wF, wG, isPremium, saveTimeoutRef]);
 
   // Lightweight SVG line plot
   const Chart = ({ seriesA, seriesB }: { seriesA: number[]; seriesB: number[] }) => {
@@ -153,15 +150,6 @@ export default function TspModeler() {
       </svg>
     );
   };
-
-  // Debounce utility
-  function debounce<T extends (...args: unknown[]) => unknown>(func: T, wait: number): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

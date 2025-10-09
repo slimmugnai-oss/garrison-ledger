@@ -30,6 +30,7 @@ export default function SdpStrategist() {
   const { isPremium } = usePremiumStatus();
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const saveTimeoutRef = useState<NodeJS.Timeout | null>(null)[0];
 
   // Load saved model on mount (premium only)
   useEffect(() => {
@@ -45,26 +46,6 @@ export default function SdpStrategist() {
     }
   }, [isPremium]);
 
-  // Debounced save function
-  const saveModel = useCallback((data: ApiResponse) => {
-    if (isPremium && data) {
-      fetch('/api/saved-models', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'sdp',
-          input: { amount },
-          output: { hy: data.hy, cons: data.cons, mod: data.mod }
-        })
-      }).catch(console.error);
-    }
-  }, [isPremium, amount]);
-
-  const debouncedSave = useCallback(
-    debounce(saveModel, 1000),
-    [saveModel]
-  );
-
   // Calculate on amount change
   useEffect(() => {
     const calculate = async () => {
@@ -77,7 +58,23 @@ export default function SdpStrategist() {
         });
         const data = await response.json();
         setApiData(data);
-        debouncedSave(data);
+        
+        // Debounced save for premium users
+        if (isPremium && data) {
+          if (saveTimeoutRef) clearTimeout(saveTimeoutRef);
+          const timeout = setTimeout(() => {
+            fetch('/api/saved-models', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                tool: 'sdp',
+                input: { amount },
+                output: { hy: data.hy, cons: data.cons, mod: data.mod }
+              })
+            }).catch(console.error);
+          }, 1000);
+          Object.assign(saveTimeoutRef as object, timeout);
+        }
       } catch (error) {
         console.error('Error calculating SDP:', error);
       } finally {
@@ -86,16 +83,7 @@ export default function SdpStrategist() {
     };
 
     calculate();
-  }, [amount, debouncedSave]);
-
-  // Debounce utility
-  function debounce<T extends (...args: unknown[]) => unknown>(func: T, wait: number): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
+  }, [amount, isPremium, saveTimeoutRef]);
 
   // Create results array with API data
   const results = SCENARIOS.map(s => ({
