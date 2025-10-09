@@ -53,17 +53,17 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
         {loading ? "✨ Generating explanation..." : "✨ Explain these results"}
       </button>
       {text && (
-        <div className="mt-4 rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md">
+        <div className="mt-4 rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md space-y-1">
           {text.split('\n').map((line, i) => {
             // Empty line = spacing
             if (!line.trim()) {
-              return <div key={i} className="h-3" />;
+              return <div key={i} className="h-2"></div>;
             }
             
             // Section headers (lines ending with :)
             if (line.trim().endsWith(':')) {
               return (
-                <div key={i} className="font-bold text-gray-900 mt-4 first:mt-0 mb-1 text-base">
+                <div key={i} className="font-bold text-gray-900 mt-3 mb-1 text-base block">
                   {line}
                 </div>
               );
@@ -72,7 +72,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
             // Bullet points
             if (line.trim().startsWith('•')) {
               return (
-                <div key={i} className="ml-4 text-gray-700 mb-1.5 text-sm">
+                <div key={i} className="ml-4 text-gray-700 text-sm block">
                   {line}
                 </div>
               );
@@ -80,7 +80,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
             
             // Regular lines
             return (
-              <div key={i} className="text-gray-700 mb-2 text-sm leading-relaxed">
+              <div key={i} className="text-gray-700 text-sm leading-relaxed block">
                 {line}
               </div>
             );
