@@ -6,6 +6,17 @@ import { useState } from 'react';
 
 export default function Header() {
   const [resourcesOpen, setResourcesOpen] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
+  
+  const handleMouseEnter = () => {
+    if (closeTimeout) clearTimeout(closeTimeout);
+    setResourcesOpen(true);
+  };
+  
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => setResourcesOpen(false), 200);
+    setCloseTimeout(timeout);
+  };
   
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -72,8 +83,8 @@ export default function Header() {
               {/* Resources Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setResourcesOpen(true)}
-                onMouseLeave={() => setResourcesOpen(false)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
                 <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center">
                   Resources
@@ -83,19 +94,19 @@ export default function Header() {
                 </button>
                 {resourcesOpen && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <a href="/career-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                    <a href="/career-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Career Hub
                     </a>
-                    <a href="/pcs-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                    <a href="/pcs-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       PCS Hub
                     </a>
-                    <a href="/base-guides.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                    <a href="/base-guides.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Base Guides
                     </a>
-                    <a href="/on-base-shopping.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                    <a href="/on-base-shopping.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       On-Base Shopping
                     </a>
-                    <a href="/deployment.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">
+                    <a href="/deployment.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Deployment Guide
                     </a>
                   </div>
