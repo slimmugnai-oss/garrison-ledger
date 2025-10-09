@@ -37,6 +37,24 @@ export default function Header() {
                 Upgrade
               </Link>
               <Link 
+                href="/dashboard/assessment" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Assessment
+              </Link>
+              <Link 
+                href="/dashboard/tools/tsp-modeler" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                TSP Tool
+              </Link>
+              <Link 
+                href="/dashboard/tools/house-hacking" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                House Tool
+              </Link>
+              <Link 
                 href="/dashboard/tools/sdp-strategist" 
                 className="text-gray-700 hover:text-gray-900 transition-colors"
               >

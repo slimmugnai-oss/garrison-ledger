@@ -113,6 +113,31 @@ function RoiBox({
       <div className="text-xs text-gray-500 mt-1">
         Education only. Past performance is not predictive.
       </div>
+      <button
+        onClick={async () => {
+          const hy = results.find(r => r.key === 'A')!.value;
+          const mod = results.find(r => r.key === 'C')!.value;
+          try {
+            const res = await fetch('/api/explain', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                tool: 'sdp', 
+                inputs: { amount }, 
+                outputs: { hy, mod } 
+              })
+            });
+            const json = await res.json();
+            alert(json.text);
+          } catch (error) {
+            console.error('Error getting explanation:', error);
+            alert('Unable to generate explanation at this time.');
+          }
+        }}
+        className="mt-3 rounded bg-slate-800 text-white px-3 py-2 hover:bg-slate-700 transition-colors"
+      >
+        Explain these results
+      </button>
     </div>
   );
 }

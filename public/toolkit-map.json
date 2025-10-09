@@ -1,0 +1,32 @@
+[
+  {
+    "title": "PCS checklist – start here",
+    "url": "https://yourmain.site/pcs-hub#checklist",
+    "tags": ["topic:pcs", "stage:pcs_soon", "audience:all"]
+  },
+  {
+    "title": "On-base housing orientation",
+    "url": "https://yourmain.site/base-guide#housing",
+    "tags": ["topic:base", "housing:onbase", "stage:pcs_soon"]
+  },
+  {
+    "title": "Childcare & schools",
+    "url": "https://yourmain.site/base-guide#childcare",
+    "tags": ["topic:base", "audience:kids"]
+  },
+  {
+    "title": "TSP allocation guide",
+    "url": "https://yourmain.site/tsp-guide",
+    "tags": ["topic:finance", "goal:tsp", "stage:pcs_soon"]
+  },
+  {
+    "title": "VA loan basics",
+    "url": "https://yourmain.site/va-loan-guide",
+    "tags": ["topic:finance", "goal:buy_multiunit", "housing:offbase"]
+  },
+  {
+    "title": "Deployment financial prep",
+    "url": "https://yourmain.site/deployment-finance",
+    "tags": ["topic:finance", "stage:deploy", "goal:sdp"]
+  }
+]
