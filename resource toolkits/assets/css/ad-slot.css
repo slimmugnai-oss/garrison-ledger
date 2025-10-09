@@ -1,0 +1,26 @@
+.ad-slot {
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  border: 2px dashed #cbd5e1; /* slate-300 */
+  border-radius: 12px;
+  background: #f8fafc;        /* slate-50 */
+  color: #64748b;              /* slate-500 */
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  padding: 16px;
+}
+.ad-slot[data-filled="true"] {
+  border: none;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
+}
+.ad-slot .ad-label {
+  font-size: 12px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: #94a3b8; /* slate-400 */
+  margin-bottom: 6px;
+}

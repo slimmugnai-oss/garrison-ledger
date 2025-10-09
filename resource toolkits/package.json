@@ -1,0 +1,33 @@
+{
+  "name": "familymedia-project",
+  "version": "2.0.0",
+  "description": "FamilyMedia Project with comprehensive backup and validation tools",
+  "main": "validate_structure.js",
+  "scripts": {
+    "validate": "node validate_structure.js",
+    "check": "npm run validate",
+    "pre-change": "npm run backup:create && npm run validate",
+    "backup:create": "node backup.js",
+    "backup:list": "node backup.js --list",
+    "backup:restore": "node restore.js --interactive",
+    "backup:restore:latest": "node restore.js $(node backup.js --list | grep -oE 'backup_[0-9_-]+' | head -1)",
+    "backup:cleanup": "node cleanup.js --interactive",
+    "backup:cleanup:policy": "node cleanup.js --policy",
+    "backup:cleanup:dry": "node cleanup.js --policy --dry-run",
+    "backup:stats": "node cleanup.js --stats",
+    "backup:help": "echo 'Available backup commands:\n  backup:create - Create a new backup\n  backup:list - List all backups\n  backup:restore - Restore a backup (interactive)\n  backup:cleanup - Clean up old backups (interactive)\n  backup:cleanup:policy - Apply cleanup policy\n  backup:cleanup:dry - Preview cleanup (dry run)\n  backup:stats - Show backup statistics'"
+  },
+  "keywords": [
+    "html",
+    "validation",
+    "structure",
+    "backup",
+    "restore",
+    "familymedia"
+  ],
+  "author": "Family Media",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
