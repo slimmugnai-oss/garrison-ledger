@@ -218,9 +218,12 @@ export default function TspModeler() {
             {/* Calculate Button */}
             <div className="mt-8 text-center">
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
+                  console.log('TSP Generate button clicked!');
                   setLoading(true);
                   try {
+                    console.log('Sending TSP request with:', { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } });
                     const response = await fetch('/api/tools/tsp', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -232,7 +235,9 @@ export default function TspModeler() {
                         mix: { C: wC, S: wS, I: wI, F: wF, G: wG }
                       })
                     });
+                    console.log('TSP response status:', response.status);
                     const data = await response.json();
+                    console.log('TSP response data:', data);
                     setApiData(data);
                   } catch (error) {
                     console.error('Error calculating TSP:', error);

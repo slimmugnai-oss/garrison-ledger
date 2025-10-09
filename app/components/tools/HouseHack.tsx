@@ -125,15 +125,20 @@ export default function HouseHack() {
             {/* Generate Button */}
             <div className="mt-8 text-center">
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
+                  console.log('House Hacking Generate button clicked!');
                   setLoading(true);
                   try {
+                    console.log('Sending House Hacking request with:', { price, rate, tax, ins, bah, rent });
                     const response = await fetch('/api/tools/house', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ price, rate, tax, ins, bah, rent })
                     });
+                    console.log('House Hacking response status:', response.status);
                     const data = await response.json();
+                    console.log('House Hacking response data:', data);
                     setApiData(data);
                   } catch (error) {
                     console.error('Error calculating House Hacking:', error);

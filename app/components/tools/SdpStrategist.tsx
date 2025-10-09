@@ -133,15 +133,20 @@ export default function SdpStrategist() {
           <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div className="text-center">
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
+                  console.log('SDP Generate button clicked!');
                   setLoading(true);
                   try {
+                    console.log('Sending SDP request with:', { amount });
                     const response = await fetch('/api/tools/sdp', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ amount })
                     });
+                    console.log('SDP response status:', response.status);
                     const data = await response.json();
+                    console.log('SDP response data:', data);
                     setApiData(data);
                   } catch (error) {
                     console.error('Error calculating SDP:', error);
