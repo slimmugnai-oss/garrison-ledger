@@ -1,0 +1,154 @@
+{
+  "career-hub": {
+    "title": "Portable Careers for Military Spouses",
+    "url": "/career-hub.html",
+    "sections": [
+      {
+        "id": "portable-careers",
+        "title": "Top Portable Career Sectors",
+        "tags": ["topic:career", "portableCareerInterest:high", "portableCareerInterest:medium"],
+        "summary": "Discover in-demand remote and portable career fields perfect for military life, including IT, healthcare, business, creative, and education sectors.",
+        "keyPoints": [
+          "Tech & IT: Remote work in cybersecurity, web development, data analysis",
+          "Healthcare: Medical billing, telehealth, health information tech",
+          "Business: Project management, virtual assistance, bookkeeping",
+          "Creative: Graphic design, copywriting, social media management",
+          "Education: Online tutoring, instructional design, curriculum development"
+        ]
+      },
+      {
+        "id": "mycaa",
+        "title": "MyCAA Scholarship - Up to $4,000",
+        "tags": ["mycaaEligible:true", "educationGoals:true", "rankCategory:enlisted_junior", "rankCategory:warrant"],
+        "summary": "Military spouses of E1-E6, W1-W2, and O1-O3 can receive up to $4,000 for portable career training and certifications.",
+        "keyPoints": [
+          "Eligibility: Spouses of E1-E6, W1-W2, O1-O3 on Title 10 orders",
+          "Funding: Up to $4,000 for associate degrees, licenses, or certifications",
+          "Process: Create account → Career plan → School approval → Direct payment",
+          "Timeline: Must complete program while spouse is on eligible orders"
+        ]
+      },
+      {
+        "id": "resume-tips",
+        "title": "Military Spouse Resume Tips",
+        "tags": ["topic:career", "spouseEmployed:false", "portableCareerInterest:high"],
+        "summary": "Translate your unique military life experience into a powerful resume that highlights transferable skills.",
+        "keyPoints": [
+          "Highlight adaptability, leadership, and project management from PCS moves",
+          "Quantify achievements with specific numbers and outcomes",
+          "Use action verbs and focus on portable skills",
+          "Address gaps positively as periods of family focus or relocation"
+        ]
+      },
+      {
+        "id": "certifications",
+        "title": "High-Impact Career Certifications",
+        "tags": ["educationGoals:true", "topic:career"],
+        "summary": "Fast-track certifications (PMP, Salesforce Admin, Google Certificates) that boost income and are often MyCAA-funded.",
+        "keyPoints": [
+          "PMP: Project Management Professional - globally recognized",
+          "Salesforce Admin: High demand for remote CRM management",
+          "Google Certificates: Data Analytics, UX Design, IT Support"
+        ]
+      }
+    ]
+  },
+  "pcs-hub": {
+    "title": "The Ultimate PCS Guide",
+    "url": "/pcs-hub.html",
+    "sections": [
+      {
+        "id": "pcs-checklist",
+        "title": "Complete PCS Checklist",
+        "tags": ["pcsDate:within_3", "pcsDate:within_6"],
+        "summary": "Step-by-step checklist covering everything from orders receipt to final move-in at your new duty station.",
+        "keyPoints": [
+          "90 days out: Orders, housing research, school enrollment",
+          "60 days out: Household goods scheduling, travel arrangements",
+          "30 days out: Utilities, address changes, medical records",
+          "Move day: Inventory documentation, final inspections",
+          "Arrival: TLE/DLA claims, base orientation, new routine establishment"
+        ]
+      },
+      {
+        "id": "pcs-budget",
+        "title": "PCS Budget & Financial Planning",
+        "tags": ["pcsDate:within_6", "monthlyBudgetStress:tight", "monthlyBudgetStress:struggling"],
+        "summary": "Understand TLE, DLA, and travel reimbursements to avoid out-of-pocket costs during your move.",
+        "keyPoints": [
+          "TLE: Temporary Lodging Expense for up to 10 days",
+          "DLA: Dislocation Allowance based on rank and dependents",
+          "MALT/POV: Mileage and per diem for drive moves",
+          "Advance pay: Request if needed for upfront costs"
+        ]
+      }
+    ]
+  },
+  "base-guides": {
+    "title": "Base Guide Navigator",
+    "url": "/base-guides.html",
+    "sections": [
+      {
+        "id": "base-research",
+        "title": "Research Your New Base",
+        "tags": ["pcsDate:within_6", "pcsDate:6-12"],
+        "summary": "Interactive guides for 25+ CONUS bases with maps, housing info, and insider tips from military families.",
+        "keyPoints": [
+          "Housing options: On-base vs off-base neighborhoods",
+          "Schools: Ratings, waitlists, childcare availability",
+          "Community: Spouse clubs, family support, local activities",
+          "Employment: Job market, commute times, remote work options"
+        ]
+      }
+    ]
+  },
+  "on-base-shopping": {
+    "title": "On-Base Shopping Guide",
+    "url": "/on-base-shopping.html",
+    "sections": [
+      {
+        "id": "commissary-savings",
+        "title": "Maximize Commissary & Exchange Savings",
+        "tags": ["housingStatus:on_base", "monthlyBudgetStress:tight", "monthlyBudgetStress:struggling"],
+        "summary": "Strategic shopping tips to save hundreds monthly using commissary sales and exchange benefits.",
+        "keyPoints": [
+          "Commissary saves average family $4,500/year vs civilian stores",
+          "Shop sales: Case lot, holiday, and manager's specials",
+          "Exchange price matching and Star Card rewards",
+          "Combine with coupons and rewards programs"
+        ]
+      }
+    ]
+  },
+  "deployment": {
+    "title": "Deployment & Reintegration Guide",
+    "url": "/deployment.html",
+    "sections": [
+      {
+        "id": "deployment-finance",
+        "title": "Deployment Financial Preparation",
+        "tags": ["deploymentStatus:upcoming", "deploymentStatus:currently", "sdpAvailable:true"],
+        "summary": "Maximize SDP, adjust allotments, and prepare family finances for deployment period.",
+        "keyPoints": [
+          "SDP: Earn 10% on up to $10,000 during deployment",
+          "Set up automatic bill payments and allotments",
+          "Emergency fund: Ensure spouse has access to 6 months expenses",
+          "Power of attorney: Financial and medical decisions"
+        ]
+      },
+      {
+        "id": "reintegration",
+        "title": "Financial Reintegration",
+        "tags": ["deploymentStatus:returned"],
+        "summary": "Smart strategies for managing SDP payout and readjusting to dual household finances.",
+        "keyPoints": [
+          "SDP windfall: Invest strategically vs lifestyle inflation",
+          "Budget adjustment: Return to two-person household expenses",
+          "Debt payoff: Use lump sum wisely",
+          "Future planning: Next deployment or separation preparation"
+        ]
+      }
+    ]
+  }
+}
+

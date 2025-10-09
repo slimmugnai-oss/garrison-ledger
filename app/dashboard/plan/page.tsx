@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Header from '@/app/components/Header';
 import { runPlanRules, scoreResources } from '@/lib/plan/rules';
 import ResourcesList from '@/app/components/ResourcesList';
+import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 
 type Item = { title: string; url: string; tags: string[] };
 
@@ -94,6 +95,11 @@ export default async function PlanPage() {
 
           {answers && (
             <div className="space-y-8">
+              {/* Download Guide Section */}
+              <div className="mb-6">
+                <DownloadGuideButton />
+              </div>
+
               {/* Priority Actions */}
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 <div className="flex items-center mb-6">
