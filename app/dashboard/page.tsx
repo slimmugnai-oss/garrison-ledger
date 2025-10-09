@@ -45,7 +45,7 @@ export default async function Dashboard() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section */}
           <div className="mb-12">
@@ -63,7 +63,7 @@ export default async function Dashboard() {
           {/* Quick Tools Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {/* House Hacking Tool */}
-            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+            <div className="bg-white rounded-xl card-hover p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-4xl mb-4">🏠</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 House Hacking Calculator
@@ -80,7 +80,7 @@ export default async function Dashboard() {
             </div>
 
             {/* TSP Modeler Tool */}
-            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+            <div className="bg-white rounded-xl card-hover p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-4xl mb-4">📈</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 TSP Modeler
@@ -97,7 +97,7 @@ export default async function Dashboard() {
             </div>
 
             {/* SDP Strategist Tool */}
-            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-gray-100">
+            <div className="bg-white rounded-xl card-hover p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-4xl mb-4">💰</div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 SDP Strategist
@@ -116,19 +116,24 @@ export default async function Dashboard() {
 
           {/* Assessment Section */}
           <div className="mb-12">
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white">
-              <h2 className="text-3xl font-bold mb-4">
-                🎯 Take Your Financial Assessment
-              </h2>
-              <p className="text-xl mb-6 opacity-90">
-                Get personalized recommendations based on your military service stage and financial goals.
-              </p>
-              <Link 
-                href="/dashboard/assessment"
-                className="inline-flex items-center bg-white text-indigo-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg"
-              >
-                Start Assessment →
-              </Link>
+            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+              <div className="flex items-start">
+                <div className="text-4xl mr-4">🎯</div>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                    Financial Readiness Assessment
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Get a personalized action plan based on your military service stage and financial goals. Takes 2 minutes.
+                  </p>
+                  <Link 
+                    href="/dashboard/assessment"
+                    className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  >
+                    Start Assessment →
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
 
