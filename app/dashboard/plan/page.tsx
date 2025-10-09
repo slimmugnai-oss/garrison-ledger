@@ -152,46 +152,55 @@ export default function PlanPage() {
               <p className="text-gray-600 mb-6">Run these calculations now:</p>
               <div className="space-y-4">
                 {goalTsp && (
-                  <Link 
-                    href={tspLink} 
-                    className="block p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl group"
-                  >
-                    <div className="flex items-center justify-between">
+                  <div className="p-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg text-white shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="font-semibold text-lg">TSP Modeler</p>
                         <p className="text-blue-100">Optimize your retirement contributions</p>
                       </div>
-                      <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                      <span className="text-3xl">📊</span>
                     </div>
-                  </Link>
+                    <Link 
+                      href={tspLink}
+                      className="block w-full bg-white text-blue-600 hover:bg-gray-100 py-3 px-4 rounded-lg font-semibold text-center transition-colors shadow-md hover:shadow-lg"
+                    >
+                      Run TSP Analysis →
+                    </Link>
+                  </div>
                 )}
                 {sdp && (
-                  <Link 
-                    href={sdpLink} 
-                    className="block p-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl group"
-                  >
-                    <div className="flex items-center justify-between">
+                  <div className="p-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="font-semibold text-lg">SDP Strategist</p>
                         <p className="text-green-100">Maximize deployment savings</p>
                       </div>
-                      <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                      <span className="text-3xl">💰</span>
                     </div>
-                  </Link>
+                    <Link 
+                      href={sdpLink}
+                      className="block w-full bg-white text-green-600 hover:bg-gray-100 py-3 px-4 rounded-lg font-semibold text-center transition-colors shadow-md hover:shadow-lg"
+                    >
+                      Run SDP Analysis →
+                    </Link>
+                  </div>
                 )}
                 {goalHouse && (
-                  <Link 
-                    href={houseLink} 
-                    className="block p-4 bg-gradient-to-r from-purple-600 to-violet-600 rounded-lg text-white hover:from-purple-700 hover:to-violet-700 transition-all duration-200 shadow-lg hover:shadow-xl group"
-                  >
-                    <div className="flex items-center justify-between">
+                  <div className="p-4 bg-gradient-to-r from-purple-600 to-violet-600 rounded-lg text-white shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="font-semibold text-lg">House Hacking</p>
                         <p className="text-purple-100">Analyze multi-unit investments</p>
                       </div>
-                      <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+                      <span className="text-3xl">🏠</span>
                     </div>
-                  </Link>
+                    <Link 
+                      href={houseLink}
+                      className="block w-full bg-white text-purple-600 hover:bg-gray-100 py-3 px-4 rounded-lg font-semibold text-center transition-colors shadow-md hover:shadow-lg"
+                    >
+                      Run House Analysis →
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
