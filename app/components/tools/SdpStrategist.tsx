@@ -87,7 +87,7 @@ export default function SdpStrategist() {
         }
       >
         {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
-        <RoiBox results={results} fmt={fmt} />
+        <RoiBox results={results} fmt={fmt} amount={amount} />
       </PremiumGate>
     </div>
   );
@@ -95,10 +95,12 @@ export default function SdpStrategist() {
 
 function RoiBox({ 
   results, 
-  fmt 
+  fmt,
+  amount
 }: { 
   results: (Scenario & { value: number })[]; 
-  fmt: (n: number) => string 
+  fmt: (n: number) => string;
+  amount: number;
 }) {
   const hy = results.find(r => r.key === 'A')!.value;
   const mod = results.find(r => r.key === 'C')!.value;
