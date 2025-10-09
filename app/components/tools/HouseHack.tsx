@@ -1,7 +1,7 @@
 'use client';
 
 import PremiumGate from '@/app/components/premium/PremiumGate';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 

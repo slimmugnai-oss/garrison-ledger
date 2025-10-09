@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
@@ -215,8 +215,7 @@ function RoiBox({
         </div>
         <button
           onClick={async () => {
-            const hy = results.find(r => r.key === 'A')!.value;
-            const mod = results.find(r => r.key === 'C')!.value;
+            if (!apiData || !apiData.hy || !apiData.mod) return;
             try {
               const res = await fetch('/api/explain', {
                 method: 'POST',
@@ -224,7 +223,7 @@ function RoiBox({
                 body: JSON.stringify({ 
                   tool: 'sdp', 
                   inputs: { amount }, 
-                  outputs: { hy, mod } 
+                  outputs: { hy: apiData.hy, mod: apiData.mod } 
                 })
               });
               const json = await res.json();
