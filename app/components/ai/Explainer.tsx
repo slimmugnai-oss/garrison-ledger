@@ -53,9 +53,9 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
         {loading ? "Explaining…" : "✨ Explain these results"}
       </button>
       {text && (
-        <pre className="mt-3 whitespace-pre-wrap text-sm leading-6 rounded border bg-white p-3 shadow-sm text-gray-700">
+        <div className="mt-3 whitespace-pre-line text-sm leading-relaxed rounded border bg-white p-4 shadow-sm text-gray-700 font-sans">
           {text}
-        </pre>
+        </div>
       )}
     </div>
   );
