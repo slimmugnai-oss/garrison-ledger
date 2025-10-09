@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
+import { supabaseAdmin } from '@/lib/supabase';
 import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
@@ -25,10 +26,22 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session;
       console.log('Payment successful:', session.id);
       
-      // Here you can:
-      // 1. Update user subscription status in your database
-      // 2. Send confirmation email
-      // 3. Grant access to premium features
+      // Update entitlements for the user
+      if (session.metadata?.userId) {
+        await supabaseAdmin
+          .from('entitlements')
+          .upsert({
+            user_id: session.metadata.userId,
+            tier: 'premium',
+            status: 'active',
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+            stripe_customer_id: session.customer as string,
+            stripe_subscription_id: session.subscription as string,
+            updated_at: new Date().toISOString()
+          });
+        
+        console.log('Updated entitlements for user:', session.metadata.userId);
+      }
       
       break;
     
@@ -46,9 +59,16 @@ export async function POST(req: NextRequest) {
       const subscription = event.data.object as Stripe.Subscription;
       console.log('Subscription cancelled:', subscription.id);
       
-      // Here you can:
-      // 1. Revoke user access to premium features
-      // 2. Update subscription status in your database
+      // Revoke premium access
+      await supabaseAdmin
+        .from('entitlements')
+        .update({
+          status: 'canceled',
+          updated_at: new Date().toISOString()
+        })
+        .eq('stripe_subscription_id', subscription.id);
+      
+      console.log('Revoked premium access for subscription:', subscription.id);
       
       break;
     

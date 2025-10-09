@@ -36,6 +36,12 @@ export default function Header() {
               >
                 Upgrade
               </Link>
+              <Link 
+                href="/dashboard/tools/sdp-strategist" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                SDP Tool
+              </Link>
             </SignedIn>
           </nav>
 
