@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
 import { runPlanRules, scoreResources } from '@/lib/plan/rules';
+import ResourcesList from '@/app/components/ResourcesList';
 
 type Item = { title: string; url: string; tags: string[] };
 
@@ -153,27 +154,14 @@ export default async function PlanPage() {
 
               {/* Your Resources */}
               {ranked.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
                   <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mr-4">
+                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
                       <span className="text-white text-xl">📚</span>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">Recommended Resources</h2>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {ranked.map((r: Item) => (
-                      <a
-                        key={r.url}
-                        href={r.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-lg border-2 border-gray-200 p-4 hover:bg-slate-50 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md"
-                      >
-                        <div className="font-semibold text-gray-900 mb-1">{r.title}</div>
-                        <div className="text-xs text-gray-500">{(r.tags || []).join(" · ")}</div>
-                      </a>
-                    ))}
-                  </div>
+                  <ResourcesList ranked={ranked} />
                 </div>
               )}
             </div>
