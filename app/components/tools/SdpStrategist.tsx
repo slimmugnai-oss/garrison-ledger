@@ -129,6 +129,34 @@ export default function SdpStrategist() {
             </div>
           </div>
 
+          {/* Generate Button */}
+          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <div className="text-center">
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const response = await fetch('/api/tools/sdp', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ amount })
+                    });
+                    const data = await response.json();
+                    setApiData(data);
+                  } catch (error) {
+                    console.error('Error calculating SDP:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? '🔄 Calculating...' : '🚀 Generate SDP Analysis'}
+              </button>
+            </div>
+          </div>
+
           {/* Cards */}
           <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Scenarios</h2>

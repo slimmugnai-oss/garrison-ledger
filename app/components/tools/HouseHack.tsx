@@ -121,6 +121,32 @@ export default function HouseHack() {
             <div className="text-sm text-gray-500 mt-4 p-4 bg-gray-50 rounded-lg">
               💡 <strong>Note:</strong> Assumes 30-year VA loan. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
             </div>
+            
+            {/* Generate Button */}
+            <div className="mt-8 text-center">
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const response = await fetch('/api/tools/house', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ price, rate, tax, ins, bah, rent })
+                    });
+                    const data = await response.json();
+                    setApiData(data);
+                  } catch (error) {
+                    console.error('Error calculating House Hacking:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? '🔄 Calculating...' : '🚀 Generate House Analysis'}
+              </button>
+            </div>
           </div>
 
           {!isPremium && (

@@ -214,6 +214,38 @@ export default function TspModeler() {
             <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg mt-4">
               💡 <strong>Note:</strong> Weights normalize automatically. This is for educational purposes only. Past performance is not predictive of future results.
             </div>
+            
+            {/* Calculate Button */}
+            <div className="mt-8 text-center">
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const response = await fetch('/api/tools/tsp', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        age,
+                        retire: ret,
+                        balance: bal,
+                        monthly: cont,
+                        mix: { C: wC, S: wS, I: wI, F: wF, G: wG }
+                      })
+                    });
+                    const data = await response.json();
+                    setApiData(data);
+                  } catch (error) {
+                    console.error('Error calculating TSP:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? '🔄 Calculating...' : '🚀 Generate TSP Analysis'}
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
