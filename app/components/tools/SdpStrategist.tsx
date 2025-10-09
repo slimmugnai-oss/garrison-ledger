@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import FootNote from '@/app/components/layout/FootNote';
 
 type Scenario = {
   key: 'A' | 'B' | 'C';
@@ -290,6 +291,7 @@ function RoiBox({
         <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
         Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.
       </div>
+      <FootNote />
     </div>
   );
 }

@@ -60,6 +60,12 @@ export default function Header() {
               >
                 SDP Tool
               </Link>
+              <Link 
+                href="/dashboard/directory" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Directory
+              </Link>
             </SignedIn>
           </nav>
 

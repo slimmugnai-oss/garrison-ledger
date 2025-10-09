@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import FootNote from '@/app/components/layout/FootNote';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -238,6 +239,7 @@ export default function HouseHack() {
                     <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
                     Consult with financial and real estate professionals for actual investment decisions.
                   </div>
+                  <FootNote />
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-8">

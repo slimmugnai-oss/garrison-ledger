@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import FootNote from '@/app/components/layout/FootNote';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -332,6 +333,7 @@ export default function TspModeler() {
                       Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
                     </div>
                   </div>
+                  <FootNote />
                 </>
               ) : (
                 <div className="text-center text-gray-500 py-8">
