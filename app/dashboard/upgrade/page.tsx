@@ -2,6 +2,8 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Header from '../../components/Header';
 import PaymentButton from '../../components/PaymentButton';
+import BillingPortalButton from '../../components/BillingPortalButton';
+import Link from 'next/link';
 
 export default async function UpgradePage() {
   const user = await currentUser();
@@ -107,6 +109,19 @@ export default async function UpgradePage() {
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Billing Management & Support */}
+          <div className="mt-12 text-center space-y-4">
+            <BillingPortalButton />
+            <div className="text-sm text-gray-600">
+              Already a subscriber? Manage your subscription, update payment method, or view invoices.
+            </div>
+            <div className="text-sm">
+              <Link href="/dashboard/support/refund" className="text-blue-600 hover:text-blue-700 underline">
+                Request a refund (7-day guarantee)
+              </Link>
             </div>
           </div>
 
