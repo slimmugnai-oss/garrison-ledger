@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
     // Test if Stripe is properly configured
     const balance = await stripe.balance.retrieve();

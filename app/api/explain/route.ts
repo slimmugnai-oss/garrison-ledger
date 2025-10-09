@@ -26,9 +26,9 @@ function makeExplanation(
   outputs: Record<string, number | string | boolean | null | undefined>
 ) {
   if (tool === 'sdp') {
-    const amt = inputs?.amount ?? 0;
-    const hy = outputs?.hy ?? 0;
-    const mod = outputs?.mod ?? 0;
+    const amt = Number(inputs?.amount) || 0;
+    const hy = Number(outputs?.hy) || 0;
+    const mod = Number(outputs?.mod) || 0;
     const diff = mod - hy;
     return [
       `You entered $${amt.toLocaleString()} for your SDP payout.`,
@@ -40,10 +40,10 @@ function makeExplanation(
   }
   
   if (tool === 'tsp') {
-    const age = inputs?.age ?? 30;
-    const retire = inputs?.retire ?? 50;
-    const bal = inputs?.bal ?? 50000;
-    const diff = outputs?.diff ?? 0;
+    const age = Number(inputs?.age) || 30;
+    const retire = Number(inputs?.retire) || 50;
+    const bal = Number(inputs?.bal) || 50000;
+    const diff = Number(outputs?.diff) || 0;
     return [
       `At age ${age}, retiring at ${retire}, with a current balance of $${bal.toLocaleString()},`,
       `your custom allocation could potentially generate $${Math.round(diff).toLocaleString()} more than the default mix.`,
@@ -53,8 +53,8 @@ function makeExplanation(
   }
   
   if (tool === 'house') {
-    const price = inputs?.price ?? 400000;
-    const verdict = outputs?.verdict ?? 0;
+    const price = Number(inputs?.price) || 400000;
+    const verdict = Number(outputs?.verdict) || 0;
     return [
       `For a $${price.toLocaleString()} property, your estimated monthly cash flow is $${Math.round(verdict).toLocaleString()}.`,
       `Remember to factor in vacancy rates, maintenance costs, property management fees, and potential rent increases.`,
