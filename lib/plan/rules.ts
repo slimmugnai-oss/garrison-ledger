@@ -13,25 +13,60 @@ export type RuleEvent = { type: "recommendContent"; params: { tag: string } };
 
 /** Seed rules (easy to extend in JSON later) */
 const ruleDefs = [
+  // Stage-based recommendations
   {
     conditions: { all: [{ fact: "stage", operator: "equal", value: "pcs_soon" }] },
     event: { type: "recommendContent", params: { tag: "stage:pcs_soon" } }
+  },
+  {
+    conditions: { all: [{ fact: "stage", operator: "equal", value: "pcs_soon" }] },
+    event: { type: "recommendContent", params: { tag: "topic:pcs" } }
   },
   {
     conditions: { all: [{ fact: "stage", operator: "equal", value: "deployment" }] },
     event: { type: "recommendContent", params: { tag: "stage:deployment" } }
   },
   {
+    conditions: { all: [{ fact: "stage", operator: "equal", value: "deployment" }] },
+    event: { type: "recommendContent", params: { tag: "topic:deployment" } }
+  },
+  {
+    conditions: { all: [{ fact: "stage", operator: "equal", value: "reintegration" }] },
+    event: { type: "recommendContent", params: { tag: "stage:reintegration" } }
+  },
+  {
+    conditions: { all: [{ fact: "stage", operator: "equal", value: "pcs_later" }] },
+    event: { type: "recommendContent", params: { tag: "stage:pcs_later" } }
+  },
+  
+  // Housing-based recommendations
+  {
     conditions: { all: [{ fact: "housing", operator: "equal", value: "off_base" }] },
     event: { type: "recommendContent", params: { tag: "housing:off_base" } }
   },
   {
+    conditions: { all: [{ fact: "housing", operator: "equal", value: "on_base" }] },
+    event: { type: "recommendContent", params: { tag: "housing:on_base" } }
+  },
+  {
+    conditions: { all: [{ fact: "housing", operator: "equal", value: "on_base" }] },
+    event: { type: "recommendContent", params: { tag: "topic:shopping" } }
+  },
+  
+  // Family-based recommendations
+  {
     conditions: { all: [{ fact: "kids", operator: "equal", value: true }] },
     event: { type: "recommendContent", params: { tag: "audience:with_kids" } }
   },
+  
+  // Goal-based recommendations (tools)
   {
     conditions: { all: [{ fact: "goals.tsp", operator: "equal", value: true }] },
     event: { type: "recommendContent", params: { tag: "tool:tsp" } }
+  },
+  {
+    conditions: { all: [{ fact: "goals.tsp", operator: "equal", value: true }] },
+    event: { type: "recommendContent", params: { tag: "topic:finance" } }
   },
   {
     conditions: { all: [{ fact: "goals.sdp", operator: "equal", value: true }] },
@@ -41,6 +76,14 @@ const ruleDefs = [
     conditions: { all: [{ fact: "goals.house", operator: "equal", value: true }] },
     event: { type: "recommendContent", params: { tag: "tool:house" } }
   },
+  
+  // Career always relevant for military spouses
+  {
+    conditions: { all: [{ fact: "stage", operator: "in", value: ["pcs_soon", "pcs_later", "reintegration"] }] },
+    event: { type: "recommendContent", params: { tag: "topic:career" } }
+  },
+  
+  // Finance stress
   {
     conditions: { all: [{ fact: "financeStress", operator: "equal", value: "high" }] },
     event: { type: "recommendContent", params: { tag: "topic:financial_first_aid" } }

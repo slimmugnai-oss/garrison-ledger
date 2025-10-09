@@ -1,32 +1,87 @@
 [
   {
-    "title": "PCS checklist – start here",
-    "url": "https://yourmain.site/pcs-hub#checklist",
-    "tags": ["topic:pcs", "stage:pcs_soon", "audience:all"]
+    "title": "Career Hub - Portable Careers Guide",
+    "url": "/career-hub.html",
+    "tags": ["topic:career", "audience:all", "stage:pcs_soon", "stage:pcs_later"]
   },
   {
-    "title": "On-base housing orientation",
-    "url": "https://yourmain.site/base-guide#housing",
-    "tags": ["topic:base", "housing:onbase", "stage:pcs_soon"]
+    "title": "Career Hub - MyCAA Scholarship",
+    "url": "/career-hub.html#education",
+    "tags": ["topic:career", "topic:education", "audience:all"]
   },
   {
-    "title": "Childcare & schools",
-    "url": "https://yourmain.site/base-guide#childcare",
-    "tags": ["topic:base", "audience:kids"]
+    "title": "Career Hub - Remote Job Platforms",
+    "url": "/career-hub.html#job-search",
+    "tags": ["topic:career", "stage:pcs_soon", "audience:all"]
   },
   {
-    "title": "TSP allocation guide",
-    "url": "https://yourmain.site/tsp-guide",
-    "tags": ["topic:finance", "goal:tsp", "stage:pcs_soon"]
+    "title": "PCS Hub - Complete Moving Checklist",
+    "url": "/pcs-hub.html",
+    "tags": ["topic:pcs", "stage:pcs_soon", "audience:all", "housing:on_base", "housing:off_base"]
   },
   {
-    "title": "VA loan basics",
-    "url": "https://yourmain.site/va-loan-guide",
-    "tags": ["topic:finance", "goal:buy_multiunit", "housing:offbase"]
+    "title": "PCS Hub - Budget & Financial Planning",
+    "url": "/pcs-hub.html#budget",
+    "tags": ["topic:pcs", "topic:finance", "stage:pcs_soon"]
   },
   {
-    "title": "Deployment financial prep",
-    "url": "https://yourmain.site/deployment-finance",
-    "tags": ["topic:finance", "stage:deploy", "goal:sdp"]
+    "title": "PCS Hub - TLE & DLA Reimbursement",
+    "url": "/pcs-hub.html#reimbursement",
+    "tags": ["topic:pcs", "topic:finance", "stage:pcs_soon"]
+  },
+  {
+    "title": "Base Guides - Research Your New Base",
+    "url": "/base-guides.html",
+    "tags": ["topic:base", "stage:pcs_soon", "audience:all"]
+  },
+  {
+    "title": "Base Guides - Housing Options",
+    "url": "/base-guides.html#housing",
+    "tags": ["topic:base", "topic:housing", "stage:pcs_soon", "housing:on_base", "housing:off_base"]
+  },
+  {
+    "title": "Base Guides - Schools & Childcare",
+    "url": "/base-guides.html#family",
+    "tags": ["topic:base", "audience:with_kids", "stage:pcs_soon"]
+  },
+  {
+    "title": "On-Base Shopping - Commissary & Exchange Guide",
+    "url": "/on-base-shopping.html",
+    "tags": ["topic:shopping", "topic:finance", "audience:all", "housing:on_base"]
+  },
+  {
+    "title": "On-Base Shopping - Savings Strategies",
+    "url": "/on-base-shopping.html#savings",
+    "tags": ["topic:shopping", "topic:finance", "audience:all"]
+  },
+  {
+    "title": "Deployment Guide - Financial Preparation",
+    "url": "/deployment.html#finance",
+    "tags": ["topic:deployment", "topic:finance", "stage:deployment", "tool:sdp"]
+  },
+  {
+    "title": "Deployment Guide - Family Readiness",
+    "url": "/deployment.html#family",
+    "tags": ["topic:deployment", "stage:deployment", "audience:with_kids"]
+  },
+  {
+    "title": "Deployment Guide - Reintegration Planning",
+    "url": "/deployment.html#reintegration",
+    "tags": ["topic:deployment", "stage:reintegration", "audience:all"]
+  },
+  {
+    "title": "TSP Optimization Strategy",
+    "url": "/career-hub.html#certifications",
+    "tags": ["topic:finance", "tool:tsp", "audience:all"]
+  },
+  {
+    "title": "House Hacking with VA Loans",
+    "url": "/career-hub.html",
+    "tags": ["topic:finance", "tool:house", "housing:off_base"]
+  },
+  {
+    "title": "SDP Investment Strategies",
+    "url": "/deployment.html#finance",
+    "tags": ["topic:finance", "tool:sdp", "stage:deployment"]
   }
 ]
