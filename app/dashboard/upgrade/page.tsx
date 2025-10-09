@@ -39,20 +39,20 @@ export default async function UpgradePage() {
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Advanced budgeting tools
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Advanced budgeting tools</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Detailed financial reports
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Detailed financial reports</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Priority customer support
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Priority customer support</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Export data to CSV/PDF
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Export data to CSV/PDF</span>
                   </li>
                 </ul>
                 <PaymentButton 
@@ -85,20 +85,20 @@ export default async function UpgradePage() {
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Everything in Monthly
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Everything in Monthly</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Annual financial planning
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Annual financial planning</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Tax report generation
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Tax report generation</span>
                   </li>
                   <li className="flex items-center">
-                    <span className="text-green-500 mr-3">✓</span>
-                    Priority feature requests
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Priority feature requests</span>
                   </li>
                 </ul>
                 <PaymentButton 

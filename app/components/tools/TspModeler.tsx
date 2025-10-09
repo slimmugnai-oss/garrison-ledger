@@ -112,115 +112,145 @@ export default function TspModeler() {
   const diff = endB - endA;
 
   return (
-    <div className="space-y-6">
-      <div className="rounded border bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap gap-4">
-          <label className="text-sm">
-            Age
-            <input 
-              type="number" 
-              className="ml-2 w-20 border rounded px-2 py-1" 
-              value={age} 
-              onChange={e => setAge(Number(e.target.value))} 
-            />
-          </label>
-          <label className="text-sm">
-            Retire at
-            <input 
-              type="number" 
-              className="ml-2 w-20 border rounded px-2 py-1" 
-              value={ret} 
-              onChange={e => setRet(Number(e.target.value))} 
-            />
-          </label>
-          <label className="text-sm">
-            Current balance
-            <input 
-              type="number" 
-              className="ml-2 w-28 border rounded px-2 py-1" 
-              value={bal} 
-              onChange={e => setBal(Number(e.target.value))} 
-            />
-          </label>
-          <label className="text-sm">
-            Monthly contrib
-            <input 
-              type="number" 
-              className="ml-2 w-24 border rounded px-2 py-1" 
-              value={cont} 
-              onChange={e => setCont(Number(e.target.value))} 
-            />
-          </label>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">📈 TSP Allocation Modeler</h1>
+          <p className="text-xl text-gray-600">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
         </div>
 
-        <div className="mt-4">
-          <div className="text-sm mb-1">Custom mix (C/S/I/F/G)</div>
-          <div className="flex flex-wrap gap-4">
-            <Range label="C" v={wC} set={setWC} />
-            <Range label="S" v={wS} set={setWS} />
-            <Range label="I" v={wI} set={setWI} />
-            <Range label="F" v={wF} set={setWF} />
-            <Range label="G" v={wG} set={setWG} />
+        <div className="space-y-8">
+          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Personal Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Current Age</label>
+                <input 
+                  type="number" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  value={age} 
+                  onChange={e => setAge(Number(e.target.value))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Retirement Age</label>
+                <input 
+                  type="number" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  value={ret} 
+                  onChange={e => setRet(Number(e.target.value))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Current Balance</label>
+                <input 
+                  type="number" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  value={bal} 
+                  onChange={e => setBal(Number(e.target.value))} 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Monthly Contribution</label>
+                <input 
+                  type="number" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  value={cont} 
+                  onChange={e => setCont(Number(e.target.value))} 
+                />
+              </div>
+            </div>
           </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Weights normalize automatically. Education only. Past performance is not predictive.
+
+          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Custom Allocation Mix</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              <Range label="C Fund" v={wC} set={setWC} />
+              <Range label="S Fund" v={wS} set={setWS} />
+              <Range label="I Fund" v={wI} set={setWI} />
+              <Range label="F Fund" v={wF} set={setWF} />
+              <Range label="G Fund" v={wG} set={setWG} />
+            </div>
+            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg mt-4">
+              💡 <strong>Note:</strong> Weights normalize automatically. This is for educational purposes only. Past performance is not predictive of future results.
+            </div>
           </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Growth Projection</h2>
+            <Chart seriesA={Atrim} seriesB={Btrim} />
+            {!isPremium && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-blue-800 font-medium">
+                  📊 Preview shows the first third of the timeline. Unlock to view full projection and ROI analysis.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <PremiumGate
+            placeholder={
+              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                <div className="text-center">
+                  <div className="text-6xl mb-4">🔒</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
+                  <p className="text-lg text-gray-600 mb-6">
+                    See projected balances and the potential difference at retirement with detailed breakdowns.
+                  </p>
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
+                    Upgrade to Premium
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Mix (L2050)</h3>
+                  <p className="text-3xl font-bold text-gray-900">{fmt(endA)}</p>
+                </div>
+                <div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
+                  <h3 className="text-lg font-semibold text-blue-800 mb-2">Custom Mix</h3>
+                  <p className="text-3xl font-bold text-blue-900">{fmt(endB)}</p>
+                </div>
+              </div>
+              <div className={`p-6 rounded-lg border-2 ${diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                <div className={`text-3xl font-bold mb-2 ${diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                  {diff >= 0 ? '💰 Potential Gain' : '📉 Potential Loss'}
+                </div>
+                <div className={`text-4xl font-bold mb-4 ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {diff >= 0 ? '+' : ''}{fmt(diff)}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
+                  Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
+                </div>
+              </div>
+            </div>
+          </PremiumGate>
         </div>
       </div>
-
-      <div className="rounded border bg-white p-4 shadow-sm">
-        <Chart seriesA={Atrim} seriesB={Btrim} />
-        {!isPremium && (
-          <div className="mt-2 text-sm text-gray-600">
-            Preview shows the first third of the timeline. Unlock to view full projection and ROI.
-          </div>
-        )}
-      </div>
-
-      <PremiumGate
-        placeholder={
-          <div>
-            <div className="text-lg font-semibold mb-2">Unlock your ROI</div>
-            <p className="text-sm text-gray-600">
-              See projected balances and the potential difference at retirement.
-            </p>
-          </div>
-        }
-      >
-        <div className="rounded border bg-white p-6 shadow-sm">
-          <div className="text-lg font-semibold mb-2">Projected balances</div>
-          <div className="text-sm">
-            Default mix: <span className="font-semibold">{fmt(endA)}</span>
-          </div>
-          <div className="text-sm">
-            Custom mix: <span className="font-semibold">{fmt(endB)}</span>
-          </div>
-          <div className="text-xl font-bold mt-2">
-            Potential difference: 
-            <span className="text-green-700 ml-2">{fmt(diff)}</span>
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Illustrative only (proxy returns). Past performance is not predictive.
-          </div>
-        </div>
-      </PremiumGate>
     </div>
   );
 }
 
 function Range({ label, v, set }: { label: string; v: number; set: (n: number) => void }) {
   return (
-    <label className="text-sm inline-flex items-center gap-2">
-      {label}
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <label className="text-sm font-semibold text-gray-700">{label}</label>
+        <span className="text-lg font-bold text-blue-600">{v}%</span>
+      </div>
       <input 
         type="range" 
         min={0} 
         max={100} 
         value={v} 
         onChange={e => set(Number(e.target.value))}
-        className="w-40" 
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider" 
       />
-      <span className="w-10 text-right">{v}%</span>
-    </label>
+    </div>
   );
 }
