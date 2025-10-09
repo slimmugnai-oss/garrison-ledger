@@ -5,6 +5,7 @@ import PaymentButton from '../components/PaymentButton';
 import Link from 'next/link';
 import PremiumStatusIndicator from '../components/PremiumStatusIndicator';
 import PremiumDebug from '../components/PremiumDebug';
+import { createClient } from '@supabase/supabase-js';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
@@ -14,6 +15,11 @@ export default async function Dashboard() {
   if (!user) {
     redirect('/sign-in');
   }
+
+  // Check premium status
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  const { data: access } = await supabase.from("v_user_access").select("is_premium").eq("user_id", user.id).single();
+  const isPremium = !!access?.is_premium;
 
   return (
     <>
@@ -110,29 +116,31 @@ export default async function Dashboard() {
             <PremiumDebug />
           </div>
 
-          {/* Premium Features */}
-          <div className="mb-12">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-              <h2 className="text-3xl font-bold mb-4">
-                🚀 Upgrade to Premium
-              </h2>
-              <p className="text-xl mb-6 opacity-90">
-                Unlock advanced features, detailed explanations, and priority support for all your financial tools.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
-                  buttonText="Monthly - $15/month"
-                  className="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors"
-                />
-                <PaymentButton 
-                  priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
-                  buttonText="Annual - $150/year (Save $30!)"
-                  className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-lg font-semibold transition-colors"
-                />
+          {/* Premium Features - Only show for non-premium users */}
+          {!isPremium && (
+            <div className="mb-12">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+                <h2 className="text-3xl font-bold mb-4">
+                  🚀 Upgrade to Premium
+                </h2>
+                <p className="text-xl mb-6 opacity-90">
+                  Unlock advanced features, detailed explanations, and priority support for all your financial tools.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <PaymentButton 
+                    priceId="price_1SG1IMQnBqVFfU8hOxI25Axu"
+                    buttonText="Monthly - $15/month"
+                    className="bg-gray-100 text-gray-900 hover:bg-white px-6 py-3 rounded-lg font-semibold transition-colors border-2 border-white"
+                  />
+                  <PaymentButton 
+                    priceId="price_1SG1IMQnBqVFfU8h25rO6MoP"
+                    buttonText="Annual - $150/year (Save $30!)"
+                    className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-lg font-semibold transition-colors"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
