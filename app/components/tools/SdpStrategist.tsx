@@ -121,7 +121,7 @@ export default function SdpStrategist() {
                 step={100}
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium"
+                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white"
               />
               <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg">
                 💡 <strong>Note:</strong> Enter your expected SDP payout amount. This tool helps you compare different investment strategies over a 15-year period. Past performance is not predictive of future results.
@@ -154,25 +154,24 @@ export default function SdpStrategist() {
           </div>
 
           {/* ROI payoff (premium only) */}
-          <PremiumGate
-            placeholder={
-              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
-                  <p className="text-lg text-gray-600 mb-6">
-                    See how much more your payout could grow in 15 years with detailed breakdowns.
-                  </p>
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
-                    Upgrade to Premium
-                  </div>
+          {!isPremium && (
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  See how much more your payout could grow in 15 years with detailed breakdowns.
+                </p>
+                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
+                  Upgrade to Premium
                 </div>
               </div>
-            }
-          >
+            </div>
+          )}
+          {isPremium && (
             {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
             <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
-          </PremiumGate>
+          )}
         </div>
       </div>
     </div>

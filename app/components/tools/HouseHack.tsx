@@ -123,22 +123,21 @@ export default function HouseHack() {
             </div>
           </div>
 
-          <PremiumGate
-            placeholder={
-              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Monthly Breakdown</h3>
-                  <p className="text-lg text-gray-600 mb-6">
-                    See detailed monthly costs and income breakdown with PITI calculations.
-                  </p>
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
-                    Upgrade to Premium
-                  </div>
+          {!isPremium && (
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Monthly Breakdown</h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  See detailed monthly costs and income breakdown with PITI calculations.
+                </p>
+                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
+                  Upgrade to Premium
                 </div>
               </div>
-            }
-          >
+            </div>
+          )}
+          {isPremium && (
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
               {loading ? (
@@ -166,22 +165,21 @@ export default function HouseHack() {
             </div>
           </PremiumGate>
 
-          <PremiumGate
-            placeholder={
-              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Cash Flow Analysis</h3>
-                  <p className="text-lg text-gray-600 mb-6">
-                    See if this scenario is likely cash-flow positive with detailed breakdowns.
-                  </p>
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
-                    Upgrade to Premium
-                  </div>
+          {!isPremium && (
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Cash Flow Analysis</h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  See if this scenario is likely cash-flow positive with detailed breakdowns.
+                </p>
+                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
+                  Upgrade to Premium
                 </div>
               </div>
-            }
-          >
+            </div>
+          )}
+          {isPremium && (
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
               {apiData && apiData.verdict !== undefined ? (
@@ -203,7 +201,7 @@ export default function HouseHack() {
                 </div>
               )}
             </div>
-          </PremiumGate>
+          )}
         </div>
       </div>
     </div>
@@ -231,7 +229,7 @@ function Num({
         value={v} 
         onChange={e => set(Number(e.target.value))}
         step={step} 
-        className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+        className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
       />
     </div>
   );

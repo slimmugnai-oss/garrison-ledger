@@ -167,7 +167,7 @@ export default function TspModeler() {
                 <label className="block text-sm font-semibold text-gray-700">Current Age</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
                   value={age} 
                   onChange={e => setAge(Number(e.target.value))} 
                 />
@@ -176,7 +176,7 @@ export default function TspModeler() {
                 <label className="block text-sm font-semibold text-gray-700">Retirement Age</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
                   value={ret} 
                   onChange={e => setRet(Number(e.target.value))} 
                 />
@@ -185,7 +185,7 @@ export default function TspModeler() {
                 <label className="block text-sm font-semibold text-gray-700">Current Balance</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
                   value={bal} 
                   onChange={e => setBal(Number(e.target.value))} 
                 />
@@ -194,7 +194,7 @@ export default function TspModeler() {
                 <label className="block text-sm font-semibold text-gray-700">Monthly Contribution</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium" 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
                   value={cont} 
                   onChange={e => setCont(Number(e.target.value))} 
                 />
@@ -240,22 +240,21 @@ export default function TspModeler() {
             )}
           </div>
 
-          <PremiumGate
-            placeholder={
-              <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
-                  <p className="text-lg text-gray-600 mb-6">
-                    See projected balances and the potential difference at retirement with detailed breakdowns.
-                  </p>
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold inline-block">
-                    Upgrade to Premium
-                  </div>
+          {!isPremium && (
+            <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  See projected balances and the potential difference at retirement with detailed breakdowns.
+                </p>
+                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
+                  Upgrade to Premium
                 </div>
               </div>
-            }
-          >
+            </div>
+          )}
+          {isPremium && (
             <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
@@ -289,7 +288,7 @@ export default function TspModeler() {
                 </div>
               )}
             </div>
-          </PremiumGate>
+          )}
         </div>
       </div>
     </div>
