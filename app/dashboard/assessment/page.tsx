@@ -16,72 +16,96 @@ export default function Assessment() {
   return (
     <>
       <Header />
-      <div className="max-w-3xl mx-auto p-6 space-y-4">
-        <h1 className="text-2xl font-bold">Readiness Assessment</h1>
-        <div className="rounded border bg-white p-6 shadow-sm space-y-3">
-          <Field label="Stage">
-            <select 
-              value={stage} 
-              onChange={e => setStage(e.target.value)} 
-              className="border rounded px-2 py-1"
-            >
-              <option value="pcs_soon">PCS soon</option>
-              <option value="pcs_later">PCS later</option>
-              <option value="deploy">Deployment</option>
-              <option value="reintegration">Reintegration</option>
-            </select>
-          </Field>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">🎯 Readiness Assessment</h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Get personalized financial recommendations based on your military service stage and goals.
+            </p>
+          </div>
           
-          <Field label="Housing">
-            <select 
-              value={housing} 
-              onChange={e => setHousing(e.target.value)} 
-              className="border rounded px-2 py-1"
-            >
-              <option value="onbase">On base</option>
-              <option value="offbase">Off base</option>
-              <option value="unsure">Unsure</option>
-            </select>
-          </Field>
-          
-          <Field label="Kids">
-            <input 
-              type="checkbox" 
-              checked={kids} 
-              onChange={e => setKids(e.target.checked)} 
-            />
-          </Field>
-          
-          <Field label="Goals">
-            <label className="mr-4 text-sm">
-              <input 
-                type="checkbox" 
-                checked={goalTsp} 
-                onChange={e => setGoalTsp(e.target.checked)} 
-              /> Improve TSP
-            </label>
-            <label className="mr-4 text-sm">
-              <input 
-                type="checkbox" 
-                checked={goalHouse} 
-                onChange={e => setGoalHouse(e.target.checked)} 
-              /> Buy multi-unit
-            </label>
-            <label className="text-sm">
-              <input 
-                type="checkbox" 
-                checked={sdp} 
-                onChange={e => setSdp(e.target.checked)} 
-              /> Use SDP well
-            </label>
-          </Field>
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div className="space-y-8">
+              <Field label="Current Stage">
+                <select 
+                  value={stage} 
+                  onChange={e => setStage(e.target.value)} 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                >
+                  <option value="pcs_soon" className="text-gray-900">PCS soon</option>
+                  <option value="pcs_later" className="text-gray-900">PCS later</option>
+                  <option value="deploy" className="text-gray-900">Deployment</option>
+                  <option value="reintegration" className="text-gray-900">Reintegration</option>
+                </select>
+              </Field>
+              
+              <Field label="Housing Preference">
+                <select 
+                  value={housing} 
+                  onChange={e => setHousing(e.target.value)} 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                >
+                  <option value="onbase" className="text-gray-900">On base</option>
+                  <option value="offbase" className="text-gray-900">Off base</option>
+                  <option value="unsure" className="text-gray-900">Unsure</option>
+                </select>
+              </Field>
+              
+              <Field label="Family Status">
+                <div className="flex items-center space-x-3">
+                  <input 
+                    type="checkbox" 
+                    checked={kids} 
+                    onChange={e => setKids(e.target.checked)}
+                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-gray-900 font-medium">I have children</span>
+                </div>
+              </Field>
+              
+              <Field label="Financial Goals">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <input 
+                      type="checkbox" 
+                      checked={goalTsp} 
+                      onChange={e => setGoalTsp(e.target.checked)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-gray-900 font-medium">Improve TSP allocation</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <input 
+                      type="checkbox" 
+                      checked={goalHouse} 
+                      onChange={e => setGoalHouse(e.target.checked)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-gray-900 font-medium">Buy multi-unit property</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <input 
+                      type="checkbox" 
+                      checked={sdp} 
+                      onChange={e => setSdp(e.target.checked)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-gray-900 font-medium">Use SDP effectively</span>
+                  </div>
+                </div>
+              </Field>
 
-          <button
-            onClick={() => r.push(`/dashboard/plan?stage=${stage}&housing=${housing}&kids=${kids}&tsp=${goalTsp}&house=${goalHouse}&sdp=${sdp}`)}
-            className="rounded bg-blue-700 text-white px-4 py-2 hover:bg-blue-800 transition-colors"
-          >
-            Generate my plan
-          </button>
+              <div className="pt-6">
+                <button
+                  onClick={() => r.push(`/dashboard/plan?stage=${stage}&housing=${housing}&kids=${kids}&tsp=${goalTsp}&house=${goalHouse}&sdp=${sdp}`)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg"
+                >
+                  Generate My Personalized Plan 🚀
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
@@ -90,8 +114,8 @@ export default function Assessment() {
 
 function Field({ label, children }: { label: string; children: React.ReactNode | React.ReactElement }) {
   return (
-    <div>
-      <div className="text-sm font-medium mb-1">{label}</div>
+    <div className="space-y-3">
+      <div className="text-lg font-semibold text-gray-900">{label}</div>
       {children}
     </div>
   );

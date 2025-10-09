@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import { redirect } from 'next/navigation';
 import PaymentButton from '../components/PaymentButton';
 import Link from 'next/link';
+import PremiumStatusIndicator from '../components/PremiumStatusIndicator';
 
 export default async function Dashboard() {
   // This will redirect to sign-in if user is not authenticated
@@ -20,9 +21,12 @@ export default async function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section */}
           <div className="mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Welcome back, {user.firstName || 'User'}! 👋
-            </h1>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Welcome back, {user.firstName || 'User'}! 👋
+              </h1>
+              <PremiumStatusIndicator />
+            </div>
             <p className="text-xl text-gray-600">
               Here&apos;s an overview of your financial dashboard and tools.
             </p>
