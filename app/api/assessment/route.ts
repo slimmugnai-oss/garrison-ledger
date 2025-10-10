@@ -31,53 +31,22 @@ export async function POST(req: NextRequest) {
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   
   console.log('Assessment API - Saving for user:', userId);
-  console.log('Assessment API - Answers type:', typeof answers);
   
-  try {
-    // First try to insert
-    const { data: insertData, error: insertError } = await sb
-      .from("assessments")
-      .insert({ user_id: userId, answers: answers as Record<string, unknown> })
-      .select();
-    
-    // If insert fails due to duplicate, update instead
-    if (insertError && insertError.code === '23505') {
-      const { error: updateError } = await sb
-        .from("assessments")
-        .update({ answers: answers as Record<string, unknown>, updated_at: new Date().toISOString() })
-        .eq("user_id", userId);
-      
-      if (updateError) {
-        console.error('Assessment API - Update error:', updateError);
-        return NextResponse.json({ 
-          error: "persist failed", 
-          details: updateError.message || 'Update failed',
-          code: updateError.code
-        }, { status: 500 });
-      }
-      
-      console.log('Assessment API - Updated successfully');
-      return NextResponse.json({ ok: true });
-    }
-    
-    if (insertError) {
-      console.error('Assessment API - Insert error:', insertError);
-      console.error('Assessment API - Error details:', JSON.stringify(insertError));
-      return NextResponse.json({ 
-        error: "persist failed", 
-        details: insertError.message || insertError.hint || 'Unknown database error',
-        code: insertError.code
-      }, { status: 500 });
-    }
-    
-    console.log('Assessment API - Inserted successfully');
-    return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error('Assessment API - Unexpected error:', e);
-    return NextResponse.json({ 
-      error: "persist failed", 
-      details: e instanceof Error ? e.message : 'Unknown error' 
+  // IMPORTANT: explicit conflict target prevents "internal error" if PK != user_id
+  const { error } = await sb
+    .from("assessments")
+    .upsert({ user_id: userId, answers }, { onConflict: "user_id" });
+
+  if (error) {
+    console.error('Assessment API - Upsert error:', error);
+    return NextResponse.json({
+      error: "persist failed",
+      details: error.message || String(error),
+      code: error.code || ""
     }, { status: 500 });
   }
+
+  console.log('Assessment API - Saved successfully');
+  return NextResponse.json({ ok: true });
 }
 
