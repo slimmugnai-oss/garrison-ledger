@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const answers = body?.answers ?? null;
   if (!answers) return NextResponse.json({ error: "answers required" }, { status: 400 });
 
-  // Create Supabase client with explicit config for Node runtime
+  // Direct REST API call to Supabase (bypassing JS client issues)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
@@ -23,50 +23,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
   
-  const sb = createClient(supabaseUrl, supabaseKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  });
-  
   console.log('SaveAssessment - User:', userId);
+  console.log('SaveAssessment - Supabase URL:', supabaseUrl);
   
   try {
-    // Try insert first
-    const { error: insertError } = await sb
-      .from("assessments")
-      .insert({ user_id: userId, answers });
+    // Use direct REST API call instead of JS client
+    const endpoint = `${supabaseUrl}/rest/v1/assessments`;
     
-    // If duplicate, update instead
-    if (insertError?.code === '23505') {
-      const { error: updateError } = await sb
-        .from("assessments")
-        .update({ answers, updated_at: new Date().toISOString() })
-        .eq("user_id", userId);
-      
-      if (updateError) {
-        console.error('SaveAssessment - Update error:', updateError);
-        return NextResponse.json({ 
-          error: "Update failed", 
-          details: updateError.message,
-          code: updateError.code
-        }, { status: 500 });
-      }
-      
-      return NextResponse.json({ ok: true, action: 'updated' });
-    }
+    // Try upsert via REST
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        answers,
+        updated_at: new Date().toISOString()
+      })
+    });
     
-    if (insertError) {
-      console.error('SaveAssessment - Insert error:', insertError);
+    console.log('SaveAssessment - Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('SaveAssessment - API error:', errorText);
       return NextResponse.json({ 
-        error: "Insert failed", 
-        details: insertError.message,
-        code: insertError.code
+        error: "Database save failed", 
+        details: errorText,
+        status: response.status
       }, { status: 500 });
     }
     
-    return NextResponse.json({ ok: true, action: 'inserted' });
+    console.log('SaveAssessment - Success!');
+    return NextResponse.json({ ok: true });
   } catch (e) {
     console.error('SaveAssessment - Exception:', e);
     return NextResponse.json({ 
