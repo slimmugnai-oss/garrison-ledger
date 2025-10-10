@@ -32,13 +32,14 @@ export async function POST(req: NextRequest) {
   
   console.log('Assessment API - Saving for user:', userId);
   
-  // IMPORTANT: explicit conflict target prevents "internal error" if PK != user_id
-  const { error } = await sb
-    .from("assessments")
-    .upsert({ user_id: userId, answers }, { onConflict: "user_id" });
+  // 🔁 Use RPC to avoid PostgREST upsert quirks
+  const { error } = await sb.rpc("assessments_save", {
+    p_user_id: userId,
+    p_answers: answers
+  });
 
   if (error) {
-    console.error('Assessment API - Upsert error:', error);
+    console.error('Assessment API - RPC error:', error);
     return NextResponse.json({
       error: "persist failed",
       details: error.message || String(error),
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 
-  console.log('Assessment API - Saved successfully');
+  console.log('Assessment API - Saved successfully via RPC');
   return NextResponse.json({ ok: true });
 }
 
