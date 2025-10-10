@@ -59,7 +59,22 @@ export async function POST(req: NextRequest) {
     });
     if (!res.ok) {
       const text = await res.text();
-      return NextResponse.json({ error: "persist failed", details: text }, { status: 500 });
+      // Fallback: direct REST upsert
+      const upsertEndpoint = `${supabaseUrl}/rest/v1/assessments_v2?on_conflict=user_id`;
+      const upRes = await fetch(upsertEndpoint, {
+        method: "POST",
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          Prefer: "resolution=merge-duplicates,return=minimal"
+        },
+        body: JSON.stringify([{ user_id: userId, answers }])
+      });
+      if (!upRes.ok) {
+        const upText = await upRes.text();
+        return NextResponse.json({ error: "persist failed", details: text || upText }, { status: 500 });
+      }
     }
     return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
