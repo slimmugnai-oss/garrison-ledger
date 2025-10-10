@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       // If duplicate, try update
       if (error.code === '23505') {
         console.log('SaveAssessment - Duplicate, trying update');
-        const { error: updateError } = await sb
+        const { error: updateError } = await supabase
           .from("assessments")
           .update({ answers, updated_at: new Date().toISOString() })
           .eq("user_id", userId);
