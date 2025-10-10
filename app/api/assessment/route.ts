@@ -29,26 +29,48 @@ export async function POST(req: NextRequest) {
   const answers = body?.answers ?? null;
   if (!answers) return NextResponse.json({ error: "answers required" }, { status: 400 });
 
-  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   
   console.log('Assessment API - Saving for user:', userId);
   
-  // 🔁 Use RPC to avoid PostgREST upsert quirks
-  const { error } = await sb.rpc("assessments_save", {
-    p_user_id: userId,
-    p_answers: answers
-  });
-
-  if (error) {
-    console.error('Assessment API - RPC error:', error);
+  try {
+    // Call RPC via direct REST API (bypasses JS client issues in Edge)
+    const rpcEndpoint = `${supabaseUrl}/rest/v1/rpc/assessments_save`;
+    
+    const response = await fetch(rpcEndpoint, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        p_user_id: userId,
+        p_answers: answers
+      })
+    });
+    
+    console.log('Assessment API - RPC response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Assessment API - RPC error:', errorText);
+      return NextResponse.json({
+        error: "persist failed",
+        details: errorText || 'RPC call failed',
+        status: response.status
+      }, { status: 500 });
+    }
+    
+    console.log('Assessment API - Saved successfully via RPC');
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error('Assessment API - Exception:', e);
     return NextResponse.json({
-      error: "persist failed",
-      details: error.message || String(error),
-      code: error.code || ""
+      error: "unexpected error",
+      details: e instanceof Error ? e.message : String(e)
     }, { status: 500 });
   }
-
-  console.log('Assessment API - Saved successfully via RPC');
-  return NextResponse.json({ ok: true });
 }
 
