@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 function isAllowed(email?: string | null) {
   const list = (process.env.ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  // If no allowlist is configured, allow any signed-in user to view diagnostics
+  if (list.length === 0) return !!email;
   return !!email && list.includes(email.toLowerCase());
 }
 
