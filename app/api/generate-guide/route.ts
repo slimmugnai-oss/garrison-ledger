@@ -5,7 +5,7 @@ import { renderToStream } from "@react-pdf/renderer";
 import PersonalizedGuide from "@/lib/plan/pdf-generator";
 import { checkAndIncrement } from "@/lib/limits";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

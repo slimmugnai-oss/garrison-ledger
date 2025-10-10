@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import contentSections from './content-sections.json';
 
 // Register fonts if needed (optional - falls back to default)
@@ -171,13 +171,13 @@ function getRelevantSections(assessment: AssessmentData): RelevantSection[] {
   };
 
   // Iterate through all hubs and sections
-  Object.entries(contentSections).forEach(([hubKey, hub]) => {
-    const hubData = hub as { title: string; url: string; sections: any[] };
+  Object.entries(contentSections).forEach(([, hub]) => {
+    const hubData = hub as { title: string; url: string; sections: { id: string; title: string; tags: string[]; summary: string; keyPoints: string[] }[] };
     hubData.sections.forEach(section => {
       if (matches(section.tags)) {
         sections.push({
           hubTitle: hubData.title,
-          section: section as any
+          section: section
         });
       }
     });
@@ -277,14 +277,14 @@ export function PersonalizedGuide({ userName, assessment }: { userName: string; 
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionTitle}>Your Financial Tools</Text>
         <Text style={styles.text}>
-          Based on your assessment, we've pre-configured these tools with your specific numbers:
+          Based on your assessment, we&apos;ve pre-configured these tools with your specific numbers:
         </Text>
 
         {assessment.financial?.tspBalance && (
           <View style={styles.section}>
             <Text style={styles.subsectionTitle}>📈 TSP Modeler</Text>
             <Text style={styles.text}>
-              We've pre-filled your TSP tool with:
+              We&apos;ve pre-filled your TSP tool with:
             </Text>
             <Text style={styles.bulletPoint}>• Current balance: ${assessment.financial.tspBalance.toLocaleString()}</Text>
             <Text style={styles.bulletPoint}>• Monthly contribution: ${assessment.financial?.tspContribution?.toLocaleString() || 0}</Text>
