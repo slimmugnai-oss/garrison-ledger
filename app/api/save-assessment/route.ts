@@ -18,13 +18,19 @@ export async function POST(req: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
-  if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase credentials');
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-  }
-  
   console.log('SaveAssessment - User:', userId);
-  console.log('SaveAssessment - Supabase URL:', supabaseUrl);
+  console.log('SaveAssessment - Has URL?', !!supabaseUrl, 'Length:', supabaseUrl?.length || 0);
+  console.log('SaveAssessment - Has Key?', !!supabaseKey, 'Length:', supabaseKey?.length || 0);
+  console.log('SaveAssessment - URL value:', supabaseUrl);
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase credentials - URL:', !!supabaseUrl, 'Key:', !!supabaseKey);
+    return NextResponse.json({ 
+      error: "Server configuration error",
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseKey
+    }, { status: 500 });
+  }
   
   try {
     // Use direct REST API call instead of JS client
