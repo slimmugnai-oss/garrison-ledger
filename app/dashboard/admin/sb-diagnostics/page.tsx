@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 function isAllowed(email?: string | null) {
   const list = (process.env.ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
