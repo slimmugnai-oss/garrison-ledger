@@ -32,39 +32,50 @@ export async function POST(req: NextRequest) {
   }
   
   try {
-    // Use direct REST API call instead of JS client
-    const endpoint = `${supabaseUrl}/rest/v1/assessments`;
+    // Use Supabase JS client with minimal config for Edge
+    const sb = createClient(supabaseUrl, supabaseKey);
     
-    // Try upsert via REST
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        answers,
-        updated_at: new Date().toISOString()
-      })
-    });
+    console.log('SaveAssessment - Created client');
     
-    console.log('SaveAssessment - Response status:', response.status);
+    // Simple insert (let database handle duplicates with ON CONFLICT)
+    const { error } = await sb
+      .from("assessments")
+      .insert({ user_id: userId, answers })
+      .select();
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('SaveAssessment - API error:', errorText);
+    console.log('SaveAssessment - Insert result, error?', !!error);
+    
+    if (error) {
+      // If duplicate, try update
+      if (error.code === '23505') {
+        console.log('SaveAssessment - Duplicate, trying update');
+        const { error: updateError } = await sb
+          .from("assessments")
+          .update({ answers, updated_at: new Date().toISOString() })
+          .eq("user_id", userId);
+        
+        if (updateError) {
+          console.error('SaveAssessment - Update error:', updateError);
+          return NextResponse.json({ 
+            error: "Update failed", 
+            details: updateError.message,
+            code: updateError.code
+          }, { status: 500 });
+        }
+        
+        return NextResponse.json({ ok: true, action: 'updated' });
+      }
+      
+      console.error('SaveAssessment - Insert error:', error);
       return NextResponse.json({ 
-        error: "Database save failed", 
-        details: errorText,
-        status: response.status
+        error: "Insert failed", 
+        details: error.message,
+        code: error.code
       }, { status: 500 });
     }
     
     console.log('SaveAssessment - Success!');
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, action: 'inserted' });
   } catch (e) {
     console.error('SaveAssessment - Exception:', e);
     return NextResponse.json({ 
