@@ -62,15 +62,31 @@ export async function POST(req: NextRequest) {
     });
     if (!res.ok) {
       const text = await res.text();
-      return NextResponse.json({
-        error: 'persist failed',
-        details: text || 'request failed',
-        meta: {
-          endpointHost: (()=>{ try { return new URL(rpc).host; } catch { return 'n/a'; } })(),
-          hasKey: Boolean(key),
-          keyLen: (key || '').length
-        }
-      }, { status: 500 });
+      // Fallback: direct upsert to table via REST
+      const upsertEndpoint = `${url}/rest/v1/assessments?on_conflict=user_id`;
+      const up = await fetch(upsertEndpoint, {
+        method: 'POST',
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Content-Profile': 'public',
+          Prefer: 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify([{ user_id: userId, answers }])
+      });
+      if (!up.ok) {
+        const upText = await up.text();
+        return NextResponse.json({
+          error: 'persist failed',
+          details: upText || text || 'request failed',
+          meta: {
+            endpointHost: (()=>{ try { return new URL(upsertEndpoint).host; } catch { return 'n/a'; } })(),
+            hasKey: Boolean(key),
+            keyLen: (key || '').length
+          }
+        }, { status: 500 });
+      }
     }
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
