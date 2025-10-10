@@ -1,215 +1,167 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
-import Header from "@/app/components/Header";
+import PremiumGate from "@/app/components/premium/PremiumGate";
 import { usePremiumStatus } from "@/lib/hooks/usePremiumStatus";
+import { track } from "@/lib/track";
+import Header from "@/app/components/Header";
 
 type Provider = {
-  id: number;
-  name: string;
-  business_name: string | null;
+  id: string;
   type: string;
-  location: string | null;
-  phone: string | null;
+  name: string | null;
+  business_name: string | null;
   email: string | null;
+  phone: string | null;
   website: string | null;
-  military_friendly: boolean;
-  description: string | null;
-  specialties: string[] | null;
+  calendly: string | null;
+  state: string | null;
+  city: string | null;
+  zip: string | null;
+  stations: string[] | null;
+  coverage_states: string[] | null;
+  military_friendly: boolean | null;
+  spouse_owned: boolean | null;
+  va_expert: boolean | null;
+  notes: string | null;
+  license_id: string | null;
 };
 
 export default function DirectoryPage() {
-  const { isPremium, loading: premiumLoading } = usePremiumStatus();
-  const [providers, setProviders] = useState<Provider[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filterType, setFilterType] = useState<string>("all");
-  const [searchLocation, setSearchLocation] = useState("");
+  const { isPremium } = usePremiumStatus();
+  const [q, setQ] = useState("");
+  const [type, setType] = useState("");
+  const [state, setState] = useState("");
+  const [mil, setMil] = useState(true);
+  const [items, setItems] = useState<Provider[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isPremium || premiumLoading) return;
-    
-    async function fetchProviders() {
-      setLoading(true);
+  useEffect(() => { track("directory_view"); }, []);
+
+  async function load(p = 1) {
+    setLoading(true);
+    try {
       const params = new URLSearchParams();
-      if (filterType !== "all") params.set("type", filterType);
-      if (searchLocation) params.set("location", searchLocation);
-      
-      const res = await fetch(`/api/providers?${params}`);
-      const data = await res.json();
-      setProviders(data.providers || []);
+      if (q) params.set("q", q);
+      if (type) params.set("type", type);
+      if (state) params.set("state", state);
+      if (mil) params.set("mil", "1");
+      params.set("page", String(p));
+      params.set("size", "20");
+      const res = await fetch(`/api/directory/providers?${params.toString()}`);
+      if (!res.ok) {
+        setItems([]);
+        setTotal(0);
+        return;
+      }
+      const j = await res.json();
+      setItems(j.items || []);
+      setTotal(j.total || 0);
+      setPage(j.page || 1);
+      track("directory_search", { q, type, state, mil });
+    } finally {
       setLoading(false);
     }
-    
-    fetchProviders();
-  }, [isPremium, premiumLoading, filterType, searchLocation]);
+  }
+
+  useEffect(() => { if (isPremium) load(1); }, [isPremium]);
+
+  const pages = useMemo(() => Math.max(1, Math.ceil(total / 20)), [total]);
+
+  const Card = ({ p }: { p: Provider }) => (
+    <div className="rounded border bg-white p-4 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-lg font-semibold">{p.business_name || p.name || "Provider"}</div>
+          <div className="text-xs text-gray-500">{(p.type || "").replace("_", " ")} · {p.city || ""}{p.city && p.state ? ", " : ""}{p.state || ""}</div>
+        </div>
+        <div className="flex gap-2 text-xs flex-wrap justify-end">
+          {p.military_friendly && <span className="rounded bg-green-100 text-green-700 px-2 py-1">Military-friendly</span>}
+          {p.va_expert && <span className="rounded bg-blue-100 text-blue-700 px-2 py-1">VA-savvy</span>}
+          {p.spouse_owned && <span className="rounded bg-purple-100 text-purple-700 px-2 py-1">Spouse-owned</span>}
+        </div>
+      </div>
+      <div className="mt-2 text-sm">
+        {p.notes && <p className="text-gray-700">{p.notes}</p>}
+        {p.stations && p.stations.length > 0 && <p className="text-gray-500 mt-1">Stations: {p.stations.join(", ")}</p>}
+        {p.coverage_states && p.coverage_states.length > 0 && <p className="text-gray-500">Coverage: {p.coverage_states.join(", ")}</p>}
+        {p.license_id && <p className="text-gray-500">License: {p.license_id}</p>}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-3 text-sm">
+        {p.website && <a className="underline text-blue-600 hover:text-blue-700" href={p.website} target="_blank" rel="noreferrer">Website</a>}
+        {p.email && <a className="underline text-blue-600 hover:text-blue-700" href={`mailto:${p.email}`}>Email</a>}
+        {p.phone && <a className="underline text-blue-600 hover:text-blue-700" href={`tel:${p.phone}`}>Call</a>}
+        {p.calendly && <a className="underline text-blue-600 hover:text-blue-700" href={p.calendly} target="_blank" rel="noreferrer">Book</a>}
+      </div>
+    </div>
+  );
+
+  const Filters = (
+    <div className="rounded border bg-white p-4 shadow-sm">
+      <div className="grid gap-3 sm:grid-cols-5">
+        <input placeholder="Search name, city, notes…" value={q} onChange={e => setQ(e.target.value)} className="border rounded px-2 py-2 sm:col-span-2" />
+        <select value={type} onChange={e => setType(e.target.value)} className="border rounded px-2 py-2">
+          <option value="">Any type</option>
+          <option value="agent">Agent</option>
+          <option value="lender">Lender</option>
+          <option value="property_manager">Property Manager</option>
+          <option value="other">Other</option>
+        </select>
+        <input placeholder="State (e.g., TX)" maxLength={2} value={state} onChange={e => setState(e.target.value.toUpperCase())} className="border rounded px-2 py-2" />
+        <label className="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={mil} onChange={e => setMil(e.target.checked)} />
+          Military-friendly
+        </label>
+      </div>
+      <div className="mt-3">
+        <button onClick={() => load(1)} disabled={loading}
+          className="rounded bg-slate-800 text-white px-4 py-2 hover:bg-slate-900 disabled:opacity-50">
+          {loading ? "Searching…" : "Search"}
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <>
       <Header />
-      <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-3">Vetted Pros Directory</h1>
-            <p className="text-lg text-gray-600">
-              Agents, lenders, and property managers familiar with military families.
-            </p>
+      <div className="max-w-5xl mx-auto p-6 space-y-6">
+        <h1 className="text-2xl font-bold">Vetted Pros Directory</h1>
+        <p className="text-gray-600">Agents, lenders, and property managers who understand military families and VA loans.</p>
+
+        <SignedOut>
+          <div className="rounded border bg-white p-6 shadow-sm">
+            <p className="mb-4">Please sign in to view the directory.</p>
+            <SignIn />
           </div>
+        </SignedOut>
 
-          <SignedOut>
-            <div className="bg-white rounded-xl p-6 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <p className="mb-4 text-gray-700">Please sign in to view the directory.</p>
-              <SignIn />
-            </div>
-          </SignedOut>
+        <SignedIn>
+          <PremiumGate
+            placeholder={<div><div className="font-semibold mb-1">Premium directory</div><p className="text-sm text-gray-600">Unlock access to vetted providers and search by location.</p></div>}
+          >
+            {Filters}
 
-          <SignedIn>
-            {!premiumLoading && !isPremium && (
-              <div className="bg-white rounded-xl p-8 text-center border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                <div className="text-6xl mb-4">🔒</div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">Premium Directory</h2>
-                <p className="text-gray-600 mb-6">
-                  Unlock access to our vetted network of military-friendly professionals.
-                </p>
-                <a
-                  href="/dashboard/upgrade"
-                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  Upgrade to Premium
-                </a>
+            {items.length === 0 && !loading ? (
+              <div className="text-sm text-gray-600">No results yet. Try broadening your search.</div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {items.map(p => <Card key={p.id} p={p} />)}
               </div>
             )}
 
-            {isPremium && (
-              <>
-                {/* Filters */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Provider Type
-                      </label>
-                      <select
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      >
-                        <option value="all">All Types</option>
-                        <option value="agent">Real Estate Agent</option>
-                        <option value="lender">Lender</option>
-                        <option value="property_manager">Property Manager</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Search Location
-                      </label>
-                      <input
-                        type="text"
-                        value={searchLocation}
-                        onChange={(e) => setSearchLocation(e.target.value)}
-                        placeholder="City or State..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Providers List */}
-                {loading ? (
-                  <div className="text-center py-12">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <p className="mt-4 text-gray-600">Loading providers...</p>
-                  </div>
-                ) : providers.length === 0 ? (
-                  <div className="bg-white rounded-xl p-8 text-center border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                    <div className="text-4xl mb-4">🔍</div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">No Providers Found</h3>
-                    <p className="text-gray-600">
-                      Try adjusting your filters or check back soon as we add more providers to the directory.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {providers.map((provider) => (
-                      <div
-                        key={provider.id}
-                        className="bg-white rounded-xl p-6 border border-gray-200 card-hover"
-                        style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900">{provider.name}</h3>
-                            {provider.business_name && (
-                              <p className="text-sm text-gray-600">{provider.business_name}</p>
-                            )}
-                          </div>
-                          {provider.military_friendly && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              🎖️ Military-Friendly
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-sm">
-                            <span className="font-medium text-gray-700 w-20">Type:</span>
-                            <span className="text-gray-600 capitalize">{provider.type.replace('_', ' ')}</span>
-                          </div>
-                          {provider.location && (
-                            <div className="flex items-center text-sm">
-                              <span className="font-medium text-gray-700 w-20">Location:</span>
-                              <span className="text-gray-600">{provider.location}</span>
-                            </div>
-                          )}
-                          {provider.specialties && provider.specialties.length > 0 && (
-                            <div className="flex items-start text-sm">
-                              <span className="font-medium text-gray-700 w-20">Focus:</span>
-                              <span className="text-gray-600">{provider.specialties.join(", ")}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        {provider.description && (
-                          <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.description}</p>
-                        )}
-
-                        <div className="flex flex-wrap gap-2 border-t border-gray-200 pt-4">
-                          {provider.phone && (
-                            <a
-                              href={`tel:${provider.phone}`}
-                              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                              📞 Call
-                            </a>
-                          )}
-                          {provider.email && (
-                            <a
-                              href={`mailto:${provider.email}`}
-                              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                              ✉️ Email
-                            </a>
-                          )}
-                          {provider.website && (
-                            <a
-                              href={provider.website}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                              🌐 Website
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
+            {pages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button disabled={page <= 1} onClick={() => load(page - 1)} className="px-3 py-1 rounded border disabled:opacity-50">Prev</button>
+                <div className="text-sm text-gray-600">Page {page} of {pages}</div>
+                <button disabled={page >= pages} onClick={() => load(page + 1)} className="px-3 py-1 rounded border disabled:opacity-50">Next</button>
+              </div>
             )}
-          </SignedIn>
-        </div>
+            <div className="text-xs text-gray-500 mt-4">Listings are informational and not endorsements. Verify licenses independently.</div>
+          </PremiumGate>
+        </SignedIn>
       </div>
     </>
   );
