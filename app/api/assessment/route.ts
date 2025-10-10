@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { createClerkClient } from "@clerk/backend";
 import { checkAndIncrement } from "@/lib/limits";
 
-export const runtime = "edge";
+// Use Node runtime so Clerk server client works for fallback storage
+export const runtime = "nodejs";
 
 export async function GET() {
   const { userId } = await auth();
@@ -18,24 +20,40 @@ export async function GET() {
     });
     if (!res.ok) {
       const text = await res.text();
-      return NextResponse.json({
-        error: 'load failed',
-        details: text || 'request failed',
-        meta: {
-          endpointHost: (()=>{ try { return new URL(endpoint).host; } catch { return 'n/a'; } })(),
-          hasKey: Boolean(key),
-          keyLen: (key || '').length
-        }
-      }, { status: 500 });
+      // Fallback: read from Clerk private metadata
+      try {
+        const backend = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
+        const u = await backend.users.getUser(userId);
+        const fromClerk = (u?.privateMetadata as Record<string, unknown> | undefined)?.assessment ?? null;
+        return NextResponse.json({ answers: fromClerk ?? null, source: 'clerk' }, { headers: { 'Cache-Control': 'no-store' } });
+      } catch {
+        return NextResponse.json({
+          error: 'load failed',
+          details: text || 'request failed',
+          meta: {
+            endpointHost: (()=>{ try { return new URL(endpoint).host; } catch { return 'n/a'; } })(),
+            hasKey: Boolean(key),
+            keyLen: (key || '').length
+          }
+        }, { status: 500 });
+      }
     }
     const rows = (await res.json()) as Array<{ answers?: unknown }>;
     return NextResponse.json({ answers: rows?.[0]?.answers ?? null }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
-    return NextResponse.json({
-      error: 'load failed',
-      details: e instanceof Error ? e.message : String(e),
-      meta: { hasKey: Boolean(key), keyLen: (key || '').length }
-    }, { status: 500 });
+    // Fallback: read from Clerk private metadata
+    try {
+      const backend = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
+      const u = await backend.users.getUser(userId);
+      const fromClerk = (u?.privateMetadata as Record<string, unknown> | undefined)?.assessment ?? null;
+      return NextResponse.json({ answers: fromClerk ?? null, source: 'clerk' }, { headers: { 'Cache-Control': 'no-store' } });
+    } catch {
+      return NextResponse.json({
+        error: 'load failed',
+        details: e instanceof Error ? e.message : String(e),
+        meta: { hasKey: Boolean(key), keyLen: (key || '').length }
+      }, { status: 500 });
+    }
   }
 }
 
@@ -76,25 +94,39 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify([{ user_id: userId, answers }])
       });
       if (!up.ok) {
-        const upText = await up.text();
-        return NextResponse.json({
-          error: 'persist failed',
-          details: upText || text || 'request failed',
-          meta: {
-            endpointHost: (()=>{ try { return new URL(upsertEndpoint).host; } catch { return 'n/a'; } })(),
-            hasKey: Boolean(key),
-            keyLen: (key || '').length
-          }
-        }, { status: 500 });
+        // Final fallback: persist in Clerk private metadata
+        try {
+          const backend = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
+          await backend.users.updateUser(userId, { privateMetadata: { assessment: answers } as Record<string, unknown> });
+          return NextResponse.json({ ok: true, stored: 'clerk' }, { headers: { 'Cache-Control': 'no-store' } });
+        } catch {
+          const upText = await up.text();
+          return NextResponse.json({
+            error: 'persist failed',
+            details: upText || text || 'request failed',
+            meta: {
+              endpointHost: (()=>{ try { return new URL(upsertEndpoint).host; } catch { return 'n/a'; } })(),
+              hasKey: Boolean(key),
+              keyLen: (key || '').length
+            }
+          }, { status: 500 });
+        }
       }
     }
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
-    return NextResponse.json({
-      error: 'persist failed',
-      details: e instanceof Error ? e.message : String(e),
-      meta: { hasKey: Boolean(key), keyLen: (key || '').length }
-    }, { status: 500 });
+    // Final fallback: persist in Clerk private metadata
+    try {
+      const backend = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
+      await backend.users.updateUser(userId, { privateMetadata: { assessment: answers } as Record<string, unknown> });
+      return NextResponse.json({ ok: true, stored: 'clerk' }, { headers: { 'Cache-Control': 'no-store' } });
+    } catch {
+      return NextResponse.json({
+        error: 'persist failed',
+        details: e instanceof Error ? e.message : String(e),
+        meta: { hasKey: Boolean(key), keyLen: (key || '').length }
+      }, { status: 500 });
+    }
   }
 }
 
