@@ -3,18 +3,25 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { checkAndIncrement } from "@/lib/limits";
 
-export const runtime = "edge";
-// Assessment save with RPC - final fix
-// Force deployment - assessment save fix
+// Temporarily use Node runtime for clearer errors; switch back to Edge when stable
+export const runtime = "nodejs";
 
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  
+
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { data } = await sb.from("assessments").select("answers").eq("user_id", userId).maybeSingle();
-  
-  return NextResponse.json({ answers: data?.answers ?? null });
+  const { data, error } = await sb
+    .from("assessments_v2")
+    .select("answers")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ error: "load failed", details: error.message || String(error) }, { status: 500 });
+  }
+
+  return NextResponse.json({ answers: data?.answers ?? null }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(req: NextRequest) {
@@ -29,46 +36,28 @@ export async function POST(req: NextRequest) {
   const answers = body?.answers ?? null;
   if (!answers) return NextResponse.json({ error: "answers required" }, { status: 400 });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  
-  console.log('Assessment API - Saving for user:', userId);
-  
+  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+
   try {
-    // Call RPC via direct REST API (bypasses JS client issues in Edge)
-    const rpcEndpoint = `${supabaseUrl}/rest/v1/rpc/assessments_save`;
-    
-    const response = await fetch(rpcEndpoint, {
-      method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        p_user_id: userId,
-        p_answers: answers
-      })
+    const { error } = await sb.rpc("assessments_v2_save", {
+      p_user_id: userId,
+      p_answers: answers
     });
-    
-    console.log('Assessment API - RPC response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Assessment API - RPC error:', errorText);
+
+    if (error) {
+      console.error('Assessment API - RPC error:', error);
       return NextResponse.json({
         error: "persist failed",
-        details: errorText || 'RPC call failed',
-        status: response.status
+        details: error.message || String(error),
+        code: (error as { code?: string }).code || ""
       }, { status: 500 });
     }
-    
-    console.log('Assessment API - Saved successfully via RPC');
-    return NextResponse.json({ ok: true });
+
+    return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     console.error('Assessment API - Exception:', e);
     return NextResponse.json({
-      error: "unexpected error",
+      error: "persist failed",
       details: e instanceof Error ? e.message : String(e)
     }, { status: 500 });
   }

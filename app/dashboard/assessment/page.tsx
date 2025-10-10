@@ -126,7 +126,7 @@ export default function DetailedAssessment() {
                   />
                 </Field>
                 <Field label="Rank Category">
-                  <select
+            <select 
                     value={rankCategory}
                     onChange={e => setRankCategory(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
@@ -135,8 +135,8 @@ export default function DetailedAssessment() {
                     <option value="enlisted_senior">Enlisted (E7-E9)</option>
                     <option value="warrant">Warrant Officer</option>
                     <option value="officer">Commissioned Officer</option>
-                  </select>
-                </Field>
+            </select>
+          </Field>
                 <Field label="Number of Dependents">
                   <input
                     type="number"
@@ -196,7 +196,7 @@ export default function DetailedAssessment() {
                 </Field>
                 
                 <Field label="Interest in portable/remote career">
-                  <select
+            <select 
                     value={portableCareerInterest}
                     onChange={e => setPortableCareerInterest(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
@@ -204,22 +204,22 @@ export default function DetailedAssessment() {
                     <option value="high">High - actively seeking</option>
                     <option value="medium">Medium - exploring options</option>
                     <option value="low">Low - not a priority</option>
-                  </select>
-                </Field>
-                
+            </select>
+          </Field>
+          
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
+            <input 
+              type="checkbox" 
                     checked={educationGoals}
                     onChange={e => setEducationGoals(e.target.checked)}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
+            />
                   <span className="text-gray-900 font-medium">Interested in education/certification programs</span>
                 </div>
-                
+          
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
+              <input 
+                type="checkbox" 
                     checked={mycaaEligible}
                     onChange={e => setMycaaEligible(e.target.checked)}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -342,8 +342,8 @@ export default function DetailedAssessment() {
               </div>
               <div className="mt-4">
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
+              <input 
+                type="checkbox" 
                     checked={houseHackingInterest}
                     onChange={e => setHouseHackingInterest(e.target.checked)}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -398,8 +398,8 @@ export default function DetailedAssessment() {
               
               <div className="mt-6 space-y-4">
                 <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
+              <input 
+                type="checkbox" 
                     checked={sdpAvailable}
                     onChange={e => setSdpAvailable(e.target.checked)}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -435,8 +435,8 @@ export default function DetailedAssessment() {
                     <option value="moderate">Moderate - balanced approach</option>
                     <option value="aggressive">Aggressive - maximize growth</option>
                   </select>
-                </Field>
-                
+          </Field>
+
                 <Field label="Financial Goals (select all that apply)">
                   <div className="space-y-3">
                     {[
@@ -464,13 +464,13 @@ export default function DetailedAssessment() {
 
             {/* Submit Button */}
             <div className="pt-6">
-              <button
+          <button
                 onClick={handleSubmit}
                 disabled={submitting}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+          >
                 {submitting ? '💾 Saving assessment...' : 'Generate My Personalized Financial Roadmap 🚀'}
-              </button>
+          </button>
               <p className="text-center text-sm text-gray-500 mt-4">
                 Premium members will receive a downloadable PDF guide
               </p>
