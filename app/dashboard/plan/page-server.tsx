@@ -1,86 +1,68 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
 import { runPlanRules, scoreResources } from '@/lib/plan/rules';
 import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
-import toolkitData from '@/public/toolkit-map.json';
 
 type Item = { title: string; url: string; tags: string[] };
-type AssessmentAnswers = Record<string, unknown>;
 
-export default function PlanPage() {
-  const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [tags, setTags] = useState<Set<string>>(new Set());
-  const [ranked, setRanked] = useState<Item[]>([]);
-
-  useEffect(() => {
-    async function loadAssessment() {
-      try {
-        const res = await fetch('/api/assessment', { cache: 'no-store' });
-        const data = await res.json();
-        
-        if (data.answers) {
-          setAnswers(data.answers);
-          
-          // Run rules engine client-side
-          const generatedTags = await runPlanRules(data.answers);
-          setTags(generatedTags);
-          
-          // Score resources
-          const scoredResources = scoreResources(generatedTags, toolkitData as Item[]).slice(0, 10);
-          setRanked(scoredResources);
-        }
-      } catch (error) {
-        console.error('Error loading assessment:', error);
-      } finally {
-        setLoading(false);
+async function getAnswers() {
+  try {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/assessment`, { 
+      cache: "no-store",
+      headers: {
+        cookie: cookieHeader
       }
-    }
+    });
+    const j = await res.json().catch(() => ({}));
+    return j.answers ?? null;
+  } catch (error) {
+    console.error('Error fetching assessment:', error);
+    return null;
+  }
+}
 
-    loadAssessment();
-  }, []);
+async function getToolkit(): Promise<Item[]> {
+  try {
+    // For server-side, we need to read the file directly or fetch it
+    const toolkit = await import('@/public/toolkit-map.json');
+    return toolkit.default as Item[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function PlanPage() {
+  const answers = await getAnswers();
+  const toolkit = await getToolkit();
+  
+  // Run rules engine if we have answers
+  let tags = new Set<string>();
+  let ranked: Item[] = [];
+  
+  if (answers) {
+    tags = await runPlanRules(answers);
+    ranked = scoreResources(tags, toolkit).slice(0, 10);
+  }
 
   // Deep links to tools from facts
-  const personal = (answers as { personal?: { age?: number } })?.personal;
-  const timeline = (answers as { timeline?: { sdpAmount?: number } })?.timeline;
-  const housing = (answers as { housing?: { bahAmount?: number; houseHackingInterest?: boolean } })?.housing;
-  const financial = (answers as { financial?: { tspBalance?: number; tspContribution?: number } })?.financial;
+  const age = answers?.tsp?.age ?? 30;
+  const retire = answers?.tsp?.retire ?? 50;
+  const tspHref = `/dashboard/tools/tsp-modeler?age=${age}&retire=${retire}&bal=50000&cont=500&mix=C:70,S:30`;
 
-  const age = personal?.age ?? 30;
-  const tspBalance = financial?.tspBalance ?? 50000;
-  const tspContribution = financial?.tspContribution ?? 500;
-  const tspHref = `/dashboard/tools/tsp-modeler?age=${age}&retire=50&bal=${tspBalance}&cont=${tspContribution}&mix=C:70,S:30`;
-
-  const sdpAmount = timeline?.sdpAmount ?? 10000;
+  const sdpAmount = answers?.sdp?.amount ?? 10000;
   const sdpHref = `/dashboard/tools/sdp-strategist?amount=${sdpAmount}`;
 
-  const bahAmount = housing?.bahAmount ?? 2400;
-  const houseHref = `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=${bahAmount}&rent=2200`;
-
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-gray-600">Loading your personalized plan...</p>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
+  const houseHref = `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=2400&rent=2200`;
 
   return (
     <>
       <Header />
-      <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header Section */}
           <div className="text-center mb-12">
