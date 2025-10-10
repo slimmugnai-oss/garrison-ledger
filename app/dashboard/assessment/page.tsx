@@ -52,7 +52,11 @@ export default function DetailedAssessment() {
     );
   };
 
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async () => {
+    setSubmitting(true);
+    
     const answers = {
       personal: { age, yearsOfService, rankCategory, dependents, kidsAges },
       career: { spouseEmployed, careerField, portableCareerInterest, educationGoals, mycaaEligible },
@@ -63,16 +67,30 @@ export default function DetailedAssessment() {
     };
 
     try {
-      await fetch('/api/assessment', {
+      console.log('Saving assessment:', answers);
+      const res = await fetch('/api/assessment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers })
       });
+      
+      console.log('Assessment response:', res.status, res.statusText);
+      const data = await res.json();
+      console.log('Assessment data:', data);
+      
+      if (!res.ok) {
+        alert(`Failed to save assessment: ${data.error || 'Unknown error'}`);
+        setSubmitting(false);
+        return;
+      }
+      
+      console.log('Assessment saved successfully, navigating to plan...');
+      r.push('/dashboard/plan');
     } catch (error) {
       console.error('Error saving assessment:', error);
+      alert('Failed to save assessment. Please try again.');
+      setSubmitting(false);
     }
-
-    r.push('/dashboard/plan');
   };
 
   return (
@@ -448,9 +466,10 @@ export default function DetailedAssessment() {
             <div className="pt-6">
               <button
                 onClick={handleSubmit}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg"
+                disabled={submitting}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Generate My Personalized Financial Roadmap 🚀
+                {submitting ? '💾 Saving assessment...' : 'Generate My Personalized Financial Roadmap 🚀'}
               </button>
               <p className="text-center text-sm text-gray-500 mt-4">
                 Premium members will receive a downloadable PDF guide
