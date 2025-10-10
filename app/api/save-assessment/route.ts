@@ -32,16 +32,15 @@ export async function POST(req: NextRequest) {
   }
   
   try {
-    // Use Supabase JS client with minimal config for Edge
-    const sb = createClient(supabaseUrl, supabaseKey);
+    // Use same pattern as working tool APIs
+    const supabase = createClient(supabaseUrl, supabaseKey);
     
     console.log('SaveAssessment - Created client');
     
-    // Simple insert (let database handle duplicates with ON CONFLICT)
-    const { error } = await sb
+    // Simple insert without .select() - might be causing the issue
+    const { error } = await supabase
       .from("assessments")
-      .insert({ user_id: userId, answers })
-      .select();
+      .insert({ user_id: userId, answers });
     
     console.log('SaveAssessment - Insert result, error?', !!error);
     
