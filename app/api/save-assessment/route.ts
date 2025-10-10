@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,7 +14,21 @@ export async function POST(req: NextRequest) {
   const answers = body?.answers ?? null;
   if (!answers) return NextResponse.json({ error: "answers required" }, { status: 400 });
 
-  const sb = supabaseAdmin;
+  // Create Supabase client with explicit config for Node runtime
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('Missing Supabase credentials');
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+  
+  const sb = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
   
   console.log('SaveAssessment - User:', userId);
   
