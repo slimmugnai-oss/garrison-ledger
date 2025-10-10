@@ -13,7 +13,7 @@ export async function GET() {
   const endpoint = `${url}/rest/v1/assessments?user_id=eq.${encodeURIComponent(userId)}&select=answers&limit=1`;
   try {
     const res = await fetch(endpoint, {
-      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Accept-Profile': 'public' },
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Accept-Profile': 'public', 'Accept': 'application/json' },
       cache: 'no-store'
     });
     if (!res.ok) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch(rpc, {
       method: 'POST',
-      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Content-Profile': 'public' },
+      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Content-Profile': 'public', 'Prefer': 'params=single-object' },
       body: JSON.stringify({ p_user_id: userId, p_answers: answers })
     });
     if (!res.ok) {
