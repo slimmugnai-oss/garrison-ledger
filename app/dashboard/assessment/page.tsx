@@ -68,7 +68,7 @@ export default function DetailedAssessment() {
 
     try {
       console.log('Saving assessment:', answers);
-      const res = await fetch('/api/assessment', {
+      const res = await fetch('/api/save-assessment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers })
