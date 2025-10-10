@@ -28,9 +28,22 @@ export async function POST(req: NextRequest) {
   if (!answers) return NextResponse.json({ error: "answers required" }, { status: 400 });
 
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { error } = await sb.from("assessments").upsert({ user_id: userId, answers, updated_at: new Date().toISOString() });
-  if (error) return NextResponse.json({ error: "persist failed" }, { status: 500 });
   
+  console.log('Assessment API - Saving for user:', userId);
+  console.log('Assessment API - Answers:', JSON.stringify(answers).slice(0, 200));
+  
+  const { data, error } = await sb.from("assessments").upsert({ 
+    user_id: userId, 
+    answers, 
+    updated_at: new Date().toISOString() 
+  }).select();
+  
+  if (error) {
+    console.error('Assessment API - Supabase error:', error);
+    return NextResponse.json({ error: "persist failed", details: error.message }, { status: 500 });
+  }
+  
+  console.log('Assessment API - Saved successfully:', data);
   return NextResponse.json({ ok: true });
 }
 
