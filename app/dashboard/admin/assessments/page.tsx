@@ -8,7 +8,7 @@ function isAllowed(email?: string | null) {
 
 export default async function AdminAssessments() {
   const user = await currentUser();
-  const email = (user as any)?.emailAddresses?.[0]?.emailAddress ?? null;
+  const email = user?.emailAddresses?.[0]?.emailAddress ?? null;
   if (!isAllowed(email)) return <div className="p-6">Not authorized.</div>;
 
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -33,13 +33,17 @@ export default async function AdminAssessments() {
             </tr>
           </thead>
           <tbody>
-            {(data || []).map((r: any) => (
+            {(() => {
+              type AssessmentRow = { user_id: string; updated_at: string; answers: unknown };
+              const rows: AssessmentRow[] = (data ?? []) as AssessmentRow[];
+              return rows.map((r) => (
               <tr key={`${r.user_id}-${r.updated_at}`} className="border-t align-top">
                 <td className="px-3 py-2">{r.user_id}</td>
                 <td className="px-3 py-2">{new Date(r.updated_at).toLocaleString()}</td>
                 <td className="px-3 py-2 whitespace-pre-wrap">{JSON.stringify(r.answers, null, 2)}</td>
               </tr>
-            ))}
+              ));
+            })()}
           </tbody>
         </table>
       </div>
