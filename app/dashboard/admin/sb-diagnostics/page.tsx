@@ -52,6 +52,20 @@ async function runDiagnostics() {
     results.push({ title: "POST rpc/assessments_save (exception)", status: "exception", body: String(e) });
   }
 
+  // Simple ping RPC to isolate PostgREST health
+  try {
+    const pingUrl = `${base}/rest/v1/rpc/ping`;
+    const r3 = await fetch(pingUrl, {
+      method: "POST",
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Content-Profile": "public" },
+      body: "{}"
+    });
+    const t3 = await r3.text().catch(() => "<no-body>");
+    results.push({ title: `POST rpc/ping`, status: r3.status, body: t3 });
+  } catch (e) {
+    results.push({ title: "POST rpc/ping (exception)", status: "exception", body: String(e) });
+  }
+
   return results;
 }
 
