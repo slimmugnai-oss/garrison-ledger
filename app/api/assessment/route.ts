@@ -18,12 +18,24 @@ export async function GET() {
     });
     if (!res.ok) {
       const text = await res.text();
-      return NextResponse.json({ error: 'load failed', details: text }, { status: 500 });
+      return NextResponse.json({
+        error: 'load failed',
+        details: text || 'request failed',
+        meta: {
+          endpointHost: (()=>{ try { return new URL(endpoint).host; } catch { return 'n/a'; } })(),
+          hasKey: Boolean(key),
+          keyLen: (key || '').length
+        }
+      }, { status: 500 });
     }
     const rows = (await res.json()) as Array<{ answers?: unknown }>;
     return NextResponse.json({ answers: rows?.[0]?.answers ?? null }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
-    return NextResponse.json({ error: 'load failed', details: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    return NextResponse.json({
+      error: 'load failed',
+      details: e instanceof Error ? e.message : String(e),
+      meta: { hasKey: Boolean(key), keyLen: (key || '').length }
+    }, { status: 500 });
   }
 }
 
@@ -50,11 +62,23 @@ export async function POST(req: NextRequest) {
     });
     if (!res.ok) {
       const text = await res.text();
-      return NextResponse.json({ error: 'persist failed', details: text }, { status: 500 });
+      return NextResponse.json({
+        error: 'persist failed',
+        details: text || 'request failed',
+        meta: {
+          endpointHost: (()=>{ try { return new URL(rpc).host; } catch { return 'n/a'; } })(),
+          hasKey: Boolean(key),
+          keyLen: (key || '').length
+        }
+      }, { status: 500 });
     }
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
-    return NextResponse.json({ error: 'persist failed', details: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    return NextResponse.json({
+      error: 'persist failed',
+      details: e instanceof Error ? e.message : String(e),
+      meta: { hasKey: Boolean(key), keyLen: (key || '').length }
+    }, { status: 500 });
   }
 }
 
