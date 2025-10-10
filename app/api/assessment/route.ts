@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "edge";
+// Force deployment - assessment save fix
 
 export async function GET() {
   const { userId } = await auth();
