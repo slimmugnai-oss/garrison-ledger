@@ -16,7 +16,8 @@ export async function GET() {
     const res = await fetch(endpoint, {
       headers: {
         apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
+        Authorization: `Bearer ${supabaseKey}`,
+        'Accept-Profile': 'public'
       },
       cache: "no-store"
     });
@@ -53,7 +54,8 @@ export async function POST(req: NextRequest) {
       headers: {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        'Content-Profile': 'public'
       },
       body: JSON.stringify({ p_user_id: userId, p_answers: answers })
     });
@@ -67,7 +69,8 @@ export async function POST(req: NextRequest) {
           apikey: supabaseKey,
           Authorization: `Bearer ${supabaseKey}`,
           "Content-Type": "application/json",
-          Prefer: "resolution=merge-duplicates,return=minimal"
+          Prefer: "resolution=merge-duplicates,return=minimal",
+          'Content-Profile': 'public'
         },
         body: JSON.stringify([{ user_id: userId, answers }])
       });
