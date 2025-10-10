@@ -5,7 +5,7 @@ import { renderToStream } from "@react-pdf/renderer";
 import PersonalizedGuide from "@/lib/plan/pdf-generator";
 import { checkAndIncrement } from "@/lib/limits";
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -57,9 +57,9 @@ export async function POST(_req: NextRequest) {
     );
 
     // Convert stream to buffer for edge runtime
-    const chunks: Uint8Array[] = [];
+    const chunks: Buffer[] = [];
     for await (const chunk of pdfStream) {
-      chunks.push(chunk);
+      chunks.push(Buffer.from(chunk));
     }
     const buffer = Buffer.concat(chunks);
 
