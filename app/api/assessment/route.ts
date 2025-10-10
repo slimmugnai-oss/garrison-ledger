@@ -33,10 +33,35 @@ export async function POST(req: NextRequest) {
   console.log('Assessment API - Answers type:', typeof answers);
   
   try {
-    const { data, error } = await sb.from("assessments").upsert({ 
-      user_id: userId, 
-      answers: answers as Record<string, unknown>
-    }).select();
+    // First try to insert
+    const { data: insertData, error: insertError } = await sb
+      .from("assessments")
+      .insert({ user_id: userId, answers: answers as Record<string, unknown> })
+      .select();
+    
+    // If insert fails due to duplicate, update instead
+    if (insertError && insertError.code === '23505') {
+      const { data: updateData, error: updateError } = await sb
+        .from("assessments")
+        .update({ answers: answers as Record<string, unknown>, updated_at: new Date().toISOString() })
+        .eq("user_id", userId)
+        .select();
+      
+      if (updateError) {
+        console.error('Assessment API - Update error:', updateError);
+        return NextResponse.json({ 
+          error: "persist failed", 
+          details: updateError.message || 'Update failed',
+          code: updateError.code
+        }, { status: 500 });
+      }
+      
+      console.log('Assessment API - Updated successfully');
+      return NextResponse.json({ ok: true });
+    }
+    
+    const error = insertError;
+    const data = insertData;
     
     if (error) {
       console.error('Assessment API - Supabase error:', error);
