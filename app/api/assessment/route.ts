@@ -30,20 +30,32 @@ export async function POST(req: NextRequest) {
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   
   console.log('Assessment API - Saving for user:', userId);
-  console.log('Assessment API - Answers:', JSON.stringify(answers).slice(0, 200));
+  console.log('Assessment API - Answers type:', typeof answers);
   
-  const { data, error } = await sb.from("assessments").upsert({ 
-    user_id: userId, 
-    answers, 
-    updated_at: new Date().toISOString() 
-  }).select();
-  
-  if (error) {
-    console.error('Assessment API - Supabase error:', error);
-    return NextResponse.json({ error: "persist failed", details: error.message }, { status: 500 });
+  try {
+    const { data, error } = await sb.from("assessments").upsert({ 
+      user_id: userId, 
+      answers: answers as Record<string, unknown>
+    }).select();
+    
+    if (error) {
+      console.error('Assessment API - Supabase error:', error);
+      console.error('Assessment API - Error details:', JSON.stringify(error));
+      return NextResponse.json({ 
+        error: "persist failed", 
+        details: error.message || error.hint || 'Unknown database error',
+        code: error.code
+      }, { status: 500 });
+    }
+    
+    console.log('Assessment API - Saved successfully');
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error('Assessment API - Unexpected error:', e);
+    return NextResponse.json({ 
+      error: "persist failed", 
+      details: e instanceof Error ? e.message : 'Unknown error' 
+    }, { status: 500 });
   }
-  
-  console.log('Assessment API - Saved successfully:', data);
-  return NextResponse.json({ ok: true });
 }
 
