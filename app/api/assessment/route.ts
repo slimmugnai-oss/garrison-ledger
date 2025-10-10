@@ -42,11 +42,10 @@ export async function POST(req: NextRequest) {
     
     // If insert fails due to duplicate, update instead
     if (insertError && insertError.code === '23505') {
-      const { data: updateData, error: updateError } = await sb
+      const { error: updateError } = await sb
         .from("assessments")
         .update({ answers: answers as Record<string, unknown>, updated_at: new Date().toISOString() })
-        .eq("user_id", userId)
-        .select();
+        .eq("user_id", userId);
       
       if (updateError) {
         console.error('Assessment API - Update error:', updateError);
@@ -61,20 +60,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
     
-    const error = insertError;
-    const data = insertData;
-    
-    if (error) {
-      console.error('Assessment API - Supabase error:', error);
-      console.error('Assessment API - Error details:', JSON.stringify(error));
+    if (insertError) {
+      console.error('Assessment API - Insert error:', insertError);
+      console.error('Assessment API - Error details:', JSON.stringify(insertError));
       return NextResponse.json({ 
         error: "persist failed", 
-        details: error.message || error.hint || 'Unknown database error',
-        code: error.code
+        details: insertError.message || insertError.hint || 'Unknown database error',
+        code: insertError.code
       }, { status: 500 });
     }
     
-    console.log('Assessment API - Saved successfully');
+    console.log('Assessment API - Inserted successfully');
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error('Assessment API - Unexpected error:', e);
