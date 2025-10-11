@@ -31,10 +31,10 @@ export async function GET() {
     .eq("user_id", userId)
     .maybeSingle();
   if (aErr) return NextResponse.json({ error: "load assessment" }, { status: 500 });
-  const answers = (aRow?.answers || {}) as AssessmentFacts;
+  const answersRaw = (aRow?.answers || {}) as Record<string, unknown>;
 
   // 2) Compute tags via rules engine
-  const tagSet = await runPlanRules(answers);
+  const tagSet = await runPlanRules(answersRaw as unknown as AssessmentFacts);
   const tags = Array.from(tagSet);
 
   // 3) Select blocks by tag overlap; fallback to top ordered blocks
@@ -71,7 +71,7 @@ export async function GET() {
 
   // 4) Tool deep links based on answers (lightweight defaults)
   type AnyObj = Record<string, unknown>;
-  const answersObj = answers as unknown as AnyObj;
+  const answersObj = answersRaw as AnyObj;
   const getNum = (obj: AnyObj, path: string[], fallback: number): number => {
     let cur: unknown = obj;
     for (const key of path) {
@@ -85,6 +85,17 @@ export async function GET() {
     const num = typeof cur === "number" ? cur : Number(cur);
     return Number.isFinite(num) ? (num as number) : fallback;
   };
+  const getStr = (obj: AnyObj, path: string[], fallback = ""): string => {
+    let cur: unknown = obj;
+    for (const key of path) {
+      if (typeof cur === "object" && cur !== null && key in (cur as AnyObj)) {
+        cur = (cur as AnyObj)[key];
+      } else {
+        return fallback;
+      }
+    }
+    return typeof cur === "string" ? cur : fallback;
+  };
 
   const age = getNum(answersObj, ["tsp", "age"], 30);
   const retire = getNum(answersObj, ["tsp", "retire"], 50);
@@ -94,9 +105,12 @@ export async function GET() {
   const houseHref = `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=2400&rent=2200`;
 
   const stageBits: string[] = [];
-  if (answers?.timeline?.pcsDate) stageBits.push(String(answers.timeline.pcsDate).replaceAll("_", " "));
-  if (answers?.personal?.dependents != null) stageBits.push(`${answers.personal.dependents} dependents`);
-  if (answers?.financial?.monthlyBudgetStress) stageBits.push(String(answers.financial.monthlyBudgetStress));
+  const pcs = getStr(answersObj, ["timeline", "pcsDate"], "");
+  if (pcs) stageBits.push(pcs.replaceAll("_", " "));
+  const depsNum = getNum(answersObj, ["personal", "dependents"], NaN);
+  if (Number.isFinite(depsNum)) stageBits.push(`${depsNum} dependents`);
+  const stress = getStr(answersObj, ["financial", "monthlyBudgetStress"], "");
+  if (stress) stageBits.push(stress);
   const stageSummary = stageBits.filter(Boolean).join(" • ");
 
   return NextResponse.json({
