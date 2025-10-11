@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
-import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
-import toolkitData from '@/public/toolkit-map.json';
+import TaskCard from '@/app/components/ui/TaskCard';
 import { useUser } from '@clerk/nextjs';
 import AccordionItem from '@/app/components/ui/AccordionItem';
 
@@ -17,9 +16,9 @@ export default function PlanPage() {
   const { user } = useUser();
   const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tags, setTags] = useState<Set<string>>(new Set());
-  const [ranked, setRanked] = useState<Item[]>([]);
-  const [blocks, setBlocks] = useState<PlanBlock[]>([]);
+  const [taskStatuses, setTaskStatuses] = useState<Record<string,'incomplete'|'complete'>>({});
+  const [taskData, setTaskData] = useState<{ pcs:any[]; career:any[]; finance:any[]; deployment:any[] }>({ pcs:[], career:[], finance:[], deployment:[] });
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   type PlanRenderNode = {
     id: string;
     title: string;
@@ -33,10 +32,27 @@ export default function PlanPage() {
       estImpact?: { label:string; value:string }[];
     };
   };
-  const [nodes, setNodes] = useState<PlanRenderNode[]>([]);
   const [sections, setSections] = useState<Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>>({ pcs: [], career: [], finance: [], deployment: [] });
   const [stageSummary, setStageSummary] = useState<string>("");
   const [tools, setTools] = useState<{ tspHref: string; sdpHref: string; houseHref: string } | null>(null);
+
+  const allTopics = useMemo(() => {
+    const s = new Set<string>();
+    for (const cat of ['pcs','career','finance','deployment'] as const) {
+      for (const item of taskData[cat] || []) {
+        for (const t of (item?.topics || []) as string[]) s.add(t);
+      }
+    }
+    return Array.from(s).sort();
+  }, [taskData]);
+
+  const toggleTopic = (topic: string) => {
+    setSelectedTopics(prev => prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]);
+  };
+
+  const clearTopics = () => setSelectedTopics([]);
+
+  const topicMatches = (item: any) => selectedTopics.length === 0 || (item?.topics || []).some((t: string) => selectedTopics.includes(t));
 
   useEffect(() => {
     async function loadAssessment() {
@@ -65,16 +81,27 @@ export default function PlanPage() {
         const r = await fetch('/api/plan', { cache: 'no-store' });
         if (!r.ok) return;
         const j = await r.json();
-        setBlocks(j.blocks || []);
-        setNodes((j.nodes || []) as PlanRenderNode[]);
         if (j.sections) setSections(j.sections as Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>);
         setTools(j.tools || null);
         setStageSummary(j.stageSummary || "");
+        setTaskData({ pcs: j.pcs || [], career: j.career || [], finance: j.finance || [], deployment: j.deployment || [] });
       } catch (e) {
-        console.error('Error loading plan blocks:', e);
+        console.error('Error loading plan:', e);
       }
     }
     loadPlanBlocks();
+  }, []);
+
+  useEffect(() => {
+    async function loadStatuses() {
+      try {
+        const r = await fetch('/api/task-status', { cache: 'no-store' });
+        if (!r.ok) return;
+        const j = await r.json();
+        setTaskStatuses(j.statuses || {});
+      } catch {}
+    }
+    loadStatuses();
   }, []);
 
   // Deep links to tools from facts
@@ -169,6 +196,32 @@ export default function PlanPage() {
                   <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-4">
                     <span className="text-white text-xl">⚡</span>
                   </div>
+
+          {/* Topic Filters */}
+          {allTopics.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Filter by Topic</h3>
+                {selectedTopics.length > 0 && (
+                  <button onClick={clearTopics} className="text-sm text-slate-600 hover:text-slate-800 underline">Clear filters</button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {allTopics.map(t => {
+                  const active = selectedTopics.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => toggleTopic(t)}
+                      className={`inline-flex items-center rounded-full border px-3 py-1 text-sm ${active ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-700'}`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
                   <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -177,19 +230,6 @@ export default function PlanPage() {
                   <ActionLinkCard title="Open House Calculator" description="Analyze a house-hack" href={houseHref} icon="🏡" />
                 </div>
               </div>
-
-              {/* Your Resources */}
-              {ranked.length > 0 && (
-                <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                  <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
-                      <span className="text-white text-xl">📚</span>
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Recommended Resources</h2>
-                  </div>
-                  <ResourcesList ranked={ranked} />
-                </div>
-              )}
 
               {/* Intelligent Sections */}
               {sections.pcs.length > 0 && (
@@ -200,42 +240,9 @@ export default function PlanPage() {
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">Your PCS Action Plan 🗺️</h2>
                   </div>
-                  <div className="space-y-10">
-                    {sections.pcs.map((n) => (
-                      <AccordionItem key={n.id} title={n.title} icon="🧭" defaultOpen={false}>
-                        <SmartContent html={n.html} />
-                        {Array.isArray(n.callouts?.whyItMatters) && n.callouts.whyItMatters.length > 0 && (
-                          <div className="mt-4">
-                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Why this matters</h4>
-                            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
-                              {n.callouts.whyItMatters.map((t: string, i: number) => (<li key={i}>{t}</li>))}
-                            </ul>
-                          </div>
-                        )}
-                        {Array.isArray(n.callouts?.doThisNow) && n.callouts.doThisNow.length > 0 && (
-                          <div className="mt-4">
-                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Do this now</h4>
-                            <ul className="space-y-1 text-sm">
-                              {n.callouts.doThisNow.map((d) => (
-                                <li key={d.id} className="flex items-start gap-2">
-                                  <input type="checkbox" className="mt-1" />
-                                  <span className="text-slate-700">{d.text}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        {Array.isArray(n.callouts?.estImpact) && n.callouts.estImpact.length > 0 && (
-                          <div className="mt-4">
-                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Est. impact</h4>
-                            <ul className="space-y-1 text-sm text-slate-700">
-                              {n.callouts.estImpact.map((e, i) => (
-                                <li key={i} className="flex justify-between gap-3"><span>{e.label}</span><span className="font-medium">{e.value}</span></li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </AccordionItem>
+                  <div className="space-y-4">
+                    {taskData.pcs.filter(topicMatches).map((t) => (
+                      <TaskCard key={t.slug} slug={t.slug} title={t.title} summary={t.summary} fullContent={t.fullContent} status={taskStatuses[t.slug] || 'incomplete'} topics={t.topics || []} priority={t.priority || 'low'} />
                     ))}
                   </div>
                 </div>
@@ -249,11 +256,9 @@ export default function PlanPage() {
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">Your Career Development Roadmap 💼</h2>
                   </div>
-                  <div className="space-y-10">
-                    {sections.career.map((n) => (
-                      <AccordionItem key={n.id} title={n.title} icon="💼" defaultOpen={false}>
-                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                      </AccordionItem>
+                  <div className="space-y-4">
+                    {taskData.career.filter(topicMatches).map((t) => (
+                      <TaskCard key={t.slug} slug={t.slug} title={t.title} summary={t.summary} fullContent={t.fullContent} status={taskStatuses[t.slug] || 'incomplete'} topics={t.topics || []} priority={t.priority || 'low'} />
                     ))}
                   </div>
                 </div>
@@ -267,11 +272,9 @@ export default function PlanPage() {
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">Your Financial Wellness Checklist 💰</h2>
                   </div>
-                  <div className="space-y-10">
-                    {sections.finance.map((n) => (
-                      <AccordionItem key={n.id} title={n.title} icon="💰" defaultOpen={false}>
-                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                      </AccordionItem>
+                  <div className="space-y-4">
+                    {taskData.finance.filter(topicMatches).map((t) => (
+                      <TaskCard key={t.slug} slug={t.slug} title={t.title} summary={t.summary} fullContent={t.fullContent} status={taskStatuses[t.slug] || 'incomplete'} topics={t.topics || []} priority={t.priority || 'low'} />
                     ))}
                   </div>
                 </div>
@@ -285,11 +288,9 @@ export default function PlanPage() {
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">Your Deployment Readiness Guide ❤️</h2>
                   </div>
-                  <div className="space-y-10">
-                    {sections.deployment.map((n) => (
-                      <AccordionItem key={n.id} title={n.title} icon="❤️" defaultOpen={false}>
-                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                      </AccordionItem>
+                  <div className="space-y-4">
+                    {taskData.deployment.filter(topicMatches).map((t) => (
+                      <TaskCard key={t.slug} slug={t.slug} title={t.title} summary={t.summary} fullContent={t.fullContent} status={taskStatuses[t.slug] || 'incomplete'} topics={t.topics || []} priority={t.priority || 'low'} />
                     ))}
                   </div>
                 </div>

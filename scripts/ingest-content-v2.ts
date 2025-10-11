@@ -68,10 +68,17 @@ async function upsertBlock(row: {
   text_content: string;
   block_type: string;
   tags: string[];
+  topics: string[];
   horder: number;
   est_read_min: number;
+  summary?: string;
 }) {
-  const { error } = await SB.from('content_blocks').upsert(row, { onConflict: 'source_page,slug' });
+  let { error } = await SB.from('content_blocks').upsert(row, { onConflict: 'source_page,slug' });
+  if (error && /'topics' column/i.test(error.message)) {
+    const { topics, ...fallbackRow } = row as any;
+    const retry = await SB.from('content_blocks').upsert(fallbackRow, { onConflict: 'source_page,slug' });
+    error = retry.error || null as any;
+  }
   if (error) throw new Error(error.message);
 }
 
@@ -117,8 +124,10 @@ async function ingestOne({ file, source }: Source) {
 
     const html = sanitize(frag.map(x => $.html(x)).join('\n'));
     const txt = textOnly(html);
+    const summary = txt.split('. ').slice(0, 2).join('. ') + (txt ? '.' : '');
     const block_type = classifyBlock($, $(frag as any));
     const tags = deriveTags(source, title);
+    const topics = deriveTopics(source, title, txt);
     const est_read_min = Math.max(1, Math.ceil(txt.split(' ').length / 220));
 
     await upsertBlock({
@@ -130,8 +139,10 @@ async function ingestOne({ file, source }: Source) {
       text_content: txt,
       block_type,
       tags,
+      topics,
       horder: order++,
       est_read_min,
+      summary,
     });
 
     process.stdout.write(`V2 Inserted ${source}/${slug} (h${level})\n`);
@@ -150,3 +161,52 @@ async function main() {
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
+
+// --- Topics derivation (heuristic taxonomy) ---
+function deriveTopics(source: string, title: string, text: string): string[] {
+  const hay = `${source} ${title} ${text}`.toLowerCase();
+  const topics = new Set<string>();
+
+  const addIf = (cond: boolean, t: string) => { if (cond) topics.add(t); };
+
+  // Hubs
+  addIf(source.includes('pcs'), 'pcs');
+  addIf(source.includes('career'), 'career');
+  addIf(source.includes('deployment'), 'deployment');
+  addIf(source.includes('shopping'), 'on-base-shopping');
+
+  // PCS & Housing
+  addIf(/\bpcs\b|pre-?move|move prep|timeline|orders in hand|first 30 days/.test(hay), 'pcs-prep');
+  addIf(/bah|basic allowance for housing|rent|lease|on[- ]base|off[- ]base|housing/.test(hay), 'housing');
+  addIf(/va loan|va mortgage|entitlement/.test(hay), 'va-loan');
+  addIf(/license transfer|licen[cs]ure|re-?licen[cs]ing|recertification/.test(hay), 'license-transfer');
+  addIf(/efmp/.test(hay), 'efmp');
+  addIf(/oconus|sofa|host[- ]nation/.test(hay), 'oconus');
+
+  // Career
+  addIf(/portable career|remote work|work from home|telework|telecommute/.test(hay), 'remote-work');
+  addIf(/resume|interview|ats|cover letter/.test(hay), 'resume');
+  addIf(/job search|apply|application|hiring|employer|network/.test(hay), 'job-search');
+  addIf(/networking|mentor(ship)?|linkedin/.test(hay), 'networking');
+  addIf(/entrepreneur|business plan|llc|sole proprietorship|clients|marketing/.test(hay), 'entrepreneurship');
+  addIf(/usajobs|federal resume|military spouse preference|noncompetitive|5 cfr 315\.612/.test(hay), 'federal-employment');
+  addIf(/mycaa|seco/.test(hay), 'mycaa');
+  addIf(/certificate|certification|upskilling|google career certificates|pmp|comptia|trailhead|salesforce/.test(hay), 'certifications');
+
+  // Finance
+  addIf(/tsp|thrift savings plan|brs/.test(hay), 'tsp');
+  addIf(/sdp|savings deposit program/.test(hay), 'sdp');
+  addIf(/budget|debt|emergency fund|savings/.test(hay), 'personal-finance');
+  addIf(/tax/.test(hay), 'taxes');
+
+  // Deployment
+  addIf(/pre[- ]deployment|homefront|reintegration/.test(hay), 'deployment-phases');
+
+  // Content styles
+  addIf(/faq|q:|question:/.test(hay), 'faq');
+  addIf(/checklist|do this now|next steps|action/.test(hay), 'checklist');
+  addIf(/tip|pro[- ]?tip/.test(hay), 'tips');
+
+  // Return stable, capped list
+  return Array.from(topics).slice(0, 8);
+}

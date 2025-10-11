@@ -40,6 +40,12 @@ export default function DetailedAssessment() {
         deployment: { status: deployReality },
         career: { ambitions },
         finance: { priority: finPriority },
+        preferences: {
+          topicInterests,
+          urgency,
+          knowledgeLevel,
+          formatPreference,
+        },
       },
       // Legacy keys still referenced downstream (light touch)
       timeline: { pcsDate: pcsSituation, deploymentStatus: deployReality },
@@ -200,6 +206,88 @@ export default function DetailedAssessment() {
                   <option value="va">Use the VA Loan</option>
                 </select>
               </Field>
+            </Section>
+
+            {/* Section 6: Elite — Personalization Preferences */}
+            <Section title="Personalization Preferences (Optional)" icon="⚙️">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Which topics are you most interested in learning about? (Select all that apply)</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {[
+                      { id: "pcs-prep", label: "PCS Planning & Checklists" },
+                      { id: "housing", label: "Housing & BAH Strategies" },
+                      { id: "va-loan", label: "VA Loan & Home Buying" },
+                      { id: "remote-work", label: "Remote Work & Portable Careers" },
+                      { id: "mycaa", label: "MyCAA & Education Funding" },
+                      { id: "federal-employment", label: "Federal Employment (USAJOBS)" },
+                      { id: "entrepreneurship", label: "Starting a Business" },
+                      { id: "tsp", label: "TSP & Retirement Planning" },
+                      { id: "sdp", label: "SDP & Deployment Savings" },
+                      { id: "deployment-phases", label: "Deployment & Reintegration" },
+                      { id: "license-transfer", label: "Professional License Transfers" },
+                      { id: "oconus", label: "OCONUS Living" },
+                    ].map((opt) => (
+                      <label key={opt.id} className="flex items-center space-x-2 p-2 rounded hover:bg-slate-50">
+                        <input
+                          type="checkbox"
+                          checked={topicInterests.includes(opt.id)}
+                          onChange={() => toggleTopicInterest(opt.id)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-900">{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <Field label="How urgent are your needs?">
+                  <select
+                    value={urgency}
+                    onChange={(e) => setUrgency(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                  >
+                    <option value="low">Low — I'm exploring and planning ahead</option>
+                    <option value="normal">Normal — I need this in the next few months</option>
+                    <option value="high">High — I need actionable steps right now</option>
+                  </select>
+                </Field>
+
+                <Field label="How would you describe your knowledge level with military benefits?">
+                  <select
+                    value={knowledgeLevel}
+                    onChange={(e) => setKnowledgeLevel(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                  >
+                    <option value="beginner">Beginner — I'm new to military life</option>
+                    <option value="intermediate">Intermediate — I know the basics</option>
+                    <option value="advanced">Advanced — I know my benefits well</option>
+                  </select>
+                </Field>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">How do you prefer to consume information? (Select all that apply)</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {[
+                      { id: "checklists", label: "Step-by-step checklists" },
+                      { id: "deep-dive", label: "In-depth guides & explanations" },
+                      { id: "quick-tips", label: "Quick tips & actionable advice" },
+                      { id: "faqs", label: "FAQs & common questions" },
+                      { id: "calculators", label: "Interactive tools & calculators" },
+                    ].map((opt) => (
+                      <label key={opt.id} className="flex items-center space-x-2 p-2 rounded hover:bg-slate-50">
+                        <input
+                          type="checkbox"
+                          checked={formatPreference.includes(opt.id)}
+                          onChange={() => toggleFormatPref(opt.id)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-900">{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </Section>
 
             {/* Submit Button */}

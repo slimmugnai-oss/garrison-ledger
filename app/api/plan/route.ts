@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 // (no-op import removed)
-import { buildUserContext, type V2Block } from "@/lib/plan/personalize";
+import { buildUserContext, scoreBlock, type V2Block } from "@/lib/plan/personalize";
 import { doThisNowFromChecklist, type DoNowItem } from "@/lib/plan/interpolate";
 import { runPlanBuckets, type AssessmentFacts, type PlanBuckets } from "@/lib/plan/rules";
 import { checkAndIncrement } from "@/lib/limits";
@@ -15,10 +15,12 @@ type Block = {
   title: string;
   html: string;
   tags: string[];
+  topics?: string[];
   horder: number;
   hlevel?: number;
   block_type?: V2Block['block_type'];
   text_content?: string;
+  summary?: string;
 };
 
 export async function GET() {
@@ -53,11 +55,27 @@ export async function GET() {
   if (allSlugs.size) {
     const { data } = await supabase
       .from("content_blocks")
-      .select("source_page,slug,title,html,tags,horder,hlevel,block_type,text_content")
+      .select("source_page,slug,title,html,tags,topics,horder,hlevel,block_type,text_content,summary")
       .in("slug", Array.from(allSlugs))
       .order("horder", { ascending: true });
     blocks = (data || []) as Block[];
   }
+
+  // Score blocks for priority ranking
+  const scoredBlocks = blocks.map(b => ({
+    ...b,
+    score: scoreBlock({
+      source_page: b.source_page,
+      slug: b.slug,
+      hlevel: b.hlevel || 2,
+      title: b.title,
+      text_content: b.text_content || '',
+      block_type: b.block_type || 'section',
+      tags: b.tags,
+      topics: b.topics,
+      horder: b.horder,
+    } as V2Block, ctx),
+  }));
 
   // 4) Tool deep links based on answers (lightweight defaults)
   type AnyObj = Record<string, unknown>;
@@ -136,7 +154,7 @@ export async function GET() {
     };
   };
 
-  const bBySlug = new Map<string, Block>(blocks.map(b => [b.slug, b]));
+  const bBySlug = new Map<string, typeof scoredBlocks[0]>(scoredBlocks.map(b => [b.slug, b]));
   const sections: Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]> = { pcs: [], career: [], finance: [], deployment: [] };
 
   const pushBucket = (key: keyof PlanBuckets, list: { slug: string; why?: string }[]) => {
@@ -152,10 +170,22 @@ export async function GET() {
   pushBucket('finance', bucketsWithWhy.finance);
   pushBucket('deployment', bucketsWithWhy.deployment);
 
+  // Helper to determine priority level
+  const getPriority = (score: number): 'high'|'medium'|'low' => {
+    if (score >= 20) return 'high';
+    if (score >= 10) return 'medium';
+    return 'low';
+  };
+
   return NextResponse.json({
     sections,
     tools: { tspHref, sdpHref, houseHref },
     stageSummary,
+    // also return structured lists for TaskCards with priority
+    pcs: sections.pcs.map(n => { const b = bBySlug.get(n.slug); return ({ slug: n.slug, title: n.title, summary: (b?.summary) || '', fullContent: n.html, topics: b?.topics || [], priority: b ? getPriority(b.score) : 'low' }); }),
+    career: sections.career.map(n => { const b = bBySlug.get(n.slug); return ({ slug: n.slug, title: n.title, summary: (b?.summary) || '', fullContent: n.html, topics: b?.topics || [], priority: b ? getPriority(b.score) : 'low' }); }),
+    finance: sections.finance.map(n => { const b = bBySlug.get(n.slug); return ({ slug: n.slug, title: n.title, summary: (b?.summary) || '', fullContent: n.html, topics: b?.topics || [], priority: b ? getPriority(b.score) : 'low' }); }),
+    deployment: sections.deployment.map(n => { const b = bBySlug.get(n.slug); return ({ slug: n.slug, title: n.title, summary: (b?.summary) || '', fullContent: n.html, topics: b?.topics || [], priority: b ? getPriority(b.score) : 'low' }); }),
   }, { headers: { "Cache-Control": "no-store" } });
 }
 

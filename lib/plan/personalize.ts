@@ -11,6 +11,11 @@ export type UserContext = {
   needsMyCAA?: boolean;
   portableCareerInterestHigh?: boolean;
   candidateTags: Set<string>;
+  // Elite tier preferences
+  topicInterests?: string[];
+  urgency?: 'low' | 'normal' | 'high';
+  knowledgeLevel?: 'beginner' | 'intermediate' | 'advanced';
+  formatPreference?: string[];
 };
 
 type AnyObj = Record<string, unknown>;
@@ -50,6 +55,14 @@ export function buildUserContext(answers: AnyObj): UserContext {
   const needsMyCAA = str(answers, ['career', 'educationGoals'], '') === 'true';
   const portableCareerInterestHigh = portableCareerInterest === 'high';
 
+  // Elite tier: extract preferences
+  const v21 = (answers as any)?.v21 || {};
+  const prefs = v21?.preferences || {};
+  const topicInterests = Array.isArray(prefs.topicInterests) ? prefs.topicInterests : [];
+  const urgency = str(prefs as AnyObj, ['urgency'], 'normal') as UserContext['urgency'];
+  const knowledgeLevel = str(prefs as AnyObj, ['knowledgeLevel'], 'intermediate') as UserContext['knowledgeLevel'];
+  const formatPreference = Array.isArray(prefs.formatPreference) ? prefs.formatPreference : [];
+
   const candidateTags = new Set<string>();
   if (stage === 'pcs_soon') candidateTags.add('pcs');
   if (dependents && dependents > 0) candidateTags.add('kids');
@@ -72,6 +85,10 @@ export function buildUserContext(answers: AnyObj): UserContext {
     needsMyCAA,
     portableCareerInterestHigh,
     candidateTags,
+    topicInterests,
+    urgency,
+    knowledgeLevel,
+    formatPreference,
   };
 }
 
@@ -83,28 +100,103 @@ export type V2Block = {
   text_content: string;
   block_type: 'section'|'checklist'|'faq'|'table'|'tip';
   tags: string[];
+  topics?: string[];
   horder: number;
 };
 
 export function scoreBlock(block: V2Block, ctx: UserContext): number {
   let score = 0;
-  // tag overlap
+  
+  // Topic overlap (primary signal)
+  const userTopics = buildUserTopics(ctx);
+  for (const t of block.topics || []) {
+    if (userTopics.has(t)) score += 12;
+  }
+  
+  // Elite: explicit topic interests from assessment
+  for (const t of ctx.topicInterests || []) {
+    if ((block.topics || []).includes(t)) score += 15;
+  }
+  
+  // Tag overlap (legacy support)
   for (const t of block.tags || []) if (ctx.candidateTags.has(t)) score += 8;
-  // related keywords
+  
+  // Related keywords
   const text = `${block.title} ${block.text_content}`.toLowerCase();
   for (const kw of ctx.candidateTags) if (text.includes(kw)) score += 4;
-  // block type weights
-  if (block.block_type === 'checklist') score += 3;
-  if (block.block_type === 'table') score += 2;
-  // time relevance
-  if (ctx.timelineMonths != null) {
-    if (ctx.timelineMonths <= 6 && /pre[- ]?move|first 30 days|timeline/i.test(block.title)) score += 3;
+  
+  // Block type weights (with format preference boost)
+  const formatPrefs = ctx.formatPreference || [];
+  if (block.block_type === 'checklist') {
+    score += 3;
+    if (formatPrefs.includes('checklists')) score += 5;
   }
-  // demography boosts
+  if (block.block_type === 'table') score += 2;
+  if (block.block_type === 'tip') {
+    score += 1;
+    if (formatPrefs.includes('quick-tips')) score += 4;
+  }
+  if (block.block_type === 'faq' && formatPrefs.includes('faqs')) score += 5;
+  
+  // Time relevance
+  if (ctx.timelineMonths != null) {
+    if (ctx.timelineMonths <= 6 && /pre[- ]?move|first 30 days|timeline/i.test(block.title)) score += 5;
+    if (ctx.timelineMonths <= 3 && (block.topics || []).includes('pcs-prep')) score += 8;
+  }
+  
+  // Urgency multiplier
+  if (ctx.urgency === 'high') {
+    if ((block.topics || []).some(t => ['pcs-prep', 'checklist', 'deployment-phases'].includes(t))) {
+      score = Math.floor(score * 1.3);
+    }
+  }
+  
+  // Knowledge level adjustments
+  if (ctx.knowledgeLevel === 'beginner' && /intro|guide|101|basics|getting started/i.test(block.title)) score += 6;
+  if (ctx.knowledgeLevel === 'advanced' && /advanced|deep[- ]dive|master/i.test(block.title)) score += 4;
+  
+  // Demography boosts
   if ((ctx.dependents || 0) > 0 && /kids|children|school/i.test(text)) score += 3;
   if (ctx.housingStatus === 'on_base' && /on[- ]base|access/i.test(text)) score += 2;
   if (ctx.housingStatus === 'off_base' && /off[- ]base|bah|rent/i.test(text)) score += 2;
+  
+  // EFMP boost
+  const efmp = str(ctx as any, ['efmp'], '') === 'true';
+  if (efmp && (block.topics || []).includes('efmp')) score += 10;
+  
   return score;
+}
+
+// Map user context to relevant topics
+function buildUserTopics(ctx: UserContext): Set<string> {
+  const topics = new Set<string>();
+  
+  // Inferred from context
+  if (ctx.stage === 'pcs_soon') {
+    topics.add('pcs');
+    topics.add('pcs-prep');
+    topics.add('housing');
+  }
+  if (ctx.isBuyingLikely) topics.add('va-loan');
+  if (ctx.needsMyCAA) topics.add('mycaa');
+  if (ctx.portableCareerInterestHigh) {
+    topics.add('remote-work');
+    topics.add('career');
+    topics.add('job-search');
+  }
+  if (ctx.tspContribution > 0) topics.add('tsp');
+  if (ctx.sdpAmount > 0) topics.add('sdp');
+  if ((ctx.dependents || 0) > 0) {
+    topics.add('kids');
+    topics.add('efmp');
+  }
+  
+  // Elite: explicit topic interests from assessment
+  for (const t of ctx.topicInterests || []) {
+    topics.add(t);
+  }
+  
+  return topics;
 }
 
 
