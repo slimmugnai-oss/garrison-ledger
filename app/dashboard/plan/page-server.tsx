@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
-import { runPlanRules, scoreResources } from '@/lib/plan/rules';
+// V2.1 server plan is sourced from /api/plan; local rules are deprecated
 import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 
@@ -40,14 +40,9 @@ export default async function PlanPage() {
   const answers = await getAnswers();
   const toolkit = await getToolkit();
   
-  // Run rules engine if we have answers
-  let tags = new Set<string>();
-  let ranked: Item[] = [];
-  
-  if (answers) {
-    tags = await runPlanRules(answers);
-    ranked = scoreResources(tags, toolkit).slice(0, 10);
-  }
+  // Deprecated: server rules removed in V2.1
+  const tags = new Set<string>();
+  const ranked: Item[] = [];
 
   // Deep links to tools from facts
   const age = answers?.tsp?.age ?? 30;
