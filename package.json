@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "content:ingest": "tsx scripts/ingest-content.ts",
-    "content:ingest:v2": "tsx scripts/ingest-content-v2.ts"
+    "content:ingest:v2": "tsx scripts/ingest-content-v2.ts",
+    "content:ingest:v3": "tsx scripts/ingest-content-v3-smart.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.3",

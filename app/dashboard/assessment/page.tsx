@@ -4,62 +4,48 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Header from "@/app/components/Header";
 
-export default function DetailedAssessment() {
+export default function StrategicAssessment() {
   const r = useRouter();
 
-  // V2.1 — Revised Readiness Assessment
-  // Section 1: Your Foundation
-  const [serviceYears, setServiceYears] = useState("0-4");
-  const [familySnapshot, setFamilySnapshot] = useState("none");
-  const [efmp, setEfmp] = useState(false);
+  // Section 1: The Big Picture
+  const [biggestFocus, setBiggestFocus] = useState<string>("");
 
-  // Section 2: Your Next Move (PCS & Relocation)
-  const [pcsSituation, setPcsSituation] = useState("dwell");
-  const [oconus, setOconus] = useState<"yes" | "no" | "unsure">("no");
+  // Section 2: Your Next Move
+  const [pcsTimeline, setPcsTimeline] = useState<string>("");
+  const [efmpEnrolled, setEfmpEnrolled] = useState<boolean>(false);
 
-  // Section 3: Homefront (Deployment)
-  const [deployReality, setDeployReality] = useState("none");
+  // Section 3: Your Career
+  const [careerGoal, setCareerGoal] = useState<string>("");
 
-  // Section 4: Career & Ambition (multi-select)
-  const [ambitions, setAmbitions] = useState<string[]>([]);
-  const toggleAmbition = (id: string) =>
-    setAmbitions((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-
-  // Section 5: Financial Picture
-  const [finPriority, setFinPriority] = useState("budget");
-
-  // Section 6: Elite — Personalization Preferences
-  const [topicInterests, setTopicInterests] = useState<string[]>([]);
-  const toggleTopicInterest = (id: string) =>
-    setTopicInterests((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  const [urgency, setUrgency] = useState("normal");
-  const [knowledgeLevel, setKnowledgeLevel] = useState("intermediate");
-  const [formatPreference, setFormatPreference] = useState<string[]>([]);
-  const toggleFormatPref = (id: string) =>
-    setFormatPreference((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  // Section 4: Your Finances
+  const [financialWorry, setFinancialWorry] = useState<string>("");
 
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
+    if (!biggestFocus) {
+      alert("Please select your biggest focus to continue.");
+      return;
+    }
+
     setSubmitting(true);
 
     const answers = {
-      v21: {
-        foundation: { serviceYears, familySnapshot, efmp },
-        move: { pcsSituation, oconus },
-        deployment: { status: deployReality },
-        career: { ambitions },
-        finance: { priority: finPriority },
-        preferences: {
-          topicInterests,
-          urgency,
-          knowledgeLevel,
-          formatPreference,
-        },
+      strategic: {
+        biggestFocus,
+        pcsTimeline,
+        efmpEnrolled,
+        careerGoal,
+        financialWorry,
       },
-      // Legacy keys still referenced downstream (light touch)
-      timeline: { pcsDate: pcsSituation, deploymentStatus: deployReality },
-    } as const;
+      // Legacy compatibility
+      v21: {
+        foundation: { efmp: efmpEnrolled },
+        move: { pcsSituation: pcsTimeline },
+        career: { ambitions: careerGoal ? [careerGoal] : [] },
+        finance: { priority: financialWorry },
+      },
+    };
 
     try {
       const res = await fetch("/api/assessment", {
@@ -84,232 +70,117 @@ export default function DetailedAssessment() {
     <>
       <Header />
       <div className="min-h-screen" style={{ backgroundColor: "#FDFDFB" }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">📋 Readiness Assessment</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Answer these questions to receive your personalized plan. Takes about 3-5 minutes.
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Strategic Assessment
+            </h1>
+            <p className="text-xl text-gray-600">
+              Answer 4 questions to receive your personalized action plan. Takes 2 minutes.
             </p>
           </div>
 
-          <div className="space-y-6">
-            {/* Section 1: Your Foundation */}
-            <Section title="Your Foundation" icon="🏛️">
-              <div className="space-y-6">
-                <Field label="Which best describes you or your spouse's service?">
-                  <select
-                    value={serviceYears}
-                    onChange={(e) => setServiceYears(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="0-4">0-4 Years (Newer to military life)</option>
-                    <option value="5-10">5-10 Years (Finding the rhythm)</option>
-                    <option value="11-15">11-15 Years (Mid-career)</option>
-                    <option value="16+">16+ Years (Approaching retirement/transition)</option>
-                  </select>
-                </Field>
-                <Field label="What does your family look like right now?">
-                  <select
-                    value={familySnapshot}
-                    onChange={(e) => setFamilySnapshot(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="none">No children</option>
-                    <option value="young_children">Young children</option>
-                    <option value="school_age">School-age children</option>
-                    <option value="mixed">Mixed ages</option>
-                  </select>
-                </Field>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={efmp}
-                    onChange={(e) => setEfmp(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-gray-900 font-medium">Enrolled in Exceptional Family Member Program (EFMP)</span>
-                </div>
-              </div>
+          <div className="space-y-8">
+            {/* Section 1: The Big Picture */}
+            <Section title="The Big Picture" number="1">
+              <Question text="What is your family's single biggest focus or challenge right now?">
+                <RadioGroup
+                  name="biggestFocus"
+                  value={biggestFocus}
+                  onChange={setBiggestFocus}
+                  options={[
+                    { value: "pcs", label: "Preparing for an upcoming PCS move." },
+                    { value: "deployment", label: "Navigating a current or upcoming deployment." },
+                    { value: "career", label: "My (or my spouse's) career development." },
+                    { value: "finances", label: "Getting our household finances in order." },
+                  ]}
+                />
+              </Question>
             </Section>
 
-            {/* Section 2: Your Next Move (PCS & Relocation) */}
-            <Section title="Your Next Move (PCS & Relocation)" icon="🧭">
-              <div className="space-y-6">
-                <Field label="What is your current PCS situation?">
-                  <select
-                    value={pcsSituation}
-                    onChange={(e) => setPcsSituation(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="arrived">Just arrived</option>
-                    <option value="dwell">In the dwell time</option>
-                    <option value="window">In the PCS window</option>
-                    <option value="orders">Orders in hand</option>
-                    <option value="none">Not expecting to PCS again</option>
-                  </select>
-                </Field>
-                <Field label="Will this be an OCONUS (overseas) move?">
-                  <select
-                    value={oconus}
-                    onChange={(e) => setOconus(e.target.value as 'yes'|'no'|'unsure')}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                    <option value="unsure">Unsure</option>
-                  </select>
-                </Field>
-              </div>
-            </Section>
-
-            {/* Section 3: The Homefront (Deployment) */}
-            <Section title="The Homefront (Deployment)" icon="🎗️">
-              <Field label="What's your current deployment reality?">
-                <select
-                  value={deployReality}
-                  onChange={(e) => setDeployReality(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                >
-                  <option value="pre">Pre-deployment</option>
-                  <option value="current">Currently deployed</option>
-                  <option value="reintegration">Reintegration phase</option>
-                  <option value="none">Not in a deployment cycle</option>
-                </select>
-              </Field>
-            </Section>
-
-            {/* Section 4: Your Career & Ambition */}
-            <Section title="Your Career & Ambition" icon="💼">
-              <div className="space-y-3">
-                {[
-                  { id: "job", label: "I'm looking to find a new job." },
-                  { id: "portable", label: "I want to make my current career more 'portable.'" },
-                  { id: "business", label: "I'm trying to grow my own business." },
-                  { id: "education", label: "I'm considering going back to school or certification." },
-                  { id: "not_career", label: "I'm not focused on my career at this time." },
-                ].map((opt) => (
-                  <label key={opt.id} className="flex items-center space-x-3">
+            {/* Section 2: Your Next Move */}
+            <Section title="Your Next Move" number="2">
+              <Question text="How close is your next PCS?">
+                <RadioGroup
+                  name="pcsTimeline"
+                  value={pcsTimeline}
+                  onChange={setPcsTimeline}
+                  options={[
+                    { value: "orders", label: "We have orders in hand (less than 4 months)." },
+                    { value: "window", label: "We're in the \"PCS window\" (4-12 months)." },
+                    { value: "settled", label: "We're comfortably settled (1+ year away)." },
+                  ]}
+                />
+              </Question>
+              <Question text="Is your family enrolled in EFMP?" className="mt-6">
+                <div className="space-y-3">
+                  <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                     <input
-                      type="checkbox"
-                      checked={ambitions.includes(opt.id)}
-                      onChange={() => toggleAmbition(opt.id)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      type="radio"
+                      name="efmp"
+                      checked={efmpEnrolled === true}
+                      onChange={() => setEfmpEnrolled(true)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
-                    <span className="text-gray-900">{opt.label}</span>
+                    <span className="ml-3 text-gray-900 font-medium">Yes</span>
                   </label>
-                ))}
-              </div>
+                  <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="efmp"
+                      checked={efmpEnrolled === false}
+                      onChange={() => setEfmpEnrolled(false)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-gray-900 font-medium">No</span>
+                  </label>
+                </div>
+              </Question>
             </Section>
 
-            {/* Section 5: Your Financial Picture */}
-            <Section title="Your Financial Picture" icon="💰">
-              <Field label="What is your family's single biggest financial priority right now?">
-                <select
-                  value={finPriority}
-                  onChange={(e) => setFinPriority(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                >
-                  <option value="budget">Get on a budget</option>
-                  <option value="debt">Pay off debt</option>
-                  <option value="emergency">Build emergency savings</option>
-                  <option value="tsp">Maximize TSP</option>
-                  <option value="va">Use the VA Loan</option>
-                </select>
-              </Field>
+            {/* Section 3: Your Career */}
+            <Section title="Your Career" number="3">
+              <Question text="What's your primary career goal today?">
+                <RadioGroup
+                  name="careerGoal"
+                  value={careerGoal}
+                  onChange={setCareerGoal}
+                  options={[
+                    { value: "find-job", label: "Find a job, now." },
+                    { value: "portable-career", label: "Explore portable career options for the future." },
+                    { value: "business", label: "Start or grow my own business." },
+                    { value: "education", label: "Get a new certification or degree." },
+                  ]}
+                />
+              </Question>
             </Section>
 
-            {/* Section 6: Elite — Personalization Preferences */}
-            <Section title="Personalization Preferences (Optional)" icon="⚙️">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">Which topics are you most interested in learning about? (Select all that apply)</label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {[
-                      { id: "pcs-prep", label: "PCS Planning & Checklists" },
-                      { id: "housing", label: "Housing & BAH Strategies" },
-                      { id: "va-loan", label: "VA Loan & Home Buying" },
-                      { id: "remote-work", label: "Remote Work & Portable Careers" },
-                      { id: "mycaa", label: "MyCAA & Education Funding" },
-                      { id: "federal-employment", label: "Federal Employment (USAJOBS)" },
-                      { id: "entrepreneurship", label: "Starting a Business" },
-                      { id: "tsp", label: "TSP & Retirement Planning" },
-                      { id: "sdp", label: "SDP & Deployment Savings" },
-                      { id: "deployment-phases", label: "Deployment & Reintegration" },
-                      { id: "license-transfer", label: "Professional License Transfers" },
-                      { id: "oconus", label: "OCONUS Living" },
-                    ].map((opt) => (
-                      <label key={opt.id} className="flex items-center space-x-2 p-2 rounded hover:bg-slate-50">
-                        <input
-                          type="checkbox"
-                          checked={topicInterests.includes(opt.id)}
-                          onChange={() => toggleTopicInterest(opt.id)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-900">{opt.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <Field label="How urgent are your needs?">
-                  <select
-                    value={urgency}
-                    onChange={(e) => setUrgency(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="low">Low — I&apos;m exploring and planning ahead</option>
-                    <option value="normal">Normal — I need this in the next few months</option>
-                    <option value="high">High — I need actionable steps right now</option>
-                  </select>
-                </Field>
-
-                <Field label="How would you describe your knowledge level with military benefits?">
-                  <select
-                    value={knowledgeLevel}
-                    onChange={(e) => setKnowledgeLevel(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="beginner">Beginner — I&apos;m new to military life</option>
-                    <option value="intermediate">Intermediate — I know the basics</option>
-                    <option value="advanced">Advanced — I know my benefits well</option>
-                  </select>
-                </Field>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">How do you prefer to consume information? (Select all that apply)</label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {[
-                      { id: "checklists", label: "Step-by-step checklists" },
-                      { id: "deep-dive", label: "In-depth guides & explanations" },
-                      { id: "quick-tips", label: "Quick tips & actionable advice" },
-                      { id: "faqs", label: "FAQs & common questions" },
-                      { id: "calculators", label: "Interactive tools & calculators" },
-                    ].map((opt) => (
-                      <label key={opt.id} className="flex items-center space-x-2 p-2 rounded hover:bg-slate-50">
-                        <input
-                          type="checkbox"
-                          checked={formatPreference.includes(opt.id)}
-                          onChange={() => toggleFormatPref(opt.id)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-900">{opt.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            {/* Section 4: Your Finances */}
+            <Section title="Your Finances" number="4">
+              <Question text="From a financial standpoint, what's keeping you up at night?">
+                <RadioGroup
+                  name="financialWorry"
+                  value={financialWorry}
+                  onChange={setFinancialWorry}
+                  options={[
+                    { value: "budget-debt", label: "The stress of monthly budgeting and debt." },
+                    { value: "emergency-savings", label: "The fear of not having enough emergency savings." },
+                    { value: "retirement-tsp", label: "The uncertainty of not saving enough for retirement (TSP)." },
+                  ]}
+                />
+              </Question>
             </Section>
 
             {/* Submit Button */}
-            <div className="pt-6">
+            <div className="pt-8">
               <button
                 onClick={handleSubmit}
-                disabled={submitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={submitting || !biggestFocus}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-5 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? "💾 Saving assessment..." : "Generate My Personalized Plan 🚀"}
+                {submitting ? "Generating Your Plan..." : "Generate My Personalized Plan →"}
               </button>
-              <p className="text-center text-sm text-gray-500 mt-4">Premium members will receive a downloadable PDF guide</p>
             </div>
           </div>
         </div>
@@ -318,27 +189,62 @@ export default function DetailedAssessment() {
   );
 }
 
-function Section({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
+function Section({ title, number, children }: { title: string; number: string; children: React.ReactNode }) {
   return (
-    <div
-      className="bg-white rounded-xl p-8 border border-gray-200"
-      style={{ boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}
-    >
-      <div className="flex items-center mb-6">
-        <span className="text-3xl mr-3">{icon}</span>
-        <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+    <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-sm">
+      <div className="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200">
+        <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+          <span className="text-white text-xl font-bold">{number}</span>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
       </div>
       {children}
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Question({ text, children, className = "" }: { text: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">{label}</label>
+    <div className={className}>
+      <label className="block text-lg font-semibold text-gray-900 mb-4">{text}</label>
       {children}
     </div>
   );
 }
 
+function RadioGroup({ 
+  name, 
+  value, 
+  onChange, 
+  options 
+}: { 
+  name: string; 
+  value: string; 
+  onChange: (val: string) => void; 
+  options: Array<{ value: string; label: string }> 
+}) {
+  return (
+    <div className="space-y-3">
+      {options.map((opt) => (
+        <label
+          key={opt.value}
+          className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+            value === opt.value
+              ? 'border-blue-600 bg-blue-50'
+              : 'border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          <input
+            type="radio"
+            name={name}
+            value={opt.value}
+            checked={value === opt.value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+          />
+          <span className="ml-3 text-gray-900 font-medium">{opt.label}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
