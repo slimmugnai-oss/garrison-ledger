@@ -124,10 +124,10 @@ export async function GET() {
   const scored = blocks.map(b => ({ b, score: scoreBlock({
     source_page: b.source_page,
     slug: b.slug,
-    hlevel: (b as any).hlevel || 2,
+    hlevel: b.hlevel || 2,
     title: b.title,
-    text_content: (b as any).text_content || '',
-    block_type: ((b as any).block_type || 'section') as V2Block['block_type'],
+    text_content: b.text_content || '',
+    block_type: (b.block_type || 'section') as V2Block['block_type'],
     tags: b.tags || [],
     horder: b.horder,
   }, ctx) }));
@@ -161,7 +161,7 @@ export async function GET() {
   };
 
   const nodes: PlanRenderNode[] = selected.map(b => {
-    const blockType = ((b as any).block_type || 'section') as PlanRenderNode['blockType'];
+    const blockType = (b.block_type || 'section') as PlanRenderNode['blockType'];
     const callouts = {
       whyItMatters: whyItMattersBullets(ctx as UserContext),
       doThisNow: blockType === 'checklist' ? doThisNowFromChecklist(b.html) : undefined,
