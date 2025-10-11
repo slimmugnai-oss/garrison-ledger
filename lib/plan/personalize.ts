@@ -184,8 +184,8 @@ function buildUserTopics(ctx: UserContext): Set<string> {
     topics.add('career');
     topics.add('job-search');
   }
-  if (ctx.tspContribution > 0) topics.add('tsp');
-  if (ctx.sdpAmount > 0) topics.add('sdp');
+  if ((ctx.tspContribution || 0) > 0) topics.add('tsp');
+  if ((ctx.sdpAmount || 0) > 0) topics.add('sdp');
   if ((ctx.dependents || 0) > 0) {
     topics.add('kids');
     topics.add('efmp');
