@@ -32,7 +32,7 @@ function makeSanitizer() {
   return (html: string) => DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }
 
-function classifyBlock($: cheerio.CheerioAPI, root: cheerio.Cheerio<cheerio.Element>): 'section'|'checklist'|'faq'|'table'|'tip' {
+function classifyBlock($: cheerio.CheerioAPI, root: cheerio.Cheerio<unknown>): 'section'|'checklist'|'faq'|'table'|'tip' {
   if (root.find('table').length > 0) return 'table';
   if (root.find('ul,ol').length > 0) {
     const text = root.text().toLowerCase();
@@ -74,9 +74,9 @@ async function upsertBlock(row: {
   if (error) throw new Error(error.message);
 }
 
-function normalizeLinks($frag: cheerio.CheerioAPI, el: cheerio.Cheerio<cheerio.Element>) {
+function normalizeLinks($frag: cheerio.CheerioAPI, el: cheerio.Cheerio<unknown>) {
   el.find('a[href^="/"]').each((_, a) => {
-    const $a = $frag(a);
+    const $a = $frag(a as unknown as any);
     const href = $a.attr('href');
     if (href && href.startsWith('/')) $a.attr('href', `${SITE_URL}${href}`);
   });
@@ -101,7 +101,7 @@ async function ingestOne({ file, source }: Source) {
     const slug = slugify(title);
 
     // collect content until next heading of same or higher level
-    const frag: cheerio.Element[] = [];
+    const frag: unknown[] = [];
     let sib = $h.next();
     while (sib.length) {
       const tag = sib[0].tagName?.toLowerCase();
@@ -110,13 +110,13 @@ async function ingestOne({ file, source }: Source) {
         if (nextLevel <= level) break;
       }
       normalizeLinks($, sib);
-      frag.push(sib[0]);
+      frag.push(sib[0] as unknown);
       sib = sib.next();
     }
 
     const html = sanitize(frag.map(x => $.html(x)).join('\n'));
     const txt = textOnly(html);
-    const block_type = classifyBlock($, $(frag));
+    const block_type = classifyBlock($, $(frag as any));
     const tags = deriveTags(source, title);
     const est_read_min = Math.max(1, Math.ceil(txt.split(' ').length / 220));
 
