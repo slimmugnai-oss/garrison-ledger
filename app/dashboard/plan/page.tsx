@@ -10,12 +10,16 @@ import toolkitData from '@/public/toolkit-map.json';
 
 type Item = { title: string; url: string; tags: string[] };
 type AssessmentAnswers = Record<string, unknown>;
+type PlanBlock = { source_page: string; slug: string; title: string; html: string; tags: string[]; horder: number };
 
 export default function PlanPage() {
   const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState<Set<string>>(new Set());
   const [ranked, setRanked] = useState<Item[]>([]);
+  const [blocks, setBlocks] = useState<PlanBlock[]>([]);
+  const [stageSummary, setStageSummary] = useState<string>("");
+  const [tools, setTools] = useState<{ tspHref: string; sdpHref: string; houseHref: string } | null>(null);
 
   useEffect(() => {
     async function loadAssessment() {
@@ -44,6 +48,22 @@ export default function PlanPage() {
     loadAssessment();
   }, []);
 
+  useEffect(() => {
+    async function loadPlanBlocks() {
+      try {
+        const r = await fetch('/api/plan', { cache: 'no-store' });
+        if (!r.ok) return;
+        const j = await r.json();
+        setBlocks(j.blocks || []);
+        setTools(j.tools || null);
+        setStageSummary(j.stageSummary || "");
+      } catch (e) {
+        console.error('Error loading plan blocks:', e);
+      }
+    }
+    loadPlanBlocks();
+  }, []);
+
   // Deep links to tools from facts
   const personal = (answers as { personal?: { age?: number } })?.personal;
   const timeline = (answers as { timeline?: { sdpAmount?: number } })?.timeline;
@@ -53,13 +73,13 @@ export default function PlanPage() {
   const age = personal?.age ?? 30;
   const tspBalance = financial?.tspBalance ?? 50000;
   const tspContribution = financial?.tspContribution ?? 500;
-  const tspHref = `/dashboard/tools/tsp-modeler?age=${age}&retire=50&bal=${tspBalance}&cont=${tspContribution}&mix=C:70,S:30`;
+  const tspHref = tools?.tspHref || `/dashboard/tools/tsp-modeler?age=${age}&retire=50&bal=${tspBalance}&cont=${tspContribution}&mix=C:70,S:30`;
 
   const sdpAmount = timeline?.sdpAmount ?? 10000;
-  const sdpHref = `/dashboard/tools/sdp-strategist?amount=${sdpAmount}`;
+  const sdpHref = tools?.sdpHref || `/dashboard/tools/sdp-strategist?amount=${sdpAmount}`;
 
   const bahAmount = housing?.bahAmount ?? 2400;
-  const houseHref = `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=${bahAmount}&rent=2200`;
+  const houseHref = tools?.houseHref || `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=${bahAmount}&rent=2200`;
 
   if (loading) {
     return (
@@ -90,9 +110,7 @@ export default function PlanPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Your Personalized Action Plan
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Tailored financial roadmap based on your military service stage and goals
-            </p>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">{stageSummary || 'Tailored financial roadmap based on your military service stage and goals'}</p>
           </div>
 
           {!answers && (
@@ -186,6 +204,26 @@ export default function PlanPage() {
                     <h2 className="text-2xl font-bold text-gray-900">Recommended Resources</h2>
                   </div>
                   <ResourcesList ranked={ranked} />
+                </div>
+              )}
+
+              {/* Recommended Sections (full content) */}
+              {blocks.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
+                      <span className="text-white text-xl">🧭</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Recommended Sections for You</h2>
+                  </div>
+                  <div className="space-y-10">
+                    {blocks.map((b) => (
+                      <section key={`${b.source_page}:${b.slug}`} id={`cb-${b.slug}`} className="border-t border-gray-200 pt-6">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">{b.title}</h3>
+                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: b.html }} />
+                      </section>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
