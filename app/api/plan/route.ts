@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { runPlanRules } from "@/lib/plan/rules";
 import type { AssessmentFacts } from "@/lib/plan/rules";
-import { buildUserContext, scoreBlock, type V2Block } from "@/lib/plan/personalize";
-import { whyItMattersBullets, doThisNowFromChecklist, estImpact } from "@/lib/plan/interpolate";
+import { buildUserContext, scoreBlock, type V2Block, type UserContext } from "@/lib/plan/personalize";
+import { whyItMattersBullets, doThisNowFromChecklist, estImpact, type DoNowItem, type EstImpact } from "@/lib/plan/interpolate";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
@@ -155,17 +155,17 @@ export async function GET() {
     slug: string;
     callouts: {
       whyItMatters?: string[];
-      doThisNow?: { id:string; text:string }[];
-      estImpact?: { label:string; value:string }[];
+      doThisNow?: DoNowItem[];
+      estImpact?: EstImpact[];
     };
   };
 
   const nodes: PlanRenderNode[] = selected.map(b => {
     const blockType = ((b as any).block_type || 'section') as PlanRenderNode['blockType'];
     const callouts = {
-      whyItMatters: whyItMattersBullets(ctx as any),
+      whyItMatters: whyItMattersBullets(ctx as UserContext),
       doThisNow: blockType === 'checklist' ? doThisNowFromChecklist(b.html) : undefined,
-      estImpact: estImpact(ctx as any),
+      estImpact: estImpact(ctx as UserContext),
     };
     return {
       id: `${b.source_page}:${b.slug}`,

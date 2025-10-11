@@ -18,7 +18,20 @@ export default function PlanPage() {
   const [tags, setTags] = useState<Set<string>>(new Set());
   const [ranked, setRanked] = useState<Item[]>([]);
   const [blocks, setBlocks] = useState<PlanBlock[]>([]);
-  const [nodes, setNodes] = useState<any[]>([]);
+  type PlanRenderNode = {
+    id: string;
+    title: string;
+    html: string;
+    blockType: 'section'|'checklist'|'faq'|'table'|'tip';
+    source: string;
+    slug: string;
+    callouts: {
+      whyItMatters?: string[];
+      doThisNow?: { id:string; text:string }[];
+      estImpact?: { label:string; value:string }[];
+    };
+  };
+  const [nodes, setNodes] = useState<PlanRenderNode[]>([]);
   const [stageSummary, setStageSummary] = useState<string>("");
   const [tools, setTools] = useState<{ tspHref: string; sdpHref: string; houseHref: string } | null>(null);
 
@@ -56,7 +69,7 @@ export default function PlanPage() {
         if (!r.ok) return;
         const j = await r.json();
         setBlocks(j.blocks || []);
-        setNodes(j.nodes || []);
+        setNodes((j.nodes || []) as PlanRenderNode[]);
         setTools(j.tools || null);
         setStageSummary(j.stageSummary || "");
       } catch (e) {
@@ -228,7 +241,7 @@ export default function PlanPage() {
                           </div>
                           <aside className="hidden md:block w-80 flex-shrink-0 sticky top-24 self-start">
                             <div className="rounded-lg border bg-slate-50 p-4 space-y-4">
-                              {n.callouts?.whyItMatters?.length > 0 && (
+                              {Array.isArray(n.callouts?.whyItMatters) && n.callouts.whyItMatters.length > 0 && (
                                 <div>
                                   <div className="text-sm font-semibold text-slate-700 mb-2">Why this matters</div>
                                   <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
@@ -236,11 +249,11 @@ export default function PlanPage() {
                                   </ul>
                                 </div>
                               )}
-                              {n.callouts?.doThisNow?.length > 0 && (
+                              {Array.isArray(n.callouts?.doThisNow) && n.callouts.doThisNow.length > 0 && (
                                 <div>
                                   <div className="text-sm font-semibold text-slate-700 mb-2">Do this now</div>
                                   <ul className="space-y-1 text-sm">
-                                    {n.callouts.doThisNow.map((d: any) => (
+                                    {n.callouts.doThisNow.map((d) => (
                                       <li key={d.id} className="flex items-start gap-2">
                                         <input type="checkbox" className="mt-1" />
                                         <span className="text-slate-700">{d.text}</span>
@@ -249,11 +262,11 @@ export default function PlanPage() {
                                   </ul>
                                 </div>
                               )}
-                              {n.callouts?.estImpact?.length > 0 && (
+                              {Array.isArray(n.callouts?.estImpact) && n.callouts.estImpact.length > 0 && (
                                 <div>
                                   <div className="text-sm font-semibold text-slate-700 mb-2">Est. impact</div>
                                   <ul className="space-y-1 text-sm text-slate-700">
-                                    {n.callouts.estImpact.map((e: any, i: number) => (
+                                    {n.callouts.estImpact.map((e, i) => (
                                       <li key={i} className="flex justify-between gap-3"><span>{e.label}</span><span className="font-medium">{e.value}</span></li>
                                     ))}
                                   </ul>
