@@ -78,12 +78,17 @@ export default function PlanPage() {
     async function loadPlanBlocks() {
       try {
         const r = await fetch('/api/plan', { cache: 'no-store' });
-        if (!r.ok) return;
+        if (!r.ok) {
+          console.error('Plan API failed:', r.status, await r.text());
+          return;
+        }
         const j = await r.json();
+        console.log('Plan API response:', j);
         if (j.sections) setSections(j.sections as Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>);
         setTools(j.tools || null);
         setStageSummary(j.stageSummary || "");
         setTaskData({ pcs: j.pcs || [], career: j.career || [], finance: j.finance || [], deployment: j.deployment || [] });
+        console.log('TaskData set:', { pcs: j.pcs?.length, career: j.career?.length, finance: j.finance?.length, deployment: j.deployment?.length });
       } catch (e) {
         console.error('Error loading plan:', e);
       }
@@ -231,7 +236,7 @@ export default function PlanPage() {
               </div>
 
               {/* Intelligent Sections */}
-              {sections.pcs.length > 0 && (
+              {taskData.pcs.filter(topicMatches).length > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
@@ -247,7 +252,7 @@ export default function PlanPage() {
                 </div>
               )}
 
-              {sections.career.length > 0 && (
+              {taskData.career.filter(topicMatches).length > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mr-4">
@@ -263,7 +268,7 @@ export default function PlanPage() {
                 </div>
               )}
 
-              {sections.finance.length > 0 && (
+              {taskData.finance.filter(topicMatches).length > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center mr-4">
@@ -279,7 +284,7 @@ export default function PlanPage() {
                 </div>
               )}
 
-              {sections.deployment.length > 0 && (
+              {taskData.deployment.filter(topicMatches).length > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-rose-600 rounded-lg flex items-center justify-center mr-4">
