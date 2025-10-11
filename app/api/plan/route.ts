@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { runPlanRules } from "@/lib/plan/rules";
 import type { AssessmentFacts } from "@/lib/plan/rules";
 import { buildUserContext, scoreBlock, type V2Block, type UserContext } from "@/lib/plan/personalize";
 import { whyItMattersBullets, doThisNowFromChecklist, estImpact, type DoNowItem, type EstImpact } from "@/lib/plan/interpolate";
@@ -41,8 +40,7 @@ export async function GET() {
 
   // 2) Build personalization context and candidate tags
   const ctx = buildUserContext(answersRaw);
-  const tagSet = await runPlanRules(answersRaw as unknown as AssessmentFacts);
-  const tags = Array.from(new Set([...(ctx.candidateTags || new Set<string>()), ...Array.from(tagSet)]));
+  const tags = Array.from(new Set([...(ctx.candidateTags || new Set<string>())]));
 
   // 3) Select blocks by tag overlap; fallback to top ordered blocks
   const MAX_BLOCKS = 12;
