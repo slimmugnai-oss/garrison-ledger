@@ -12,13 +12,15 @@ export default async function CommandDashboard() {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
   const answers = (aRow?.answers || {}) as Record<string, unknown>;
-  const v21 = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined || {};
+  const v21Obj = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined;
+  const foundation = (v21Obj?.foundation as Record<string, unknown> | undefined) || {};
+  const move = (v21Obj?.move as Record<string, unknown> | undefined) || {};
 
   // Extract profile data
-  const serviceYears = String(v21?.foundation?.serviceYears || '');
-  const familySnapshot = String(v21?.move?.familySnapshot || 'none');
-  const efmp = Boolean(v21?.foundation?.efmp);
-  const pcsSituation = String(v21?.move?.pcsSituation || '');
+  const serviceYears = String(foundation?.serviceYears || '');
+  const familySnapshot = String(move?.familySnapshot || 'none');
+  const efmp = Boolean(foundation?.efmp);
+  const pcsSituation = String(move?.pcsSituation || '');
   const hasAssessment = Object.keys(answers).length > 0;
 
   // Profile summary strings
