@@ -56,8 +56,8 @@ export function buildUserContext(answers: AnyObj): UserContext {
   const portableCareerInterestHigh = portableCareerInterest === 'high';
 
   // Elite tier: extract preferences
-  const v21 = (answers as any)?.v21 || {};
-  const prefs = v21?.preferences || {};
+  const v21 = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined || {};
+  const prefs = (v21?.preferences as Record<string, unknown> | undefined) || {};
   const topicInterests = Array.isArray(prefs.topicInterests) ? prefs.topicInterests : [];
   const urgency = str(prefs as AnyObj, ['urgency'], 'normal') as UserContext['urgency'];
   const knowledgeLevel = str(prefs as AnyObj, ['knowledgeLevel'], 'intermediate') as UserContext['knowledgeLevel'];
@@ -161,7 +161,7 @@ export function scoreBlock(block: V2Block, ctx: UserContext): number {
   if (ctx.housingStatus === 'off_base' && /off[- ]base|bah|rent/i.test(text)) score += 2;
   
   // EFMP boost
-  const efmp = str(ctx as any, ['efmp'], '') === 'true';
+  const efmp = str(ctx as unknown as AnyObj, ['efmp'], '') === 'true';
   if (efmp && (block.topics || []).includes('efmp')) score += 10;
   
   return score;

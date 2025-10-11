@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const body = await req.json().catch(() => ({} as any));
+  const body = await req.json().catch(() => ({} as Record<string, unknown>));
   const slug = String(body?.slug || '');
   const status = body?.status === 'complete' ? 'complete' : 'incomplete';
   if (!slug) return NextResponse.json({ error: 'slug required' }, { status: 400 });

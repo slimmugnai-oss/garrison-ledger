@@ -6,32 +6,31 @@ import Header from '@/app/components/Header';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import TaskCard from '@/app/components/ui/TaskCard';
 import { useUser } from '@clerk/nextjs';
-import AccordionItem from '@/app/components/ui/AccordionItem';
 
-type Item = { title: string; url: string; tags: string[] };
 type AssessmentAnswers = Record<string, unknown>;
-type PlanBlock = { source_page: string; slug: string; title: string; html: string; tags: string[]; horder: number };
+
+type TaskItem = { slug: string; title: string; summary: string; fullContent: string; topics?: string[]; priority?: 'high'|'medium'|'low' };
+type PlanRenderNode = {
+  id: string;
+  title: string;
+  html: string;
+  blockType: 'section'|'checklist'|'faq'|'table'|'tip';
+  source: string;
+  slug: string;
+  callouts: {
+    whyItMatters?: string[];
+    doThisNow?: { id:string; text:string }[];
+    estImpact?: { label:string; value:string }[];
+  };
+};
 
 export default function PlanPage() {
   const { user } = useUser();
   const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
   const [loading, setLoading] = useState(true);
   const [taskStatuses, setTaskStatuses] = useState<Record<string,'incomplete'|'complete'>>({});
-  const [taskData, setTaskData] = useState<{ pcs:any[]; career:any[]; finance:any[]; deployment:any[] }>({ pcs:[], career:[], finance:[], deployment:[] });
+  const [taskData, setTaskData] = useState<{ pcs:TaskItem[]; career:TaskItem[]; finance:TaskItem[]; deployment:TaskItem[] }>({ pcs:[], career:[], finance:[], deployment:[] });
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  type PlanRenderNode = {
-    id: string;
-    title: string;
-    html: string;
-    blockType: 'section'|'checklist'|'faq'|'table'|'tip';
-    source: string;
-    slug: string;
-    callouts: {
-      whyItMatters?: string[];
-      doThisNow?: { id:string; text:string }[];
-      estImpact?: { label:string; value:string }[];
-    };
-  };
   const [sections, setSections] = useState<Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>>({ pcs: [], career: [], finance: [], deployment: [] });
   const [stageSummary, setStageSummary] = useState<string>("");
   const [tools, setTools] = useState<{ tspHref: string; sdpHref: string; houseHref: string } | null>(null);
@@ -52,7 +51,7 @@ export default function PlanPage() {
 
   const clearTopics = () => setSelectedTopics([]);
 
-  const topicMatches = (item: any) => selectedTopics.length === 0 || (item?.topics || []).some((t: string) => selectedTopics.includes(t));
+  const topicMatches = (item: TaskItem) => selectedTopics.length === 0 || (item?.topics || []).some((t: string) => selectedTopics.includes(t));
 
   useEffect(() => {
     async function loadAssessment() {
@@ -359,43 +358,6 @@ function resolveFinancialPriority(answers: AssessmentAnswers | null): string {
   return p ? (map[p] || String(p)) : '';
 }
 
-function SmartContent({ html }: { html: string }) {
-  // Heuristic: split tips marked with 💡 into separate blocks; otherwise render prose
-  if (html.includes('💡')) {
-    const tips = html.split(/💡/).map(t => t.trim()).filter(Boolean);
-    if (tips.length > 1) {
-      return (
-        <div className="grid gap-4 md:grid-cols-2">
-          {tips.map((t, i) => (
-            <div key={i} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-700 mb-2">💡 Tip</div>
-              <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: t }} />
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-  // Fallback: render with a short summary if long
-  const textOnly = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  const summary = textOnly.split('. ').slice(0, 3).join('. ') + (textOnly ? '.' : '');
-  const isLong = textOnly.length > 600;
-  return (
-    <div>
-      {isLong && (
-        <div className="mb-3 rounded-md bg-slate-50 border border-slate-200 p-3">
-          <div className="text-sm font-semibold text-slate-700 mb-1">Key points</div>
-          <ul className="list-disc pl-5 text-sm text-slate-700">
-            {summary.split('. ').filter(Boolean).map((s, i) => (
-              <li key={i}>{s.replace(/\.$/, '')}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
 
 function ActionLinkCard({ title, description, href, icon }: { title: string; description: string; href: string; icon: string }) {
   return (

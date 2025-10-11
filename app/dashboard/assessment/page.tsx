@@ -28,6 +28,16 @@ export default function DetailedAssessment() {
   // Section 5: Financial Picture
   const [finPriority, setFinPriority] = useState("budget");
 
+  // Section 6: Elite — Personalization Preferences
+  const [topicInterests, setTopicInterests] = useState<string[]>([]);
+  const toggleTopicInterest = (id: string) =>
+    setTopicInterests((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const [urgency, setUrgency] = useState("normal");
+  const [knowledgeLevel, setKnowledgeLevel] = useState("intermediate");
+  const [formatPreference, setFormatPreference] = useState<string[]>([]);
+  const toggleFormatPref = (id: string) =>
+    setFormatPreference((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -64,7 +74,7 @@ export default function DetailedAssessment() {
         return;
       }
       r.push("/dashboard/plan");
-    } catch (e) {
+    } catch {
       alert("Failed to save assessment. Please try again.");
       setSubmitting(false);
     }
@@ -247,7 +257,7 @@ export default function DetailedAssessment() {
                     onChange={(e) => setUrgency(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   >
-                    <option value="low">Low — I'm exploring and planning ahead</option>
+                    <option value="low">Low — I&apos;m exploring and planning ahead</option>
                     <option value="normal">Normal — I need this in the next few months</option>
                     <option value="high">High — I need actionable steps right now</option>
                   </select>
@@ -259,7 +269,7 @@ export default function DetailedAssessment() {
                     onChange={(e) => setKnowledgeLevel(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   >
-                    <option value="beginner">Beginner — I'm new to military life</option>
+                    <option value="beginner">Beginner — I&apos;m new to military life</option>
                     <option value="intermediate">Intermediate — I know the basics</option>
                     <option value="advanced">Advanced — I know my benefits well</option>
                   </select>
