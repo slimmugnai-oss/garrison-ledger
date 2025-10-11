@@ -7,6 +7,7 @@ import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import toolkitData from '@/public/toolkit-map.json';
 import { useUser } from '@clerk/nextjs';
+import AccordionItem from '@/app/components/ui/AccordionItem';
 
 type Item = { title: string; url: string; tags: string[] };
 type AssessmentAnswers = Record<string, unknown>;
@@ -201,49 +202,40 @@ export default function PlanPage() {
                   </div>
                   <div className="space-y-10">
                     {sections.pcs.map((n) => (
-                      <section key={n.id} id={`node-${n.slug}`} className="border-t border-gray-200 pt-6">
-                        <div className="flex items-start justify-between gap-6">
-                          <div className="min-w-0">
-                            <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
-                            <SmartContent html={n.html} />
+                      <AccordionItem key={n.id} title={n.title} icon="🧭" defaultOpen={false}>
+                        <SmartContent html={n.html} />
+                        {Array.isArray(n.callouts?.whyItMatters) && n.callouts.whyItMatters.length > 0 && (
+                          <div className="mt-4">
+                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Why this matters</h4>
+                            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                              {n.callouts.whyItMatters.map((t: string, i: number) => (<li key={i}>{t}</li>))}
+                            </ul>
                           </div>
-                          <aside className="hidden md:block w-80 flex-shrink-0 sticky top-24 self-start">
-                            <div className="rounded-lg border bg-slate-50 p-4 space-y-4">
-                              {Array.isArray(n.callouts?.whyItMatters) && n.callouts.whyItMatters.length > 0 && (
-                                <div>
-                                  <div className="text-sm font-semibold text-slate-700 mb-2">Why this matters</div>
-                                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
-                                    {n.callouts.whyItMatters.map((t: string, i: number) => (<li key={i}>{t}</li>))}
-                                  </ul>
-                                </div>
-                              )}
-                              {Array.isArray(n.callouts?.doThisNow) && n.callouts.doThisNow.length > 0 && (
-                                <div>
-                                  <div className="text-sm font-semibold text-slate-700 mb-2">Do this now</div>
-                                  <ul className="space-y-1 text-sm">
-                                    {n.callouts.doThisNow.map((d) => (
-                                      <li key={d.id} className="flex items-start gap-2">
-                                        <input type="checkbox" className="mt-1" />
-                                        <span className="text-slate-700">{d.text}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                              {Array.isArray(n.callouts?.estImpact) && n.callouts.estImpact.length > 0 && (
-                                <div>
-                                  <div className="text-sm font-semibold text-slate-700 mb-2">Est. impact</div>
-                                  <ul className="space-y-1 text-sm text-slate-700">
-                                    {n.callouts.estImpact.map((e, i) => (
-                                      <li key={i} className="flex justify-between gap-3"><span>{e.label}</span><span className="font-medium">{e.value}</span></li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          </aside>
-                        </div>
-                      </section>
+                        )}
+                        {Array.isArray(n.callouts?.doThisNow) && n.callouts.doThisNow.length > 0 && (
+                          <div className="mt-4">
+                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Do this now</h4>
+                            <ul className="space-y-1 text-sm">
+                              {n.callouts.doThisNow.map((d) => (
+                                <li key={d.id} className="flex items-start gap-2">
+                                  <input type="checkbox" className="mt-1" />
+                                  <span className="text-slate-700">{d.text}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {Array.isArray(n.callouts?.estImpact) && n.callouts.estImpact.length > 0 && (
+                          <div className="mt-4">
+                            <h4 className="text-lg font-semibold text-slate-900 mb-2">Est. impact</h4>
+                            <ul className="space-y-1 text-sm text-slate-700">
+                              {n.callouts.estImpact.map((e, i) => (
+                                <li key={i} className="flex justify-between gap-3"><span>{e.label}</span><span className="font-medium">{e.value}</span></li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </AccordionItem>
                     ))}
                   </div>
                 </div>
@@ -259,14 +251,9 @@ export default function PlanPage() {
                   </div>
                   <div className="space-y-10">
                     {sections.career.map((n) => (
-                      <section key={n.id} id={`node-${n.slug}`} className="border-t border-gray-200 pt-6">
-                        <div className="flex items-start justify-between gap-6">
-                          <div className="min-w-0">
-                            <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
-                            <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                          </div>
-                        </div>
-                      </section>
+                      <AccordionItem key={n.id} title={n.title} icon="💼" defaultOpen={false}>
+                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
+                      </AccordionItem>
                     ))}
                   </div>
                 </div>
@@ -282,12 +269,9 @@ export default function PlanPage() {
                   </div>
                   <div className="space-y-10">
                     {sections.finance.map((n) => (
-                      <section key={n.id} id={`node-${n.slug}`} className="border-t border-gray-200 pt-6">
-                        <div className="min-w-0">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
-                          <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                        </div>
-                      </section>
+                      <AccordionItem key={n.id} title={n.title} icon="💰" defaultOpen={false}>
+                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
+                      </AccordionItem>
                     ))}
                   </div>
                 </div>
@@ -303,12 +287,9 @@ export default function PlanPage() {
                   </div>
                   <div className="space-y-10">
                     {sections.deployment.map((n) => (
-                      <section key={n.id} id={`node-${n.slug}`} className="border-t border-gray-200 pt-6">
-                        <div className="min-w-0">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
-                          <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
-                        </div>
-                      </section>
+                      <AccordionItem key={n.id} title={n.title} icon="❤️" defaultOpen={false}>
+                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
+                      </AccordionItem>
                     ))}
                   </div>
                 </div>
