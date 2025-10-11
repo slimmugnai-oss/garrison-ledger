@@ -44,7 +44,7 @@ export function runPlanBuckets(facts: AssessmentFacts): PlanBuckets {
   // Topic-driven PCS additions
   if (topicInterests.includes('pcs-prep')) buckets.pcs.push({ slug: 'interactive-pcs-timeline-generator', why: 'Because you expressed interest in PCS planning, this timeline tool organizes every deadline.' });
   if (topicInterests.includes('housing')) buckets.pcs.push({ slug: 'mental-and-emotional-readiness', why: 'Because housing transitions are stressful, this guide helps you navigate the emotional side of a move.' });
-  if (topicInterests.includes('oconus') && v21?.move?.oconus === 'yes') buckets.pcs.push({ slug: 'oconus-navigator', why: 'Because you're moving overseas, these country-specific guides prevent costly surprises.' });
+  if (topicInterests.includes('oconus') && v21?.move?.oconus === 'yes') buckets.pcs.push({ slug: 'oconus-navigator', why: "Because you're moving overseas, these country-specific guides prevent costly surprises." });
 
   // Career
   if (ambitions.includes('job') || ambitions.includes('portable')) buckets.career.push({ slug: 'career-exploration-and-portable-fields', why: 'Because your goal is a portable, resilient career, these fields travel well across moves.' });
@@ -54,7 +54,7 @@ export function runPlanBuckets(facts: AssessmentFacts): PlanBuckets {
   // Topic-driven career additions
   if (topicInterests.includes('remote-work')) buckets.career.push({ slug: 'resume-power-up-translate-your-life', why: 'Because you want remote work, translating military life into resume gold is essential.' });
   if (topicInterests.includes('federal-employment')) buckets.career.push({ slug: 'mastering-federal-employment-navigate-usajobs', why: 'Because federal jobs offer stability and PCS portability, mastering USAJOBS opens powerful doors.' });
-  if (topicInterests.includes('mycaa') && knowledgeLevel === 'beginner') buckets.career.push({ slug: 'deep-dive-my-caa-scholarship', why: 'Because you're new to MyCAA, this deep-dive walks you through every step of the $4,000 benefit.' });
+  if (topicInterests.includes('mycaa') && knowledgeLevel === 'beginner') buckets.career.push({ slug: 'deep-dive-my-caa-scholarship', why: "Because you're new to MyCAA, this deep-dive walks you through every step of the $4,000 benefit." });
   if (topicInterests.includes('entrepreneurship')) buckets.career.push({ slug: 'step-1-create-a-simple-business-plan', why: 'Because you want to start a business, this 1-page plan framework gets you moving fast.' });
   
   // Urgency boost for checklists
