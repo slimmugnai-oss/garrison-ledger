@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   title: string;
@@ -13,6 +12,22 @@ type Props = {
 
 export default function AccordionItem({ title, content, icon, defaultOpen = false, children }: Props) {
   const [open, setOpen] = useState<boolean>(defaultOpen);
+  const [maxHeight, setMaxHeight] = useState<number>(0);
+  const [renderedOpen, setRenderedOpen] = useState<boolean>(defaultOpen);
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      setRenderedOpen(true);
+      requestAnimationFrame(() => {
+        if (innerRef.current) setMaxHeight(innerRef.current.scrollHeight);
+      });
+    } else {
+      if (innerRef.current) setMaxHeight(innerRef.current.scrollHeight);
+      // allow frame paint then collapse
+      requestAnimationFrame(() => setMaxHeight(0));
+    }
+  }, [open, content]);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
@@ -28,25 +43,25 @@ export default function AccordionItem({ title, content, icon, defaultOpen = fals
         </span>
         <span className="text-slate-500">{open ? '⌄' : '›'}</span>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="px-5 pb-4">
-              {children ? (
-                children
-              ) : (
-                <article className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: content || '' }} />
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        style={{
+          maxHeight: renderedOpen ? maxHeight : 0,
+          opacity: open ? 1 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 200ms ease, opacity 200ms ease',
+        }}
+        onTransitionEnd={() => {
+          if (!open) setRenderedOpen(false);
+        }}
+      >
+        <div ref={innerRef} className="px-5 pb-4">
+          {children ? (
+            children
+          ) : (
+            <article className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: content || '' }} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
