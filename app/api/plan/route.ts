@@ -3,7 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 // (no-op import removed)
 import { buildUserContext, scoreBlock, type V2Block, type UserContext } from "@/lib/plan/personalize";
-import { whyItMattersBullets, doThisNowFromChecklist, estImpact, type DoNowItem, type EstImpact } from "@/lib/plan/interpolate";
+import { doThisNowFromChecklist, type DoNowItem } from "@/lib/plan/interpolate";
+import { runPlanBuckets, type AssessmentFacts, type PlanBuckets } from "@/lib/plan/rules";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
@@ -15,6 +16,9 @@ type Block = {
   html: string;
   tags: string[];
   horder: number;
+  hlevel?: number;
+  block_type?: V2Block['block_type'];
+  text_content?: string;
 };
 
 export async function GET() {
@@ -38,40 +42,21 @@ export async function GET() {
   if (aErr) return NextResponse.json({ error: "load assessment" }, { status: 500 });
   const answersRaw = (aRow?.answers || {}) as Record<string, unknown>;
 
-  // 2) Build personalization context and candidate tags
+  // 2) Build personalization context and rule-based buckets (with why)
   const ctx = buildUserContext(answersRaw);
-  const tags = Array.from(new Set([...(ctx.candidateTags || new Set<string>())]));
-
-  // 3) Select blocks by tag overlap; fallback to top ordered blocks
-  const MAX_BLOCKS = 12;
-  let blocks: (Block & V2Block)[] = [];
-  if (tags.length) {
-    const { data, error } = await supabase
-      .from("content_blocks")
-      .select("source_page,slug,title,html,tags,horder,hlevel,block_type,text_content")
-      .overlaps("tags", tags)
-      .order("horder", { ascending: true })
-      .limit(MAX_BLOCKS);
-    if (!error && data) blocks = data as (Block & V2Block)[];
-  }
-  if (blocks.length < 6) {
-    const need = MAX_BLOCKS - blocks.length;
+  const bucketsWithWhy = await runPlanBuckets(answersRaw as AssessmentFacts);
+  const allSlugs = new Set<string>();
+  (Object.values(bucketsWithWhy) as Array<{ slug: string; why?: string }[]>).forEach(list => {
+    list.forEach(i => allSlugs.add(i.slug));
+  });
+  let blocks: Block[] = [];
+  if (allSlugs.size) {
     const { data } = await supabase
       .from("content_blocks")
       .select("source_page,slug,title,html,tags,horder,hlevel,block_type,text_content")
-      .order("horder", { ascending: true })
-      .limit(need);
-    const add = (data || []) as (Block & V2Block)[];
-    // Deduplicate by source_page+slug
-    const seen = new Set(blocks.map(b => `${b.source_page}:${b.slug}`));
-    for (const b of add) {
-      const k = `${b.source_page}:${b.slug}`;
-      if (!seen.has(k)) {
-        seen.add(k);
-        blocks.push(b);
-      }
-      if (blocks.length >= MAX_BLOCKS) break;
-    }
+      .in("slug", Array.from(allSlugs))
+      .order("horder", { ascending: true });
+    blocks = (data || []) as Block[];
   }
 
   // 4) Tool deep links based on answers (lightweight defaults)
@@ -118,31 +103,17 @@ export async function GET() {
   if (stress) stageBits.push(stress);
   const stageSummary = stageBits.filter(Boolean).join(" • ");
 
-  // 5) Score, diversify and build PlanRenderNode[]
-  const scored = blocks.map(b => ({ b, score: scoreBlock({
+  // 5) Score and build PlanRenderNode[] per bucket preserving why
+  const scoreInput = (b: Block) => ({
     source_page: b.source_page,
     slug: b.slug,
-    hlevel: b.hlevel || 2,
+    hlevel: (b as any).hlevel || 2,
     title: b.title,
-    text_content: b.text_content || '',
-    block_type: (b.block_type || 'section') as V2Block['block_type'],
+    text_content: (b as any).text_content || '',
+    block_type: ((b as any).block_type || 'section') as V2Block['block_type'],
     tags: b.tags || [],
     horder: b.horder,
-  }, ctx) }));
-
-  scored.sort((a, b) => b.score - a.score || a.b.horder - b.b.horder);
-
-  // diversify: max 4 per source
-  const perSourceCount = new Map<string, number>();
-  const selected: typeof blocks = [];
-  for (const s of scored) {
-    const src = s.b.source_page;
-    const n = perSourceCount.get(src) || 0;
-    if (n >= 4) continue;
-    perSourceCount.set(src, n + 1);
-    selected.push(s.b);
-    if (selected.length >= 14) break;
-  }
+  });
 
   type PlanRenderNode = {
     id: string;
@@ -154,16 +125,14 @@ export async function GET() {
     callouts: {
       whyItMatters?: string[];
       doThisNow?: DoNowItem[];
-      estImpact?: EstImpact[];
     };
   };
 
-  const nodes: PlanRenderNode[] = selected.map(b => {
-    const blockType = (b.block_type || 'section') as PlanRenderNode['blockType'];
+  const toNode = (b: Block, why?: string): PlanRenderNode => {
+    const blockType = (((b as any).block_type) || 'section') as PlanRenderNode['blockType'];
     const callouts = {
-      whyItMatters: whyItMattersBullets(ctx as UserContext),
+      whyItMatters: why ? [why] : undefined,
       doThisNow: blockType === 'checklist' ? doThisNowFromChecklist(b.html) : undefined,
-      estImpact: estImpact(ctx as UserContext),
     };
     return {
       id: `${b.source_page}:${b.slug}`,
@@ -174,32 +143,26 @@ export async function GET() {
       slug: b.slug,
       callouts,
     };
-  });
+  };
 
-  const categoryBySource: Record<string, 'pcs'|'career'|'finance'|'deployment'|undefined> = {
-    'pcs-hub': 'pcs',
-    'career-hub': 'career',
-    'on-base-shopping': 'finance',
-    'deployment': 'deployment',
+  const bBySlug = new Map<string, Block>(blocks.map(b => [b.slug, b]));
+  const sections: Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]> = { pcs: [], career: [], finance: [], deployment: [] };
+
+  const pushBucket = (key: keyof PlanBuckets, list: { slug: string; why?: string }[]) => {
+    for (const item of list) {
+      const b = bBySlug.get(item.slug);
+      if (!b) continue;
+      sections[key].push(toNode(b, item.why));
+    }
   };
-  const sections: Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]> = {
-    pcs: [], career: [], finance: [], deployment: []
-  } as const as Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>;
-  for (const n of nodes) {
-    const cat = categoryBySource[n.source];
-    if (!cat) continue; // exclude base-guides
-    sections[cat].push(n);
-  }
-  const buckets = {
-    pcs: sections.pcs.map(n => n.slug),
-    career: sections.career.map(n => n.slug),
-    finance: sections.finance.map(n => n.slug),
-    deployment: sections.deployment.map(n => n.slug),
-  };
+
+  pushBucket('pcs', bucketsWithWhy.pcs);
+  pushBucket('career', bucketsWithWhy.career);
+  pushBucket('finance', bucketsWithWhy.finance);
+  pushBucket('deployment', bucketsWithWhy.deployment);
 
   return NextResponse.json({
     sections,
-    buckets,
     tools: { tspHref, sdpHref, houseHref },
     stageSummary,
   }, { headers: { "Cache-Control": "no-store" } });

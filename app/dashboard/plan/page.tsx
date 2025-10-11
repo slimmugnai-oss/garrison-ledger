@@ -6,12 +6,14 @@ import Header from '@/app/components/Header';
 import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import toolkitData from '@/public/toolkit-map.json';
+import { useUser } from '@clerk/nextjs';
 
 type Item = { title: string; url: string; tags: string[] };
 type AssessmentAnswers = Record<string, unknown>;
 type PlanBlock = { source_page: string; slug: string; title: string; html: string; tags: string[]; horder: number };
 
 export default function PlanPage() {
+  const { user } = useUser();
   const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState<Set<string>>(new Set());
@@ -112,15 +114,24 @@ export default function PlanPage() {
       <Header />
       <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
-              <span className="text-3xl">🎯</span>
+          {/* Command Center Header */}
+          <div className="mb-10 rounded-2xl p-8 md:p-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div>
+                <div className="text-slate-300 text-sm mb-2">Automated Concierge</div>
+                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+                  {(user?.firstName ? `${user.firstName}` : 'Your') + "'s"} Military Financial Roadmap
+                </h2>
+                {stageSummary && (
+                  <p className="mt-3 text-slate-200/90 max-w-2xl">
+                    {stageSummary}
+                  </p>
+                )}
+              </div>
+              <div>
+                <DownloadGuideButton />
+              </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Your Personalized Action Plan
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">{stageSummary || 'Tailored financial roadmap based on your military service stage and goals'}</p>
           </div>
 
           {!answers && (
@@ -141,67 +152,29 @@ export default function PlanPage() {
 
           {answers && (
             <div className="space-y-8">
-              {/* Download Guide Section */}
-              <div className="mb-6">
-                <DownloadGuideButton />
+              {/* At-a-Glance Priorities */}
+              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Your Top Priorities</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <InsightCard title="Next Move" value={resolvePcsStatus(answers)} icon="🧭" accent="emerald" />
+                  <InsightCard title="Career Goal" value={resolveCareerGoal(answers)} icon="💼" accent="indigo" />
+                  <InsightCard title="Financial Priority" value={resolveFinancialPriority(answers)} icon="💰" accent="amber" />
+                </div>
               </div>
 
-              {/* Priority Actions */}
+              {/* Quick Actions */}
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 <div className="flex items-center mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-4">
                     <span className="text-white text-xl">⚡</span>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Priority Actions</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
                 </div>
-                <p className="text-gray-600 mb-6">Focus on these next steps:</p>
-                <ul className="space-y-4">
-                  {tags.has("tool:tsp") && (
-                    <li className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                      <span className="text-2xl">📈</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Optimize Your TSP</p>
-                        <p className="text-gray-600 mb-2">Model your TSP strategy and review allocation differences</p>
-                        <Link href={tspHref} className="text-blue-600 hover:text-blue-700 underline font-medium">
-                          Open TSP Modeler →
-                        </Link>
-                      </div>
-                    </li>
-                  )}
-                  {tags.has("tool:sdp") && (
-                    <li className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-100">
-                      <span className="text-2xl">💰</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Plan Your SDP Windfall</p>
-                        <p className="text-gray-600 mb-2">Compare growth scenarios for your SDP payout</p>
-                        <Link href={sdpHref} className="text-green-600 hover:text-green-700 underline font-medium">
-                          Open SDP Strategist →
-                        </Link>
-                      </div>
-                    </li>
-                  )}
-                  {tags.has("tool:house") && (
-                    <li className="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg border border-purple-100">
-                      <span className="text-2xl">🏡</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Analyze House Hacking</p>
-                        <p className="text-gray-600 mb-2">See if a duplex scenario makes financial sense</p>
-                        <Link href={houseHref} className="text-purple-600 hover:text-purple-700 underline font-medium">
-                          Open House Calculator →
-                        </Link>
-                      </div>
-                    </li>
-                  )}
-                  {tags.has("topic:financial_first_aid") && (
-                    <li className="flex items-start space-x-3 p-4 bg-red-50 rounded-lg border border-red-100">
-                      <span className="text-2xl">🚨</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Stabilize Cash Flow</p>
-                        <p className="text-gray-600">Build emergency buffer and automate bills before investing</p>
-                      </div>
-                    </li>
-                  )}
-                </ul>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <ActionLinkCard title="Open TSP Modeler" description="Optimize your retirement savings" href={tspHref} icon="📈" />
+                  <ActionLinkCard title="Open SDP Strategist" description="Plan your deployment windfall" href={sdpHref} icon="💵" />
+                  <ActionLinkCard title="Open House Calculator" description="Analyze a house-hack" href={houseHref} icon="🏡" />
+                </div>
               </div>
 
               {/* Your Resources */}
@@ -232,7 +205,7 @@ export default function PlanPage() {
                         <div className="flex items-start justify-between gap-6">
                           <div className="min-w-0">
                             <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
-                            <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
+                            <SmartContent html={n.html} />
                           </div>
                           <aside className="hidden md:block w-80 flex-shrink-0 sticky top-24 self-start">
                             <div className="rounded-lg border bg-slate-50 p-4 space-y-4">
@@ -345,6 +318,104 @@ export default function PlanPage() {
         </div>
       </div>
     </>
+  );
+}
+
+function InsightCard({ title, value, icon, accent }: { title: string; value: string; icon: string; accent: 'emerald'|'indigo'|'amber' }) {
+  const color = accent === 'emerald' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : accent === 'indigo' ? 'bg-indigo-50 text-indigo-800 border-indigo-200' : 'bg-amber-50 text-amber-800 border-amber-200';
+  return (
+    <div className={`rounded-xl border p-4 ${color}`}>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-xl">{icon}</span>
+        <div className="text-sm font-semibold">{title}</div>
+      </div>
+      <div className="text-lg font-bold leading-tight">{value || '—'}</div>
+    </div>
+  );
+}
+
+function resolvePcsStatus(answers: AssessmentAnswers | null): string {
+  const v21 = (answers as any)?.v21;
+  const s = v21?.move?.pcsSituation;
+  const map: Record<string,string> = { arrived: 'Just Arrived', dwell: 'Dwell Time', window: 'PCS Window', orders: 'Orders in Hand', none: 'Not Expecting' };
+  return s ? (map[s] || String(s)) : '';
+}
+
+function resolveCareerGoal(answers: AssessmentAnswers | null): string {
+  const v21 = (answers as any)?.v21;
+  const ambitions: string[] = Array.isArray(v21?.career?.ambitions) ? v21.career.ambitions : [];
+  const priorityOrder = ['business','job','portable','education','not_career'];
+  const first = priorityOrder.find(k => ambitions.includes(k)) || ambitions[0];
+  const map: Record<string,string> = {
+    business: 'Grow Your Business',
+    job: 'Find a New Job',
+    portable: 'Make Career Portable',
+    education: 'Education/Certification',
+    not_career: 'Not Focused Now',
+  };
+  return first ? (map[first] || String(first)) : '';
+}
+
+function resolveFinancialPriority(answers: AssessmentAnswers | null): string {
+  const v21 = (answers as any)?.v21;
+  const p = v21?.finance?.priority;
+  const map: Record<string,string> = {
+    budget: 'Stabilize Budget',
+    pay_debt: 'Pay Down Debt',
+    emergency_savings: 'Build Emergency Fund',
+    maximize_tsp: 'Invest for Retirement',
+    use_va_loan: 'Use VA Loan Smartly',
+  };
+  return p ? (map[p] || String(p)) : '';
+}
+
+function SmartContent({ html }: { html: string }) {
+  // Heuristic: split tips marked with 💡 into separate blocks; otherwise render prose
+  if (html.includes('💡')) {
+    const tips = html.split(/💡/).map(t => t.trim()).filter(Boolean);
+    if (tips.length > 1) {
+      return (
+        <div className="grid gap-4 md:grid-cols-2">
+          {tips.map((t, i) => (
+            <div key={i} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-sm font-semibold text-slate-700 mb-2">💡 Tip</div>
+              <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: t }} />
+            </div>
+          ))}
+        </div>
+      );
+    }
+  }
+  // Fallback: render with a short summary if long
+  const textOnly = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const summary = textOnly.split('. ').slice(0, 3).join('. ') + (textOnly ? '.' : '');
+  const isLong = textOnly.length > 600;
+  return (
+    <div>
+      {isLong && (
+        <div className="mb-3 rounded-md bg-slate-50 border border-slate-200 p-3">
+          <div className="text-sm font-semibold text-slate-700 mb-1">Key points</div>
+          <ul className="list-disc pl-5 text-sm text-slate-700">
+            {summary.split('. ').filter(Boolean).map((s, i) => (
+              <li key={i}>{s.replace(/\.$/, '')}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  );
+}
+
+function ActionLinkCard({ title, description, href, icon }: { title: string; description: string; href: string; icon: string }) {
+  return (
+    <Link href={href} className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-3 mb-1">
+        <span className="text-2xl">{icon}</span>
+        <h4 className="font-semibold text-slate-900">{title}</h4>
+      </div>
+      <p className="text-sm text-slate-600">{description}</p>
+    </Link>
   );
 }
 
