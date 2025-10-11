@@ -30,8 +30,9 @@ const SOURCES: Source[] = [
 ];
 
 function sanitize(html: string) {
-  const window = new JSDOM("").window as unknown as Window;
-  const DOMPurify = createDOMPurify(window);
+  // Use jsdom window for server-side sanitization; cast to any to satisfy types
+  const window = new JSDOM("").window as any;
+  const DOMPurify = createDOMPurify(window as any);
   return DOMPurify.sanitize(html, {
     USE_PROFILES: { html: true },
   });
