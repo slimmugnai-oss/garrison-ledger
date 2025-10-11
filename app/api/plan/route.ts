@@ -70,10 +70,26 @@ export async function GET() {
   }
 
   // 4) Tool deep links based on answers (lightweight defaults)
-  const age = Number(answers?.tsp?.age ?? 30);
-  const retire = Number(answers?.tsp?.retire ?? 50);
+  type AnyObj = Record<string, unknown>;
+  const answersObj = answers as unknown as AnyObj;
+  const getNum = (obj: AnyObj, path: string[], fallback: number): number => {
+    let cur: unknown = obj;
+    for (const key of path) {
+      if (typeof cur === "object" && cur !== null && key in (cur as AnyObj)) {
+        cur = (cur as AnyObj)[key];
+      } else {
+        cur = undefined;
+        break;
+      }
+    }
+    const num = typeof cur === "number" ? cur : Number(cur);
+    return Number.isFinite(num) ? (num as number) : fallback;
+  };
+
+  const age = getNum(answersObj, ["tsp", "age"], 30);
+  const retire = getNum(answersObj, ["tsp", "retire"], 50);
   const tspHref = `/dashboard/tools/tsp-modeler?age=${age}&retire=${retire}&bal=50000&cont=500&mix=C:70,S:30`;
-  const sdpAmount = Number(answers?.timeline?.sdpAmount ?? 10000);
+  const sdpAmount = getNum(answersObj, ["timeline", "sdpAmount"], 10000);
   const sdpHref = `/dashboard/tools/sdp-strategist?amount=${sdpAmount}`;
   const houseHref = `/dashboard/tools/house-hacking?price=400000&rate=6.5&tax=4800&ins=1600&bah=2400&rent=2200`;
 
