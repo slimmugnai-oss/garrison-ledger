@@ -51,13 +51,24 @@ export async function GET() {
   (Object.values(bucketsWithWhy) as Array<{ slug: string; why?: string }[]>).forEach(list => {
     list.forEach(i => allSlugs.add(i.slug));
   });
+  
+  console.log('[Plan API] Buckets:', JSON.stringify(bucketsWithWhy, null, 2));
+  console.log('[Plan API] All slugs requested:', Array.from(allSlugs));
+  
   let blocks: Block[] = [];
   if (allSlugs.size) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("content_blocks")
       .select("source_page,slug,title,html,tags,topics,horder,hlevel,block_type,text_content,summary")
       .in("slug", Array.from(allSlugs))
       .order("horder", { ascending: true });
+    
+    console.log('[Plan API] Query error:', error);
+    console.log('[Plan API] Blocks found:', data?.length || 0);
+    if (data && data.length > 0) {
+      console.log('[Plan API] Sample block:', data[0]);
+    }
+    
     blocks = (data || []) as Block[];
   }
 
