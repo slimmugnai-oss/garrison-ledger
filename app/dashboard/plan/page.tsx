@@ -18,6 +18,7 @@ export default function PlanPage() {
   const [tags, setTags] = useState<Set<string>>(new Set());
   const [ranked, setRanked] = useState<Item[]>([]);
   const [blocks, setBlocks] = useState<PlanBlock[]>([]);
+  const [nodes, setNodes] = useState<any[]>([]);
   const [stageSummary, setStageSummary] = useState<string>("");
   const [tools, setTools] = useState<{ tspHref: string; sdpHref: string; houseHref: string } | null>(null);
 
@@ -55,6 +56,7 @@ export default function PlanPage() {
         if (!r.ok) return;
         const j = await r.json();
         setBlocks(j.blocks || []);
+        setNodes(j.nodes || []);
         setTools(j.tools || null);
         setStageSummary(j.stageSummary || "");
       } catch (e) {
@@ -207,8 +209,8 @@ export default function PlanPage() {
                 </div>
               )}
 
-              {/* Recommended Sections (full content) */}
-              {blocks.length > 0 && (
+              {/* Recommended Sections (full content via nodes) */}
+              {nodes.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
@@ -217,10 +219,49 @@ export default function PlanPage() {
                     <h2 className="text-2xl font-bold text-gray-900">Recommended Sections for You</h2>
                   </div>
                   <div className="space-y-10">
-                    {blocks.map((b) => (
-                      <section key={`${b.source_page}:${b.slug}`} id={`cb-${b.slug}`} className="border-t border-gray-200 pt-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">{b.title}</h3>
-                        <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: b.html }} />
+                    {nodes.map((n) => (
+                      <section key={n.id} id={`node-${n.slug}`} className="border-t border-gray-200 pt-6">
+                        <div className="flex items-start justify-between gap-6">
+                          <div className="min-w-0">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-3">{n.title}</h3>
+                            <article className="prose max-w-none prose-slate" dangerouslySetInnerHTML={{ __html: n.html }} />
+                          </div>
+                          <aside className="hidden md:block w-80 flex-shrink-0 sticky top-24 self-start">
+                            <div className="rounded-lg border bg-slate-50 p-4 space-y-4">
+                              {n.callouts?.whyItMatters?.length > 0 && (
+                                <div>
+                                  <div className="text-sm font-semibold text-slate-700 mb-2">Why this matters</div>
+                                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                                    {n.callouts.whyItMatters.map((t: string, i: number) => (<li key={i}>{t}</li>))}
+                                  </ul>
+                                </div>
+                              )}
+                              {n.callouts?.doThisNow?.length > 0 && (
+                                <div>
+                                  <div className="text-sm font-semibold text-slate-700 mb-2">Do this now</div>
+                                  <ul className="space-y-1 text-sm">
+                                    {n.callouts.doThisNow.map((d: any) => (
+                                      <li key={d.id} className="flex items-start gap-2">
+                                        <input type="checkbox" className="mt-1" />
+                                        <span className="text-slate-700">{d.text}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {n.callouts?.estImpact?.length > 0 && (
+                                <div>
+                                  <div className="text-sm font-semibold text-slate-700 mb-2">Est. impact</div>
+                                  <ul className="space-y-1 text-sm text-slate-700">
+                                    {n.callouts.estImpact.map((e: any, i: number) => (
+                                      <li key={i} className="flex justify-between gap-3"><span>{e.label}</span><span className="font-medium">{e.value}</span></li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </aside>
+                        </div>
                       </section>
                     ))}
                   </div>

@@ -3,6 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { runPlanRules } from "@/lib/plan/rules";
 import type { AssessmentFacts } from "@/lib/plan/rules";
+import { buildUserContext, scoreBlock, type V2Block } from "@/lib/plan/personalize";
+import { whyItMattersBullets, doThisNowFromChecklist, estImpact } from "@/lib/plan/interpolate";
+import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
 
@@ -19,6 +22,9 @@ export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { allowed } = await checkAndIncrement(userId, "/api/plan", 100);
+  if (!allowed) return NextResponse.json({ error: "Rate limit" }, { status: 429 });
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -33,30 +39,31 @@ export async function GET() {
   if (aErr) return NextResponse.json({ error: "load assessment" }, { status: 500 });
   const answersRaw = (aRow?.answers || {}) as Record<string, unknown>;
 
-  // 2) Compute tags via rules engine
+  // 2) Build personalization context and candidate tags
+  const ctx = buildUserContext(answersRaw);
   const tagSet = await runPlanRules(answersRaw as unknown as AssessmentFacts);
-  const tags = Array.from(tagSet);
+  const tags = Array.from(new Set([...(ctx.candidateTags || new Set<string>()), ...Array.from(tagSet)]));
 
   // 3) Select blocks by tag overlap; fallback to top ordered blocks
   const MAX_BLOCKS = 12;
-  let blocks: Block[] = [];
+  let blocks: (Block & V2Block)[] = [];
   if (tags.length) {
     const { data, error } = await supabase
       .from("content_blocks")
-      .select("source_page,slug,title,html,tags,horder")
+      .select("source_page,slug,title,html,tags,horder,hlevel,block_type,text_content")
       .overlaps("tags", tags)
       .order("horder", { ascending: true })
       .limit(MAX_BLOCKS);
-    if (!error && data) blocks = data as Block[];
+    if (!error && data) blocks = data as (Block & V2Block)[];
   }
   if (blocks.length < 6) {
     const need = MAX_BLOCKS - blocks.length;
     const { data } = await supabase
       .from("content_blocks")
-      .select("source_page,slug,title,html,tags,horder")
+      .select("source_page,slug,title,html,tags,horder,hlevel,block_type,text_content")
       .order("horder", { ascending: true })
       .limit(need);
-    const add = (data || []) as Block[];
+    const add = (data || []) as (Block & V2Block)[];
     // Deduplicate by source_page+slug
     const seen = new Set(blocks.map(b => `${b.source_page}:${b.slug}`));
     for (const b of add) {
@@ -113,8 +120,66 @@ export async function GET() {
   if (stress) stageBits.push(stress);
   const stageSummary = stageBits.filter(Boolean).join(" • ");
 
+  // 5) Score, diversify and build PlanRenderNode[]
+  const scored = blocks.map(b => ({ b, score: scoreBlock({
+    source_page: b.source_page,
+    slug: b.slug,
+    hlevel: (b as any).hlevel || 2,
+    title: b.title,
+    text_content: (b as any).text_content || '',
+    block_type: ((b as any).block_type || 'section') as V2Block['block_type'],
+    tags: b.tags || [],
+    horder: b.horder,
+  }, ctx) }));
+
+  scored.sort((a, b) => b.score - a.score || a.b.horder - b.b.horder);
+
+  // diversify: max 4 per source
+  const perSourceCount = new Map<string, number>();
+  const selected: typeof blocks = [];
+  for (const s of scored) {
+    const src = s.b.source_page;
+    const n = perSourceCount.get(src) || 0;
+    if (n >= 4) continue;
+    perSourceCount.set(src, n + 1);
+    selected.push(s.b);
+    if (selected.length >= 14) break;
+  }
+
+  type PlanRenderNode = {
+    id: string;
+    title: string;
+    html: string;
+    blockType: 'section'|'checklist'|'faq'|'table'|'tip';
+    source: string;
+    slug: string;
+    callouts: {
+      whyItMatters?: string[];
+      doThisNow?: { id:string; text:string }[];
+      estImpact?: { label:string; value:string }[];
+    };
+  };
+
+  const nodes: PlanRenderNode[] = selected.map(b => {
+    const blockType = ((b as any).block_type || 'section') as PlanRenderNode['blockType'];
+    const callouts = {
+      whyItMatters: whyItMattersBullets(ctx as any),
+      doThisNow: blockType === 'checklist' ? doThisNowFromChecklist(b.html) : undefined,
+      estImpact: estImpact(ctx as any),
+    };
+    return {
+      id: `${b.source_page}:${b.slug}`,
+      title: b.title,
+      html: b.html,
+      blockType,
+      source: b.source_page,
+      slug: b.slug,
+      callouts,
+    };
+  });
+
   return NextResponse.json({
-    blocks,
+    nodes,
     tools: { tspHref, sdpHref, houseHref },
     stageSummary,
   }, { headers: { "Cache-Control": "no-store" } });
