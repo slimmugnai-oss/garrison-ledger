@@ -178,8 +178,30 @@ export async function GET() {
     };
   });
 
+  const categoryBySource: Record<string, 'pcs'|'career'|'finance'|'deployment'|undefined> = {
+    'pcs-hub': 'pcs',
+    'career-hub': 'career',
+    'on-base-shopping': 'finance',
+    'deployment': 'deployment',
+  };
+  const sections: Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]> = {
+    pcs: [], career: [], finance: [], deployment: []
+  } as const as Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>;
+  for (const n of nodes) {
+    const cat = categoryBySource[n.source];
+    if (!cat) continue; // exclude base-guides
+    sections[cat].push(n);
+  }
+  const buckets = {
+    pcs: sections.pcs.map(n => n.slug),
+    career: sections.career.map(n => n.slug),
+    finance: sections.finance.map(n => n.slug),
+    deployment: sections.deployment.map(n => n.slug),
+  };
+
   return NextResponse.json({
-    nodes,
+    sections,
+    buckets,
     tools: { tspHref, sdpHref, houseHref },
     stageSummary,
   }, { headers: { "Cache-Control": "no-store" } });
