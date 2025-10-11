@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { runPlanRules } from "@/lib/plan/rules";
+import type { AssessmentFacts } from "@/lib/plan/rules";
 
 export const runtime = "nodejs";
 
@@ -30,10 +31,10 @@ export async function GET() {
     .eq("user_id", userId)
     .maybeSingle();
   if (aErr) return NextResponse.json({ error: "load assessment" }, { status: 500 });
-  const answers = aRow?.answers || {};
+  const answers = (aRow?.answers || {}) as AssessmentFacts;
 
   // 2) Compute tags via rules engine
-  const tagSet = await runPlanRules(answers as any);
+  const tagSet = await runPlanRules(answers);
   const tags = Array.from(tagSet);
 
   // 3) Select blocks by tag overlap; fallback to top ordered blocks
