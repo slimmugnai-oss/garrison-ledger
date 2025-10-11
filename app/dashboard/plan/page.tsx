@@ -78,17 +78,12 @@ export default function PlanPage() {
     async function loadPlanBlocks() {
       try {
         const r = await fetch('/api/plan', { cache: 'no-store' });
-        if (!r.ok) {
-          console.error('Plan API failed:', r.status, await r.text());
-          return;
-        }
+        if (!r.ok) return;
         const j = await r.json();
-        console.log('Plan API response:', j);
         if (j.sections) setSections(j.sections as Record<'pcs'|'career'|'finance'|'deployment', PlanRenderNode[]>);
         setTools(j.tools || null);
         setStageSummary(j.stageSummary || "");
         setTaskData({ pcs: j.pcs || [], career: j.career || [], finance: j.finance || [], deployment: j.deployment || [] });
-        console.log('TaskData set:', { pcs: j.pcs?.length, career: j.career?.length, finance: j.finance?.length, deployment: j.deployment?.length });
       } catch (e) {
         console.error('Error loading plan:', e);
       }
@@ -100,14 +95,11 @@ export default function PlanPage() {
     async function loadStatuses() {
       try {
         const r = await fetch('/api/task-status', { cache: 'no-store' });
-        if (!r.ok) {
-          console.warn('Task status endpoint failed, continuing without saved statuses');
-          return;
-        }
+        if (!r.ok) return;
         const j = await r.json();
         setTaskStatuses(j.statuses || {});
-      } catch (err) {
-        console.warn('Error loading task statuses:', err);
+      } catch {
+        // Graceful degradation - continue without saved statuses
       }
     }
     loadStatuses();
