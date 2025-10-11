@@ -234,7 +234,7 @@ type SectionProps = {
   tools: { tspHref: string; sdpHref: string; houseHref: string } | null;
 };
 
-function ContentSection({ title, icon, color, items }: SectionProps) {
+function ContentSection({ title, icon, color, items, tools }: SectionProps) {
   const colorClasses = {
     emerald: 'bg-emerald-600 border-emerald-200',
     indigo: 'bg-indigo-600 border-indigo-200',
@@ -255,14 +255,14 @@ function ContentSection({ title, icon, color, items }: SectionProps) {
       {/* Content Cards */}
       <div className="bg-white rounded-b-2xl shadow-xl border-l border-r border-b border-gray-200 p-8 space-y-12">
         {items.map((item, idx) => (
-          <ContentBlock key={item.slug} item={item} isLast={idx === items.length - 1} />
+          <ContentBlock key={item.slug} item={item} isLast={idx === items.length - 1} tools={tools} />
         ))}
       </div>
     </section>
   );
 }
 
-function ContentBlock({ item, isLast }: { item: TaskItem; isLast: boolean }) {
+function ContentBlock({ item, isLast, tools }: { item: TaskItem; isLast: boolean; tools: { tspHref: string; sdpHref: string; houseHref: string } | null }) {
   const priorityBadge = item.priority === 'high' ? (
     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
       ⚡ Priority Action
