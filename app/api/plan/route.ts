@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 // (no-op import removed)
-import { buildUserContext, scoreBlock, type V2Block, type UserContext } from "@/lib/plan/personalize";
+import { buildUserContext, type V2Block } from "@/lib/plan/personalize";
 import { doThisNowFromChecklist, type DoNowItem } from "@/lib/plan/interpolate";
 import { runPlanBuckets, type AssessmentFacts, type PlanBuckets } from "@/lib/plan/rules";
 import { checkAndIncrement } from "@/lib/limits";
@@ -104,16 +104,7 @@ export async function GET() {
   const stageSummary = stageBits.filter(Boolean).join(" • ");
 
   // 5) Score and build PlanRenderNode[] per bucket preserving why
-  const scoreInput = (b: Block) => ({
-    source_page: b.source_page,
-    slug: b.slug,
-    hlevel: (b as any).hlevel || 2,
-    title: b.title,
-    text_content: (b as any).text_content || '',
-    block_type: ((b as any).block_type || 'section') as V2Block['block_type'],
-    tags: b.tags || [],
-    horder: b.horder,
-  });
+  // no score function used in this version
 
   type PlanRenderNode = {
     id: string;
@@ -129,7 +120,7 @@ export async function GET() {
   };
 
   const toNode = (b: Block, why?: string): PlanRenderNode => {
-    const blockType = (((b as any).block_type) || 'section') as PlanRenderNode['blockType'];
+    const blockType = ((b.block_type) || 'section') as PlanRenderNode['blockType'];
     const callouts = {
       whyItMatters: why ? [why] : undefined,
       doThisNow: blockType === 'checklist' ? doThisNowFromChecklist(b.html) : undefined,

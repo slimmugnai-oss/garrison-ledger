@@ -334,16 +334,24 @@ function InsightCard({ title, value, icon, accent }: { title: string; value: str
   );
 }
 
+type V21Answers = {
+  v21?: {
+    move?: { pcsSituation?: string };
+    career?: { ambitions?: string[] };
+    finance?: { priority?: string };
+  };
+};
+
 function resolvePcsStatus(answers: AssessmentAnswers | null): string {
-  const v21 = (answers as any)?.v21;
+  const v21 = (answers as unknown as V21Answers)?.v21;
   const s = v21?.move?.pcsSituation;
   const map: Record<string,string> = { arrived: 'Just Arrived', dwell: 'Dwell Time', window: 'PCS Window', orders: 'Orders in Hand', none: 'Not Expecting' };
   return s ? (map[s] || String(s)) : '';
 }
 
 function resolveCareerGoal(answers: AssessmentAnswers | null): string {
-  const v21 = (answers as any)?.v21;
-  const ambitions: string[] = Array.isArray(v21?.career?.ambitions) ? v21.career.ambitions : [];
+  const v21 = (answers as unknown as V21Answers)?.v21;
+  const ambitions: string[] = Array.isArray(v21?.career?.ambitions) ? v21.career!.ambitions! : [];
   const priorityOrder = ['business','job','portable','education','not_career'];
   const first = priorityOrder.find(k => ambitions.includes(k)) || ambitions[0];
   const map: Record<string,string> = {
@@ -357,7 +365,7 @@ function resolveCareerGoal(answers: AssessmentAnswers | null): string {
 }
 
 function resolveFinancialPriority(answers: AssessmentAnswers | null): string {
-  const v21 = (answers as any)?.v21;
+  const v21 = (answers as unknown as V21Answers)?.v21;
   const p = v21?.finance?.priority;
   const map: Record<string,string> = {
     budget: 'Stabilize Budget',
