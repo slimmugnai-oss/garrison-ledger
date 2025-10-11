@@ -5,14 +5,22 @@ import { createClient } from '@supabase/supabase-js';
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { data, error } = await supabase.from('task_statuses').select('content_block_slug,status').eq('user_id', userId);
-  if (error) return NextResponse.json({ error: 'load' }, { status: 500 });
-  const map: Record<string, 'incomplete'|'complete'> = {};
-  (data || []).forEach(r => { map[r.content_block_slug] = r.status as 'incomplete'|'complete'; });
-  return NextResponse.json({ statuses: map });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const { data, error } = await supabase.from('task_statuses').select('content_block_slug,status').eq('user_id', userId);
+    if (error) {
+      console.error('Task status query error:', error);
+      return NextResponse.json({ statuses: {} }); // Return empty instead of 500
+    }
+    const map: Record<string, 'incomplete'|'complete'> = {};
+    (data || []).forEach(r => { map[r.content_block_slug] = r.status as 'incomplete'|'complete'; });
+    return NextResponse.json({ statuses: map });
+  } catch (err) {
+    console.error('Task status error:', err);
+    return NextResponse.json({ statuses: {} }); // Graceful degradation
+  }
 }
 
 export async function POST(req: NextRequest) {

@@ -100,10 +100,15 @@ export default function PlanPage() {
     async function loadStatuses() {
       try {
         const r = await fetch('/api/task-status', { cache: 'no-store' });
-        if (!r.ok) return;
+        if (!r.ok) {
+          console.warn('Task status endpoint failed, continuing without saved statuses');
+          return;
+        }
         const j = await r.json();
         setTaskStatuses(j.statuses || {});
-      } catch {}
+      } catch (err) {
+        console.warn('Error loading task statuses:', err);
+      }
     }
     loadStatuses();
   }, []);
