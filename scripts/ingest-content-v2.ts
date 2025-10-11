@@ -30,7 +30,13 @@ const SOURCES: Source[] = [
 function makeSanitizer() {
   const window = new JSDOM('').window as any;
   const DOMPurify = createDOMPurify(window as any);
-  return (html: string) => DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+  return (html: string) => DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    KEEP_CONTENT: true,
+    ALLOWED_TAGS: ['h2', 'h3', 'h4', 'h5', 'p', 'a', 'ul', 'ol', 'li', 'strong', 'em', 'br', 'blockquote', 'div', 'span', 'table', 'thead', 'tbody', 'tr', 'td', 'th', 'img'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'src', 'alt', 'title'],
+    ALLOW_DATA_ATTR: false,
+  });
 }
 
 function classifyBlock($: cheerio.CheerioAPI, root: cheerio.Cheerio<unknown>): 'section'|'checklist'|'faq'|'table'|'tip' {
