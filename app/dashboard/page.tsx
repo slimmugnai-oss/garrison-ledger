@@ -12,7 +12,7 @@ export default async function CommandDashboard() {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
   const answers = (aRow?.answers || {}) as Record<string, unknown>;
-  const v21 = (answers as any)?.v21 || {};
+  const v21 = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined || {};
 
   // Extract profile data
   const serviceYears = String(v21?.foundation?.serviceYears || '');

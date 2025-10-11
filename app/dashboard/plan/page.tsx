@@ -71,9 +71,9 @@ export default function ExecutiveBriefing() {
         // Extract 'why' from sections and merge with taskData
         const withWhy = (cat: 'pcs'|'career'|'finance'|'deployment') => {
           const items = j[cat] || [];
-          const sectionItems = (j.sections?.[cat] || []);
+          const sectionItems = (j.sections?.[cat] || []) as Array<{ slug: string; callouts?: { whyItMatters?: string[] } }>;
           return items.map((item: TaskItem) => {
-            const sectionMatch = sectionItems.find((s: any) => s.slug === item.slug);
+            const sectionMatch = sectionItems.find((s) => s.slug === item.slug);
             return { ...item, why: sectionMatch?.callouts?.whyItMatters?.[0] || '' };
           });
         };
