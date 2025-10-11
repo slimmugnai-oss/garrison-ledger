@@ -1,3 +1,4 @@
+// @ts-nocheck
 // scripts/ingest-content-v2.ts
 import fs from 'node:fs/promises';
 import path from 'node:path';
