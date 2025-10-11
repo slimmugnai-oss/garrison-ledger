@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
-import { runPlanRules, scoreResources } from '@/lib/plan/rules';
+// V2.1 removed client-side rules/resources; keep UI scaffolding if needed later
 import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import toolkitData from '@/public/toolkit-map.json';
@@ -26,13 +26,7 @@ export default function PlanPage() {
         if (data.answers) {
           setAnswers(data.answers);
           
-          // Run rules engine client-side
-          const generatedTags = await runPlanRules(data.answers);
-          setTags(generatedTags);
-          
-          // Score resources
-          const scoredResources = scoreResources(generatedTags, toolkitData as Item[]).slice(0, 10);
-          setRanked(scoredResources);
+          // Deprecated in V2.1: server-curated plan
         }
       } catch (error) {
         console.error('Error loading assessment:', error);
