@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import type { AssessmentFacts } from "@/lib/plan/rules";
+// (no-op import removed)
 import { buildUserContext, scoreBlock, type V2Block, type UserContext } from "@/lib/plan/personalize";
 import { whyItMattersBullets, doThisNowFromChecklist, estImpact, type DoNowItem, type EstImpact } from "@/lib/plan/interpolate";
 import { checkAndIncrement } from "@/lib/limits";

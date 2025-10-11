@@ -1,4 +1,10 @@
-export type AssessmentFacts = Record<string, unknown>;
+export type AssessmentFacts = { v21?: {
+  foundation?: { serviceYears?: string; familySnapshot?: string; efmp?: boolean };
+  move?: { pcsSituation?: string; oconus?: 'yes'|'no'|'unsure' };
+  deployment?: { status?: string };
+  career?: { ambitions?: string[] };
+  finance?: { priority?: string };
+} };
 
 export type PlanBuckets = {
   pcs: string[];
@@ -9,12 +15,11 @@ export type PlanBuckets = {
 
 export function runPlanBuckets(facts: AssessmentFacts): PlanBuckets {
   const buckets: PlanBuckets = { pcs: [], career: [], finance: [], deployment: [] };
-  const v21 = (facts as any)?.v21 || {};
+  const v21 = facts?.v21 || {};
   const stage = String(v21?.move?.pcsSituation || '');
   const dep = String(v21?.deployment?.status || '');
-  const family = String(v21?.foundation?.familySnapshot || '');
   const efmp = Boolean(v21?.foundation?.efmp);
-  const ambitions = Array.isArray(v21?.career?.ambitions) ? (v21?.career?.ambitions as string[]) : [];
+  const ambitions = Array.isArray(v21?.career?.ambitions) ? v21.career!.ambitions! : [];
   const finPriority = String(v21?.finance?.priority || '');
 
   // PCS

@@ -135,7 +135,7 @@ export default function DetailedAssessment() {
                 <Field label="Will this be an OCONUS (overseas) move?">
                   <select
                     value={oconus}
-                    onChange={(e) => setOconus(e.target.value as any)}
+                    onChange={(e) => setOconus(e.target.value as 'yes'|'no'|'unsure')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   >
                     <option value="no">No</option>
