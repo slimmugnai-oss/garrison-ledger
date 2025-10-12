@@ -187,12 +187,22 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
 
   // ==================== CAREER RULES ====================
   
-  // Rule 8: Job Search NOW
+  // Rule 8: Job Search NOW - Priority-Based Selection
   if (focus === 'career' && (career === 'find-job' || interests.includes('remote-work'))) {
+    // Step 1: Non-negotiables for active job search
+    const atoms = ['resume-power-up', 'federal-employment-guide', 'portable-careers-guide'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const hasFinancialStress = ['budget', 'debt'].includes(finance);
+    
+    if (hasFinancialStress) {
+      atoms.push('les-decoder');  // Foundation for budgeting while job searching
+    }
+    
     return {
       primarySituation: "Active Job Search",
       priorityAction: "Translate your military life into powerful resume achievements and connect with MSEP (Military Spouse Employment Partnership) employers who value your skills.",
-      atomIds: ['resume-power-up', 'portable-careers-guide', 'federal-employment-guide'],
+      atomIds: atoms.slice(0, 4),  // Cap at 4
     };
   }
 
