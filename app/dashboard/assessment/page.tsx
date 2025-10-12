@@ -133,7 +133,7 @@ export default function ComprehensiveAssessment() {
                 ]} />
               </Field>
               <Field label="Will this be an OCONUS (overseas) move?">
-                <RadioGroup name="oconus" value={oconusMove} onChange={setOconusMove} options={[
+                <RadioGroup name="oconus" value={oconusMove} onChange={(v) => setOconusMove(v as "yes"|"no"|"unsure")} options={[
                   { value: "no", label: "No - staying CONUS" },
                   { value: "yes", label: "Yes - moving overseas" },
                   { value: "unsure", label: "Unsure" },
