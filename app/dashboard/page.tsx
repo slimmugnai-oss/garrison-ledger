@@ -25,9 +25,16 @@ export default async function CommandDashboard() {
   }
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
   const answers = (aRow?.answers || {}) as Record<string, unknown>;
+  
+  // Try both data structures (v21 and comprehensive)
   const v21Obj = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined;
-  const foundation = (v21Obj?.foundation as Record<string, unknown> | undefined) || {};
-  const move = (v21Obj?.move as Record<string, unknown> | undefined) || {};
+  const comprehensiveObj = (answers as Record<string, unknown>)?.comprehensive as Record<string, unknown> | undefined;
+  
+  // Use comprehensive if available, fallback to v21
+  const foundation = (comprehensiveObj?.foundation as Record<string, unknown> | undefined) || 
+                     (v21Obj?.foundation as Record<string, unknown> | undefined) || {};
+  const move = (comprehensiveObj?.move as Record<string, unknown> | undefined) || 
+               (v21Obj?.move as Record<string, unknown> | undefined) || {};
 
   const serviceYears = String(foundation?.serviceYears || '');
   const familySnapshot = String(foundation?.familySnapshot || 'none'); // Fixed: was move?.familySnapshot
