@@ -173,5 +173,3 @@ export default function ExecutiveBriefing() {
     </>
   );
 }
-
-import Footer from '@/app/components/Footer';
