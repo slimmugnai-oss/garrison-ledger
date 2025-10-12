@@ -149,21 +149,49 @@ export default function TspModeler() {
 
   // Lightweight SVG line plot
   const Chart = ({ seriesA, seriesB }: { seriesA: number[]; seriesB: number[] }) => {
-    const w = 560, h = 240, pad = 24;
-    const all = [...seriesA, ...seriesB];
-    const min = Math.min(...all);
-    const max = Math.max(...all);
-    const X = (i: number, n: number) => pad + (i / (n - 1)) * (w - 2 * pad);
-    const Y = (v: number) => h - pad - ((v - min) / (max - min || 1)) * (h - 2 * pad);
-    const toPath = (s: number[]) => s.map((v, i) => `${i === 0 ? 'M' : 'L'} ${X(i, s.length)} ${Y(v)}`).join(' ');
+    // Transform data for Recharts
+    const chartData = seriesA.map((defaultVal, index) => ({
+      year: index,
+      'Default Mix': Math.round(defaultVal),
+      'Your Custom Mix': Math.round(seriesB[index] || 0),
+    }));
     
     return (
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-60 border rounded bg-white">
-        <path d={toPath(seriesA)} fill="none" stroke="#94a3b8" strokeWidth="2" />
-        <path d={toPath(seriesB)} fill="none" stroke="#0b3d91" strokeWidth="2" />
-        <text x={20} y={20} className="text-xs fill-gray-600">Default Mix</text>
-        <text x={20} y={40} className="text-xs fill-blue-800">Custom Mix</text>
-      </svg>
+      <div className="w-full h-80 mt-6">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis 
+              dataKey="year" 
+              label={{ value: 'Years from Now', position: 'insideBottom', offset: -5 }}
+              stroke="#6b7280"
+            />
+            <YAxis 
+              tickFormatter={(val) => `$${(val / 1000).toFixed(0)}K`}
+              stroke="#6b7280"
+            />
+            <Tooltip 
+              formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+              contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="Default Mix" 
+              stroke="#94a3b8" 
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="Your Custom Mix" 
+              stroke="#0A2463" 
+              strokeWidth={3}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     );
   };
 
