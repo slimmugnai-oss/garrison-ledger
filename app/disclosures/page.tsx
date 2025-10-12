@@ -44,7 +44,7 @@ export default function Disclosures() {
 
               <h2>Projections & Forward-Looking Statements</h2>
               <p>
-                Our "Wealth-Builder" tools, including the TSP Allocation Modeler, SDP Payout Strategist, and House Hacking Calculator, provide projections based on user inputs and historical market data.
+                Our &quot;Wealth-Builder&quot; tools, including the TSP Allocation Modeler, SDP Payout Strategist, and House Hacking Calculator, provide projections based on user inputs and historical market data.
               </p>
               <p>
                 <strong>Past performance is not an indicator of future results.</strong> These projections are hypothetical, for illustrative purposes only, and are not guarantees of future investment performance or financial outcomes. The actual results you experience will vary based on a multitude of factors, including market fluctuations and your personal financial decisions.
