@@ -1303,34 +1303,200 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  // Placeholder atoms for remaining content (to be completed)
   'commissary-savings-calculator': { 
-    title: 'Commissary & Exchange Savings Calculator', 
+    title: 'Visualize Your Annual On-Base Savings', 
     type: 'calculator', 
-    tags: ['finance', 'shopping'], 
-    topics: ['finance'], 
-    html: '<p class="text-lg">Interactive calculator for estimating annual savings from commissary and exchange shopping. Coming soon.</p>' 
+    tags: ['finance', 'savings', 'calculator', 'commissary', 'exchange'], 
+    topics: ['on-base-shopping', 'personal-finance', 'budgeting'], 
+    html: `
+      <h3 class="text-2xl font-bold text-headings mb-4">Visualize Your Savings</h3>
+      <p class="text-body mb-6">The benefits of on-base shopping add up quickly. Use these interactive calculators to estimate how much your family can save over the course of a year.</p>
+
+      <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+        <h4 class="text-xl font-bold text-headings mb-1">Advanced Commissary Savings</h4>
+        <p class="text-muted mb-4">Estimate your grocery savings based on your family's actual monthly spending.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="commissary-meat" class="block text-sm font-medium text-body">Monthly Meat & Seafood</label>
+            <input type="number" id="commissary-meat" value="150" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="commissary-produce" class="block text-sm font-medium text-body">Monthly Produce</label>
+            <input type="number" id="commissary-produce" value="100" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="commissary-pantry" class="block text-sm font-medium text-body">Monthly Pantry Items</label>
+            <input type="number" id="commissary-pantry" value="200" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="commissary-household" class="block text-sm font-medium text-body">Monthly Household Goods</label>
+            <input type="number" id="commissary-household" value="75" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+        </div>
+        <div class="mt-6 bg-green-100 p-4 rounded-lg text-center">
+          <p class="text-sm text-green-800">Estimated Annual Savings:</p>
+          <p class="text-3xl font-bold text-green-900" id="commissary-savings-result">$1,575</p>
+        </div>
+        <p class="text-xs text-muted mt-2 text-center">Estimates use DeCA's worldwide average savings of ~25%. The 5% surcharge funds commissary facilities.</p>
+      </div>
+
+      <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+        <h4 class="text-xl font-bold text-headings mb-1">Advanced Exchange Tax Savings</h4>
+        <p class="text-muted mb-4">Estimate your tax and MILITARY STAR® card savings from the Exchange.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="exchange-electronics" class="block text-sm font-medium text-body">Annual Electronics Spend</label>
+            <input type="number" id="exchange-electronics" value="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="exchange-clothing" class="block text-sm font-medium text-body">Annual Clothing/Shoes Spend</label>
+            <input type="number" id="exchange-clothing" value="800" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="exchange-gas" class="block text-sm font-medium text-body">Weekly Gas (Gallons)</label>
+            <input type="number" id="exchange-gas" value="15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+          <div>
+            <label for="exchange-tax" class="block text-sm font-medium text-body">Your Local Sales Tax Rate (%)</label>
+            <input type="number" id="exchange-tax" value="6.5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-accent focus:ring-primary-accent sm:text-sm">
+          </div>
+        </div>
+        <div class="mt-6 bg-blue-100 p-4 rounded-lg text-center">
+          <p class="text-sm text-blue-800">Combined Estimated Annual Savings:</p>
+          <p class="text-3xl font-bold text-blue-900" id="exchange-savings-result">$384</p>
+        </div>
+        <p class="text-xs text-muted mt-2 text-center">Assumes MILITARY STAR® savings of 5¢/gallon on gas. Tax savings vary by location.</p>
+      </div>
+    ` 
   },
   'commissary-exchange-basics': { 
-    title: 'Commissary & Exchange Shopping Guide', 
+    title: 'Commissary & Exchange 101: Your On-Base Shopping Benefits', 
     type: 'guide', 
-    tags: ['finance', 'shopping'], 
-    topics: ['finance'], 
-    html: '<p class="text-lg">Complete guide to maximizing on-base shopping benefits. Coming soon.</p>' 
+    tags: ['finance', 'savings', 'commissary', 'exchange', 'benefits', 'mwr'], 
+    topics: ['on-base-shopping', 'personal-finance', 'military-benefits'], 
+    html: `
+      <h3 class="text-2xl font-bold text-headings mb-4">Understanding Your On-Base Shopping Benefits</h3>
+      <p class="text-body mb-8">The Commissary and the Exchange are two of the most valuable benefits for military families, but they operate very differently. Understanding how each works is key to maximizing your savings and supporting your community.</p>
+
+      <div class="mb-8">
+        <h4 class="text-xl font-bold text-headings mb-2">The Commissary: Your At-Cost Supermarket</h4>
+        <p class="text-body mb-4">Run by the Defense Commissary Agency (DeCA), the Commissary's mission is to provide groceries to military families at the lowest possible price. By law, all items are sold <strong>at cost</strong> from the supplier, which is why the savings are so significant—averaging over 25% compared to civilian grocery stores.</p>
+        
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h5 class="font-bold text-headings">The 5% Surcharge Explained</h5>
+          <p class="text-body text-sm">A 5% surcharge is added to your total bill at the register. This is not a tax. This fee is used exclusively to fund the construction and maintenance of commissaries worldwide, ensuring the facilities remain modern and safe for the families they serve.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-xl font-bold text-headings mb-2">The Exchange: Your Tax-Free Department Store</h4>
+        <p class="text-body mb-4">The Exchange (AAFES, NEX, MCX) is your on-base department store, gas station, and food court. Every purchase you make at the Exchange is <strong>100% tax-free</strong>. Even better, 100% of the profits are paid as dividends to fund your installation's Morale, Welfare, and Recreation (MWR) programs.</p>
+        
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+          <h5 class="font-bold text-headings">Profits with a Purpose</h5>
+          <p class="text-body text-sm">Your shopping directly improves the quality of life on your base. The money you spend at the Exchange funds everything from the base gym and swimming pools to community events and outdoor recreation programs.</p>
+        </div>
+
+        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+           <h5 class="font-bold text-headings">The MILITARY STAR® Card Advantage</h5>
+           <p class="text-body text-sm">This exclusive credit card offers a competitive low APR, no annual fees, and a rewards program. Key benefits include:</p>
+           <ul class="list-disc list-inside text-sm text-body mt-2 space-y-1">
+              <li>5¢ off every gallon of gas at the Exchange gas station.</li>
+              <li>10% off all purchases at Exchange food courts.</li>
+              <li>Free standard shipping on all online orders from ShopMyExchange.com.</li>
+           </ul>
+        </div>
+      </div>
+    ` 
   },
   'oconus-shopping-guide': { 
-    title: 'OCONUS Shopping Navigator', 
+    title: 'A Military Family\'s Guide to Shopping Overseas (OCONUS)', 
     type: 'guide', 
-    tags: ['finance', 'oconus'], 
-    topics: ['finance', 'oconus'], 
-    html: '<p class="text-lg">Country-specific shopping guides with VAT and currency information. Coming soon.</p>' 
+    tags: ['oconus', 'pcs', 'shopping', 'germany', 'japan', 'korea', 'vat'], 
+    topics: ['on-base-shopping', 'pcs-prep', 'oconus'], 
+    html: `
+      <h3 class="text-2xl font-bold text-headings mb-4">Navigating Your OCONUS Shopping Experience</h3>
+      <p class="text-body mb-6">Shopping overseas comes with unique opportunities and challenges. The Cost of Living Allowance (COLA) you receive is designed to offset higher local prices, and maximizing both on- and off-base shopping helps that allowance go further. Here are country-specific tips to help you navigate the local economy.</p>
+
+      <div class="mb-6 pb-6 border-b border-gray-200">
+        <h4 class="text-xl font-bold text-headings mb-3">🇩🇪 Germany</h4>
+        <ul class="space-y-2 text-body">
+          <li><strong>Currency:</strong> Euro (€)</li>
+          <li><strong>VAT/Tax Info:</strong> Germany has a Value-Added Tax (VAT). Under the Status of Forces Agreement (SOFA), you are exempt from this tax on many purchases. Get VAT forms from your local VAT office *before* you shop to save significantly.</li>
+          <li><strong>Popular Local Stores:</strong> Rewe, Edeka (groceries); Lidl, Aldi (discount groceries); Saturn, MediaMarkt (electronics).</li>
+          <li><strong>Key Phrase:</strong> "Wie viel kostet das?" (How much does this cost?)</li>
+          <li><strong>Pro-Tip:</strong> Always bring your own reusable bags when shopping, as stores charge for them. Be prepared to bag your own groceries quickly!</li>
+        </ul>
+      </div>
+
+      <div class="mb-6 pb-6 border-b border-gray-200">
+        <h4 class="text-xl font-bold text-headings mb-3">🇯🇵 Japan</h4>
+        <ul class="space-y-2 text-body">
+          <li><strong>Currency:</strong> Japanese Yen (¥)</li>
+          <li><strong>VAT/Tax Info:</strong> Japan has a Consumption Tax. SOFA status personnel are generally exempt when shopping on base, but will pay the tax at off-base stores.</li>
+          <li><strong>Popular Local Stores:</strong> Don Quijote (discount variety); Daiso (100-yen store); Yodobashi Camera, Bic Camera (electronics).</li>
+          <li><strong>Key Phrase:</strong> "Kore wa ikura desu ka?" (How much is this?)</li>
+          <li><strong>Pro-Tip:</strong> While credit cards are common, many smaller shops and restaurants are still cash-only. It's wise to carry a reasonable amount of Yen.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xl font-bold text-headings mb-3">🇰🇷 South Korea</h4>
+        <ul class="space-y-2 text-body">
+          <li><strong>Currency:</strong> South Korean Won (₩)</li>
+          <li><strong>VAT/Tax Info:</strong> SOFA status personnel are exempt from taxes on-base. Off-base purchases include the VAT.</li>
+          <li><strong>Popular Local Stores:</strong> E-Mart, Lotte Mart, Homeplus (large supermarkets); Daiso (variety store); Hi-Mart (electronics).</li>
+          <li><strong>Key Phrase:</strong> "Igeo eolmayeyo?" (How much is this?)</li>
+          <li><strong>Pro-Tip:</strong> Many stores offer a point card or membership for discounts. It's also common for cashiers to ask if you need a bag ("bongtu pilyohaseyo?"), as they often cost a small fee.</li>
+        </ul>
+      </div>
+    ` 
   },
   'shopping-pro-tips': { 
-    title: 'On-Base Shopping Pro-Tips', 
+    title: 'Shop Like a Pro: Insider Tips for Commissary & Exchange Savings', 
     type: 'pro_tip_list', 
-    tags: ['finance', 'shopping'], 
-    topics: ['finance'], 
-    html: '<p class="text-lg">Curated tips for maximizing commissary and exchange benefits. Coming soon.</p>' 
+    tags: ['finance', 'savings', 'commissary', 'exchange', 'pcs', 'oconus', 'tips'], 
+    topics: ['on-base-shopping', 'personal-finance', 'pcs-prep'], 
+    html: `
+      <h3 class="text-2xl font-bold text-headings mb-4">Shop Like a Pro: Maximize Your Savings</h3>
+      <p class="text-body mb-6">A few extra pieces of knowledge can make your on-base shopping trips even more effective. Here are some essential tips to help you get started.</p>
+
+      <div class="mb-8">
+        <h4 class="text-xl font-bold text-headings mb-3">Essential Shopping Tips</h4>
+        <ul class="space-y-3 text-body">
+          <li class="flex items-start">
+            <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-3 px-2.5 py-1 rounded-full">✔</span>
+            <span><strong>Tip the Baggers:</strong> At most commissaries, baggers are not DeCA employees and work solely for tips. It's customary to tip them for their service.</span>
+          </li>
+          <li class="flex items-start">
+            <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-3 px-2.5 py-1 rounded-full">✔</span>
+            <span><strong>Check Local Ads:</strong> Your local Exchange and Commissary have weekly sales flyers with special deals. Grab one near the entrance or check their website before you shop.</span>
+          </li>
+          <li class="flex items-start">
+            <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold mr-3 px-2.5 py-1 rounded-full">✔</span>
+            <span><strong>Combine Savings:</strong> You can often use manufacturer coupons on top of Commissary Rewards Card digital coupons and store sales to maximize your savings on every trip.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xl font-bold text-headings mb-3">From the Trenches: PCS & OCONUS Shopping Secrets</h4>
+        <div class="space-y-4">
+          <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <p class="font-bold text-amber-900">💡 The Pre-OCONUS Stock-Up</p>
+            <p class="text-sm text-body mt-1">"Before moving overseas, use your US-based Commissary to stock up on American staples you love (spices, baking mixes, favorite brands). They can be expensive or unavailable abroad."</p>
+          </div>
+          <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <p class="font-bold text-amber-900">💡 Wait on Big Purchases</p>
+            <p class="text-sm text-body mt-1">"Never buy furniture for an OCONUS move until you see your actual housing. European and Asian homes are often much smaller, and power outlets are different (220v)."</p>
+          </div>
+          <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+            <p class="font-bold text-amber-900">💡 The 'First Day' Box Rule</p>
+            <p class="text-sm text-body mt-1">"Your first grocery run in a new place is overwhelming. Pack a 'First Day' box with paper towels, soap, coffee, snacks, and pet food so you're not in a rush."</p>
+          </div>
+        </div>
+      </div>
+    ` 
   },
 };
 
