@@ -96,12 +96,44 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 3: PCS Window
+  // Rule 3: PCS Window - Priority-Based Selection
   if (focus === 'pcs' && pcs === 'window') {
+    // Step 1: Non-negotiable for PCS planning
+    const atoms = ['pcs-timeline-tool'];
+    
+    // Step 2: Context-aware atom selection
+    const serviceYrs = c.foundation?.serviceYears || '';
+    const isVeteran = serviceYrs === '16+';
+    const hasTSPFocus = finance === 'tsp';
+    const hasChildren = ['young_children', 'school_age', 'mixed'].includes(c.foundation?.familySnapshot || '');
+    const hasFinancialStress = ['budget', 'debt'].includes(finance);
+    
+    // Veteran spouse approaching retirement with TSP focus
+    if (isVeteran && hasTSPFocus) {
+      atoms.push('tsp-brs-essentials');
+      atoms.push('ppm-profit-guide');
+      atoms.push('federal-employment-guide');
+    }
+    // Young family with financial stress
+    else if (hasChildren && hasFinancialStress) {
+      atoms.push('pcs-emotional-readiness');
+      atoms.push('pcs-budget-calculator');
+      atoms.push('les-decoder');
+    }
+    // General PCS window planning
+    else {
+      atoms.push('pcs-emotional-readiness');
+      atoms.push('pcs-budget-calculator');
+      
+      if (hasTSPFocus) atoms.push('tsp-brs-essentials');
+      else if (hasFinancialStress) atoms.push('les-decoder');
+      else atoms.push('pcs-faq');
+    }
+    
     return {
       primarySituation: "Strategic PCS Planning",
       priorityAction: "Use this planning window to organize your finances, research your new location, and prepare emotionally. Early preparation gives you maximum control.",
-      atomIds: ['pcs-timeline-tool', 'pcs-emotional-readiness', 'pcs-budget-calculator'],
+      atomIds: atoms.slice(0, 4),
     };
   }
 
