@@ -8,7 +8,17 @@ export default function BillingPortalButton() {
     setBusy(true);
     try {
       const res = await fetch("/api/billing/portal", { method: "POST" });
-      const j = await res.json().catch(() => null);
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+        if (error.error === "No Stripe customer found") {
+          alert("No active subscription found. Please upgrade to a premium plan first.");
+        } else {
+          alert("Could not open billing portal. Please contact support.");
+        }
+        setBusy(false);
+        return;
+      }
+      const j = await res.json();
       if (j?.url) {
         window.location.href = j.url;
       } else {
