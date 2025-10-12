@@ -98,43 +98,50 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
 
   // Rule 3: PCS Window - Priority-Based Selection
   if (focus === 'pcs' && pcs === 'window') {
-    // Step 1: Non-negotiable for PCS planning
-    const atoms = ['pcs-timeline-tool'];
-    
-    // Step 2: Context-aware atom selection
-    const serviceYrs = c.foundation?.serviceYears || '';
-    const isVeteran = serviceYrs === '16+';
-    const hasTSPFocus = finance === 'tsp';
-    const hasChildren = ['young_children', 'school_age', 'mixed'].includes(c.foundation?.familySnapshot || '');
-    const hasFinancialStress = ['budget', 'debt'].includes(finance);
-    
-    // Veteran spouse approaching retirement with TSP focus
-    if (isVeteran && hasTSPFocus) {
-      atoms.push('tsp-brs-essentials');
-      atoms.push('ppm-profit-guide');
-      atoms.push('federal-employment-guide');
-    }
-    // Young family with financial stress
-    else if (hasChildren && hasFinancialStress) {
-      atoms.push('pcs-emotional-readiness');
-      atoms.push('pcs-budget-calculator');
-      atoms.push('les-decoder');
-    }
-    // General PCS window planning
-    else {
-      atoms.push('pcs-emotional-readiness');
-      atoms.push('pcs-budget-calculator');
+    // Check if this is actually a PCS + Career combo (defer to Rule 15)
+    const hasActiveCareerGoal = career && career !== 'not_career' && career !== '';
+    if (hasActiveCareerGoal) {
+      // Fall through to let Rule 15 handle PCS + Career combo
+    } else {
+      // Step 1: Non-negotiable for PCS planning
+      const atoms = ['pcs-timeline-tool'];
       
-      if (hasTSPFocus) atoms.push('tsp-brs-essentials');
-      else if (hasFinancialStress) atoms.push('les-decoder');
-      else atoms.push('pcs-faq');
+      // Step 2: Context-aware atom selection
+      const serviceYrs = c.foundation?.serviceYears || '';
+      const isVeteran = serviceYrs === '16+';
+      const hasTSPFocus = finance === 'tsp';
+      const hasChildren = ['young_children', 'school_age', 'mixed'].includes(c.foundation?.familySnapshot || '');
+      const hasFinancialStress = ['budget', 'debt'].includes(finance);
+      
+      // Veteran spouse approaching retirement with TSP focus
+      if (isVeteran && hasTSPFocus) {
+        atoms.push('tsp-brs-essentials');
+        atoms.push('ppm-profit-guide');
+        atoms.push('federal-employment-guide');
+      }
+      // Young family with financial stress
+      else if (hasChildren && hasFinancialStress) {
+        atoms.push('pcs-emotional-readiness');
+        atoms.push('pcs-budget-calculator');
+        atoms.push('les-decoder');
+      }
+      // General PCS window planning
+      else {
+        atoms.push('pcs-emotional-readiness');
+        atoms.push('pcs-budget-calculator');
+        
+        if (hasTSPFocus) atoms.push('tsp-brs-essentials');
+        else if (hasFinancialStress) atoms.push('les-decoder');
+        else if (finance === 'emergency') atoms.push('emergency-fund-builder');
+        else atoms.push('pcs-faq');
+      }
+      
+      return {
+        primarySituation: "Strategic PCS Planning",
+        priorityAction: "Use this planning window to organize your finances, research your new location, and prepare emotionally. Early preparation gives you maximum control.",
+        atomIds: atoms.slice(0, 4),
+      };
     }
-    
-    return {
-      primarySituation: "Strategic PCS Planning",
-      priorityAction: "Use this planning window to organize your finances, research your new location, and prepare emotionally. Early preparation gives you maximum control.",
-      atomIds: atoms.slice(0, 4),
-    };
   }
 
   // Rule 4: OCONUS PCS - Priority-Based Selection
@@ -324,12 +331,36 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
 
   // ==================== COMBO/FALLBACK RULES ====================
   
-  // Rule 15: PCS + Career Combo
+  // Rule 15: PCS + Career Combo - Priority-Based Selection
   if ((focus === 'pcs' || pcs === 'window') && career) {
+    // Step 1: Non-negotiables for PCS + career multitasking
+    const atoms = ['pcs-timeline-tool', 'resume-power-up'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const isJobSearching = career === 'find-job';
+    const hasFinancialStress = ['budget', 'debt', 'emergency'].includes(finance);
+    
+    if (isJobSearching) {
+      atoms.push('portable-careers-guide');  // Target portable roles
+    } else {
+      atoms.push('mycaa-complete-guide');    // Education/upskilling focus
+    }
+    
+    if (hasFinancialStress) {
+      atoms.push('emergency-fund-builder');  // Stability during dual transitions
+    }
+    
+    // Step 3: Fill remaining slots
+    const standardPriority = ['pcs-master-checklist', 'federal-employment-guide'];
+    for (const atom of standardPriority) {
+      if (atoms.length >= 4) break;
+      atoms.push(atom);
+    }
+    
     return {
       primarySituation: "PCS + Career Transition",
-      priorityAction: "Use your PCS as a career reset opportunity. Target remote roles that will travel with you to every future duty station.",
-      atomIds: ['resume-power-up', 'pcs-master-checklist', 'portable-careers-guide'],
+      priorityAction: "With a PCS on the horizon and an immediate need for employment, your #1 priority is to simultaneously manage your relocation timeline while preparing your resume for your new job market.",
+      atomIds: atoms.slice(0, 4),
     };
   }
 
