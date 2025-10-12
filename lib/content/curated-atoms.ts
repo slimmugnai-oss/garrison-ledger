@@ -97,6 +97,120 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
+  'pcs-timeline-tool': {
+    title: 'Interactive PCS Timeline Generator',
+    type: 'tool',
+    tags: ['pcs', 'timeline', 'planning'],
+    topics: ['pcs', 'pcs-prep'],
+    html: `
+      <p class="text-xl mb-8">Generate a personalized PCS timeline based on your report date, with every critical deadline mapped out week-by-week.</p>
+      
+      <h3 class="text-2xl font-bold mb-4">Key Milestones Timeline</h3>
+      <p class="mb-6">Working backwards from your Report No Later Than Date (RNLTD), here's when to complete each critical task:</p>
+
+      <div class="space-y-4 mb-8">
+        <div class="flex gap-4 items-start p-4 bg-blue-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-blue-900">12 Weeks</div>
+            <div class="text-sm text-blue-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Schedule HHG Shipment with TMO</p>
+            <p class="text-sm text-gray-600">Critical during peak season (May-August). Book early for preferred dates.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-indigo-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-indigo-900">10 Weeks</div>
+            <div class="text-sm text-indigo-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Complete Medical/Dental Clearance</p>
+            <p class="text-sm text-gray-600">Schedule appointments for entire family.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-purple-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-purple-900">8 Weeks</div>
+            <div class="text-sm text-purple-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Book Temporary Lodging (TLE/TLA)</p>
+            <p class="text-sm text-gray-600">Research and reserve lodging at new duty station.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-green-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-green-900">6 Weeks</div>
+            <div class="text-sm text-green-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Begin Decluttering & Purging</p>
+            <p class="text-sm text-gray-600">Donate, sell, or discard items to reduce moving costs.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-amber-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-amber-900">4 Weeks</div>
+            <div class="text-sm text-amber-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Submit USPS Address Change</p>
+            <p class="text-sm text-gray-600">Also update banks, subscriptions, and important accounts.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-red-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-red-900">3 Weeks</div>
+            <div class="text-sm text-red-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Notify Schools & Arrange Transfers</p>
+            <p class="text-sm text-gray-600">Request records, research new school district.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-orange-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-orange-900">2 Weeks</div>
+            <div class="text-sm text-orange-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Pack Personal Items & Essentials</p>
+            <p class="text-sm text-gray-600">Items you'll hand-carry during move.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start p-4 bg-pink-50 rounded-lg">
+          <div class="flex-shrink-0 w-20 text-center">
+            <div class="font-bold text-pink-900">1 Week</div>
+            <div class="text-sm text-pink-700">Out</div>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-gray-900">Final Preparations & Goodbyes</p>
+            <p class="text-sm text-gray-600">Last-minute tasks, farewells to friends.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 p-6 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+        <p class="font-semibold text-yellow-900 mb-2">Disclaimer</p>
+        <p class="text-yellow-800">This timeline is an unofficial planning estimate. Every PCS is unique. Always refer to official orders and consult TMO for deadlines.</p>
+      </div>
+
+      <div class="mt-6">
+        <a href="https://www.move.mil/" target="_blank" rel="noopener" class="text-primary-accent font-semibold hover:underline">
+          Official Move.mil Portal →
+        </a>
+      </div>
+    `,
+  },
+
   'pcs-budget-calculator': {
     title: 'PCS Financial Calculator',
     type: 'calculator',
