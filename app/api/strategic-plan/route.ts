@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { generateStrategicPlan, type StrategicAnswers } from "@/lib/plan/strategic-rules";
+import { assemblePlan, type StrategicInput } from "@/lib/plan/atomic-rules";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
@@ -25,34 +25,42 @@ export async function GET() {
     .eq("user_id", userId)
     .maybeSingle();
   
-  const answers = (aRow?.answers || {}) as StrategicAnswers;
+  const answers = (aRow?.answers || {}) as StrategicInput;
 
-  // Generate strategic plan using intelligent rules
-  const strategicPlan = generateStrategicPlan(answers);
+  // Assemble plan using intelligent rules
+  const assembled = assemblePlan(answers);
 
-  // Fetch the curated blocks from database
-  const slugs = strategicPlan.blocks.map(b => b.slug);
+  // Fetch atomic blocks from database
+  const atomIds = assembled.atoms.map(a => a.atomId);
   const { data: blocks } = await supabase
     .from("content_blocks")
-    .select("slug, title, html, topics")
-    .in("slug", slugs);
+    .select("slug, title, html, type, topics")
+    .in("slug", atomIds);
 
-  // Merge why strings with block content
-  const blocksWithWhy = (blocks || []).map(b => {
-    const ruleBlock = strategicPlan.blocks.find(rb => rb.slug === b.slug);
+  if (!blocks || blocks.length === 0) {
+    console.error('[Strategic Plan] No blocks found for atomIds:', atomIds);
+  }
+
+  // Merge with why strings and preserve order
+  const blocksWithWhy = assembled.atoms.map(atom => {
+    const block = blocks?.find(b => b.slug === atom.atomId);
+    if (!block) {
+      console.warn('[Strategic Plan] Missing block:', atom.atomId);
+      return null;
+    }
     return {
-      slug: b.slug,
-      title: b.title,
-      html: b.html,
-      why: ruleBlock?.why || '',
-      topics: b.topics || [],
+      slug: block.slug,
+      title: block.title,
+      html: block.html,
+      type: block.type,
+      topics: block.topics || [],
+      why: atom.why,
     };
-  });
+  }).filter(Boolean);
 
   return NextResponse.json({
-    primarySituation: strategicPlan.primarySituation,
-    priorityAction: strategicPlan.priorityAction,
+    primarySituation: assembled.primarySituation,
+    priorityAction: assembled.priorityAction,
     blocks: blocksWithWhy,
   }, { headers: { "Cache-Control": "no-store" } });
 }
-
