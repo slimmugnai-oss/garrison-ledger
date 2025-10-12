@@ -7,6 +7,7 @@ import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import SectionHeader from '@/app/components/ui/SectionHeader';
 import ContentCard from '@/app/components/ui/ContentCard';
 import { useUser } from '@clerk/nextjs';
+import Footer from '@/app/components/Footer';
 
 type Block = {
   slug: string;
@@ -154,8 +155,8 @@ export default function ExecutiveBriefing() {
             ))}
           </div>
 
-          {/* Footer Navigation */}
-          <div className="mt-24 pt-12 border-t-2 border-border text-center">
+          {/* Back Link */}
+          <div className="mt-24 text-center">
             <Link 
               href="/dashboard"
               className="inline-flex items-center gap-3 text-primary-accent hover:text-primary-hover font-bold text-xl transition-colors"
@@ -166,6 +167,11 @@ export default function ExecutiveBriefing() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
+
+import Footer from '@/app/components/Footer';
