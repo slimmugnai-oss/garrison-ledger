@@ -304,8 +304,29 @@ export default function TspModeler() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : apiData ? (
+              isPremium ? (
+                <>
+                  <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
+                </>
+              ) : (
+                <div className="relative">
+                  <div className="blur-sm pointer-events-none select-none">
+                    <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border-2 border-primary text-center max-w-md">
+                      <div className="text-5xl mb-4">⭐</div>
+                      <h3 className="text-2xl font-bold text-text mb-3">Premium Feature</h3>
+                      <p className="text-muted mb-6">Upgrade to see your full growth projection chart and compare allocation strategies.</p>
+                      <a href="/dashboard/upgrade" className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold shadow-lg">
+                        Upgrade to Premium →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : apiData ? (
               <>
-                <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
                 {apiData.partial && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-blue-800 font-medium">
