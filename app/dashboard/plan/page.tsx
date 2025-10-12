@@ -5,15 +5,8 @@ import Link from 'next/link';
 import Header from '@/app/components/Header';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import SectionHeader from '@/app/components/ui/SectionHeader';
+import ContentCard from '@/app/components/ui/ContentCard';
 import { useUser } from '@clerk/nextjs';
-
-// Atomic Component Imports
-import ToolCard from '@/app/components/atomic/ToolCard';
-import ChecklistCard from '@/app/components/atomic/ChecklistCard';
-import ProTipCard from '@/app/components/atomic/ProTipCard';
-import GuideCard from '@/app/components/atomic/GuideCard';
-import FAQCard from '@/app/components/atomic/FAQCard';
-import CalculatorCard from '@/app/components/atomic/CalculatorCard';
 
 type Block = {
   slug: string;
@@ -122,11 +115,11 @@ export default function ExecutiveBriefing() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Priority Action Card - Clean, No "Why" */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Priority Action Card */}
           <div className="mb-20 bg-gradient-to-br from-amber-50 to-orange-50 border-l-8 border-amber-500 rounded-2xl shadow-2xl p-12">
             <div className="flex items-start gap-8">
-              <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform">
+              <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl">
                 <span className="text-white text-5xl font-black">!</span>
               </div>
               <div className="flex-1">
@@ -145,22 +138,20 @@ export default function ExecutiveBriefing() {
             Your Curated Action Plan
           </SectionHeader>
           <p className="text-xl text-text-body mb-12 -mt-6">
-            {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled specifically for your situation
+            {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled for your situation
           </p>
 
-          {/* Modular Content Blocks */}
-          <div className="space-y-10">
-            {plan.blocks.map((block) => {
-              // Dynamic component rendering based on atomic type
-              if (block.type === 'tool') return <ToolCard key={block.slug} title={block.title} html={block.html} />;
-              if (block.type === 'checklist') return <ChecklistCard key={block.slug} title={block.title} html={block.html} />;
-              if (block.type === 'pro_tip_list') return <ProTipCard key={block.slug} title={block.title} html={block.html} />;
-              if (block.type === 'faq_section') return <FAQCard key={block.slug} title={block.title} html={block.html} />;
-              if (block.type === 'calculator') return <CalculatorCard key={block.slug} title={block.title} html={block.html} />;
-              if (block.type === 'guide') return <GuideCard key={block.slug} title={block.title} html={block.html} />;
-              // Fallback
-              return <GuideCard key={block.slug} title={block.title} html={block.html} />;
-            })}
+          {/* Content Blocks - Magazine Style */}
+          <div className="space-y-12">
+            {plan.blocks.map((block) => (
+              <ContentCard
+                key={block.slug}
+                title={block.title}
+                html={block.html}
+                type={block.type}
+                topics={block.topics}
+              />
+            ))}
           </div>
 
           {/* Footer Navigation */}
