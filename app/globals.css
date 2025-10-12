@@ -30,22 +30,7 @@
   --font-serif: var(--font-lora);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --secondary: #94a3b8;
-    --accent: #38bdf8;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
-    --border: #334155;
-    --muted: #64748b;
-    --muted-foreground: #94a3b8;
-  }
-}
+/* Dark mode disabled - keeping light theme consistent across all pages */
 
 * {
   box-sizing: border-box;
