@@ -30,8 +30,8 @@ export default async function CommandDashboard() {
   const move = (v21Obj?.move as Record<string, unknown> | undefined) || {};
 
   const serviceYears = String(foundation?.serviceYears || '');
-  const familySnapshot = String(move?.familySnapshot || 'none');
-  const efmp = Boolean(foundation?.efmp);
+  const familySnapshot = String(foundation?.familySnapshot || 'none'); // Fixed: was move?.familySnapshot
+  const efmp = Boolean(foundation?.efmpEnrolled); // Fixed: was foundation?.efmp
   const pcsSituation = String(move?.pcsSituation || '');
   const hasAssessment = Object.keys(answers).length > 0;
 

@@ -235,7 +235,7 @@ export default function ComprehensiveAssessment() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? "Generating Your Plan..." : "Generate My Personalized Plan →"}
               </button>
