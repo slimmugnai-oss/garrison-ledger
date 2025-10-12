@@ -10,7 +10,8 @@
     "content:ingest": "tsx scripts/ingest-content.ts",
     "content:ingest:v2": "tsx scripts/ingest-content-v2.ts",
     "content:ingest:v3": "tsx scripts/ingest-content-v3-smart.ts",
-    "content:ingest:atomic": "tsx scripts/ingest-atomic.ts"
+    "content:ingest:atomic": "tsx scripts/ingest-atomic.ts",
+    "content:load-curated": "tsx scripts/load-curated-atoms.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.3",
