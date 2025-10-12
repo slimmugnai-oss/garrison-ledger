@@ -88,13 +88,13 @@ export default function ComprehensiveAssessment() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-bg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-serif font-black text-text-headings mb-4">
+            <h1 className="text-5xl font-serif font-black text-text mb-4">
               Readiness Assessment
             </h1>
-            <p className="text-xl text-text-body max-w-2xl mx-auto">
+            <p className="text-xl text-muted max-w-2xl mx-auto">
               Complete this comprehensive assessment to receive your personalized Military Financial Roadmap. Takes 5-7 minutes.
             </p>
           </div>
@@ -235,7 +235,7 @@ export default function ComprehensiveAssessment() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="w-full bg-primary-accent hover:bg-primary-hover text-white font-bold py-5 px-8 rounded-xl transition-colors text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? "Generating Your Plan..." : "Generate My Personalized Plan →"}
               </button>
@@ -249,14 +249,14 @@ export default function ComprehensiveAssessment() {
 
 function Section({ title, number, icon, children }: { title: string; number: string; icon: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-2xl p-8 border border-border shadow-lg">
+    <div className="bg-card rounded-2xl p-8 border border-border shadow-card">
       <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-        <div className="flex-shrink-0 w-14 h-14 bg-primary-accent rounded-xl flex items-center justify-center shadow-md">
+        <div className="flex-shrink-0 w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-md">
           <span className="text-white text-2xl">{icon}</span>
         </div>
         <div>
-          <div className="text-sm font-bold text-text-muted uppercase tracking-wider">Section {number}</div>
-          <h2 className="text-2xl font-serif font-bold text-text-headings">{title}</h2>
+          <div className="text-sm font-bold text-muted uppercase tracking-wider">Section {number}</div>
+          <h2 className="text-2xl font-serif font-bold text-text">{title}</h2>
         </div>
       </div>
       <div className="space-y-6">{children}</div>
@@ -267,7 +267,7 @@ function Section({ title, number, icon, children }: { title: string; number: str
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-base font-bold text-text-headings mb-3">{label}</label>
+      <label className="block text-base font-bold text-text mb-3">{label}</label>
       {children}
     </div>
   );
@@ -278,7 +278,7 @@ function Select({ value, onChange, options }: { value: string; onChange: (v: str
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-3 border-2 border-border rounded-lg focus:ring-2 focus:ring-primary-accent focus:border-primary-accent text-text-body bg-card font-medium"
+      className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary text-text bg-card font-medium transition-all"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
