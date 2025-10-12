@@ -63,43 +63,6 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
   'pcs-timeline-tool': {
     title: 'Interactive PCS Timeline Generator',
     type: 'tool',
-    tags: ['pcs', 'timeline'],
-    topics: ['pcs', 'pcs-prep'],
-    html: `
-      <p class="text-lg mb-6">Generate a personalized PCS timeline based on your report date, with every critical deadline mapped out week-by-week.</p>
-      
-      <h3 class="text-2xl font-bold mb-4">How It Works</h3>
-      <p class="mb-6">Enter your Report No Later Than Date (RNLTD) from your orders. The tool generates a customized timeline showing when to complete each task, working backwards from your report date.</p>
-
-      <h3 class="text-2xl font-bold mt-8 mb-4">Key Milestones</h3>
-      <ul class="space-y-3">
-        <li><strong>12 weeks out:</strong> Schedule HHG shipment with TMO</li>
-        <li><strong>10 weeks out:</strong> Complete medical/dental clearance</li>
-        <li><strong>8 weeks out:</strong> Book temporary lodging (TLE/TLA)</li>
-        <li><strong>6 weeks out:</strong> Begin decluttering and purging</li>
-        <li><strong>4 weeks out:</strong> Submit USPS address change</li>
-        <li><strong>3 weeks out:</strong> Notify schools, arrange transfers</li>
-        <li><strong>2 weeks out:</strong> Pack personal items and essentials</li>
-        <li><strong>1 week out:</strong> Final preparations and goodbyes</li>
-        <li><strong>Report date:</strong> Check in at new duty station</li>
-      </ul>
-
-      <div class="mt-8 p-6 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-        <p class="font-semibold text-yellow-900 mb-2">Disclaimer</p>
-        <p class="text-yellow-800">This timeline is an unofficial planning estimate. Every PCS is unique. Always refer to your official orders and consult TMO for official deadlines.</p>
-      </div>
-
-      <div class="mt-6">
-        <a href="https://www.move.mil/" target="_blank" rel="noopener" class="inline-flex items-center text-primary-accent font-semibold hover:underline">
-          Visit Official Move.mil Portal →
-        </a>
-      </div>
-    `,
-  },
-
-  'pcs-timeline-tool': {
-    title: 'Interactive PCS Timeline Generator',
-    type: 'tool',
     tags: ['pcs', 'timeline', 'planning'],
     topics: ['pcs', 'pcs-prep'],
     html: `
