@@ -5,6 +5,7 @@ import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
