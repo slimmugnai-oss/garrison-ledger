@@ -18,17 +18,17 @@ export default function Home() {
 
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
           {/* Kicker Badge */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-text-muted uppercase tracking-wider">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
             Intelligent Financial Planning
           </span>
 
           {/* Main Heading - Lora serif, full contrast */}
-          <h1 className="mt-6 font-serif text-6xl md:text-7xl font-black tracking-tight text-text-headings">
+          <h1 className="mt-6 font-serif text-6xl md:text-7xl font-black tracking-tight text-gray-900">
             Garrison Ledger
           </h1>
 
           {/* Subtitle - Readable muted tone */}
-          <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-text-muted">
+          <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
             Your comprehensive financial toolkit for military personnel. Plan, track, and optimize your financial future with specialized tools.
           </p>
 
@@ -36,13 +36,13 @@ export default function Home() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <SignedOut>
               <SignUpButton mode="modal">
-                <button className="inline-flex items-center rounded-xl bg-primary-accent px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-primary-hover hover:-translate-y-[2px] hover:shadow-xl">
+                <button className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl">
                   Start Free Preview
                 </button>
               </SignUpButton>
               <Link
                 href="/dashboard/tools/tsp-modeler"
-                className="inline-flex items-center rounded-xl border-2 border-border px-8 py-4 text-primary-accent font-semibold transition-all hover:border-primary-accent hover:-translate-y-[2px]"
+                className="inline-flex items-center rounded-xl border-2 border-gray-300 px-8 py-4 text-indigo-600 font-semibold transition-all hover:border-indigo-600 hover:-translate-y-[2px]"
               >
                 Explore the Tools
               </Link>
@@ -64,7 +64,7 @@ export default function Home() {
             </SignedIn>
           </div>
 
-          <p className="mt-6 text-sm text-text-muted">
+          <p className="mt-6 text-sm text-gray-600">
             7-day money-back guarantee · No credit card required
           </p>
         </div>
