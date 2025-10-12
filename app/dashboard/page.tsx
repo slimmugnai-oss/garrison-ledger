@@ -12,8 +12,17 @@ export default async function CommandDashboard() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');
 
-  // Load assessment
+  // Load assessment and premium status
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  
+  // Check premium
+  let isPremium = false;
+  try {
+    const { data: entitlement } = await supabase.from("entitlements").select("tier, status").eq("user_id", user.id).single();
+    isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+  } catch {
+    isPremium = false;
+  }
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
   const answers = (aRow?.answers || {}) as Record<string, unknown>;
   const v21Obj = (answers as Record<string, unknown>)?.v21 as Record<string, unknown> | undefined;
@@ -44,6 +53,11 @@ export default async function CommandDashboard() {
           <PageHeader 
             title={`Welcome back, ${user.firstName || 'Commander'}! 👋`}
             subtitle="Your military financial command center"
+            right={isPremium && (
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-sm font-black text-gray-900 shadow-lg">
+                ⭐ Premium Member
+              </div>
+            )}
           />
 
           {!hasAssessment && (

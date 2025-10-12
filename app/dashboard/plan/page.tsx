@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
-import DownloadGuideButton from '@/app/components/DownloadGuideButton';
 import SectionHeader from '@/app/components/ui/SectionHeader';
 import ContentCard from '@/app/components/ui/ContentCard';
 import { useUser } from '@clerk/nextjs';
@@ -108,9 +107,6 @@ export default function ExecutiveBriefing() {
                 <p className="text-2xl text-slate-200 leading-relaxed">
                   <strong className="text-white font-bold">{plan.primarySituation}</strong>
                 </p>
-              </div>
-              <div className="flex-shrink-0">
-                <DownloadGuideButton />
               </div>
             </div>
           </div>

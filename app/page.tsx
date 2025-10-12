@@ -70,39 +70,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Value Highlights */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <AnimatedCard delay={0}>
-            <StatCard 
-              icon="📈" 
-              label="TSP Modeler" 
-              description="Optimize retirement allocation for maximum growth"
-            />
-          </AnimatedCard>
-          <AnimatedCard delay={100}>
-            <StatCard 
-              icon="💵" 
-              label="SDP Strategist" 
-              description="Maximize deployment windfall returns"
-            />
-          </AnimatedCard>
-          <AnimatedCard delay={200}>
-            <StatCard 
-              icon="🏡" 
-              label="House Hacking" 
-              description="Analyze multi-unit property ROI with BAH"
-            />
-          </AnimatedCard>
-          <AnimatedCard delay={300}>
-            <StatCard 
-              icon="📊" 
-              label="Personalized Plan" 
-              description="Curated recommendations from toolkit hubs"
-            />
-          </AnimatedCard>
-        </div>
-      </section>
 
       {/* How It Works */}
       <section className="bg-card border-y border-border py-20">
