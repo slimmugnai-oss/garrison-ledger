@@ -48,12 +48,34 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 2: Imminent PCS (Orders in Hand)
+  // Rule 2: Imminent PCS (Orders in Hand) - Priority-Based Selection
   if (focus === 'pcs' && pcs === 'orders') {
+    // Step 1: Non-negotiables for any imminent PCS
+    const atoms = ['pcs-master-checklist', 'pcs-budget-calculator'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const familySnap = c.foundation?.familySnapshot || '';
+    const hasChildren = ['young_children', 'school_age', 'mixed'].includes(familySnap);
+    const hasFinancialStress = ['budget', 'debt'].includes(finance);
+    
+    if (hasChildren) {
+      atoms.push('pcs-emotional-readiness');
+    }
+    if (hasFinancialStress) {
+      atoms.push('les-decoder');
+    }
+    
+    // Step 3: Fill remaining slots with standard resources (max 4 total)
+    const standardPriority = ['pcs-timeline-tool', 'pcs-faq'];
+    for (const atom of standardPriority) {
+      if (atoms.length >= 4) break;
+      atoms.push(atom);
+    }
+    
     return {
       primarySituation: "Imminent PCS Move",
       priorityAction: "Schedule your household goods shipment with TMO immediately and create your PCS binder. You need to act within the next 2 weeks to secure your preferred dates.",
-      atomIds: ['pcs-timeline-tool', 'pcs-master-checklist', 'pcs-budget-calculator', 'pcs-faq'],
+      atomIds: atoms,
     };
   }
 
