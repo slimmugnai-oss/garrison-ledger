@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
+import SectionHeader from '@/app/components/ui/SectionHeader';
 import { useUser } from '@clerk/nextjs';
 
 // Atomic Component Imports
@@ -14,19 +15,19 @@ import GuideCard from '@/app/components/atomic/GuideCard';
 import FAQCard from '@/app/components/atomic/FAQCard';
 import CalculatorCard from '@/app/components/atomic/CalculatorCard';
 
-type AtomicBlock = {
+type Block = {
   slug: string;
   title: string;
   html: string;
   type: string;
-  topics: string[];
-  why: string;
+  topics?: string[];
+  tags?: string[];
 };
 
 type PlanData = {
   primarySituation: string;
   priorityAction: string;
-  blocks: AtomicBlock[];
+  blocks: Block[];
 };
 
 export default function ExecutiveBriefing() {
@@ -57,12 +58,12 @@ export default function ExecutiveBriefing() {
     return (
       <>
         <Header />
-        <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="min-h-screen bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-6"></div>
-              <p className="text-2xl font-semibold text-gray-700">Assembling your Executive Briefing...</p>
-              <p className="text-gray-500 mt-2">Selecting the most relevant content for your situation</p>
+              <div className="inline-block animate-spin rounded-full h-20 w-20 border-b-4 border-primary-accent mb-8"></div>
+              <p className="text-2xl font-serif font-bold text-text-headings">Assembling your Executive Briefing...</p>
+              <p className="text-text-muted mt-2">Selecting the most relevant content for your situation</p>
             </div>
           </div>
         </div>
@@ -74,17 +75,17 @@ export default function ExecutiveBriefing() {
     return (
       <>
         <Header />
-        <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="bg-white rounded-2xl shadow-2xl p-12 text-center border-2 border-gray-200">
-              <div className="text-7xl mb-6">📋</div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">Assessment Required</h2>
-              <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Complete the Strategic Assessment to receive your personalized Executive Briefing with curated content from our toolkit hubs.
+        <div className="min-h-screen bg-background">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="bg-card rounded-3xl shadow-2xl p-16 text-center border-2 border-border">
+              <div className="text-8xl mb-8">📋</div>
+              <h2 className="text-5xl font-serif font-black text-text-headings mb-6">Assessment Required</h2>
+              <p className="text-2xl text-text-body mb-12 max-w-2xl mx-auto leading-relaxed">
+                Complete the comprehensive assessment to receive your personalized Executive Briefing.
               </p>
               <Link 
                 href="/dashboard/assessment"
-                className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-5 px-12 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl text-xl"
+                className="inline-block bg-primary-accent hover:bg-primary-hover text-white font-bold py-6 px-14 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl text-xl"
               >
                 Take Assessment →
               </Link>
@@ -98,20 +99,20 @@ export default function ExecutiveBriefing() {
   return (
     <>
       <Header />
-      <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-        {/* Premium Hero Header */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white py-16 md:py-24 border-b-4 border-blue-600">
+      <div className="min-h-screen bg-background">
+        {/* Premium Hero */}
+        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white py-20 md:py-28 border-b-4 border-primary-accent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-              <div className="max-w-3xl">
-                <div className="inline-flex items-center px-4 py-2 bg-blue-600/30 border-2 border-blue-400/50 rounded-full text-blue-200 text-sm font-bold mb-5 uppercase tracking-wider">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
+              <div className="max-w-4xl">
+                <div className="inline-flex items-center px-5 py-2 bg-primary-accent/30 border-2 border-indigo-400/50 rounded-full text-indigo-200 text-sm font-black mb-6 uppercase tracking-widest">
                   Executive Briefing
                 </div>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-tight">
+                <h1 className="text-6xl md:text-7xl font-serif font-black tracking-tight mb-6 leading-none">
                   {user?.firstName || 'Your'}&apos;s Military Financial Roadmap
                 </h1>
-                <p className="text-2xl text-slate-300 leading-relaxed">
-                  <strong className="text-white">{plan.primarySituation}</strong> · Curated content for your unique situation
+                <p className="text-2xl text-slate-200 leading-relaxed">
+                  <strong className="text-white font-bold">{plan.primarySituation}</strong>
                 </p>
               </div>
               <div className="flex-shrink-0">
@@ -122,17 +123,17 @@ export default function ExecutiveBriefing() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Priority Action Card */}
-          <div className="mb-16 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 border-l-8 border-amber-500 rounded-2xl shadow-2xl p-10 md:p-12">
+          {/* Priority Action Card - Clean, No "Why" */}
+          <div className="mb-20 bg-gradient-to-br from-amber-50 to-orange-50 border-l-8 border-amber-500 rounded-2xl shadow-2xl p-12">
             <div className="flex items-start gap-8">
-              <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <span className="text-white text-4xl font-black">!</span>
+              <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform">
+                <span className="text-white text-5xl font-black">!</span>
               </div>
-              <div>
-                <div className="inline-flex items-center px-4 py-1.5 bg-amber-500 text-white rounded-full text-sm font-black mb-5 uppercase tracking-wide shadow-md">
+              <div className="flex-1">
+                <div className="inline-flex items-center px-5 py-2 bg-amber-500 text-white rounded-full text-sm font-black mb-5 uppercase tracking-widest shadow-md">
                   Your #1 Priority
                 </div>
-                <p className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                <p className="text-3xl md:text-4xl font-serif font-bold text-text-headings leading-tight">
                   {plan.priorityAction}
                 </p>
               </div>
@@ -140,76 +141,35 @@ export default function ExecutiveBriefing() {
           </div>
 
           {/* Section Header */}
-          <div className="mb-10">
-            <h2 className="text-4xl font-black text-gray-900 mb-3">Your Curated Action Plan</h2>
-            <p className="text-xl text-gray-600">
-              {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} selected for your situation
-            </p>
+          <SectionHeader icon="📚">
+            Your Curated Action Plan
+          </SectionHeader>
+          <p className="text-xl text-text-body mb-12 -mt-6">
+            {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled specifically for your situation
+          </p>
+
+          {/* Modular Content Blocks */}
+          <div className="space-y-10">
+            {plan.blocks.map((block) => {
+              // Dynamic component rendering based on atomic type
+              if (block.type === 'tool') return <ToolCard key={block.slug} title={block.title} html={block.html} />;
+              if (block.type === 'checklist') return <ChecklistCard key={block.slug} title={block.title} html={block.html} />;
+              if (block.type === 'pro_tip_list') return <ProTipCard key={block.slug} title={block.title} html={block.html} />;
+              if (block.type === 'faq_section') return <FAQCard key={block.slug} title={block.title} html={block.html} />;
+              if (block.type === 'calculator') return <CalculatorCard key={block.slug} title={block.title} html={block.html} />;
+              if (block.type === 'guide') return <GuideCard key={block.slug} title={block.title} html={block.html} />;
+              // Fallback
+              return <GuideCard key={block.slug} title={block.title} html={block.html} />;
+            })}
           </div>
 
-          {/* Dynamic Atomic Content Blocks */}
-          <div className="space-y-12">
-            {plan.blocks.map((block, idx) => (
-              <div key={block.slug} className="relative">
-                {/* Two-Column Layout */}
-                <div className="grid lg:grid-cols-[1fr,380px] gap-10">
-                  {/* Main Content - Dynamic Component Selection */}
-                  <div>
-                    {block.type === 'tool' && <ToolCard title={block.title} html={block.html} />}
-                    {block.type === 'checklist' && <ChecklistCard title={block.title} html={block.html} />}
-                    {block.type === 'pro_tip_list' && <ProTipCard title={block.title} html={block.html} />}
-                    {block.type === 'faq_section' && <FAQCard title={block.title} html={block.html} />}
-                    {block.type === 'calculator' && <CalculatorCard title={block.title} html={block.html} />}
-                    {block.type === 'guide' && <GuideCard title={block.title} html={block.html} />}
-                  </div>
-
-                  {/* Sticky Sidebar */}
-                  <aside className="lg:sticky lg:top-24 self-start">
-                    {/* Why This Matters */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-400 shadow-lg mb-6">
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                          <span className="text-white font-bold text-xl">?</span>
-                        </div>
-                        <h4 className="font-black text-blue-900 text-lg">Why This Matters</h4>
-                      </div>
-                      <p className="text-blue-900 leading-relaxed font-medium text-base">{block.why}</p>
-                    </div>
-
-                    {/* Topic Tags */}
-                    {block.topics && block.topics.length > 0 && (
-                      <div className="bg-white rounded-lg p-4 border border-gray-200 mb-6">
-                        <div className="text-sm font-semibold text-gray-600 mb-3">Related Topics</div>
-                        <div className="flex flex-wrap gap-2">
-                          {block.topics.map((t) => (
-                            <span key={t} className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Sequential Navigation */}
-                    {idx < plan.blocks.length - 1 && (
-                      <div className="bg-slate-100 rounded-lg p-5 border-2 border-slate-300">
-                        <div className="text-sm text-slate-600 font-bold mb-2 uppercase tracking-wide">Next Up</div>
-                        <div className="text-slate-900 font-semibold text-base">{plan.blocks[idx + 1].title}</div>
-                      </div>
-                    )}
-                  </aside>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Back to Dashboard */}
-          <div className="mt-20 pt-12 border-t-2 border-gray-200 text-center">
+          {/* Footer Navigation */}
+          <div className="mt-24 pt-12 border-t-2 border-border text-center">
             <Link 
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-xl transition-colors"
+              className="inline-flex items-center gap-3 text-primary-accent hover:text-primary-hover font-bold text-xl transition-colors"
             >
-              <span>←</span>
+              <span className="text-2xl">←</span>
               <span>Back to Command Dashboard</span>
             </Link>
           </div>

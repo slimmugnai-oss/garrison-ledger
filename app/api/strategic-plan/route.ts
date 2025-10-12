@@ -27,40 +27,25 @@ export async function GET() {
   
   const answers = (aRow?.answers || {}) as StrategicInput;
 
-  // Assemble plan using intelligent rules
+  // Assemble plan using intelligent rules (NO "why" strings)
   const assembled = assemblePlan(answers);
 
   // Fetch atomic blocks from database
-  const atomIds = assembled.atoms.map(a => a.atomId);
   const { data: blocks } = await supabase
     .from("content_blocks")
-    .select("slug, title, html, type, topics")
-    .in("slug", atomIds);
+    .select("slug, title, html, type, topics, tags")
+    .in("slug", assembled.atomIds);
 
   if (!blocks || blocks.length === 0) {
-    console.error('[Strategic Plan] No blocks found for atomIds:', atomIds);
+    console.error('[Strategic Plan] No blocks found for atomIds:', assembled.atomIds);
   }
 
-  // Merge with why strings and preserve order
-  const blocksWithWhy = assembled.atoms.map(atom => {
-    const block = blocks?.find(b => b.slug === atom.atomId);
-    if (!block) {
-      console.warn('[Strategic Plan] Missing block:', atom.atomId);
-      return null;
-    }
-    return {
-      slug: block.slug,
-      title: block.title,
-      html: block.html,
-      type: block.type,
-      topics: block.topics || [],
-      why: atom.why,
-    };
-  }).filter(Boolean);
+  // Preserve order from rules engine
+  const orderedBlocks = assembled.atomIds.map(id => blocks?.find(b => b.slug === id)).filter(Boolean);
 
   return NextResponse.json({
     primarySituation: assembled.primarySituation,
     priorityAction: assembled.priorityAction,
-    blocks: blocksWithWhy,
+    blocks: orderedBlocks,
   }, { headers: { "Cache-Control": "no-store" } });
 }
