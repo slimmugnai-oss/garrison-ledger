@@ -39,12 +39,29 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
 
   // ==================== PCS RULES ====================
   
-  // Rule 1: Urgent EFMP PCS
+  // Rule 1: Urgent EFMP PCS - Priority-Based Selection
   if ((focus === 'pcs' || pcs === 'orders' || pcs === 'window') && efmp && (pcs === 'orders' || urgency === 'high')) {
+    // Step 1: Non-negotiables for EFMP move
+    const atoms = ['pcs-emotional-readiness', 'pcs-master-checklist'];  // EFMP support FIRST
+    
+    // Step 2: Add high-priority contextual atoms
+    const hasFinancialStress = ['budget', 'debt'].includes(finance);
+    
+    if (hasFinancialStress) {
+      atoms.push('pcs-budget-calculator');  // Critical for managing EFMP move costs
+    }
+    
+    // Step 3: Fill remaining slots
+    const standardPriority = ['pcs-timeline-tool', 'pcs-faq'];
+    for (const atom of standardPriority) {
+      if (atoms.length >= 4) break;
+      atoms.push(atom);
+    }
+    
     return {
       primarySituation: "Urgent EFMP Relocation",
-      priorityAction: "Contact your EFMP Family Support Coordinator immediately to begin medical and educational screening for your new location. This is the most time-sensitive part of your PCS.",
-      atomIds: ['pcs-master-checklist', 'pcs-timeline-tool', 'pcs-budget-calculator'],
+      priorityAction: "With an EFMP move on orders, your #1 priority is to initiate the family member travel screening process immediately. This is the crucial first step to ensure medical and educational support is available at your new duty station.",
+      atomIds: atoms,
     };
   }
 
