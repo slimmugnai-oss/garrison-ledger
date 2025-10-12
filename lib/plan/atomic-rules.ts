@@ -215,12 +215,22 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 11: Education/MyCAA
+  // Rule 11: Education/MyCAA - Priority-Based Selection
   if (focus === 'career' && (career === 'education' || interests.includes('mycaa'))) {
+    // Step 1: Non-negotiables for education pursuit
+    const atoms = ['mycaa-complete-guide', 'high-impact-certs', 'portable-careers-guide'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const hasFinancialStress = ['budget', 'debt'].includes(finance);
+    
+    if (hasFinancialStress) {
+      atoms.push('les-decoder');  // Foundation for budgeting while pursuing education
+    }
+    
     return {
       primarySituation: "Education & Certification Priority",
       priorityAction: "Check your MyCAA eligibility today and choose a portable, high-demand certification. The $4,000 benefit can transform your career.",
-      atomIds: ['mycaa-complete-guide', 'high-impact-certs', 'portable-careers-guide'],
+      atomIds: atoms.slice(0, 4),  // Cap at 4
     };
   }
 
