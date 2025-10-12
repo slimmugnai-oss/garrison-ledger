@@ -146,12 +146,30 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 10: Entrepreneurship
+  // Rule 10: Entrepreneurship - Priority-Based Selection
   if (focus === 'career' && (career === 'business' || interests.includes('entrepreneurship'))) {
+    // Step 1: Non-negotiables for any entrepreneur
+    const atoms = ['entrepreneur-toolkit', 'license-transfer-guide'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const hasFinancialStress = ['budget', 'debt', 'emergency'].includes(finance);
+    
+    if (hasFinancialStress) {
+      atoms.push('emergency-fund-builder');  // Critical for business owners with debt
+      atoms.push('les-decoder');             // Essential for budgeting with variable income
+    }
+    
+    // Step 3: Fill remaining slots with standard resources (max 4 total)
+    const standardPriority = ['portable-careers-guide', 'mycaa-complete-guide'];
+    for (const atom of standardPriority) {
+      if (atoms.length >= 4) break;
+      atoms.push(atom);
+    }
+    
     return {
       primarySituation: "Business Development Priority",
-      priorityAction: "Validate your business idea, choose the correct legal structure (likely an LLC), and create a 1-page business plan this week.",
-      atomIds: ['entrepreneur-toolkit', 'portable-careers-guide', 'license-transfer-guide'],
+      priorityAction: "Validate your business idea, choose the correct legal structure (likely an LLC), and create a clear budget that separates your business and personal finances to ensure sustainable growth.",
+      atomIds: atoms,
     };
   }
 
