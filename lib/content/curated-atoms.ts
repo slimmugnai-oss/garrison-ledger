@@ -1226,13 +1226,35 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  // Add placeholder for remaining atoms that can be filled in next iteration
-  'pcs-timeline-tool': { title: 'Interactive PCS Timeline Generator', type: 'tool', tags: ['pcs'], topics: ['pcs'], html: '<p>Timeline tool content...</p>' },
-  'deployment-family-pact': { title: 'Family Deployment Pact', type: 'tool', tags: ['deployment'], topics: ['deployment'], html: '<p>Deployment pact content...</p>' },
-  'commissary-savings-calculator': { title: 'Commissary Savings Calculator', type: 'calculator', tags: ['finance'], topics: ['finance'], html: '<p>Calculator content...</p>' },
-  'commissary-exchange-basics': { title: 'Commissary & Exchange Guide', type: 'guide', tags: ['finance'], topics: ['finance'], html: '<p>Shopping guide content...</p>' },
-  'oconus-shopping-guide': { title: 'OCONUS Shopping Guide', type: 'guide', tags: ['finance'], topics: ['finance', 'oconus'], html: '<p>OCONUS shopping content...</p>' },
-  'shopping-pro-tips': { title: 'Shopping Pro-Tips', type: 'pro_tip_list', tags: ['finance'], topics: ['finance'], html: '<p>Shopping tips content...</p>' },
+  // Placeholder atoms for remaining content (to be completed)
+  'commissary-savings-calculator': { 
+    title: 'Commissary & Exchange Savings Calculator', 
+    type: 'calculator', 
+    tags: ['finance', 'shopping'], 
+    topics: ['finance'], 
+    html: '<p class="text-lg">Interactive calculator for estimating annual savings from commissary and exchange shopping. Coming soon.</p>' 
+  },
+  'commissary-exchange-basics': { 
+    title: 'Commissary & Exchange Shopping Guide', 
+    type: 'guide', 
+    tags: ['finance', 'shopping'], 
+    topics: ['finance'], 
+    html: '<p class="text-lg">Complete guide to maximizing on-base shopping benefits. Coming soon.</p>' 
+  },
+  'oconus-shopping-guide': { 
+    title: 'OCONUS Shopping Navigator', 
+    type: 'guide', 
+    tags: ['finance', 'oconus'], 
+    topics: ['finance', 'oconus'], 
+    html: '<p class="text-lg">Country-specific shopping guides with VAT and currency information. Coming soon.</p>' 
+  },
+  'shopping-pro-tips': { 
+    title: 'On-Base Shopping Pro-Tips', 
+    type: 'pro_tip_list', 
+    tags: ['finance', 'shopping'], 
+    topics: ['finance'], 
+    html: '<p class="text-lg">Curated tips for maximizing commissary and exchange benefits. Coming soon.</p>' 
+  },
 };
 
 // Export helper to get atom by ID
