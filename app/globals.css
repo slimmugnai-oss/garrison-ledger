@@ -1,17 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb;
-  --card: #ffffff;
-  --text-headings: #111827;
+  /* Premium Light Theme - WCAG AA Compliant */
+  --bg: #F7F8FA;
+  --card: #FFFFFF;
+  --border: #E6E9EE;
+  --text: #0F172A;
+  --muted: #55657a;
+  --primary: #0A2463;
+  --accent: #D4AF37;
+  --success: #10B981;
+  --danger: #EF4444;
+  --shadow: 0 8px 24px rgba(2,6,23,0.08);
+  --radius: 16px;
+  
+  /* Legacy compat */
+  --background: #F7F8FA;
+  --card-bg: #FFFFFF;
+  --text-headings: #0F172A;
   --text-body: #374151;
-  --text-muted: #55657a;  /* Darkened for AA contrast on light backgrounds */
-  --primary-accent: #4f46e5;
-  --primary-hover: #4338ca;
-  --success: #059669;
-  --warning: #d97706;
-  --error: #dc2626;
-  --border: #e5e7eb;
+  --text-muted: #55657a;
+  --primary-accent: #0A2463;
+  --primary-hover: #082055;
 }
 
 @theme inline {
@@ -32,13 +42,59 @@
 
 /* Dark mode disabled - keeping light theme consistent across all pages */
 
-* {
-  box-sizing: border-box;
+/* Premium prose wrapper for inline toolkit HTML */
+.prose-ledger :where(h1,h2,h3) {
+  font-family: var(--font-lora, Lora, serif);
+  color: var(--text);
+  margin: 1.2rem 0 0.5rem;
+  font-weight: 700;
+}
+.prose-ledger h2 { font-size: 1.5rem; }
+.prose-ledger h3 { font-size: 1.25rem; }
+.prose-ledger p {
+  margin: 0.5rem 0;
+  line-height: 1.7;
+  color: var(--text);
+}
+.prose-ledger ul, .prose-ledger ol {
+  margin: 0.4rem 0 0.8rem 1.25rem;
+  color: var(--text);
+}
+.prose-ledger ul { list-style: disc; }
+.prose-ledger ol { list-style: decimal; }
+.prose-ledger a {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.prose-ledger a:hover {
+  color: var(--accent);
+}
+.prose-ledger table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+}
+.prose-ledger th, .prose-ledger td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.6rem;
+}
+.prose-ledger tbody tr:nth-child(odd) {
+  background: rgba(2,6,23,0.02);
+}
+.prose-ledger strong {
+  font-weight: 700;
+  color: var(--text);
 }
 
-body {
-  background: var(--background);
-  color: var(--text-body);
+* {
+  box-sizing: border-box;
+  outline-offset: 2px;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;

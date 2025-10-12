@@ -9,13 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#f9fafb",
-        card: "#ffffff",
-        "heading": "#111827",
-        "body": "#374151",
-        "muted": "#55657a",
-        "primary": "#4f46e5",
-        "primary-hover": "#4338ca",
+        bg: "var(--bg)",
+        card: "var(--card)",
+        border: "var(--border)",
+        text: "var(--text)",
+        muted: "var(--muted)",
+        primary: "var(--primary)",
+        accent: "var(--accent)",
+        success: "var(--success)",
+        danger: "var(--danger)",
+        // Legacy compat
+        background: "#F7F8FA",
+      },
+      borderRadius: {
+        xl: "var(--radius)",
+      },
+      boxShadow: {
+        card: "var(--shadow)",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
