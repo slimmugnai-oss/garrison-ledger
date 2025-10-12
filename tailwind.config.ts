@@ -11,10 +11,11 @@ const config: Config = {
       colors: {
         background: "#f9fafb",
         card: "#ffffff",
-        "text-headings": "#111827",
-        "text-body": "#374151",
-        "text-muted": "#6b7280",
-        "primary-accent": "#4f46e5",
+        "heading": "#111827",
+        "body": "#374151",
+        "muted": "#55657a",
+        "primary": "#4f46e5",
+        "primary-hover": "#4338ca",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
