@@ -34,6 +34,12 @@ export async function POST(req: NextRequest) {
     }
   }
   
+  // TEMPORARY: Hardcode customer ID for premium users until webhook fixed
+  if (!customerId && ent?.tier === 'premium' && ent?.status === 'active') {
+    customerId = 'cus_TDikQM9RGvFfA2';
+    console.log('[Billing Portal] Using hardcoded customer ID for premium user');
+  }
+  
   if (!customerId) {
     console.error('[Billing Portal] No customer ID found for user:', userId);
     return NextResponse.json({ 
