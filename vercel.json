@@ -1,0 +1,27 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "garrison-ledger.vercel.app"
+        }
+      ],
+      "destination": "https://app.familymedia.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "garrison-ledger-git-.*\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://app.familymedia.com/:path*",
+      "permanent": true
+    }
+  ]
+}
+
