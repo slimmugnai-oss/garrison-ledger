@@ -88,12 +88,33 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 4: PCS + OCONUS
+  // Rule 4: OCONUS PCS - Priority-Based Selection
   if ((focus === 'pcs' || pcs === 'orders' || pcs === 'window') && c.move?.oconusMove === 'yes') {
+    // Step 1: Non-negotiables for OCONUS move
+    const atoms = ['oconus-pcs-guide', 'pcs-master-checklist'];
+    
+    // Step 2: Add high-priority contextual atoms
+    const hasCareerGoal = career && career !== 'not_career';
+    const hasFinancialStress = ['budget', 'debt', 'emergency'].includes(finance);
+    
+    if (hasCareerGoal) {
+      atoms.push('portable-careers-guide');  // Research career options before OCONUS
+    }
+    if (hasFinancialStress) {
+      atoms.push('emergency-fund-builder');  // OCONUS moves have higher unexpected costs
+    }
+    
+    // Step 3: Fill remaining slots with standard resources (max 4 total)
+    const standardPriority = ['pcs-timeline-tool', 'oconus-shopping-guide', 'pcs-budget-calculator'];
+    for (const atom of standardPriority) {
+      if (atoms.length >= 4) break;
+      atoms.push(atom);
+    }
+    
     return {
       primarySituation: "OCONUS PCS Preparation",
       priorityAction: "Begin country-specific preparations immediately: passports, pet quarantine paperwork, and understanding SOFA/VAT regulations for your destination.",
-      atomIds: ['oconus-pcs-guide', 'pcs-master-checklist', 'pcs-timeline-tool'],
+      atomIds: atoms,
     };
   }
 
