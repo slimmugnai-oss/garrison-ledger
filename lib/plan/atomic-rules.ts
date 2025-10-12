@@ -117,12 +117,33 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     };
   }
 
-  // Rule 7: Reintegration
+  // Rule 7: Reintegration - Priority-Based Selection
   if (c.deployment?.status === 'reintegration') {
+    // Step 1: Non-negotiable for reintegration
+    const atoms = ['reintegration-roadmap'];
+    
+    // Step 2: Add high-priority contextual atoms based on stated focus
+    if (focus === 'finances' && finance === 'tsp') {
+      // TSP-focused reintegration
+      atoms.push('tsp-brs-essentials');
+      atoms.push('emergency-fund-builder');
+      atoms.push('deployment-faq');
+    } else if (focus === 'finances') {
+      // General financial focus during reintegration
+      atoms.push('emergency-fund-builder');
+      atoms.push('les-decoder');
+      atoms.push('deployment-faq');
+    } else {
+      // Standard reintegration support
+      atoms.push('deployment-faq');
+      atoms.push('emergency-fund-builder');
+      atoms.push('homefront-survival');
+    }
+    
     return {
       primarySituation: "Reintegration Phase",
-      priorityAction: "Give yourself and your service member grace. Rebuilding your 'new normal' takes 3-6 months. Professional counseling is available and recommended.",
-      atomIds: ['reintegration-roadmap', 'deployment-faq', 'emergency-fund-builder'],
+      priorityAction: "Give yourself and your service member grace. Rebuilding your 'new normal' takes 3-6 months. If finances are a concern, now is the time to realign your budget as deployment pays end.",
+      atomIds: atoms.slice(0, 4),  // Cap at 4
     };
   }
 
