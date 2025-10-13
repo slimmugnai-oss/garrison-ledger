@@ -31,6 +31,7 @@ export default function BriefingAdminPage() {
   const [editHTML, setEditHTML] = useState('');
   const [editTags, setEditTags] = useState<string[]>([]);
   const [promoting, setPromoting] = useState(false);
+  const [curating, setCurating] = useState(false);
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -141,6 +142,46 @@ export default function BriefingAdminPage() {
     }
   };
 
+  // Auto-curate with Gemini AI
+  const handleAutoCurate = async () => {
+    if (!selectedItem) return;
+    
+    setCurating(true);
+    
+    try {
+      const response = await fetch('/api/curate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: selectedItem.title,
+          summary: selectedItem.summary || '',
+          source_url: selectedItem.url
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        alert(`AI curation failed: ${data.error || 'Unknown error'}`);
+        setCurating(false);
+        return;
+      }
+      
+      // Populate editor with AI-curated content
+      setEditHTML(data.html);
+      setEditSummary(data.summary);
+      setEditTags(data.tags);
+      
+      alert('✨ Content curated by AI! Review and edit before promoting.');
+      
+    } catch (error) {
+      console.error('Auto-curation error:', error);
+      alert('Failed to curate content');
+    }
+    
+    setCurating(false);
+  };
+
   // Filtered items for display
   const filteredItems = items.filter(item =>
     searchTerm === '' ||
@@ -249,6 +290,13 @@ export default function BriefingAdminPage() {
                       </a>
                     </div>
                     <div className="flex gap-2">
+                      <button
+                        onClick={handleAutoCurate}
+                        disabled={curating}
+                        className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      >
+                        {curating ? '✨ Curating...' : '✨ Auto-Curate with Gemini'}
+                      </button>
                       <button
                         onClick={() => updateStatus('approved')}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors"
