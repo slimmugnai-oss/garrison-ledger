@@ -288,8 +288,12 @@ export async function GET(req: NextRequest) {
   
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      db: { schema: 'public' },
+      auth: { persistSession: false }
+    }
+  ) as any; // Type override for custom tables not in generated types
   
   // Load feed sources from JSON file
   let sources: FeedSource[] = [];
