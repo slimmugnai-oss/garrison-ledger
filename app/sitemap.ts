@@ -55,6 +55,40 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   ];
 
+  // Hub pages (high-value content)
+  const hubPages = [
+    {
+      url: `${SITE_URL}/pcs-hub`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/career-hub`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/deployment`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/on-base-shopping`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/base-guides`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    }
+  ];
+
   // Protected pages (auth required) - lower priority, still indexed for SEO
   const protectedPages = [
     {
@@ -101,5 +135,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   ];
 
-  return [...publicPages, ...protectedPages];
+  return [...publicPages, ...hubPages, ...protectedPages];
 }
