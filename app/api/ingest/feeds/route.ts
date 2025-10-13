@@ -103,6 +103,7 @@ async function processRSSFeed(
       const allTags = [...new Set([...source.tags, ...autoTags])];
       
       // Insert
+      // @ts-ignore - Supabase type inference issue with feed_items table
       const { error: insertError } = await supabase
         .from("feed_items")
         .insert({
@@ -114,7 +115,7 @@ async function processRSSFeed(
           tags: allTags,
           published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
           status: 'new'
-        } as any);
+        });
       
       if (!insertError) {
         newItems++;
@@ -238,6 +239,7 @@ async function processWebScrape(
         const allTags = [...new Set([...source.tags, ...autoTags])];
         
         // Insert
+        // @ts-ignore - Supabase type inference issue with feed_items table
         const { error: insertError } = await supabase
           .from("feed_items")
           .insert({
@@ -249,7 +251,7 @@ async function processWebScrape(
             tags: allTags,
             published_at: new Date().toISOString(),
             status: 'new'
-          } as any);
+          });
         
         if (!insertError) {
           newItems++;
