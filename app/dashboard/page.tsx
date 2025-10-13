@@ -69,11 +69,17 @@ export default async function CommandDashboard() {
           <PageHeader 
             title={`Welcome back, ${user.firstName || 'Commander'}! 👋`}
             subtitle="Your military financial command center"
-            right={isPremium && (
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-sm font-black text-gray-900 shadow-lg">
-                ⭐ Premium Member
-              </div>
-            )}
+            right={
+              isPremium ? (
+                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-sm font-black text-gray-900 shadow-lg">
+                  ⭐ Premium Member
+                </div>
+              ) : (
+                <div className="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-full text-sm font-semibold text-gray-700">
+                  Free Preview
+                </div>
+              )
+            }
           />
 
           {!hasAssessment && (
