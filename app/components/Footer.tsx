@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-card border-t border-border mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <div className="text-xl font-bold text-text-headings mb-4">
@@ -15,7 +15,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Links */}
+          {/* Platform */}
           <div>
             <h3 className="font-bold text-text-headings mb-4">Platform</h3>
             <ul className="space-y-2">
@@ -33,6 +33,38 @@ export default function Footer() {
                 <Link href="/dashboard/plan" className="text-text-body hover:text-primary-accent transition-colors">
                   Your Plan
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h3 className="font-bold text-text-headings mb-4">Resources</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="https://familymedia.com/career-hub" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                  Career Hub
+                </a>
+              </li>
+              <li>
+                <a href="https://familymedia.com/pcs-hub" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                  PCS Hub
+                </a>
+              </li>
+              <li>
+                <a href="https://familymedia.com/base-guides" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                  Base Guides
+                </a>
+              </li>
+              <li>
+                <a href="https://familymedia.com/on-base-shopping" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                  On-Base Shopping
+                </a>
+              </li>
+              <li>
+                <a href="https://familymedia.com/deployment" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                  Deployment Guide
+                </a>
               </li>
             </ul>
           </div>

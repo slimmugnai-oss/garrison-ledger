@@ -94,19 +94,19 @@ export default function Header() {
                 </button>
                 {resourcesOpen && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <a href="/career-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="https://familymedia.com/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
                       Career Hub
                     </a>
-                    <a href="/pcs-hub.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="https://familymedia.com/pcs-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
                       PCS Hub
                     </a>
-                    <a href="/base-guides.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="https://familymedia.com/base-guides" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
                       Base Guides
                     </a>
-                    <a href="/on-base-shopping.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="https://familymedia.com/on-base-shopping" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
                       On-Base Shopping
                     </a>
-                    <a href="/deployment.html" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="https://familymedia.com/deployment" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
                       Deployment Guide
                     </a>
                   </div>
