@@ -408,6 +408,80 @@
             outline-offset: 2px;
         }
     </style>
+
+    <!-- Garrison Ledger CTA Styles -->
+    <style>
+      .gl-cta-box {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        padding: 28px;
+        border-radius: 16px;
+        margin: 40px 0;
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .gl-cta-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(79, 70, 229, 0.3);
+      }
+      .gl-cta-box h3 {
+        color: white;
+        margin: 0 0 12px 0;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+      .gl-cta-box p {
+        color: rgba(255, 255, 255, 0.92);
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .gl-cta-button {
+        display: inline-block;
+        background: white;
+        color: #4f46e5;
+        padding: 14px 28px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .gl-cta-button:hover {
+        background: #f9fafb;
+        color: #4338ca;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+      }
+      .gl-inline-link {
+        color: #4f46e5;
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+        transition: color 0.2s ease;
+      }
+      .gl-inline-link:hover {
+        color: #4338ca;
+        text-decoration-color: #4338ca;
+      }
+      @media (max-width: 768px) {
+        .gl-cta-box {
+          padding: 20px;
+          margin: 28px 0;
+        }
+        .gl-cta-box h3 {
+          font-size: 19px;
+        }
+        .gl-cta-button {
+          display: block;
+          text-align: center;
+          padding: 12px 20px;
+        }
+      }
+    </style>
 </head>
 <body class="antialiased">
 
@@ -821,13 +895,13 @@
                 <li class="main-nav-item"><a href="https://familymedia.com/articles/military-life" class="main-nav-link">MILITARY LIFE</a></li>
                 <li class="main-nav-item"><a href="https://familymedia.com/articles/education" class="main-nav-link">HEALTH & WELLNESS</a></li>
                 <li class="main-nav-item has-dropdown">
-                    <a href="https://familymedia.com/career-hub" class="main-nav-link">TOOLKITS</a>
+                    <a href="/career-hub" class="main-nav-link">TOOLKITS</a>
                     <div class="main-dropdown">
-                        <a href="https://familymedia.com/career-hub">CAREER HUB</a>
-                        <a href="https://familymedia.com/pcs-hub">PCS HUB</a>
-                        <a href="https://familymedia.com/base-guides">BASE GUIDES</a>
-                        <a href="https://familymedia.com/on-base-shopping">ON-BASE SHOPPING</a>
-                        <a href="https://familymedia.com/deployment">DEPLOYMENT</a>
+                        <a href="/career-hub">CAREER HUB</a>
+                        <a href="/pcs-hub">PCS HUB</a>
+                        <a href="/base-guides">BASE GUIDES</a>
+                        <a href="/on-base-shopping">ON-BASE SHOPPING</a>
+                        <a href="/deployment">DEPLOYMENT</a>
                     </div>
                 </li>
                 <li class="main-nav-item has-dropdown">
@@ -1286,6 +1360,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             </section>
+
+<!-- Garrison Ledger CTA: House Hacking -->
+<div class="gl-cta-box" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+  <h3>🏡 Calculate Your House Hacking Potential</h3>
+  <p>Turning your next PCS into a wealth-building opportunity starts with the numbers. Our interactive calculator shows you exactly how much rental income you could generate, your cash flow breakdown, and long-term ROI using your VA loan benefits.</p>
+  <a href="/dashboard/tools/house-hacking?utm_source=pcs_hub&utm_medium=cta_box&utm_campaign=real_estate" class="gl-cta-button">
+    Launch House Hacking Calculator →
+  </a>
+</div>
+
             
             <!-- Mental & Emotional Readiness Section -->
             <section id="mental-emotional" class="scroll-mt-24">
