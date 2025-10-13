@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
   
   let totalProcessed = 0;
   let totalNew = 0;
-  let errors: string[] = [];
+  const errors: string[] = [];
   
   for (const feed of RSS_FEEDS) {
     try {
