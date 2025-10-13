@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
@@ -23,7 +21,7 @@ export const metadata: Metadata = generatePageMeta({
 export default function PCSHub() {
   return (
     <>
-      <Header />
+      {/* ADD DANNY'S HEADER HERE */}
       
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
@@ -344,7 +342,7 @@ export default function PCSHub() {
         </div>
       </main>
 
-      <Footer />
+      {/* ADD DANNY'S FOOTER HERE */}
     </>
   );
 }
