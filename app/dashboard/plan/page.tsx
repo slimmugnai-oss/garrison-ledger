@@ -15,12 +15,16 @@ type Block = {
   type: string;
   topics?: string[];
   tags?: string[];
+  aiReason?: string; // AI-generated "why this matters"
+  score?: number;
+  isRecent?: boolean;
 };
 
 type PlanData = {
   primarySituation: string;
   priorityAction: string;
   blocks: Block[];
+  aiEnhanced?: boolean; // Flag if AI scoring worked
 };
 
 export default function ExecutiveBriefing() {
@@ -138,16 +142,48 @@ export default function ExecutiveBriefing() {
             {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled for your situation
           </p>
 
+          {/* AI Enhancement Badge */}
+          {plan.aiEnhanced && (
+            <div className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
+              <span className="text-2xl">✨</span>
+              <div>
+                <div className="font-bold text-purple-900">AI-Enhanced Personalization</div>
+                <div className="text-sm text-purple-700">This plan was intelligently curated using GPT-4o to analyze your specific situation</div>
+              </div>
+            </div>
+          )}
+
           {/* Content Blocks - Magazine Style */}
           <div className="space-y-12">
-            {plan.blocks.map((block) => (
-              <ContentCard
-                key={block.slug}
-                title={block.title}
-                html={block.html}
-                type={block.type}
-                topics={block.topics}
-              />
+            {plan.blocks.map((block, index) => (
+              <div key={block.slug}>
+                {/* AI Reasoning (if available) */}
+                {block.aiReason && (
+                  <div className="mb-4 bg-gradient-to-br from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-xl p-6 shadow-sm">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-black text-lg">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
+                          Why This Matters for You
+                        </div>
+                        <p className="text-gray-800 leading-relaxed font-medium">
+                          {block.aiReason}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Content Card */}
+                <ContentCard
+                  title={block.title}
+                  html={block.html}
+                  type={block.type}
+                  topics={block.topics}
+                />
+              </div>
             ))}
           </div>
 
