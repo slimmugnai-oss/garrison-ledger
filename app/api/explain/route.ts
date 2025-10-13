@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
     .eq("user_id", userId)
     .maybeSingle();
 
-  const answers = (assessment?.answers as any) || {};
+  const answers = (assessment?.answers as Record<string, unknown>) || {};
   const comprehensive = answers.comprehensive || {};
   const foundation = comprehensive.foundation || {};
   
