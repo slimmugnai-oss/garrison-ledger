@@ -1,0 +1,211 @@
+<!-- 
+  GARRISON LEDGER TOOLKIT INTEGRATION - SHARED STYLES
+  
+  Copy this <style> block into the <head> of each toolkit page
+  This ensures consistent branding and smooth animations
+-->
+
+<style>
+  /* Garrison Ledger Integration Styles */
+  .gl-cta-box {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    padding: 28px;
+    border-radius: 16px;
+    margin: 40px 0;
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .gl-cta-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(79, 70, 229, 0.3);
+  }
+  
+  .gl-cta-box h3 {
+    color: white;
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  
+  .gl-cta-box p {
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .gl-cta-button {
+    display: inline-block;
+    background: white;
+    color: #4f46e5;
+    padding: 14px 28px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .gl-cta-button:hover {
+    background: #f9fafb;
+    color: #4338ca;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+  }
+  
+  .gl-inline-link {
+    color: #4f46e5;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+  }
+  
+  .gl-inline-link:hover {
+    color: #4338ca;
+    text-decoration-color: #4338ca;
+  }
+  
+  .gl-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 16px 24px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    animation: slideDown 0.4s ease;
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .gl-banner-text {
+    font-weight: 600;
+    font-size: 15px;
+    margin-right: 12px;
+  }
+  
+  .gl-banner-link {
+    color: white;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    font-weight: 700;
+    transition: opacity 0.2s ease;
+  }
+  
+  .gl-banner-link:hover {
+    opacity: 0.85;
+    color: white;
+  }
+  
+  .gl-widget {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+    transition: border-color 0.3s ease;
+  }
+  
+  .gl-widget:hover {
+    border-color: #4f46e5;
+  }
+  
+  .gl-widget h4 {
+    color: #1e293b;
+    margin: 0 0 16px 0;
+    font-size: 19px;
+    font-weight: 700;
+  }
+  
+  .gl-widget-content {
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  
+  .gl-checklist {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #4f46e5;
+  }
+  
+  .gl-checklist-item {
+    padding: 8px 0;
+    color: #334155;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  
+  .gl-small-cta {
+    display: inline-block;
+    background: #4f46e5;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .gl-small-cta:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .gl-cta-box {
+      padding: 20px;
+      margin: 28px 0;
+    }
+    
+    .gl-cta-box h3 {
+      font-size: 19px;
+    }
+    
+    .gl-cta-box p {
+      font-size: 15px;
+    }
+    
+    .gl-cta-button {
+      display: block;
+      text-align: center;
+      padding: 12px 20px;
+    }
+    
+    .gl-banner {
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+    
+    .gl-banner-text {
+      display: block;
+      margin-bottom: 8px;
+      margin-right: 0;
+    }
+  }
+</style>
+
