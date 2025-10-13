@@ -51,7 +51,7 @@ export default function Home() {
 
           {/* Subtitle - Readable muted tone */}
           <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
-            Personalized planning for every aspect of military life. PCS moves, career development, deployment prep, on-base living, and financial optimization—all in one place.
+            Personalized planning for every aspect of military life. Get guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization.
           </p>
 
           {/* CTAs */}
