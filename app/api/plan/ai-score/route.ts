@@ -59,9 +59,15 @@ Return ONLY a valid JSON array of objects with this structure:
 Score ALL blocks provided. Return valid JSON only, no markdown.`;
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Auth check - allow internal calls or authenticated users
+  const internalSecret = req.headers.get('x-internal-secret');
+  const isInternalCall = internalSecret === process.env.INTERNAL_API_SECRET;
+  
+  if (!isInternalCall) {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   // Parse request
