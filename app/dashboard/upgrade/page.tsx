@@ -42,7 +42,7 @@ export default async function UpgradePage() {
             {isPremium ? (
               <>
                 <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-lg font-black text-gray-900 shadow-lg mb-4">
-                  ⭐ You're Already Premium!
+                  ⭐ You&apos;re Already Premium!
                 </div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
                   Manage Your Subscription
@@ -70,7 +70,7 @@ export default async function UpgradePage() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Free Preview
                 </h3>
-                <p className="text-gray-600">What you're already enjoying at no cost</p>
+                <p className="text-gray-600">What you&apos;re already enjoying at no cost</p>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
