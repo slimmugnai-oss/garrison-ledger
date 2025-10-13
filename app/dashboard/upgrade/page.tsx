@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 import Header from '../../components/Header';
 import PaymentButton from '../../components/PaymentButton';
 import BillingPortalButton from '../../components/BillingPortalButton';
@@ -21,6 +22,16 @@ export default async function UpgradePage() {
     redirect('/sign-in');
   }
 
+  // Check if user is already premium
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+  const { data: entitlement } = await supabase
+    .from("entitlements")
+    .select("tier, status")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  
+  const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+
   return (
     <>
       <Header />
@@ -28,12 +39,28 @@ export default async function UpgradePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Upgrade to Premium
-            </h1>
-            <p className="text-xl text-gray-600">
-              Unlock advanced features for better financial management
-            </p>
+            {isPremium ? (
+              <>
+                <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-lg font-black text-gray-900 shadow-lg mb-4">
+                  ⭐ You're Already Premium!
+                </div>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  Manage Your Subscription
+                </h1>
+                <p className="text-xl text-gray-600">
+                  Update billing, view invoices, or modify your plan
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  Upgrade to Premium
+                </h1>
+                <p className="text-xl text-gray-600">
+                  Unlock advanced features for better financial management
+                </p>
+              </>
+            )}
           </div>
 
           {/* Free Tier - What You Already Get */}
@@ -87,7 +114,7 @@ export default async function UpgradePage() {
           {/* Pricing Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Monthly Plan */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-gray-200">
+            <div className={`rounded-2xl shadow-lg p-8 border-2 ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-white border-gray-200'}`}>
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Monthly Plan
@@ -136,16 +163,25 @@ export default async function UpgradePage() {
                     </div>
                   </li>
                 </ul>
-                <PaymentButton 
-                  priceId="price_1SHdWQQnBqVFfU8hW2UE3je8"
-                  buttonText="Start Monthly Plan"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold"
-                />
+                {isPremium ? (
+                  <button 
+                    disabled
+                    className="w-full bg-gray-400 text-gray-600 py-3 px-6 rounded-lg font-semibold cursor-not-allowed"
+                  >
+                    Current Plan Active
+                  </button>
+                ) : (
+                  <PaymentButton 
+                    priceId="price_1SHdWQQnBqVFfU8hW2UE3je8"
+                    buttonText="Start Monthly Plan"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold"
+                  />
+                )}
               </div>
             </div>
 
             {/* Annual Plan */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-purple-500 relative">
+            <div className={`rounded-2xl shadow-lg p-8 border-2 relative ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-white border-purple-500'}`}>
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
                   Save 17%
@@ -197,11 +233,20 @@ export default async function UpgradePage() {
                     </div>
                   </li>
                 </ul>
-                <PaymentButton 
-                  priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                  buttonText="Start Annual Plan"
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
-                />
+                {isPremium ? (
+                  <button 
+                    disabled
+                    className="w-full bg-gray-400 text-gray-600 py-3 px-6 rounded-lg font-semibold cursor-not-allowed"
+                  >
+                    Current Plan Active
+                  </button>
+                ) : (
+                  <PaymentButton 
+                    priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
+                    buttonText="Start Annual Plan"
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
+                  />
+                )}
               </div>
             </div>
           </div>
