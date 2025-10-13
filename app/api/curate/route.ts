@@ -70,20 +70,21 @@ export async function POST(req: NextRequest) {
   });
 
   try {
-    // Construct user prompt
-    const userPrompt = `Title: ${title}
+    // Construct combined prompt
+    const fullPrompt = `${SYSTEM_PROMPT}
+
+---
+
+Title: ${title}
 
 Summary: ${summary}
 
 Source URL: ${source_url}
 
-Please analyze this article and create a curated atomic content block following the JSON format specified in the system prompt.`;
+Please analyze this article and create a curated atomic content block following the JSON format specified above.`;
 
     // Call Gemini API
-    const result = await model.generateContent([
-      { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-      { role: "user", parts: [{ text: userPrompt }] },
-    ]);
+    const result = await model.generateContent(fullPrompt);
 
     const response = result.response;
     const text = response.text();
