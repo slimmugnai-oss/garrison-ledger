@@ -104,18 +104,19 @@ async function processRSSFeed(
       const allTags = [...new Set([...source.tags, ...autoTags])];
       
       // Insert
-      const { error: insertError } = await supabase
+      const insertData = {
+        source_id: source.id,
+        url: item.link,
+        title: item.title || 'Untitled',
+        summary,
+        raw_html: sanitized,
+        tags: allTags,
+        published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
+        status: 'new'
+      };
+      const { error: insertError } = await (supabase as any)
         .from("feed_items")
-        .insert({
-          source_id: source.id,
-          url: item.link,
-          title: item.title || 'Untitled',
-          summary,
-          raw_html: sanitized,
-          tags: allTags,
-          published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-          status: 'new'
-        });
+        .insert(insertData);
       
       if (!insertError) {
         newItems++;
@@ -239,18 +240,19 @@ async function processWebScrape(
         const allTags = [...new Set([...source.tags, ...autoTags])];
         
         // Insert
-        const { error: insertError } = await supabase
+        const insertData = {
+          source_id: source.id,
+          url: link,
+          title: title.slice(0, 500),
+          summary: summary.slice(0, 500),
+          raw_html: content,
+          tags: allTags,
+          published_at: new Date().toISOString(),
+          status: 'new'
+        };
+        const { error: insertError } = await (supabase as any)
           .from("feed_items")
-          .insert({
-            source_id: source.id,
-            url: link,
-            title: title.slice(0, 500),
-            summary: summary.slice(0, 500),
-            raw_html: content,
-            tags: allTags,
-            published_at: new Date().toISOString(),
-            status: 'new'
-          });
+          .insert(insertData);
         
         if (!insertError) {
           newItems++;
@@ -294,7 +296,7 @@ export async function GET(req: NextRequest) {
       db: { schema: 'public' },
       auth: { persistSession: false }
     }
-  ) as any; // Type override for custom tables not in generated types
+  );
   
   // Load feed sources from JSON file
   let sources: FeedSource[] = [];
