@@ -45,6 +45,27 @@ export async function GET() {
   
   const answers = validationResult.data;
 
+  // Create hash of assessment answers for cache key
+  const assessmentHash = Buffer.from(JSON.stringify(answers)).toString('base64').slice(0, 32);
+
+  // Check cache first
+  const { data: cachedPlan } = await supabase
+    .from('plan_cache')
+    .select('plan_data, ai_enhanced, generated_at')
+    .eq('user_id', userId)
+    .eq('assessment_hash', assessmentHash)
+    .gt('expires_at', new Date().toISOString())
+    .maybeSingle();
+
+  if (cachedPlan) {
+    console.log('[Strategic Plan] Cache hit! Using cached plan from:', cachedPlan.generated_at);
+    return NextResponse.json(cachedPlan.plan_data, { 
+      headers: { "Cache-Control": "no-store" } 
+    });
+  }
+
+  console.log('[Strategic Plan] Cache miss, generating new plan with AI');
+
   // Fetch ALL content blocks for AI scoring
   const { data: allBlocks } = await supabase
     .from("content_blocks")
@@ -146,12 +167,33 @@ export async function GET() {
     };
   }).filter(Boolean);
 
-  return NextResponse.json({
+  const planResponse = {
     primarySituation: rulesPlan.primarySituation,
     priorityAction: rulesPlan.priorityAction,
     blocks: enrichedBlocks,
     aiEnhanced: aiScores ? true : false, // Flag if AI worked
-  }, { headers: { "Cache-Control": "no-store" } });
+  };
+
+  // Cache the generated plan
+  await supabase
+    .from('plan_cache')
+    .upsert({
+      user_id: userId,
+      plan_data: planResponse,
+      assessment_hash: assessmentHash,
+      generated_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+      ai_enhanced: aiScores ? true : false,
+      ai_model: 'gpt-4o'
+    } as any, {
+      onConflict: 'user_id'
+    });
+
+  console.log('[Strategic Plan] Plan cached for user:', userId);
+
+  return NextResponse.json(planResponse, { 
+    headers: { "Cache-Control": "no-store" } 
+  });
 }
 
 /**

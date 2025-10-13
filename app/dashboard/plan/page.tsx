@@ -142,8 +142,8 @@ export default function ExecutiveBriefing() {
             {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled for your situation
           </p>
 
-          {/* AI Enhancement Badge */}
-          {plan.aiEnhanced && (
+          {/* AI Enhancement Badge - Only show if we actually have AI reasoning */}
+          {plan.aiEnhanced && plan.blocks.some(b => b.aiReason) && (
             <div className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
               <span className="text-2xl">✨</span>
               <div>
