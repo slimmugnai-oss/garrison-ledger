@@ -27,9 +27,11 @@ export default async function CommandDashboard() {
   // Check premium
   let isPremium = false;
   try {
-    const { data: entitlement } = await supabase.from("entitlements").select("tier, status").eq("user_id", user.id).single();
+    const { data: entitlement, error: entError } = await supabase.from("entitlements").select("tier, status").eq("user_id", user.id).single();
+    console.log('[Dashboard] User:', user.id, 'Entitlement:', entitlement, 'Error:', entError);
     isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
-  } catch {
+  } catch (err) {
+    console.error('[Dashboard] Premium check failed:', err);
     isPremium = false;
   }
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
