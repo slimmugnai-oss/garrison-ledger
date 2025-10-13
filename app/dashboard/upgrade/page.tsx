@@ -9,7 +9,7 @@ import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
   title: "Upgrade to Premium - Unlock Full Military Financial Planning",
-  description: "Get unlimited access to all TSP, SDP, and house hacking calculators, personalized action plans, PDF exports, and priority support. $9.99/month or $99/year.",
+  description: "Get unlimited access to all TSP, SDP, and house hacking calculators, personalized action plans, and priority support. $9.99/month or $99/year.",
   path: "/dashboard/upgrade",
   keywords: ["premium military finance", "TSP calculator premium", "military financial planning subscription", "upgrade account"]
 });
@@ -45,25 +45,29 @@ export default async function UpgradePage() {
                   Monthly Plan
                 </h3>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$15</span>
+                  <span className="text-4xl font-bold text-gray-900">$9.99</span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Advanced budgeting tools</span>
+                    <span className="text-gray-900 font-medium">TSP Allocation Optimizer</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Detailed financial reports</span>
+                    <span className="text-gray-900 font-medium">SDP Payout Strategist</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Priority customer support</span>
+                    <span className="text-gray-900 font-medium">House Hacking Calculator</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Export data to CSV/PDF</span>
+                    <span className="text-gray-900 font-medium">Personalized Action Plans</span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="text-green-500 mr-3 text-lg">✓</span>
+                    <span className="text-gray-900 font-medium">Priority Support</span>
                   </li>
                 </ul>
                 <PaymentButton 
@@ -78,7 +82,7 @@ export default async function UpgradePage() {
             <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-purple-500 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Best Value
+                  Save 17%
                 </span>
               </div>
               <div className="text-center">
@@ -86,30 +90,30 @@ export default async function UpgradePage() {
                   Annual Plan
                 </h3>
                 <div className="mb-2">
-                  <span className="text-4xl font-bold text-gray-900">$150</span>
+                  <span className="text-4xl font-bold text-gray-900">$99</span>
                   <span className="text-gray-600">/year</span>
                 </div>
                 <div className="mb-6">
                   <span className="text-lg text-green-600 font-semibold">
-                    Save $30 per year!
+                    Save $20.88 per year!
                   </span>
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Everything in Monthly</span>
+                    <span className="text-gray-900 font-medium">All Premium Tools</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Annual financial planning</span>
+                    <span className="text-gray-900 font-medium">Personalized Action Plans</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Tax report generation</span>
+                    <span className="text-gray-900 font-medium">Priority Support</span>
                   </li>
                   <li className="flex items-center">
                     <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Priority feature requests</span>
+                    <span className="text-gray-900 font-medium">17% Savings</span>
                   </li>
                 </ul>
                 <PaymentButton 
@@ -137,29 +141,29 @@ export default async function UpgradePage() {
           {/* Features Comparison */}
           <div className="mt-16">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-              Premium Features
+              What You Get with Premium
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📊</span>
+                  <span className="text-2xl">📈</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Advanced Analytics</h3>
-                <p className="text-gray-600">Get detailed insights into your spending patterns and financial health.</p>
+                <h3 className="text-xl font-semibold mb-2">TSP Optimizer</h3>
+                <p className="text-gray-600">Model different fund allocations and project retirement growth with historical data.</p>
               </div>
               <div className="text-center">
                 <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🎯</span>
+                  <span className="text-2xl">💰</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Smart Budgeting</h3>
-                <p className="text-gray-600">AI-powered budget recommendations based on your spending history.</p>
+                <h3 className="text-xl font-semibold mb-2">SDP Strategist</h3>
+                <p className="text-gray-600">Calculate deployment savings and compare payout strategies for maximum wealth building.</p>
               </div>
               <div className="text-center">
                 <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📈</span>
+                  <span className="text-2xl">🏡</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Goal Tracking</h3>
-                <p className="text-gray-600">Set and track financial goals with personalized milestones.</p>
+                <h3 className="text-xl font-semibold mb-2">House Hacking ROI</h3>
+                <p className="text-gray-600">Analyze rental income potential and turn your next PCS into a wealth opportunity.</p>
               </div>
             </div>
           </div>

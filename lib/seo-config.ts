@@ -143,21 +143,40 @@ export const softwareAppSchema = {
   name: SITE_NAME,
   applicationCategory: "FinanceApplication",
   operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "9.99",
-    priceCurrency: "USD",
-    priceSpecification: {
-      "@type": "UnitPriceSpecification",
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Monthly Plan",
       price: "9.99",
       priceCurrency: "USD",
-      referenceQuantity: {
-        "@type": "QuantitativeValue",
-        value: "1",
-        unitCode: "MON"
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "9.99",
+        priceCurrency: "USD",
+        referenceQuantity: {
+          "@type": "QuantitativeValue",
+          value: "1",
+          unitCode: "MON"
+        }
+      }
+    },
+    {
+      "@type": "Offer",
+      name: "Annual Plan",
+      price: "99.00",
+      priceCurrency: "USD",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "99.00",
+        priceCurrency: "USD",
+        referenceQuantity: {
+          "@type": "QuantitativeValue",
+          value: "1",
+          unitCode: "ANN"
+        }
       }
     }
-  },
+  ],
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "4.8",
