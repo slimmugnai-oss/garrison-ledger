@@ -36,6 +36,54 @@ export default async function UpgradePage() {
             </p>
           </div>
 
+          {/* Free Tier - What You Already Get */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-md p-8 border-2 border-gray-300">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Free Preview
+                </h3>
+                <p className="text-gray-600">What you're already enjoying at no cost</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">5 Resource Hub Pages</div>
+                    <p className="text-sm text-gray-600">PCS, Career, Deployment, Shopping, Base Guides</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">Personal Assessment</div>
+                    <p className="text-sm text-gray-600">Comprehensive financial situation questionnaire</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">Action Plan Preview</div>
+                    <p className="text-sm text-gray-600">See your personalized recommendations</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">Tool Previews</div>
+                    <p className="text-sm text-gray-600">Limited access to TSP, SDP, House Hacking calculators</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Upgrade Headline */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Unlock Full Access</h2>
+            <p className="text-lg text-gray-600">Get unlimited use of all premium tools and features</p>
+          </div>
+
           {/* Pricing Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Monthly Plan */}
@@ -48,26 +96,44 @@ export default async function UpgradePage() {
                   <span className="text-4xl font-bold text-gray-900">$9.99</span>
                   <span className="text-gray-600">/month</span>
                 </div>
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Everything in Free, plus:</p>
+                </div>
                 <ul className="text-left space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">TSP Allocation Optimizer</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Unlimited TSP Modeling</div>
+                      <p className="text-sm text-gray-600">Full allocation optimizer with growth projections</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">SDP Payout Strategist</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Complete SDP Analysis</div>
+                      <p className="text-sm text-gray-600">Strategic payout calculator with ROI scenarios</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">House Hacking Calculator</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Full House Hacking Tool</div>
+                      <p className="text-sm text-gray-600">Complete cash flow and rental income analysis</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Personalized Action Plans</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Advanced Action Plans</div>
+                      <p className="text-sm text-gray-600">Full access to all 19 curated content blocks</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Priority Support</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Priority Support</div>
+                      <p className="text-sm text-gray-600">Email support with 24-hour response time</p>
+                    </div>
                   </li>
                 </ul>
                 <PaymentButton 
@@ -98,22 +164,37 @@ export default async function UpgradePage() {
                     Save $20.88 per year!
                   </span>
                 </div>
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Everything in Free, plus:</p>
+                </div>
                 <ul className="text-left space-y-3 mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">All Premium Tools</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">All Premium Tools</div>
+                      <p className="text-sm text-gray-600">Unlimited access to TSP, SDP, House Hacking</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Personalized Action Plans</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Complete Action Plans</div>
+                      <p className="text-sm text-gray-600">All 19 curated content blocks unlocked</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">Priority Support</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Priority Support</div>
+                      <p className="text-sm text-gray-600">24-hour email response time</p>
+                    </div>
                   </li>
-                  <li className="flex items-center">
-                    <span className="text-green-500 mr-3 text-lg">✓</span>
-                    <span className="text-gray-900 font-medium">17% Savings</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-purple-500 text-xl mt-0.5">★</span>
+                    <div>
+                      <div className="text-purple-900 font-bold">Save $20.88/Year</div>
+                      <p className="text-sm text-purple-600">17% discount vs. monthly billing</p>
+                    </div>
                   </li>
                 </ul>
                 <PaymentButton 
