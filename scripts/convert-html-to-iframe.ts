@@ -29,7 +29,7 @@ import { useEffect } from 'react';
 export default function Page() {
   useEffect(() => {
     // Adjust iframe height to content
-    const iframe = document.getElementById('hub-content');
+    const iframe = document.getElementById('hub-content') as HTMLIFrameElement | null;
     if (iframe) {
       iframe.onload = () => {
         try {
@@ -37,7 +37,7 @@ export default function Page() {
           if (iframeDoc) {
             iframe.style.height = iframeDoc.documentElement.scrollHeight + 'px';
           }
-        } catch (e) {
+        } catch {
           // Cross-origin restriction, use default height
           iframe.style.height = '100vh';
         }
