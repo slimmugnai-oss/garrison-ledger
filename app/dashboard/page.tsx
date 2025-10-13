@@ -26,13 +26,21 @@ export default async function CommandDashboard() {
   
   // Check premium
   let isPremium = false;
-  try {
-    const { data: entitlement, error: entError } = await supabase.from("entitlements").select("tier, status").eq("user_id", user.id).single();
-    console.log('[Dashboard] User:', user.id, 'Entitlement:', entitlement, 'Error:', entError);
-    isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
-  } catch (err) {
-    console.error('[Dashboard] Premium check failed:', err);
-    isPremium = false;
+  const { data: entitlement, error: entError } = await supabase
+    .from("entitlements")
+    .select("tier, status, stripe_customer_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  
+  console.log('[Dashboard] User:', user.id);
+  console.log('[Dashboard] Entitlement:', entitlement);
+  console.log('[Dashboard] Error:', entError);
+  
+  if (entitlement) {
+    isPremium = entitlement.tier === 'premium' && entitlement.status === 'active';
+    console.log('[Dashboard] isPremium:', isPremium, 'tier:', entitlement.tier, 'status:', entitlement.status);
+  } else {
+    console.log('[Dashboard] No entitlement found for user');
   }
   const { data: aRow } = await supabase.from("assessments").select("answers").eq("user_id", user.id).maybeSingle();
   const answers = (aRow?.answers || {}) as Record<string, unknown>;
