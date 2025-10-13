@@ -94,19 +94,19 @@ export default function Header() {
                 </button>
                 {resourcesOpen && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <a href="https://familymedia.com/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Career Hub
                     </a>
-                    <a href="https://familymedia.com/pcs-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="/pcs-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       PCS Hub
                     </a>
-                    <a href="https://familymedia.com/base-guides" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="/base-guides" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Base Guides
                     </a>
-                    <a href="https://familymedia.com/on-base-shopping" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="/on-base-shopping" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       On-Base Shopping
                     </a>
-                    <a href="https://familymedia.com/deployment" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="/deployment" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Deployment Guide
                     </a>
                   </div>

@@ -42,29 +42,29 @@ export default function Footer() {
             <h3 className="font-bold text-text-headings mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="https://familymedia.com/career-hub" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                <Link href="/career-hub" className="text-text-body hover:text-primary-accent transition-colors">
                   Career Hub
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://familymedia.com/pcs-hub" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                <Link href="/pcs-hub" className="text-text-body hover:text-primary-accent transition-colors">
                   PCS Hub
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://familymedia.com/base-guides" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                <Link href="/base-guides" className="text-text-body hover:text-primary-accent transition-colors">
                   Base Guides
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://familymedia.com/on-base-shopping" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                <Link href="/on-base-shopping" className="text-text-body hover:text-primary-accent transition-colors">
                   On-Base Shopping
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://familymedia.com/deployment" className="text-text-body hover:text-primary-accent transition-colors" target="_blank" rel="noopener noreferrer">
+                <Link href="/deployment" className="text-text-body hover:text-primary-accent transition-colors">
                   Deployment Guide
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
