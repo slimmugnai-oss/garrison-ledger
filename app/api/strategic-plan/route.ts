@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { assemblePlan, type StrategicInput } from "@/lib/plan/atomic-rules";
+import { assemblePlan, type StrategicInput, StrategicInputSchema } from "@/lib/server/rules-engine";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
@@ -25,9 +25,17 @@ export async function GET() {
     .eq("user_id", userId)
     .maybeSingle();
   
-  const answers = (aRow?.answers || {}) as StrategicInput;
+  // Validate input with Zod schema
+  const validationResult = StrategicInputSchema.safeParse(aRow?.answers || {});
+  
+  if (!validationResult.success) {
+    console.error('[Strategic Plan] Input validation failed:', validationResult.error);
+    return NextResponse.json({ error: "Invalid assessment data" }, { status: 400 });
+  }
+  
+  const answers = validationResult.data;
 
-  // Assemble plan using intelligent rules (NO "why" strings)
+  // Assemble plan using intelligent rules (SERVER-ONLY, SECURE)
   const assembled = assemblePlan(answers);
 
   // Fetch atomic blocks from database
