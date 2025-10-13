@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { DEFAULT_META, softwareAppSchema, organizationSchema } from "@/lib/seo-config";
 import "./globals.css";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
           className={`${inter.variable} ${lora.variable} font-sans antialiased bg-background text-text-body`}
         >
           {children}
+          <GoogleAnalytics gaId="G-TCPN1EGMD8" />
         </body>
       </html>
     </ClerkProvider>
