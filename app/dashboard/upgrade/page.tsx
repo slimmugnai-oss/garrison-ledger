@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Header from '../../components/Header';
 import PaymentButton from '../../components/PaymentButton';
 import BillingPortalButton from '../../components/BillingPortalButton';
 import Link from 'next/link';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "Upgrade to Premium - Unlock Full Military Financial Planning",
+  description: "Get unlimited access to all TSP, SDP, and house hacking calculators, personalized action plans, PDF exports, and priority support. $9.99/month or $99/year.",
+  path: "/dashboard/upgrade",
+  keywords: ["premium military finance", "TSP calculator premium", "military financial planning subscription", "upgrade account"]
+});
 
 export default async function UpgradePage() {
   const user = await currentUser();

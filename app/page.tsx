@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { SignedIn, SignedOut, SignUpButton } from '@clerk/nextjs';
@@ -5,6 +6,25 @@ import Link from 'next/link';
 import AnimatedCard from './components/ui/AnimatedCard';
 import StatCard from './components/ui/StatCard';
 import Badge from './components/ui/Badge';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "Garrison Ledger - Financial Intelligence for Military Families",
+  description: "Comprehensive financial planning toolkit for military life. Get personalized action plans, optimize your TSP, calculate SDP payouts, analyze house hacking ROI, and master PCS finances.",
+  path: "/",
+  keywords: [
+    "military finance calculator",
+    "TSP optimizer",
+    "military PCS planning",
+    "SDP calculator",
+    "house hacking ROI",
+    "military spouse career",
+    "deployment financial planning",
+    "BRS retirement calculator",
+    "military financial advisor",
+    "veteran financial planning"
+  ]
+});
 
 export default function Home() {
   return (

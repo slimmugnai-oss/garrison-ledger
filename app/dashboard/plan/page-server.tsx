@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import Header from '@/app/components/Header';
 // V2.1 server plan is sourced from /api/plan; local rules are deprecated
 import ResourcesList from '@/app/components/ResourcesList';
 import DownloadGuideButton from '@/app/components/DownloadGuideButton';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "Your Personalized Action Plan - Strategic Financial Guidance",
+  description: "Your AI-curated financial action plan based on your military family's unique situation. Get personalized guidance for PCS, deployment, career, TSP, and more.",
+  path: "/dashboard/plan",
+  keywords: ["personalized financial plan", "military action plan", "financial guidance", "strategic planning"]
+});
 
 type Item = { title: string; url: string; tags: string[] };
 

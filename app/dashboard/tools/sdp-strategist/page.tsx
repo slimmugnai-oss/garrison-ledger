@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import SdpStrategist from '@/app/components/tools/SdpStrategist';
 import Header from '@/app/components/Header';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "SDP Payout Strategist - Maximize Your Deployment Savings",
+  description: "Strategic SDP calculator for deployed service members. Compare payout strategies, model investment scenarios, and turn your 10% deployment savings into long-term wealth.",
+  path: "/dashboard/tools/sdp-strategist",
+  keywords: ["SDP calculator", "Savings Deposit Program", "deployment savings", "military deployment bonus", "10% interest rate", "deployment payout"]
+});
 
 export default function Page() {
   return (

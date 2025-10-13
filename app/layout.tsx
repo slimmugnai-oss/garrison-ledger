@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
+import { DEFAULT_META, softwareAppSchema, organizationSchema } from "@/lib/seo-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,8 +17,7 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Garrison Ledger",
-  description: "Personal finance tracking and management application",
+  ...DEFAULT_META,
   ...(process.env.NEXT_PUBLIC_ENV !== "production"
     ? { robots: { index: false, follow: false } }
     : {}),
@@ -31,6 +31,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
+          />
+        </head>
         <body
           className={`${inter.variable} ${lora.variable} font-sans antialiased bg-background text-text-body`}
         >

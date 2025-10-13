@@ -1,12 +1,105 @@
-import type { MetadataRoute } from "next";
+import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo-config";
 
+/**
+ * Dynamic sitemap generation for Garrison Ledger
+ * Automatically updates when pages change
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://garrison-ledger.vercel.app";
-  const pages = [
-    { url: `${base}/`, lastModified: new Date() },
-    { url: `${base}/disclosures`, lastModified: new Date() },
-    { url: `${base}/dashboard`, lastModified: new Date() },
-  ];
-  return pages;
-}
+  const now = new Date();
+  const lastModified = now.toISOString();
 
+  // Public pages (no auth required)
+  const publicPages = [
+    {
+      url: SITE_URL,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 1.0
+    },
+    {
+      url: `${SITE_URL}/sign-in`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.5
+    },
+    {
+      url: `${SITE_URL}/sign-up`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/privacy`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.3
+    },
+    {
+      url: `${SITE_URL}/privacy/cookies`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.2
+    },
+    {
+      url: `${SITE_URL}/privacy/do-not-sell`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.2
+    },
+    {
+      url: `${SITE_URL}/disclosures`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.3
+    }
+  ];
+
+  // Protected pages (auth required) - lower priority, still indexed for SEO
+  const protectedPages = [
+    {
+      url: `${SITE_URL}/dashboard`,
+      lastModified,
+      changeFrequency: "daily" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/dashboard/assessment`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/plan`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9
+    },
+    {
+      url: `${SITE_URL}/dashboard/tools/tsp-modeler`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/tools/sdp-strategist`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/tools/house-hacking`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/upgrade`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.7
+    }
+  ];
+
+  return [...publicPages, ...protectedPages];
+}

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,6 +8,14 @@ import { createClient } from '@supabase/supabase-js';
 import PageHeader from '../components/ui/PageHeader';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import StatCard from '../components/ui/StatCard';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "Dashboard - Your Military Financial Command Center",
+  description: "Access your personalized financial action plan, military-specific calculators, and strategic planning tools. Track your progress and optimize your military family's financial future.",
+  path: "/dashboard",
+  keywords: ["military dashboard", "financial planning dashboard", "military finance tools", "personal finance tracker"]
+});
 
 export default async function CommandDashboard() {
   const user = await currentUser();

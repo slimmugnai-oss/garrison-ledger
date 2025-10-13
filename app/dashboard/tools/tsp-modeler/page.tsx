@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import TspModeler from '@/app/components/tools/TspModeler';
 import Header from '@/app/components/Header';
+import { generatePageMeta } from "@/lib/seo-config";
+
+export const metadata: Metadata = generatePageMeta({
+  title: "TSP Allocation Modeler - Optimize Your Thrift Savings Plan",
+  description: "Interactive TSP calculator for military members. Model different fund allocations, compare BRS scenarios, and project long-term retirement growth with historical data analysis.",
+  path: "/dashboard/tools/tsp-modeler",
+  keywords: ["TSP calculator", "Thrift Savings Plan", "military TSP", "BRS calculator", "retirement planning", "TSP allocation", "C fund S fund"]
+});
 
 export default function Page() {
   return (
