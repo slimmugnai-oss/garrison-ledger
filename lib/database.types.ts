@@ -265,6 +265,42 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_cache: {
+        Row: {
+          ai_enhanced: boolean | null
+          ai_model: string | null
+          assessment_hash: string
+          created_at: string | null
+          expires_at: string | null
+          generated_at: string | null
+          plan_data: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_enhanced?: boolean | null
+          ai_model?: string | null
+          assessment_hash: string
+          created_at?: string | null
+          expires_at?: string | null
+          generated_at?: string | null
+          plan_data: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_enhanced?: boolean | null
+          ai_model?: string | null
+          assessment_hash?: string
+          created_at?: string | null
+          expires_at?: string | null
+          generated_at?: string | null
+          plan_data?: Json
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
