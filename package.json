@@ -49,6 +49,7 @@
     "@types/turndown": "^5.0.5",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "supabase": "^2.51.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.2",
     "typescript": "^5"
