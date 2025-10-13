@@ -50,15 +50,22 @@ export async function GET() {
     .from("content_blocks")
     .select("slug, title, summary, type, topics, tags, updated_at");
   
-  const blockMetadata = allBlocks || [];
+  // Filter and map to required metadata format
+  const blockMetadata = (allBlocks || [])
+    .filter(b => b.slug && b.type) // Ensure required fields exist
+    .map(b => ({
+      slug: b.slug,
+      type: b.type!,
+      updated_at: b.updated_at || null
+    }));
 
   // PARALLEL PROCESSING: Rules engine + AI scoring
   const [rulesResult, aiResult] = await Promise.allSettled([
     // Rules engine (fast, reliable baseline)
     Promise.resolve(assemblePlanWithDiversity(answers, blockMetadata)),
     
-    // AI scoring (intelligent, personalized)
-    callAIScoring(answers, blockMetadata)
+    // AI scoring (intelligent, personalized) - pass full blocks
+    callAIScoring(answers, allBlocks || [])
   ]);
 
   // Extract results
