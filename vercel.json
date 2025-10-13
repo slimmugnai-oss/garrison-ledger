@@ -1,4 +1,26 @@
 {
+  "rewrites": [
+    {
+      "source": "/pcs-hub",
+      "destination": "/pcs-hub.html"
+    },
+    {
+      "source": "/career-hub",
+      "destination": "/career-hub.html"
+    },
+    {
+      "source": "/deployment",
+      "destination": "/deployment.html"
+    },
+    {
+      "source": "/on-base-shopping",
+      "destination": "/on-base-shopping.html"
+    },
+    {
+      "source": "/base-guides",
+      "destination": "/base-guides.html"
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",
