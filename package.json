@@ -21,7 +21,7 @@
     "@sindresorhus/slugify": "^2.2.1",
     "@stripe/stripe-js": "^8.0.0",
     "@supabase/supabase-js": "^2.74.0",
-    "cheerio": "^1.0.0",
+    "cheerio": "^1.1.2",
     "framer-motion": "^11.3.20",
     "isomorphic-dompurify": "^2.14.0",
     "jsdom": "^25.0.0",
@@ -30,9 +30,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.2.1",
+    "rss-parser": "^3.13.0",
     "server-only": "^0.0.1",
     "stripe": "^19.1.0",
     "svix": "^1.76.1",
+    "turndown": "^7.2.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
