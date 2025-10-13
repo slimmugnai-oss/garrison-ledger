@@ -72,6 +72,13 @@ export async function GET() {
   const rulesPlan = rulesResult.status === 'fulfilled' ? rulesResult.value : null;
   const aiScores = aiResult.status === 'fulfilled' ? aiResult.value : null;
 
+  console.log('[Strategic Plan] Rules result:', rulesResult.status);
+  console.log('[Strategic Plan] AI result:', aiResult.status);
+  if (aiResult.status === 'rejected') {
+    console.error('[Strategic Plan] AI scoring failed:', aiResult.reason);
+  }
+  console.log('[Strategic Plan] AI scores received:', aiScores);
+
   if (!rulesPlan) {
     console.error('[Strategic Plan] Rules engine failed');
     return NextResponse.json({ error: "Plan generation failed" }, { status: 500 });
