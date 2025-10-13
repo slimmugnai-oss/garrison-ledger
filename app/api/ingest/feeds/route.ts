@@ -103,7 +103,6 @@ async function processRSSFeed(
       const allTags = [...new Set([...source.tags, ...autoTags])];
       
       // Insert
-      // @ts-expect-error - Supabase type inference issue with feed_items table
       const { error: insertError } = await supabase
         .from("feed_items")
         .insert({
@@ -239,7 +238,6 @@ async function processWebScrape(
         const allTags = [...new Set([...source.tags, ...autoTags])];
         
         // Insert
-        // @ts-expect-error - Supabase type inference issue with feed_items table
         const { error: insertError } = await supabase
           .from("feed_items")
           .insert({
