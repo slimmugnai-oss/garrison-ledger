@@ -17,6 +17,11 @@ type FeedSource = {
   selector?: string;
 };
 
+// Helper to bypass Supabase type checking for feed_items table
+function getFeedItemsTable(supabase: any) {
+  return supabase.from("feed_items");
+}
+
 /**
  * Sanitize HTML content
  */
@@ -88,8 +93,7 @@ async function processRSSFeed(
       processed++;
       
       // Check if exists
-      const { data: existing } = await supabase
-        .from("feed_items")
+      const { data: existing } = await getFeedItemsTable(supabase)
         .select("id")
         .eq("url", item.link)
         .maybeSingle();
@@ -114,9 +118,7 @@ async function processRSSFeed(
         published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
         status: 'new'
       };
-      const { error: insertError } = await (supabase as any)
-        .from("feed_items")
-        .insert(insertData);
+      const { error: insertError } = await getFeedItemsTable(supabase).insert(insertData);
       
       if (!insertError) {
         newItems++;
@@ -189,8 +191,7 @@ async function processWebScrape(
       processed++;
       
       // Check if exists
-      const { data: existing } = await supabase
-        .from("feed_items")
+      const { data: existing } = await getFeedItemsTable(supabase)
         .select("id")
         .eq("url", link)
         .maybeSingle();
@@ -250,9 +251,7 @@ async function processWebScrape(
           published_at: new Date().toISOString(),
           status: 'new'
         };
-        const { error: insertError } = await (supabase as any)
-          .from("feed_items")
-          .insert(insertData);
+        const { error: insertError } = await getFeedItemsTable(supabase).insert(insertData);
         
         if (!insertError) {
           newItems++;
