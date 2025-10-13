@@ -38,12 +38,24 @@ SCORING CRITERIA:
 - 30-49: Somewhat relevant, lower priority  
 - 0-29: Not applicable to current situation
 
-REASONING RULES:
-- Be specific to THEIR situation (reference their age, family, timeline)
-- Explain WHY this content matters NOW vs. later
-- Use military terminology correctly
-- Keep reasoning to 1-2 sentences (concise, punchy)
-- Focus on actionability and urgency
+REASONING RULES - THIS IS CRITICAL:
+- DO NOT write generic statements that could apply to anyone
+- Reference SPECIFIC details from their situation (their service years, their kids' ages, their actual timeline)
+- Include NUMBERS when relevant (e.g., "your 12-week PCS window", "at 28 years old", "with 2 school-age kids")
+- Explain the SPECIFIC consequence or benefit for THEM (e.g., "missing EFMP deadlines could delay your kids starting school in August")
+- Make it tactical and specific (e.g., "since you're interested in federal employment AND PCSing, research USAJobs positions at your gaining base NOW")
+- Keep it 2-3 sentences maximum
+- Write like you're their experienced military friend giving real talk, not a corporate chatbot
+
+BAD EXAMPLES (NEVER DO THIS):
+❌ "Pre-deployment readiness is crucial for stability"
+❌ "This guide will help you prepare"
+❌ "Important information for your situation"
+
+GOOD EXAMPLES (DO THIS):
+✅ "With a deployment in 4 months, young kids (ages 2 and 4), and stated debt concerns, getting POA and wills done NOW prevents legal emergencies if something happens while you're deployed and your spouse needs to handle finances or medical decisions."
+✅ "You said you're interested in federal employment - since you're PCSing in 6 months, start browsing USAJobs for your gaining base NOW and tailor your resume during the move, not after you arrive and need income immediately."
+✅ "Your 5-10 years of service puts you in prime house-hacking territory - you understand the military lifestyle well enough to pick a rental-worthy property, but young enough that the equity compounds for 15+ years before retirement."
 
 OUTPUT FORMAT:
 You MUST score EVERY SINGLE block provided in the input. Return a JSON object with a "scores" array:
@@ -144,8 +156,8 @@ Score each block and provide personalized reasoning for this specific service me
         { role: "system", content: SCORING_PROMPT },
         { role: "user", content: userPrompt }
       ],
-      temperature: 0.3, // Lower temp for consistent scoring
-      max_tokens: 3000,
+      temperature: 0.4, // Slightly higher for more creative reasoning
+      max_tokens: 6000, // Need more tokens to score all 26 blocks with detailed reasoning
       response_format: { type: "json_object" }
     });
 
