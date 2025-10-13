@@ -312,12 +312,14 @@ export default function TspModeler() {
                     <div className="blur-sm pointer-events-none select-none">
                       <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border-2 border-primary text-center max-w-md">
-                        <div className="text-5xl mb-4">⭐</div>
-                        <h3 className="text-2xl font-bold text-text mb-3">Premium Feature</h3>
-                        <p className="text-muted mb-6">Upgrade to see your full growth projection chart and compare allocation strategies.</p>
-                        <a href="/dashboard/upgrade" className="inline-block bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold shadow-lg">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 backdrop-blur-sm">
+                      <div className="bg-white rounded-2xl p-10 shadow-2xl border border-gray-200 text-center max-w-md">
+                        <div className="text-6xl mb-4">⭐</div>
+                        <h3 className="text-3xl font-bold text-gray-900 mb-4">Premium Feature</h3>
+                        <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                          Upgrade to see your full growth projection chart and compare allocation strategies.
+                        </p>
+                        <a href="/dashboard/upgrade" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-0.5">
                           Upgrade to Premium →
                         </a>
                       </div>
