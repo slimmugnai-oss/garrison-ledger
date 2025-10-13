@@ -195,6 +195,11 @@ async function callAIScoring(
 
     // Call AI scoring endpoint
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    
+    console.log('[AI Score] Calling endpoint:', `${baseUrl}/api/plan/ai-score`);
+    console.log('[AI Score] User context:', userContext);
+    console.log('[AI Score] Blocks to score:', blocksSummary.length);
+    
     const response = await fetch(`${baseUrl}/api/plan/ai-score`, {
       method: 'POST',
       headers: {
@@ -207,16 +212,20 @@ async function callAIScoring(
       signal: AbortSignal.timeout(25000) // 25s timeout
     });
 
+    console.log('[AI Score] Response status:', response.status);
+    
     if (!response.ok) {
-      console.warn('[Strategic Plan] AI scoring failed, using rules only');
+      const errorText = await response.text();
+      console.error('[AI Score] Failed:', response.status, errorText);
       return null;
     }
 
     const data = await response.json();
+    console.log('[AI Score] Success! Scores received:', data.scores?.length);
     return data;
 
   } catch (error) {
-    console.warn('[Strategic Plan] AI scoring error, falling back to rules:', error);
+    console.error('[AI Score] Exception:', error);
     return null;
   }
 }
