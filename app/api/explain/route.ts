@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -86,18 +87,22 @@ export async function POST(req: NextRequest) {
     .eq("user_id", userId)
     .maybeSingle();
 
-  const answers = (assessment?.answers as Record<string, unknown>) || {};
-  const comprehensive = answers.comprehensive || {};
-  const foundation = comprehensive.foundation || {};
+  const answers = (assessment?.answers || {}) as Record<string, any>;
+  const comprehensive = (answers.comprehensive || {}) as Record<string, any>;
+  const foundation = (comprehensive.foundation || {}) as Record<string, any>;
+  const move = (comprehensive.move || {}) as Record<string, any>;
+  const deployment = (comprehensive.deployment || {}) as Record<string, any>;
+  const career = (comprehensive.career || {}) as Record<string, any>;
+  const finance = (comprehensive.finance || {}) as Record<string, any>;
   
   // Build user context
   const userContext = {
-    serviceYears: foundation.serviceYears || 'unknown',
-    familySnapshot: foundation.familySnapshot || 'none',
-    pcsSituation: comprehensive.move?.pcsSituation || 'none',
-    deploymentStatus: comprehensive.deployment?.status || 'none',
-    careerAmbitions: comprehensive.career?.ambitions || [],
-    financialPriority: comprehensive.finance?.priority || 'unknown'
+    serviceYears: String(foundation.serviceYears || 'unknown'),
+    familySnapshot: String(foundation.familySnapshot || 'none'),
+    pcsSituation: String(move.pcsSituation || 'none'),
+    deploymentStatus: String(deployment.status || 'none'),
+    careerAmbitions: Array.isArray(career.ambitions) ? career.ambitions : [],
+    financialPriority: String(finance.priority || 'unknown')
   };
 
   // Initialize Gemini
