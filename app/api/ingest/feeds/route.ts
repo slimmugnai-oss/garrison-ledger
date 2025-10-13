@@ -114,7 +114,7 @@ async function processRSSFeed(
           tags: allTags,
           published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
           status: 'new'
-        });
+        } as any);
       
       if (!insertError) {
         newItems++;
@@ -249,7 +249,7 @@ async function processWebScrape(
             tags: allTags,
             published_at: new Date().toISOString(),
             status: 'new'
-          });
+          } as any);
         
         if (!insertError) {
           newItems++;
