@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG Image - Garrison Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Lora:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+    
+    .og-card {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4338ca 50%, #6366f1 75%, #818cf8 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px;
+    }
+    
+    /* Decorative elements */
+    .og-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    
+    .og-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
+    
+    .badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .title {
+      font-family: 'Lora', serif;
+      font-size: 96px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 24px;
+      line-height: 1.1;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .tagline {
+      font-size: 36px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 40px;
+      line-height: 1.4;
+      max-width: 900px;
+    }
+    
+    .features {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 12px 24px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-icon {
+      font-size: 24px;
+    }
+    
+    .instructions {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .instructions h3 {
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1f2937;
+    }
+    
+    .instructions ol {
+      margin-left: 20px;
+      color: #4b5563;
+    }
+    
+    .instructions li {
+      margin-bottom: 8px;
+    }
+    
+    .instructions code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="instructions">
+    <h3>📸 How to Create og-image.png:</h3>
+    <ol>
+      <li>Press <code>Cmd+Shift+4</code></li>
+      <li>Press <code>Spacebar</code></li>
+      <li>Click on the blue card below</li>
+      <li>Save as: <code>og-image.png</code></li>
+      <li>Move to <code>/public/og-image.png</code></li>
+      <li>Commit and push!</li>
+    </ol>
+    <p style="margin-top: 12px; font-size: 13px; color: #6b7280;">
+      The image will be 1200×630px automatically. This will appear when anyone shares your link on social media.
+    </p>
+  </div>
+
+  <div class="og-card">
+    <div class="content">
+      <div class="badge">Intelligent Financial Planning</div>
+      <h1 class="title">Garrison Ledger</h1>
+      <p class="tagline">Financial Intelligence for Military Families</p>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon">📈</span>
+          <span>TSP Optimizer</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">💰</span>
+          <span>SDP Calculator</span>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🏡</span>
+          <span>House Hacking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
