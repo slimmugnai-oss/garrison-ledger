@@ -2,51 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
 import * as cheerio from "cheerio";
-import TurndownService from "turndown";
+import { readFile } from "fs/promises";
+import path from "path";
 
 export const runtime = "nodejs";
-export const maxDuration = 60; // Allow up to 60 seconds for feed processing
+export const maxDuration = 60;
 
-/**
- * RSS FEED SOURCES
- * Add or remove feeds here to control what content is ingested
- */
-const RSS_FEEDS = [
-  {
-    id: "military_times",
-    url: "https://www.militarytimes.com/arc/outboundfeeds/rss/category/pay-benefits/",
-    tags: ["military-pay", "benefits", "official-news"]
-  },
-  {
-    id: "stars_and_stripes",
-    url: "https://www.stripes.com/rss/news",
-    tags: ["military-news", "lifestyle"]
-  },
-  // Add more feeds as needed
-  // {
-  //   id: "military_spouse",
-  //   url: "https://militaryspouse.com/feed/",
-  //   tags: ["spouse", "career", "family"]
-  // },
-];
+type FeedSource = {
+  id: string;
+  type: 'rss' | 'web_scrape';
+  url: string;
+  tags: string[];
+  selector?: string;
+};
 
 /**
  * Sanitize HTML content
- * Removes scripts, styles, and dangerous elements
  */
 function sanitizeHTML(html: string): string {
   const $ = cheerio.load(html);
-  
-  // Remove dangerous elements
   $('script, style, iframe, object, embed').remove();
-  
-  // Remove tracking pixels and ads
   $('img[width="1"], img[height="1"], .ad, .advertisement').remove();
-  
-  // Clean up attributes
   $('*').each((_, el) => {
     const element = $(el);
-    // Keep only safe attributes
     const allowedAttrs = ['href', 'src', 'alt', 'title', 'class'];
     const attrs = element.attr();
     if (attrs) {
@@ -57,40 +35,25 @@ function sanitizeHTML(html: string): string {
       });
     }
   });
-  
   return $.html();
 }
 
 /**
- * Convert HTML to clean markdown
- */
-function htmlToMarkdown(html: string): string {
-  const turndown = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-  });
-  
-  return turndown.turndown(html);
-}
-
-/**
- * Extract keywords from text for auto-tagging
+ * Extract keywords from text
  */
 function extractKeywords(title: string, summary: string): string[] {
   const text = `${title} ${summary}`.toLowerCase();
   const keywords: string[] = [];
   
-  // Military-specific keyword patterns
   const patterns: Record<string, string[]> = {
     'pcs': ['pcs', 'permanent change', 'relocation', 'moving', 'orders'],
-    'tsp': ['tsp', 'thrift savings', 'retirement', 'brs', 'blended retirement'],
-    'deployment': ['deployment', 'deployed', 'combat zone', 'hardship duty'],
-    'bah': ['bah', 'housing allowance', 'bas', 'basic allowance'],
-    'career': ['career', 'employment', 'job', 'resume', 'mycaa'],
-    'va-loan': ['va loan', 'va home', 'certificate of eligibility'],
-    'scra': ['scra', 'servicemembers civil relief'],
-    'commissary': ['commissary', 'exchange', 'shopette', 'aafes'],
-    'oconus': ['oconus', 'overseas', 'germany', 'japan', 'korea', 'italy'],
+    'tsp': ['tsp', 'thrift savings', 'retirement', 'brs'],
+    'deployment': ['deployment', 'deployed', 'combat zone'],
+    'bah': ['bah', 'housing allowance', 'bas'],
+    'career': ['career', 'employment', 'job', 'mycaa'],
+    'va-loan': ['va loan', 'va home'],
+    'commissary': ['commissary', 'exchange', 'aafes'],
+    'oconus': ['oconus', 'overseas', 'germany', 'japan', 'korea'],
   };
   
   Object.entries(patterns).forEach(([tag, terms]) => {
@@ -103,10 +66,219 @@ function extractKeywords(title: string, summary: string): string[] {
 }
 
 /**
+ * Process RSS feed
+ */
+async function processRSSFeed(
+  source: FeedSource,
+  parser: Parser,
+  supabase: any
+): Promise<{ processed: number; new: number; errors: string[] }> {
+  let processed = 0;
+  let newItems = 0;
+  const errors: string[] = [];
+  
+  try {
+    console.log(`[RSS] Processing: ${source.id}`);
+    const feedData = await parser.parseURL(source.url);
+    
+    for (const item of feedData.items.slice(0, 10)) {
+      if (!item.link) continue;
+      
+      processed++;
+      
+      // Check if exists
+      const { data: existing } = await supabase
+        .from("feed_items")
+        .select("id")
+        .eq("url", item.link)
+        .maybeSingle();
+      
+      if (existing) continue;
+      
+      // Prepare content
+      const rawHTML = item.content || item.contentSnippet || item.summary || '';
+      const sanitized = sanitizeHTML(rawHTML);
+      const summary = item.contentSnippet?.slice(0, 500) || item.summary?.slice(0, 500) || '';
+      const autoTags = extractKeywords(item.title || '', summary);
+      const allTags = [...new Set([...source.tags, ...autoTags])];
+      
+      // Insert
+      const { error: insertError } = await supabase
+        .from("feed_items")
+        .insert({
+          source_id: source.id,
+          url: item.link,
+          title: item.title || 'Untitled',
+          summary,
+          raw_html: sanitized,
+          tags: allTags,
+          published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
+          status: 'new'
+        });
+      
+      if (!insertError) {
+        newItems++;
+        console.log(`[RSS] ✓ New: ${item.title}`);
+      } else {
+        errors.push(`${item.link}: ${insertError.message}`);
+      }
+    }
+  } catch (error) {
+    errors.push(`${source.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+  
+  return { processed, new: newItems, errors };
+}
+
+/**
+ * Process web scrape source
+ */
+async function processWebScrape(
+  source: FeedSource,
+  supabase: any
+): Promise<{ processed: number; new: number; errors: string[] }> {
+  let processed = 0;
+  let newItems = 0;
+  const errors: string[] = [];
+  
+  try {
+    console.log(`[Scrape] Processing: ${source.id}`);
+    
+    // Fetch the index page
+    const response = await fetch(source.url, {
+      headers: {
+        'User-Agent': 'GarrisonLedger/1.0 (+https://app.familymedia.com)'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    // Find article links using provided selector or fallback
+    const selector = source.selector || 'article a, .post a, .entry a';
+    const links = $(selector)
+      .map((_, el) => {
+        let href = $(el).attr('href');
+        if (!href) return null;
+        
+        // Make absolute URL if relative
+        if (href.startsWith('/')) {
+          const base = new URL(source.url);
+          href = `${base.protocol}//${base.host}${href}`;
+        }
+        
+        // Only process URLs from same domain
+        if (!href.startsWith('http')) return null;
+        
+        return href;
+      })
+      .get()
+      .filter(Boolean)
+      .filter((url, index, self) => self.indexOf(url) === index) // Unique
+      .slice(0, 10); // Limit to 10 per scrape
+    
+    console.log(`[Scrape] Found ${links.length} links on ${source.id}`);
+    
+    for (const link of links) {
+      processed++;
+      
+      // Check if exists
+      const { data: existing } = await supabase
+        .from("feed_items")
+        .select("id")
+        .eq("url", link)
+        .maybeSingle();
+      
+      if (existing) {
+        console.log(`[Scrape] Skipping duplicate: ${link}`);
+        continue;
+      }
+      
+      // Fetch article page
+      try {
+        const articleResponse = await fetch(link, {
+          headers: {
+            'User-Agent': 'GarrisonLedger/1.0 (+https://app.familymedia.com)'
+          },
+          signal: AbortSignal.timeout(10000) // 10s timeout per article
+        });
+        
+        if (!articleResponse.ok) continue;
+        
+        const articleHTML = await articleResponse.text();
+        const article$ = cheerio.load(articleHTML);
+        
+        // Extract title
+        const title = article$('h1').first().text().trim() ||
+                     article$('title').first().text().trim() ||
+                     article$('meta[property="og:title"]').attr('content') ||
+                     'Untitled Article';
+        
+        // Extract summary
+        const summary = article$('meta[name="description"]').attr('content') ||
+                       article$('meta[property="og:description"]').attr('content') ||
+                       article$('p').first().text().trim().slice(0, 500) ||
+                       '';
+        
+        // Extract main content (try multiple selectors)
+        let content = article$('article').first().html() ||
+                     article$('.entry-content').first().html() ||
+                     article$('.post-content').first().html() ||
+                     article$('main').first().html() ||
+                     '';
+        
+        content = sanitizeHTML(content);
+        
+        // Auto-tag
+        const autoTags = extractKeywords(title, summary);
+        const allTags = [...new Set([...source.tags, ...autoTags])];
+        
+        // Insert
+        const { error: insertError } = await supabase
+          .from("feed_items")
+          .insert({
+            source_id: source.id,
+            url: link,
+            title: title.slice(0, 500),
+            summary: summary.slice(0, 500),
+            raw_html: content,
+            tags: allTags,
+            published_at: new Date().toISOString(),
+            status: 'new'
+          });
+        
+        if (!insertError) {
+          newItems++;
+          console.log(`[Scrape] ✓ New: ${title}`);
+        } else {
+          errors.push(`${link}: ${insertError.message}`);
+        }
+        
+        // Rate limit: wait 1s between article fetches
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+      } catch (articleError) {
+        console.error(`[Scrape] Failed to fetch article ${link}:`, articleError);
+        // Continue to next article
+      }
+    }
+    
+  } catch (error) {
+    errors.push(`${source.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+  
+  return { processed, new: newItems, errors };
+}
+
+/**
  * Main ingestion handler
  */
 export async function GET(req: NextRequest) {
-  // Verify this is a cron job or authorized request
+  // Verify authorization
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
   
@@ -119,6 +291,17 @@ export async function GET(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
+  // Load feed sources from JSON file
+  let sources: FeedSource[] = [];
+  try {
+    const sourcesPath = path.join(process.cwd(), 'public', 'feed-sources.json');
+    const sourcesData = await readFile(sourcesPath, 'utf-8');
+    sources = JSON.parse(sourcesData);
+  } catch (error) {
+    console.error('[Ingest] Failed to load feed-sources.json:', error);
+    return NextResponse.json({ error: "Failed to load feed sources" }, { status: 500 });
+  }
+  
   const parser = new Parser({
     timeout: 10000,
     headers: {
@@ -128,66 +311,29 @@ export async function GET(req: NextRequest) {
   
   let totalProcessed = 0;
   let totalNew = 0;
-  const errors: string[] = [];
+  const allErrors: string[] = [];
   
-  for (const feed of RSS_FEEDS) {
+  // Process each source based on type
+  for (const source of sources) {
     try {
-      console.log(`[Feed Ingest] Processing: ${feed.id}`);
+      let result;
       
-      const feedData = await parser.parseURL(feed.url);
-      
-      for (const item of feedData.items.slice(0, 10)) { // Process latest 10 items per feed
-        if (!item.link) continue;
-        
-        totalProcessed++;
-        
-        // Check if URL already exists (dedup)
-        const { data: existing } = await supabase
-          .from("feed_items")
-          .select("id")
-          .eq("url", item.link)
-          .maybeSingle();
-        
-        if (existing) {
-          console.log(`[Feed Ingest] Skipping duplicate: ${item.link}`);
-          continue;
-        }
-        
-        // Extract and clean content
-        const rawHTML = item.content || item.contentSnippet || item.summary || '';
-        const sanitized = sanitizeHTML(rawHTML);
-        const summary = item.contentSnippet?.slice(0, 500) || item.summary?.slice(0, 500) || '';
-        
-        // Auto-suggest tags
-        const autoTags = extractKeywords(item.title || '', summary);
-        const allTags = [...new Set([...feed.tags, ...autoTags])];
-        
-        // Insert into feed_items
-        const { error: insertError } = await supabase
-          .from("feed_items")
-          .insert({
-            source_id: feed.id,
-            url: item.link,
-            title: item.title || 'Untitled',
-            summary,
-            raw_html: sanitized,
-            tags: allTags,
-            published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-            status: 'new'
-          });
-        
-        if (insertError) {
-          console.error(`[Feed Ingest] Insert error for ${item.link}:`, insertError);
-          errors.push(`${item.link}: ${insertError.message}`);
-        } else {
-          totalNew++;
-          console.log(`[Feed Ingest] ✓ New item: ${item.title}`);
-        }
+      if (source.type === 'rss') {
+        result = await processRSSFeed(source, parser, supabase);
+      } else if (source.type === 'web_scrape') {
+        result = await processWebScrape(source, supabase);
+      } else {
+        console.warn(`[Ingest] Unknown source type: ${source.type}`);
+        continue;
       }
       
+      totalProcessed += result.processed;
+      totalNew += result.new;
+      allErrors.push(...result.errors);
+      
     } catch (error) {
-      console.error(`[Feed Ingest] Error processing ${feed.id}:`, error);
-      errors.push(`${feed.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(`[Ingest] Fatal error processing ${source.id}:`, error);
+      allErrors.push(`${source.id}: Fatal error`);
     }
   }
   
@@ -195,8 +341,8 @@ export async function GET(req: NextRequest) {
     success: true,
     processed: totalProcessed,
     new: totalNew,
-    errors: errors.length > 0 ? errors : undefined,
+    sources: sources.length,
+    errors: allErrors.length > 0 ? allErrors : undefined,
     timestamp: new Date().toISOString()
   });
 }
-

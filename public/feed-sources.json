@@ -1,0 +1,47 @@
+[
+  {
+    "id": "defense_gov",
+    "type": "rss",
+    "url": "https://www.defense.gov/Newsroom/News/RSS/",
+    "tags": ["official", "defense-news"]
+  },
+  {
+    "id": "tsp_gov_news",
+    "type": "rss",
+    "url": "https://www.tsp.gov/feed/",
+    "tags": ["tsp", "retirement", "official"]
+  },
+  {
+    "id": "military_times_benefits",
+    "type": "rss",
+    "url": "https://www.militarytimes.com/arc/outboundfeeds/rss/category/smr/benefits-guide/?outputType=xml",
+    "tags": ["benefits", "military-pay"]
+  },
+  {
+    "id": "military_com",
+    "type": "rss",
+    "url": "https://www.military.com/rss-feeds",
+    "tags": ["military-news", "lifestyle"]
+  },
+  {
+    "id": "dfas",
+    "type": "rss",
+    "url": "https://www.dfas.mil/news/rss/",
+    "tags": ["pay", "finance", "official"]
+  },
+  {
+    "id": "mbo_relocating",
+    "type": "web_scrape",
+    "url": "https://www.militarybyowner.com/resources/relocatingmoving-resources/",
+    "tags": ["pcs", "relocation", "housing"],
+    "selector": "article a[href*='/blog/'], .resource-link a"
+  },
+  {
+    "id": "mbo_military_life",
+    "type": "web_scrape",
+    "url": "https://www.militarybyowner.com/resources/military-life-resources/",
+    "tags": ["military-life", "family", "lifestyle"],
+    "selector": "article a[href*='/blog/'], .resource-link a"
+  }
+]
+
