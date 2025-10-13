@@ -8,8 +8,8 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://app.familymedia.com";
 
 export const SITE_NAME = "Garrison Ledger";
-export const SITE_TAGLINE = "Financial Intelligence for Military Families";
-export const SITE_DESCRIPTION = "Your comprehensive financial planning toolkit for military life. Personalized action plans, TSP optimization, deployment strategies, and PCS financial guidance.";
+export const SITE_TAGLINE = "Intelligent Planning for Military Life";
+export const SITE_DESCRIPTION = "Comprehensive planning platform for military families. Get personalized guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization. Includes TSP calculator, SDP strategist, and house hacking tools.";
 
 export const SOCIAL_IMAGE = `${SITE_URL}/og-image.png`;
 export const TWITTER_HANDLE = "@GarrisonLedger"; // Update when you have one
@@ -18,16 +18,18 @@ export const DEFAULT_META = {
   title: `${SITE_NAME} - ${SITE_TAGLINE}`,
   description: SITE_DESCRIPTION,
   keywords: [
-    "military finance",
-    "TSP calculator",
-    "military PCS",
-    "deployment planning",
+    "military life planning",
+    "military PCS planning",
+    "deployment preparation",
     "military spouse career",
+    "TSP calculator",
     "SDP calculator",
     "house hacking military",
+    "on-base shopping guide",
+    "military base guides",
+    "military family resources",
     "military financial planning",
-    "BRS retirement",
-    "military benefits"
+    "BRS retirement"
   ],
   authors: [{ name: "Family Media, LLC" }],
   creator: "Family Media, LLC",
@@ -141,7 +143,7 @@ export const softwareAppSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: SITE_NAME,
-  applicationCategory: "FinanceApplication",
+  applicationCategory: "LifestyleApplication",
   operatingSystem: "Web",
   offers: [
     {
@@ -187,12 +189,14 @@ export const softwareAppSchema = {
   description: SITE_DESCRIPTION,
   screenshot: `${SITE_URL}/screenshot.png`,
   featureList: [
-    "Personalized Financial Action Plans",
+    "Personalized Military Life Action Plans",
+    "PCS Move Planning & Checklists",
+    "Career Development Guidance",
+    "Deployment Preparation Tools",
+    "On-Base Shopping & Benefits Guide",
     "TSP Allocation Optimizer",
     "SDP Payout Calculator",
-    "House Hacking ROI Analysis",
-    "PCS Financial Planning",
-    "Military Spouse Career Tools"
+    "House Hacking ROI Analysis"
   ],
   author: organizationSchema
 };

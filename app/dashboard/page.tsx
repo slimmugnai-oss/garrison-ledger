@@ -11,10 +11,10 @@ import StatCard from '../components/ui/StatCard';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Dashboard - Your Military Financial Command Center",
-  description: "Access your personalized financial action plan, military-specific calculators, and strategic planning tools. Track your progress and optimize your military family's financial future.",
+  title: "Dashboard - Your Military Life Command Center",
+  description: "Access your personalized action plan for PCS, career, deployment, and finances. Get curated guidance from 5 resource hubs and use premium calculators for TSP, SDP, and house hacking.",
   path: "/dashboard",
-  keywords: ["military dashboard", "financial planning dashboard", "military finance tools", "personal finance tracker"]
+  keywords: ["military dashboard", "military life planning", "PCS planning", "deployment prep", "military career tools", "TSP calculator"]
 });
 
 export default async function CommandDashboard() {
@@ -78,7 +78,7 @@ export default async function CommandDashboard() {
           
           <PageHeader 
             title={`Welcome back, ${user.firstName || 'Commander'}! 👋`}
-            subtitle="Your military financial command center"
+            subtitle="Your military life command center"
             right={
               isPremium ? (
                 <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-sm font-black text-gray-900 shadow-lg">

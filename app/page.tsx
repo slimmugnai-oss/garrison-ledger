@@ -9,20 +9,22 @@ import Badge from './components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Garrison Ledger - Financial Intelligence for Military Families",
-  description: "Comprehensive financial planning toolkit for military life. Get personalized action plans, optimize your TSP, calculate SDP payouts, analyze house hacking ROI, and master PCS finances.",
+  title: "Garrison Ledger - Intelligent Planning for Military Life",
+  description: "Comprehensive planning platform for military families. Personalized guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization. Includes TSP calculator, SDP strategist, house hacking tools, and curated content across 5 military life domains.",
   path: "/",
   keywords: [
-    "military finance calculator",
-    "TSP optimizer",
+    "military life planning",
     "military PCS planning",
-    "SDP calculator",
-    "house hacking ROI",
+    "deployment preparation",
     "military spouse career",
-    "deployment financial planning",
+    "TSP optimizer",
+    "SDP calculator",
+    "house hacking military",
+    "on-base shopping guide",
+    "military base guides",
+    "military family resources",
     "BRS retirement calculator",
-    "military financial advisor",
-    "veteran financial planning"
+    "military relocation"
   ]
 });
 
@@ -39,7 +41,7 @@ export default function Home() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
           {/* Kicker Badge */}
           <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
-            Intelligent Financial Planning
+            Intelligent Military Life Planning
           </span>
 
           {/* Main Heading - Lora serif, full contrast */}
@@ -49,7 +51,7 @@ export default function Home() {
 
           {/* Subtitle - Readable muted tone */}
           <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
-            Your comprehensive financial toolkit for military personnel. Plan, track, and optimize your financial future with specialized tools.
+            Personalized planning for every aspect of military life. PCS moves, career development, deployment prep, on-base living, and financial optimization—all in one place.
           </p>
 
           {/* CTAs */}
