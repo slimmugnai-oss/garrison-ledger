@@ -46,17 +46,25 @@ REASONING RULES:
 - Focus on actionability and urgency
 
 OUTPUT FORMAT:
-Return ONLY a valid JSON array of objects with this structure:
-[
-  {
-    "slug": "pcs-master-checklist",
-    "score": 95,
-    "reason": "With orders in hand and school-age kids, you need a comprehensive checklist now to coordinate enrollment and EFMP screening before your 12-week deadline."
-  },
-  ...
-]
+You MUST score EVERY SINGLE block provided in the input. Return a JSON object with a "scores" array:
 
-Score ALL blocks provided. Return valid JSON only, no markdown.`;
+{
+  "scores": [
+    {
+      "slug": "pcs-master-checklist",
+      "score": 95,
+      "reason": "With orders in hand and school-age kids, you need a comprehensive checklist now to coordinate enrollment and EFMP screening before your 12-week deadline."
+    },
+    {
+      "slug": "tsp-brs-essentials",
+      "score": 45,
+      "reason": "While important long-term, TSP optimization is lower priority than your imminent PCS and deployment prep."
+    },
+    ... (continue for ALL blocks)
+  ]
+}
+
+CRITICAL: Score ALL blocks, not just the top ones. Return the full JSON structure above.`;
 
 export async function POST(req: NextRequest) {
   // Auth check - allow internal calls or authenticated users
