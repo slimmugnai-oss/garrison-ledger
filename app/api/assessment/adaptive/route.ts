@@ -59,7 +59,7 @@ const CORE_QUESTIONS = [
     question: 'What is your family situation?',
     type: 'select' as const,
     options: ['Single, no kids', 'Married, no kids', 'Married with young kids (0-5)', 'Married with school-age kids (6-18)', 'Single parent'],
-    context: 'Affects financial planning and PCS complexity'
+    context: 'Affects planning needs and PCS complexity'
   },
   {
     id: 'deployment_status',

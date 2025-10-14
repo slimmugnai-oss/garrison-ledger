@@ -71,7 +71,7 @@ SECTION INTRO STRUCTURE:
 EXAMPLES OF GOOD VS BAD:
 
 BAD EXECUTIVE SUMMARY:
-"You're at an important stage in your military career. We've created this plan to help you navigate your journey. Financial planning is crucial for service members."
+"You're at an important stage in your military journey. We've created this plan to help you navigate every aspect of military life - from PCS moves to career development to financial optimization."
 
 GOOD EXECUTIVE SUMMARY:
 "As an E-5 at Fort Liberty with 6 years in and two kids (ages 3 and 6), you're juggling a complex 8-week window: PCS orders to JBLM plus deployment prep starting in 4 months. Your $18K debt and $5K emergency fund make this high-stakes—missing your kids' school enrollment deadline or deployment financial prep could cascade into serious problems. This plan tackles three priorities: (1) PCS execution with school coordination, (2) deployment financial/legal readiness, (3) long-term federal employment prep since you flagged that interest. Your $52K TSP at 6 years is solid—you're ahead of 70% of E-5s—but the next 12 weeks will determine whether you maintain that momentum or lose ground."

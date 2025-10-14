@@ -9,10 +9,10 @@ import Link from 'next/link';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Upgrade to Premium - Unlock Full Military Financial Planning",
+  title: "Upgrade to Premium - Unlock Full Military Life Planning",
   description: "Get unlimited access to all TSP, SDP, and house hacking calculators, personalized action plans, and priority support. $9.99/month or $99/year.",
   path: "/dashboard/upgrade",
-  keywords: ["premium military finance", "TSP calculator premium", "military financial planning subscription", "upgrade account"]
+  keywords: ["premium military planning", "TSP calculator premium", "military life planning subscription", "upgrade account"]
 });
 
 export default async function UpgradePage() {
@@ -57,7 +57,7 @@ export default async function UpgradePage() {
                   Upgrade to Premium
                 </h1>
                 <p className="text-xl text-gray-600">
-                  Unlock advanced features for better financial management
+                  Unlock advanced tools for comprehensive military life planning
                 </p>
               </>
             )}

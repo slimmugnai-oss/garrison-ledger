@@ -134,7 +134,7 @@ export default function AdaptiveAssessmentPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
             <h1 className="text-4xl font-serif font-black text-text mb-2">Quick Assessment</h1>
-            <p className="text-xl text-muted">AI-powered assessment that adapts to your situation</p>
+            <p className="text-xl text-muted">Intelligent assessment that adapts to your situation</p>
           </div>
 
           {/* Progress Bar */}

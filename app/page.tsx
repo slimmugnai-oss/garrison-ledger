@@ -267,7 +267,7 @@ export default function Home() {
                 Ready to Take Control of Your Finances?
               </h2>
               <p className="text-xl mb-10 text-slate-200 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of military personnel who trust Garrison Ledger for their financial planning.
+                Join thousands of military personnel who trust Garrison Ledger for their military life planning.
               </p>
               
               <SignedOut>

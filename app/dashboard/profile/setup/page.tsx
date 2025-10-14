@@ -362,7 +362,7 @@ export default function ProfileSetupPage() {
             )}
             {data.service_status === 'veteran' && (
               <div className="mt-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4">
-                <p className="text-sm text-green-900"><strong>Thank you for your service!</strong> We&apos;ll focus on veteran benefits, civilian career transition, and post-service financial planning.</p>
+                <p className="text-sm text-green-900"><strong>Thank you for your service!</strong> We&apos;ll focus on veteran benefits, civilian career transition, and post-service life planning.</p>
               </div>
             )}
             {data.service_status === 'separating' && (
@@ -372,7 +372,7 @@ export default function ProfileSetupPage() {
             )}
             {data.service_status === 'military_spouse' && (
               <div className="mt-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg p-4">
-                <p className="text-sm text-purple-900"><strong>Military Spouse Resources:</strong> We&apos;ll focus on spouse employment, PCS support, deployment readiness, and family financial planning specific to military life.</p>
+                <p className="text-sm text-purple-900"><strong>Military Spouse Resources:</strong> We&apos;ll focus on spouse employment, PCS support, deployment readiness, and comprehensive planning for military family life.</p>
               </div>
             )}
             {data.service_status === 'dod_civilian' && (

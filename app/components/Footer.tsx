@@ -11,7 +11,7 @@ export default function Footer() {
               📊 Garrison Ledger
             </div>
             <p className="text-text-body leading-relaxed">
-              Intelligent financial planning for military families.
+              Intelligent planning for military life.
             </p>
           </div>
 

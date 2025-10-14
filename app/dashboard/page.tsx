@@ -73,7 +73,7 @@ export default async function CommandDashboard() {
               Welcome back, {user.firstName || 'Commander'}
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
-              Your command center for military financial planning
+              Your command center for military life planning
             </p>
           </div>
 
@@ -85,9 +85,9 @@ export default async function CommandDashboard() {
                   <span className="text-4xl">🎯</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-serif font-black mb-2">Unlock AI-Powered Personalization</h2>
+                  <h2 className="text-2xl font-serif font-black mb-2">Unlock Intelligent Personalization</h2>
                   <p className="text-blue-50 text-lg mb-4 leading-relaxed">
-                    Add your rank, branch, base, and goals to get hyper-personalized financial roadmaps powered by GPT-4o.
+                    Add your rank, branch, base, and goals to get hyper-personalized guidance for every aspect of military life.
                   </p>
                   <Link href="/dashboard/profile/setup" className="inline-flex items-center bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
                     Complete Profile →
@@ -104,7 +104,7 @@ export default async function CommandDashboard() {
                 <div className="flex-1">
                   <h2 className="text-3xl font-serif font-bold mb-3">Get Your Personalized Plan</h2>
                   <p className="text-xl text-blue-50 mb-6 leading-relaxed">
-                    Complete the 5-minute assessment to unlock your tailored Military Financial Roadmap with curated content from our toolkit hubs.
+                    Complete the 5-minute assessment to unlock your tailored Military Life Roadmap with curated content from our toolkit hubs.
                   </p>
                   <Link 
                     href="/dashboard/assessment"
@@ -342,7 +342,7 @@ export default async function CommandDashboard() {
                     </div>
                     <div className="flex-1">
                       <div className="inline-flex items-center px-3 py-1 bg-blue-600/20 border border-blue-400/30 rounded-full text-blue-200 text-xs font-black mb-3 uppercase tracking-widest">
-                        AI-Powered Roadmap
+                        Intelligent Roadmap
                       </div>
                       <h2 className="text-3xl md:text-4xl font-serif font-black mb-3">
                         Your Strategic Plan is Ready
