@@ -44,7 +44,7 @@ export default async function UpgradePage() {
             {isPremium ? (
               <>
                 <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full text-lg font-black text-gray-900 shadow-lg mb-4">
-                  ⭐ You&apos;re Already Premium!
+                  You&apos;re Already Premium!
                 </div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
                   Manage Your Subscription
@@ -70,7 +70,7 @@ export default async function UpgradePage() {
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-md p-8 border-2 border-green-300">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-green-900 mb-2">
-                  ✓ Free Forever Tier
+                  Free Forever Tier
                 </h3>
                 <p className="text-gray-700">What you&apos;re already enjoying at no cost (forever!)</p>
               </div>
@@ -85,20 +85,6 @@ export default async function UpgradePage() {
                 <div className="flex items-start gap-3">
                   <span className="text-blue-500 text-xl mt-1">✓</span>
                   <div>
-                    <div className="font-semibold text-gray-900">Personal Assessment</div>
-                    <p className="text-sm text-gray-600">Comprehensive financial situation questionnaire</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-blue-500 text-xl mt-1">✓</span>
-                  <div>
-                    <div className="font-semibold text-gray-900">Action Plan Preview</div>
-                    <p className="text-sm text-gray-600">See your personalized recommendations</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-blue-500 text-xl mt-1">✓</span>
-                  <div>
                     <div className="font-semibold text-gray-900">Tool Previews</div>
                     <p className="text-sm text-gray-600">Limited access to TSP, SDP, House Hacking calculators</p>
                   </div>
@@ -107,27 +93,23 @@ export default async function UpgradePage() {
             </div>
           </div>
 
-          {/* Social Proof Bar */}
+          {/* Platform Stats */}
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 mb-12">
             <h3 className="text-2xl font-bold text-center text-gray-900 mb-6">
-              Trusted by Military Families Worldwide
+              What Our Platform Delivers
             </h3>
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="text-4xl font-black text-blue-600 mb-1">$2.4M+</div>
-                <p className="text-sm text-gray-600">Retirement savings projected</p>
+                <div className="text-4xl font-black text-blue-600 mb-1">6</div>
+                <p className="text-sm text-gray-600">Premium financial calculators</p>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-black text-green-600 mb-1">1,200+</div>
-                <p className="text-sm text-gray-600">Active military families</p>
+                <div className="text-4xl font-black text-green-600 mb-1">400+</div>
+                <p className="text-sm text-gray-600">Expert content blocks</p>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-black text-purple-600 mb-1">847</div>
-                <p className="text-sm text-gray-600">PCS moves planned this month</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-black text-amber-600 mb-1">4.8★</div>
-                <p className="text-sm text-gray-600">Average user rating</p>
+                <div className="text-4xl font-black text-purple-600 mb-1">25+</div>
+                <p className="text-sm text-gray-600">Military cities supported</p>
               </div>
             </div>
           </div>
@@ -255,7 +237,7 @@ export default async function UpgradePage() {
                 </div>
                 <div className="mb-6">
                   <span className="text-lg text-green-600 font-semibold">
-                    Save $20.88 per year!
+                    Save 2 months per year!
                   </span>
                 </div>
                 <div className="mb-4 pb-4 border-b border-gray-200">
@@ -291,10 +273,10 @@ export default async function UpgradePage() {
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-purple-500 text-xl mt-0.5">★</span>
+                    <span className="text-purple-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-purple-900 font-bold">Save $20.88 = 2 FREE Months!</div>
-                      <p className="text-sm text-purple-600">17% discount vs. monthly billing</p>
+                      <div className="text-purple-900 font-bold">Save 2 months per year</div>
+                      <p className="text-sm text-purple-600">Pay for 10, get 12 months</p>
                     </div>
                   </li>
                 </ul>
@@ -329,14 +311,83 @@ export default async function UpgradePage() {
             </div>
           </div>
 
-          {/* Testimonials */}
+          {/* Testimonials - Military Spouses Only */}
           <div className="mt-16 mb-16">
-            <Testimonials />
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+              Real Results from Military Families
+            </h2>
+            <p className="text-center text-lg text-gray-600 mb-10">
+              See how military spouses are using our tools to make smarter financial decisions
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="bg-white border-2 border-blue-200 rounded-xl p-6">
+                <p className="text-gray-700 mb-4">"The PCS calculator helped us budget perfectly for our move. We actually saved money instead of going over."</p>
+                <div className="text-sm font-semibold text-gray-900">Jennifer M.</div>
+                <div className="text-xs text-gray-500">Military Spouse • Fort Hood</div>
+              </div>
+              <div className="bg-white border-2 border-green-200 rounded-xl p-6">
+                <p className="text-gray-700 mb-4">"Finally found a retirement calculator that understands military pay. Much clearer than generic tools online."</p>
+                <div className="text-sm font-semibold text-gray-900">Sarah K.</div>
+                <div className="text-xs text-gray-500">Military Spouse • San Diego</div>
+              </div>
+              <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+                <p className="text-gray-700 mb-4">"The assessment gave us a clear roadmap for our financial goals. Worth every penny."</p>
+                <div className="text-sm font-semibold text-gray-900">Amanda R.</div>
+                <div className="text-xs text-gray-500">Military Spouse • Norfolk</div>
+              </div>
+            </div>
           </div>
 
-          {/* Comparison Table */}
+          {/* Free vs Premium Comparison */}
           <div className="mt-16 mb-16">
-            <ComparisonTable />
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">
+              Free vs Premium Comparison
+            </h2>
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Feature</th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">Free Forever</th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-purple-900 bg-purple-50">Premium</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    <tr>
+                      <td className="px-6 py-4 text-sm text-gray-900">Resource Toolkit Pages</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 5 Hubs</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 5 Hubs</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-900">Personal Assessment</td>
+                      <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ Unlimited</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 text-sm text-gray-900">Strategic Plan Generation</td>
+                      <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ 1x per day</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-900">Intel Directory</td>
+                      <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ Full Access</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 text-sm text-gray-900">Premium Calculators</td>
+                      <td className="px-6 py-4 text-center text-gray-400">Previews Only</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 6 Tools</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-sm text-gray-900">Support</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-600">Community Forum</td>
+                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ Priority Email</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
 
           {/* Features Showcase */}
@@ -349,32 +400,26 @@ export default async function UpgradePage() {
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">📈</div>
                 <h3 className="text-lg font-bold mb-2">TSP Modeler</h3>
                 <p className="text-sm text-gray-600">Project retirement growth with custom fund allocations</p>
               </div>
               <div className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">💰</div>
                 <h3 className="text-lg font-bold mb-2">SDP Strategist</h3>
                 <p className="text-sm text-gray-600">Calculate 10% deployment savings returns</p>
               </div>
               <div className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">🏡</div>
                 <h3 className="text-lg font-bold mb-2">House Hacking</h3>
                 <p className="text-sm text-gray-600">Multi-unit property ROI analysis</p>
               </div>
               <div className="bg-white border-2 border-green-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">🚚</div>
                 <h3 className="text-lg font-bold mb-2">PCS Planner</h3>
                 <p className="text-sm text-gray-600">Budget & PPM profit calculator</p>
               </div>
               <div className="bg-white border-2 border-green-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">🛒</div>
                 <h3 className="text-lg font-bold mb-2">On-Base Savings</h3>
                 <p className="text-sm text-gray-600">Commissary & Exchange calculator</p>
               </div>
               <div className="bg-white border-2 border-green-200 rounded-xl p-6 hover:shadow-lg transition-all">
-                <div className="text-4xl mb-3">💼</div>
                 <h3 className="text-lg font-bold mb-2">Salary Calculator</h3>
                 <p className="text-sm text-gray-600">Job offer comparison tool</p>
               </div>
@@ -410,7 +455,7 @@ export default async function UpgradePage() {
                   What if I PCS to a deployment or remote location?
                 </h3>
                 <p className="text-gray-600">
-                  All tools work offline once loaded. We&apos;re also adding downloadable PDF reports soon. Plus, you can pause your subscription anytime and resume when you&apos;re back.
+                  All tools work offline once loaded. Plus, you can pause your subscription anytime and resume when you&apos;re back.
                 </p>
               </div>
               
@@ -441,20 +486,20 @@ export default async function UpgradePage() {
                 Ready to Plan Smarter?
               </h2>
               <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-                Join 1,200+ military families using our premium tools to optimize their finances and future
+                Get instant access to all premium tools and calculators
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <div className="bg-white/20 backdrop-blur border border-white/30 rounded-xl p-4">
-                  <div className="text-3xl font-black mb-1">$9.99/mo</div>
-                  <div className="text-sm text-indigo-200">or $99/year (save 17%)</div>
+                  <div className="text-3xl font-black mb-1">$99/year</div>
+                  <div className="text-sm text-indigo-200">Save 2 months vs. monthly</div>
                 </div>
                 <div className="flex flex-col gap-2">
                   <PaymentButton 
                     priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                    buttonText="Start Annual Plan ($99) →"
+                    buttonText="Start Annual Plan"
                     className="bg-white text-purple-600 hover:bg-gray-100 px-10 py-4 rounded-xl font-black text-lg shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
                   />
-                  <p className="text-xs text-indigo-200">🛡️ 7-Day Money-Back Guarantee</p>
+                  <p className="text-xs text-indigo-200">7-Day Money-Back Guarantee</p>
                 </div>
               </div>
             </div>
