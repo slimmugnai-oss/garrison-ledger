@@ -121,8 +121,55 @@ export async function POST(req: NextRequest) {
 
   const { answers, questionsAsked } = body;
 
-  // If this is the first question, return the first core question
+  // Load user profile to skip already-answered questions
+  let profile: any = null;
   if (questionsAsked.length === 0) {
+    // First question - check if we have profile data
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
+      .eq('user_id', userId)
+      .maybeSingle();
+    profile = data;
+  }
+
+  // If this is the first question, check profile and skip answered questions
+  if (questionsAsked.length === 0) {
+    // Build pre-answered data from profile
+    const preAnswered: Record<string, string> = {};
+    if (profile) {
+      if (profile.rank) preAnswered.rank = profile.rank;
+      if (profile.pcs_date) preAnswered.pcs_situation = 'Orders in hand';
+      if (profile.deployment_status) preAnswered.deployment_status = profile.deployment_status;
+      if (profile.marital_status) {
+        const maritalMap: Record<string, string> = {
+          'single': 'Single, no kids',
+          'married': profile.num_children > 0 
+            ? (profile.num_children <= 5 ? 'Married with young kids (0-5)' : 'Married with school-age kids (6-18)')
+            : 'Married, no kids',
+          'single_parent': 'Single parent'
+        };
+        preAnswered.family_status = maritalMap[profile.marital_status] || profile.marital_status;
+      }
+    }
+    
+    // Find first unanswered core question
+    const firstUnanswered = CORE_QUESTIONS.find(q => !preAnswered[q.id]);
+    
+    if (firstUnanswered) {
+      return NextResponse.json({
+        needsMore: true,
+        nextQuestion: firstUnanswered,
+        preAnswered // Send pre-filled answers to frontend
+      });
+    }
+    
+    // If all core questions answered via profile, return first core question anyway
     return NextResponse.json({
       needsMore: true,
       nextQuestion: CORE_QUESTIONS[0]

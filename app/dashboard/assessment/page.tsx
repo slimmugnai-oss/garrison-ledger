@@ -26,7 +26,30 @@ export default function AdaptiveAssessmentPage() {
 
   // Load first question on mount
   useEffect(() => {
-    loadNextQuestion({}, []);
+    async function init() {
+      const res = await fetch('/api/assessment/adaptive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers: {}, questionsAsked: [] })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        
+        // If profile data exists, pre-fill answers
+        if (data.preAnswered) {
+          setAnswers(data.preAnswered);
+          // Mark pre-answered questions as already asked
+          const preAnsweredIds = Object.keys(data.preAnswered);
+          setQuestionsAsked(preAnsweredIds);
+        }
+        
+        if (data.nextQuestion) {
+          setCurrentQuestion(data.nextQuestion);
+        }
+      }
+    }
+    init();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
