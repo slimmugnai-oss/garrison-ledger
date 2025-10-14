@@ -80,6 +80,12 @@ export default function Header() {
               >
                 Directory
               </Link>
+              <Link 
+                href="/dashboard/referrals" 
+                className="text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Refer & Earn
+              </Link>
               {/* Resources Dropdown */}
               <div 
                 className="relative"

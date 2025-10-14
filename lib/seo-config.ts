@@ -18,18 +18,40 @@ export const DEFAULT_META = {
   title: `${SITE_NAME} - ${SITE_TAGLINE}`,
   description: SITE_DESCRIPTION,
   keywords: [
+    // Primary
+    "military financial planning",
     "military life planning",
-    "military PCS planning",
-    "deployment preparation",
-    "military spouse career",
     "TSP calculator",
+    "military retirement planning",
+    // PCS & Move
+    "military PCS planning",
+    "PCS checklist military",
+    "military move calculator",
+    "OCONUS PCS guide",
+    // Deployment
+    "deployment preparation",
     "SDP calculator",
+    "military deployment checklist",
+    "pre-deployment financial planning",
+    // Career & Education
+    "military spouse career",
+    "MyCAA program",
+    "GI Bill benefits",
+    "military to civilian transition",
+    "federal employment veterans",
+    // Finance & Benefits
     "house hacking military",
+    "VA loan house hacking",
+    "military BAH calculator",
+    "BRS retirement calculator",
+    "Tricare enrollment",
+    "SGLI life insurance",
+    // Family & Lifestyle
     "on-base shopping guide",
     "military base guides",
     "military family resources",
-    "military financial planning",
-    "BRS retirement"
+    "EFMP program guide",
+    "military childcare options"
   ],
   authors: [{ name: "Family Media, LLC" }],
   creator: "Family Media, LLC",
