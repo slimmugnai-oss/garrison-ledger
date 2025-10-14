@@ -18,7 +18,7 @@ export default function Header() {
           {/* Logo/Brand */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold text-gray-900">
-              <Icon name="BarChart3" className="h-5 w-5 inline mr-1" /> Garrison Ledger
+              <Icon name="BarChart2" className="h-5 w-5 inline mr-1" /> Garrison Ledger
             </Link>
           </div>
 

@@ -9,7 +9,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="text-xl font-bold text-text-headings mb-4">
-              <Icon name="BarChart3" className="h-5 w-5 inline mr-1" /> Garrison Ledger
+              <Icon name="BarChart2" className="h-5 w-5 inline mr-1" /> Garrison Ledger
             </div>
             <p className="text-text-body leading-relaxed">
               Intelligent planning for military life.
