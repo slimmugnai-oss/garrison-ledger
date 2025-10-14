@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import OpenAI from "openai";
@@ -204,7 +203,7 @@ Write an executive summary that sets strategic context for this member's situati
       if (!roadmap.executiveSummary || !Array.isArray(roadmap.sections)) {
         throw new Error('Invalid roadmap structure');
       }
-    } catch (parseError) {
+    } catch {
       console.error('[Generate Roadmap] Failed to parse GPT-4o response:', responseText);
       return NextResponse.json(
         { error: "Failed to parse AI response", raw: responseText },

@@ -98,7 +98,7 @@ Please analyze this article and create a curated atomic content block following 
       const jsonText = jsonMatch ? jsonMatch[1] : text;
       
       curated = JSON.parse(jsonText.trim());
-    } catch (parseError) {
+    } catch {
       console.error('[Curate] Failed to parse Gemini response:', text);
       return NextResponse.json(
         { error: "Failed to parse AI response", raw: text },

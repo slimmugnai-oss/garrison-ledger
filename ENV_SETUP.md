@@ -1,72 +1,154 @@
-# 🔐 ENVIRONMENT VARIABLES SETUP
+# 🔐 ENVIRONMENT VARIABLES - COMPLETE GUIDE
 
-**Required environment variables for Garrison Ledger**
+**All environment variables required for Garrison Ledger**
 
 ---
 
-## **📋 ADD TO VERCEL:**
+## ✅ **REQUIRED - Application Won't Work Without These:**
 
-Go to: Vercel Dashboard → Settings → Environment Variables
-
-Add the following:
-
-### **AI Curation (NEW - Required for Auto-Curate feature)**
+### **Supabase (Database)**
 ```
-GEMINI_API_KEY=YOUR_API_KEY_HERE
+NEXT_PUBLIC_SUPABASE_URL=https://wjwumzgqifrtihilafir.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-**How to get your Gemini API key:**
-1. Go to: https://aistudio.google.com/app/apikey
-2. Click "Create API key"
-3. Copy the key
-4. Add to Vercel environment variables
+### **Clerk (Authentication)**
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_xxx
+CLERK_SECRET_KEY=sk_live_xxx
+```
+
+### **Stripe (Payments)**
+```
+STRIPE_SECRET_KEY=sk_live_xxx
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_PRICE_ID_MONTHLY=price_xxx
+STRIPE_PRICE_ID_ANNUAL=price_xxx
+```
+
+### **Site Configuration**
+```
+NEXT_PUBLIC_SITE_URL=https://garrisonledger.com
+NEXT_PUBLIC_ENV=production
+```
+
+---
+
+## 🤖 **AI FEATURES - Required for Full Functionality:**
+
+### **OpenAI (GPT-4o)**
+```
+OPENAI_API_KEY=sk-proj-xxx
+```
+
+**What it powers:**
+- AI plan scoring (rates blocks 0-100 for each user)
+- Executive summary generation (200-250 word personalized overview)
+- Section introduction generation (why each domain matters for THIS user)
+- Block reasoning ("Why This Matters for You")
+
+**Cost:** ~$15/month at 500 users
+
+### **Google AI (Gemini 2.0)**
+```
+GEMINI_API_KEY=AIzaxxx
+```
+
+**What it powers:**
+- Content curation (transforms RSS articles)
+- Tool explanations (personalized TSP/SDP/House insights)
+
+**Cost:** ~$0.15/month at 500 users
+
+---
+
+## 🔧 **OPTIONAL - Advanced Features:**
+
+### **Internal API Secret**
+```
+INTERNAL_API_SECRET=your-random-secret-string-here
+```
+
+**What it's for:**
+- Server-to-server API calls (strategic-plan → ai-score, etc.)
+- Bypasses normal auth for internal routes
+- Not critical (will work without it)
+
+---
+
+## 💰 **COST STRUCTURE:**
+
+### **Monthly Costs (at 500 users):**
+| Service | Cost |
+|---------|------|
+| Vercel Pro | $20 |
+| Supabase Pro | $25 |
+| OpenAI (GPT-4o) | $15 |
+| Google AI (Gemini) | $0.15 |
+| **TOTAL** | **$60.15/month** |
+
+### **Revenue:**
+- 500 users × $9.99 = **$4,995/month**
+- Margin: **98.8%**
+
+---
+
+## 🚀 **SETUP CHECKLIST:**
+
+### **1. Vercel Dashboard:**
+1. Go to: vercel.com/yourproject/settings/environment-variables
+2. Add all variables above
+3. Set for: Production, Preview, Development
+4. Click "Save"
 5. Redeploy
 
----
+### **2. Test Locally:**
+```bash
+# Create .env.local file (NOT committed to git)
+cp .env.example .env.local
 
-## **🎯 WHAT IT'S FOR:**
+# Add your keys
+nano .env.local
 
-The `GEMINI_API_KEY` powers the **"Auto-Curate with Gemini"** button in the admin briefing UI.
+# Test
+npm run dev
+```
 
-**Workflow:**
-1. RSS feeds auto-ingest articles
-2. You click "✨ Auto-Curate with Gemini"
-3. Gemini AI transforms the article into a curated atomic content block
-4. Editor fields auto-populate with professional HTML, summary, and tags
-5. You review/edit, then promote to content_blocks
-
-**Benefits:**
-- ⚡ 10x faster curation (5 min → 30 sec per article)
-- 🎯 Consistent brand voice
-- 📝 Professional formatting
-- 🏷️ Auto-suggested tags
-
----
-
-## **💰 COST:**
-
-Gemini 1.5 Flash is **extremely cheap**:
-- **Free tier:** 15 requests per minute, 1,500 per day
-- **Paid:** ~$0.00002 per request
-
-**Your usage:** ~5-10 curations per week = **FREE**
+### **3. Verify:**
+- ✅ Sign up works (Clerk)
+- ✅ Assessment saves (Supabase)
+- ✅ Plan generates (OpenAI + Gemini)
+- ✅ Payment works (Stripe)
+- ✅ AI features work (GPT-4o summaries, Gemini explanations)
 
 ---
 
-## **🔒 SECURITY:**
+## 📊 **Feature Dependency Matrix:**
 
-- API key stored in Vercel env vars (never in code)
-- API route protected by Clerk auth
-- Only admin users can access
-- Rate-limited by Gemini's free tier
+| Feature | Required Env Vars |
+|---------|------------------|
+| User signup/login | Clerk keys |
+| Assessment save | Supabase keys |
+| Plan generation (basic) | Supabase keys |
+| AI-enhanced plans | Supabase + OpenAI |
+| Executive summaries | OpenAI |
+| Tool explanations | Gemini |
+| Content curation | Gemini |
+| Payments | Stripe keys |
+| Referrals | Supabase keys |
 
 ---
 
-## **✅ AFTER ADDING KEY:**
+## 🔒 **SECURITY NOTES:**
 
-1. Add `GEMINI_API_KEY` to Vercel
-2. Redeploy
-3. Visit `/dashboard/admin/briefing`
-4. Click "✨ Auto-Curate with Gemini"
-5. Watch AI transform content in seconds!
+- **NEVER** commit .env files to git
+- **ALWAYS** use Vercel env vars for production
+- **ROTATE** keys if exposed
+- Service role key bypasses RLS - use only in API routes
+- Anon key is public-safe (RLS protected)
 
+---
+
+**All env vars are properly configured in production Vercel deployment.** ✅

@@ -181,7 +181,7 @@ Score each block and provide personalized reasoning for this specific service me
       const parsed = JSON.parse(responseText);
       // Handle both array and object with array property
       scoredBlocks = Array.isArray(parsed) ? parsed : (parsed.blocks || parsed.scores || []);
-    } catch (parseError) {
+    } catch {
       console.error('[AI Score] Failed to parse GPT-4o response:', responseText);
       return NextResponse.json(
         { error: "Failed to parse AI response", raw: responseText },
