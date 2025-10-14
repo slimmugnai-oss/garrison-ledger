@@ -270,6 +270,107 @@ export default async function CommandDashboard() {
                 )}
               </AnimatedCard>
 
+              {/* Timeline View - PCS & Deployment */}
+              {(profileRow?.pcs_date || profileRow?.deployment_status) && (
+                <AnimatedCard className="mb-8 p-8" delay={50}>
+                  <h2 className="text-2xl font-serif font-bold text-text mb-6">Your Timeline</h2>
+                  <div className="space-y-6">
+                    {/* PCS Timeline */}
+                    {profileRow?.pcs_date && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">📍</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm text-muted font-medium">PCS Move</div>
+                            {(() => {
+                              const pcsDate = new Date(profileRow.pcs_date);
+                              const today = new Date();
+                              const daysUntil = Math.ceil((pcsDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                              const weeksUntil = Math.ceil(daysUntil / 7);
+                              
+                              if (daysUntil < 0) {
+                                return <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-semibold">Past</span>;
+                              } else if (daysUntil <= 30) {
+                                return <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full font-semibold">URGENT: {daysUntil} days</span>;
+                              } else if (daysUntil <= 90) {
+                                return <span className="text-xs bg-amber-100 text-amber-600 px-2 py-1 rounded-full font-semibold">{weeksUntil} weeks</span>;
+                              } else {
+                                return <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full font-semibold">{Math.ceil(daysUntil / 30)} months</span>;
+                              }
+                            })()}
+                          </div>
+                          <div className="text-lg font-bold text-text">
+                            {new Date(profileRow.pcs_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                          </div>
+                          {profileRow?.next_base && (
+                            <div className="text-sm text-muted">→ {profileRow.next_base}</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Deployment Status */}
+                    {profileRow?.deployment_status && profileRow.deployment_status !== 'never' && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">🌍</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm text-muted font-medium mb-2">Deployment</div>
+                          <div className="text-lg font-bold text-text capitalize">
+                            {profileRow.deployment_status.replace('-', ' ')}
+                          </div>
+                          {profileRow.deployment_count > 0 && (
+                            <div className="text-sm text-muted">{profileRow.deployment_count} deployment{profileRow.deployment_count > 1 ? 's' : ''} completed</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </AnimatedCard>
+              )}
+
+              {/* Financial Snapshot */}
+              {(profileRow?.tsp_balance_range || profileRow?.debt_amount_range || profileRow?.emergency_fund_range) && (
+                <AnimatedCard className="mb-8 p-8" delay={100}>
+                  <h2 className="text-2xl font-serif font-bold text-text mb-6">Financial Snapshot</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {profileRow?.tsp_balance_range && profileRow.tsp_balance_range !== 'prefer-not-to-say' && (
+                      <div>
+                        <div className="text-sm text-muted font-medium mb-2">TSP Balance</div>
+                        <div className="text-2xl font-bold text-green-600">{profileRow.tsp_balance_range}</div>
+                      </div>
+                    )}
+                    {profileRow?.debt_amount_range && profileRow.debt_amount_range !== 'prefer-not-to-say' && (
+                      <div>
+                        <div className="text-sm text-muted font-medium mb-2">Debt</div>
+                        <div className="text-2xl font-bold text-red-600">{profileRow.debt_amount_range}</div>
+                      </div>
+                    )}
+                    {profileRow?.emergency_fund_range && profileRow.emergency_fund_range !== 'prefer-not-to-say' && (
+                      <div>
+                        <div className="text-sm text-muted font-medium mb-2">Emergency Fund</div>
+                        <div className="text-2xl font-bold text-blue-600">{profileRow.emergency_fund_range}</div>
+                      </div>
+                    )}
+                  </div>
+                  {profileRow?.financial_priorities && profileRow.financial_priorities.length > 0 && (
+                    <div className="mt-6 pt-6 border-t border-border">
+                      <div className="text-sm text-muted font-medium mb-3">Your Focus Areas</div>
+                      <div className="flex flex-wrap gap-2">
+                        {profileRow.financial_priorities.map((priority: string) => (
+                          <span key={priority} className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium capitalize">
+                            {priority}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </AnimatedCard>
+              )}
+
               {/* Plan Ready */}
               <AnimatedCard className="mb-8 bg-gradient-to-br from-green-50 to-emerald-50 p-8 border-2 border-green-200" delay={100}>
                 <div className="flex items-center justify-between">

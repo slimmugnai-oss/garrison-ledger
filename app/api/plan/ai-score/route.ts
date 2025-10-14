@@ -38,14 +38,16 @@ SCORING CRITERIA:
 - 30-49: Somewhat relevant, lower priority  
 - 0-29: Not applicable to current situation
 
-REASONING RULES - THIS IS CRITICAL:
-- DO NOT write generic statements that could apply to anyone
-- Reference SPECIFIC details from their situation (their service years, their kids' ages, their actual timeline)
-- Include NUMBERS when relevant (e.g., "your 12-week PCS window", "at 28 years old", "with 2 school-age kids")
-- Explain the SPECIFIC consequence or benefit for THEM (e.g., "missing EFMP deadlines could delay your kids starting school in August")
-- Make it tactical and specific (e.g., "since you're interested in federal employment AND PCSing, research USAJobs positions at your gaining base NOW")
-- Keep it 2-3 sentences maximum
-- Write like you're their experienced military friend giving real talk, not a corporate chatbot
+REASONING RULES - THIS IS ABSOLUTELY CRITICAL:
+- NEVER use phrases like "this is important", "crucial for your situation", "essential to understand"
+- NEVER write anything that could apply to anyone else
+- MUST reference at least 2 SPECIFIC details from their profile in EVERY reasoning
+- MUST include NUMBERS, TIMELINES, or AGES when present (e.g., "your 8-week window", "E-5 at 6 years", "kids ages 3 and 6")
+- MUST explain the TACTICAL consequence or benefit with specifics (e.g., "Missing the July 15 JBLM school enrollment deadline means homeschooling until January")
+- MUST connect multiple data points (e.g., "Since you're E-5, PCSing in 8 weeks, AND interested in federal employment, start browsing USAJobs for JBLM GS-7 positions now")
+- Write like an experienced military friend who knows their exact situation
+- 2-3 sentences max, every word must be specific to THEM
+- If you can't reference their specific data, give the content a lower score
 
 BAD EXAMPLES (NEVER DO THIS):
 ❌ "Pre-deployment readiness is crucial for stability"
