@@ -61,8 +61,8 @@ export default async function CommandDashboard() {
   const pcsSituation = String(move?.pcsSituation || '');
   const hasAssessment = Object.keys(answers).length > 0;
 
-  // Check if profile is complete
-  const { data: profileRow } = await supabase.from("user_profiles").select("profile_completed").eq("user_id", user.id).maybeSingle();
+  // Load user profile
+  const { data: profileRow } = await supabase.from("user_profiles").select("*").eq("user_id", user.id).maybeSingle();
   const profileComplete = profileRow?.profile_completed || false;
 
   const yearsMap: Record<string,string> = { '0-4': '0-4 Years Service', '5-10': '5-10 Years', '11-15': '11-15 Years', '16+': '16+ Years' };
@@ -133,41 +133,141 @@ export default async function CommandDashboard() {
 
           {hasAssessment && (
             <>
-              {/* Profile Snapshot */}
+              {/* Profile Snapshot - Dynamic based on what user has filled */}
               <AnimatedCard className="mb-8 p-8" delay={0}>
-                <h2 className="text-2xl font-serif font-bold text-text mb-6">Profile Snapshot</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">⭐</span>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted font-medium">Service</div>
-                      <div className="text-lg font-bold text-text">{serviceDisplay}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">👨‍👩‍👧‍👦</span>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted font-medium">Family</div>
-                      <div className="text-lg font-bold text-text">
-                        {familyDisplay}
-                        {efmp && <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-semibold">EFMP</span>}
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-serif font-bold text-text">Your Profile</h2>
+                  <Link href="/dashboard/profile/setup" className="text-sm text-blue-600 hover:underline font-semibold">
+                    {profileComplete ? 'Edit' : 'Complete Profile'}
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Military Identity */}
+                  {(profileRow?.rank || profileRow?.branch) && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl">⭐</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted font-medium">Military</div>
+                        <div className="text-lg font-bold text-text">
+                          {profileRow?.rank || 'Service Member'}
+                        </div>
+                        {profileRow?.branch && (
+                          <div className="text-sm text-muted">{profileRow.branch}</div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">🧭</span>
+                  )}
+                  
+                  {/* Location & PCS */}
+                  {(profileRow?.current_base || profileRow?.pcs_date) && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl">📍</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted font-medium">Station</div>
+                        <div className="text-lg font-bold text-text">
+                          {profileRow?.current_base || 'Unknown'}
+                        </div>
+                        {profileRow?.pcs_date && (
+                          <div className="text-sm text-muted">
+                            PCS: {new Date(profileRow.pcs_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-muted font-medium">Next Move</div>
-                      <div className="text-lg font-bold text-text">{pcsDisplay}</div>
+                  )}
+                  
+                  {/* Family */}
+                  {(profileRow?.marital_status || profileRow?.num_children !== null) && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl">👨‍👩‍👧‍👦</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted font-medium">Family</div>
+                        <div className="text-lg font-bold text-text capitalize">
+                          {profileRow?.marital_status || 'Not specified'}
+                        </div>
+                        {profileRow?.num_children !== null && profileRow?.num_children > 0 && (
+                          <div className="text-sm text-muted">
+                            {profileRow.num_children} {profileRow.num_children === 1 ? 'child' : 'children'}
+                            {profileRow?.has_efmp && <span className="ml-1 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-semibold">EFMP</span>}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  
+                  {/* Financial Snapshot */}
+                  {(profileRow?.tsp_balance_range || profileRow?.debt_amount_range) && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl">💰</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted font-medium">Finances</div>
+                        {profileRow?.tsp_balance_range && (
+                          <div className="text-sm text-text">
+                            TSP: <span className="font-semibold">{profileRow.tsp_balance_range}</span>
+                          </div>
+                        )}
+                        {profileRow?.debt_amount_range && (
+                          <div className="text-sm text-text">
+                            Debt: <span className="font-semibold">{profileRow.debt_amount_range}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Fallback if no profile data */}
+                  {!profileRow?.rank && !profileRow?.branch && !profileRow?.current_base && !profileRow?.marital_status && (
+                    <div className="col-span-full text-center py-6">
+                      <p className="text-muted mb-4">Complete your profile to see personalized insights here</p>
+                      <Link 
+                        href="/dashboard/profile/setup"
+                        className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold transition-all shadow"
+                      >
+                        Set up profile →
+                      </Link>
+                    </div>
+                  )}
                 </div>
+                
+                {/* Career Interests & Goals */}
+                {(profileRow?.career_interests?.length > 0 || profileRow?.financial_priorities?.length > 0) && (
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {profileRow?.career_interests?.length > 0 && (
+                        <div>
+                          <div className="text-sm text-muted font-medium mb-2">Career Interests</div>
+                          <div className="flex flex-wrap gap-2">
+                            {profileRow.career_interests.map((interest: string) => (
+                              <span key={interest} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                                {interest}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {profileRow?.financial_priorities?.length > 0 && (
+                        <div>
+                          <div className="text-sm text-muted font-medium mb-2">Financial Priorities</div>
+                          <div className="flex flex-wrap gap-2">
+                            {profileRow.financial_priorities.map((priority: string) => (
+                              <span key={priority} className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                                {priority}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </AnimatedCard>
 
               {/* Plan Ready */}

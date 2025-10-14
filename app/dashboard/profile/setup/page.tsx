@@ -30,9 +30,9 @@ const yesNo = [
   { label: 'Yes', value: true },
   { label: 'No', value: false },
 ];
-const ranges = ['none','1-5k','5-10k','10-25k','25-50k','50k+'];
-const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+'];
-const housing = ['on-base','rent-off-base','own-primary','own-rental'];
+const ranges = ['none','1-5k','5-10k','10-25k','25-50k','50k+','prefer-not-to-say'];
+const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+','prefer-not-to-say'];
+const housing = ['on-base','rent-off-base','own-primary','own-rental','other'];
 const interests = ['federal','entrepreneur','remote','education'];
 const priorities = ['tsp','debt','emergency','house-hack','budget','sdp'];
 
@@ -152,11 +152,12 @@ export default function ProfileSetupPage() {
         <div className="space-y-8">
           <section>
             <h2 className="text-xl font-bold mb-4">Military identity</h2>
+            <p className="text-sm text-muted mb-4">Optional - helps us personalize your plan</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))}>
-                  <option value="">Select</option>
+                  <option value="">Select (optional)</option>
                   {ranks.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
@@ -179,24 +180,26 @@ export default function ProfileSetupPage() {
 
           <section>
             <h2 className="text-xl font-bold mb-4">Location & timeline</h2>
+            <p className="text-sm text-muted mb-4">Optional - helps us tailor move and deployment advice</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Current base</label>
-                <input className="w-full border border-border rounded-lg px-3 py-2" value={data.current_base ?? ''} onChange={e => setData(d => ({ ...d, current_base: e.target.value || null }))} />
+                <input placeholder="e.g., Fort Liberty, NC (optional)" className="w-full border border-border rounded-lg px-3 py-2" value={data.current_base ?? ''} onChange={e => setData(d => ({ ...d, current_base: e.target.value || null }))} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Next base</label>
-                <input className="w-full border border-border rounded-lg px-3 py-2" value={data.next_base ?? ''} onChange={e => setData(d => ({ ...d, next_base: e.target.value || null }))} />
+                <input placeholder="If known (optional)" className="w-full border border-border rounded-lg px-3 py-2" value={data.next_base ?? ''} onChange={e => setData(d => ({ ...d, next_base: e.target.value || null }))} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">PCS date</label>
-                <input type="date" className="w-full border border-border rounded-lg px-3 py-2" value={data.pcs_date ?? ''} onChange={e => setData(d => ({ ...d, pcs_date: e.target.value || null }))} />
+                <input type="date" placeholder="Optional" className="w-full border border-border rounded-lg px-3 py-2" value={data.pcs_date ?? ''} onChange={e => setData(d => ({ ...d, pcs_date: e.target.value || null }))} />
               </div>
             </div>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-4">Family</h2>
+            <p className="text-sm text-muted mb-4">Optional - helps with family-specific recommendations</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Marital status</label>
@@ -206,6 +209,7 @@ export default function ProfileSetupPage() {
                   <option value="married">Married</option>
                   <option value="divorced">Divorced</option>
                   <option value="widowed">Widowed</option>
+                  <option value="prefer-not-to-say">Prefer not to say</option>
                 </select>
               </div>
               <div>
@@ -224,6 +228,7 @@ export default function ProfileSetupPage() {
 
           <section>
             <h2 className="text-xl font-bold mb-4">Financial snapshot</h2>
+            <p className="text-sm text-muted mb-4">Optional - use ranges for privacy. This helps tailor financial advice.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">TSP balance</label>
