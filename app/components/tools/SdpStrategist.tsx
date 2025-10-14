@@ -207,27 +207,46 @@ export default function SdpStrategist() {
             </div>
           </div>
 
-          {/* ROI payoff (premium only) */}
-          {!isPremium && (
-            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <div className="text-center">
-                <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
-                <p className="text-lg text-gray-600 mb-6">
-                  See how much more your payout could grow in 15 years with detailed breakdowns.
-                </p>
-                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
-                  Upgrade to Premium
+          {/* ROI payoff */}
+          <div>
+            {isPremium ? (
+              <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
+            ) : (
+              <div className="relative">
+                <div className="blur-sm pointer-events-none select-none">
+                  <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
+                  <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                    <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
+                    <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                      Your Results Are Ready!
+                    </h3>
+                    <p className="text-lg text-gray-700 mb-2">
+                      Unlock to see your complete 15-year ROI analysis with detailed breakdowns
+                    </p>
+                    <p className="text-sm text-gray-600 mb-6">
+                      <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+                    </p>
+                    <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                      <p className="text-sm font-semibold text-green-800">
+                        <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
+                      </p>
+                    </div>
+                    <p className="text-3xl font-black text-gray-900 mb-6">
+                      $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                    </p>
+                    <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
+                      Unlock Now →
+                    </a>
+                    <p className="text-xs text-gray-500">
+                      Less than a coffee per week · Upgrade anytime
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          {isPremium && (
-            <div>
-              {/* Rendered only when premium; compute diff here to avoid DOM leakage */}
-              <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </Section>
     </div>
