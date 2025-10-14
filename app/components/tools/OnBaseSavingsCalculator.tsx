@@ -140,28 +140,59 @@ export default function OnBaseSavingsCalculator() {
 
           {/* Commissary Results Preview */}
           <div className="mt-8 pt-6 border-t-2 border-gray-200">
-            <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
-              <p className="text-sm text-gray-700 mb-2 font-medium text-center">
-                Estimated Annual Commissary Savings
-              </p>
-              <p className="text-5xl font-black text-blue-600 text-center mb-3">
-                ${Math.round(totalCommissarySavings).toLocaleString()}
-              </p>
-              <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
-                <div>
-                  <p className="text-gray-600">Meat/Produce</p>
-                  <p className="font-bold text-blue-700">${Math.round(meatProduceSavings).toLocaleString()}</p>
+            <PaywallWrapper
+              isPremium={isPremium}
+              title="Your Commissary Savings Revealed!"
+              description="Unlock to see your detailed commissary savings breakdown by category"
+              toolName="On-Base Savings"
+              sampleData={
+                <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                  <p className="text-sm text-gray-700 mb-2 font-medium text-center">
+                    Estimated Annual Commissary Savings
+                  </p>
+                  <p className="text-5xl font-black text-blue-600 text-center mb-3">
+                    $1,800
+                  </p>
+                  <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
+                    <div>
+                      <p className="text-gray-600">Meat/Produce</p>
+                      <p className="font-bold text-blue-700">$900</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">Pantry Staples</p>
+                      <p className="font-bold text-blue-700">$600</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">Baby Supplies</p>
+                      <p className="font-bold text-blue-700">$300</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-600">Pantry Staples</p>
-                  <p className="font-bold text-blue-700">${Math.round(pantryStaplesSavings).toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Baby Supplies</p>
-                  <p className="font-bold text-blue-700">${Math.round(diapersBabySavings).toLocaleString()}</p>
+              }
+            >
+              <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+                <p className="text-sm text-gray-700 mb-2 font-medium text-center">
+                  Estimated Annual Commissary Savings
+                </p>
+                <p className="text-5xl font-black text-blue-600 text-center mb-3">
+                  ${Math.round(totalCommissarySavings).toLocaleString()}
+                </p>
+                <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
+                  <div>
+                    <p className="text-gray-600">Meat/Produce</p>
+                    <p className="font-bold text-blue-700">${Math.round(meatProduceSavings).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Pantry Staples</p>
+                    <p className="font-bold text-blue-700">${Math.round(pantryStaplesSavings).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Baby Supplies</p>
+                    <p className="font-bold text-blue-700">${Math.round(diapersBabySavings).toLocaleString()}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </PaywallWrapper>
           </div>
         </div>
       </div>
@@ -271,40 +302,83 @@ export default function OnBaseSavingsCalculator() {
 
           {/* Exchange Results Preview */}
           <div className="mt-8 pt-6 border-t-2 border-gray-200">
-            <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
-              <p className="text-sm text-gray-700 mb-4 font-medium text-center">
-                Estimated Annual Exchange Savings Breakdown
-              </p>
-              
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-white rounded-lg p-4 border border-green-300">
-                  <p className="text-xs text-gray-600 mb-1">Tax Savings (Non-Fuel)</p>
-                  <p className="text-3xl font-bold text-green-600">
-                    ${Math.round(taxSavings).toLocaleString()}
+            <PaywallWrapper
+              isPremium={isPremium}
+              title="Your Exchange Savings Revealed!"
+              description="Unlock to see your detailed exchange savings breakdown including tax savings and STAR card benefits"
+              toolName="On-Base Savings"
+              sampleData={
+                <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                  <p className="text-sm text-gray-700 mb-4 font-medium text-center">
+                    Estimated Annual Exchange Savings Breakdown
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Based on {salesTaxRate}% local rate
-                  </p>
-                </div>
-                
-                <div className="bg-white rounded-lg p-4 border border-blue-300">
-                  <p className="text-xs text-gray-600 mb-1">MILITARY STAR® Fuel Savings</p>
-                  <p className="text-3xl font-bold text-blue-600">
-                    ${Math.round(starCardSavings).toLocaleString()}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {annualGasGallons.toLocaleString()} gallons × 5¢
-                  </p>
-                </div>
-              </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                    <div className="bg-white rounded-lg p-4 border border-green-300">
+                      <p className="text-xs text-gray-600 mb-1">Tax Savings (Non-Fuel)</p>
+                      <p className="text-3xl font-bold text-green-600">
+                        $224
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Based on 7% local rate
+                      </p>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4 border border-blue-300">
+                      <p className="text-xs text-gray-600 mb-1">MILITARY STAR® Fuel Savings</p>
+                      <p className="text-3xl font-bold text-blue-600">
+                        $39
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        780 gallons × 5¢
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
-                <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
-                <p className="text-4xl font-black">
-                  ${Math.round(totalExchangeSavings).toLocaleString()}
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
+                    <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
+                    <p className="text-4xl font-black">
+                      $263
+                    </p>
+                  </div>
+                </div>
+              }
+            >
+              <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+                <p className="text-sm text-gray-700 mb-4 font-medium text-center">
+                  Estimated Annual Exchange Savings Breakdown
                 </p>
+                
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white rounded-lg p-4 border border-green-300">
+                    <p className="text-xs text-gray-600 mb-1">Tax Savings (Non-Fuel)</p>
+                    <p className="text-3xl font-bold text-green-600">
+                      ${Math.round(taxSavings).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Based on {salesTaxRate}% local rate
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-blue-300">
+                    <p className="text-xs text-gray-600 mb-1">MILITARY STAR® Fuel Savings</p>
+                    <p className="text-3xl font-bold text-blue-600">
+                      ${Math.round(starCardSavings).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {annualGasGallons.toLocaleString()} gallons × 5¢
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
+                  <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
+                  <p className="text-4xl font-black">
+                    ${Math.round(totalExchangeSavings).toLocaleString()}
+                  </p>
+                </div>
               </div>
-            </div>
+            </PaywallWrapper>
           </div>
         </div>
       </div>
