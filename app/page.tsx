@@ -59,7 +59,7 @@ export default function Home() {
             <SignedOut>
               <SignUpButton mode="modal">
                 <button className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl">
-                  Start Free Preview
+                  Start Free Forever
                 </button>
               </SignUpButton>
               <Link
@@ -87,7 +87,7 @@ export default function Home() {
           </div>
 
           <p className="mt-6 text-sm text-gray-600">
-            7-day money-back guarantee · No credit card required
+            <strong>Free Forever</strong> · No Credit Card Required · Upgrade Anytime
           </p>
         </div>
       </section>

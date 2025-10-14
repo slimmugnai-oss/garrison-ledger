@@ -312,16 +312,32 @@ export default function TspModeler() {
                     <div className="blur-sm pointer-events-none select-none">
                       <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 backdrop-blur-sm">
-                      <div className="bg-white rounded-2xl p-10 shadow-2xl border border-gray-200 text-center max-w-md">
-                        <div className="text-6xl mb-4">⭐</div>
-                        <h3 className="text-3xl font-bold text-gray-900 mb-4">Premium Feature</h3>
-                        <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                          Upgrade to see your full growth projection chart and compare allocation strategies.
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm">
+                      <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                        <div className="text-6xl mb-4">🔒</div>
+                        <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                          Your Results Are Ready!
+                        </h3>
+                        <p className="text-lg text-gray-700 mb-2">
+                          Unlock to see your complete 30-year retirement projection + unlimited scenario comparisons
                         </p>
-                        <a href="/dashboard/upgrade" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-0.5">
-                          Upgrade to Premium →
+                        <p className="text-sm text-gray-600 mb-6">
+                          💡 This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+                        </p>
+                        <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                          <p className="text-sm font-semibold text-green-800">
+                            🛡️ 7-Day Money-Back Guarantee · Cancel Anytime
+                          </p>
+                        </div>
+                        <p className="text-3xl font-black text-gray-900 mb-6">
+                          $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                        </p>
+                        <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
+                          Unlock Now →
                         </a>
+                        <p className="text-xs text-gray-500">
+                          Less than a coffee per week · Upgrade anytime
+                        </p>
                       </div>
                     </div>
                   </div>

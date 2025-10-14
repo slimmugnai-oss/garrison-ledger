@@ -64,8 +64,8 @@ export default async function CommandDashboard() {
                   <span>⭐</span> Premium Member
                 </span>
               ) : (
-                <span className="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Free Preview
+                <span className="inline-flex items-center rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 uppercase tracking-wider">
+                  Free Forever
                 </span>
               )}
             </div>

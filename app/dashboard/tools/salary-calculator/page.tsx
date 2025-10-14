@@ -39,18 +39,32 @@ export default function Page() {
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-white rounded-xl p-8 shadow-lg border border-gray-200 text-center">
+            <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
               <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Premium Tool Access Required</h2>
-              <p className="text-gray-600 mb-6">
-                Sign in to access the Salary & Relocation Calculator and make smarter career decisions.
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Compare Job Offers Intelligently</h2>
+              <p className="text-lg text-gray-700 mb-2">
+                See real purchasing power across 25+ military cities
+              </p>
+              <p className="text-sm text-gray-600 mb-6">
+                💡 Make informed career decisions worth <strong className="text-purple-600">$10K+ in lifetime earnings</strong>
+              </p>
+              <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                <p className="text-sm font-semibold text-green-800">
+                  🛡️ 7-Day Money-Back Guarantee · Free Forever Tier Available
+                </p>
+              </div>
+              <p className="text-3xl font-black text-gray-900 mb-6">
+                $9.99<span className="text-lg font-normal text-gray-600">/month</span>
               </p>
               <Link
                 href="/sign-in"
-                className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl"
+                className="inline-block w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4"
               >
-                Sign In to Continue
+                Start Free, Upgrade Anytime →
               </Link>
+              <p className="text-xs text-gray-500">
+                No credit card required for free tier · Less than a coffee per week for premium
+              </p>
             </div>
           </SignedOut>
 
