@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 
 type TabMode = 'commissary' | 'exchange';
@@ -9,7 +8,6 @@ type CommissaryMode = 'monthly' | 'pcs';
 type ExchangeMode = 'annual' | 'newhome';
 
 export default function OnBaseSavingsCalculator() {
-  const { isPremium } = usePremiumStatus();
   const [activeTab, setActiveTab] = useState<TabMode>('commissary');
   
   // Commissary state

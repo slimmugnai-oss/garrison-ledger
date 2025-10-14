@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 
 const CITY_DATA = [
@@ -33,8 +32,6 @@ const CITY_DATA = [
 ];
 
 export default function SalaryRelocationCalculator() {
-  const { isPremium } = usePremiumStatus();
-  
   const [currentSalary, setCurrentSalary] = useState(60000);
   const [currentCity, setCurrentCity] = useState("100.0");
   const [newSalary, setNewSalary] = useState(65000);
@@ -246,7 +243,7 @@ export default function SalaryRelocationCalculator() {
         {/* Results */}
         {showResult && result && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-8">
-            <h4 className="text-2xl font-bold text-gray-900 mb-4">Here's the breakdown:</h4>
+            <h4 className="text-2xl font-bold text-gray-900 mb-4">Here&apos;s the breakdown:</h4>
             
             <p className="text-gray-700 mb-6 text-lg">
               To maintain your current lifestyle in <strong>{result.newCityLabel}</strong>, 

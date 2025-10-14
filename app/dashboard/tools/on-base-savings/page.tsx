@@ -44,12 +44,12 @@ export default function Page() {
               <p className="text-gray-600 mb-6">
                 Sign in to access the On-Base Savings Calculator and start maximizing your military shopping benefits.
               </p>
-              <a
+              <Link
                 href="/sign-in"
                 className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl"
               >
                 Sign In to Continue
-              </a>
+              </Link>
             </div>
           </SignedOut>
 

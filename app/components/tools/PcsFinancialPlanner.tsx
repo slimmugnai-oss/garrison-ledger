@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 
 type TabMode = 'basic' | 'ppm';
 
 export default function PcsFinancialPlanner() {
-  const { isPremium } = usePremiumStatus();
   const [activeTab, setActiveTab] = useState<TabMode>('basic');
   
   // Basic Calculator state

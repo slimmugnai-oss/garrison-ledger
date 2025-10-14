@@ -33,7 +33,7 @@ export default function Page() {
             </h1>
             <p className="mx-auto max-w-3xl text-xl text-gray-600">
               Plan your PCS move finances with confidence. Calculate your budget, estimate PPM profits, 
-              and ensure you're financially prepared for your next duty station.
+              and ensure you&apos;re financially prepared for your next duty station.
             </p>
           </div>
 
@@ -44,12 +44,12 @@ export default function Page() {
               <p className="text-gray-600 mb-6">
                 Sign in to access the PCS Financial Planner and take control of your move budget.
               </p>
-              <a
+              <Link
                 href="/sign-in"
                 className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl"
               >
                 Sign In to Continue
-              </a>
+              </Link>
             </div>
           </SignedOut>
 

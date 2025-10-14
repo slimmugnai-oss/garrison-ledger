@@ -44,12 +44,12 @@ export default function Page() {
               <p className="text-gray-600 mb-6">
                 Sign in to access the Salary & Relocation Calculator and make smarter career decisions.
               </p>
-              <a
+              <Link
                 href="/sign-in"
                 className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl"
               >
                 Sign In to Continue
-              </a>
+              </Link>
             </div>
           </SignedOut>
 
@@ -80,7 +80,7 @@ export default function Page() {
                   <div className="text-4xl mb-4">📍</div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">PCS Planning</h3>
                   <p className="text-gray-600 text-sm">
-                    Moving to a new duty station? Understand how the local economy and cost of living will affect your family's budget and lifestyle.
+                    Moving to a new duty station? Understand how the local economy and cost of living will affect your family&apos;s budget and lifestyle.
                   </p>
                 </div>
               </div>
