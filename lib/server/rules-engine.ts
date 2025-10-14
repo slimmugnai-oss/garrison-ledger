@@ -174,8 +174,10 @@ function ensureTopicCoverage(
   
   const finance = s.financialWorry || c.finance?.priority || '';
   const career = s.careerGoal || c.career?.ambitions?.[0] || '';
-  const deployment = c.deployment?.status || a.deployment_status || '';
-  const biggestConcern = (a.biggest_concern || '').toLowerCase();
+  const deploymentRaw = a.deployment_status || c.deployment?.status || '';
+  const deployment = typeof deploymentRaw === 'string' ? deploymentRaw : '';
+  const biggestConcernRaw = a.biggest_concern || '';
+  const biggestConcern = (typeof biggestConcernRaw === 'string' ? biggestConcernRaw : '').toLowerCase();
   
   // Map concerns to required atoms (support various patterns)
   const topicAtoms: Record<string, string[]> = {
@@ -249,9 +251,11 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   const interests = c.preferences?.topicInterests || [];
   const urgency = c.preferences?.urgencyLevel || 'normal';
   
-  // Extract from adaptive assessment format
-  const biggestConcern = a.biggest_concern || '';
-  const deployment = a.deployment_status || c.deployment?.status || '';
+  // Extract from adaptive assessment format (handle string or array)
+  const biggestConcernRaw = a.biggest_concern || '';
+  const biggestConcern = typeof biggestConcernRaw === 'string' ? biggestConcernRaw : '';
+  const deploymentRaw = a.deployment_status || c.deployment?.status || '';
+  const deployment = typeof deploymentRaw === 'string' ? deploymentRaw : '';
 
   // Check for pinned content first
   const pinnedAtoms = getPinnedContent(input);
