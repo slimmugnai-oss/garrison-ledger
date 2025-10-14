@@ -27,15 +27,22 @@ type AssessmentState = {
 
 const CORE_QUESTIONS = [
   {
+    id: 'service_status',
+    question: 'What is your current service status?',
+    type: 'select' as const,
+    options: ['Active Duty', 'Reserve', 'National Guard', 'Retired', 'Veteran (Separated)', 'Separating (within 12 months)'],
+    context: 'Determines available benefits and relevant planning needs'
+  },
+  {
     id: 'branch',
-    question: 'What branch are you in?',
+    question: 'What branch did you serve in?',
     type: 'select' as const,
     options: ['Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard', 'Space Force'],
     context: 'Determines which rank structure and benefits apply'
   },
   {
     id: 'rank',
-    question: 'What is your current rank?',
+    question: 'What is/was your rank?',
     type: 'select' as const,
     options: ['E-1 to E-4', 'E-5 to E-6', 'E-7 to E-9', 'W-1 to W-5 (Warrant)', 'O-1 to O-3', 'O-4 to O-6', 'O-7+'],
     context: 'Helps determine appropriate financial strategies'
@@ -139,7 +146,7 @@ export async function POST(req: NextRequest) {
     );
     const { data } = await supabase
       .from('user_profiles')
-      .select('rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
+      .select('service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
       .eq('user_id', userId)
       .maybeSingle();
     profile = data;
@@ -150,6 +157,18 @@ export async function POST(req: NextRequest) {
     // Build pre-answered data from profile
     const preAnswered: Record<string, string> = {};
     if (profile) {
+      // Map service_status to assessment options
+      if (profile.service_status) {
+        const statusMap: Record<string, string> = {
+          'active_duty': 'Active Duty',
+          'reserve': 'Reserve',
+          'national_guard': 'National Guard',
+          'retired': 'Retired',
+          'veteran': 'Veteran (Separated)',
+          'separating': 'Separating (within 12 months)'
+        };
+        preAnswered.service_status = statusMap[profile.service_status] || profile.service_status;
+      }
       if (profile.branch) preAnswered.branch = profile.branch;
       if (profile.rank) {
         // Map specific rank to rank range for assessment

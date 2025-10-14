@@ -11,8 +11,9 @@ type ProfilePayload = {
   gender?: string | null;
   years_of_service?: number | null;
   education_level?: string | null;
-  rank?: string | null;
+  service_status?: string | null;
   branch?: string | null;
+  rank?: string | null;
   component?: string | null;
   current_base?: string | null;
   next_base?: string | null;
@@ -45,6 +46,14 @@ type MilitaryComponents = {
 
 const ranksData = militaryRanks as MilitaryRanks;
 const componentsData = militaryComponents as MilitaryComponents;
+const serviceStatuses = [
+  { value: 'active_duty', label: 'Active Duty' },
+  { value: 'reserve', label: 'Reserve' },
+  { value: 'national_guard', label: 'National Guard' },
+  { value: 'retired', label: 'Retired' },
+  { value: 'veteran', label: 'Veteran (Separated)' },
+  { value: 'separating', label: 'Separating (within 12 months)' }
+];
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
 const genders = ['Male','Female','Prefer not to say'];
 const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
@@ -73,8 +82,9 @@ export default function ProfileSetupPage() {
         if (res.ok) {
           const json = await res.json();
           setData({
-            rank: json?.rank || null,
+            service_status: json?.service_status || null,
             branch: json?.branch || null,
+            rank: json?.rank || null,
             component: json?.component || null,
             current_base: json?.current_base || null,
             next_base: json?.next_base || null,
@@ -235,7 +245,14 @@ export default function ProfileSetupPage() {
           <section>
             <h2 className="text-xl font-bold mb-4">Military identity</h2>
             <p className="text-sm text-muted mb-4">Optional - helps us personalize your plan</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-semibold text-muted mb-2">Service Status</label>
+                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.service_status ?? ''} onChange={e => setData(d => ({ ...d, service_status: e.target.value || null }))}>
+                  <option value="">Select</option>
+                  {serviceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Branch</label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
@@ -274,14 +291,27 @@ export default function ProfileSetupPage() {
                   )}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Component</label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.component ?? ''} onChange={e => setData(d => ({ ...d, component: e.target.value || null }))} disabled={!data.branch}>
-                  <option value="">Select {!data.branch ? '(select branch first)' : ''}</option>
-                  {availableComponents.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
             </div>
+            {data.service_status && ['reserve', 'national_guard'].includes(data.service_status) && (
+              <div className="mt-4">
+                <p className="text-xs text-muted mb-2">🎖️ You selected {serviceStatuses.find(s => s.value === data.service_status)?.label}. This gives us context for your service type.</p>
+              </div>
+            )}
+            {data.service_status === 'retired' && (
+              <div className="mt-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4">
+                <p className="text-sm text-blue-900"><strong>Thank you for your service!</strong> We&apos;ll tailor content for your retirement phase, including continued benefits, VA resources, and transition planning.</p>
+              </div>
+            )}
+            {data.service_status === 'veteran' && (
+              <div className="mt-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4">
+                <p className="text-sm text-green-900"><strong>Thank you for your service!</strong> We&apos;ll focus on veteran benefits, civilian career transition, and post-service financial planning.</p>
+              </div>
+            )}
+            {data.service_status === 'separating' && (
+              <div className="mt-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg p-4">
+                <p className="text-sm text-amber-900"><strong>Transition Planning Mode:</strong> We&apos;ll prioritize TAP/SFL-TAP resources, resume building, job search strategies, and benefits preservation.</p>
+              </div>
+            )}
           </section>
 
           <section>
