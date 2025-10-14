@@ -6,6 +6,7 @@ import CitySearchInput from '@/app/components/ui/CitySearchInput';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
+import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 interface City {
@@ -162,13 +163,104 @@ export default function CareerOpportunityAnalyzer() {
           {/* Input Grid */}
           <div className="grid lg:grid-cols-2 gap-8 mb-8">
             {/* Current Situation */}
-            <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
-              </div>
-              
-              <div className="space-y-4">
+            <PaywallWrapper
+              isPremium={isPremium}
+              title="Your Current Situation Analysis is Ready!"
+              description="Unlock to see your current compensation breakdown and total after-tax income analysis"
+              toolName="Career Opportunity Analyzer"
+              sampleData={
+                <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                    <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {/* Sample City */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Current City
+                      </label>
+                      <div className="w-full pl-4 pr-4 py-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100">
+                        San Antonio, TX
+                      </div>
+                      <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 mt-2">
+                        <p className="text-xs font-semibold text-blue-900">
+                          Cost of Living Index: 86.9 (13% below national average)
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Sample Salary */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Base Annual Salary
+                      </label>
+                      <div className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100">
+                        $60,000
+                      </div>
+                    </div>
+
+                    {/* Sample Bonus */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Annual Bonus (if applicable)
+                      </label>
+                      <div className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        $0
+                      </div>
+                    </div>
+
+                    {/* Sample Retirement Match */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Retirement Match (e.g., 401k match %)
+                      </label>
+                      <div className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        5%
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Value: $3,000
+                      </p>
+                    </div>
+
+                    {/* Sample State Tax */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Estimated State Income Tax (%)
+                      </label>
+                      <div className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        0%
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
+                      </p>
+                    </div>
+
+                    {/* Sample Total Compensation Summary */}
+                    <div className="bg-blue-100 border-2 border-blue-300 rounded-lg p-4 mt-4">
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="font-semibold text-gray-700">Total Compensation:</span>
+                          <span className="font-bold text-blue-900">$63,000</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-semibold text-gray-700">After Taxes:</span>
+                          <span className="font-bold text-blue-900">$60,000</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            >
+              <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                  <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
+                </div>
+                
+                <div className="space-y-4">
                 {/* Current City */}
                 <CitySearchInput
                   value={currentData.city ? `${currentData.city.city}, ${currentData.city.state}` : ''}
@@ -283,17 +375,109 @@ export default function CareerOpportunityAnalyzer() {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
-            </div>
+            </PaywallWrapper>
 
             {/* New Offer */}
-            <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-green-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
-              </div>
-              
-              <div className="space-y-4">
+            <PaywallWrapper
+              isPremium={isPremium}
+              title="Your New Offer Analysis is Ready!"
+              description="Unlock to see your new compensation breakdown and compare against your current situation"
+              toolName="Career Opportunity Analyzer"
+              sampleData={
+                <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+                    <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {/* Sample City */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        New City
+                      </label>
+                      <div className="w-full pl-4 pr-4 py-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100">
+                        San Diego, CA
+                      </div>
+                      <div className="bg-green-100 border border-green-300 rounded-lg p-3 mt-2">
+                        <p className="text-xs font-semibold text-green-900">
+                          Cost of Living Index: 160.4 (60% above national average)
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Sample Salary */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Base Annual Salary
+                      </label>
+                      <div className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg text-lg bg-gray-100">
+                        $75,000
+                      </div>
+                    </div>
+
+                    {/* Sample Bonus */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Annual Bonus (if applicable)
+                      </label>
+                      <div className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        $5,000
+                      </div>
+                    </div>
+
+                    {/* Sample Retirement Match */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Retirement Match (e.g., 401k match %)
+                      </label>
+                      <div className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        6%
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Value: $4,500
+                      </p>
+                    </div>
+
+                    {/* Sample State Tax */}
+                    <div>
+                      <label className="block text-sm font-semibold text-text-body mb-2">
+                        Estimated State Income Tax (%)
+                      </label>
+                      <div className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg text-base bg-gray-100">
+                        9%
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
+                      </p>
+                    </div>
+
+                    {/* Sample Total Compensation Summary */}
+                    <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4 mt-4">
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="font-semibold text-gray-700">Total Compensation:</span>
+                          <span className="font-bold text-green-900">$84,500</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-semibold text-gray-700">After Taxes:</span>
+                          <span className="font-bold text-green-900">$76,895</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            >
+              <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+                  <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
+                </div>
+                
+                <div className="space-y-4">
                 {/* New City */}
                 <CitySearchInput
                   value={newData.city ? `${newData.city.city}, ${newData.city.state}` : ''}
@@ -408,8 +592,9 @@ export default function CareerOpportunityAnalyzer() {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
-            </div>
+            </PaywallWrapper>
           </div>
 
           {/* Verdict Card */}
