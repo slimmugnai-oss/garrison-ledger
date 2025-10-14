@@ -11,7 +11,7 @@ export const maxDuration = 60; // Allow time for AI scoring 400+ blocks
 
 // Cache version - increment this when you make changes to plan generation logic
 // This ensures users get fresh plans after deployments
-const PLAN_CACHE_VERSION = "v4";
+const PLAN_CACHE_VERSION = "v5";
 
 type ScoredBlock = {
   slug: string;
