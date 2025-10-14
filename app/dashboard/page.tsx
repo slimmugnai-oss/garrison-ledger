@@ -77,46 +77,58 @@ export default async function CommandDashboard() {
             </p>
           </div>
 
-          {/* Profile completion CTA - only show if profile not complete */}
-          {!profileComplete && (
-            <AnimatedCard className="mb-10 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white shadow-2xl border-0" delay={0}>
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                  <Icon name="Target" className="h-10 w-10 text-gray-700" />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-2xl font-serif font-black mb-2">Unlock Intelligent Personalization</h2>
-                  <p className="text-blue-50 text-lg mb-4 leading-relaxed">
-                    Add your rank, branch, base, and goals to get hyper-personalized guidance for every aspect of military life.
-                  </p>
-                  <Link href="/dashboard/profile/setup" className="inline-flex items-center bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
-                    Complete Profile →
-                  </Link>
-                </div>
-              </div>
-            </AnimatedCard>
-          )}
+          {/* Onboarding CTAs - Sophisticated Two-Column Layout */}
+          {(!profileComplete || !hasAssessment) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {/* Profile Completion CTA */}
+              {!profileComplete && (
+                <AnimatedCard className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-600 rounded-2xl p-8 text-white shadow-lg border border-slate-600/50" delay={0}>
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
+                        <Icon name="Target" className="h-7 w-7 text-white" />
+                      </div>
+                      <div className="inline-flex items-center px-2.5 py-1 bg-emerald-500/20 border border-emerald-400/30 rounded-full text-emerald-200 text-xs font-bold uppercase tracking-wider">
+                        Quick Setup
+                      </div>
+                    </div>
+                    <h2 className="text-2xl font-serif font-black mb-3 text-white">Unlock Intelligent Personalization</h2>
+                    <p className="text-slate-200 text-base mb-6 leading-relaxed flex-1">
+                      Add your rank, branch, base, and goals to get hyper-personalized guidance for every aspect of military life.
+                    </p>
+                    <Link href="/dashboard/profile/setup" className="inline-flex items-center justify-center bg-white text-slate-800 hover:bg-slate-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                      Complete Profile →
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              )}
 
-          {!hasAssessment && (
-            <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 to-blue-600 p-10 text-white">
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                  <Icon name="ClipboardList" className="h-10 w-10 text-gray-700" />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-3xl font-serif font-bold mb-3">Get Your Personalized Plan</h2>
-                  <p className="text-xl text-blue-50 mb-6 leading-relaxed">
-                    Complete the 5-minute assessment to unlock your tailored Military Life Roadmap with curated content from our toolkit hubs.
-                  </p>
-                  <Link 
-                    href="/dashboard/assessment"
-                    className="inline-flex items-center bg-white text-indigo-600 hover:bg-blue-50 px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px]"
-                  >
-                    Start Assessment →
-                  </Link>
-                </div>
-              </div>
-            </AnimatedCard>
+              {/* Assessment CTA */}
+              {!hasAssessment && (
+                <AnimatedCard className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-2xl p-8 text-white shadow-lg border border-indigo-700/50" delay={50}>
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
+                        <Icon name="ClipboardList" className="h-7 w-7 text-white" />
+                      </div>
+                      <div className="inline-flex items-center px-2.5 py-1 bg-purple-500/20 border border-purple-400/30 rounded-full text-purple-200 text-xs font-bold uppercase tracking-wider">
+                        5 Minutes
+                      </div>
+                    </div>
+                    <h2 className="text-2xl font-serif font-black mb-3 text-white">Get Your Personalized Plan</h2>
+                    <p className="text-indigo-100 text-base mb-6 leading-relaxed flex-1">
+                      Complete the assessment to unlock your tailored Military Life Roadmap with curated content from our toolkit hubs.
+                    </p>
+                    <Link 
+                      href="/dashboard/assessment"
+                      className="inline-flex items-center justify-center bg-white text-indigo-900 hover:bg-indigo-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    >
+                      Start Assessment →
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              )}
+            </div>
           )}
 
           {hasAssessment && (
