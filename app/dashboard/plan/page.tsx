@@ -109,15 +109,29 @@ export default function ExecutiveBriefing() {
       <>
         <Header />
         <div className="min-h-screen bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-20 w-20 border-b-4 border-primary-accent mb-8"></div>
-              <p className="text-2xl font-serif font-bold text-text-headings">
-                {regenerating ? 'Regenerating your plan with latest data...' : 'Assembling your Executive Briefing...'}
-              </p>
-              <p className="text-text-muted mt-2">
-                {regenerating ? 'Using your updated profile and assessment' : 'Selecting the most relevant content for your situation'}
-              </p>
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-6"></div>
+              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">
+                {regenerating ? 'Regenerating Your Plan' : 'Assembling Your Executive Briefing'}
+              </h2>
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+                <p className="text-lg font-semibold text-blue-900 mb-2">
+                  ✨ AI is analyzing 400+ military resources
+                </p>
+                <p className="text-blue-700 leading-relaxed">
+                  We're scoring every guide, calculator, and checklist against your unique situation to build your personalized 18-block action plan.
+                </p>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
+                <p className="flex items-center justify-center gap-2">
+                  <span className="animate-pulse">⏱️</span>
+                  <span>This typically takes 20-30 seconds</span>
+                </p>
+                <p className="mt-2 text-xs text-gray-500">
+                  Your plan is cached for 7 days after generation for instant access
+                </p>
+              </div>
             </div>
           </div>
         </div>
