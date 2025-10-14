@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/app/components/Header';
 import SectionHeader from '@/app/components/ui/SectionHeader';
 import ContentCard from '@/app/components/ui/ContentCard';
@@ -38,7 +39,9 @@ type PlanData = {
 
 export default function ExecutiveBriefing() {
   const { user } = useUser();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [regenerating, setRegenerating] = useState(false);
   const [plan, setPlan] = useState<PlanData | null>(null);
 
   useEffect(() => {
@@ -60,7 +63,19 @@ export default function ExecutiveBriefing() {
     loadPlan();
   }, []);
 
-  if (loading) {
+  async function handleRegenerate() {
+    setRegenerating(true);
+    try {
+      await fetch('/api/plan/regenerate', { method: 'POST' });
+      router.refresh(); // Force page reload
+      window.location.reload(); // Ensure fresh data
+    } catch (e) {
+      console.error('Regenerate failed:', e);
+      setRegenerating(false);
+    }
+  }
+
+  if (loading || regenerating) {
     return (
       <>
         <Header />
@@ -68,8 +83,12 @@ export default function ExecutiveBriefing() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-20 w-20 border-b-4 border-primary-accent mb-8"></div>
-              <p className="text-2xl font-serif font-bold text-text-headings">Assembling your Executive Briefing...</p>
-              <p className="text-text-muted mt-2">Selecting the most relevant content for your situation</p>
+              <p className="text-2xl font-serif font-bold text-text-headings">
+                {regenerating ? 'Regenerating your plan with latest data...' : 'Assembling your Executive Briefing...'}
+              </p>
+              <p className="text-text-muted mt-2">
+                {regenerating ? 'Using your updated profile and assessment' : 'Selecting the most relevant content for your situation'}
+              </p>
             </div>
           </div>
         </div>
@@ -173,16 +192,25 @@ export default function ExecutiveBriefing() {
             {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled for your situation
           </p>
 
-          {/* AI Enhancement Badge - Only show if we actually have AI reasoning */}
-          {plan.aiEnhanced && plan.blocks.some(b => b.aiReason) && (
-            <div className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
-              <span className="text-2xl">✨</span>
-              <div>
-                <div className="font-bold text-purple-900">AI-Enhanced Personalization</div>
-                <div className="text-sm text-purple-700">This plan was intelligently curated using GPT-4o to analyze your specific situation</div>
+          {/* AI Enhancement Badge + Regenerate Button */}
+          <div className="flex items-center justify-between mb-8">
+            {plan.aiEnhanced && plan.blocks.some(b => b.aiReason) && (
+              <div className="flex-1 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
+                <span className="text-2xl">✨</span>
+                <div>
+                  <div className="font-bold text-purple-900">AI-Enhanced Personalization</div>
+                  <div className="text-sm text-purple-700">This plan was intelligently curated using GPT-4o to analyze your specific situation</div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+            <button
+              onClick={handleRegenerate}
+              disabled={regenerating}
+              className="ml-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
+            >
+              {regenerating ? 'Regenerating...' : '🔄 Regenerate Plan'}
+            </button>
+          </div>
 
           {/* Content Blocks - Organized by Domain */}
           <div className="space-y-16">
