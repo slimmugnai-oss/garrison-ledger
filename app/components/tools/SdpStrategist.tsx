@@ -8,6 +8,7 @@ import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
+import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 
 type Scenario = {
   key: 'A' | 'B' | 'C';
@@ -183,70 +184,87 @@ export default function SdpStrategist() {
             </div>
           </div>
 
-          {/* Cards */}
-          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Scenarios</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {results.map((r) => (
-                <div key={r.key} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-lg font-semibold text-gray-900 mb-3">{r.title}</div>
-                  {loading ? (
-                    <div className="text-3xl font-bold mb-2">
-                      <span className="inline-block h-8 w-32 bg-gray-200 rounded animate-pulse" />
+          {/* Results Section - Single Comprehensive Paywall */}
+          <PaywallWrapper
+            isPremium={isPremium}
+            title="Your SDP Analysis is Ready!"
+            description="Unlock to see your complete 15-year deployment savings analysis with detailed ROI breakdowns"
+            toolName="SDP Strategist"
+            sampleData={
+              <div className="space-y-8">
+                {/* Investment Scenarios */}
+                <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Scenarios</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-lg font-semibold text-gray-900 mb-3">High-Yield Savings (4%)</div>
+                      <div className="text-3xl font-bold text-green-600 mb-2">$18,000</div>
+                      <div className="text-sm text-gray-700 font-medium">Safe, liquid savings for emergencies.</div>
                     </div>
-                  ) : r.value !== undefined ? (
-                    <div className="text-3xl font-bold text-green-600 mb-2">{fmt(r.value)}</div>
-                  ) : (
-                    <div className="text-3xl font-bold mb-2">
-                      <span className="inline-block h-8 w-32 bg-gray-200 rounded animate-pulse" />
+                    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-lg font-semibold text-gray-900 mb-3">Conservative Growth (6%)</div>
+                      <div className="text-3xl font-bold text-green-600 mb-2">$24,000</div>
+                      <div className="text-sm text-gray-700 font-medium">Balanced stock/bond index mix.</div>
                     </div>
-                  )}
-                  <div className="text-sm text-gray-700 font-medium">{r.desc}</div>
+                    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-lg font-semibold text-gray-900 mb-3">Moderate Growth (8%)</div>
+                      <div className="text-3xl font-bold text-green-600 mb-2">$32,000</div>
+                      <div className="text-sm text-gray-700 font-medium">Stock-heavy mix for long horizons.</div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* ROI payoff */}
-          <div>
-            {isPremium ? (
-              <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
-            ) : (
-              <div className="relative">
-                <div className="blur-sm pointer-events-none select-none">
-                  <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                  <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                    <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                    <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                      Your Results Are Ready!
-                    </h3>
-                    <p className="text-lg text-gray-700 mb-2">
-                      Unlock to see your complete 15-year ROI analysis with detailed breakdowns
-                    </p>
-                    <p className="text-sm text-gray-600 mb-6">
-                      <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
-                    </p>
-                    <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                      <p className="text-sm font-semibold text-green-800">
-                        <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
-                      </p>
+                {/* ROI Analysis */}
+                <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">15-Year ROI Analysis</h3>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-blue-50 p-6 rounded-lg">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-3">Conservative Strategy</h4>
+                      <div className="text-3xl font-bold text-blue-600 mb-2">$24,000</div>
+                      <p className="text-sm text-blue-800">6% annual return</p>
                     </div>
-                    <p className="text-3xl font-black text-gray-900 mb-6">
-                      $9.99<span className="text-lg font-normal text-gray-600">/month</span>
-                    </p>
-                    <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                      Unlock Now →
-                    </a>
-                    <p className="text-xs text-gray-500">
-                      Less than a coffee per week · Upgrade anytime
+                    <div className="bg-green-50 p-6 rounded-lg">
+                      <h4 className="text-lg font-semibold text-green-900 mb-3">Growth Strategy</h4>
+                      <div className="text-3xl font-bold text-green-600 mb-2">$32,000</div>
+                      <p className="text-sm text-green-800">8% annual return</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Note:</strong> These are estimates based on historical averages. Actual returns may vary.
                     </p>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            }
+          >
+            {/* Investment Scenarios */}
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Scenarios</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {results.map((r) => (
+                  <div key={r.key} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-lg font-semibold text-gray-900 mb-3">{r.title}</div>
+                    {loading ? (
+                      <div className="text-3xl font-bold mb-2">
+                        <span className="inline-block h-8 w-32 bg-gray-200 rounded animate-pulse" />
+                      </div>
+                    ) : r.value !== undefined ? (
+                      <div className="text-3xl font-bold text-green-600 mb-2">{fmt(r.value)}</div>
+                    ) : (
+                      <div className="text-3xl font-bold mb-2">
+                        <span className="inline-block h-8 w-32 bg-gray-200 rounded animate-pulse" />
+                      </div>
+                    )}
+                    <div className="text-sm text-gray-700 font-medium">{r.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ROI Analysis */}
+            <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
+          </PaywallWrapper>
         </div>
       </Section>
     </div>

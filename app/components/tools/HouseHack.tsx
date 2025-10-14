@@ -8,6 +8,7 @@ import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
+import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -175,163 +176,106 @@ export default function HouseHack() {
             </div>
           </div>
 
-          <div>
-            {isPremium ? (
-              <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
-                {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  </div>
-                ) : apiData ? (
+          {/* Results Section - Single Comprehensive Paywall */}
+          <PaywallWrapper
+            isPremium={isPremium}
+            title="Your House Hacking Analysis is Ready!"
+            description="Unlock to see your complete property investment analysis with PITI breakdowns and cash flow projections"
+            toolName="House Hacking"
+            sampleData={
+              <div className="space-y-8">
+                {/* Monthly Summary */}
+                <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 bg-red-50 rounded-lg border border-red-200">
                       <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
-                      <p className="text-3xl font-bold text-red-600">{fmt(apiData.costs)}</p>
+                      <p className="text-3xl font-bold text-red-600">$2,847</p>
                       <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
                     </div>
                     <div className="p-6 bg-green-50 rounded-lg border border-green-200">
                       <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
-                      <p className="text-3xl font-bold text-green-600">{fmt(apiData.income)}</p>
+                      <p className="text-3xl font-bold text-green-600">$4,600</p>
                       <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
                     </div>
                   </div>
-                ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    Enter property details above to see monthly summary
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="relative">
-                <div className="blur-sm pointer-events-none select-none">
-                  <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="p-6 bg-red-50 rounded-lg border border-red-200">
-                        <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
-                        <p className="text-3xl font-bold text-red-600">$2,847</p>
-                        <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
-                      </div>
-                      <div className="p-6 bg-green-50 rounded-lg border border-green-200">
-                        <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
-                        <p className="text-3xl font-bold text-green-600">$4,600</p>
-                        <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                  <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                    <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                    <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                      Your Results Are Ready!
-                    </h3>
-                    <p className="text-lg text-gray-700 mb-2">
-                      Unlock to see your complete house hacking analysis with detailed PITI breakdowns
-                    </p>
-                    <p className="text-sm text-gray-600 mb-6">
-                      <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
-                    </p>
-                    <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                      <p className="text-sm font-semibold text-green-800">
-                        <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
-                      </p>
-                    </div>
-                    <p className="text-3xl font-black text-gray-900 mb-6">
-                      $9.99<span className="text-lg font-normal text-gray-600">/month</span>
-                    </p>
-                    <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                      Unlock Now →
-                    </a>
-                    <p className="text-xs text-gray-500">
-                      Less than a coffee per week · Upgrade anytime
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
-          <div>
-            {isPremium ? (
-              <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
-                {apiData && apiData.verdict !== undefined ? (
-                  <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                    <div className={`text-3xl font-bold mb-2 ${apiData.verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                      {apiData.verdict >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Negative Cash Flow</>}
+                {/* Cash Flow Analysis */}
+                <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
+                  <div className="p-6 rounded-lg border-2 bg-green-50 border-green-200">
+                    <div className="text-3xl font-bold mb-2 text-green-700">
+                      <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow
                     </div>
-                    <div className={`text-4xl font-bold mb-4 ${apiData.verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {fmt(apiData.verdict)}
+                    <div className="text-4xl font-bold mb-4 text-green-600">
+                      $1,753
                     </div>
                     <div className="text-sm text-gray-600">
                       <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
                       Consult with financial and real estate professionals for actual investment decisions.
                     </div>
-                    <Explainer payload={{ 
-                      tool: "house", 
-                      inputs: { price, rate, tax, ins, bah, rent }, 
-                      outputs: { costs: apiData.costs, income: apiData.income, verdict: apiData.verdict } 
-                    }} />
-                    <FootNote />
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    Complete the form above to see cash flow analysis
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="relative">
-                <div className="blur-sm pointer-events-none select-none">
-                  <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
-                    <div className="p-6 rounded-lg border-2 bg-green-50 border-green-200">
-                      <div className="text-3xl font-bold mb-2 text-green-700">
-                        <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow
-                      </div>
-                      <div className="text-4xl font-bold mb-4 text-green-600">
-                        $1,753
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
-                        Consult with financial and real estate professionals for actual investment decisions.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                  <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                    <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                    <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                      Your Results Are Ready!
-                    </h3>
-                    <p className="text-lg text-gray-700 mb-2">
-                      Unlock to see your complete cash flow analysis with investment recommendations
-                    </p>
-                    <p className="text-sm text-gray-600 mb-6">
-                      <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
-                    </p>
-                    <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                      <p className="text-sm font-semibold text-green-800">
-                        <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
-                      </p>
-                    </div>
-                    <p className="text-3xl font-black text-gray-900 mb-6">
-                      $9.99<span className="text-lg font-normal text-gray-600">/month</span>
-                    </p>
-                    <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                      Unlock Now →
-                    </a>
-                    <p className="text-xs text-gray-500">
-                      Less than a coffee per week · Upgrade anytime
-                    </p>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            }
+          >
+            {/* Monthly Summary */}
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : apiData ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-red-50 rounded-lg border border-red-200">
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
+                    <p className="text-3xl font-bold text-red-600">{fmt(apiData.costs)}</p>
+                    <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+                  </div>
+                  <div className="p-6 bg-green-50 rounded-lg border border-green-200">
+                    <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
+                    <p className="text-3xl font-bold text-green-600">{fmt(apiData.income)}</p>
+                    <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Enter property details above to see monthly summary
+                </div>
+              )}
+            </div>
+
+            {/* Cash Flow Analysis */}
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
+              {apiData && apiData.verdict !== undefined ? (
+                <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                  <div className={`text-3xl font-bold mb-2 ${apiData.verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                    {apiData.verdict >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Negative Cash Flow</>}
+                  </div>
+                  <div className={`text-4xl font-bold mb-4 ${apiData.verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {fmt(apiData.verdict)}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
+                    Consult with financial and real estate professionals for actual investment decisions.
+                  </div>
+                  <Explainer payload={{ 
+                    tool: "house", 
+                    inputs: { price, rate, tax, ins, bah, rent }, 
+                    outputs: { costs: apiData.costs, income: apiData.income, verdict: apiData.verdict } 
+                  }} />
+                  <FootNote />
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  Complete the form above to see cash flow analysis
+                </div>
+              )}
+            </div>
+          </PaywallWrapper>
         </div>
       </Section>
     </div>

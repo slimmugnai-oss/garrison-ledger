@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 
 export default function OnBaseSavingsCalculator() {
   const { isPremium } = usePremiumStatus();
@@ -328,51 +329,118 @@ export default function OnBaseSavingsCalculator() {
 
         {/* Breakdown Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
-            <Icon name="ShoppingCart" className="h-10 w-10 text-gray-700 mb-3" />
-            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
-              Commissary Savings
-            </p>
-            <p className="text-4xl font-black text-blue-600 mb-2">
-              ${Math.round(totalCommissarySavings).toLocaleString()}
-            </p>
-            <div className="flex justify-center gap-4 text-xs text-gray-600">
-              <span>Meat: ${Math.round(meatProduceSavings).toLocaleString()}</span>
-              <span>Pantry: ${Math.round(pantryStaplesSavings).toLocaleString()}</span>
-              {diapersBabySavings > 0 && <span>Baby: ${Math.round(diapersBabySavings).toLocaleString()}</span>}
+          <PaywallWrapper
+            isPremium={isPremium}
+            title="Commissary Savings Revealed!"
+            description="Unlock to see your detailed commissary savings breakdown by category"
+            toolName="On-Base Savings"
+            sampleData={
+              <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
+                <Icon name="ShoppingCart" className="h-10 w-10 text-gray-700 mb-3" />
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                  Commissary Savings
+                </p>
+                <p className="text-4xl font-black text-blue-600 mb-2">
+                  $2,847
+                </p>
+                <div className="flex justify-center gap-4 text-xs text-gray-600">
+                  <span>Meat: $1,200</span>
+                  <span>Pantry: $1,647</span>
+                </div>
+              </div>
+            }
+          >
+            <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
+              <Icon name="ShoppingCart" className="h-10 w-10 text-gray-700 mb-3" />
+              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                Commissary Savings
+              </p>
+              <p className="text-4xl font-black text-blue-600 mb-2">
+                ${Math.round(totalCommissarySavings).toLocaleString()}
+              </p>
+              <div className="flex justify-center gap-4 text-xs text-gray-600">
+                <span>Meat: ${Math.round(meatProduceSavings).toLocaleString()}</span>
+                <span>Pantry: ${Math.round(pantryStaplesSavings).toLocaleString()}</span>
+                {diapersBabySavings > 0 && <span>Baby: ${Math.round(diapersBabySavings).toLocaleString()}</span>}
+              </div>
             </div>
-          </div>
+          </PaywallWrapper>
 
-          <div className="bg-white rounded-xl border-2 border-green-400 p-6 text-center">
-            <div className="text-4xl mb-3">🏪</div>
-            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
-              Exchange Savings
-            </p>
-            <p className="text-4xl font-black text-green-600 mb-2">
-              ${Math.round(totalExchangeSavings).toLocaleString()}
-            </p>
-            <div className="flex justify-center gap-4 text-xs text-gray-600">
-              <span>Tax: ${Math.round(taxSavings).toLocaleString()}</span>
-              <span>STAR®: ${Math.round(starCardSavings).toLocaleString()}</span>
+          <PaywallWrapper
+            isPremium={isPremium}
+            title="Exchange Savings Revealed!"
+            description="Unlock to see your detailed exchange savings including tax savings and STAR card benefits"
+            toolName="On-Base Savings"
+            sampleData={
+              <div className="bg-white rounded-xl border-2 border-green-400 p-6 text-center">
+                <div className="text-4xl mb-3">🏪</div>
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                  Exchange Savings
+                </p>
+                <p className="text-4xl font-black text-green-600 mb-2">
+                  $1,753
+                </p>
+                <div className="flex justify-center gap-4 text-xs text-gray-600">
+                  <span>Tax: $1,400</span>
+                  <span>STAR®: $353</span>
+                </div>
+              </div>
+            }
+          >
+            <div className="bg-white rounded-xl border-2 border-green-400 p-6 text-center">
+              <div className="text-4xl mb-3">🏪</div>
+              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                Exchange Savings
+              </p>
+              <p className="text-4xl font-black text-green-600 mb-2">
+                ${Math.round(totalExchangeSavings).toLocaleString()}
+              </p>
+              <div className="flex justify-center gap-4 text-xs text-gray-600">
+                <span>Tax: ${Math.round(taxSavings).toLocaleString()}</span>
+                <span>STAR®: ${Math.round(starCardSavings).toLocaleString()}</span>
+              </div>
             </div>
-          </div>
+          </PaywallWrapper>
         </div>
 
         {/* Grand Total */}
-        <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
-          <p className="text-center text-lg font-semibold mb-3 opacity-90">
-            <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
-          </p>
-          <p className="text-center text-6xl font-black mb-6">
-            ${Math.round(grandTotal).toLocaleString()}
-          </p>
-          <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
-            <p className="text-white text-center text-base leading-relaxed">
-              <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
-              <span className="text-2xl font-black">${Math.round(grandTotal).toLocaleString()}</span> this year.</strong>
+        <PaywallWrapper
+          isPremium={isPremium}
+          title="Total Savings Revealed!"
+          description="Unlock to see your complete annual savings total and personalized savings strategy"
+          toolName="On-Base Savings"
+          sampleData={
+            <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
+              <p className="text-center text-lg font-semibold mb-3 opacity-90">
+                <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
+              </p>
+              <p className="text-center text-6xl font-black mb-6">
+                $4,600
+              </p>
+              <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
+                <p className="text-white text-center text-base leading-relaxed">
+                  <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
+                  <span className="text-2xl font-black">$4,600</span> this year.</strong>
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
+            <p className="text-center text-lg font-semibold mb-3 opacity-90">
+              <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
             </p>
+            <p className="text-center text-6xl font-black mb-6">
+              ${Math.round(grandTotal).toLocaleString()}
+            </p>
+            <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
+              <p className="text-white text-center text-base leading-relaxed">
+                <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
+                <span className="text-2xl font-black">${Math.round(grandTotal).toLocaleString()}</span> this year.</strong>
+              </p>
+            </div>
           </div>
-        </div>
+        </PaywallWrapper>
 
         {/* Context */}
         <div className="mt-6 grid md:grid-cols-3 gap-4 text-center">
