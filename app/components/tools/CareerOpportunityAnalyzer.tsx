@@ -46,6 +46,16 @@ export default function CareerOpportunityAnalyzer() {
     track('career_opportunity_analyzer_view');
   }, []);
 
+  // Format currency
+  const fmt = (value: number) => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
   // Calculate total compensation for a scenario
   const calculateTotalCompensation = (data: CompensationData): number => {
     const retirementMatch = data.salary * (data.retirementMatchPercent / 100);
@@ -133,14 +143,6 @@ export default function CareerOpportunityAnalyzer() {
       isPositive: netDifference > 0
     };
   }, [currentData, newData]);
-
-  const fmt = (value: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0 
-    }).format(value);
-  };
 
   // Format percentage (currently unused but available for future use)
   // const fmtPercent = (value: number) => {
