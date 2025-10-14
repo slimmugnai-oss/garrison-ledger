@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from 'next/link';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import SalaryRelocationCalculator from '@/app/components/tools/SalaryRelocationCalculator';
 import Header from '@/app/components/Header';

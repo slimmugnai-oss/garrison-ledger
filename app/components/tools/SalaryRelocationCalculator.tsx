@@ -276,7 +276,7 @@ export default function SalaryRelocationCalculator() {
             {result.difference >= -100 && result.difference <= 100 && (
               <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-6">
                 <p className="font-bold text-blue-900 text-lg">
-                  🎯 It's a match! Your offer of <strong>{fmt(newSalary)}</strong> should provide 
+                  🎯 It&apos;s a match! Your offer of <strong>{fmt(newSalary)}</strong> should provide 
                   a similar standard of living in your new location.
                 </p>
               </div>

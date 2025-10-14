@@ -224,7 +224,7 @@ export default function OnBaseSavingsCalculator() {
                   ${Math.round(commissarySavings).toLocaleString()}
                 </p>
                 <p className="text-xs text-gray-500 mt-3">
-                  Estimates use DeCA's worldwide average savings. Real savings vary by store and basket.
+                  Estimates use DeCA&apos;s worldwide average savings. Real savings vary by store and basket.
                 </p>
               </div>
             </div>
