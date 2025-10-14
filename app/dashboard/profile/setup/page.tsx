@@ -13,6 +13,7 @@ type ProfilePayload = {
   years_of_service?: number | null;
   education_level?: string | null;
   service_status?: string | null;
+  spouse_service_status?: string | null;
   branch?: string | null;
   rank?: string | null;
   component?: string | null;
@@ -53,7 +54,17 @@ const serviceStatuses = [
   { value: 'national_guard', label: 'National Guard' },
   { value: 'retired', label: 'Retired' },
   { value: 'veteran', label: 'Veteran (Separated)' },
-  { value: 'separating', label: 'Separating (within 12 months)' }
+  { value: 'separating', label: 'Separating (within 12 months)' },
+  { value: 'military_spouse', label: 'Military Spouse / Dependent' },
+  { value: 'dod_civilian', label: 'DoD Civilian / Contractor' }
+];
+
+const spouseServiceStatuses = [
+  { value: 'active_duty', label: 'Active Duty' },
+  { value: 'reserve', label: 'Reserve' },
+  { value: 'national_guard', label: 'National Guard' },
+  { value: 'retired', label: 'Retired' },
+  { value: 'veteran', label: 'Veteran' }
 ];
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
 const genders = ['Male','Female','Prefer not to say'];
@@ -85,6 +96,7 @@ export default function ProfileSetupPage() {
           const json = await res.json();
           setData({
             service_status: json?.service_status || null,
+            spouse_service_status: json?.spouse_service_status || null,
             branch: json?.branch || null,
             rank: json?.rank || null,
             component: json?.component || null,
@@ -268,13 +280,23 @@ export default function ProfileSetupPage() {
                   {serviceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Branch</label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
-                  <option value="">Select</option>
-                  {branches.map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-              </div>
+              {data.service_status === 'military_spouse' ? (
+                <div>
+                  <label className="block text-sm font-semibold text-muted mb-2">Spouse&apos;s Service Status</label>
+                  <select className="w-full border border-border rounded-lg px-3 py-2" value={data.spouse_service_status ?? ''} onChange={e => setData(d => ({ ...d, spouse_service_status: e.target.value || null }))}>
+                    <option value="">Select</option>
+                    {spouseServiceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-muted mb-2">Branch</label>
+                    <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
+                      <option value="">Select</option>
+                      {branches.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                  </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))} disabled={!data.branch}>
@@ -306,6 +328,8 @@ export default function ProfileSetupPage() {
                   )}
                 </select>
               </div>
+                </>
+              )}
             </div>
             {data.service_status && ['reserve', 'national_guard'].includes(data.service_status) && (
               <div className="mt-4">
@@ -325,6 +349,16 @@ export default function ProfileSetupPage() {
             {data.service_status === 'separating' && (
               <div className="mt-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg p-4">
                 <p className="text-sm text-amber-900"><strong>Transition Planning Mode:</strong> We&apos;ll prioritize TAP/SFL-TAP resources, resume building, job search strategies, and benefits preservation.</p>
+              </div>
+            )}
+            {data.service_status === 'military_spouse' && (
+              <div className="mt-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg p-4">
+                <p className="text-sm text-purple-900"><strong>Military Spouse Resources:</strong> We&apos;ll focus on spouse employment, PCS support, deployment readiness, and family financial planning specific to military life.</p>
+              </div>
+            )}
+            {data.service_status === 'dod_civilian' && (
+              <div className="mt-4 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg p-4">
+                <p className="text-sm text-indigo-900"><strong>DoD Civilian Resources:</strong> We&apos;ll focus on federal employment benefits, TSP optimization, and career advancement within the DoD system.</p>
               </div>
             )}
           </section>

@@ -30,7 +30,7 @@ const CORE_QUESTIONS = [
     id: 'service_status',
     question: 'What is your current service status?',
     type: 'select' as const,
-    options: ['Active Duty', 'Reserve', 'National Guard', 'Retired', 'Veteran (Separated)', 'Separating (within 12 months)'],
+    options: ['Active Duty', 'Reserve', 'National Guard', 'Retired', 'Veteran (Separated)', 'Separating (within 12 months)', 'Military Spouse / Dependent', 'DoD Civilian / Contractor'],
     context: 'Determines available benefits and relevant planning needs'
   },
   {
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
     );
     const { data } = await supabase
       .from('user_profiles')
-      .select('service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
+      .select('service_status, spouse_service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
       .eq('user_id', userId)
       .maybeSingle();
     profile = data;
@@ -165,7 +165,9 @@ export async function POST(req: NextRequest) {
           'national_guard': 'National Guard',
           'retired': 'Retired',
           'veteran': 'Veteran (Separated)',
-          'separating': 'Separating (within 12 months)'
+          'separating': 'Separating (within 12 months)',
+          'military_spouse': 'Military Spouse / Dependent',
+          'dod_civilian': 'DoD Civilian / Contractor'
         };
         preAnswered.service_status = statusMap[profile.service_status] || profile.service_status;
       }
