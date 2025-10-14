@@ -16,7 +16,7 @@ type Question = {
 
 export default function AdaptiveAssessmentPage() {
   const router = useRouter();
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [questionsAsked, setQuestionsAsked] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentAnswer, setCurrentAnswer] = useState<string | string[]>('');
@@ -29,7 +29,7 @@ export default function AdaptiveAssessmentPage() {
     loadNextQuestion({}, []);
   });
 
-  async function loadNextQuestion(newAnswers: Record<string, any>, asked: string[]) {
+  async function loadNextQuestion(newAnswers: Record<string, string | string[]>, asked: string[]) {
     setLoading(true);
     setError(null);
     try {
@@ -50,7 +50,7 @@ export default function AdaptiveAssessmentPage() {
         // Assessment complete - save and redirect
         await saveAssessment(newAnswers);
       }
-    } catch (e) {
+    } catch {
       setError('Failed to load next question');
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ export default function AdaptiveAssessmentPage() {
     await loadNextQuestion(newAnswers, newQuestionsAsked);
   }
 
-  async function saveAssessment(finalAnswers: Record<string, any>) {
+  async function saveAssessment(finalAnswers: Record<string, string | string[]>) {
     setSaving(true);
     try {
       const res = await fetch('/api/assessment', {
@@ -82,7 +82,7 @@ export default function AdaptiveAssessmentPage() {
 
       // Redirect to plan
       router.push('/dashboard/plan');
-    } catch (e) {
+    } catch {
       setError('Failed to save assessment');
       setSaving(false);
     }

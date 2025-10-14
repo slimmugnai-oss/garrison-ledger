@@ -32,7 +32,6 @@ const yesNo = [
 ];
 const ranges = ['none','1-5k','5-10k','10-25k','25-50k','50k+','prefer-not-to-say'];
 const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+','prefer-not-to-say'];
-const housing = ['on-base','rent-off-base','own-primary','own-rental','other'];
 const interests = ['federal','entrepreneur','remote','education'];
 const priorities = ['tsp','debt','emergency','house-hack','budget','sdp'];
 
@@ -73,7 +72,7 @@ export default function ProfileSetupPage() {
         } else if (res.status !== 404) {
           setError('Failed to load profile');
         }
-      } catch (e) {
+      } catch {
         setError('Failed to load profile');
       } finally {
         if (mounted) setLoading(false);
@@ -103,7 +102,7 @@ export default function ProfileSetupPage() {
       });
       if (!res.ok) throw new Error('Save failed');
       setSaved(true);
-    } catch (e) {
+    } catch {
       setError('Could not save profile. Please try again.');
     } finally {
       setSaving(false);

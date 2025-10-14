@@ -94,7 +94,7 @@ export default function ReferralsPage() {
                     </div>
                     <div>
                       <div className="font-bold text-text mb-1">They sign up</div>
-                      <div className="text-muted">When someone creates an account using your link, you're credited</div>
+                      <div className="text-muted">When someone creates an account using your link, you&apos;re credited</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">

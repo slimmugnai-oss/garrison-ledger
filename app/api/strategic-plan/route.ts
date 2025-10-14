@@ -312,15 +312,7 @@ async function generateRoadmap(
   profile: any | null
 ): Promise<{ roadmap: any } | null> {
   try {
-    // Build user context
-    const s = answers?.strategic || {};
-    const c = answers?.comprehensive || {};
-    const foundation = (c.foundation || {}) as any;
-    const move = (c.move || {}) as any;
-    const deployment = (c.deployment || {}) as any;
-    const career = (c.career || {}) as any;
-    const finance = (c.finance || {}) as any;
-
+    // Build user context directly from profile
     const userContext = {
       rank: profile?.rank || null,
       branch: profile?.branch || null,

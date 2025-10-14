@@ -5,9 +5,7 @@ import Footer from '../components/Footer';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import PageHeader from '../components/ui/PageHeader';
 import AnimatedCard from '../components/ui/AnimatedCard';
-import StatCard from '../components/ui/StatCard';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
@@ -55,24 +53,11 @@ export default async function CommandDashboard() {
   const move = (comprehensiveObj?.move as Record<string, unknown> | undefined) || 
                (v21Obj?.move as Record<string, unknown> | undefined) || {};
 
-  const serviceYears = String(foundation?.serviceYears || '');
-  const familySnapshot = String(foundation?.familySnapshot || 'none'); // Fixed: was move?.familySnapshot
-  const efmp = Boolean(foundation?.efmpEnrolled); // Fixed: was foundation?.efmp
-  const pcsSituation = String(move?.pcsSituation || '');
   const hasAssessment = Object.keys(answers).length > 0;
 
   // Load user profile
   const { data: profileRow } = await supabase.from("user_profiles").select("*").eq("user_id", user.id).maybeSingle();
   const profileComplete = profileRow?.profile_completed || false;
-
-  const yearsMap: Record<string,string> = { '0-4': '0-4 Years Service', '5-10': '5-10 Years', '11-15': '11-15 Years', '16+': '16+ Years' };
-  const serviceDisplay = yearsMap[serviceYears] || 'Service Member';
-  
-  const familyMap: Record<string,string> = { none: 'No Children', young_children: 'Young Children', school_age: 'School-Age Kids', mixed: 'Mixed Ages' };
-  const familyDisplay = familyMap[familySnapshot] || familySnapshot;
-  
-  const pcsMap: Record<string,string> = { arrived: 'Just Arrived', dwell: 'Dwell Time', window: 'PCS Window', orders: 'Orders in Hand', none: 'No PCS Expected' };
-  const pcsDisplay = pcsMap[pcsSituation] || 'Status Unknown';
 
   return (
     <>
