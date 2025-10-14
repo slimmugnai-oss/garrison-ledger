@@ -70,7 +70,7 @@ export default function Testimonials() {
       
       <div className="mt-8 text-center">
         <p className="text-sm text-gray-600">
-          ⭐⭐⭐⭐⭐ <strong>4.8/5 average rating</strong> from 127 reviews
+          <Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /> <strong>4.8/5 average rating</strong> from 127 reviews
         </p>
       </div>
     </div>

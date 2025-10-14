@@ -6,6 +6,7 @@ import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Icon from '@/app/components/ui/Icon';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -199,7 +200,7 @@ export default function TspModeler() {
     <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">📈 TSP Allocation Modeler</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2"><Icon name="TrendingUp" className="h-8 w-8" /> TSP Allocation Modeler</h1>
           <p className="text-lg text-gray-600">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
         </div>
 
@@ -256,7 +257,7 @@ export default function TspModeler() {
               <Range label="G Fund" v={wG} set={setWG} />
             </div>
             <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg mt-4">
-              💡 <strong>Note:</strong> Weights normalize automatically. This is for educational purposes only. Past performance is not predictive of future results.
+              <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Weights normalize automatically. This is for educational purposes only. Past performance is not predictive of future results.
             </div>
             
             {/* Calculate Button */}
@@ -314,7 +315,7 @@ export default function TspModeler() {
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm">
                       <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                        <div className="text-6xl mb-4">🔒</div>
+                        <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
                         <h3 className="text-3xl font-bold text-gray-900 mb-3">
                           Your Results Are Ready!
                         </h3>
@@ -322,11 +323,11 @@ export default function TspModeler() {
                           Unlock to see your complete 30-year retirement projection + unlimited scenario comparisons
                         </p>
                         <p className="text-sm text-gray-600 mb-6">
-                          💡 This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+                          <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
                         </p>
                         <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
                           <p className="text-sm font-semibold text-green-800">
-                            🛡️ 7-Day Money-Back Guarantee · Cancel Anytime
+                            <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
                           </p>
                         </div>
                         <p className="text-3xl font-black text-gray-900 mb-6">
@@ -345,7 +346,7 @@ export default function TspModeler() {
                 {apiData.partial && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-blue-800 font-medium">
-                      📊 Preview shows {apiData.yearsVisible} years. Unlock to view full {Math.max(0, ret - age)}-year projection and ROI analysis.
+                      <Icon name="BarChart" className="h-4 w-4 inline mr-1" /> Preview shows {apiData.yearsVisible} years. Unlock to view full {Math.max(0, ret - age)}-year projection and ROI analysis.
                     </p>
                   </div>
                 )}
@@ -360,7 +361,7 @@ export default function TspModeler() {
           {!isPremium && (
             <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
-                <div className="text-6xl mb-4">🔒</div>
+                <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
                 <p className="text-lg text-gray-600 mb-6">
                   See projected balances and the potential difference at retirement with detailed breakdowns.
@@ -388,7 +389,7 @@ export default function TspModeler() {
                   </div>
                   <div className={`p-6 rounded-lg border-2 ${apiData.diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                     <div className={`text-3xl font-bold mb-2 ${apiData.diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                      {apiData.diff >= 0 ? '💰 Potential Gain' : '📉 Potential Loss'}
+                      {apiData.diff >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Potential Gain</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Potential Loss</>}
                     </div>
                     <div className={`text-4xl font-bold mb-4 ${apiData.diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {apiData.diff >= 0 ? '+' : ''}{fmt(apiData.diff)}

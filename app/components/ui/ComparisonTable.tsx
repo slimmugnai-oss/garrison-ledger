@@ -40,7 +40,7 @@ export default function ComparisonTable() {
               </th>
               <th className="text-center p-6 text-amber-700 font-semibold w-32">
                 <div className="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-bold">
-                  ⭐ Premium
+                  <Icon name="Star" className="h-4 w-4 inline" /> Premium
                 </div>
               </th>
             </tr>
@@ -52,7 +52,7 @@ export default function ComparisonTable() {
                 <td className="p-6 text-center">
                   {typeof feature.free === 'boolean' ? (
                     feature.free ? (
-                      <span className="text-2xl text-green-500">✓</span>
+                      <Icon name="Check" className="h-6 w-6 text-green-500" />
                     ) : (
                       <span className="text-2xl text-gray-300">—</span>
                     )
@@ -63,7 +63,7 @@ export default function ComparisonTable() {
                 <td className="p-6 text-center">
                   {typeof feature.premium === 'boolean' ? (
                     feature.premium ? (
-                      <span className="text-2xl text-amber-500">✓</span>
+                      <Icon name="Check" className="h-6 w-6 text-amber-500" />
                     ) : (
                       <span className="text-2xl text-gray-300">—</span>
                     )

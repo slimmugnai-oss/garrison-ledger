@@ -8,6 +8,7 @@ import SectionHeader from '@/app/components/ui/SectionHeader';
 import ContentCard from '@/app/components/ui/ContentCard';
 import { useUser } from '@clerk/nextjs';
 import Footer from '@/app/components/Footer';
+import Icon from '@/app/components/ui/Icon';
 
 type Block = {
   slug: string;
@@ -125,7 +126,7 @@ export default function ExecutiveBriefing() {
               </div>
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
                 <p className="flex items-center justify-center gap-2">
-                  <span className="animate-pulse">⏱️</span>
+                  <Icon name="Timer" className="h-5 w-5 animate-pulse" />
                   <span>This typically takes 30-45 seconds</span>
                 </p>
                 <p className="mt-2 text-xs text-gray-500">
@@ -268,12 +269,12 @@ export default function ExecutiveBriefing() {
                 }, {} as Record<string, number>);
                 
                 const tabs = [
-                  { id: 'all', label: 'All Topics', count: plan.blocks.length, icon: '📚' },
-                  ...(toolBlocks.length > 0 ? [{ id: 'tools', label: 'Tools & Calculators', count: toolBlocks.length, icon: '🧰' }] : []),
-                  ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: '🚚' }] : []),
-                  ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: '🌍' }] : []),
-                  ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: '💼' }] : []),
-                  ...(domainCounts.finance ? [{ id: 'finance', label: 'Finance', count: domainCounts.finance, icon: '💰' }] : []),
+                  { id: 'all', label: 'All Topics', count: plan.blocks.length, icon: 'BookOpen' },
+                  ...(toolBlocks.length > 0 ? [{ id: 'tools', label: 'Tools & Calculators', count: toolBlocks.length, icon: 'Wrench' }] : []),
+                  ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: 'Truck' }] : []),
+                  ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: 'Shield' }] : []),
+                  ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: 'Briefcase' }] : []),
+                  ...(domainCounts.finance ? [{ id: 'finance', label: 'Finance', count: domainCounts.finance, icon: 'Landmark' }] : []),
                 ];
                 
                 return tabs.map(tab => (
@@ -286,7 +287,7 @@ export default function ExecutiveBriefing() {
                         : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg'
                     }`}
                   >
-                    <span className="mr-2">{tab.icon}</span>
+                    <Icon name={tab.icon as keyof typeof import('lucide-react').icons} className="h-5 w-5 inline mr-2" />
                     {tab.label}
                     <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
                       activeTab === tab.id ? 'bg-white/20' : 'bg-gray-200'
@@ -317,13 +318,17 @@ export default function ExecutiveBriefing() {
                 className="ml-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 title={hoursUntilRegen ? `Available in ${hoursUntilRegen} hour${hoursUntilRegen !== 1 ? 's' : ''}` : ''}
               >
-                {regenerating ? 'Regenerating...' : hoursUntilRegen ? `🔒 Available in ${hoursUntilRegen}h` : '🔄 Regenerate Plan'}
+                {regenerating ? 'Regenerating...' : hoursUntilRegen ? (
+                  <><Icon name="Lock" className="h-4 w-4 inline mr-1" /> Available in {hoursUntilRegen}h</>
+                ) : (
+                  <><Icon name="RefreshCw" className="h-4 w-4 inline mr-1" /> Regenerate Plan</>
+                )}
               </button>
             </div>
             {rateLimitError && (
               <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">⏱️</span>
+                  <Icon name="Timer" className="h-8 w-8 text-gray-700" />
                   <div>
                     <div className="font-bold text-amber-900">Rate Limit Active</div>
                     <div className="text-amber-800">{rateLimitError}</div>
@@ -373,7 +378,7 @@ export default function ExecutiveBriefing() {
                     {/* Tools Section Header */}
                     <div className="mb-10">
                       <div className="flex items-center gap-4 mb-4">
-                        <span className="text-5xl">🧰</span>
+                        <Icon name="Wrench" className="h-12 w-12 text-gray-700" />
                         <h2 className="text-4xl font-serif font-black text-text-headings">
                           Tools & Calculators
                         </h2>
@@ -384,50 +389,50 @@ export default function ExecutiveBriefing() {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                           <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">📈</span>
+                            <Icon name="TrendingUp" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
                               <div className="font-bold text-gray-900">TSP Modeler</div>
                               <div className="text-xs text-gray-600">Retirement projections</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">💰</span>
+                            <Icon name="DollarSign" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
                               <div className="font-bold text-gray-900">SDP Strategist</div>
                               <div className="text-xs text-gray-600">Deployment savings</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">🏡</span>
+                            <Icon name="House" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
                               <div className="font-bold text-gray-900">House Hacking</div>
                               <div className="text-xs text-gray-600">BAH optimization</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">🚚</span>
+                            <Icon name="Truck" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
                               <div className="font-bold text-gray-900">PCS Planner</div>
                               <div className="text-xs text-gray-600">Move budget & PPM</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">🛒</span>
+                            <Icon name="ShoppingCart" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
                               <div className="font-bold text-gray-900">On-Base Savings</div>
                               <div className="text-xs text-gray-600">Commissary & Exchange</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/salary-calculator" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
-                            <span className="text-3xl group-hover:scale-110 transition-transform">💼</span>
+                            <Icon name="Briefcase" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">Salary Calculator</div>
-                              <div className="text-xs text-gray-600">Job offer comparison</div>
+                              <div className="font-bold text-gray-900">Career Opportunity Analyzer</div>
+                              <div className="text-xs text-gray-600">Total comp, taxes & COL analysis</div>
                             </div>
                           </Link>
                         </div>
                         <p className="text-sm text-gray-600 mt-4">
-                          💡 <strong>New:</strong> All tools now paywalled and accessible directly from your dashboard.
+                          <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>New:</strong> All tools now paywalled and accessible directly from your dashboard.
                         </p>
                       </div>
                     </div>
@@ -477,10 +482,10 @@ export default function ExecutiveBriefing() {
 
               const domainOrder = ['pcs', 'deployment', 'career', 'finance'];
               const domainIcons: Record<string, string> = {
-                pcs: '🚚',
-                deployment: '🌍',
-                career: '💼',
-                finance: '💰'
+                pcs: 'Truck',
+                deployment: 'Shield',
+                career: 'Briefcase',
+                finance: 'Landmark'
               };
 
               // Filter domains by active tab
@@ -497,7 +502,7 @@ export default function ExecutiveBriefing() {
                     {/* Section Header */}
                     <div className="mb-10">
                       <div className="flex items-center gap-4 mb-4">
-                        <span className="text-5xl">{domainIcons[domain]}</span>
+                        <Icon name={domainIcons[domain] as keyof typeof import('lucide-react').icons} className="h-12 w-12 text-gray-700" />
                         <h2 className="text-4xl font-serif font-black text-text-headings capitalize">
                           {sectionMeta?.title || domain}
                         </h2>

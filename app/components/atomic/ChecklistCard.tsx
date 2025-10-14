@@ -10,7 +10,7 @@ export default function ChecklistCard({ title, html }: Props) {
     <div className="bg-white rounded-xl p-8 border-l-4 border-green-500 shadow-lg">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-          <span className="text-white text-2xl">✓</span>
+          <Icon name="Check" className="h-6 w-6 text-white" />
         </div>
         <h4 className="text-2xl font-bold text-gray-900">{title}</h4>
       </div>

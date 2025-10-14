@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
+import Icon from '@/app/components/ui/Icon';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -210,7 +211,7 @@ export default function PcsFinancialPlanner() {
             </div>
 
             <p className="text-xs text-gray-500 mt-4 text-center">
-              ✓ Data auto-populated below based on current DoD rates
+              <Icon name="Check" className="h-4 w-4 inline mr-1" /> Data auto-populated below based on current DoD rates
             </p>
           </div>
         )}
@@ -237,7 +238,7 @@ export default function PcsFinancialPlanner() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              📊 Basic PCS Calculator
+              <Icon name="BarChart" className="h-5 w-5 inline mr-1" /> Basic PCS Calculator
             </button>
             <button
               onClick={() => setActiveTab('ppm')}
@@ -247,7 +248,7 @@ export default function PcsFinancialPlanner() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              🚚 PPM Profit Estimator
+              <Icon name="Truck" className="h-5 w-5 inline mr-1" /> PPM Profit Estimator
             </button>
           </nav>
         </div>
@@ -277,7 +278,7 @@ export default function PcsFinancialPlanner() {
                     Dislocation Allowance (DLA)
                     {entitlementData && (
                       <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
-                        Auto-filled ✓
+                        Auto-filled <Icon name="Check" className="h-3 w-3 inline" />
                       </span>
                     )}
                   </label>
@@ -467,7 +468,7 @@ export default function PcsFinancialPlanner() {
                     Estimated Weight (lbs)
                     {entitlementData && (
                       <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
-                        Max: {entitlementData.weight_allowance.toLocaleString()} ✓
+                        Max: {entitlementData.weight_allowance.toLocaleString()} <Icon name="Check" className="h-3 w-3 inline" />
                       </span>
                     )}
                   </label>
@@ -605,7 +606,7 @@ export default function PcsFinancialPlanner() {
 
               {entitlementData && ppmWeight > entitlementData.weight_allowance && (
                 <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
-                  <p className="text-sm font-semibold text-red-900 mb-1">⚠️ Weight Limit Exceeded</p>
+                  <p className="text-sm font-semibold text-red-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
                   <p className="text-xs text-red-800">
                     Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
                     You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
@@ -614,7 +615,7 @@ export default function PcsFinancialPlanner() {
               )}
 
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                <p className="text-sm font-semibold text-yellow-900 mb-1">⚠️ Important Disclaimer</p>
+                <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
                 <p className="text-xs text-yellow-800">
                   This is a simplified, unofficial estimate for planning purposes only. 
                   Actual PPM rates vary by weight, distance, and current DoD rate schedules. 

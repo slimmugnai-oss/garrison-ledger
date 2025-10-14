@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import { generatePageMeta } from "@/lib/seo-config";
+import Icon from '../components/ui/Icon';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -61,7 +62,7 @@ export default async function CommandDashboard() {
             <div className="mb-4">
               {isPremium ? (
                 <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                  <span>⭐</span> Premium Member
+                  <Icon name="Star" className="h-4 w-4 inline" /> Premium Member
                 </span>
               ) : (
                 <span className="inline-flex items-center rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 uppercase tracking-wider">
@@ -82,7 +83,7 @@ export default async function CommandDashboard() {
             <AnimatedCard className="mb-10 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white shadow-2xl border-0" delay={0}>
               <div className="flex items-start gap-6">
                 <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                  <span className="text-4xl">🎯</span>
+                  <Icon name="Target" className="h-10 w-10 text-gray-700" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-serif font-black mb-2">Unlock Intelligent Personalization</h2>
@@ -123,7 +124,7 @@ export default async function CommandDashboard() {
               <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 p-10 md:p-12 text-white shadow-2xl border-0" delay={0}>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
-                    <span className="text-4xl">⚡</span>
+                    <Icon name="Zap" className="h-10 w-10 text-gray-700" />
                   </div>
                   <div>
                     <div className="inline-flex items-center px-3 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-black mb-2 uppercase tracking-widest">
@@ -174,7 +175,7 @@ export default async function CommandDashboard() {
                   <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-semibold text-blue-100">Strategic Plan</span>
-                      <span className="text-lg font-black text-green-300">✓ Active</span>
+                      <span className="text-lg font-black text-green-300"><Icon name="Check" className="h-5 w-5 inline" /> Active</span>
                     </div>
                     <p className="text-sm text-blue-100">AI-personalized roadmap generated</p>
                   </div>
@@ -184,7 +185,7 @@ export default async function CommandDashboard() {
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-semibold text-blue-100">Membership</span>
                       <span className={`text-lg font-black ${isPremium ? 'text-amber-300' : 'text-gray-300'}`}>
-                        {isPremium ? '⭐ Premium' : 'Free'}
+                        {isPremium ? <><Icon name="Star" className="h-4 w-4 inline" /> Premium</> : 'Free'}
                       </span>
                     </div>
                     {!isPremium && (
@@ -197,7 +198,7 @@ export default async function CommandDashboard() {
 
                 {/* Key Insights */}
                 <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-4">🎯 Your Priority Focus</h3>
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="Target" className="h-5 w-5" /> Your Priority Focus</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     {profileRow?.pcs_date && (() => {
                       const pcsDate = new Date(profileRow.pcs_date);
@@ -207,7 +208,7 @@ export default async function CommandDashboard() {
                       if (daysUntil > 0 && daysUntil <= 90) {
                         return (
                           <div className="flex items-start gap-3">
-                            <span className="text-2xl">🚚</span>
+                            <Icon name="Truck" className="h-6 w-6 text-gray-700" />
                             <div>
                               <div className="font-bold text-white">PCS Move - {daysUntil} days away</div>
                               <div className="text-sm text-blue-100">
@@ -234,7 +235,7 @@ export default async function CommandDashboard() {
                     
                     {profileRow?.financial_priorities?.includes('emergency-fund') && (
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">💰</span>
+                        <Icon name="DollarSign" className="h-6 w-6 text-gray-700" />
                         <div>
                           <div className="font-bold text-white">Build Emergency Fund</div>
                           <div className="text-sm text-blue-100">Target: 3-6 months of expenses</div>
@@ -244,7 +245,7 @@ export default async function CommandDashboard() {
                     
                     {profileRow?.career_interests?.length > 0 && (
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">💼</span>
+                        <Icon name="Briefcase" className="h-6 w-6 text-gray-700" />
                         <div>
                           <div className="font-bold text-white">Career Development</div>
                           <div className="text-sm text-blue-100">Explore {profileRow.career_interests.slice(0, 2).join(', ')}</div>
@@ -260,7 +261,7 @@ export default async function CommandDashboard() {
                 <div className="flex items-center justify-between mb-10">
                   <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">Your Profile</h2>
                   <Link href="/dashboard/profile/setup" className="inline-flex items-center gap-2 rounded-lg border-2 border-gray-300 px-5 py-2.5 text-indigo-600 font-semibold transition-all hover:border-indigo-600 hover:-translate-y-[2px]">
-                    {profileComplete ? '✏️ Edit' : '➕ Complete'}
+                    {profileComplete ? <><Icon name="Pencil" className="h-4 w-4 inline" /> Edit</> : <><Icon name="Plus" className="h-4 w-4 inline" /> Complete</>}
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -520,7 +521,7 @@ export default async function CommandDashboard() {
               {/* Financial Tools */}
               <AnimatedCard delay={0} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/tsp-modeler" className="block p-8">
-                  <div className="text-5xl mb-4">📈</div>
+                  <Icon name="TrendingUp" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Financial
                   </div>
@@ -531,7 +532,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={50} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/sdp-strategist" className="block p-8">
-                  <div className="text-5xl mb-4">💵</div>
+                  <Icon name="Banknote" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Financial
                   </div>
@@ -542,7 +543,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={100} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/house-hacking" className="block p-8">
-                  <div className="text-5xl mb-4">🏡</div>
+                  <Icon name="House" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Financial
                   </div>
@@ -554,7 +555,7 @@ export default async function CommandDashboard() {
               {/* Planning Tools */}
               <AnimatedCard delay={150} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/pcs-planner" className="block p-8">
-                  <div className="text-5xl mb-4">🚚</div>
+                  <Icon name="Truck" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Planning
                   </div>
@@ -565,7 +566,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={200} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/on-base-savings" className="block p-8">
-                  <div className="text-5xl mb-4">🛒</div>
+                  <Icon name="ShoppingCart" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Planning
                   </div>
@@ -576,12 +577,12 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={250} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/salary-calculator" className="block p-8">
-                  <div className="text-5xl mb-4">💼</div>
+                  <Icon name="Briefcase" className="h-12 w-12 text-gray-700 mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Planning
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Salary Calculator</h3>
-                  <p className="text-gray-600 leading-relaxed">Compare job offers with cost-of-living adjustments</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Career Opportunity Analyzer</h3>
+                  <p className="text-gray-600 leading-relaxed">Complete financial analysis: salary, taxes, COL & total compensation</p>
                 </Link>
               </AnimatedCard>
             </div>
@@ -606,7 +607,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={50} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
                 <Link href="/dashboard/assessment" className="block p-6 text-center">
-                  <div className="text-4xl mb-3">✅</div>
+                  <Icon name="CircleCheckBig" className="h-10 w-10 text-gray-700 mb-3" />
                   <h3 className="text-lg font-bold text-gray-900 mb-1">Assessment</h3>
                   <p className="text-sm text-gray-600">Update your profile</p>
                 </Link>
@@ -633,7 +634,7 @@ export default async function CommandDashboard() {
           {/* Additional Resources */}
           {!isPremium && (
             <AnimatedCard className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-10 text-center" delay={300}>
-              <div className="text-5xl mb-4">⭐</div>
+              <Icon name="Star" className="h-12 w-12 text-gray-700 mb-4" />
               <h2 className="text-3xl font-serif font-black text-gray-900 mb-3">Unlock Full Access</h2>
               <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
                 Get unlimited access to all 6 premium calculators, the Intel Library, and personalized AI-enhanced planning for just $9.99/month.

@@ -3,6 +3,7 @@
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useState } from 'react';
+import Icon from './ui/Icon';
 
 export default function Header() {
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -17,7 +18,7 @@ export default function Header() {
           {/* Logo/Brand */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold text-gray-900">
-              📊 Garrison Ledger
+              <Icon name="BarChart3" className="h-5 w-5 inline mr-1" /> Garrison Ledger
             </Link>
           </div>
 
@@ -80,7 +81,7 @@ export default function Header() {
                       Annual Savings Center
                     </Link>
                     <Link href="/dashboard/tools/salary-calculator" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-                      Salary Calculator
+                      Career Opportunity Analyzer
                     </Link>
                   </div>
                 )}
@@ -240,7 +241,7 @@ export default function Header() {
                       Annual Savings Center
                     </Link>
                     <Link href="/dashboard/tools/salary-calculator" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
-                      Salary Calculator
+                      Career Opportunity Analyzer
                     </Link>
                   </div>
                 </div>

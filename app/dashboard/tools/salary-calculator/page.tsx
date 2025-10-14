@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import Link from 'next/link';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
-import SalaryRelocationCalculator from '@/app/components/tools/SalaryRelocationCalculator';
+import CareerOpportunityAnalyzer from '@/app/components/tools/CareerOpportunityAnalyzer';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Salary & Relocation Calculator - Cost of Living Comparison",
-  description: "Compare job offers across different cities with our cost of living calculator. Perfect for military transitions, spouse careers, and civilian job offers. Adjust salaries for location differences.",
+  title: "Career Opportunity Analyzer - Complete Compensation Comparison",
+  description: "Compare job offers with total compensation analysis including salary, bonuses, retirement match, state taxes, and cost of living. Make smarter career decisions with real-time financial insights for military transitions and spouse careers.",
   path: "/dashboard/tools/salary-calculator",
-  keywords: ["salary calculator", "cost of living calculator", "job offer comparison", "military transition", "military spouse career", "relocation salary"]
+  keywords: ["career opportunity analyzer", "salary calculator", "total compensation calculator", "cost of living calculator", "job offer comparison", "military transition", "military spouse career", "relocation salary", "state income tax comparison"]
 });
 
 export default function Page() {
@@ -30,23 +30,23 @@ export default function Page() {
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
-              Salary & Relocation Calculator
+              Career Opportunity Analyzer
             </h1>
             <p className="mx-auto max-w-3xl text-xl text-gray-600">
-              Compare job offers across different cities with cost-of-living adjustments. 
-              Make informed career decisions for transitions, spouse employment, or civilian opportunities.
+              Compare job offers with complete financial analysis including total compensation, state taxes, and cost of living. 
+              Get real-time insights to make smarter career decisions.
             </p>
           </div>
 
           <SignedOut>
             <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
               <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Compare Job Offers Intelligently</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Analyze Career Opportunities Intelligently</h2>
               <p className="text-lg text-gray-700 mb-2">
-                See real purchasing power across 25+ military cities
+                Complete financial analysis across 70+ military cities with total compensation, tax, and cost of living insights
               </p>
               <p className="text-sm text-gray-600 mb-6">
-                💡 Make informed career decisions worth <strong className="text-purple-600">$10K+ in lifetime earnings</strong>
+                💡 Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
               </p>
               <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
                 <p className="text-sm font-semibold text-green-800">
@@ -69,7 +69,7 @@ export default function Page() {
           </SignedOut>
 
           <SignedIn>
-            <SalaryRelocationCalculator />
+            <CareerOpportunityAnalyzer />
             
             {/* Use Cases */}
             <div className="mt-16">
@@ -106,12 +106,12 @@ export default function Page() {
               <h3 className="text-2xl font-bold text-indigo-900 mb-4">💡 Smart Career Move Tips</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-bold text-indigo-800 mb-2">Consider Beyond Salary:</h4>
+                  <h4 className="font-bold text-indigo-800 mb-2">Now Includes:</h4>
                   <ul className="space-y-1 text-sm text-indigo-700">
-                    <li>• Healthcare benefits and costs</li>
-                    <li>• State income tax differences</li>
-                    <li>• Retirement contributions (401k match, etc.)</li>
-                    <li>• Work-from-home flexibility</li>
+                    <li>✓ Total compensation (salary + bonus + retirement)</li>
+                    <li>✓ State income tax comparisons</li>
+                    <li>✓ Cost of living adjustments for 70+ cities</li>
+                    <li>✓ Real-time financial verdict with insights</li>
                   </ul>
                 </div>
                 <div>

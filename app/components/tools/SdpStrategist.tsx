@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 
@@ -118,7 +119,7 @@ export default function SdpStrategist() {
     <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">💰 SDP Strategist</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-2"><Icon name="DollarSign" className="h-10 w-10" /> SDP Strategist</h1>
           <p className="text-xl text-gray-600">Maximize your Savings Deposit Program returns with strategic investment planning</p>
         </div>
 
@@ -139,7 +140,7 @@ export default function SdpStrategist() {
                 className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white"
               />
               <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg">
-                💡 <strong>Note:</strong> Enter your expected SDP payout amount. This tool helps you compare different investment strategies over a 15-year period. Past performance is not predictive of future results.
+                <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Enter your expected SDP payout amount. This tool helps you compare different investment strategies over a 15-year period. Past performance is not predictive of future results.
               </div>
             </div>
           </div>
@@ -205,7 +206,7 @@ export default function SdpStrategist() {
           {!isPremium && (
             <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
-                <div className="text-6xl mb-4">🔒</div>
+                <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
                 <p className="text-lg text-gray-600 mb-6">
                   See how much more your payout could grow in 15 years with detailed breakdowns.
@@ -254,7 +255,7 @@ function RoiBox({
       <h2 className="text-2xl font-bold text-gray-900 mb-6">ROI Analysis</h2>
       <div className={`p-6 rounded-lg border-2 ${diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
         <div className={`text-3xl font-bold mb-2 ${diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-          {diff >= 0 ? '💰 Potential Gain' : '📉 Potential Loss'}
+          {diff >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Potential Gain</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Potential Loss</>}
         </div>
         <div className={`text-4xl font-bold mb-4 ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {diff >= 0 ? '+' : ''}{fmt(diff)}

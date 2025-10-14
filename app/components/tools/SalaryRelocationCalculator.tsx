@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
+import Icon from '@/app/components/ui/Icon';
 
 const CITY_DATA = [
   { value: "100.0", label: "National Average" },
@@ -256,7 +257,7 @@ export default function SalaryRelocationCalculator() {
             {result.difference > 100 && (
               <div className="bg-green-100 border-2 border-green-300 rounded-xl p-6">
                 <p className="font-bold text-green-900 text-lg">
-                  ✅ Good news! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
+                  <Icon name="CircleCheck" className="h-5 w-5 inline mr-1" /> Good news! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
                   <span className="text-2xl text-green-700">{fmt(result.difference)}</span> more 
                   than you need, giving you increased purchasing power.
                 </p>
@@ -266,7 +267,7 @@ export default function SalaryRelocationCalculator() {
             {result.difference < -100 && (
               <div className="bg-red-100 border-2 border-red-300 rounded-xl p-6">
                 <p className="font-bold text-red-900 text-lg">
-                  ⚠️ Heads up! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
+                  <Icon name="AlertTriangle" className="h-5 w-5 inline mr-1" /> Heads up! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
                   <span className="text-2xl text-red-700">{fmt(Math.abs(result.difference))}</span> short 
                   of maintaining your current lifestyle in the new city.
                 </p>
@@ -276,7 +277,7 @@ export default function SalaryRelocationCalculator() {
             {result.difference >= -100 && result.difference <= 100 && (
               <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-6">
                 <p className="font-bold text-blue-900 text-lg">
-                  🎯 It&apos;s a match! Your offer of <strong>{fmt(newSalary)}</strong> should provide 
+                  <Icon name="Target" className="h-5 w-5 inline mr-1" /> It&apos;s a match! Your offer of <strong>{fmt(newSalary)}</strong> should provide 
                   a similar standard of living in your new location.
                 </p>
               </div>
@@ -287,7 +288,7 @@ export default function SalaryRelocationCalculator() {
 
       {/* Educational Content */}
       <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-6">
-        <h3 className="text-lg font-bold text-amber-900 mb-3">💡 Understanding Cost of Living</h3>
+        <h3 className="text-lg font-bold text-amber-900 mb-3 flex items-center gap-2"><Icon name="Lightbulb" className="h-5 w-5" /> Understanding Cost of Living</h3>
         <p className="text-sm text-amber-800 mb-3">
           Cost of living indices help compare how far your money goes in different cities. 
           A city with an index of 120 is 20% more expensive than the national average (100), 

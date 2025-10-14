@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 
@@ -134,7 +135,7 @@ export default function HouseHack() {
               <Num label="Monthly Rent" v={rent} set={setRent} />
             </div>
             <div className="text-sm text-gray-500 mt-4 p-4 bg-gray-50 rounded-lg">
-              💡 <strong>Note:</strong> Assumes 30-year VA loan. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
+              <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Assumes 30-year VA loan. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
             </div>
             
             {/* Generate Button */}
@@ -231,7 +232,7 @@ export default function HouseHack() {
               {apiData && apiData.verdict !== undefined ? (
                 <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                   <div className={`text-3xl font-bold mb-2 ${apiData.verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                    {apiData.verdict >= 0 ? '💰 Positive Cash Flow' : '📉 Negative Cash Flow'}
+                    {apiData.verdict >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Negative Cash Flow</>}
                   </div>
                   <div className={`text-4xl font-bold mb-4 ${apiData.verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {fmt(apiData.verdict)}

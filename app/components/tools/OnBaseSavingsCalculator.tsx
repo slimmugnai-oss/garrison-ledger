@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
+import Icon from '@/app/components/ui/Icon';
 
 export default function OnBaseSavingsCalculator() {
   // Commissary state - granular breakdown
@@ -59,7 +60,7 @@ export default function OnBaseSavingsCalculator() {
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
-            💡 <strong>Pro Tip:</strong> Different categories have different savings rates. Meat & produce typically save you 30%, while pantry staples average 25%.
+            <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Pro Tip:</strong> Different categories have different savings rates. Meat & produce typically save you 30%, while pantry staples average 25%.
           </p>
         </div>
 
@@ -175,7 +176,7 @@ export default function OnBaseSavingsCalculator() {
 
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-green-800">
-            💡 <strong>Remember:</strong> Exchange shopping is tax-free! Plus, MILITARY STAR® cardholders get 5¢/gallon fuel discounts.
+            <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Remember:</strong> Exchange shopping is tax-free! Plus, MILITARY STAR® cardholders get 5¢/gallon fuel discounts.
           </p>
         </div>
 
@@ -209,7 +210,7 @@ export default function OnBaseSavingsCalculator() {
           {/* Major Annual Purchases */}
           <div>
             <label className="block text-base font-semibold text-gray-800 mb-2">
-              🖥️ Major Annual Purchases (Electronics, Furniture, Appliances)
+              <Icon name="Monitor" className="h-4 w-4 inline mr-1" /> Major Annual Purchases (Electronics, Furniture, Appliances)
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
@@ -308,7 +309,7 @@ export default function OnBaseSavingsCalculator() {
       <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
-            <span className="text-2xl">⭐</span>
+            <Icon name="Star" className="h-6 w-6 text-gray-700" />
             <span className="text-sm font-black text-amber-900 uppercase tracking-wider">
               Executive Summary
             </span>
@@ -324,7 +325,7 @@ export default function OnBaseSavingsCalculator() {
         {/* Breakdown Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
-            <div className="text-4xl mb-3">🛒</div>
+            <Icon name="ShoppingCart" className="h-10 w-10 text-gray-700 mb-3" />
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
               Commissary Savings
             </p>
@@ -356,7 +357,7 @@ export default function OnBaseSavingsCalculator() {
         {/* Grand Total */}
         <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
           <p className="text-center text-lg font-semibold mb-3 opacity-90">
-            💰 Total Combined Annual Savings
+            <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
           </p>
           <p className="text-center text-6xl font-black mb-6">
             ${Math.round(grandTotal).toLocaleString()}
@@ -392,13 +393,13 @@ export default function OnBaseSavingsCalculator() {
         </div>
 
         <p className="text-xs text-gray-500 mt-6 text-center">
-          💡 These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
+          <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
         </p>
       </div>
 
       {/* Educational Tips */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-indigo-900 mb-4">💡 Maximize Your Savings</h3>
+        <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2"><Icon name="Lightbulb" className="h-5 w-5" /> Maximize Your Savings</h3>
         <div className="grid md:grid-cols-2 gap-4">
           <ul className="space-y-2 text-sm text-indigo-800">
             <li className="flex items-start gap-2">

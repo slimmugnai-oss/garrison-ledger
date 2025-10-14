@@ -128,6 +128,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8
     },
     {
+      url: `${SITE_URL}/dashboard/tools/salary-calculator`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/tools/pcs-planner`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
+      url: `${SITE_URL}/dashboard/tools/on-base-savings`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8
+    },
+    {
       url: `${SITE_URL}/dashboard/upgrade`,
       lastModified,
       changeFrequency: "weekly" as const,
