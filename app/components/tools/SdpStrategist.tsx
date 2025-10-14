@@ -119,13 +119,13 @@ export default function SdpStrategist() {
     <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-2"><Icon name="DollarSign" className="h-10 w-10" /> SDP Strategist</h1>
-          <p className="text-xl text-gray-600">Maximize your Savings Deposit Program returns with strategic investment planning</p>
+          <h1 className="text-4xl font-serif font-black text-text-headings mb-2 flex items-center gap-2"><Icon name="DollarSign" className="h-10 w-10" /> SDP Strategist</h1>
+          <p className="text-xl text-text-body">Maximize your Savings Deposit Program returns with strategic investment planning</p>
         </div>
 
         <div className="space-y-8">
           {/* Input */}
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Amount</h2>
             <div className="space-y-4">
               <label className="block text-lg font-semibold text-gray-700">
@@ -146,7 +146,7 @@ export default function SdpStrategist() {
           </div>
 
           {/* Generate Button */}
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <div className="text-center">
               <button
                 onClick={async (e) => {
@@ -179,7 +179,7 @@ export default function SdpStrategist() {
           </div>
 
           {/* Cards */}
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Scenarios</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {results.map((r) => (
@@ -204,7 +204,7 @@ export default function SdpStrategist() {
 
           {/* ROI payoff (premium only) */}
           {!isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>

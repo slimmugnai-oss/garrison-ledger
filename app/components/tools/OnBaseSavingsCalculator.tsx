@@ -314,7 +314,7 @@ export default function OnBaseSavingsCalculator() {
               Executive Summary
             </span>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-3">
+          <h2 className="text-4xl font-serif font-black text-text-headings mb-3">
             Your Annual Savings Command Center
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">

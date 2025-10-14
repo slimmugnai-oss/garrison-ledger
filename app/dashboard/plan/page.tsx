@@ -392,47 +392,47 @@ export default function ExecutiveBriefing() {
                           <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
                             <Icon name="TrendingUp" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">TSP Modeler</div>
-                              <div className="text-xs text-gray-600">Retirement projections</div>
+                              <div className="font-bold text-text-headings">TSP Modeler</div>
+                              <div className="text-xs text-text-body">Retirement projections</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
                             <Icon name="DollarSign" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">SDP Strategist</div>
-                              <div className="text-xs text-gray-600">Deployment savings</div>
+                              <div className="font-bold text-text-headings">SDP Strategist</div>
+                              <div className="text-xs text-text-body">Deployment savings</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
                             <Icon name="House" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">House Hacking</div>
-                              <div className="text-xs text-gray-600">BAH optimization</div>
+                              <div className="font-bold text-text-headings">House Hacking</div>
+                              <div className="text-xs text-text-body">BAH optimization</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
                             <Icon name="Truck" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">PCS Planner</div>
-                              <div className="text-xs text-gray-600">Move budget & PPM</div>
+                              <div className="font-bold text-text-headings">PCS Planner</div>
+                              <div className="text-xs text-text-body">Move budget & PPM</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
                             <Icon name="ShoppingCart" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">On-Base Savings</div>
-                              <div className="text-xs text-gray-600">Commissary & Exchange</div>
+                              <div className="font-bold text-text-headings">On-Base Savings</div>
+                              <div className="text-xs text-text-body">Commissary & Exchange</div>
                             </div>
                           </Link>
                           <Link href="/dashboard/tools/salary-calculator" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
                             <Icon name="Briefcase" className="h-8 w-8 text-gray-700 group-hover:scale-110 transition-transform" />
                             <div>
-                              <div className="font-bold text-gray-900">Career Opportunity Analyzer</div>
-                              <div className="text-xs text-gray-600">Total comp, taxes & COL analysis</div>
+                              <div className="font-bold text-text-headings">Career Opportunity Analyzer</div>
+                              <div className="text-xs text-text-body">Total comp, taxes & COL analysis</div>
                             </div>
                           </Link>
                         </div>
-                        <p className="text-sm text-gray-600 mt-4">
+                        <p className="text-sm text-text-body mt-4">
                           <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>New:</strong> All tools now paywalled and accessible directly from your dashboard.
                         </p>
                       </div>
@@ -504,13 +504,13 @@ export default function ExecutiveBriefing() {
                     <div className="mb-10">
                       <div className="flex items-center gap-4 mb-4">
                         <Icon name={domainIcons[domain]} className="h-12 w-12 text-gray-700" />
-                        <h2 className="text-4xl font-serif font-black text-text-headings capitalize">
+                        <h2 className="text-4xl font-serif font-black text-text-headings">
                           {sectionMeta?.title || domain}
                         </h2>
                       </div>
                       {sectionMeta?.intro && (
                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-600 rounded-r-xl p-6 shadow-sm">
-                          <p className="text-gray-800 leading-relaxed text-lg font-medium">
+                          <p className="text-text-body leading-relaxed text-lg font-medium">
                             {sectionMeta.intro}
                           </p>
                         </div>

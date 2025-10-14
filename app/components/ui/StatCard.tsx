@@ -1,13 +1,16 @@
+import Icon from './Icon';
+import { IconName } from './icon-registry';
+
 type Props = {
-  icon: string;
+  iconName: IconName;
   label: string;
   description: string;
 };
 
-export default function StatCard({ icon, label, description }: Props) {
+export default function StatCard({ iconName, label, description }: Props) {
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
-      <div className="text-4xl mb-3">{icon}</div>
+      <Icon name={iconName} className="h-10 w-10 text-gray-700 mb-3" />
       <h3 className="text-xl font-bold text-text-headings mb-2">{label}</h3>
       <p className="text-text-body text-sm">{description}</p>
     </div>

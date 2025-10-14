@@ -124,7 +124,7 @@ export default function HouseHack() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Property Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Num label="Property Price" v={price} set={setPrice} />
@@ -171,7 +171,7 @@ export default function HouseHack() {
           </div>
 
           {!isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Monthly Breakdown</h3>
@@ -185,7 +185,7 @@ export default function HouseHack() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
@@ -213,7 +213,7 @@ export default function HouseHack() {
           )}
 
           {!isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock Cash Flow Analysis</h3>
@@ -227,7 +227,7 @@ export default function HouseHack() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
               {apiData && apiData.verdict !== undefined ? (
                 <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>

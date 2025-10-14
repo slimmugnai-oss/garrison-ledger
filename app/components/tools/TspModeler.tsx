@@ -200,12 +200,12 @@ export default function TspModeler() {
     <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-2"><Icon name="TrendingUp" className="h-8 w-8" /> TSP Allocation Modeler</h1>
-          <p className="text-lg text-gray-600">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
+          <h1 className="text-3xl font-serif font-black text-text-headings mb-2 flex items-center gap-2"><Icon name="TrendingUp" className="h-8 w-8" /> TSP Allocation Modeler</h1>
+          <p className="text-lg text-text-body">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
         </div>
 
         <div className="space-y-8">
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
@@ -247,7 +247,7 @@ export default function TspModeler() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Custom Allocation Mix</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <Range label="C Fund" v={wC} set={setWC} />
@@ -298,7 +298,7 @@ export default function TspModeler() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Growth Projection</h2>
             {loading ? (
               <div className="flex items-center justify-center h-60">
@@ -359,10 +359,10 @@ export default function TspModeler() {
           </div>
 
           {!isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <div className="text-center">
                 <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Unlock ROI Analysis</h3>
+                <h3 className="text-2xl font-bold text-text-headings mb-2">Unlock ROI Analysis</h3>
                 <p className="text-lg text-gray-600 mb-6">
                   See projected balances and the potential difference at retirement with detailed breakdowns.
                 </p>
@@ -373,7 +373,7 @@ export default function TspModeler() {
             </div>
           )}
           {isPremium && (
-            <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
                 <>

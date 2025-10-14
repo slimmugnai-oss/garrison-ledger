@@ -130,17 +130,17 @@ export default function AdaptiveAssessmentPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-bg">
+      <div className="min-h-screen bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
-            <h1 className="text-4xl font-serif font-black text-text mb-2">Quick Assessment</h1>
-            <p className="text-xl text-muted">Intelligent assessment that adapts to your situation</p>
+            <h1 className="text-4xl font-serif font-black text-text-headings mb-2">Quick Assessment</h1>
+            <p className="text-xl text-text-body">Intelligent assessment that adapts to your situation</p>
           </div>
 
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-muted">Progress</span>
+              <span className="text-sm font-semibold text-text-body">Progress</span>
               <span className="text-sm font-bold text-blue-600">{questionsAsked.length} / ~10 questions</span>
             </div>
             <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
@@ -163,11 +163,11 @@ export default function AdaptiveAssessmentPage() {
                 <div className="text-sm text-blue-600 font-bold mb-3 uppercase tracking-wider">
                   Question {questionsAsked.length + 1}
                 </div>
-                <h2 className="text-3xl font-serif font-black text-text mb-3">
+                <h2 className="text-3xl font-serif font-black text-text-headings mb-3">
                   {currentQuestion.question}
                 </h2>
                 {currentQuestion.context && (
-                  <p className="text-muted italic">{currentQuestion.context}</p>
+                  <p className="text-text-body italic">{currentQuestion.context}</p>
                 )}
               </div>
 
@@ -181,7 +181,7 @@ export default function AdaptiveAssessmentPage() {
                       className={`w-full p-4 rounded-xl border-2 text-left font-semibold transition-all ${
                         currentAnswer === option
                           ? 'border-blue-600 bg-blue-50 text-blue-900'
-                          : 'border-slate-200 bg-white hover:border-blue-300 text-text'
+                          : 'border-border bg-card hover:border-blue-300 text-text-headings'
                       }`}
                     >
                       {option}
@@ -196,7 +196,7 @@ export default function AdaptiveAssessmentPage() {
                     type="text"
                     value={currentAnswer as string}
                     onChange={e => setCurrentAnswer(e.target.value)}
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-lg"
+                    className="w-full border-2 border-border rounded-xl px-4 py-3 text-lg bg-card"
                     placeholder="Your answer..."
                   />
                 </div>
@@ -215,7 +215,7 @@ export default function AdaptiveAssessmentPage() {
                     }
                   }}
                   disabled={questionsAsked.length === 0 || loading}
-                  className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-all disabled:opacity-50"
+                  className="px-6 py-3 bg-card hover:bg-gray-100 text-text-headings border border-border rounded-xl font-bold transition-all disabled:opacity-50"
                 >
                   ← Back
                 </button>

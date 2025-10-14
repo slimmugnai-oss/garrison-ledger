@@ -144,7 +144,7 @@ export default function CareerOpportunityAnalyzer() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="bg-card rounded-xl border border-border shadow-sm">
         {/* Header */}
         <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-t-xl p-8 text-white">
           <h2 className="text-4xl font-bold mb-3">Career Opportunity Analyzer</h2>
@@ -161,7 +161,7 @@ export default function CareerOpportunityAnalyzer() {
             <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-gray-900">Current Situation</h3>
+                <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
               </div>
               
               <div className="space-y-4">
@@ -190,7 +190,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* Current Salary */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Base Annual Salary
                   </label>
                   <div className="relative">
@@ -207,7 +207,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* Current Bonus */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Annual Bonus (if applicable)
                   </label>
                   <div className="relative">
@@ -224,7 +224,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* Current Retirement Match */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Retirement Match (e.g., 401k match %)
                   </label>
                   <div className="relative">
@@ -245,7 +245,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* Current State Tax */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Estimated State Income Tax (%)
                   </label>
                   <div className="relative">
@@ -286,7 +286,7 @@ export default function CareerOpportunityAnalyzer() {
             <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-4 h-4 bg-green-600 rounded-full"></div>
-                <h3 className="text-xl font-bold text-gray-900">New Offer</h3>
+                <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
               </div>
               
               <div className="space-y-4">
@@ -315,7 +315,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* New Salary */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Base Annual Salary
                   </label>
                   <div className="relative">
@@ -332,7 +332,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* New Bonus */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Annual Bonus (if applicable)
                   </label>
                   <div className="relative">
@@ -349,7 +349,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* New Retirement Match */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Retirement Match (e.g., 401k match %)
                   </label>
                   <div className="relative">
@@ -370,7 +370,7 @@ export default function CareerOpportunityAnalyzer() {
 
                 {/* New State Tax */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-text-body mb-2">
                     Estimated State Income Tax (%)
                   </label>
                   <div className="relative">
@@ -416,7 +416,7 @@ export default function CareerOpportunityAnalyzer() {
                 : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-400'
             }`}>
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                <h3 className="text-2xl font-bold text-text-headings mb-4">
                   <Icon name="BarChart" className="h-6 w-6 inline mr-2" /> Executive Summary
                 </h3>
                 <div className="mb-6">
@@ -435,8 +435,8 @@ export default function CareerOpportunityAnalyzer() {
               </div>
 
               {/* Breakdown */}
-              <div className="bg-white rounded-lg p-6 mb-6">
-                <h4 className="font-bold text-gray-900 mb-4 text-lg">Financial Breakdown</h4>
+              <div className="bg-card rounded-lg p-6 mb-6 border border-border">
+                <h4 className="font-bold text-text-headings mb-4 text-lg">Financial Breakdown</h4>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <div className="text-sm text-gray-600 mb-1">Your Current After-Tax Income</div>
