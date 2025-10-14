@@ -607,7 +607,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={50} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
                 <Link href="/dashboard/assessment" className="block p-6 text-center">
-                  <Icon name="CircleCheckBig" className="h-10 w-10 text-gray-700 mb-3" />
+                  <Icon name="CircleCheck" className="h-10 w-10 text-gray-700 mb-3" />
                   <h3 className="text-lg font-bold text-gray-900 mb-1">Assessment</h3>
                   <p className="text-sm text-gray-600">Update your profile</p>
                 </Link>

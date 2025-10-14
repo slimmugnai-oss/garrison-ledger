@@ -9,6 +9,7 @@ import ContentCard from '@/app/components/ui/ContentCard';
 import { useUser } from '@clerk/nextjs';
 import Footer from '@/app/components/Footer';
 import Icon from '@/app/components/ui/Icon';
+import { IconName } from '@/app/components/ui/icon-registry';
 
 type Block = {
   slug: string;
@@ -268,13 +269,13 @@ export default function ExecutiveBriefing() {
                   return acc;
                 }, {} as Record<string, number>);
                 
-                const tabs = [
+                const tabs: Array<{ id: string; label: string; count: number; icon: IconName }> = [
                   { id: 'all', label: 'All Topics', count: plan.blocks.length, icon: 'BookOpen' },
-                  ...(toolBlocks.length > 0 ? [{ id: 'tools', label: 'Tools & Calculators', count: toolBlocks.length, icon: 'Wrench' }] : []),
-                  ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: 'Truck' }] : []),
-                  ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: 'Shield' }] : []),
-                  ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: 'Briefcase' }] : []),
-                  ...(domainCounts.finance ? [{ id: 'finance', label: 'Finance', count: domainCounts.finance, icon: 'Landmark' }] : []),
+                  ...(toolBlocks.length > 0 ? [{ id: 'tools', label: 'Tools & Calculators', count: toolBlocks.length, icon: 'Wrench' as IconName }] : []),
+                  ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: 'Truck' as IconName }] : []),
+                  ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: 'Shield' as IconName }] : []),
+                  ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: 'Briefcase' as IconName }] : []),
+                  ...(domainCounts.finance ? [{ id: 'finance', label: 'Finance', count: domainCounts.finance, icon: 'Landmark' as IconName }] : []),
                 ];
                 
                 return tabs.map(tab => (
@@ -287,7 +288,7 @@ export default function ExecutiveBriefing() {
                         : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg'
                     }`}
                   >
-                    <Icon name={tab.icon as keyof typeof import('lucide-react').icons} className="h-5 w-5 inline mr-2" />
+                    <Icon name={tab.icon} className="h-5 w-5 inline mr-2" />
                     {tab.label}
                     <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
                       activeTab === tab.id ? 'bg-white/20' : 'bg-gray-200'
@@ -481,7 +482,7 @@ export default function ExecutiveBriefing() {
               }, {} as Record<string, Block[]>);
 
               const domainOrder = ['pcs', 'deployment', 'career', 'finance'];
-              const domainIcons: Record<string, string> = {
+              const domainIcons: Record<string, IconName> = {
                 pcs: 'Truck',
                 deployment: 'Shield',
                 career: 'Briefcase',
@@ -502,7 +503,7 @@ export default function ExecutiveBriefing() {
                     {/* Section Header */}
                     <div className="mb-10">
                       <div className="flex items-center gap-4 mb-4">
-                        <Icon name={domainIcons[domain] as keyof typeof import('lucide-react').icons} className="h-12 w-12 text-gray-700" />
+                        <Icon name={domainIcons[domain]} className="h-12 w-12 text-gray-700" />
                         <h2 className="text-4xl font-serif font-black text-text-headings capitalize">
                           {sectionMeta?.title || domain}
                         </h2>
