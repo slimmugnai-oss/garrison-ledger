@@ -446,19 +446,20 @@ export default async function UpgradePage() {
               <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
                 Get instant access to all premium tools and calculators
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <div className="bg-white/20 backdrop-blur border border-white/30 rounded-xl p-4">
-                  <div className="text-3xl font-black mb-1">$99/year</div>
-                  <div className="text-sm text-indigo-200">Save 2 months vs. monthly</div>
+              <div className="flex flex-col items-center gap-6">
+                <div className="text-center">
+                  <div className="text-5xl font-black mb-2">$99/year</div>
+                  <div className="text-lg text-indigo-200 mb-4">Save 2 months vs. monthly</div>
+                  <div className="text-sm text-indigo-300 mb-6">
+                    Less than $8.25/month • Cancel anytime
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <PaymentButton 
-                    priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                    buttonText="Start Annual Plan"
-                    className="bg-white text-purple-600 hover:bg-gray-100 px-10 py-4 rounded-xl font-black text-lg shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
-                  />
-                  <p className="text-xs text-indigo-200">7-Day Money-Back Guarantee</p>
-                </div>
+                <PaymentButton 
+                  priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
+                  buttonText="Start Annual Plan"
+                  className="bg-white text-purple-600 hover:bg-gray-100 px-12 py-5 rounded-xl font-black text-xl shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
+                />
+                <p className="text-sm text-indigo-200">7-Day Money-Back Guarantee</p>
               </div>
             </div>
           )}
