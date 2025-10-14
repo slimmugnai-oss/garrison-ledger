@@ -120,7 +120,7 @@ export default function ExecutiveBriefing() {
                   ✨ AI is analyzing 400+ military resources
                 </p>
                 <p className="text-blue-700 leading-relaxed">
-                  We're scoring every guide, calculator, and checklist against your unique situation to build your personalized 18-block action plan.
+                  We&apos;re scoring every guide, calculator, and checklist against your unique situation to build your personalized 18-block action plan.
                 </p>
               </div>
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
