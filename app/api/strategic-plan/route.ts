@@ -354,12 +354,18 @@ async function generateRoadmap(
     
     console.log('[Generate Roadmap] Calling endpoint');
     
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    
+    // Add internal secret if available
+    if (process.env.INTERNAL_API_SECRET) {
+      headers['x-internal-secret'] = process.env.INTERNAL_API_SECRET;
+    }
+
     const response = await fetch(`${baseUrl}/api/plan/generate-roadmap`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-internal-secret': process.env.INTERNAL_API_SECRET || 'dev-secret'
-      },
+      headers,
       body: JSON.stringify({
         userContext,
         blocks: blocksSummary

@@ -99,9 +99,9 @@ OUTPUT FORMAT (JSON):
 }`;
 
 export async function POST(req: NextRequest) {
-  // Auth check
+  // Auth check - allow internal calls OR authenticated users
   const internalSecret = req.headers.get('x-internal-secret');
-  const isInternalCall = internalSecret === process.env.INTERNAL_API_SECRET;
+  const isInternalCall = internalSecret && internalSecret === process.env.INTERNAL_API_SECRET;
   
   if (!isInternalCall) {
     const { userId } = await auth();
