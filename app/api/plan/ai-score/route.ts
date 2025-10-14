@@ -32,53 +32,35 @@ const SCORING_PROMPT = `You are the strategic planning AI for Garrison Ledger, a
 Your task: Analyze a service member's situation and score each available content block (0-100) based on relevance and urgency.
 
 SCORING CRITERIA:
-- 90-100: Critical, immediate need (e.g., orders in hand = PCS checklist)
+- 90-100: Critical, immediate need 
 - 70-89: High priority, should act soon
 - 50-69: Relevant, good to know
 - 30-49: Somewhat relevant, lower priority  
-- 0-29: Not applicable to current situation
+- 1-29: Not applicable to current situation
+- 0: Completely irrelevant
 
-REASONING RULES - THIS IS ABSOLUTELY CRITICAL:
-- NEVER use phrases like "this is important", "crucial for your situation", "essential to understand"
-- NEVER write anything that could apply to anyone else
-- MUST reference at least 2 SPECIFIC details from their profile in EVERY reasoning
-- MUST include NUMBERS, TIMELINES, or AGES when present (e.g., "your 8-week window", "E-5 at 6 years", "kids ages 3 and 6")
-- MUST explain the TACTICAL consequence or benefit with specifics (e.g., "Missing the July 15 JBLM school enrollment deadline means homeschooling until January")
-- MUST connect multiple data points (e.g., "Since you're E-5, PCSing in 8 weeks, AND interested in federal employment, start browsing USAJobs for JBLM GS-7 positions now")
-- Write like an experienced military friend who knows their exact situation
-- 2-3 sentences max, every word must be specific to THEM
-- If you can't reference their specific data, give the content a lower score
+REASONING RULES:
+- Reference at least 2 SPECIFIC details from their profile
+- Include NUMBERS, TIMELINES, or AGES when present
+- Explain the TACTICAL consequence or benefit
+- 1-2 sentences max, be concise
+- If you can't reference their specific data, score 0-30
 
-BAD EXAMPLES (NEVER DO THIS):
-❌ "Pre-deployment readiness is crucial for stability"
-❌ "This guide will help you prepare"
-❌ "Important information for your situation"
-
-GOOD EXAMPLES (DO THIS):
-✅ "With a deployment in 4 months, young kids (ages 2 and 4), and stated debt concerns, getting POA and wills done NOW prevents legal emergencies if something happens while you're deployed and your spouse needs to handle finances or medical decisions."
-✅ "You said you're interested in federal employment - since you're PCSing in 6 months, start browsing USAJobs for your gaining base NOW and tailor your resume during the move, not after you arrive and need income immediately."
-✅ "Your 5-10 years of service puts you in prime house-hacking territory - you understand the military lifestyle well enough to pick a rental-worthy property, but young enough that the equity compounds for 15+ years before retirement."
-
-OUTPUT FORMAT:
-You MUST score EVERY SINGLE block provided in the input. Return a JSON object with a "scores" array:
-
+OUTPUT FORMAT (JSON):
 {
   "scores": [
-    {
-      "slug": "pcs-master-checklist",
-      "score": 95,
-      "reason": "With orders in hand and school-age kids, you need a comprehensive checklist now to coordinate enrollment and EFMP screening before your 12-week deadline."
-    },
-    {
-      "slug": "tsp-brs-essentials",
-      "score": 45,
-      "reason": "While important long-term, TSP optimization is lower priority than your imminent PCS and deployment prep."
-    },
-    ... (continue for ALL blocks)
+    {"slug": "block-slug", "score": 95, "reason": "Specific reason with their data"},
+    {"slug": "another-slug", "score": 60, "reason": "Why this matters for them"},
+    ... (continue for ALL blocks - give score 0 if not relevant)
   ]
 }
 
-CRITICAL: Score ALL blocks, not just the top ones. Return the full JSON structure above.`;
+CRITICAL: 
+- Score ALL blocks provided (even if score is 0)
+- Keep reasoning under 150 characters for efficiency
+- Focus on top 30-40 blocks with detailed reasoning
+- For low-scoring blocks (under 40), use brief reasoning or "Not applicable"`;
+
 
 export async function POST(req: NextRequest) {
   // Auth check - allow internal calls or authenticated users
@@ -128,20 +110,21 @@ export async function POST(req: NextRequest) {
     const contextSummary = `SERVICE MEMBER PROFILE:
 - Rank: ${userContext.rank || 'unknown'}
 - Branch: ${userContext.branch || 'unknown'}
-- Service Years: ${userContext.serviceYears || 'unknown'}
+- Service Years: ${userContext.yearsOfService || userContext.serviceYears || 'unknown'}
 - Current Base: ${userContext.currentBase || 'unknown'}
 - Next Base: ${userContext.nextBase || 'TBD'}
 - PCS Date: ${userContext.pcsDate || 'none'}
 - PCS Status: ${userContext.pcsSituation || 'none'}
 - Deployment: ${userContext.deploymentStatus || 'none'}
-- Family: ${userContext.familySnapshot || 'none'}
+- Family: ${userContext.familyStatus || userContext.familySnapshot || 'none'}
 - Children: ${userContext.childrenCount ?? 'none'}
 - EFMP: ${userContext.efmpEnrolled ? 'Yes' : 'No'}
 - TSP Balance: ${userContext.tspRange || 'unknown'}
 - Debt: ${userContext.debtRange || 'unknown'}
 - Emergency Fund: ${userContext.emergencyFundRange || 'unknown'}
-- Career Goals: ${Array.isArray(userContext.careerAmbitions) ? userContext.careerAmbitions.join(', ') : 'none'}
-- Financial Priority: ${userContext.financialPriority || 'unknown'}
+- Biggest Concern: ${userContext.biggestConcern || 'not specified'}
+- Career Goals: ${Array.isArray(userContext.careerGoals) ? userContext.careerGoals.join(', ') : (userContext.careerGoals || 'none')}
+- Financial Priorities: ${Array.isArray(userContext.financialPriorities) ? userContext.financialPriorities.join(', ') : (userContext.financialPriorities || 'none')}
 - Urgency Level: ${userContext.urgencyLevel || 'normal'}`;
 
     // Build blocks summary
@@ -161,15 +144,15 @@ ${blocksSummary}
 
 Score each block and provide personalized reasoning for this specific service member.`;
 
-    // Call GPT-4o
+    // Call GPT-4o-mini (cost-effective for large-scale scoring)
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: SCORING_PROMPT },
         { role: "user", content: userPrompt }
       ],
-      temperature: 0.4, // Slightly higher for more creative reasoning
-      max_tokens: 6000, // Need more tokens to score all 26 blocks with detailed reasoning
+      temperature: 0.3, // Lower for consistent scoring
+      max_tokens: 16000, // Sufficient for 400+ blocks with concise reasoning
       response_format: { type: "json_object" }
     });
 
@@ -202,10 +185,12 @@ Score each block and provide personalized reasoning for this specific service me
       );
     }
 
+    console.log('[AI Score] Successfully scored', validScores.length, 'blocks');
+    
     return NextResponse.json({
       success: true,
       scores: validScores,
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       timestamp: new Date().toISOString()
     });
 

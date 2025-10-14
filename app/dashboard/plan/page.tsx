@@ -174,39 +174,39 @@ export default function ExecutiveBriefing() {
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Executive Summary */}
+          {/* Executive Summary - Compact */}
           {plan.executiveSummary && (
-            <div className="mb-16 bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200 rounded-3xl shadow-2xl p-12">
-              <div className="flex items-start gap-6 mb-6">
-                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white text-3xl">📋</span>
+            <div className="mb-10 bg-white border-2 border-gray-200 rounded-xl shadow-md p-6">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xl">📋</span>
                 </div>
                 <div>
-                  <div className="inline-flex items-center px-4 py-2 bg-slate-700 text-white rounded-full text-xs font-black mb-2 uppercase tracking-widest shadow-md">
+                  <div className="inline-flex items-center px-3 py-1 bg-gray-900 text-white rounded-full text-xs font-bold uppercase tracking-wide">
                     Executive Summary
                   </div>
-                  <h2 className="text-2xl font-serif font-bold text-text-headings">Your Strategic Overview</h2>
+                  <h2 className="text-lg font-serif font-bold text-gray-900 mt-1">Your Strategic Overview</h2>
                 </div>
               </div>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-line font-serif">
+              <div className="prose max-w-none">
+                <p className="text-base text-gray-700 leading-relaxed whitespace-pre-line">
                   {plan.executiveSummary}
                 </p>
               </div>
             </div>
           )}
 
-          {/* Priority Action Card */}
-          <div className="mb-20 bg-gradient-to-br from-amber-50 to-orange-50 border-l-8 border-amber-500 rounded-2xl shadow-2xl p-12">
-            <div className="flex items-start gap-8">
-              <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <span className="text-white text-5xl font-black">!</span>
+          {/* Priority Action Card - Compact */}
+          <div className="mb-12 bg-gradient-to-br from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-xl shadow-lg p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
+                <span className="text-white text-2xl font-black">!</span>
               </div>
               <div className="flex-1">
-                <div className="inline-flex items-center px-5 py-2 bg-amber-500 text-white rounded-full text-sm font-black mb-5 uppercase tracking-widest shadow-md">
+                <div className="inline-flex items-center px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-bold mb-2 uppercase tracking-wide">
                   Your #1 Priority
                 </div>
-                <p className="text-3xl md:text-4xl font-serif font-bold text-text-headings leading-tight">
+                <p className="text-xl font-serif font-bold text-gray-900 leading-snug">
                   {plan.priorityAction}
                 </p>
               </div>
