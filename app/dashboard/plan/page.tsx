@@ -13,6 +13,7 @@ type Block = {
   title: string;
   html: string;
   type: string;
+  domain?: string; // Explicit domain from database
   topics?: string[];
   tags?: string[];
   aiReason?: string; // AI-generated "why this matters"
@@ -186,8 +187,11 @@ export default function ExecutiveBriefing() {
           {/* Content Blocks - Organized by Domain */}
           <div className="space-y-16">
             {(() => {
-              // Group blocks by domain
-              const getDomain = (slug: string): string => {
+              // Group blocks by domain (use explicit domain field, fallback to slug detection)
+              const getDomain = (block: Block): string => {
+                if (block.domain) return block.domain;
+                // Fallback for blocks without domain field
+                const slug = block.slug;
                 if (slug.includes('pcs') || slug.includes('move') || slug.includes('station')) return 'pcs';
                 if (slug.includes('career') || slug.includes('tsp') || slug.includes('education') || slug.includes('mycaa')) return 'career';
                 if (slug.includes('deploy') || slug.includes('sdp')) return 'deployment';
@@ -195,7 +199,7 @@ export default function ExecutiveBriefing() {
               };
 
               const domainBlocks = plan.blocks.reduce((acc, block) => {
-                const domain = getDomain(block.slug);
+                const domain = getDomain(block);
                 if (!acc[domain]) acc[domain] = [];
                 acc[domain].push(block);
                 return acc;

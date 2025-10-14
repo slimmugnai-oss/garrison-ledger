@@ -4,6 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 type ProfilePayload = {
+  age?: number | null;
+  gender?: string | null;
+  years_of_service?: number | null;
+  education_level?: string | null;
   rank?: string | null;
   branch?: string | null;
   component?: string | null;
@@ -11,6 +15,7 @@ type ProfilePayload = {
   next_base?: string | null;
   pcs_date?: string | null;
   marital_status?: string | null;
+  spouse_age?: number | null;
   num_children?: number | null;
   has_efmp?: boolean | null;
   tsp_balance_range?: string | null;
@@ -26,6 +31,8 @@ type ProfilePayload = {
 const ranks = ['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-8','E-9','O-1','O-2','O-3','O-4','O-5','O-6'];
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
 const components = ['Active','Reserve','Guard'];
+const genders = ['Male','Female','Other','Prefer not to say'];
+const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
 const yesNo = [
   { label: 'Yes', value: true },
   { label: 'No', value: false },
@@ -83,11 +90,12 @@ export default function ProfileSetupPage() {
 
   const step = useMemo(() => {
     // Simple step derivation based on filled fields
-    if (!data.rank || !data.branch) return 1;
-    if (!data.current_base) return 2;
-    if (data.marital_status == null || data.num_children == null || data.has_efmp == null) return 3;
-    if (!data.tsp_balance_range || !data.debt_amount_range || !data.emergency_fund_range) return 4;
-    return 5;
+    if (!data.age || !data.gender) return 1;
+    if (!data.rank || !data.branch) return 2;
+    if (!data.current_base) return 3;
+    if (data.marital_status == null || data.num_children == null || data.has_efmp == null) return 4;
+    if (!data.tsp_balance_range || !data.debt_amount_range || !data.emergency_fund_range) return 5;
+    return 6;
   }, [data]);
 
   async function submit() {
@@ -135,9 +143,9 @@ export default function ProfileSetupPage() {
         </div>
 
         <div className="mb-6">
-          <div className="text-sm text-muted">Step {step} of 5</div>
+          <div className="text-sm text-muted">Step {step} of 6</div>
           <div className="w-full bg-gray-100 h-2 rounded">
-            <div className="bg-blue-600 h-2 rounded" style={{ width: `${(step/5)*100}%` }} />
+            <div className="bg-blue-600 h-2 rounded" style={{ width: `${(step/6)*100}%` }} />
           </div>
         </div>
 
@@ -149,6 +157,28 @@ export default function ProfileSetupPage() {
         )}
 
         <div className="space-y-8">
+          <section>
+            <h2 className="text-xl font-bold mb-4">About you</h2>
+            <p className="text-sm text-muted mb-4">Basic info helps us tailor calculations and advice</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-muted mb-2">Age</label>
+                <input type="number" min={17} max={100} placeholder="e.g., 28" className="w-full border border-border rounded-lg px-3 py-2" value={data.age ?? ''} onChange={e => setData(d => ({ ...d, age: e.target.value ? Number(e.target.value) : null }))} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-muted mb-2">Gender</label>
+                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.gender ?? ''} onChange={e => setData(d => ({ ...d, gender: e.target.value || null }))}>
+                  <option value="">Select</option>
+                  {genders.map(g => <option key={g} value={g.toLowerCase()}>{g}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-muted mb-2">Years of service</label>
+                <input type="number" min={0} max={40} placeholder="e.g., 6" className="w-full border border-border rounded-lg px-3 py-2" value={data.years_of_service ?? ''} onChange={e => setData(d => ({ ...d, years_of_service: e.target.value ? Number(e.target.value) : null }))} />
+              </div>
+            </div>
+          </section>
+
           <section>
             <h2 className="text-xl font-bold mb-4">Military identity</h2>
             <p className="text-sm text-muted mb-4">Optional - helps us personalize your plan</p>
@@ -213,8 +243,14 @@ export default function ProfileSetupPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Children</label>
-                <input type="number" min={0} className="w-full border border-border rounded-lg px-3 py-2" value={data.num_children ?? 0} onChange={e => setData(d => ({ ...d, num_children: Number(e.target.value) }))} />
+                <input type="number" min={0} max={10} placeholder="0" className="w-full border border-border rounded-lg px-3 py-2" value={data.num_children ?? 0} onChange={e => setData(d => ({ ...d, num_children: Number(e.target.value) }))} />
               </div>
+              {data.marital_status === 'married' && (
+                <div>
+                  <label className="block text-sm font-semibold text-muted mb-2">Spouse age</label>
+                  <input type="number" min={17} max={100} placeholder="Optional" className="w-full border border-border rounded-lg px-3 py-2" value={data.spouse_age ?? ''} onChange={e => setData(d => ({ ...d, spouse_age: e.target.value ? Number(e.target.value) : null }))} />
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">EFMP enrolled</label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.has_efmp === null || data.has_efmp === undefined ? '' : String(data.has_efmp)} onChange={e => setData(d => ({ ...d, has_efmp: e.target.value === '' ? null : e.target.value === 'true' }))}>
@@ -254,7 +290,14 @@ export default function ProfileSetupPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-4">Goals & preferences</h2>
+            <h2 className="text-xl font-bold mb-4">Education & goals</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-muted mb-2">Education level</label>
+              <select className="w-full border border-border rounded-lg px-3 py-2" value={data.education_level ?? ''} onChange={e => setData(d => ({ ...d, education_level: e.target.value || null }))}>
+                <option value="">Select (optional)</option>
+                {educationLevels.map(e => <option key={e} value={e.toLowerCase().replace(' ', '-')}>{e}</option>)}
+              </select>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Career interests</label>

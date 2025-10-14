@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { assemblePlanWithDiversity, type StrategicInput, StrategicInputSchema } from "@/lib/server/rules-engine";
+import { normalizeAssessment, buildAIContext } from "@/lib/server/assessment-normalizer";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
@@ -69,7 +70,7 @@ export async function GET() {
   // Fetch ALL content blocks for AI scoring
   const { data: allBlocks } = await supabase
     .from("content_blocks")
-    .select("slug, title, summary, type, topics, tags, updated_at");
+    .select("slug, title, summary, type, domain, topics, tags, updated_at");
   
   // Filter and map to required metadata format
   const blockMetadata = (allBlocks || [])
@@ -87,16 +88,19 @@ export async function GET() {
     .eq('user_id', userId)
     .maybeSingle();
 
+  // Normalize assessment data for consistent AI context
+  const normalized = normalizeAssessment(answers as any, profile);
+
   // PARALLEL PROCESSING: Rules engine + AI scoring + Roadmap generation
   const [rulesResult, aiResult, roadmapResult] = await Promise.allSettled([
     // Rules engine (fast, reliable baseline)
     Promise.resolve(assemblePlanWithDiversity(answers, blockMetadata)),
     
-    // AI scoring (intelligent, personalized) - pass full blocks
-    callAIScoring(answers, allBlocks || [], profile || null),
+    // AI scoring (intelligent, personalized) - use normalized context
+    callAIScoring(normalized, allBlocks || [], profile || null),
     
-    // Executive roadmap generation
-    generateRoadmap(answers, allBlocks || [], profile || null)
+    // Executive roadmap generation - use normalized context
+    generateRoadmap(normalized, allBlocks || [], profile || null)
   ]);
 
   // Extract results
@@ -158,7 +162,7 @@ export async function GET() {
   // Fetch full content for top-scored blocks
   const { data: blocks } = await supabase
     .from("content_blocks")
-    .select("slug, title, summary, html, type, topics, tags, updated_at")
+    .select("slug, title, summary, html, type, domain, topics, tags, updated_at")
     .in("slug", topSlugs);
 
   if (!blocks || blocks.length === 0) {
@@ -218,42 +222,32 @@ export async function GET() {
  * Call AI scoring endpoint
  */
 async function callAIScoring(
-  answers: StrategicInput,
+  normalized: any,
   blocks: any[],
   profile: any | null
 ): Promise<{ scores: any[] } | null> {
   try {
-    // Build user context from assessment (support multiple formats)
-    const s = answers?.strategic || {};
-    const c = answers?.comprehensive || {};
-    const a = answers?.adaptive || {};
-    const foundation = (c.foundation || {}) as any;
-    const move = (c.move || {}) as any;
-    const deployment = (c.deployment || {}) as any;
-    const career = (c.career || {}) as any;
-    const finance = (c.finance || {}) as any;
-    const prefs = (c.preferences || {}) as any;
-
+    // Build clean user context from normalized assessment
     const userContext = {
-      serviceYears: foundation.serviceYears || a.rank || s.efmpEnrolled ? '5-10' : 'unknown',
-      familySnapshot: foundation.familySnapshot || a.family_status || 'none',
-      pcsSituation: move.pcsSituation || a.pcs_situation || s.pcsTimeline || 'none',
-      deploymentStatus: deployment.status || a.deployment_status || 'none',
-      careerAmbitions: career.ambitions || [],
-      financialPriority: finance.priority || a.biggest_concern || s.financialWorry || 'unknown',
-      urgencyLevel: prefs.urgencyLevel || 'normal',
-      biggestFocus: s.biggestFocus || a.biggest_concern || 'unknown',
-      // Enrich with profile if present (profile takes precedence)
-      rank: profile?.rank || null,
-      branch: profile?.branch || null,
-      currentBase: profile?.current_base || null,
-      nextBase: profile?.next_base || null,
-      pcsDate: profile?.pcs_date || null,
-      childrenCount: profile?.num_children ?? null,
-      efmpEnrolled: profile?.has_efmp ?? null,
-      tspRange: profile?.tsp_balance_range || null,
-      debtRange: profile?.debt_amount_range || null,
-      emergencyFundRange: profile?.emergency_fund_range || null,
+      age: normalized.age,
+      gender: normalized.gender,
+      yearsOfService: normalized.yearsOfService,
+      rank: normalized.rank,
+      branch: normalized.branch,
+      currentBase: profile?.current_base,
+      nextBase: profile?.next_base,
+      pcsDate: profile?.pcs_date,
+      pcsSituation: normalized.pcsSituation,
+      deploymentStatus: normalized.deploymentStatus,
+      familyStatus: normalized.familyStatus,
+      childrenCount: normalized.numChildren,
+      efmpEnrolled: normalized.efmpEnrolled,
+      tspRange: normalized.tspRange,
+      debtRange: normalized.debtRange,
+      emergencyFundRange: normalized.emergencyFundRange,
+      biggestConcern: normalized.biggestConcern,
+      careerGoals: normalized.careerGoals,
+      financialPriorities: normalized.financialPriorities,
     };
 
     // Prepare blocks metadata for AI
@@ -308,29 +302,41 @@ async function callAIScoring(
  * Generate executive roadmap (summary + section intros)
  */
 async function generateRoadmap(
-  answers: StrategicInput,
+  normalized: any,
   blocks: any[],
   profile: any | null
 ): Promise<{ roadmap: any } | null> {
   try {
-    // Build user context directly from profile
+    // Build clean user context from normalized data
     const userContext = {
-      rank: profile?.rank || null,
-      branch: profile?.branch || null,
-      currentBase: profile?.current_base || null,
-      nextBase: profile?.next_base || null,
-      pcsDate: profile?.pcs_date || null,
-      childrenCount: profile?.num_children ?? null,
-      efmpEnrolled: profile?.has_efmp ?? null,
-      tspRange: profile?.tsp_balance_range || null,
-      debtRange: profile?.debt_amount_range || null,
-      emergencyFundRange: profile?.emergency_fund_range || null,
-      careerInterests: profile?.career_interests || [],
-      financialPriorities: profile?.financial_priorities || [],
+      age: normalized.age,
+      gender: normalized.gender,
+      yearsOfService: normalized.yearsOfService,
+      rank: normalized.rank,
+      branch: normalized.branch,
+      currentBase: profile?.current_base,
+      nextBase: profile?.next_base,
+      pcsDate: profile?.pcs_date,
+      pcsSituation: normalized.pcsSituation,
+      deploymentStatus: normalized.deploymentStatus,
+      familyStatus: normalized.familyStatus,
+      childrenCount: normalized.numChildren,
+      efmpEnrolled: normalized.efmpEnrolled,
+      tspRange: normalized.tspRange,
+      debtRange: normalized.debtRange,
+      emergencyFundRange: normalized.emergencyFundRange,
+      biggestConcern: normalized.biggestConcern,
+      careerGoals: normalized.careerGoals,
+      financialPriorities: normalized.financialPriorities,
+      educationLevel: profile?.education_level,
+      spouseAge: profile?.spouse_age,
     };
 
-    // Determine domain for each block based on slug patterns
-    const getDomain = (slug: string): string => {
+    // Use explicit domain field from database (fallback to slug-based detection)
+    const getDomain = (block: any): string => {
+      if (block.domain) return block.domain;
+      // Fallback for blocks without domain field
+      const slug = block.slug;
       if (slug.includes('pcs') || slug.includes('move') || slug.includes('station')) return 'pcs';
       if (slug.includes('career') || slug.includes('tsp') || slug.includes('education') || slug.includes('mycaa')) return 'career';
       if (slug.includes('deploy') || slug.includes('sdp')) return 'deployment';
@@ -340,7 +346,7 @@ async function generateRoadmap(
     const blocksSummary = blocks.slice(0, 10).map(b => ({
       slug: b.slug,
       title: b.title,
-      domain: getDomain(b.slug),
+      domain: getDomain(b),
     }));
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
