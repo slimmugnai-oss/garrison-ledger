@@ -119,8 +119,144 @@ export default async function CommandDashboard() {
 
           {hasAssessment && (
             <>
+              {/* Executive Summary - NEW! */}
+              <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 p-10 md:p-12 text-white shadow-2xl border-0" delay={0}>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
+                    <span className="text-4xl">⚡</span>
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center px-3 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-black mb-2 uppercase tracking-widest">
+                      Executive Summary
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-serif font-black">Your Command Center</h2>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                  {/* Profile Completion */}
+                  <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-blue-100">Profile Completion</span>
+                      <span className="text-2xl font-black text-white">
+                        {(() => {
+                          let score = 0;
+                          if (profileRow?.rank) score += 20;
+                          if (profileRow?.branch) score += 20;
+                          if (profileRow?.current_base) score += 15;
+                          if (profileRow?.marital_status) score += 10;
+                          if (profileRow?.pcs_date) score += 15;
+                          if (profileRow?.career_interests?.length > 0) score += 10;
+                          if (profileRow?.financial_priorities?.length > 0) score += 10;
+                          return score;
+                        })()}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div 
+                        className="bg-white rounded-full h-2 transition-all duration-500"
+                        style={{ width: `${(() => {
+                          let score = 0;
+                          if (profileRow?.rank) score += 20;
+                          if (profileRow?.branch) score += 20;
+                          if (profileRow?.current_base) score += 15;
+                          if (profileRow?.marital_status) score += 10;
+                          if (profileRow?.pcs_date) score += 15;
+                          if (profileRow?.career_interests?.length > 0) score += 10;
+                          if (profileRow?.financial_priorities?.length > 0) score += 10;
+                          return score;
+                        })()}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Assessment Status */}
+                  <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-blue-100">Strategic Plan</span>
+                      <span className="text-lg font-black text-green-300">✓ Active</span>
+                    </div>
+                    <p className="text-sm text-blue-100">AI-personalized roadmap generated</p>
+                  </div>
+
+                  {/* Premium Status */}
+                  <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-blue-100">Membership</span>
+                      <span className={`text-lg font-black ${isPremium ? 'text-amber-300' : 'text-gray-300'}`}>
+                        {isPremium ? '⭐ Premium' : 'Free'}
+                      </span>
+                    </div>
+                    {!isPremium && (
+                      <Link href="/dashboard/upgrade" className="text-xs text-blue-200 hover:text-white underline">
+                        Upgrade for full access →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+
+                {/* Key Insights */}
+                <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">🎯 Your Priority Focus</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {profileRow?.pcs_date && (() => {
+                      const pcsDate = new Date(profileRow.pcs_date);
+                      const today = new Date();
+                      const daysUntil = Math.ceil((pcsDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                      
+                      if (daysUntil > 0 && daysUntil <= 90) {
+                        return (
+                          <div className="flex items-start gap-3">
+                            <span className="text-2xl">🚚</span>
+                            <div>
+                              <div className="font-bold text-white">PCS Move - {daysUntil} days away</div>
+                              <div className="text-sm text-blue-100">
+                                {daysUntil <= 30 ? 'URGENT: Start packing and TMO coordination' : 
+                                 daysUntil <= 60 ? 'Start planning and organizing' : 
+                                 'Begin early preparation'}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    
+                    {profileRow?.deployment_status === 'preparing' && (
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🌍</span>
+                        <div>
+                          <div className="font-bold text-white">Deployment Preparation</div>
+                          <div className="text-sm text-blue-100">Review deployment checklist and SDP setup</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {profileRow?.financial_priorities?.includes('emergency-fund') && (
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">💰</span>
+                        <div>
+                          <div className="font-bold text-white">Build Emergency Fund</div>
+                          <div className="text-sm text-blue-100">Target: 3-6 months of expenses</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {profileRow?.career_interests?.length > 0 && (
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">💼</span>
+                        <div>
+                          <div className="font-bold text-white">Career Development</div>
+                          <div className="text-sm text-blue-100">Explore {profileRow.career_interests.slice(0, 2).join(', ')}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </AnimatedCard>
+
               {/* Profile Snapshot - Home page style */}
-              <AnimatedCard className="mb-12 p-10 md:p-12 bg-white border border-gray-200 shadow-sm" delay={0}>
+              <AnimatedCard className="mb-12 p-10 md:p-12 bg-white border border-gray-200 shadow-sm" delay={50}>
                 <div className="flex items-center justify-between mb-10">
                   <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">Your Profile</h2>
                   <Link href="/dashboard/profile/setup" className="inline-flex items-center gap-2 rounded-lg border-2 border-gray-300 px-5 py-2.5 text-indigo-600 font-semibold transition-all hover:border-indigo-600 hover:-translate-y-[2px]">
@@ -371,52 +507,144 @@ export default async function CommandDashboard() {
             </>
           )}
 
-          {/* Wealth-Builder Tools - Clean section */}
+          {/* Premium Tools Grid - Comprehensive showcase */}
           <div className="mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900 mb-10 text-center">Wealth-Builder Tools</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <AnimatedCard delay={0} className="border border-gray-200 bg-white hover:shadow-lg transition-all hover:-translate-y-[2px]">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-4">Your Premium Toolkit</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                {isPremium ? 'Access all 6 interactive calculators to optimize your military finances' : 'Upgrade to access powerful financial planning tools'}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Financial Tools */}
+              <AnimatedCard delay={0} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/tsp-modeler" className="block p-8">
                   <div className="text-5xl mb-4">📈</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Financial
+                  </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">TSP Modeler</h3>
-                  <p className="text-gray-600 leading-relaxed">Model retirement scenarios with compound growth and allocation strategies</p>
+                  <p className="text-gray-600 leading-relaxed">Project retirement growth with allocation strategies</p>
                 </Link>
               </AnimatedCard>
 
-              <AnimatedCard delay={100} className="border border-gray-200 bg-white hover:shadow-lg transition-all hover:-translate-y-[2px]">
+              <AnimatedCard delay={50} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/sdp-strategist" className="block p-8">
                   <div className="text-5xl mb-4">💵</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Financial
+                  </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">SDP Strategist</h3>
-                  <p className="text-gray-600 leading-relaxed">Calculate 10% guaranteed returns on deployment savings up to $10K</p>
+                  <p className="text-gray-600 leading-relaxed">Calculate 10% guaranteed deployment savings returns</p>
                 </Link>
               </AnimatedCard>
 
-              <AnimatedCard delay={200} className="border border-gray-200 bg-white hover:shadow-lg transition-all hover:-translate-y-[2px]">
+              <AnimatedCard delay={100} className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/house-hacking" className="block p-8">
                   <div className="text-5xl mb-4">🏡</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Financial
+                  </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">House Hacking</h3>
-                  <p className="text-gray-600 leading-relaxed">Analyze multi-unit property ROI with BAH and rental income</p>
+                  <p className="text-gray-600 leading-relaxed">Analyze multi-unit property ROI with BAH optimization</p>
+                </Link>
+              </AnimatedCard>
+
+              {/* Planning Tools */}
+              <AnimatedCard delay={150} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+                <Link href="/dashboard/tools/pcs-planner" className="block p-8">
+                  <div className="text-5xl mb-4">🚚</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Planning
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">PCS Planner</h3>
+                  <p className="text-gray-600 leading-relaxed">Budget your move and estimate PPM profit potential</p>
+                </Link>
+              </AnimatedCard>
+
+              <AnimatedCard delay={200} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+                <Link href="/dashboard/tools/on-base-savings" className="block p-8">
+                  <div className="text-5xl mb-4">🛒</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Planning
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">On-Base Savings</h3>
+                  <p className="text-gray-600 leading-relaxed">Calculate Commissary & Exchange annual savings</p>
+                </Link>
+              </AnimatedCard>
+
+              <AnimatedCard delay={250} className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+                <Link href="/dashboard/tools/salary-calculator" className="block p-8">
+                  <div className="text-5xl mb-4">💼</div>
+                  <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
+                    Planning
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Salary Calculator</h3>
+                  <p className="text-gray-600 leading-relaxed">Compare job offers with cost-of-living adjustments</p>
                 </Link>
               </AnimatedCard>
             </div>
           </div>
 
 
-          {!hasAssessment && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-              <AnimatedCard delay={0}>
-                <Link href="/dashboard/directory" className="block p-6 hover:shadow-lg transition-shadow">
-                  <h3 className="text-xl font-bold text-text mb-2">Provider Directory</h3>
-                  <p className="text-muted">Find vetted financial advisors and service providers</p>
+          {/* Quick Actions Grid */}
+          <div className="mb-16">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-4">Quick Actions</h2>
+              <p className="text-xl text-gray-600">Jump to the most important areas of your military life planning</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnimatedCard delay={0} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
+                <Link href="/dashboard/plan" className="block p-6 text-center">
+                  <div className="text-4xl mb-3">📋</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Strategic Plan</h3>
+                  <p className="text-sm text-gray-600">View your roadmap</p>
                 </Link>
               </AnimatedCard>
-              <AnimatedCard delay={100}>
-                <Link href="/dashboard/upgrade" className="block p-6 hover:shadow-lg transition-shadow">
-                  <h3 className="text-xl font-bold text-text mb-2">Upgrade to Premium</h3>
-                  <p className="text-muted">Unlock advanced features and priority support</p>
+
+              <AnimatedCard delay={50} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
+                <Link href="/dashboard/assessment" className="block p-6 text-center">
+                  <div className="text-4xl mb-3">✅</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Assessment</h3>
+                  <p className="text-sm text-gray-600">Update your profile</p>
+                </Link>
+              </AnimatedCard>
+
+              <AnimatedCard delay={100} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
+                <Link href="/dashboard/library" className="block p-6 text-center">
+                  <div className="text-4xl mb-3">📚</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Intel Library</h3>
+                  <p className="text-sm text-gray-600">Search 400+ resources</p>
+                </Link>
+              </AnimatedCard>
+
+              <AnimatedCard delay={150} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
+                <Link href="/dashboard/referrals" className="block p-6 text-center">
+                  <div className="text-4xl mb-3">🎁</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Refer & Earn</h3>
+                  <p className="text-sm text-gray-600">Get rewards</p>
                 </Link>
               </AnimatedCard>
             </div>
+          </div>
+
+          {/* Additional Resources */}
+          {!isPremium && (
+            <AnimatedCard className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-10 text-center" delay={300}>
+              <div className="text-5xl mb-4">⭐</div>
+              <h2 className="text-3xl font-serif font-black text-gray-900 mb-3">Unlock Full Access</h2>
+              <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
+                Get unlimited access to all 6 premium calculators, the Intel Library, and personalized AI-enhanced planning for just $9.99/month.
+              </p>
+              <Link 
+                href="/dashboard/upgrade"
+                className="inline-flex items-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-10 py-5 text-white font-black text-lg shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
+              >
+                Upgrade to Premium →
+              </Link>
+            </AnimatedCard>
           )}
         </div>
       </div>
