@@ -9,6 +9,10 @@ import { checkAndIncrement } from "@/lib/limits";
 export const runtime = "nodejs";
 export const maxDuration = 30; // Allow time for AI scoring
 
+// Cache version - increment this when you make changes to plan generation logic
+// This ensures users get fresh plans after deployments
+const PLAN_CACHE_VERSION = "v2";
+
 type ScoredBlock = {
   slug: string;
   ruleScore: number;
@@ -46,8 +50,8 @@ export async function GET() {
   
   const answers = validationResult.data;
 
-  // Create hash of assessment answers for cache key
-  const assessmentHash = Buffer.from(JSON.stringify(answers)).toString('base64').slice(0, 32);
+  // Create hash of assessment answers + cache version for cache key
+  const assessmentHash = Buffer.from(JSON.stringify({ ...answers, cacheVersion: PLAN_CACHE_VERSION })).toString('base64').slice(0, 32);
 
   // Check cache first
   const { data: cachedPlan } = await supabase
