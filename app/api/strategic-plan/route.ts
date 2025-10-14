@@ -7,7 +7,7 @@ import { normalizeAssessment } from "@/lib/server/assessment-normalizer";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
-export const maxDuration = 30; // Allow time for AI scoring
+export const maxDuration = 60; // Allow time for AI scoring 400+ blocks
 
 // Cache version - increment this when you make changes to plan generation logic
 // This ensures users get fresh plans after deployments

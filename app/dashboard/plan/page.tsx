@@ -126,7 +126,7 @@ export default function ExecutiveBriefing() {
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
                 <p className="flex items-center justify-center gap-2">
                   <span className="animate-pulse">⏱️</span>
-                  <span>This typically takes 20-30 seconds</span>
+                  <span>This typically takes 30-45 seconds</span>
                 </p>
                 <p className="mt-2 text-xs text-gray-500">
                   Your plan is cached for 7 days after generation for instant access
