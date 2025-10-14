@@ -1,28 +1,32 @@
-import { icons, LucideProps } from 'lucide-react';
+'use client';
+
+import * as Icons from 'lucide-react';
 import { FC } from 'react';
 
-interface IconProps extends Omit<LucideProps, 'ref'> {
-  name: keyof typeof icons;
+interface IconProps {
+  name: string;
   className?: string;
+  size?: number;
+  strokeWidth?: number;
 }
 
 /**
  * Dynamic icon wrapper for lucide-react icons
  * 
  * Usage:
- * <Icon name="truck" className="h-5 w-5 text-muted" />
- * <Icon name="briefcase" className="h-6 w-6 text-blue-600" />
+ * <Icon name="Truck" className="h-5 w-5 text-gray-700" />
+ * <Icon name="Briefcase" className="h-6 w-6 text-blue-600" />
  */
-const Icon: FC<IconProps> = ({ name, className = "h-5 w-5", ...props }) => {
-  const LucideIcon = icons[name];
+const Icon: FC<IconProps> = ({ name, className = "h-5 w-5", size, strokeWidth }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const IconComponent = (Icons as any)[name];
   
-  if (!LucideIcon) {
-    console.warn(`Icon "${name}" not found in lucide-react`);
+  if (!IconComponent || typeof IconComponent !== 'function') {
+    console.warn(`Icon "${name}" not found in lucide-react. Available icons include: Truck, Briefcase, etc.`);
     return null;
   }
   
-  return <LucideIcon className={className} {...props} />;
+  return <IconComponent className={className} size={size} strokeWidth={strokeWidth} />;
 };
 
 export default Icon;
-
