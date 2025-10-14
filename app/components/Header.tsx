@@ -111,6 +111,12 @@ export default function Header() {
               </div>
 
               <Link 
+                href="/dashboard/library" 
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                Intelligence Library
+              </Link>
+              <Link 
                 href="/dashboard/directory" 
                 className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
               >
