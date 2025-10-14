@@ -3,437 +3,433 @@
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 
-type TabMode = 'commissary' | 'exchange';
-type CommissaryMode = 'monthly' | 'pcs';
-type ExchangeMode = 'annual' | 'newhome';
-
 export default function OnBaseSavingsCalculator() {
-  const [activeTab, setActiveTab] = useState<TabMode>('commissary');
+  // Commissary state - granular breakdown
+  const [meatProduce, setMeatProduce] = useState(250);
+  const [pantryStaples, setPantryStaples] = useState(200);
+  const [diapersBaby, setDiapersBaby] = useState(100);
   
-  // Commissary state
-  const [commissaryMode, setCommissaryMode] = useState<CommissaryMode>('monthly');
-  const [commissaryRate, setCommissaryRate] = useState(25);
-  const [monthlyGroceries, setMonthlyGroceries] = useState(600);
-  const [habitCaselot, setHabitCaselot] = useState(false);
-  const [habitStoreBrands, setHabitStoreBrands] = useState(false);
-  const [habitFamilyMag, setHabitFamilyMag] = useState(false);
-  
-  // Exchange state
-  const [exchangeMode, setExchangeMode] = useState<ExchangeMode>('annual');
+  // Exchange state - integrated approach
+  const [majorPurchases, setMajorPurchases] = useState(2000);
+  const [clothingApparel, setClothingApparel] = useState(1200);
+  const [weeklyGasGallons, setWeeklyGasGallons] = useState(15);
   const [salesTaxRate, setSalesTaxRate] = useState(7);
-  const [annualClothing, setAnnualClothing] = useState(1200);
-  const [annualElectronics, setAnnualElectronics] = useState(800);
-  const [annualHomeGoods, setAnnualHomeGoods] = useState(600);
-  const [weeklyFuel, setWeeklyFuel] = useState(50);
-  const [weeklyFoodCourt, setWeeklyFoodCourt] = useState(20);
-  const [newHomeAppliances, setNewHomeAppliances] = useState(false);
-  const [newHomeFurniture, setNewHomeFurniture] = useState(false);
 
   // Track page view on mount
   useEffect(() => {
-    track('onbase_savings_view');
+    track('annual_savings_command_center_view');
   }, []);
 
-  // Commissary calculations
-  const calculateCommissarySavings = () => {
-    let baseSavings = 0;
-    
-    if (commissaryMode === 'monthly') {
-      baseSavings = (monthlyGroceries * 12 * commissaryRate) / 100;
-    } else {
-      // PCS Stock-Up mode - one-time purchase
-      baseSavings = (monthlyGroceries * commissaryRate) / 100;
-    }
-    
-    // Add habit boosters (small percentage increases)
-    let boostMultiplier = 1;
-    if (habitCaselot) boostMultiplier += 0.05; // 5% extra
-    if (habitStoreBrands) boostMultiplier += 0.03; // 3% extra
-    if (habitFamilyMag) boostMultiplier += 0.02; // 2% extra
-    
-    return baseSavings * boostMultiplier;
-  };
+  // COMMISSARY CALCULATIONS
+  // Higher savings on meat/produce (~30%), standard on others (~25%)
+  const meatProduceSavings = (meatProduce * 12 * 0.30);
+  const pantryStaplesSavings = (pantryStaples * 12 * 0.25);
+  const diapersBabySavings = (diapersBaby * 12 * 0.25);
+  const totalCommissarySavings = meatProduceSavings + pantryStaplesSavings + diapersBabySavings;
 
-  // Exchange calculations
-  const calculateExchangeSavings = () => {
-    const taxRateDecimal = salesTaxRate / 100;
-    
-    // Calculate tax savings on non-fuel items
-    const annualSpending = annualClothing + annualElectronics + annualHomeGoods;
-    const newHomeSpending = (newHomeAppliances ? 2000 : 0) + (newHomeFurniture ? 3000 : 0);
-    
-    const totalNonFuelSpending = exchangeMode === 'annual' 
-      ? annualSpending 
-      : annualSpending + newHomeSpending;
-    
-    const taxSavings = totalNonFuelSpending * taxRateDecimal;
-    
-    // MILITARY STAR savings
-    const fuelSavings = weeklyFuel * 52 * 0.05; // 5 cents per gallon, assume $50/week = ~15 gallons
-    const foodCourtSavings = weeklyFoodCourt * 52 * 0.10; // 10% discount
-    const starSavings = fuelSavings + foodCourtSavings;
-    
-    return {
-      taxSavings,
-      starSavings,
-      total: taxSavings + starSavings
-    };
-  };
+  // EXCHANGE CALCULATIONS
+  // Tax savings on major purchases and apparel
+  const taxRateDecimal = salesTaxRate / 100;
+  const totalTaxableSpending = majorPurchases + clothingApparel;
+  const taxSavings = totalTaxableSpending * taxRateDecimal;
+  
+  // MILITARY STAR® savings (5¢/gallon on gas)
+  const annualGasGallons = weeklyGasGallons * 52;
+  const starCardSavings = annualGasGallons * 0.05;
+  
+  const totalExchangeSavings = taxSavings + starCardSavings;
 
-  const commissarySavings = calculateCommissarySavings();
-  const exchangeSavings = calculateExchangeSavings();
+  // TOTAL COMBINED SAVINGS
+  const grandTotal = totalCommissarySavings + totalExchangeSavings;
 
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Tab Navigation */}
-      <div className="mb-8">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('commissary')}
-              className={`py-4 px-1 border-b-2 font-medium text-lg transition-colors ${
-                activeTab === 'commissary'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              💰 Commissary Savings
-            </button>
-            <button
-              onClick={() => setActiveTab('exchange')}
-              className={`py-4 px-1 border-b-2 font-medium text-lg transition-colors ${
-                activeTab === 'exchange'
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              🏪 Exchange Tax Savings
-            </button>
-          </nav>
+    <div className="max-w-6xl mx-auto space-y-10">
+      
+      {/* Section 1: Commissary Savings Plan */}
+      <div className="bg-white rounded-2xl border-2 border-blue-300 p-8 shadow-lg">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
+            1
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Your Commissary Savings Plan</h2>
+            <p className="text-gray-600">Break down your grocery spending for accurate savings estimates</p>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p className="text-sm text-blue-800">
+            💡 <strong>Pro Tip:</strong> Different categories have different savings rates. Meat & produce typically save you 30%, while pantry staples average 25%.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {/* Meat & Produce */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-base font-semibold text-gray-800">
+                🥩 Monthly Meat & Produce Spending
+              </label>
+              <span className="text-sm font-medium text-blue-600">~30% savings</span>
+            </div>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+              <input
+                type="number"
+                value={meatProduce}
+                onChange={(e) => setMeatProduce(Number(e.target.value))}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                placeholder="250"
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Includes: Fresh meats, poultry, seafood, fruits, vegetables
+            </p>
+          </div>
+
+          {/* Pantry Staples */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-base font-semibold text-gray-800">
+                🥫 Monthly Pantry Staples Spending
+              </label>
+              <span className="text-sm font-medium text-blue-600">~25% savings</span>
+            </div>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+              <input
+                type="number"
+                value={pantryStaples}
+                onChange={(e) => setPantryStaples(Number(e.target.value))}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                placeholder="200"
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Includes: Canned goods, dry goods, paper products, cleaning supplies
+            </p>
+          </div>
+
+          {/* Diapers & Baby */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-base font-semibold text-gray-800">
+                👶 Monthly Diapers & Baby Supplies Spending
+              </label>
+              <span className="text-sm font-medium text-blue-600">~25% savings</span>
+            </div>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+              <input
+                type="number"
+                value={diapersBaby}
+                onChange={(e) => setDiapersBaby(Number(e.target.value))}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                placeholder="100"
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Includes: Diapers, wipes, formula, baby food (enter 0 if not applicable)
+            </p>
+          </div>
+
+          {/* Commissary Results Preview */}
+          <div className="mt-8 pt-6 border-t-2 border-gray-200">
+            <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+              <p className="text-sm text-gray-700 mb-2 font-medium text-center">
+                Estimated Annual Commissary Savings
+              </p>
+              <p className="text-5xl font-black text-blue-600 text-center mb-3">
+                ${Math.round(totalCommissarySavings).toLocaleString()}
+              </p>
+              <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
+                <div>
+                  <p className="text-gray-600">Meat/Produce</p>
+                  <p className="font-bold text-blue-700">${Math.round(meatProduceSavings).toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Pantry Staples</p>
+                  <p className="font-bold text-blue-700">${Math.round(pantryStaplesSavings).toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Baby Supplies</p>
+                  <p className="font-bold text-blue-700">${Math.round(diapersBabySavings).toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Commissary Tab */}
-      {activeTab === 'commissary' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-900">Commissary Savings Calculator</h3>
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setCommissaryMode('monthly')}
-                className={`px-4 py-2 text-sm rounded-md transition-colors font-medium ${
-                  commissaryMode === 'monthly' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setCommissaryMode('pcs')}
-                className={`px-4 py-2 text-sm rounded-md transition-colors font-medium ${
-                  commissaryMode === 'pcs' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                }`}
-              >
-                PCS Stock-Up
-              </button>
-            </div>
+      {/* Section 2: Exchange Savings Plan */}
+      <div className="bg-white rounded-2xl border-2 border-green-300 p-8 shadow-lg">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-green-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
+            2
           </div>
-          
-          <p className="text-gray-600 mb-6">
-            {commissaryMode === 'monthly'
-              ? 'Estimate your annual savings based on your monthly grocery spending.'
-              : 'Estimate savings on a one-time PCS stock-up purchase.'}
-          </p>
-
-          <div className="space-y-6">
-            {/* Savings Rate Slider */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Estimated Savings Rate: {commissaryRate}%
-              </label>
-              <input
-                type="range"
-                min="10"
-                max="35"
-                value={commissaryRate}
-                onChange={(e) => setCommissaryRate(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                DeCA worldwide average is ≈25%. Adjust based on your local store and shopping habits.
-              </p>
-            </div>
-
-            {/* Monthly Spending */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                {commissaryMode === 'monthly' ? 'Monthly Grocery Spending' : 'PCS Stock-Up Amount'}
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  value={monthlyGroceries}
-                  onChange={(e) => setMonthlyGroceries(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
-                  placeholder="600"
-                />
-              </div>
-            </div>
-
-            {/* Habit Boosters */}
-            <div>
-              <h4 className="font-bold text-gray-700 mb-3">💡 Savings Habit Boosters</h4>
-              <div className="space-y-2">
-                <label className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={habitCaselot}
-                    onChange={(e) => setHabitCaselot(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-3 text-gray-700">Shop at Case Lot Sales (+5%)</span>
-                </label>
-                <label className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={habitStoreBrands}
-                    onChange={(e) => setHabitStoreBrands(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-3 text-gray-700">Buy Commissary Store Brands (+3%)</span>
-                </label>
-                <label className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-blue-50 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={habitFamilyMag}
-                    onChange={(e) => setHabitFamilyMag(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-3 text-gray-700">Use Family Magazine Coupons (+2%)</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="mt-8 pt-6 border-t-2 border-gray-200">
-              <div className="text-center bg-blue-50 p-6 rounded-xl">
-                <p className="text-gray-700 mb-2 font-medium">
-                  {commissaryMode === 'monthly' ? 'Estimated Annual Savings:' : 'Estimated PCS Stock-Up Savings:'}
-                </p>
-                <p className="text-5xl font-black text-blue-600">
-                  ${Math.round(commissarySavings).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-3">
-                  Estimates use DeCA&apos;s worldwide average savings. Real savings vary by store and basket.
-                </p>
-              </div>
-            </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Your Exchange Savings Plan</h2>
+            <p className="text-gray-600">Calculate tax savings and MILITARY STAR® benefits</p>
           </div>
         </div>
-      )}
 
-      {/* Exchange Tab */}
-      {activeTab === 'exchange' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-900">Exchange Tax Savings Calculator</h3>
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setExchangeMode('annual')}
-                className={`px-4 py-2 text-sm rounded-md transition-colors font-medium ${
-                  exchangeMode === 'annual' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                }`}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+          <p className="text-sm text-green-800">
+            💡 <strong>Remember:</strong> Exchange shopping is tax-free! Plus, MILITARY STAR® cardholders get 5¢/gallon fuel discounts.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {/* Sales Tax Rate */}
+          <div>
+            <label className="block text-base font-semibold text-gray-800 mb-2">
+              💳 Your Local Sales Tax Rate (%)
+            </label>
+            <input
+              type="number"
+              value={salesTaxRate}
+              onChange={(e) => setSalesTaxRate(Number(e.target.value))}
+              step="0.01"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+              placeholder="7.25"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Not sure?{' '}
+              <a
+                href="https://www.avalara.com/taxrates/en/state-rates.html"
+                target="_blank"
+                rel="noopener"
+                className="text-blue-600 underline"
               >
-                Annual
-              </button>
-              <button
-                onClick={() => setExchangeMode('newhome')}
-                className={`px-4 py-2 text-sm rounded-md transition-colors font-medium ${
-                  exchangeMode === 'newhome' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                }`}
-              >
-                New Home
-              </button>
-            </div>
+                Look up your rate by state
+              </a>
+            </p>
           </div>
 
-          <p className="text-gray-600 mb-6">
-            {exchangeMode === 'annual'
-              ? 'Estimate your total annual tax savings by shopping tax-free at the Exchange.'
-              : 'Calculate tax savings when furnishing a new home after PCS.'}
-          </p>
-
-          <div className="space-y-6">
-            {/* Sales Tax Rate */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Local Sales Tax Rate (%)
-              </label>
+          {/* Major Annual Purchases */}
+          <div>
+            <label className="block text-base font-semibold text-gray-800 mb-2">
+              🖥️ Major Annual Purchases (Electronics, Furniture, Appliances)
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
               <input
                 type="number"
-                value={salesTaxRate}
-                onChange={(e) => setSalesTaxRate(Number(e.target.value))}
-                step="0.01"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
-                placeholder="7.25"
+                value={majorPurchases}
+                onChange={(e) => setMajorPurchases(Number(e.target.value))}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                placeholder="2000"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Not sure?{' '}
-                <a
-                  href="https://www.avalara.com/taxrates/en/state-rates.html"
-                  target="_blank"
-                  rel="noopener"
-                  className="text-blue-600 underline"
-                >
-                  Look up your rate by state
-                </a>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Examples: TVs, laptops, phones, furniture, appliances (annual total)
+            </p>
+          </div>
+
+          {/* Clothing & Apparel */}
+          <div>
+            <label className="block text-base font-semibold text-gray-800 mb-2">
+              👕 Annual Clothing & Apparel Spending
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+              <input
+                type="number"
+                value={clothingApparel}
+                onChange={(e) => setClothingApparel(Number(e.target.value))}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                placeholder="1200"
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Includes: Clothing, shoes, accessories for entire family
+            </p>
+          </div>
+
+          {/* Weekly Gas */}
+          <div>
+            <label className="block text-base font-semibold text-gray-800 mb-2">
+              ⛽ Average Weekly Gas (Gallons)
+            </label>
+            <input
+              type="number"
+              value={weeklyGasGallons}
+              onChange={(e) => setWeeklyGasGallons(Number(e.target.value))}
+              step="0.1"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+              placeholder="15"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              MILITARY STAR® card saves you 5¢ per gallon
+            </p>
+          </div>
+
+          {/* Exchange Results Preview */}
+          <div className="mt-8 pt-6 border-t-2 border-gray-200">
+            <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
+              <p className="text-sm text-gray-700 mb-4 font-medium text-center">
+                Estimated Annual Exchange Savings Breakdown
               </p>
-            </div>
-
-            {/* Annual Spending */}
-            <div className="space-y-4">
-              <h4 className="font-bold text-gray-700">Annual Exchange Spending</h4>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Clothing & Apparel
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={annualClothing}
-                    onChange={(e) => setAnnualClothing(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Electronics & Tech
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={annualElectronics}
-                    onChange={(e) => setAnnualElectronics(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Home Goods & Décor
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={annualHomeGoods}
-                    onChange={(e) => setAnnualHomeGoods(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* New Home Options */}
-            {exchangeMode === 'newhome' && (
-              <div>
-                <h4 className="font-bold text-gray-700 mb-3">Big-Ticket PCS Purchases</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-green-50 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={newHomeAppliances}
-                      onChange={(e) => setNewHomeAppliances(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                    />
-                    <span className="ml-3 text-gray-700">Appliances (~$2,000)</span>
-                  </label>
-                  <label className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-green-50 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={newHomeFurniture}
-                      onChange={(e) => setNewHomeFurniture(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                    />
-                    <span className="ml-3 text-gray-700">Furniture (~$3,000)</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* Weekly STAR Savings */}
-            <div className="space-y-4">
-              <h4 className="font-bold text-gray-700">Weekly MILITARY STAR® Savings</h4>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Weekly Fuel Spending
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={weeklyFuel}
-                    onChange={(e) => setWeeklyFuel(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">5¢/gal discount with MILITARY STAR®</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Weekly Food Court Spending
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
-                    value={weeklyFoodCourt}
-                    onChange={(e) => setWeeklyFoodCourt(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">10% discount with MILITARY STAR®</p>
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="mt-8 pt-6 border-t-2 border-gray-200">
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="bg-green-50 p-4 rounded-lg text-center border-2 border-green-200">
-                  <p className="text-sm text-gray-600 mb-1">Tax Savings</p>
-                  <p className="text-3xl font-bold text-green-700">
-                    ${Math.round(exchangeSavings.taxSavings).toLocaleString()}
+              <div className="grid md:grid-cols-2 gap-4 mb-4">
+                <div className="bg-white rounded-lg p-4 border border-green-300">
+                  <p className="text-xs text-gray-600 mb-1">Tax Savings (Non-Fuel)</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    ${Math.round(taxSavings).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Based on {salesTaxRate}% local rate
                   </p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
-                  <p className="text-sm text-gray-600 mb-1">STAR® Savings</p>
-                  <p className="text-3xl font-bold text-blue-700">
-                    ${Math.round(exchangeSavings.starSavings).toLocaleString()}
+                
+                <div className="bg-white rounded-lg p-4 border border-blue-300">
+                  <p className="text-xs text-gray-600 mb-1">MILITARY STAR® Fuel Savings</p>
+                  <p className="text-3xl font-bold text-blue-600">
+                    ${Math.round(starCardSavings).toLocaleString()}
                   </p>
-                </div>
-                <div className="bg-emerald-50 p-4 rounded-lg text-center border-2 border-emerald-300">
-                  <p className="text-sm text-gray-600 mb-1 font-semibold">Total Annual Savings</p>
-                  <p className="text-3xl font-bold text-emerald-700">
-                    ${Math.round(exchangeSavings.total).toLocaleString()}
+                  <p className="text-xs text-gray-500 mt-1">
+                    {annualGasGallons.toLocaleString()} gallons × 5¢
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                Assumes your local sales tax rate for non-fuel items. Fuel prices are competitive with local market.
-              </p>
+
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
+                <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
+                <p className="text-4xl font-black">
+                  ${Math.round(totalExchangeSavings).toLocaleString()}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Section 3: Executive Summary */}
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
+            <span className="text-2xl">⭐</span>
+            <span className="text-sm font-black text-amber-900 uppercase tracking-wider">
+              Executive Summary
+            </span>
+          </div>
+          <h2 className="text-4xl font-bold text-gray-900 mb-3">
+            Your Annual Savings Command Center
+          </h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            Here&apos;s the complete picture of your on-base shopping benefits
+          </p>
+        </div>
+
+        {/* Breakdown Cards */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
+            <div className="text-4xl mb-3">🛒</div>
+            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+              Commissary Savings
+            </p>
+            <p className="text-4xl font-black text-blue-600 mb-2">
+              ${Math.round(totalCommissarySavings).toLocaleString()}
+            </p>
+            <div className="flex justify-center gap-4 text-xs text-gray-600">
+              <span>Meat: ${Math.round(meatProduceSavings).toLocaleString()}</span>
+              <span>Pantry: ${Math.round(pantryStaplesSavings).toLocaleString()}</span>
+              {diapersBabySavings > 0 && <span>Baby: ${Math.round(diapersBabySavings).toLocaleString()}</span>}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border-2 border-green-400 p-6 text-center">
+            <div className="text-4xl mb-3">🏪</div>
+            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+              Exchange Savings
+            </p>
+            <p className="text-4xl font-black text-green-600 mb-2">
+              ${Math.round(totalExchangeSavings).toLocaleString()}
+            </p>
+            <div className="flex justify-center gap-4 text-xs text-gray-600">
+              <span>Tax: ${Math.round(taxSavings).toLocaleString()}</span>
+              <span>STAR®: ${Math.round(starCardSavings).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Grand Total */}
+        <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
+          <p className="text-center text-lg font-semibold mb-3 opacity-90">
+            💰 Total Combined Annual Savings
+          </p>
+          <p className="text-center text-6xl font-black mb-6">
+            ${Math.round(grandTotal).toLocaleString()}
+          </p>
+          <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
+            <p className="text-white text-center text-base leading-relaxed">
+              <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
+              <span className="text-2xl font-black">${Math.round(grandTotal).toLocaleString()}</span> this year.</strong>
+            </p>
+          </div>
+        </div>
+
+        {/* Context */}
+        <div className="mt-6 grid md:grid-cols-3 gap-4 text-center">
+          <div className="bg-white/50 rounded-lg p-3">
+            <p className="text-xs text-gray-600 mb-1">Monthly Equivalent</p>
+            <p className="text-lg font-bold text-gray-900">
+              ${Math.round(grandTotal / 12).toLocaleString()}/mo
+            </p>
+          </div>
+          <div className="bg-white/50 rounded-lg p-3">
+            <p className="text-xs text-gray-600 mb-1">Weekly Equivalent</p>
+            <p className="text-lg font-bold text-gray-900">
+              ${Math.round(grandTotal / 52).toLocaleString()}/wk
+            </p>
+          </div>
+          <div className="bg-white/50 rounded-lg p-3">
+            <p className="text-xs text-gray-600 mb-1">Per Paycheck (24/year)</p>
+            <p className="text-lg font-bold text-gray-900">
+              ${Math.round(grandTotal / 24).toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        <p className="text-xs text-gray-500 mt-6 text-center">
+          💡 These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
+        </p>
+      </div>
+
+      {/* Educational Tips */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
+        <h3 className="text-xl font-bold text-indigo-900 mb-4">💡 Maximize Your Savings</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <ul className="space-y-2 text-sm text-indigo-800">
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>Shop Commissary on Tuesday-Thursday mornings for best selection</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>Case lot sales offer an additional 10-30% off bulk items</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>Commissary brand items often match or beat name brands in quality</span>
+            </li>
+          </ul>
+          <ul className="space-y-2 text-sm text-indigo-800">
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>Exchange price-matches local retailers (check your store&apos;s policy)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>MILITARY STAR® card offers 10% off food court purchases too</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-bold">•</span>
+              <span>Your Exchange purchases fund MWR programs and facilities</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
-

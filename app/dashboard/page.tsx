@@ -569,8 +569,8 @@ export default async function CommandDashboard() {
                   <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
                     Planning
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">On-Base Savings</h3>
-                  <p className="text-gray-600 leading-relaxed">Calculate Commissary & Exchange annual savings</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Annual Savings Center</h3>
+                  <p className="text-gray-600 leading-relaxed">Strategic Commissary & Exchange savings dashboard</p>
                 </Link>
               </AnimatedCard>
 

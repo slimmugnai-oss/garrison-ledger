@@ -7,10 +7,10 @@ import Footer from '@/app/components/Footer';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "On-Base Savings Calculator - Commissary & Exchange Tax Savings",
-  description: "Calculate your annual savings from shopping at the Commissary and Exchange. Estimate tax savings, MILITARY STAR rewards, and more. Military family financial planning made easy.",
+  title: "Annual Savings Command Center - Commissary & Exchange Calculator",
+  description: "Strategic savings calculator for military families. Calculate exact Commissary and Exchange savings with granular breakdowns. See your total annual on-base shopping benefits in one powerful dashboard.",
   path: "/dashboard/tools/on-base-savings",
-  keywords: ["commissary savings", "exchange tax savings", "military shopping", "MILITARY STAR", "on base shopping calculator", "military family budget"]
+  keywords: ["commissary savings calculator", "exchange tax savings", "military shopping benefits", "MILITARY STAR savings", "on base annual savings", "military family budget calculator"]
 });
 
 export default function Page() {
@@ -30,20 +30,20 @@ export default function Page() {
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
-              On-Base Savings Calculator
+              Annual Savings Command Center
             </h1>
             <p className="mx-auto max-w-3xl text-xl text-gray-600">
-              Discover how much you can save annually by shopping at the Commissary and Exchange. 
-              Calculate tax savings, track smart shopping habits, and maximize your military benefits.
+              Your strategic dashboard for maximizing on-base shopping benefits. 
+              Get granular breakdowns of Commissary and Exchange savings with real-time calculations.
             </p>
           </div>
 
           <SignedOut>
             <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-green-400">
               <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Calculate Your Exact Savings</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Your Strategic Savings Dashboard</h2>
               <p className="text-lg text-gray-700 mb-2">
-                See how much you can save annually from Commissary & Exchange shopping
+                Get granular breakdowns of exactly where your savings come from
               </p>
               <p className="text-sm text-gray-600 mb-6">
                 💡 Most families save <strong className="text-green-600">$2,000-4,000/year</strong> - find your number

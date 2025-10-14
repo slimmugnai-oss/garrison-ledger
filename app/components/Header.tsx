@@ -77,7 +77,7 @@ export default function Header() {
                       PCS Financial Planner
                     </Link>
                     <Link href="/dashboard/tools/on-base-savings" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
-                      On-Base Savings
+                      Annual Savings Center
                     </Link>
                     <Link href="/dashboard/tools/salary-calculator" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       Salary Calculator
@@ -237,7 +237,7 @@ export default function Header() {
                       PCS Financial Planner
                     </Link>
                     <Link href="/dashboard/tools/on-base-savings" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
-                      On-Base Savings
+                      Annual Savings Center
                     </Link>
                     <Link href="/dashboard/tools/salary-calculator" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
                       Salary Calculator
