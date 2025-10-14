@@ -7,6 +7,8 @@ import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -197,12 +199,15 @@ export default function TspModeler() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-serif font-black text-text-headings mb-2 flex items-center gap-2"><Icon name="TrendingUp" className="h-8 w-8" /> TSP Allocation Modeler</h1>
-          <p className="text-lg text-text-body">Optimize your Thrift Savings Plan allocation for maximum retirement growth</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+      
+      <Section>
+        <PageHeader 
+          title="TSP Allocation Modeler"
+          subtitle="Optimize your Thrift Savings Plan allocation for maximum retirement growth"
+          right={<Icon name="TrendingUp" className="h-10 w-10 text-text-headings" />}
+        />
 
         <div className="space-y-8">
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
@@ -414,7 +419,7 @@ export default function TspModeler() {
             </div>
           )}
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

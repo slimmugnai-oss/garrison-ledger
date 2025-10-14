@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -183,7 +185,7 @@ export default function PcsFinancialPlanner() {
         {entitlementData && !loadingEntitlements && (
           <div className="mt-6 bg-white border-2 border-indigo-400 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">📋</span>
+              <Icon name="ClipboardList" className="h-6 w-6 text-gray-700" />
               <h4 className="text-xl font-bold text-gray-900">Your PCS Entitlements</h4>
             </div>
             

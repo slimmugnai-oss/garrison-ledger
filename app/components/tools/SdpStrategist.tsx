@@ -6,6 +6,8 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
 
 type Scenario = {
   key: 'A' | 'B' | 'C';
@@ -116,12 +118,15 @@ export default function SdpStrategist() {
   });
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-serif font-black text-text-headings mb-2 flex items-center gap-2"><Icon name="DollarSign" className="h-10 w-10" /> SDP Strategist</h1>
-          <p className="text-xl text-text-body">Maximize your Savings Deposit Program returns with strategic investment planning</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+      
+      <Section>
+        <PageHeader 
+          title="SDP Strategist"
+          subtitle="Maximize your Savings Deposit Program returns with strategic investment planning"
+          right={<Icon name="DollarSign" className="h-10 w-10 text-text-headings" />}
+        />
 
         <div className="space-y-8">
           {/* Input */}
@@ -224,7 +229,7 @@ export default function SdpStrategist() {
             </div>
           )}
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

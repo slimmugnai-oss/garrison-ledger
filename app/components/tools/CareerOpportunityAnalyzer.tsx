@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { track } from '@/lib/track';
 import CitySearchInput from '@/app/components/ui/CitySearchInput';
 import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
 
 interface City {
   city: string;
@@ -143,16 +145,13 @@ export default function CareerOpportunityAnalyzer() {
   // };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <Section>
+      <PageHeader 
+        title="Career Opportunity Analyzer"
+        subtitle="Compare total compensation, state taxes, and cost of living to understand your real earning power"
+      />
+      
       <div className="bg-card rounded-xl border border-border shadow-sm">
-        {/* Header */}
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-t-xl p-8 text-white">
-          <h2 className="text-4xl font-bold mb-3">Career Opportunity Analyzer</h2>
-          <p className="text-indigo-100 text-lg">
-            Make smarter career moves with a complete financial picture. Compare total compensation, 
-            tax implications, and cost of living to see your real earning power.
-          </p>
-        </div>
 
         <div className="p-8">
           {/* Input Grid */}
@@ -510,7 +509,7 @@ export default function CareerOpportunityAnalyzer() {
           </p>
         </div>
       </div>
-    </div>
+    </Section>
   );
 }
 

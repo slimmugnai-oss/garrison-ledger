@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
+import Badge from '@/app/components/ui/Badge';
 
 type Question = {
   id: string;
@@ -131,11 +134,17 @@ export default function AdaptiveAssessmentPage() {
     <>
       <Header />
       <div className="min-h-screen bg-background">
+        {/* Subtle background gradient */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+        
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
-            <h1 className="text-4xl font-serif font-black text-text-headings mb-2">Quick Assessment</h1>
-            <p className="text-xl text-text-body">Intelligent assessment that adapts to your situation</p>
+            <Badge variant="primary">Strategic Assessment</Badge>
           </div>
+          <PageHeader 
+            title="Quick Assessment"
+            subtitle="Intelligent assessment that adapts to your situation"
+          />
 
           {/* Progress Bar */}
           <div className="mb-8">
@@ -158,7 +167,7 @@ export default function AdaptiveAssessmentPage() {
           )}
 
           {currentQuestion && (
-            <AnimatedCard className="p-8 md:p-10 bg-gradient-to-br from-white to-slate-50 border-2 border-slate-200 shadow-xl">
+            <AnimatedCard className="p-8 md:p-10 bg-card border-2 border-border shadow-xl">
               <div className="mb-8">
                 <div className="text-sm text-blue-600 font-bold mb-3 uppercase tracking-wider">
                   Question {questionsAsked.length + 1}

@@ -10,6 +10,9 @@ import { useUser } from '@clerk/nextjs';
 import Footer from '@/app/components/Footer';
 import Icon from '@/app/components/ui/Icon';
 import { IconName } from '@/app/components/ui/icon-registry';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
+import Badge from '@/app/components/ui/Badge';
 
 type Block = {
   slug: string;

@@ -8,6 +8,9 @@ import { createClient } from '@supabase/supabase-js';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import { generatePageMeta } from "@/lib/seo-config";
 import Icon from '../components/ui/Icon';
+import PageHeader from '../components/ui/PageHeader';
+import Section from '../components/ui/Section';
+import Badge from '../components/ui/Badge';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -57,23 +60,21 @@ export default async function CommandDashboard() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-          {/* Hero Header - Home page style */}
+          {/* Hero Header */}
           <div className="mb-16 text-center">
             <div className="mb-4">
               {isPremium ? (
-                <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                  <Icon name="Star" className="h-4 w-4 inline" /> Premium Member
-                </span>
+                <Badge variant="warning">
+                  <Icon name="Star" className="h-3 w-3 inline mr-1" /> Premium Member
+                </Badge>
               ) : (
-                <span className="inline-flex items-center rounded-full border border-green-300 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 uppercase tracking-wider">
-                  Free Forever
-                </span>
+                <Badge variant="success">Free Forever</Badge>
               )}
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-text-headings mb-4">
               Welcome back, {user.firstName || 'Commander'}
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            <p className="mx-auto max-w-2xl text-xl text-text-body">
               Your command center for military life planning
             </p>
           </div>
@@ -120,17 +121,17 @@ export default async function CommandDashboard() {
 
           {hasAssessment && (
             <>
-              {/* Executive Summary - NEW! */}
+              {/* Executive Summary */}
               <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 p-10 md:p-12 text-white shadow-2xl border-0" delay={0}>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
-                    <Icon name="Zap" className="h-10 w-10 text-gray-700" />
+                    <Icon name="Zap" className="h-10 w-10 text-white" />
                   </div>
                   <div>
-                    <div className="inline-flex items-center px-3 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-black mb-2 uppercase tracking-widest">
-                      Executive Summary
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-serif font-black">Your Command Center</h2>
+                    <Badge variant="primary">
+                      <span className="text-white">Executive Summary</span>
+                    </Badge>
+                    <h2 className="text-3xl md:text-4xl font-serif font-black mt-2">Your Command Center</h2>
                   </div>
                 </div>
                 

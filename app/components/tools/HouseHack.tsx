@@ -6,6 +6,8 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Section from '@/app/components/ui/Section';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -116,12 +118,15 @@ export default function HouseHack() {
   }, [price, rate, tax, ins, bah, rent, isPremium, saveTimeoutRef]);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">🏠 House Hacking Calculator</h1>
-          <p className="text-xl text-gray-600">Analyze multi-unit property investments with BAH and rental income</p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+      
+      <Section>
+        <PageHeader 
+          title="House Hacking Calculator"
+          subtitle="Analyze multi-unit property investments with BAH and rental income"
+          right={<Icon name="House" className="h-10 w-10 text-text-headings" />}
+        />
 
         <div className="space-y-8">
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
@@ -256,7 +261,7 @@ export default function HouseHack() {
             </div>
           )}
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

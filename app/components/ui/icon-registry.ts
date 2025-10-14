@@ -56,6 +56,7 @@ import {
   // General
   Zap,
   BookOpen,
+  ClipboardList,
   
   type LucideIcon,
 } from 'lucide-react';
@@ -110,6 +111,7 @@ export const iconRegistry = {
   // General
   Zap,
   BookOpen,
+  ClipboardList,
 } as const;
 
 // Export the type of valid icon names
