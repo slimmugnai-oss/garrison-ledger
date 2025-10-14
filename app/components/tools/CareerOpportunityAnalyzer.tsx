@@ -482,7 +482,6 @@ export default function CareerOpportunityAnalyzer() {
                   </div>
                 </div>
               </div>
-                </>
               ) : (
                 <div className="relative">
                   <div className="blur-sm pointer-events-none select-none">
