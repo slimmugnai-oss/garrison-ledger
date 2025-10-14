@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import BaseAutocomplete from '@/app/components/ui/BaseAutocomplete';
 
 type ProfilePayload = {
   age?: number | null;
@@ -213,11 +214,19 @@ export default function ProfileSetupPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Current base</label>
-                <input placeholder="e.g., Fort Liberty, NC (optional)" className="w-full border border-border rounded-lg px-3 py-2" value={data.current_base ?? ''} onChange={e => setData(d => ({ ...d, current_base: e.target.value || null }))} />
+                <BaseAutocomplete 
+                  value={data.current_base ?? ''} 
+                  onChange={(value) => setData(d => ({ ...d, current_base: value || null }))}
+                  placeholder="e.g., Fort Liberty, NC (optional)"
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Next base</label>
-                <input placeholder="If known (optional)" className="w-full border border-border rounded-lg px-3 py-2" value={data.next_base ?? ''} onChange={e => setData(d => ({ ...d, next_base: e.target.value || null }))} />
+                <BaseAutocomplete 
+                  value={data.next_base ?? ''} 
+                  onChange={(value) => setData(d => ({ ...d, next_base: value || null }))}
+                  placeholder="If known (optional)"
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-muted mb-2">PCS date</label>
