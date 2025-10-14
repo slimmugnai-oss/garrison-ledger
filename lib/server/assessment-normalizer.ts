@@ -53,30 +53,44 @@ export function normalizeAssessment(
   // Profile data ALWAYS takes precedence
   return {
     // Demographics - prefer profile, fallback to assessment
-    age: profile?.age || profile?.birth_year ? new Date().getFullYear() - profile.birth_year : undefined,
-    gender: profile?.gender,
-    yearsOfService: profile?.years_of_service || profile?.time_in_service_months ? Math.floor(profile.time_in_service_months / 12) : undefined,
-    rank: profile?.rank || a.rank,
-    branch: profile?.branch || a.branch,
+    age: (profile?.age as number | undefined) || 
+         (typeof profile?.birth_year === 'number' ? new Date().getFullYear() - profile.birth_year : undefined),
+    gender: profile?.gender as string | undefined,
+    yearsOfService: (profile?.years_of_service as number | undefined) || 
+                    (typeof profile?.time_in_service_months === 'number' ? Math.floor(profile.time_in_service_months / 12) : undefined),
+    rank: (profile?.rank as string | undefined) || (a.rank as string | undefined),
+    branch: (profile?.branch as string | undefined) || (a.branch as string | undefined),
     
     // Timeline - prefer profile, fallback to assessment
-    pcsSituation: profile?.pcs_date ? 'orders' : (move?.pcsSituation || a.pcs_situation || s?.pcsTimeline),
-    deploymentStatus: profile?.deployment_status || deployment?.status || a.deployment_status,
+    pcsSituation: profile?.pcs_date ? 'orders' : 
+                  (move?.pcsSituation as string | undefined) || 
+                  (a.pcs_situation as string | undefined) || 
+                  (s?.pcsTimeline as string | undefined),
+    deploymentStatus: (profile?.deployment_status as string | undefined) || 
+                      (deployment?.status as string | undefined) || 
+                      (a.deployment_status as string | undefined),
     
     // Family - prefer profile
-    familyStatus: profile?.marital_status || a.family_status || foundation?.familySnapshot,
-    numChildren: profile?.num_children ?? undefined,
-    efmpEnrolled: profile?.has_efmp ?? foundation?.efmpEnrolled ?? s?.efmpEnrolled,
+    familyStatus: (profile?.marital_status as string | undefined) || 
+                  (a.family_status as string | undefined) || 
+                  (foundation?.familySnapshot as string | undefined),
+    numChildren: profile?.num_children as number | undefined,
+    efmpEnrolled: (profile?.has_efmp as boolean | undefined) ?? 
+                  (foundation?.efmpEnrolled as boolean | undefined) ?? 
+                  (s?.efmpEnrolled as boolean | undefined),
     
     // Financial - prefer profile
-    biggestConcern: a.biggest_concern || finance?.priority || s?.financialWorry,
-    tspRange: profile?.tsp_balance_range,
-    debtRange: profile?.debt_amount_range,
-    emergencyFundRange: profile?.emergency_fund_range,
+    biggestConcern: (a.biggest_concern as string | undefined) || 
+                    (finance?.priority as string | undefined) || 
+                    (s?.financialWorry as string | undefined),
+    tspRange: profile?.tsp_balance_range as string | undefined,
+    debtRange: profile?.debt_amount_range as string | undefined,
+    emergencyFundRange: profile?.emergency_fund_range as string | undefined,
     
     // Goals - prefer profile
-    careerGoals: profile?.career_interests || career?.ambitions || [],
-    financialPriorities: profile?.financial_priorities || []
+    careerGoals: (profile?.career_interests as string[] | undefined) || 
+                 (career?.ambitions as string[] | undefined) || [],
+    financialPriorities: (profile?.financial_priorities as string[] | undefined) || []
   };
 }
 
