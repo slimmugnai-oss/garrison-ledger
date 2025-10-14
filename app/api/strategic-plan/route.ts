@@ -156,8 +156,8 @@ export async function GET() {
   // Re-sort by final score (in case AI changed priorities)
   scoredBlocks.sort((a, b) => b.finalScore - a.finalScore);
 
-  // Take top 5
-  const topSlugs = scoredBlocks.slice(0, 5).map(sb => sb.slug);
+  // Take top 15 for comprehensive coverage
+  const topSlugs = scoredBlocks.slice(0, 15).map(sb => sb.slug);
 
   // Fetch full content for top-scored blocks
   const { data: blocks } = await supabase

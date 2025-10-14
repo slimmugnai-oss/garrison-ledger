@@ -43,6 +43,7 @@ export default function ExecutiveBriefing() {
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
   const [plan, setPlan] = useState<PlanData | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('all');
 
   useEffect(() => {
     async function loadPlan() {
@@ -125,18 +126,18 @@ export default function ExecutiveBriefing() {
     <>
       <Header />
       <div className="min-h-screen bg-background">
-        {/* Premium Hero */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white py-20 md:py-28 border-b-4 border-primary-accent">
+        {/* Compact Hero */}
+        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white py-10 md:py-14 border-b-4 border-primary-accent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="max-w-4xl">
-                <div className="inline-flex items-center px-5 py-2 bg-primary-accent/30 border-2 border-indigo-400/50 rounded-full text-indigo-200 text-sm font-black mb-6 uppercase tracking-widest">
+                <div className="inline-flex items-center px-4 py-1.5 bg-primary-accent/30 border-2 border-indigo-400/50 rounded-full text-indigo-200 text-xs font-black mb-3 uppercase tracking-widest">
                   Executive Briefing
                 </div>
-                <h1 className="text-6xl md:text-7xl font-serif font-black tracking-tight mb-6 leading-none">
+                <h1 className="text-4xl md:text-5xl font-serif font-black tracking-tight mb-3 leading-tight">
                   {user?.firstName || 'Your'}&apos;s Military Financial Roadmap
                 </h1>
-                <p className="text-2xl text-slate-200 leading-relaxed">
+                <p className="text-lg text-slate-200 leading-relaxed">
                   <strong className="text-white font-bold">{plan.primarySituation}</strong>
                 </p>
               </div>
@@ -188,9 +189,59 @@ export default function ExecutiveBriefing() {
           <SectionHeader icon="📚">
             Your Curated Action Plan
           </SectionHeader>
-          <p className="text-xl text-text-body mb-12 -mt-6">
+          <p className="text-xl text-text-body mb-8 -mt-6">
             {plan.blocks.length} essential {plan.blocks.length === 1 ? 'resource' : 'resources'} assembled for your situation
           </p>
+
+          {/* Topic Tabs */}
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-3">
+              {(() => {
+                const getDomain = (block: Block): string => {
+                  if (block.domain) return block.domain;
+                  const slug = block.slug;
+                  if (slug.includes('pcs') || slug.includes('move') || slug.includes('station')) return 'pcs';
+                  if (slug.includes('career') || slug.includes('tsp') || slug.includes('education') || slug.includes('mycaa')) return 'career';
+                  if (slug.includes('deploy') || slug.includes('sdp')) return 'deployment';
+                  return 'finance';
+                };
+                
+                const domainCounts = plan.blocks.reduce((acc, block) => {
+                  const domain = getDomain(block);
+                  acc[domain] = (acc[domain] || 0) + 1;
+                  return acc;
+                }, {} as Record<string, number>);
+                
+                const tabs = [
+                  { id: 'all', label: 'All Topics', count: plan.blocks.length, icon: '📚' },
+                  ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: '🚚' }] : []),
+                  ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: '🌍' }] : []),
+                  ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: '💼' }] : []),
+                  ...(domainCounts.finance ? [{ id: 'finance', label: 'Finance', count: domainCounts.finance, icon: '💰' }] : []),
+                ];
+                
+                return tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-6 py-3 rounded-xl font-bold transition-all shadow-md ${
+                      activeTab === tab.id
+                        ? 'bg-blue-600 text-white shadow-lg scale-105'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg'
+                    }`}
+                  >
+                    <span className="mr-2">{tab.icon}</span>
+                    {tab.label}
+                    <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
+                      activeTab === tab.id ? 'bg-white/20' : 'bg-gray-200'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  </button>
+                ));
+              })()}
+            </div>
+          </div>
 
           {/* AI Enhancement Badge + Regenerate Button */}
           <div className="flex items-center justify-between mb-8">
@@ -241,7 +292,12 @@ export default function ExecutiveBriefing() {
                 finance: '💰'
               };
 
-              return domainOrder.filter(d => domainBlocks[d]?.length > 0).map(domain => {
+              // Filter domains by active tab
+              const filteredDomains = activeTab === 'all' 
+                ? domainOrder.filter(d => domainBlocks[d]?.length > 0)
+                : [activeTab];
+
+              return filteredDomains.filter(d => domainBlocks[d]?.length > 0).map(domain => {
                 const blocks = domainBlocks[domain];
                 const sectionMeta = plan.sections?.find(s => s.domain === domain);
 

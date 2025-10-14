@@ -160,9 +160,86 @@ export function applyDiversityGuardrail(
 
 // ==================== RULES ENGINE ====================
 
+/**
+ * Helper to ensure critical topics are covered
+ */
+function ensureTopicCoverage(
+  atoms: string[],
+  input: StrategicInput,
+  maxAtoms: number = 15
+): string[] {
+  const s = input?.strategic || {};
+  const c = input?.comprehensive || {};
+  const a = input?.adaptive || {};
+  
+  const finance = s.financialWorry || c.finance?.priority || '';
+  const career = s.careerGoal || c.career?.ambitions?.[0] || '';
+  const deployment = c.deployment?.status || a.deployment_status || '';
+  const biggestConcern = (a.biggest_concern || '').toLowerCase();
+  
+  // Map concerns to required atoms (support various patterns)
+  const topicAtoms: Record<string, string[]> = {
+    debt: ['les-decoder', 'emergency-fund-builder', 'commissary-savings-calculator'],
+    'debt payoff': ['les-decoder', 'emergency-fund-builder', 'commissary-savings-calculator'],
+    budget: ['les-decoder', 'commissary-savings-calculator', 'commissary-exchange-basics'],
+    tsp: ['tsp-brs-essentials', 'emergency-fund-builder', 'les-decoder'],
+    'tsp/retirement': ['tsp-brs-essentials', 'emergency-fund-builder', 'les-decoder'],
+    retirement: ['tsp-brs-essentials', 'emergency-fund-builder'],
+    emergency: ['emergency-fund-builder', 'les-decoder', 'commissary-savings-calculator'],
+    'emergency fund': ['emergency-fund-builder', 'les-decoder', 'commissary-savings-calculator'],
+    'house purchase': ['ppm-profit-guide', 'emergency-fund-builder'],
+    'career transition': ['resume-power-up', 'federal-employment-guide', 'portable-careers-guide'],
+    'find-job': ['resume-power-up', 'federal-employment-guide', 'portable-careers-guide'],
+    'portable-career': ['portable-careers-guide', 'mycaa-complete-guide'],
+    business: ['entrepreneur-toolkit', 'license-transfer-guide'],
+    entrepreneurship: ['entrepreneur-toolkit', 'license-transfer-guide', 'portable-careers-guide'],
+    education: ['mycaa-complete-guide', 'high-impact-certs'],
+    'deployment prep': ['pre-deployment-checklist', 'deployment-family-pact'],
+    pre: ['pre-deployment-checklist', 'deployment-family-pact'],
+    current: ['homefront-survival', 'emergency-fund-builder'],
+    reintegration: ['reintegration-roadmap', 'emergency-fund-builder']
+  };
+  
+  // Collect all concerns
+  const allConcerns = [
+    finance?.toLowerCase(),
+    career?.toLowerCase(),
+    deployment?.toLowerCase(),
+    biggestConcern
+  ].filter(Boolean);
+  
+  // Also check all adaptive answers for keywords
+  if (a) {
+    Object.values(a).forEach(value => {
+      if (typeof value === 'string') {
+        const lowerValue = value.toLowerCase();
+        // Check if the value matches any known concern
+        Object.keys(topicAtoms).forEach(key => {
+          if (lowerValue.includes(key)) {
+            allConcerns.push(key);
+          }
+        });
+      }
+    });
+  }
+  
+  // Add atoms for each concern if not already included
+  for (const concern of allConcerns) {
+    const requiredAtoms = topicAtoms[concern] || [];
+    for (const atom of requiredAtoms) {
+      if (!atoms.includes(atom) && atoms.length < maxAtoms) {
+        atoms.push(atom);
+      }
+    }
+  }
+  
+  return atoms;
+}
+
 export function assemblePlan(input: StrategicInput): AssembledPlan {
   const s = input?.strategic || {};
   const c = input?.comprehensive || {};
+  const a = input?.adaptive || {};
   
   const focus = s.biggestFocus || '';
   const pcs = s.pcsTimeline || c.move?.pcsSituation || '';
@@ -171,6 +248,10 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   const finance = s.financialWorry || c.finance?.priority || '';
   const interests = c.preferences?.topicInterests || [];
   const urgency = c.preferences?.urgencyLevel || 'normal';
+  
+  // Extract from adaptive assessment format
+  const biggestConcern = a.biggest_concern || '';
+  const deployment = a.deployment_status || c.deployment?.status || '';
 
   // Check for pinned content first
   const pinnedAtoms = getPinnedContent(input);
@@ -179,27 +260,30 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   
   // Rule 1: Urgent EFMP PCS
   if ((focus === 'pcs' || pcs === 'orders' || pcs === 'window') && efmp && (pcs === 'orders' || urgency === 'high')) {
-    const atoms = [...pinnedAtoms, 'pcs-emotional-readiness', 'pcs-master-checklist'];
+    let atoms = [...pinnedAtoms, 'pcs-emotional-readiness', 'pcs-master-checklist'];
     const hasFinancialStress = ['budget', 'debt'].includes(finance);
     
     if (hasFinancialStress) atoms.push('pcs-budget-calculator');
     
-    const standardPriority = ['pcs-timeline-tool', 'pcs-faq'];
+    const standardPriority = ['pcs-timeline-tool', 'pcs-faq', 'pcs-budget-calculator', 'les-decoder'];
     for (const atom of standardPriority) {
-      if (atoms.length >= 5) break;
-      atoms.push(atom);
+      if (atoms.length >= 12) break;
+      if (!atoms.includes(atom)) atoms.push(atom);
     }
+    
+    // Ensure all mentioned topics are covered
+    atoms = ensureTopicCoverage(atoms, input, 15);
     
     return {
       primarySituation: "Urgent EFMP Relocation",
       priorityAction: "With an EFMP move on orders, your #1 priority is to initiate the family member travel screening process immediately. This is the crucial first step to ensure medical and educational support is available at your new duty station.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
   // Rule 2: Imminent PCS (Orders in Hand)
   if (focus === 'pcs' && pcs === 'orders') {
-    const atoms = [...pinnedAtoms, 'pcs-master-checklist', 'pcs-budget-calculator'];
+    let atoms = [...pinnedAtoms, 'pcs-master-checklist', 'pcs-budget-calculator'];
     const familySnap = c.foundation?.familySnapshot || '';
     const hasChildren = ['young_children', 'school_age', 'mixed'].includes(familySnap);
     const hasFinancialStress = ['budget', 'debt'].includes(finance);
@@ -207,16 +291,19 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     if (hasChildren) atoms.push('pcs-emotional-readiness');
     if (hasFinancialStress) atoms.push('les-decoder');
     
-    const standardPriority = ['pcs-timeline-tool', 'pcs-faq'];
+    const standardPriority = ['pcs-timeline-tool', 'pcs-faq', 'oconus-pcs-guide', 'ppm-profit-guide', 'commissary-exchange-basics'];
     for (const atom of standardPriority) {
-      if (atoms.length >= 5) break;
-      atoms.push(atom);
+      if (atoms.length >= 12) break;
+      if (!atoms.includes(atom)) atoms.push(atom);
     }
+    
+    // Ensure all mentioned topics are covered
+    atoms = ensureTopicCoverage(atoms, input, 15);
     
     return {
       primarySituation: "Imminent PCS Move",
       priorityAction: "Schedule your household goods shipment with TMO immediately and create your PCS binder. You need to act within the next 2 weeks to secure your preferred dates.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -224,7 +311,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   if (focus === 'pcs' && pcs === 'window') {
     const hasActiveCareerGoal = career && career !== 'not_career' && career !== '';
     if (!hasActiveCareerGoal) {
-      const atoms = [...pinnedAtoms, 'pcs-timeline-tool'];
+      let atoms = [...pinnedAtoms, 'pcs-timeline-tool'];
       const serviceYrs = c.foundation?.serviceYears || '';
       const isVeteran = serviceYrs === '16+';
       const hasTSPFocus = finance === 'tsp';
@@ -243,33 +330,45 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
         else atoms.push('pcs-faq');
       }
       
+      // Add more comprehensive coverage
+      const additionalPriority = ['pcs-master-checklist', 'oconus-pcs-guide', 'commissary-exchange-basics', 'ppm-profit-guide'];
+      for (const atom of additionalPriority) {
+        if (atoms.length >= 12) break;
+        if (!atoms.includes(atom)) atoms.push(atom);
+      }
+      
+      // Ensure all mentioned topics are covered
+      atoms = ensureTopicCoverage(atoms, input, 15);
+      
       return {
         primarySituation: "Strategic PCS Planning",
         priorityAction: "Use this planning window to organize your finances, research your new location, and prepare emotionally. Early preparation gives you maximum control.",
-        atomIds: atoms.slice(0, 5),
+        atomIds: atoms.slice(0, 15),
       };
     }
   }
 
   // Rule 4: OCONUS PCS
   if ((focus === 'pcs' || pcs === 'orders' || pcs === 'window') && c.move?.oconusMove === 'yes') {
-    const atoms = [...pinnedAtoms, 'oconus-pcs-guide', 'pcs-master-checklist'];
+    let atoms = [...pinnedAtoms, 'oconus-pcs-guide', 'pcs-master-checklist'];
     const hasCareerGoal = career && career !== 'not_career';
     const hasFinancialStress = ['budget', 'debt', 'emergency'].includes(finance);
     
     if (hasCareerGoal) atoms.push('portable-careers-guide');
     if (hasFinancialStress) atoms.push('emergency-fund-builder');
     
-    const standardPriority = ['pcs-timeline-tool', 'oconus-shopping-guide', 'pcs-budget-calculator'];
+    const standardPriority = ['pcs-timeline-tool', 'oconus-shopping-guide', 'pcs-budget-calculator', 'pcs-faq', 'ppm-profit-guide', 'les-decoder'];
     for (const atom of standardPriority) {
-      if (atoms.length >= 5) break;
-      atoms.push(atom);
+      if (atoms.length >= 12) break;
+      if (!atoms.includes(atom)) atoms.push(atom);
     }
+    
+    atoms = ensureTopicCoverage(atoms, input, 15);
     
     return {
       primarySituation: "OCONUS PCS Preparation",
       priorityAction: "Begin country-specific preparations immediately: passports, pet quarantine paperwork, and understanding SOFA/VAT regulations for your destination.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -280,7 +379,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Deployment Preparation",
       priorityAction: "Complete all legal and financial preparations within the next 30 days: Power of Attorney, wills, allotments, and family communication plan.",
-      atomIds: [...pinnedAtoms, 'pre-deployment-checklist', 'deployment-family-pact', 'deployment-faq'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'pre-deployment-checklist', 'deployment-family-pact', 'deployment-faq'].slice(0, 15),
     };
   }
 
@@ -289,7 +388,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Active Deployment Support",
       priorityAction: "Focus on maintaining financial stability through allotments and accessing support resources for solo parenting and emotional wellness.",
-      atomIds: [...pinnedAtoms, 'homefront-survival', 'emergency-fund-builder', 'deployment-faq'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'homefront-survival', 'emergency-fund-builder', 'deployment-faq'].slice(0, 15),
     };
   }
 
@@ -308,7 +407,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Reintegration Phase",
       priorityAction: "Give yourself and your service member grace. Rebuilding your 'new normal' takes 3-6 months. If finances are a concern, now is the time to realign your budget as deployment pays end.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -324,7 +423,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Active Job Search",
       priorityAction: "Translate your military life into powerful resume achievements and connect with MSEP (Military Spouse Employment Partnership) employers who value your skills.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -333,7 +432,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Portable Career Development",
       priorityAction: "Identify a career field with strong remote opportunities, then create a certification roadmap to transition into it using MyCAA funding.",
-      atomIds: [...pinnedAtoms, 'portable-careers-guide', 'mycaa-complete-guide', 'high-impact-certs'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'portable-careers-guide', 'mycaa-complete-guide', 'high-impact-certs'].slice(0, 15),
     };
   }
 
@@ -348,14 +447,14 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     
     const standardPriority = ['portable-careers-guide', 'mycaa-complete-guide'];
     for (const atom of standardPriority) {
-      if (atoms.length >= 5) break;
+      if (atoms.length >= 12) break;
       atoms.push(atom);
     }
     
     return {
       primarySituation: "Business Development Priority",
       priorityAction: "Validate your business idea, choose the correct legal structure (likely an LLC), and create a clear budget that separates your business and personal finances to ensure sustainable growth.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -369,7 +468,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Education & Certification Priority",
       priorityAction: "Check your MyCAA eligibility today and choose a portable, high-demand certification. The $4,000 benefit can transform your career.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -377,28 +476,34 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   
   // Rule 12: Budget & Debt Crisis
   if (focus === 'finances' && (finance === 'budget' || finance === 'debt')) {
+    let atoms = [...pinnedAtoms, 'les-decoder', 'emergency-fund-builder', 'commissary-exchange-basics', 'commissary-savings-calculator', 'tsp-brs-essentials'];
+    atoms = ensureTopicCoverage(atoms, input, 15);
     return {
       primarySituation: "Financial Stabilization Priority",
       priorityAction: "Create a zero-based budget using your LES this week. Then leverage SCRA to reduce interest rates on existing debt to 6% immediately.",
-      atomIds: [...pinnedAtoms, 'les-decoder', 'emergency-fund-builder', 'commissary-exchange-basics'].slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
   // Rule 13: Emergency Savings
   if (focus === 'finances' && finance === 'emergency') {
+    let atoms = [...pinnedAtoms, 'emergency-fund-builder', 'les-decoder', 'commissary-savings-calculator', 'commissary-exchange-basics', 'tsp-brs-essentials'];
+    atoms = ensureTopicCoverage(atoms, input, 15);
     return {
       primarySituation: "Emergency Fund Priority",
       priorityAction: "Set up an automatic allotment today to build a 3-6 month emergency fund. Start with $100/month if that's all you can do.",
-      atomIds: [...pinnedAtoms, 'emergency-fund-builder', 'les-decoder', 'commissary-savings-calculator'].slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
   // Rule 14: TSP/Retirement Focus
   if (focus === 'finances' && (finance === 'tsp' || interests.includes('tsp'))) {
+    let atoms = [...pinnedAtoms, 'tsp-brs-essentials', 'les-decoder', 'emergency-fund-builder', 'commissary-savings-calculator', 'commissary-exchange-basics'];
+    atoms = ensureTopicCoverage(atoms, input, 15);
     return {
       primarySituation: "Retirement Readiness Priority",
       priorityAction: "Log into TSP.gov today and verify you're contributing at least 5% to capture the full government match. If not, increase your contribution immediately.",
-      atomIds: [...pinnedAtoms, 'tsp-brs-essentials', 'les-decoder', 'emergency-fund-builder'].slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -417,14 +522,14 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     
     const standardPriority = ['pcs-master-checklist', 'federal-employment-guide'];
     for (const atom of standardPriority) {
-      if (atoms.length >= 5) break;
+      if (atoms.length >= 12) break;
       atoms.push(atom);
     }
     
     return {
       primarySituation: "PCS + Career Transition",
       priorityAction: "With a PCS on the horizon and an immediate need for employment, your #1 priority is to simultaneously manage your relocation timeline while preparing your resume for your new job market.",
-      atomIds: atoms.slice(0, 5),
+      atomIds: atoms.slice(0, 15),
     };
   }
 
@@ -433,7 +538,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "PCS Planning Mode",
       priorityAction: "Familiarize yourself with the complete PCS process and understand your financial entitlements.",
-      atomIds: [...pinnedAtoms, 'pcs-master-checklist', 'pcs-timeline-tool', 'pcs-faq'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'pcs-master-checklist', 'pcs-timeline-tool', 'pcs-faq'].slice(0, 15),
     };
   }
 
@@ -442,7 +547,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Career Development Focus",
       priorityAction: "Build a portable career that thrives across multiple duty stations using strategic certifications and remote work.",
-      atomIds: [...pinnedAtoms, 'portable-careers-guide', 'resume-power-up', 'mycaa-complete-guide'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'portable-careers-guide', 'resume-power-up', 'mycaa-complete-guide'].slice(0, 15),
     };
   }
 
@@ -451,7 +556,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
     return {
       primarySituation: "Deployment Readiness",
       priorityAction: "Complete legal and financial preparations and establish a realistic family communication plan.",
-      atomIds: [...pinnedAtoms, 'pre-deployment-checklist', 'deployment-family-pact', 'deployment-faq'].slice(0, 5),
+      atomIds: [...pinnedAtoms, 'pre-deployment-checklist', 'deployment-family-pact', 'deployment-faq'].slice(0, 15),
     };
   }
 
@@ -459,7 +564,7 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
   return {
     primarySituation: "Financial Wellness Priority",
     priorityAction: "Build a solid financial foundation by understanding your military pay and creating a sustainable budget.",
-    atomIds: [...pinnedAtoms, 'les-decoder', 'emergency-fund-builder', 'tsp-brs-essentials'].slice(0, 5),
+    atomIds: [...pinnedAtoms, 'les-decoder', 'emergency-fund-builder', 'tsp-brs-essentials'].slice(0, 15),
   };
 }
 
