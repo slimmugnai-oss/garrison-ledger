@@ -152,7 +152,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
               <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
                 <h3 className="text-2xl font-bold text-text-headings mb-4">TSP Modeler</h3>
@@ -200,6 +200,57 @@ export default function Home() {
                   className="inline-flex items-center text-primary-accent hover:text-primary-hover font-semibold group-hover:underline"
                 >
                   Try House Tool →
+                </Link>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={300}>
+              <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+                <h3 className="text-2xl font-bold text-text-headings mb-4">PCS Financial Planner</h3>
+                <ul className="space-y-2 text-text-body mb-6 text-sm">
+                  <li>• Calculate government PCS entitlements</li>
+                  <li>• Estimate moving costs and reimbursements</li>
+                  <li>• Plan for PPM profit opportunities</li>
+                </ul>
+                <Link 
+                  href="/dashboard/tools/pcs-planner"
+                  className="inline-flex items-center text-primary-accent hover:text-primary-hover font-semibold group-hover:underline"
+                >
+                  Try PCS Tool →
+                </Link>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={400}>
+              <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+                <h3 className="text-2xl font-bold text-text-headings mb-4">On-Base Savings Calculator</h3>
+                <ul className="space-y-2 text-text-body mb-6 text-sm">
+                  <li>• Calculate commissary and exchange savings</li>
+                  <li>• Factor in tax-free shopping benefits</li>
+                  <li>• Maximize your military shopping power</li>
+                </ul>
+                <Link 
+                  href="/dashboard/tools/on-base-savings"
+                  className="inline-flex items-center text-primary-accent hover:text-primary-hover font-semibold group-hover:underline"
+                >
+                  Try Savings Tool →
+                </Link>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard delay={500}>
+              <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+                <h3 className="text-2xl font-bold text-text-headings mb-4">Career Opportunity Analyzer</h3>
+                <ul className="space-y-2 text-text-body mb-6 text-sm">
+                  <li>• Compare total compensation packages</li>
+                  <li>• Factor in cost of living differences</li>
+                  <li>• Calculate after-tax earning power</li>
+                </ul>
+                <Link 
+                  href="/dashboard/tools/salary-calculator"
+                  className="inline-flex items-center text-primary-accent hover:text-primary-hover font-semibold group-hover:underline"
+                >
+                  Try Career Tool →
                 </Link>
               </div>
             </AnimatedCard>
