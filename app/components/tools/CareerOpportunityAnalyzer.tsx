@@ -23,9 +23,7 @@ interface CompensationData {
 }
 
 export default function CareerOpportunityAnalyzer() {
-  console.log('CareerOpportunityAnalyzer component rendering...');
   const { isPremium } = usePremiumStatus();
-  console.log('Premium status:', isPremium);
   
   const [currentData, setCurrentData] = useState<CompensationData>({
     salary: 60000,
