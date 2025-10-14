@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 export default function OnBaseSavingsCalculator() {
+  const { isPremium } = usePremiumStatus();
+  
   // Commissary state - granular breakdown
   const [meatProduce, setMeatProduce] = useState(250);
   const [pantryStaples, setPantryStaples] = useState(200);

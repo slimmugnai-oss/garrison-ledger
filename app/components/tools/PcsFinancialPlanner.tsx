@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -43,6 +44,7 @@ const RANKS = [
 ];
 
 export default function PcsFinancialPlanner() {
+  const { isPremium } = usePremiumStatus();
   const [activeTab, setActiveTab] = useState<TabMode>('basic');
   
   // Step 1: Profile Input
