@@ -1,3 +1,5 @@
+import Icon from './Icon';
+
 type Testimonial = {
   quote: string;
   author: string;

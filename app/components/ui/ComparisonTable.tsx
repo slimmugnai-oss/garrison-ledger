@@ -1,3 +1,5 @@
+import Icon from './Icon';
+
 type Feature = {
   name: string;
   free: string | boolean;

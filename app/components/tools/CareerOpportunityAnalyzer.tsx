@@ -137,9 +137,10 @@ export default function CareerOpportunityAnalyzer() {
     }).format(value);
   };
 
-  const fmtPercent = (value: number) => {
-    return `${value.toFixed(1)}%`;
-  };
+  // Format percentage (currently unused but available for future use)
+  // const fmtPercent = (value: number) => {
+  //   return `${value.toFixed(1)}%`;
+  // };
 
   return (
     <div className="max-w-6xl mx-auto">

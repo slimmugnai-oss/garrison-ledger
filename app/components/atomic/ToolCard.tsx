@@ -1,5 +1,7 @@
 'use client';
 
+import Icon from '@/app/components/ui/Icon';
+
 type Props = {
   title: string;
   html: string;
