@@ -5,11 +5,53 @@ import { track } from '@/lib/track';
 
 type TabMode = 'basic' | 'ppm';
 
+type EntitlementData = {
+  rank_group: string;
+  dependency_status: string;
+  weight_allowance: number;
+  dla_rate: number;
+  effective_year: number;
+};
+
+const RANKS = [
+  { value: '', label: 'Select your rank...' },
+  { value: 'E-1', label: 'E-1' },
+  { value: 'E-2', label: 'E-2' },
+  { value: 'E-3', label: 'E-3' },
+  { value: 'E-4', label: 'E-4' },
+  { value: 'E-5', label: 'E-5' },
+  { value: 'E-6', label: 'E-6' },
+  { value: 'E-7', label: 'E-7' },
+  { value: 'E-8', label: 'E-8' },
+  { value: 'E-9', label: 'E-9' },
+  { value: 'W-1', label: 'W-1' },
+  { value: 'W-2', label: 'W-2' },
+  { value: 'W-3', label: 'W-3' },
+  { value: 'W-4', label: 'W-4' },
+  { value: 'W-5', label: 'W-5' },
+  { value: 'O-1', label: 'O-1' },
+  { value: 'O-2', label: 'O-2' },
+  { value: 'O-3', label: 'O-3' },
+  { value: 'O-4', label: 'O-4' },
+  { value: 'O-5', label: 'O-5' },
+  { value: 'O-6', label: 'O-6' },
+  { value: 'O-7', label: 'O-7' },
+  { value: 'O-8', label: 'O-8' },
+  { value: 'O-9', label: 'O-9' },
+  { value: 'O-10', label: 'O-10' },
+];
+
 export default function PcsFinancialPlanner() {
   const [activeTab, setActiveTab] = useState<TabMode>('basic');
   
+  // Step 1: Profile Input
+  const [rankGroup, setRankGroup] = useState('');
+  const [dependencyStatus, setDependencyStatus] = useState<'with' | 'without' | ''>('');
+  const [entitlementData, setEntitlementData] = useState<EntitlementData | null>(null);
+  const [loadingEntitlements, setLoadingEntitlements] = useState(false);
+  
   // Basic Calculator state
-  const [dla, setDla] = useState(1500);
+  const [dla, setDla] = useState(0);
   const [perDiem, setPerDiem] = useState(800);
   const [ppmIncentive, setPpmIncentive] = useState(0);
   const [otherIncome, setOtherIncome] = useState(0);
@@ -19,7 +61,7 @@ export default function PcsFinancialPlanner() {
   const [otherExpenses, setOtherExpenses] = useState(500);
   
   // PPM Profit Estimator state
-  const [ppmWeight, setPpmWeight] = useState(8000);
+  const [ppmWeight, setPpmWeight] = useState(0);
   const [ppmDistance, setPpmDistance] = useState(1200);
   const [truckRental, setTruckRental] = useState(800);
   const [gas, setGas] = useState(400);
@@ -30,6 +72,43 @@ export default function PcsFinancialPlanner() {
   useEffect(() => {
     track('pcs_financial_planner_view');
   }, []);
+
+  // Fetch entitlement data when rank and dependency are selected
+  useEffect(() => {
+    async function fetchEntitlements() {
+      if (!rankGroup || !dependencyStatus) {
+        setEntitlementData(null);
+        return;
+      }
+
+      setLoadingEntitlements(true);
+      try {
+        const params = new URLSearchParams({
+          rank_group: rankGroup,
+          dependency_status: dependencyStatus
+        });
+        
+        const response = await fetch(`/api/entitlements?${params.toString()}`);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          setEntitlementData(result.data);
+          // Auto-populate DLA and weight allowance
+          setDla(result.data.dla_rate);
+          setPpmWeight(result.data.weight_allowance);
+          track('entitlements_fetched', { rank: rankGroup, dependency: dependencyStatus });
+        } else {
+          console.error('Failed to fetch entitlements:', result.error);
+        }
+      } catch (error) {
+        console.error('Error fetching entitlements:', error);
+      } finally {
+        setLoadingEntitlements(false);
+      }
+    }
+
+    fetchEntitlements();
+  }, [rankGroup, dependencyStatus]);
 
   // Basic Calculator calculations
   const totalIncome = dla + perDiem + ppmIncentive + otherIncome;
@@ -45,6 +124,107 @@ export default function PcsFinancialPlanner() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {/* Step 1: Profile Input */}
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-300 rounded-xl p-8 mb-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-indigo-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
+            1
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900">Your Profile</h3>
+            <p className="text-sm text-gray-600">We&apos;ll auto-calculate your entitlements</p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Your Rank
+            </label>
+            <select
+              value={rankGroup}
+              onChange={(e) => setRankGroup(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+            >
+              {RANKS.map((rank) => (
+                <option key={rank.value} value={rank.value}>
+                  {rank.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Dependency Status
+            </label>
+            <select
+              value={dependencyStatus}
+              onChange={(e) => setDependencyStatus(e.target.value as 'with' | 'without')}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+            >
+              <option value="">Select...</option>
+              <option value="with">With Dependents</option>
+              <option value="without">Without Dependents</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Loading State */}
+        {loadingEntitlements && (
+          <div className="mt-6 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <p className="text-sm text-gray-600 mt-2">Fetching your entitlements...</p>
+          </div>
+        )}
+
+        {/* Entitlements Briefing Card */}
+        {entitlementData && !loadingEntitlements && (
+          <div className="mt-6 bg-white border-2 border-indigo-400 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">📋</span>
+              <h4 className="text-xl font-bold text-gray-900">Your PCS Entitlements</h4>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold text-blue-700 uppercase mb-1">DLA Rate</p>
+                <p className="text-2xl font-black text-blue-600">
+                  ${entitlementData.dla_rate.toLocaleString()}
+                </p>
+              </div>
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold text-green-700 uppercase mb-1">Weight Allowance</p>
+                <p className="text-2xl font-black text-green-600">
+                  {entitlementData.weight_allowance.toLocaleString()} lbs
+                </p>
+              </div>
+              
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold text-purple-700 uppercase mb-1">Effective Year</p>
+                <p className="text-2xl font-black text-purple-600">
+                  {entitlementData.effective_year}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-500 mt-4 text-center">
+              ✓ Data auto-populated below based on current DoD rates
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Show message if no entitlements selected */}
+      {!entitlementData && !loadingEntitlements && (
+        <div className="bg-amber-50 border border-amber-300 rounded-xl p-6 mb-8 text-center">
+          <p className="text-amber-800 font-medium">
+            👆 Select your rank and dependency status above to auto-populate your PCS entitlements
+          </p>
+        </div>
+      )}
+
       {/* Tab Navigation */}
       <div className="mb-8">
         <div className="border-b border-gray-200">
@@ -95,7 +275,11 @@ export default function PcsFinancialPlanner() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Dislocation Allowance (DLA)
-                    <span className="text-blue-600 ml-1 cursor-help" title="Based on rank and dependents">ℹ️</span>
+                    {entitlementData && (
+                      <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                        Auto-filled ✓
+                      </span>
+                    )}
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
@@ -104,9 +288,11 @@ export default function PcsFinancialPlanner() {
                       value={dla}
                       onChange={(e) => setDla(Number(e.target.value))}
                       className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="1500"
+                      placeholder="Enter rank above for auto-fill"
+                      disabled={!rankGroup}
                     />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">Based on your rank and dependents</p>
                 </div>
 
                 <div>
@@ -123,6 +309,7 @@ export default function PcsFinancialPlanner() {
                       placeholder="800"
                     />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">Varies by travel days and location</p>
                 </div>
 
                 <div>
@@ -139,6 +326,7 @@ export default function PcsFinancialPlanner() {
                       placeholder="0"
                     />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">Use PPM tab to estimate</p>
                 </div>
 
                 <div>
@@ -277,13 +465,19 @@ export default function PcsFinancialPlanner() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Estimated Weight (lbs)
+                    {entitlementData && (
+                      <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                        Max: {entitlementData.weight_allowance.toLocaleString()} ✓
+                      </span>
+                    )}
                   </label>
                   <input
                     type="number"
                     value={ppmWeight}
                     onChange={(e) => setPpmWeight(Number(e.target.value))}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
-                    placeholder="8000"
+                    placeholder={entitlementData ? entitlementData.weight_allowance.toString() : "Enter rank above for auto-fill"}
+                    disabled={!rankGroup}
                   />
                   <p className="text-xs text-gray-500 mt-1">Get weigh tickets before and after loading</p>
                 </div>
@@ -409,6 +603,16 @@ export default function PcsFinancialPlanner() {
                 </div>
               </div>
 
+              {entitlementData && ppmWeight > entitlementData.weight_allowance && (
+                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
+                  <p className="text-sm font-semibold text-red-900 mb-1">⚠️ Weight Limit Exceeded</p>
+                  <p className="text-xs text-red-800">
+                    Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
+                    You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
+                  </p>
+                </div>
+              )}
+
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
                 <p className="text-sm font-semibold text-yellow-900 mb-1">⚠️ Important Disclaimer</p>
                 <p className="text-xs text-yellow-800">
@@ -424,4 +628,3 @@ export default function PcsFinancialPlanner() {
     </div>
   );
 }
-
