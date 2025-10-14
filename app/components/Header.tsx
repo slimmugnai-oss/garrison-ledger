@@ -29,92 +29,69 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Navigation - Desktop - Updated with all tools */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Navigation - Desktop - Streamlined */}
+          <nav className="hidden lg:flex items-center space-x-6">
             <Link 
               href="/" 
-              className="text-gray-700 hover:text-gray-900 transition-colors"
+              className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
             >
               Home
             </Link>
             <SignedIn>
               <Link 
                 href="/dashboard" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
               >
                 Dashboard
               </Link>
               <Link 
-                href="/dashboard/upgrade" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Upgrade
-              </Link>
-              <Link 
                 href="/dashboard/assessment" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
               >
                 Assessment
               </Link>
-              <Link 
-                href="/dashboard/tools/tsp-modeler" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                TSP Tool
-              </Link>
-              <Link 
-                href="/dashboard/tools/house-hacking" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                House Tool
-              </Link>
-              <Link 
-                href="/dashboard/tools/sdp-strategist" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                SDP Tool
-              </Link>
-              <Link 
-                href="/dashboard/directory" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Directory
-              </Link>
-              <Link 
-                href="/dashboard/referrals" 
-                className="text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                Refer & Earn
-              </Link>
-              {/* Resources Dropdown */}
+              {/* Combined Dropdown - Tools & Resources */}
               <div 
                 className="relative"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center">
-                  Resources
+                <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center font-medium">
+                  More
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {resourcesOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <a href="/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      Career Hub
-                    </a>
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
+                    <div className="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tools</div>
+                    <Link href="/dashboard/tools/tsp-modeler" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      TSP Modeler
+                    </Link>
+                    <Link href="/dashboard/tools/sdp-strategist" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      SDP Strategist
+                    </Link>
+                    <Link href="/dashboard/tools/house-hacking" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      House Hacking
+                    </Link>
+                    <div className="border-t border-gray-200 my-2"></div>
+                    <div className="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Resources</div>
                     <a href="/pcs-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       PCS Hub
                     </a>
-                    <a href="/base-guides" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      Base Guides
-                    </a>
-                    <a href="/on-base-shopping" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      On-Base Shopping
+                    <a href="/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      Career Hub
                     </a>
                     <a href="/deployment" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
                       Deployment Guide
                     </a>
+                    <div className="border-t border-gray-200 my-2"></div>
+                    <Link href="/dashboard/directory" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      Provider Directory
+                    </Link>
+                    <Link href="/dashboard/referrals" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                      Refer & Earn
+                    </Link>
                   </div>
                 )}
               </div>
