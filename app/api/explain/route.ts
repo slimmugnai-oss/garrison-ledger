@@ -100,7 +100,12 @@ export async function POST(req: NextRequest) {
     .eq("user_id", userId)
     .maybeSingle();
 
-  const answers = (assessment?.answers || {}) as Record<string, any>;
+  type AssessmentAnswers = {
+    comprehensive?: Record<string, any>;
+    [key: string]: any;
+  };
+
+  const answers = (assessment?.answers || {}) as AssessmentAnswers;
   const comprehensive = (answers.comprehensive || {}) as Record<string, any>;
   const foundation = (comprehensive.foundation || {}) as Record<string, any>;
   const move = (comprehensive.move || {}) as Record<string, any>;
