@@ -24,24 +24,26 @@ async function autoFillProfileFromAssessment(userId: string, answers: Record<str
       updated_at: new Date().toISOString()
     };
 
-    // Map assessment fields to profile fields
-    if (answers.rank) {
+    // Map assessment fields to profile fields (with type guards)
+    if (typeof answers.rank === 'string') {
       profileUpdate.rank = answers.rank;
     }
-    if (answers.branch) {
+    if (typeof answers.branch === 'string') {
       profileUpdate.branch = answers.branch;
     }
-    if (answers.pcs_situation) {
+    if (typeof answers.pcs_situation === 'string') {
       // Map PCS situation to dates if possible
       if (answers.pcs_situation.includes('Orders')) {
         // User has orders - they might specify date in other answers
-        if (answers.pcs_date) profileUpdate.pcs_date = answers.pcs_date;
+        if (typeof answers.pcs_date === 'string') {
+          profileUpdate.pcs_date = answers.pcs_date;
+        }
       }
     }
-    if (answers.deployment_status) {
+    if (typeof answers.deployment_status === 'string') {
       profileUpdate.deployment_status = answers.deployment_status;
     }
-    if (answers.family_status) {
+    if (typeof answers.family_status === 'string') {
       // Map family status to marital status + num children
       const familyStr = answers.family_status.toLowerCase();
       if (familyStr.includes('single')) {
@@ -62,21 +64,23 @@ async function autoFillProfileFromAssessment(userId: string, answers: Record<str
     }
     
     // Financial data
-    if (answers.debt_amount) {
+    if (typeof answers.debt_amount === 'string') {
       profileUpdate.debt_amount_range = answers.debt_amount;
     }
-    if (answers.financial_status) {
+    if (typeof answers.financial_status === 'string') {
       profileUpdate.emergency_fund_range = answers.financial_status;
     }
-    if (answers.tsp_balance) {
+    if (typeof answers.tsp_balance === 'string') {
       profileUpdate.tsp_balance_range = answers.tsp_balance;
     }
     
     // Career goals
     if (answers.career_transition || answers.biggest_concern) {
       const concerns = [];
-      if (answers.career_transition) concerns.push(answers.career_transition);
-      if (answers.biggest_concern && answers.biggest_concern.toLowerCase().includes('career')) {
+      if (typeof answers.career_transition === 'string') {
+        concerns.push(answers.career_transition);
+      }
+      if (typeof answers.biggest_concern === 'string' && answers.biggest_concern.toLowerCase().includes('career')) {
         concerns.push('career_transition');
       }
       if (concerns.length > 0) {
@@ -85,7 +89,7 @@ async function autoFillProfileFromAssessment(userId: string, answers: Record<str
     }
     
     // Financial priorities
-    if (answers.biggest_concern) {
+    if (typeof answers.biggest_concern === 'string') {
       const concern = answers.biggest_concern.toLowerCase();
       const priorities = [];
       if (concern.includes('debt')) priorities.push('debt');
