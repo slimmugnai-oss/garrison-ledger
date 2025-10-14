@@ -27,10 +27,17 @@ type AssessmentState = {
 
 const CORE_QUESTIONS = [
   {
+    id: 'branch',
+    question: 'What branch are you in?',
+    type: 'select' as const,
+    options: ['Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard', 'Space Force'],
+    context: 'Determines which rank structure and benefits apply'
+  },
+  {
     id: 'rank',
     question: 'What is your current rank?',
     type: 'select' as const,
-    options: ['E-1 to E-4', 'E-5 to E-6', 'E-7 to E-9', 'O-1 to O-3', 'O-4 to O-6'],
+    options: ['E-1 to E-4', 'E-5 to E-6', 'E-7 to E-9', 'W-1 to W-5 (Warrant)', 'O-1 to O-3', 'O-4 to O-6', 'O-7+'],
     context: 'Helps determine appropriate financial strategies'
   },
   {
@@ -143,7 +150,26 @@ export async function POST(req: NextRequest) {
     // Build pre-answered data from profile
     const preAnswered: Record<string, string> = {};
     if (profile) {
-      if (profile.rank) preAnswered.rank = profile.rank;
+      if (profile.branch) preAnswered.branch = profile.branch;
+      if (profile.rank) {
+        // Map specific rank to rank range for assessment
+        const rankUpper = profile.rank.toUpperCase();
+        if (rankUpper.includes('E-1') || rankUpper.includes('E-2') || rankUpper.includes('E-3') || rankUpper.includes('E-4')) {
+          preAnswered.rank = 'E-1 to E-4';
+        } else if (rankUpper.includes('E-5') || rankUpper.includes('E-6')) {
+          preAnswered.rank = 'E-5 to E-6';
+        } else if (rankUpper.includes('E-7') || rankUpper.includes('E-8') || rankUpper.includes('E-9')) {
+          preAnswered.rank = 'E-7 to E-9';
+        } else if (rankUpper.includes('W-') || rankUpper.includes('WO') || rankUpper.includes('CW')) {
+          preAnswered.rank = 'W-1 to W-5 (Warrant)';
+        } else if (rankUpper.includes('O-1') || rankUpper.includes('O-2') || rankUpper.includes('O-3')) {
+          preAnswered.rank = 'O-1 to O-3';
+        } else if (rankUpper.includes('O-4') || rankUpper.includes('O-5') || rankUpper.includes('O-6')) {
+          preAnswered.rank = 'O-4 to O-6';
+        } else if (rankUpper.includes('O-7') || rankUpper.includes('O-8') || rankUpper.includes('O-9') || rankUpper.includes('O-10')) {
+          preAnswered.rank = 'O-7+';
+        }
+      }
       if (profile.pcs_date) preAnswered.pcs_situation = 'Orders in hand';
       if (profile.deployment_status) preAnswered.deployment_status = profile.deployment_status;
       if (profile.marital_status) {
