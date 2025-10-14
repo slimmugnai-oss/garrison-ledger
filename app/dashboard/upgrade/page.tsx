@@ -137,57 +137,22 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">TSP Modeler</div>
-                      <p className="text-sm text-gray-600">Unlimited retirement projections with all fund allocations</p>
+                      <div className="text-gray-900 font-semibold">All 6 Premium Calculators</div>
+                      <p className="text-sm text-gray-600">TSP, SDP, House Hacking, PCS, Savings, Salary</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">SDP Strategist</div>
-                      <p className="text-sm text-gray-600">Deployment savings calculator with 10% guaranteed returns</p>
+                      <div className="text-gray-900 font-semibold">Daily Strategic Plans</div>
+                      <p className="text-sm text-gray-600">AI-personalized roadmaps, regenerate daily</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">House Hacking Calculator</div>
-                      <p className="text-sm text-gray-600">Multi-unit property ROI with BAH optimization</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    <div>
-                      <div className="text-gray-900 font-semibold">PCS Financial Planner</div>
-                      <p className="text-sm text-gray-600">Budget calculator + PPM profit estimator</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    <div>
-                      <div className="text-gray-900 font-semibold">On-Base Savings Calculator</div>
-                      <p className="text-sm text-gray-600">Commissary & Exchange annual savings tracker</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    <div>
-                      <div className="text-gray-900 font-semibold">Salary & Relocation Calculator</div>
-                      <p className="text-sm text-gray-600">Job offer comparison across 25+ military cities</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    <div>
-                      <div className="text-gray-900 font-semibold">Intel Library (400+ Blocks)</div>
-                      <p className="text-sm text-gray-600">Searchable database of expert military life content</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    <div>
-                      <div className="text-gray-900 font-semibold">Unlimited Plan Regeneration</div>
-                      <p className="text-sm text-gray-600">Update strategic plan as life changes</p>
+                      <div className="text-gray-900 font-semibold">Intel Directory</div>
+                      <p className="text-sm text-gray-600">Searchable database of expert content</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -252,15 +217,15 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Intel Library (400+ Blocks)</div>
-                      <p className="text-sm text-gray-600">Searchable database of expert content</p>
+                      <div className="text-gray-900 font-semibold">Daily Strategic Plans</div>
+                      <p className="text-sm text-gray-600">AI-personalized roadmaps, regenerate daily</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Unlimited Strategic Plans</div>
-                      <p className="text-sm text-gray-600">AI-personalized roadmaps, regenerate anytime</p>
+                      <div className="text-gray-900 font-semibold">Intel Directory</div>
+                      <p className="text-sm text-gray-600">Searchable database of expert content</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -357,11 +322,6 @@ export default async function UpgradePage() {
                       <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 5 Hubs</td>
                       <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 5 Hubs</td>
                     </tr>
-                    <tr className="bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-900">Personal Assessment</td>
-                      <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
-                      <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ Unlimited</td>
-                    </tr>
                     <tr>
                       <td className="px-6 py-4 text-sm text-gray-900">Strategic Plan Generation</td>
                       <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
@@ -379,7 +339,7 @@ export default async function UpgradePage() {
                     </tr>
                     <tr className="bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">Support</td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-600">Community Forum</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-600">Email</td>
                       <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ Priority Email</td>
                     </tr>
                   </tbody>
@@ -391,10 +351,10 @@ export default async function UpgradePage() {
           {/* Features Showcase */}
           <div className="mt-16">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
-              All 6 Premium Calculators Included
+              Professional-Grade Financial Tools
             </h2>
             <p className="text-center text-lg text-gray-600 mb-10">
-              Each calculator would cost $200+ from a financial advisor. Get all 6 for $9.99/month.
+              Access sophisticated calculators designed specifically for military families. Get the insights you need to make confident financial decisions.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-lg transition-all">

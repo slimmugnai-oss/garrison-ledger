@@ -26,7 +26,7 @@ export default function Page() {
           <div className="mb-12 text-center">
             <div className="mb-4">
               <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                <span>⭐</span> Premium Tool
+                Premium Tool
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
@@ -40,17 +40,16 @@ export default function Page() {
 
           <SignedOut>
             <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
-              <div className="text-6xl mb-4">🔒</div>
               <h2 className="text-3xl font-bold text-gray-900 mb-3">Analyze Career Opportunities Intelligently</h2>
               <p className="text-lg text-gray-700 mb-2">
                 Complete financial analysis across 70+ military cities with total compensation, tax, and cost of living insights
               </p>
               <p className="text-sm text-gray-600 mb-6">
-                💡 Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
+                Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
               </p>
               <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
                 <p className="text-sm font-semibold text-green-800">
-                  🛡️ 7-Day Money-Back Guarantee · Free Forever Tier Available
+                  7-Day Money-Back Guarantee · Free Forever Tier Available
                 </p>
               </div>
               <p className="text-3xl font-black text-gray-900 mb-6">
@@ -76,7 +75,6 @@ export default function Page() {
               <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Perfect For:</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <div className="text-4xl mb-4">🎖️</div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">Military Transition</h3>
                   <p className="text-gray-600 text-sm">
                     Comparing civilian job offers as you transition out? Understand how salaries translate across different locations before accepting an offer.
@@ -84,7 +82,6 @@ export default function Page() {
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <div className="text-4xl mb-4">💼</div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">Military Spouse Career</h3>
                   <p className="text-gray-600 text-sm">
                     Remote work opening up new opportunities? See how your current salary compares to offers in high or low cost-of-living areas.
@@ -92,7 +89,6 @@ export default function Page() {
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <div className="text-4xl mb-4">📍</div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">PCS Planning</h3>
                   <p className="text-gray-600 text-sm">
                     Moving to a new duty station? Understand how the local economy and cost of living will affect your family&apos;s budget and lifestyle.
@@ -103,7 +99,7 @@ export default function Page() {
 
             {/* Tips */}
             <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-8">
-              <h3 className="text-2xl font-bold text-indigo-900 mb-4">💡 Smart Career Move Tips</h3>
+              <h3 className="text-2xl font-bold text-indigo-900 mb-4">Smart Career Move Tips</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-bold text-indigo-800 mb-2">Now Includes:</h4>
@@ -129,7 +125,7 @@ export default function Page() {
             {/* Resources */}
             <div className="mt-8 grid md:grid-cols-2 gap-6">
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-blue-900 mb-3">📊 Cost of Living Data</h3>
+                <h3 className="text-lg font-bold text-blue-900 mb-3">Cost of Living Data</h3>
                 <p className="text-sm text-blue-800 mb-3">
                   Want more detailed cost breakdowns? Check these resources for housing, transportation, and daily expenses.
                 </p>
@@ -154,7 +150,7 @@ export default function Page() {
               </div>
 
               <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-green-900 mb-3">🎯 Transition Resources</h3>
+                <h3 className="text-lg font-bold text-green-900 mb-3">Transition Resources</h3>
                 <p className="text-sm text-green-800 mb-3">
                   Transitioning from military to civilian career? These resources can help you navigate the process.
                 </p>
