@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import BaseAutocomplete from '@/app/components/ui/BaseAutocomplete';
+import militaryRanks from '@/lib/data/military-ranks.json';
+import militaryComponents from '@/lib/data/military-components.json';
 
 type ProfilePayload = {
   age?: number | null;
@@ -29,9 +31,21 @@ type ProfilePayload = {
   profile_completed?: boolean | null;
 };
 
-const ranks = ['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-8','E-9','O-1','O-2','O-3','O-4','O-5','O-6'];
+type MilitaryRanks = {
+  [key: string]: {
+    enlisted?: { code: string; title: string }[];
+    warrant?: { code: string; title: string }[];
+    officer?: { code: string; title: string }[];
+  };
+};
+
+type MilitaryComponents = {
+  [key: string]: string[];
+};
+
+const ranksData = militaryRanks as MilitaryRanks;
+const componentsData = militaryComponents as MilitaryComponents;
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
-const components = ['Active','Reserve','Guard'];
 const genders = ['Male','Female','Other','Prefer not to say'];
 const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
 const yesNo = [
@@ -88,6 +102,44 @@ export default function ProfileSetupPage() {
     })();
     return () => { mounted = false; };
   }, []);
+
+  // Compute available ranks based on selected branch
+  const availableRanks = useMemo(() => {
+    if (!data.branch || !ranksData[data.branch]) return [];
+    const branchRanks = ranksData[data.branch];
+    const allRanks = [
+      ...(branchRanks.enlisted || []),
+      ...(branchRanks.warrant || []),
+      ...(branchRanks.officer || [])
+    ];
+    return allRanks;
+  }, [data.branch]);
+
+  // Compute available components based on selected branch
+  const availableComponents = useMemo(() => {
+    if (!data.branch || !componentsData[data.branch]) return [];
+    return componentsData[data.branch];
+  }, [data.branch]);
+
+  // Reset rank if it's not available for the newly selected branch
+  useEffect(() => {
+    if (data.branch && data.rank) {
+      const rankExists = availableRanks.some(r => r.title === data.rank || r.code === data.rank);
+      if (!rankExists) {
+        setData(d => ({ ...d, rank: null }));
+      }
+    }
+  }, [data.branch, data.rank, availableRanks]);
+
+  // Reset component if it's not available for the newly selected branch
+  useEffect(() => {
+    if (data.branch && data.component) {
+      const componentExists = availableComponents.includes(data.component);
+      if (!componentExists) {
+        setData(d => ({ ...d, component: null }));
+      }
+    }
+  }, [data.branch, data.component, availableComponents]);
 
   const step = useMemo(() => {
     // Simple step derivation based on filled fields
@@ -185,13 +237,6 @@ export default function ProfileSetupPage() {
             <p className="text-sm text-muted mb-4">Optional - helps us personalize your plan</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))}>
-                  <option value="">Select (optional)</option>
-                  {ranks.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-              </div>
-              <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Branch</label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
                   <option value="">Select</option>
@@ -199,10 +244,41 @@ export default function ProfileSetupPage() {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
+                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))} disabled={!data.branch}>
+                  <option value="">Select {!data.branch ? '(select branch first)' : '(optional)'}</option>
+                  {availableRanks.length > 0 && (
+                    <>
+                      {ranksData[data.branch!]?.enlisted && ranksData[data.branch!].enlisted!.length > 0 && (
+                        <optgroup label="Enlisted">
+                          {ranksData[data.branch!].enlisted!.map(r => (
+                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {ranksData[data.branch!]?.warrant && ranksData[data.branch!].warrant!.length > 0 && (
+                        <optgroup label="Warrant Officer">
+                          {ranksData[data.branch!].warrant!.map(r => (
+                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {ranksData[data.branch!]?.officer && ranksData[data.branch!].officer!.length > 0 && (
+                        <optgroup label="Officer">
+                          {ranksData[data.branch!].officer!.map(r => (
+                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                    </>
+                  )}
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-semibold text-muted mb-2">Component</label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.component ?? ''} onChange={e => setData(d => ({ ...d, component: e.target.value || null }))}>
-                  <option value="">Select</option>
-                  {components.map(c => <option key={c} value={c}>{c}</option>)}
+                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.component ?? ''} onChange={e => setData(d => ({ ...d, component: e.target.value || null }))} disabled={!data.branch}>
+                  <option value="">Select {!data.branch ? '(select branch first)' : ''}</option>
+                  {availableComponents.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
             </div>

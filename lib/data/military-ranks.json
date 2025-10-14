@@ -1,0 +1,195 @@
+{
+  "Army": {
+    "enlisted": [
+      { "code": "E-1", "title": "Private (PV1)" },
+      { "code": "E-2", "title": "Private (PV2)" },
+      { "code": "E-3", "title": "Private First Class (PFC)" },
+      { "code": "E-4", "title": "Specialist (SPC)" },
+      { "code": "E-4", "title": "Corporal (CPL)" },
+      { "code": "E-5", "title": "Sergeant (SGT)" },
+      { "code": "E-6", "title": "Staff Sergeant (SSG)" },
+      { "code": "E-7", "title": "Sergeant First Class (SFC)" },
+      { "code": "E-8", "title": "Master Sergeant (MSG)" },
+      { "code": "E-8", "title": "First Sergeant (1SG)" },
+      { "code": "E-9", "title": "Sergeant Major (SGM)" },
+      { "code": "E-9", "title": "Command Sergeant Major (CSM)" },
+      { "code": "E-9", "title": "Sergeant Major of the Army (SMA)" }
+    ],
+    "warrant": [
+      { "code": "W-1", "title": "Warrant Officer 1 (WO1)" },
+      { "code": "W-2", "title": "Chief Warrant Officer 2 (CW2)" },
+      { "code": "W-3", "title": "Chief Warrant Officer 3 (CW3)" },
+      { "code": "W-4", "title": "Chief Warrant Officer 4 (CW4)" },
+      { "code": "W-5", "title": "Chief Warrant Officer 5 (CW5)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Second Lieutenant (2LT)" },
+      { "code": "O-2", "title": "First Lieutenant (1LT)" },
+      { "code": "O-3", "title": "Captain (CPT)" },
+      { "code": "O-4", "title": "Major (MAJ)" },
+      { "code": "O-5", "title": "Lieutenant Colonel (LTC)" },
+      { "code": "O-6", "title": "Colonel (COL)" },
+      { "code": "O-7", "title": "Brigadier General (BG)" },
+      { "code": "O-8", "title": "Major General (MG)" },
+      { "code": "O-9", "title": "Lieutenant General (LTG)" },
+      { "code": "O-10", "title": "General (GEN)" }
+    ]
+  },
+  "Navy": {
+    "enlisted": [
+      { "code": "E-1", "title": "Seaman Recruit (SR)" },
+      { "code": "E-2", "title": "Seaman Apprentice (SA)" },
+      { "code": "E-3", "title": "Seaman (SN)" },
+      { "code": "E-4", "title": "Petty Officer Third Class (PO3)" },
+      { "code": "E-5", "title": "Petty Officer Second Class (PO2)" },
+      { "code": "E-6", "title": "Petty Officer First Class (PO1)" },
+      { "code": "E-7", "title": "Chief Petty Officer (CPO)" },
+      { "code": "E-8", "title": "Senior Chief Petty Officer (SCPO)" },
+      { "code": "E-9", "title": "Master Chief Petty Officer (MCPO)" },
+      { "code": "E-9", "title": "Command Master Chief Petty Officer (CMDCM)" },
+      { "code": "E-9", "title": "Master Chief Petty Officer of the Navy (MCPON)" }
+    ],
+    "warrant": [
+      { "code": "W-2", "title": "Chief Warrant Officer 2 (CWO2)" },
+      { "code": "W-3", "title": "Chief Warrant Officer 3 (CWO3)" },
+      { "code": "W-4", "title": "Chief Warrant Officer 4 (CWO4)" },
+      { "code": "W-5", "title": "Chief Warrant Officer 5 (CWO5)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Ensign (ENS)" },
+      { "code": "O-2", "title": "Lieutenant Junior Grade (LTJG)" },
+      { "code": "O-3", "title": "Lieutenant (LT)" },
+      { "code": "O-4", "title": "Lieutenant Commander (LCDR)" },
+      { "code": "O-5", "title": "Commander (CDR)" },
+      { "code": "O-6", "title": "Captain (CAPT)" },
+      { "code": "O-7", "title": "Rear Admiral Lower Half (RDML)" },
+      { "code": "O-8", "title": "Rear Admiral (RADM)" },
+      { "code": "O-9", "title": "Vice Admiral (VADM)" },
+      { "code": "O-10", "title": "Admiral (ADM)" }
+    ]
+  },
+  "Air Force": {
+    "enlisted": [
+      { "code": "E-1", "title": "Airman Basic (AB)" },
+      { "code": "E-2", "title": "Airman (Amn)" },
+      { "code": "E-3", "title": "Airman First Class (A1C)" },
+      { "code": "E-4", "title": "Senior Airman (SrA)" },
+      { "code": "E-5", "title": "Staff Sergeant (SSgt)" },
+      { "code": "E-6", "title": "Technical Sergeant (TSgt)" },
+      { "code": "E-7", "title": "Master Sergeant (MSgt)" },
+      { "code": "E-7", "title": "First Sergeant (1st Sgt)" },
+      { "code": "E-8", "title": "Senior Master Sergeant (SMSgt)" },
+      { "code": "E-8", "title": "First Sergeant (1st Sgt)" },
+      { "code": "E-9", "title": "Chief Master Sergeant (CMSgt)" },
+      { "code": "E-9", "title": "Command Chief Master Sergeant (CCM)" },
+      { "code": "E-9", "title": "Chief Master Sergeant of the Air Force (CMSAF)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Second Lieutenant (2d Lt)" },
+      { "code": "O-2", "title": "First Lieutenant (1st Lt)" },
+      { "code": "O-3", "title": "Captain (Capt)" },
+      { "code": "O-4", "title": "Major (Maj)" },
+      { "code": "O-5", "title": "Lieutenant Colonel (Lt Col)" },
+      { "code": "O-6", "title": "Colonel (Col)" },
+      { "code": "O-7", "title": "Brigadier General (Brig Gen)" },
+      { "code": "O-8", "title": "Major General (Maj Gen)" },
+      { "code": "O-9", "title": "Lieutenant General (Lt Gen)" },
+      { "code": "O-10", "title": "General (Gen)" }
+    ]
+  },
+  "Marines": {
+    "enlisted": [
+      { "code": "E-1", "title": "Private (Pvt)" },
+      { "code": "E-2", "title": "Private First Class (PFC)" },
+      { "code": "E-3", "title": "Lance Corporal (LCpl)" },
+      { "code": "E-4", "title": "Corporal (Cpl)" },
+      { "code": "E-5", "title": "Sergeant (Sgt)" },
+      { "code": "E-6", "title": "Staff Sergeant (SSgt)" },
+      { "code": "E-7", "title": "Gunnery Sergeant (GySgt)" },
+      { "code": "E-8", "title": "Master Sergeant (MSgt)" },
+      { "code": "E-8", "title": "First Sergeant (1stSgt)" },
+      { "code": "E-9", "title": "Master Gunnery Sergeant (MGySgt)" },
+      { "code": "E-9", "title": "Sergeant Major (SgtMaj)" },
+      { "code": "E-9", "title": "Sergeant Major of the Marine Corps (SgtMajMC)" }
+    ],
+    "warrant": [
+      { "code": "W-1", "title": "Warrant Officer 1 (WO1)" },
+      { "code": "W-2", "title": "Chief Warrant Officer 2 (CWO2)" },
+      { "code": "W-3", "title": "Chief Warrant Officer 3 (CWO3)" },
+      { "code": "W-4", "title": "Chief Warrant Officer 4 (CWO4)" },
+      { "code": "W-5", "title": "Chief Warrant Officer 5 (CWO5)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Second Lieutenant (2ndLt)" },
+      { "code": "O-2", "title": "First Lieutenant (1stLt)" },
+      { "code": "O-3", "title": "Captain (Capt)" },
+      { "code": "O-4", "title": "Major (Maj)" },
+      { "code": "O-5", "title": "Lieutenant Colonel (LtCol)" },
+      { "code": "O-6", "title": "Colonel (Col)" },
+      { "code": "O-7", "title": "Brigadier General (BGen)" },
+      { "code": "O-8", "title": "Major General (MajGen)" },
+      { "code": "O-9", "title": "Lieutenant General (LtGen)" },
+      { "code": "O-10", "title": "General (Gen)" }
+    ]
+  },
+  "Coast Guard": {
+    "enlisted": [
+      { "code": "E-1", "title": "Seaman Recruit (SR)" },
+      { "code": "E-2", "title": "Seaman Apprentice (SA)" },
+      { "code": "E-3", "title": "Seaman (SN)" },
+      { "code": "E-4", "title": "Petty Officer Third Class (PO3)" },
+      { "code": "E-5", "title": "Petty Officer Second Class (PO2)" },
+      { "code": "E-6", "title": "Petty Officer First Class (PO1)" },
+      { "code": "E-7", "title": "Chief Petty Officer (CPO)" },
+      { "code": "E-8", "title": "Senior Chief Petty Officer (SCPO)" },
+      { "code": "E-9", "title": "Master Chief Petty Officer (MCPO)" },
+      { "code": "E-9", "title": "Command Master Chief Petty Officer (CMC)" },
+      { "code": "E-9", "title": "Master Chief Petty Officer of the Coast Guard (MCPOCG)" }
+    ],
+    "warrant": [
+      { "code": "W-2", "title": "Chief Warrant Officer 2 (CWO2)" },
+      { "code": "W-3", "title": "Chief Warrant Officer 3 (CWO3)" },
+      { "code": "W-4", "title": "Chief Warrant Officer 4 (CWO4)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Ensign (ENS)" },
+      { "code": "O-2", "title": "Lieutenant Junior Grade (LTJG)" },
+      { "code": "O-3", "title": "Lieutenant (LT)" },
+      { "code": "O-4", "title": "Lieutenant Commander (LCDR)" },
+      { "code": "O-5", "title": "Commander (CDR)" },
+      { "code": "O-6", "title": "Captain (CAPT)" },
+      { "code": "O-7", "title": "Rear Admiral Lower Half (RDML)" },
+      { "code": "O-8", "title": "Rear Admiral (RADM)" },
+      { "code": "O-9", "title": "Vice Admiral (VADM)" },
+      { "code": "O-10", "title": "Admiral (ADM)" }
+    ]
+  },
+  "Space Force": {
+    "enlisted": [
+      { "code": "E-1", "title": "Specialist 1 (Spc1)" },
+      { "code": "E-2", "title": "Specialist 2 (Spc2)" },
+      { "code": "E-3", "title": "Specialist 3 (Spc3)" },
+      { "code": "E-4", "title": "Specialist 4 (Spc4)" },
+      { "code": "E-5", "title": "Sergeant (Sgt)" },
+      { "code": "E-6", "title": "Technical Sergeant (TSgt)" },
+      { "code": "E-7", "title": "Master Sergeant (MSgt)" },
+      { "code": "E-8", "title": "Senior Master Sergeant (SMSgt)" },
+      { "code": "E-9", "title": "Chief Master Sergeant (CMSgt)" },
+      { "code": "E-9", "title": "Command Chief Master Sergeant (CCM)" },
+      { "code": "E-9", "title": "Chief Master Sergeant of the Space Force (CMSSF)" }
+    ],
+    "officer": [
+      { "code": "O-1", "title": "Second Lieutenant (2d Lt)" },
+      { "code": "O-2", "title": "First Lieutenant (1st Lt)" },
+      { "code": "O-3", "title": "Captain (Capt)" },
+      { "code": "O-4", "title": "Major (Maj)" },
+      { "code": "O-5", "title": "Lieutenant Colonel (Lt Col)" },
+      { "code": "O-6", "title": "Colonel (Col)" },
+      { "code": "O-7", "title": "Brigadier General (Brig Gen)" },
+      { "code": "O-8", "title": "Major General (Maj Gen)" },
+      { "code": "O-9", "title": "Lieutenant General (Lt Gen)" },
+      { "code": "O-10", "title": "General (Gen)" }
+    ]
+  }
+}
+

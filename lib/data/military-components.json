@@ -1,0 +1,9 @@
+{
+  "Army": ["Active Duty", "Army Reserve", "Army National Guard"],
+  "Navy": ["Active Duty", "Navy Reserve"],
+  "Air Force": ["Active Duty", "Air Force Reserve", "Air National Guard"],
+  "Marines": ["Active Duty", "Marine Corps Reserve"],
+  "Coast Guard": ["Active Duty", "Coast Guard Reserve"],
+  "Space Force": ["Active Duty", "Space Force Reserve"]
+}
+
