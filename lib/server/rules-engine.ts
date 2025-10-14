@@ -262,6 +262,36 @@ export function assemblePlan(input: StrategicInput): AssembledPlan {
 
   // ==================== PCS RULES ====================
   
+  // Rule 0: Deployed with upcoming PCS + Career/Debt concerns
+  if (deployment === 'Currently deployed' && (pcs === 'orders' || pcs === 'window')) {
+    let atoms = [...pinnedAtoms, 'pre-deployment-checklist', 'deployment-faq', 'pcs-timeline-tool'];
+    
+    // Add career transition content if that's their concern
+    if (biggestConcern.includes('career') || career) {
+      atoms.push('resume-power-up', 'federal-employment-guide', 'portable-careers-guide');
+    }
+    
+    // Add debt/financial content
+    if (finance === 'debt' || biggestConcern.includes('debt')) {
+      atoms.push('les-decoder', 'emergency-fund-builder');
+    }
+    
+    // Add PCS essentials
+    atoms.push('pcs-master-checklist', 'pcs-emotional-readiness');
+    
+    // Add deployment-specific
+    atoms.push('homefront-survival', 'reintegration-roadmap');
+    
+    // Ensure comprehensive coverage
+    atoms = ensureTopicCoverage(atoms, input, 18);
+    
+    return {
+      primarySituation: "Deployed with Upcoming PCS & Career Transition",
+      priorityAction: "While deployed, start preparing for your PCS AND career transition now: update your federal resume, browse USAJOBS for your next base, and ensure your family has POA for the move if it happens during deployment.",
+      atomIds: atoms.slice(0, 18),
+    };
+  }
+
   // Rule 1: Urgent EFMP PCS
   if ((focus === 'pcs' || pcs === 'orders' || pcs === 'window') && efmp && (pcs === 'orders' || urgency === 'high')) {
     let atoms = [...pinnedAtoms, 'pcs-emotional-readiness', 'pcs-master-checklist'];

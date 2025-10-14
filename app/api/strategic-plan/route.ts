@@ -310,7 +310,7 @@ async function callAIScoring(
         userContext,
         blocks: blocksSummary
       }),
-      signal: AbortSignal.timeout(25000) // 25s timeout
+      signal: AbortSignal.timeout(45000) // 45s timeout for 400+ blocks
     });
 
     console.log('[AI Score] Response status:', response.status);
