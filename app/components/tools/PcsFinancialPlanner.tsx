@@ -428,22 +428,73 @@ export default function PcsFinancialPlanner() {
 
             {/* Results */}
             <div className="pt-6 border-t-2 border-gray-200">
-              <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
-                    <p className="text-xs text-gray-600">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
+              {isPremium ? (
+                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
+                      <p className="text-xs text-gray-600">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {netEstimate >= 0 ? '+' : ''}${netEstimate.toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {netEstimate >= 0 ? '+' : ''}${netEstimate.toLocaleString()}
-                    </p>
+                  <p className="text-xs text-gray-500 mt-4 text-center">
+                    This is an estimate for planning purposes only. Actual costs may vary.
+                  </p>
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="blur-sm pointer-events-none select-none">
+                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
+                          <p className="text-xs text-gray-600">Total Income: $15,247 − Total Expenses: $8,934</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-4xl font-black text-green-600">
+                            +$6,313
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-4 text-center">
+                        This is an estimate for planning purposes only. Actual costs may vary.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
+                    <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                      <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
+                      <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                        Your Results Are Ready!
+                      </h3>
+                      <p className="text-lg text-gray-700 mb-2">
+                        Unlock to see your complete PCS financial estimate with detailed breakdowns
+                      </p>
+                      <p className="text-sm text-gray-600 mb-6">
+                        <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+                      </p>
+                      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                        <p className="text-sm font-semibold text-green-800">
+                          <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
+                        </p>
+                      </div>
+                      <p className="text-3xl font-black text-gray-900 mb-6">
+                        $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                      </p>
+                      <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
+                        Unlock Now →
+                      </a>
+                      <p className="text-xs text-gray-500">
+                        Less than a coffee per week · Upgrade anytime
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-4 text-center">
-                  This is an estimate for planning purposes only. Actual costs may vary.
-                </p>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -573,57 +624,127 @@ export default function PcsFinancialPlanner() {
 
             {/* Results */}
             <div className="pt-6 border-t-2 border-gray-200">
-              <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                <div className="bg-blue-50 p-5 rounded-xl text-center border-2 border-blue-200">
-                  <h5 className="text-sm font-semibold text-blue-800 mb-2">Government Payment</h5>
-                  <p className="text-3xl font-bold text-blue-600">
-                    ${Math.round(govtPayment).toLocaleString()}
-                  </p>
-                </div>
+              {isPremium ? (
+                <div>
+                  <div className="grid sm:grid-cols-3 gap-4 mb-4">
+                    <div className="bg-blue-50 p-5 rounded-xl text-center border-2 border-blue-200">
+                      <h5 className="text-sm font-semibold text-blue-800 mb-2">Government Payment</h5>
+                      <p className="text-3xl font-bold text-blue-600">
+                        ${Math.round(govtPayment).toLocaleString()}
+                      </p>
+                    </div>
 
-                <div className="bg-red-50 p-5 rounded-xl text-center border-2 border-red-200">
-                  <h5 className="text-sm font-semibold text-red-800 mb-2">Your Costs</h5>
-                  <p className="text-3xl font-bold text-red-600">
-                    ${Math.round(yourCosts).toLocaleString()}
-                  </p>
-                </div>
+                    <div className="bg-red-50 p-5 rounded-xl text-center border-2 border-red-200">
+                      <h5 className="text-sm font-semibold text-red-800 mb-2">Your Costs</h5>
+                      <p className="text-3xl font-bold text-red-600">
+                        ${Math.round(yourCosts).toLocaleString()}
+                      </p>
+                    </div>
 
-                <div className={`p-5 rounded-xl text-center border-2 ${
-                  netProfit >= 0 
-                    ? 'bg-green-50 border-green-300' 
-                    : 'bg-red-50 border-red-300'
-                }`}>
-                  <h5 className={`text-sm font-semibold mb-2 ${
-                    netProfit >= 0 ? 'text-green-800' : 'text-red-800'
-                  }`}>
-                    Net Profit/Loss
-                  </h5>
-                  <p className={`text-3xl font-bold ${
-                    netProfit >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {netProfit >= 0 ? '+' : ''}${Math.round(netProfit).toLocaleString()}
-                  </p>
-                </div>
-              </div>
+                    <div className={`p-5 rounded-xl text-center border-2 ${
+                      netProfit >= 0 
+                        ? 'bg-green-50 border-green-300' 
+                        : 'bg-red-50 border-red-300'
+                    }`}>
+                      <h5 className={`text-sm font-semibold mb-2 ${
+                        netProfit >= 0 ? 'text-green-800' : 'text-red-800'
+                      }`}>
+                        Net Profit/Loss
+                      </h5>
+                      <p className={`text-3xl font-bold ${
+                        netProfit >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {netProfit >= 0 ? '+' : ''}${Math.round(netProfit).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
 
-              {entitlementData && ppmWeight > entitlementData.weight_allowance && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
-                  <p className="text-sm font-semibold text-red-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
-                  <p className="text-xs text-red-800">
-                    Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
-                    You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
-                  </p>
+                  {entitlementData && ppmWeight > entitlementData.weight_allowance && (
+                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
+                      <p className="text-sm font-semibold text-red-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
+                      <p className="text-xs text-red-800">
+                        Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
+                        You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                    <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
+                    <p className="text-xs text-yellow-800">
+                      This is a simplified, unofficial estimate for planning purposes only. 
+                      Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
+                      <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="blur-sm pointer-events-none select-none">
+                    <div className="grid sm:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-blue-50 p-5 rounded-xl text-center border-2 border-blue-200">
+                        <h5 className="text-sm font-semibold text-blue-800 mb-2">Government Payment</h5>
+                        <p className="text-3xl font-bold text-blue-600">
+                          $8,247
+                        </p>
+                      </div>
+
+                      <div className="bg-red-50 p-5 rounded-xl text-center border-2 border-red-200">
+                        <h5 className="text-sm font-semibold text-red-800 mb-2">Your Costs</h5>
+                        <p className="text-3xl font-bold text-red-600">
+                          $5,934
+                        </p>
+                      </div>
+
+                      <div className="p-5 rounded-xl text-center border-2 bg-green-50 border-green-300">
+                        <h5 className="text-sm font-semibold mb-2 text-green-800">
+                          Net Profit/Loss
+                        </h5>
+                        <p className="text-3xl font-bold text-green-600">
+                          +$2,313
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                      <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
+                      <p className="text-xs text-yellow-800">
+                        This is a simplified, unofficial estimate for planning purposes only. 
+                        Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
+                        <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
+                    <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                      <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
+                      <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                        Your Results Are Ready!
+                      </h3>
+                      <p className="text-lg text-gray-700 mb-2">
+                        Unlock to see your complete PPM profit analysis with detailed breakdowns
+                      </p>
+                      <p className="text-sm text-gray-600 mb-6">
+                        <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+                      </p>
+                      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                        <p className="text-sm font-semibold text-green-800">
+                          <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
+                        </p>
+                      </div>
+                      <p className="text-3xl font-black text-gray-900 mb-6">
+                        $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                      </p>
+                      <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
+                        Unlock Now →
+                      </a>
+                      <p className="text-xs text-gray-500">
+                        Less than a coffee per week · Upgrade anytime
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
-
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                <p className="text-xs text-yellow-800">
-                  This is a simplified, unofficial estimate for planning purposes only. 
-                  Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
-                  <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
-                </p>
-              </div>
             </div>
           </div>
         </div>
