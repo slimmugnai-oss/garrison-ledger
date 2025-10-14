@@ -23,6 +23,7 @@ type ProfilePayload = {
   marital_status?: string | null;
   spouse_age?: number | null;
   num_children?: number | null;
+  children?: Array<{ age: number }> | null;
   has_efmp?: boolean | null;
   tsp_balance_range?: string | null;
   debt_amount_range?: string | null;
@@ -106,6 +107,7 @@ export default function ProfileSetupPage() {
             pcs_date: json?.pcs_date || null,
             marital_status: json?.marital_status || null,
             num_children: json?.num_children ?? null,
+            children: json?.children || null,
             has_efmp: json?.has_efmp ?? null,
             tsp_balance_range: json?.tsp_balance_range || null,
             debt_amount_range: json?.debt_amount_range || null,
@@ -165,6 +167,23 @@ export default function ProfileSetupPage() {
       }
     }
   }, [data.branch, data.component, availableComponents]);
+
+  // Initialize children array when num_children changes
+  useEffect(() => {
+    if (data.num_children !== null && data.num_children !== undefined && data.num_children > 0) {
+      const currentChildren = data.children || [];
+      const newChildren = Array.from({ length: data.num_children }, (_, i) => {
+        return currentChildren[i] || { age: 0 };
+      });
+      if (JSON.stringify(currentChildren) !== JSON.stringify(newChildren)) {
+        setData(d => ({ ...d, children: newChildren }));
+      }
+    } else if (data.num_children === 0 || data.num_children === null) {
+      if (data.children && data.children.length > 0) {
+        setData(d => ({ ...d, children: null }));
+      }
+    }
+  }, [data.num_children, data.children]);
 
   const step = useMemo(() => {
     // Simple step derivation based on filled fields
@@ -425,7 +444,7 @@ export default function ProfileSetupPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Children</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Number of children</label>
                 <input type="number" min={0} max={10} placeholder="0" className="w-full border border-border rounded-lg px-3 py-2" value={data.num_children ?? 0} onChange={e => setData(d => ({ ...d, num_children: Number(e.target.value) }))} />
               </div>
               {data.marital_status === 'married' && (
@@ -442,6 +461,36 @@ export default function ProfileSetupPage() {
                 </select>
               </div>
             </div>
+
+            {/* Children Ages - Dynamic fields */}
+            {data.num_children !== null && data.num_children !== undefined && data.num_children > 0 && (
+              <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
+                <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center gap-2">
+                  <span>👨‍👩‍👧‍👦</span> Children&apos;s Ages
+                </h3>
+                <p className="text-sm text-purple-700 mb-4">Helps us provide age-appropriate school info, childcare resources, and family planning</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Array.from({ length: data.num_children }, (_, i) => (
+                    <div key={i}>
+                      <label className="block text-sm font-semibold text-purple-900 mb-2">Child {i + 1} age</label>
+                      <input 
+                        type="number" 
+                        min={0} 
+                        max={26} 
+                        placeholder="Age"
+                        className="w-full border-2 border-purple-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        value={data.children?.[i]?.age ?? ''}
+                        onChange={e => {
+                          const newChildren = [...(data.children || [])];
+                          newChildren[i] = { age: Number(e.target.value) || 0 };
+                          setData(d => ({ ...d, children: newChildren }));
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
 
           <section>
