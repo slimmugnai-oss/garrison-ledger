@@ -67,6 +67,7 @@ const spouseServiceStatuses = [
   { value: 'veteran', label: 'Veteran' }
 ];
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
+const civilianBranches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force','Multiple / Joint','N/A (not service-specific)'];
 const genders = ['Male','Female','Prefer not to say'];
 const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
 const yesNo = [
@@ -281,13 +282,31 @@ export default function ProfileSetupPage() {
                 </select>
               </div>
               {data.service_status === 'military_spouse' ? (
-                <div>
-                  <label className="block text-sm font-semibold text-muted mb-2">Spouse&apos;s Service Status</label>
-                  <select className="w-full border border-border rounded-lg px-3 py-2" value={data.spouse_service_status ?? ''} onChange={e => setData(d => ({ ...d, spouse_service_status: e.target.value || null }))}>
-                    <option value="">Select</option>
-                    {spouseServiceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                  </select>
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-muted mb-2">Spouse&apos;s Service Status</label>
+                    <select className="w-full border border-border rounded-lg px-3 py-2" value={data.spouse_service_status ?? ''} onChange={e => setData(d => ({ ...d, spouse_service_status: e.target.value || null }))}>
+                      <option value="">Select</option>
+                      {spouseServiceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex items-center justify-center text-sm text-muted italic">
+                    Branch/rank not applicable
+                  </div>
+                </>
+              ) : data.service_status === 'dod_civilian' ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-muted mb-2">Which service do you work with?</label>
+                    <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
+                      <option value="">Select (optional)</option>
+                      {civilianBranches.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex items-center justify-center text-sm text-muted italic">
+                    Rank not applicable
+                  </div>
+                </>
               ) : (
                 <>
                   <div>
@@ -297,37 +316,37 @@ export default function ProfileSetupPage() {
                       {branches.map(b => <option key={b} value={b}>{b}</option>)}
                     </select>
                   </div>
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))} disabled={!data.branch}>
-                  <option value="">Select {!data.branch ? '(select branch first)' : '(optional)'}</option>
-                  {availableRanks.length > 0 && (
-                    <>
-                      {ranksData[data.branch!]?.enlisted && ranksData[data.branch!].enlisted!.length > 0 && (
-                        <optgroup label="Enlisted">
-                          {ranksData[data.branch!].enlisted!.map(r => (
-                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
-                          ))}
-                        </optgroup>
+                  <div>
+                    <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
+                    <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))} disabled={!data.branch}>
+                      <option value="">Select {!data.branch ? '(select branch first)' : '(optional)'}</option>
+                      {availableRanks.length > 0 && (
+                        <>
+                          {ranksData[data.branch!]?.enlisted && ranksData[data.branch!].enlisted!.length > 0 && (
+                            <optgroup label="Enlisted">
+                              {ranksData[data.branch!].enlisted!.map(r => (
+                                <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                              ))}
+                            </optgroup>
+                          )}
+                          {ranksData[data.branch!]?.warrant && ranksData[data.branch!].warrant!.length > 0 && (
+                            <optgroup label="Warrant Officer">
+                              {ranksData[data.branch!].warrant!.map(r => (
+                                <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                              ))}
+                            </optgroup>
+                          )}
+                          {ranksData[data.branch!]?.officer && ranksData[data.branch!].officer!.length > 0 && (
+                            <optgroup label="Officer">
+                              {ranksData[data.branch!].officer!.map(r => (
+                                <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
+                              ))}
+                            </optgroup>
+                          )}
+                        </>
                       )}
-                      {ranksData[data.branch!]?.warrant && ranksData[data.branch!].warrant!.length > 0 && (
-                        <optgroup label="Warrant Officer">
-                          {ranksData[data.branch!].warrant!.map(r => (
-                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
-                          ))}
-                        </optgroup>
-                      )}
-                      {ranksData[data.branch!]?.officer && ranksData[data.branch!].officer!.length > 0 && (
-                        <optgroup label="Officer">
-                          {ranksData[data.branch!].officer!.map(r => (
-                            <option key={r.code + '-' + r.title} value={r.title}>{r.title}</option>
-                          ))}
-                        </optgroup>
-                      )}
-                    </>
-                  )}
-                </select>
-              </div>
+                    </select>
+                  </div>
                 </>
               )}
             </div>
