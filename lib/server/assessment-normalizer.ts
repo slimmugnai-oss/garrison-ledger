@@ -43,7 +43,8 @@ export function normalizeAssessment(
 ): NormalizedAssessment {
   const s = (answers?.strategic || {}) as AssessmentRecord;
   const c = (answers?.comprehensive || {}) as AssessmentRecord;
-  const a = (answers?.adaptive || {}) as AssessmentRecord;
+  // If no nested format, treat the whole answers object as adaptive
+  const a = (answers?.adaptive || answers) as AssessmentRecord;
   const foundation = (c?.foundation || {}) as AssessmentRecord;
   const move = (c?.move || {}) as AssessmentRecord;
   const deployment = (c?.deployment || {}) as AssessmentRecord;

@@ -101,10 +101,13 @@ export async function GET() {
 
   // Normalize assessment data for consistent AI context
   const normalized = normalizeAssessment(answers as any, profile);
+  console.log('[Strategic Plan] Normalized assessment:', JSON.stringify(normalized, null, 2));
+  console.log('[Strategic Plan] Raw assessment answers:', JSON.stringify(answers, null, 2));
 
   // Get rules engine seed list (priority baseline)
   const rulesPlan = assemblePlanWithDiversity(answers, blockMetadata);
   console.log('[Strategic Plan] Rules engine seed list:', rulesPlan.atomIds.length, 'blocks');
+  console.log('[Strategic Plan] Rules engine selected atoms:', rulesPlan.atomIds);
 
   // PARALLEL PROCESSING: AI scoring ALL blocks + Roadmap generation
   const [aiResult, roadmapResult] = await Promise.allSettled([
@@ -123,13 +126,18 @@ export async function GET() {
   console.log('[Strategic Plan] AI result:', aiResult.status);
   console.log('[Strategic Plan] Roadmap result:', roadmapResult.status);
   if (aiResult.status === 'rejected') {
-    console.error('[Strategic Plan] AI scoring failed:', aiResult.reason);
+    console.error('[Strategic Plan] AI scoring FAILED:', aiResult.reason);
   }
   if (roadmapResult.status === 'rejected') {
     console.error('[Strategic Plan] Roadmap generation failed:', roadmapResult.reason);
   }
-  console.log('[Strategic Plan] AI scores received:', aiScores);
-  console.log('[Strategic Plan] Roadmap received:', roadmap);
+  
+  if (aiScores) {
+    console.log('[Strategic Plan] AI scores received:', aiScores.scores?.length || 0, 'blocks scored');
+    console.log('[Strategic Plan] Sample AI scores:', aiScores.scores?.slice(0, 5));
+  } else {
+    console.error('[Strategic Plan] NO AI SCORES - falling back to rules only');
+  }
 
   if (!rulesPlan) {
     console.error('[Strategic Plan] Rules engine failed');
