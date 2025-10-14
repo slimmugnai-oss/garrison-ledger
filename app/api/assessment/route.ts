@@ -225,7 +225,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Also upsert to user_profiles to auto-fill profile from assessment
-    await autoFillProfileFromAssessment(userId, answers);
+    await autoFillProfileFromAssessment(userId, answers as Record<string, unknown>);
     
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
@@ -235,7 +235,7 @@ export async function POST(req: NextRequest) {
       await backend.users.updateUser(userId, { privateMetadata: { assessment: answers } as Record<string, unknown> });
       
       // Still try to auto-fill profile even if assessment save failed
-      await autoFillProfileFromAssessment(userId, answers);
+      await autoFillProfileFromAssessment(userId, answers as Record<string, unknown>);
       
       return NextResponse.json({ ok: true, stored: 'clerk' }, { headers: { 'Cache-Control': 'no-store' } });
     } catch {
