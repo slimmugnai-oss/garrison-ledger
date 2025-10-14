@@ -493,8 +493,8 @@ export default function CareerOpportunityAnalyzer() {
                       <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-sm font-semibold text-blue-100">Net Financial Difference</span>
-                          <span className={`text-3xl font-black ${analysis.netDifference >= 0 ? 'text-green-300' : 'text-red-300'}`}>
-                            {analysis.netDifference >= 0 ? '+' : ''}${Math.abs(analysis.netDifference).toLocaleString()}
+                          <span className={`text-3xl font-black ${(analysis?.netDifference || 0) >= 0 ? 'text-green-300' : 'text-red-300'}`}>
+                            {(analysis?.netDifference || 0) >= 0 ? '+' : ''}${Math.abs(analysis?.netDifference || 0).toLocaleString()}
                           </span>
                         </div>
                         <p className="text-sm text-blue-100">After taxes & cost of living</p>
@@ -504,7 +504,7 @@ export default function CareerOpportunityAnalyzer() {
                       <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
                         <div className="text-sm font-semibold text-blue-100 mb-3">AI Analysis</div>
                         <p className="text-sm text-blue-100 leading-relaxed">
-                          {analysis.executiveSummary}
+                          {analysis?.executiveSummary || 'Complete your analysis to see personalized insights'}
                         </p>
                       </div>
                     </div>
