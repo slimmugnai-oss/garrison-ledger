@@ -100,6 +100,18 @@ export default async function SettingsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-border">
                 <div>
+                  <div className="font-semibold text-text">User Profile</div>
+                  <div className="text-sm text-muted mt-1">Update your rank, branch, base, family, and goals</div>
+                </div>
+                <a 
+                  href="/dashboard/profile/setup"
+                  className="px-4 py-2 bg-white border border-border rounded-lg text-sm font-semibold text-text hover:bg-gray-50 transition-colors"
+                >
+                  Edit Profile
+                </a>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-border">
+                <div>
                   <div className="font-semibold text-text">Email Notifications</div>
                   <div className="text-sm text-muted mt-1">Receive updates about new features and tips</div>
                 </div>

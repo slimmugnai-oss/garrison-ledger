@@ -122,12 +122,22 @@ export async function POST(req: NextRequest) {
   const openai = new OpenAI({ apiKey });
 
   try {
-    // Build user context summary
+    // Build user context summary with profile enrichment
     const contextSummary = `SERVICE MEMBER PROFILE:
+- Rank: ${userContext.rank || 'unknown'}
+- Branch: ${userContext.branch || 'unknown'}
 - Service Years: ${userContext.serviceYears || 'unknown'}
-- Family: ${userContext.familySnapshot || 'none'}
+- Current Base: ${userContext.currentBase || 'unknown'}
+- Next Base: ${userContext.nextBase || 'TBD'}
+- PCS Date: ${userContext.pcsDate || 'none'}
 - PCS Status: ${userContext.pcsSituation || 'none'}
 - Deployment: ${userContext.deploymentStatus || 'none'}
+- Family: ${userContext.familySnapshot || 'none'}
+- Children: ${userContext.childrenCount ?? 'none'}
+- EFMP: ${userContext.efmpEnrolled ? 'Yes' : 'No'}
+- TSP Balance: ${userContext.tspRange || 'unknown'}
+- Debt: ${userContext.debtRange || 'unknown'}
+- Emergency Fund: ${userContext.emergencyFundRange || 'unknown'}
 - Career Goals: ${Array.isArray(userContext.careerAmbitions) ? userContext.careerAmbitions.join(', ') : 'none'}
 - Financial Priority: ${userContext.financialPriority || 'unknown'}
 - Urgency Level: ${userContext.urgencyLevel || 'normal'}`;

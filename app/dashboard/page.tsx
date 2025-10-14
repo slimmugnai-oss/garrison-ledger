@@ -61,6 +61,10 @@ export default async function CommandDashboard() {
   const pcsSituation = String(move?.pcsSituation || '');
   const hasAssessment = Object.keys(answers).length > 0;
 
+  // Check if profile is complete
+  const { data: profileRow } = await supabase.from("user_profiles").select("profile_completed").eq("user_id", user.id).maybeSingle();
+  const profileComplete = profileRow?.profile_completed || false;
+
   const yearsMap: Record<string,string> = { '0-4': '0-4 Years Service', '5-10': '5-10 Years', '11-15': '11-15 Years', '16+': '16+ Years' };
   const serviceDisplay = yearsMap[serviceYears] || 'Service Member';
   
@@ -75,7 +79,6 @@ export default async function CommandDashboard() {
       <Header />
       <div className="min-h-screen bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          
           <PageHeader 
             title={`Welcome back, ${user.firstName || 'Commander'}! 👋`}
             subtitle="Your military life command center"
@@ -91,6 +94,22 @@ export default async function CommandDashboard() {
               )
             }
           />
+
+          {/* Profile completion CTA - only show if profile not complete */}
+          {!profileComplete && (
+            <AnimatedCard className="mb-8 bg-gradient-to-br from-amber-50 to-yellow-50 p-6 border-2 border-amber-200" delay={0}>
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">📝</div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-serif font-bold text-text mb-1">Boost personalization with your profile</h2>
+                  <p className="text-muted mb-3">Add rank, branch, move timeline, and goals to get sharper AI recommendations.</p>
+                  <Link href="/dashboard/profile/setup" className="inline-flex items-center bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow">
+                    Complete your profile →
+                  </Link>
+                </div>
+              </div>
+            </AnimatedCard>
+          )}
 
           {!hasAssessment && (
             <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 to-blue-600 p-10 text-white">

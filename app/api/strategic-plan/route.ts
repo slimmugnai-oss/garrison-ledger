@@ -80,13 +80,20 @@ export async function GET() {
       updated_at: b.updated_at || null
     }));
 
+  // Load user profile to enrich AI context
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+
   // PARALLEL PROCESSING: Rules engine + AI scoring
   const [rulesResult, aiResult] = await Promise.allSettled([
     // Rules engine (fast, reliable baseline)
     Promise.resolve(assemblePlanWithDiversity(answers, blockMetadata)),
     
     // AI scoring (intelligent, personalized) - pass full blocks
-    callAIScoring(answers, allBlocks || [])
+    callAIScoring(answers, allBlocks || [], profile || null)
   ]);
 
   // Extract results
@@ -201,7 +208,8 @@ export async function GET() {
  */
 async function callAIScoring(
   answers: StrategicInput,
-  blocks: any[]
+  blocks: any[],
+  profile: any | null
 ): Promise<{ scores: any[] } | null> {
   try {
     // Build user context from assessment
@@ -222,7 +230,18 @@ async function callAIScoring(
       careerAmbitions: career.ambitions || [],
       financialPriority: finance.priority || s.financialWorry || 'unknown',
       urgencyLevel: prefs.urgencyLevel || 'normal',
-      biggestFocus: s.biggestFocus || 'unknown'
+      biggestFocus: s.biggestFocus || 'unknown',
+      // Enrich with profile if present
+      rank: profile?.rank || null,
+      branch: profile?.branch || null,
+      currentBase: profile?.current_base || null,
+      nextBase: profile?.next_base || null,
+      pcsDate: profile?.pcs_date || null,
+      childrenCount: profile?.num_children ?? null,
+      efmpEnrolled: profile?.has_efmp ?? null,
+      tspRange: profile?.tsp_balance_range || null,
+      debtRange: profile?.debt_amount_range || null,
+      emergencyFundRange: profile?.emergency_fund_range || null,
     };
 
     // Prepare blocks metadata for AI

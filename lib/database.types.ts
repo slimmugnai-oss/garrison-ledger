@@ -462,6 +462,150 @@ export type Database = {
           },
         ]
       }
+      user_profiles: {
+        Row: {
+          bah_amount: number | null
+          branch: string | null
+          career_interests: string[] | null
+          children: Json | null
+          clearance_level: string | null
+          communication_pref: string | null
+          component: string | null
+          content_difficulty_pref: string | null
+          created_at: string | null
+          current_base: string | null
+          debt_amount_range: string | null
+          deployment_count: number | null
+          deployment_status: string | null
+          education_goals: string[] | null
+          emergency_fund_range: string | null
+          financial_priorities: string[] | null
+          has_efmp: boolean | null
+          housing_situation: string | null
+          last_assessment_at: string | null
+          last_deployment_date: string | null
+          last_login_at: string | null
+          long_term_goal: string | null
+          marital_status: string | null
+          monthly_income_range: string | null
+          mos_afsc_rate: string | null
+          next_base: string | null
+          num_children: number | null
+          owns_rental_properties: boolean | null
+          pcs_count: number | null
+          pcs_date: string | null
+          plan_generated_count: number | null
+          profile_completed: boolean | null
+          profile_completed_at: string | null
+          rank: string | null
+          retirement_age_target: number | null
+          spouse_career_field: string | null
+          spouse_employed: boolean | null
+          spouse_military: boolean | null
+          time_in_service_months: number | null
+          timezone: string | null
+          tsp_allocation: string | null
+          tsp_balance_range: string | null
+          updated_at: string | null
+          urgency_level: string | null
+          user_id: string
+        }
+        Insert: {
+          bah_amount?: number | null
+          branch?: string | null
+          career_interests?: string[] | null
+          children?: Json | null
+          clearance_level?: string | null
+          communication_pref?: string | null
+          component?: string | null
+          content_difficulty_pref?: string | null
+          created_at?: string | null
+          current_base?: string | null
+          debt_amount_range?: string | null
+          deployment_count?: number | null
+          deployment_status?: string | null
+          education_goals?: string[] | null
+          emergency_fund_range?: string | null
+          financial_priorities?: string[] | null
+          has_efmp?: boolean | null
+          housing_situation?: string | null
+          last_assessment_at?: string | null
+          last_deployment_date?: string | null
+          last_login_at?: string | null
+          long_term_goal?: string | null
+          marital_status?: string | null
+          monthly_income_range?: string | null
+          mos_afsc_rate?: string | null
+          next_base?: string | null
+          num_children?: number | null
+          owns_rental_properties?: boolean | null
+          pcs_count?: number | null
+          pcs_date?: string | null
+          plan_generated_count?: number | null
+          profile_completed?: boolean | null
+          profile_completed_at?: string | null
+          rank?: string | null
+          retirement_age_target?: number | null
+          spouse_career_field?: string | null
+          spouse_employed?: boolean | null
+          spouse_military?: boolean | null
+          time_in_service_months?: number | null
+          timezone?: string | null
+          tsp_allocation?: string | null
+          tsp_balance_range?: string | null
+          updated_at?: string | null
+          urgency_level?: string | null
+          user_id: string
+        }
+        Update: {
+          bah_amount?: number | null
+          branch?: string | null
+          career_interests?: string[] | null
+          children?: Json | null
+          clearance_level?: string | null
+          communication_pref?: string | null
+          component?: string | null
+          content_difficulty_pref?: string | null
+          created_at?: string | null
+          current_base?: string | null
+          debt_amount_range?: string | null
+          deployment_count?: number | null
+          deployment_status?: string | null
+          education_goals?: string[] | null
+          emergency_fund_range?: string | null
+          financial_priorities?: string[] | null
+          has_efmp?: boolean | null
+          housing_situation?: string | null
+          last_assessment_at?: string | null
+          last_deployment_date?: string | null
+          last_login_at?: string | null
+          long_term_goal?: string | null
+          marital_status?: string | null
+          monthly_income_range?: string | null
+          mos_afsc_rate?: string | null
+          next_base?: string | null
+          num_children?: number | null
+          owns_rental_properties?: boolean | null
+          pcs_count?: number | null
+          pcs_date?: string | null
+          plan_generated_count?: number | null
+          profile_completed?: boolean | null
+          profile_completed_at?: string | null
+          rank?: string | null
+          retirement_age_target?: number | null
+          spouse_career_field?: string | null
+          spouse_employed?: boolean | null
+          spouse_military?: boolean | null
+          time_in_service_months?: number | null
+          timezone?: string | null
+          tsp_allocation?: string | null
+          tsp_balance_range?: string | null
+          updated_at?: string | null
+          urgency_level?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       providers_public: {
@@ -745,3 +889,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
