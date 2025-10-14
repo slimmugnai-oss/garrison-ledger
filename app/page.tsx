@@ -155,7 +155,6 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
               <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <div className="text-5xl mb-4">📈</div>
                 <h3 className="text-2xl font-bold text-text-headings mb-4">TSP Modeler</h3>
                 <ul className="space-y-2 text-text-body mb-6 text-sm">
                   <li>• Model C, S, I, F, and L fund allocations</li>
@@ -173,7 +172,6 @@ export default function Home() {
 
             <AnimatedCard delay={100}>
               <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <div className="text-5xl mb-4">💵</div>
                 <h3 className="text-2xl font-bold text-text-headings mb-4">SDP Strategist</h3>
                 <ul className="space-y-2 text-text-body mb-6 text-sm">
                   <li>• Calculate 10% deployment savings growth</li>
@@ -191,7 +189,6 @@ export default function Home() {
 
             <AnimatedCard delay={200}>
               <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <div className="text-5xl mb-4">🏡</div>
                 <h3 className="text-2xl font-bold text-text-headings mb-4">House Hacking</h3>
                 <ul className="space-y-2 text-text-body mb-6 text-sm">
                   <li>• Analyze multi-unit property investments</li>
@@ -246,7 +243,7 @@ export default function Home() {
                   ].map((topic, idx) => (
                     <li key={idx} className="flex items-center text-text-body">
                       <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-green-600 text-sm font-bold">✓</span>
+                        <span className="text-green-600 text-sm font-bold">•</span>
                       </span>
                       <span className="text-sm">{topic}</span>
                     </li>

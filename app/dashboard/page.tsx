@@ -100,7 +100,9 @@ export default async function CommandDashboard() {
           {!hasAssessment && (
             <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 to-blue-600 p-10 text-white">
               <div className="flex items-start gap-6">
-                <div className="text-6xl">📋</div>
+                <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Icon name="ClipboardList" className="h-10 w-10 text-gray-700" />
+                </div>
                 <div className="flex-1">
                   <h2 className="text-3xl font-serif font-bold mb-3">Get Your Personalized Plan</h2>
                   <p className="text-xl text-blue-50 mb-6 leading-relaxed">
@@ -474,7 +476,7 @@ export default async function CommandDashboard() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
                   <div className="flex items-start gap-6">
                     <div className="flex-shrink-0 w-20 h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/20">
-                      <span className="text-5xl">📋</span>
+                      <Icon name="ClipboardList" className="h-12 w-12 text-white" />
                     </div>
                     <div className="flex-1">
                       <div className="inline-flex items-center px-3 py-1 bg-blue-600/20 border border-blue-400/30 rounded-full text-blue-200 text-xs font-black mb-3 uppercase tracking-widest">
@@ -598,7 +600,7 @@ export default async function CommandDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <AnimatedCard delay={0} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
                 <Link href="/dashboard/plan" className="block p-6 text-center">
-                  <div className="text-4xl mb-3">📋</div>
+                  <Icon name="ClipboardList" className="h-10 w-10 text-gray-700 mb-3 mx-auto" />
                   <h3 className="text-lg font-bold text-text-headings mb-1">Strategic Plan</h3>
                   <p className="text-sm text-text-body">View your roadmap</p>
                 </Link>
@@ -622,7 +624,7 @@ export default async function CommandDashboard() {
 
               <AnimatedCard delay={150} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
                 <Link href="/dashboard/referrals" className="block p-6 text-center">
-                  <div className="text-4xl mb-3">🎁</div>
+                  <Icon name="Gift" className="h-10 w-10 text-gray-700 mb-3 mx-auto" />
                   <h3 className="text-lg font-bold text-text-headings mb-1">Refer & Earn</h3>
                   <p className="text-sm text-text-body">Get rewards</p>
                 </Link>
@@ -630,17 +632,21 @@ export default async function CommandDashboard() {
             </div>
           </div>
 
-          {/* Additional Resources */}
+          {/* Premium Upgrade CTA */}
           {!isPremium && (
-            <AnimatedCard className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-10 text-center" delay={300}>
-              <Icon name="Star" className="h-12 w-12 text-gray-700 mb-4" />
-              <h2 className="text-3xl font-serif font-black text-text-headings mb-3">Unlock Full Access</h2>
-              <p className="text-lg text-text-body mb-6 max-w-2xl mx-auto">
+            <AnimatedCard className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-12 text-white text-center shadow-2xl" delay={300}>
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
+                  <Icon name="Star" className="h-10 w-10 text-white" />
+                </div>
+              </div>
+              <h2 className="text-4xl font-serif font-black mb-4">Unlock Full Access</h2>
+              <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
                 Get unlimited access to all 6 premium calculators, the Intel Library, and personalized AI-enhanced planning for just $9.99/month.
               </p>
               <Link 
                 href="/dashboard/upgrade"
-                className="inline-flex items-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-10 py-5 text-white font-black text-lg shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
+                className="inline-flex items-center bg-white text-purple-600 hover:bg-gray-100 px-10 py-5 rounded-xl font-black text-lg shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
               >
                 Upgrade to Premium →
               </Link>
