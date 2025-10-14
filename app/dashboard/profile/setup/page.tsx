@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BaseAutocomplete from '@/app/components/ui/BaseAutocomplete';
 import militaryRanks from '@/lib/data/military-ranks.json';
 import militaryComponents from '@/lib/data/military-components.json';
@@ -67,6 +68,7 @@ const interests = ['federal','entrepreneur','remote','education'];
 const priorities = ['tsp','debt','emergency','house-hack','budget','sdp'];
 
 export default function ProfileSetupPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -173,6 +175,11 @@ export default function ProfileSetupPage() {
       });
       if (!res.ok) throw new Error('Save failed');
       setSaved(true);
+      
+      // Auto-redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1500);
     } catch {
       setError('Could not save profile. Please try again.');
     } finally {
@@ -216,7 +223,15 @@ export default function ProfileSetupPage() {
           <div className="mb-6 p-3 border border-red-200 bg-red-50 text-red-800 rounded">{error}</div>
         )}
         {saved && (
-          <div className="mb-6 p-3 border border-green-200 bg-green-50 text-green-800 rounded">Profile saved!</div>
+          <div className="mb-6 p-4 border-2 border-green-300 bg-green-50 text-green-900 rounded-xl">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">✅</span>
+              <div>
+                <p className="font-bold">Profile saved successfully!</p>
+                <p className="text-sm text-green-700">Redirecting to dashboard...</p>
+              </div>
+            </div>
+          </div>
         )}
 
         <div className="space-y-8">
@@ -446,12 +461,14 @@ export default function ProfileSetupPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={submit}
-              disabled={saving}
-              className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow"
+              disabled={saving || saved}
+              className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? 'Saving…' : 'Save profile'}
+              {saving ? 'Saving…' : saved ? 'Saved! Redirecting...' : 'Save profile'}
             </button>
-            <Link href="/dashboard" className="text-sm text-muted hover:underline">Back to dashboard</Link>
+            {!saved && (
+              <Link href="/dashboard" className="text-sm text-muted hover:underline">Back to dashboard</Link>
+            )}
           </div>
         </div>
       </div>
