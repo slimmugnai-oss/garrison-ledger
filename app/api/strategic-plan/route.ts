@@ -60,17 +60,24 @@ export async function GET() {
 
   if (cachedPlan) {
     console.log('[Strategic Plan] Cache hit! Using cached plan from:', cachedPlan.generated_at);
-    return NextResponse.json(cachedPlan.plan_data, { 
+    // Add generatedAt to plan data for rate limiting UI
+    const planWithMetadata = {
+      ...cachedPlan.plan_data,
+      generatedAt: cachedPlan.generated_at
+    };
+    return NextResponse.json(planWithMetadata, { 
       headers: { "Cache-Control": "no-store" } 
     });
   }
 
   console.log('[Strategic Plan] Cache miss, generating new plan with AI');
 
-  // Fetch ALL content blocks for AI scoring
+  // Fetch ALL content blocks for comprehensive AI scoring
   const { data: allBlocks } = await supabase
     .from("content_blocks")
     .select("slug, title, summary, type, domain, topics, tags, updated_at");
+  
+  console.log('[Strategic Plan] Total content blocks available:', allBlocks?.length || 0);
   
   // Filter and map to required metadata format
   const blockMetadata = (allBlocks || [])
@@ -91,24 +98,24 @@ export async function GET() {
   // Normalize assessment data for consistent AI context
   const normalized = normalizeAssessment(answers as any, profile);
 
-  // PARALLEL PROCESSING: Rules engine + AI scoring + Roadmap generation
-  const [rulesResult, aiResult, roadmapResult] = await Promise.allSettled([
-    // Rules engine (fast, reliable baseline)
-    Promise.resolve(assemblePlanWithDiversity(answers, blockMetadata)),
-    
-    // AI scoring (intelligent, personalized) - use normalized context
+  // Get rules engine seed list (priority baseline)
+  const rulesPlan = assemblePlanWithDiversity(answers, blockMetadata);
+  console.log('[Strategic Plan] Rules engine seed list:', rulesPlan.atomIds.length, 'blocks');
+
+  // PARALLEL PROCESSING: AI scoring ALL blocks + Roadmap generation
+  const [aiResult, roadmapResult] = await Promise.allSettled([
+    // AI scoring ALL 400+ blocks (comprehensive, personalized)
     callAIScoring(normalized, allBlocks || [], profile || null),
     
-    // Executive roadmap generation - use normalized context
+    // Executive roadmap generation
     generateRoadmap(normalized, allBlocks || [], profile || null)
   ]);
 
   // Extract results
-  const rulesPlan = rulesResult.status === 'fulfilled' ? rulesResult.value : null;
   const aiScores = aiResult.status === 'fulfilled' ? aiResult.value : null;
   const roadmap = roadmapResult.status === 'fulfilled' ? roadmapResult.value : null;
 
-  console.log('[Strategic Plan] Rules result:', rulesResult.status);
+  console.log('[Strategic Plan] Rules seed list generated:', rulesPlan ? 'success' : 'failed');
   console.log('[Strategic Plan] AI result:', aiResult.status);
   console.log('[Strategic Plan] Roadmap result:', roadmapResult.status);
   if (aiResult.status === 'rejected') {
@@ -125,7 +132,7 @@ export async function GET() {
     return NextResponse.json({ error: "Plan generation failed" }, { status: 500 });
   }
 
-  // Create AI scores map
+  // Create AI scores map for ALL blocks
   const aiScoreMap = new Map<string, { score: number; reason: string }>();
   if (aiScores && aiScores.scores) {
     aiScores.scores.forEach((s: any) => {
@@ -133,31 +140,42 @@ export async function GET() {
     });
   }
 
-  // Ensemble scoring: Combine rules + AI
-  const scoredBlocks: ScoredBlock[] = rulesPlan.atomIds.map((slug, index) => {
-    const ruleScore = 100 - (index * 10); // Higher priority = higher score
-    const aiData = aiScoreMap.get(slug);
-    const aiScore = aiData?.score || 0;
-    
-    // Weighted average: 60% rules (proven) + 40% AI (enhancement)
-    const finalScore = aiScore > 0 
-      ? (ruleScore * 0.6) + (aiScore * 0.4)
-      : ruleScore; // Fall back to rules if no AI score
-    
-    return {
-      slug,
-      ruleScore,
-      aiScore,
-      aiReason: aiData?.reason,
-      finalScore
-    };
-  });
+  console.log('[Strategic Plan] AI scored', aiScoreMap.size, 'blocks');
 
-  // Re-sort by final score (in case AI changed priorities)
+  // Create seed list set for priority boosting
+  const seedList = new Set(rulesPlan.atomIds);
+
+  // Score ALL blocks in database
+  const scoredBlocks: ScoredBlock[] = (allBlocks || [])
+    .filter(b => b.slug) // Only blocks with valid slugs
+    .map(block => {
+      const slug = block.slug;
+      const aiData = aiScoreMap.get(slug);
+      const aiScore = aiData?.score || 0;
+      
+      // Boost score if in rules seed list (proven contextual relevance)
+      const seedBoost = seedList.has(slug) ? 15 : 0;
+      
+      // Final score: AI score + seed boost
+      const finalScore = aiScore + seedBoost;
+      
+      return {
+        slug,
+        ruleScore: seedBoost,
+        aiScore,
+        aiReason: aiData?.reason,
+        finalScore
+      };
+    })
+    .filter(sb => sb.finalScore > 0); // Only keep blocks with some score
+
+  // Sort by final score
   scoredBlocks.sort((a, b) => b.finalScore - a.finalScore);
 
-  // Take top 15 for comprehensive coverage
-  const topSlugs = scoredBlocks.slice(0, 15).map(sb => sb.slug);
+  console.log('[Strategic Plan] Scored', scoredBlocks.length, 'blocks with non-zero scores');
+
+  // Take top 18 for comprehensive coverage
+  const topSlugs = scoredBlocks.slice(0, 18).map(sb => sb.slug);
 
   // Fetch full content for top-scored blocks
   const { data: blocks } = await supabase
@@ -187,6 +205,8 @@ export async function GET() {
     };
   }).filter(Boolean);
 
+  const generatedAt = new Date().toISOString();
+  
   const planResponse = {
     primarySituation: rulesPlan.primarySituation,
     priorityAction: rulesPlan.priorityAction,
@@ -194,6 +214,7 @@ export async function GET() {
     aiEnhanced: aiScores ? true : false, // Flag if AI worked
     executiveSummary: roadmap?.roadmap?.executiveSummary || null,
     sections: roadmap?.roadmap?.sections || [],
+    generatedAt, // Include timestamp for rate limiting
   };
 
   // Cache the generated plan

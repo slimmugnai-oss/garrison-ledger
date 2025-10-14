@@ -35,6 +35,7 @@ type PlanData = {
   aiEnhanced?: boolean; // Flag if AI scoring worked
   executiveSummary?: string | null;
   sections?: Section[];
+  generatedAt?: string; // When the plan was last generated
 };
 
 export default function ExecutiveBriefing() {
@@ -44,6 +45,8 @@ export default function ExecutiveBriefing() {
   const [regenerating, setRegenerating] = useState(false);
   const [plan, setPlan] = useState<PlanData | null>(null);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [rateLimitError, setRateLimitError] = useState<string | null>(null);
+  const [hoursUntilRegen, setHoursUntilRegen] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadPlan() {
@@ -55,6 +58,15 @@ export default function ExecutiveBriefing() {
         }
         const data = await r.json();
         setPlan(data);
+        
+        // Calculate hours until regeneration available
+        if (data.generatedAt) {
+          const generated = new Date(data.generatedAt);
+          const now = new Date();
+          const hoursSince = (now.getTime() - generated.getTime()) / (1000 * 60 * 60);
+          const hoursRemaining = Math.max(0, Math.ceil(24 - hoursSince));
+          setHoursUntilRegen(hoursRemaining > 0 ? hoursRemaining : null);
+        }
       } catch (e) {
         console.error('Error loading plan:', e);
       } finally {
@@ -66,12 +78,28 @@ export default function ExecutiveBriefing() {
 
   async function handleRegenerate() {
     setRegenerating(true);
+    setRateLimitError(null);
     try {
-      await fetch('/api/plan/regenerate', { method: 'POST' });
-      router.refresh(); // Force page reload
-      window.location.reload(); // Ensure fresh data
+      const response = await fetch('/api/plan/regenerate', { method: 'POST' });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (response.status === 429) {
+          // Rate limited
+          setRateLimitError(data.message || 'Please wait before regenerating');
+          setHoursUntilRegen(data.hoursRemaining || null);
+          setRegenerating(false);
+          return;
+        }
+        throw new Error(data.error || 'Failed to regenerate');
+      }
+      
+      // Success - reload to get fresh plan
+      router.refresh();
+      window.location.reload();
     } catch (e) {
       console.error('Regenerate failed:', e);
+      setRateLimitError('Failed to regenerate plan. Please try again.');
       setRegenerating(false);
     }
   }
@@ -244,23 +272,38 @@ export default function ExecutiveBriefing() {
           </div>
 
           {/* AI Enhancement Badge + Regenerate Button */}
-          <div className="flex items-center justify-between mb-8">
-            {plan.aiEnhanced && plan.blocks.some(b => b.aiReason) && (
-              <div className="flex-1 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
-                <span className="text-2xl">✨</span>
-                <div>
-                  <div className="font-bold text-purple-900">AI-Enhanced Personalization</div>
-                  <div className="text-sm text-purple-700">This plan was intelligently curated using GPT-4o to analyze your specific situation</div>
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              {plan.aiEnhanced && plan.blocks.some(b => b.aiReason) && (
+                <div className="flex-1 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
+                  <span className="text-2xl">✨</span>
+                  <div>
+                    <div className="font-bold text-purple-900">AI-Enhanced Personalization</div>
+                    <div className="text-sm text-purple-700">This plan was intelligently curated using GPT-4o to analyze your specific situation</div>
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={handleRegenerate}
+                disabled={regenerating || !!hoursUntilRegen}
+                className="ml-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                title={hoursUntilRegen ? `Available in ${hoursUntilRegen} hour${hoursUntilRegen !== 1 ? 's' : ''}` : ''}
+              >
+                {regenerating ? 'Regenerating...' : hoursUntilRegen ? `🔒 Available in ${hoursUntilRegen}h` : '🔄 Regenerate Plan'}
+              </button>
+            </div>
+            {rateLimitError && (
+              <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⏱️</span>
+                  <div>
+                    <div className="font-bold text-amber-900">Rate Limit Active</div>
+                    <div className="text-amber-800">{rateLimitError}</div>
+                    <div className="text-sm text-amber-700 mt-1">Plans can be regenerated once every 24 hours to ensure optimal AI performance and cost efficiency.</div>
+                  </div>
                 </div>
               </div>
             )}
-            <button
-              onClick={handleRegenerate}
-              disabled={regenerating}
-              className="ml-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 whitespace-nowrap"
-            >
-              {regenerating ? 'Regenerating...' : '🔄 Regenerate Plan'}
-            </button>
           </div>
 
           {/* Content Blocks - Organized by Domain */}
