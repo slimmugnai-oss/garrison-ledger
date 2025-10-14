@@ -5,18 +5,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Header() {
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
-  
-  const handleMouseEnter = () => {
-    if (closeTimeout) clearTimeout(closeTimeout);
-    setResourcesOpen(true);
-  };
-  
-  const handleMouseLeave = () => {
-    const timeout = setTimeout(() => setResourcesOpen(false), 200);
-    setCloseTimeout(timeout);
-  };
   
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -29,7 +20,7 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Navigation - Desktop - Streamlined */}
+          {/* Navigation - Desktop - Clean organization */}
           <nav className="hidden lg:flex items-center space-x-6">
             <Link 
               href="/" 
@@ -50,51 +41,87 @@ export default function Header() {
               >
                 Assessment
               </Link>
-              {/* Combined Dropdown - Tools & Resources */}
+              
+              {/* Tools Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setToolsOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setToolsOpen(false), 200); setCloseTimeout(t); }}
               >
                 <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center font-medium">
-                  More
+                  Tools
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {toolsOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setToolsOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setToolsOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <Link href="/dashboard/tools/tsp-modeler" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      TSP Modeler
+                    </Link>
+                    <Link href="/dashboard/tools/sdp-strategist" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      SDP Strategist
+                    </Link>
+                    <Link href="/dashboard/tools/house-hacking" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      House Hacking
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Resources Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 200); setCloseTimeout(t); }}
+              >
+                <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center font-medium">
+                  Resources
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {resourcesOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
-                    <div className="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Tools</div>
-                    <Link href="/dashboard/tools/tsp-modeler" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      TSP Modeler
-                    </Link>
-                    <Link href="/dashboard/tools/sdp-strategist" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      SDP Strategist
-                    </Link>
-                    <Link href="/dashboard/tools/house-hacking" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      House Hacking
-                    </Link>
-                    <div className="border-t border-gray-200 my-2"></div>
-                    <div className="px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Resources</div>
-                    <a href="/pcs-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <a href="/pcs-hub" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       PCS Hub
                     </a>
-                    <a href="/career-hub" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="/career-hub" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       Career Hub
                     </a>
-                    <a href="/deployment" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <a href="/deployment" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       Deployment Guide
                     </a>
-                    <div className="border-t border-gray-200 my-2"></div>
-                    <Link href="/dashboard/directory" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      Provider Directory
-                    </Link>
-                    <Link href="/dashboard/referrals" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
-                      Refer & Earn
-                    </Link>
+                    <a href="/on-base-shopping" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      On-Base Shopping
+                    </a>
+                    <a href="/base-guides" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      Base Guides
+                    </a>
                   </div>
                 )}
               </div>
+
+              <Link 
+                href="/dashboard/directory" 
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                Directory
+              </Link>
+              <Link 
+                href="/dashboard/referrals" 
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                Refer & Earn
+              </Link>
             </SignedIn>
           </nav>
 
