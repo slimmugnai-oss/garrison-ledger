@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
 import * as cheerio from "cheerio";
 import { readFile } from "fs/promises";
@@ -71,7 +71,7 @@ function extractKeywords(title: string, summary: string): string[] {
 async function processRSSFeed(
   source: FeedSource,
   parser: Parser,
-  supabase: TypedSupabaseClient
+  supabase: SupabaseClient
 ): Promise<{ processed: number; new: number; errors: string[] }> {
   let processed = 0;
   let newItems = 0;
@@ -134,7 +134,7 @@ async function processRSSFeed(
  */
 async function processWebScrape(
   source: FeedSource,
-  supabase: TypedSupabaseClient
+  supabase: SupabaseClient
 ): Promise<{ processed: number; new: number; errors: string[] }> {
   let processed = 0;
   let newItems = 0;
