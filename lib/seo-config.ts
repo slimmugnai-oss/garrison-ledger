@@ -17,11 +17,6 @@ export const TWITTER_HANDLE = "@GarrisonLedger"; // Update when you have one
 export const DEFAULT_META = {
   title: `${SITE_NAME} - ${SITE_TAGLINE}`,
   description: SITE_DESCRIPTION,
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
-  },
   keywords: [
     // Primary
     "military financial planning",

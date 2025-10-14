@@ -380,38 +380,55 @@ export default function ExecutiveBriefing() {
                       </div>
                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-600 rounded-r-xl p-6 shadow-sm">
                         <p className="text-gray-800 leading-relaxed text-lg font-medium mb-4">
-                          These interactive tools are available in our dedicated resource toolkits. Each toolkit contains comprehensive guides, calculators, and trackers designed for specific military life situations.
+                          Access our premium interactive tools to plan, calculate, and optimize your military finances and transitions.
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                          <a href="/pcs-hub" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
-                            <span className="text-3xl">🚚</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                          <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">📈</span>
                             <div>
-                              <div className="font-bold text-gray-900">PCS Hub</div>
-                              <div className="text-sm text-gray-600">Moving & relocation tools</div>
+                              <div className="font-bold text-gray-900">TSP Modeler</div>
+                              <div className="text-xs text-gray-600">Retirement projections</div>
                             </div>
-                          </a>
-                          <a href="/career-hub" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
-                            <span className="text-3xl">💼</span>
+                          </Link>
+                          <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">💰</span>
                             <div>
-                              <div className="font-bold text-gray-900">Career Hub</div>
-                              <div className="text-sm text-gray-600">Career & education tools</div>
+                              <div className="font-bold text-gray-900">SDP Strategist</div>
+                              <div className="text-xs text-gray-600">Deployment savings</div>
                             </div>
-                          </a>
-                          <a href="/deployment" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
-                            <span className="text-3xl">🌍</span>
+                          </Link>
+                          <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">🏡</span>
                             <div>
-                              <div className="font-bold text-gray-900">Deployment Guide</div>
-                              <div className="text-sm text-gray-600">Deployment prep tools</div>
+                              <div className="font-bold text-gray-900">House Hacking</div>
+                              <div className="text-xs text-gray-600">BAH optimization</div>
                             </div>
-                          </a>
-                          <a href="/base-guides" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
-                            <span className="text-3xl">📍</span>
+                          </Link>
+                          <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">🚚</span>
                             <div>
-                              <div className="font-bold text-gray-900">Base Guides</div>
-                              <div className="text-sm text-gray-600">Base-specific tools</div>
+                              <div className="font-bold text-gray-900">PCS Planner</div>
+                              <div className="text-xs text-gray-600">Move budget & PPM</div>
                             </div>
-                          </a>
+                          </Link>
+                          <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">🛒</span>
+                            <div>
+                              <div className="font-bold text-gray-900">On-Base Savings</div>
+                              <div className="text-xs text-gray-600">Commissary & Exchange</div>
+                            </div>
+                          </Link>
+                          <Link href="/dashboard/tools/salary-calculator" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-md group">
+                            <span className="text-3xl group-hover:scale-110 transition-transform">💼</span>
+                            <div>
+                              <div className="font-bold text-gray-900">Salary Calculator</div>
+                              <div className="text-xs text-gray-600">Job offer comparison</div>
+                            </div>
+                          </Link>
                         </div>
+                        <p className="text-sm text-gray-600 mt-4">
+                          💡 <strong>New:</strong> All tools now paywalled and accessible directly from your dashboard.
+                        </p>
                       </div>
                     </div>
 

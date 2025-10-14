@@ -19,6 +19,15 @@ const lora = Lora({
 
 export const metadata: Metadata = {
   ...DEFAULT_META,
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   ...(process.env.NEXT_PUBLIC_ENV !== "production"
     ? { robots: { index: false, follow: false } }
     : {}),

@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 /**
- * INTELLIGENCE LIBRARY API ENDPOINT
+ * INTEL LIBRARY API ENDPOINT
  * Protected endpoint for premium users to search and filter atomic content blocks
  */
 

@@ -57,10 +57,11 @@ export default function Header() {
                 </button>
                 {toolsOpen && (
                   <div 
-                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
+                    className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
                     onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setToolsOpen(true); }}
                     onMouseLeave={() => { const t = setTimeout(() => setToolsOpen(false), 200); setCloseTimeout(t); }}
                   >
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Financial Tools</div>
                     <Link href="/dashboard/tools/tsp-modeler" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       TSP Modeler
                     </Link>
@@ -69,6 +70,17 @@ export default function Header() {
                     </Link>
                     <Link href="/dashboard/tools/house-hacking" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
                       House Hacking
+                    </Link>
+                    <div className="border-t border-gray-200 my-2"></div>
+                    <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Planning Tools</div>
+                    <Link href="/dashboard/tools/pcs-planner" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      PCS Financial Planner
+                    </Link>
+                    <Link href="/dashboard/tools/on-base-savings" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      On-Base Savings
+                    </Link>
+                    <Link href="/dashboard/tools/salary-calculator" className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+                      Salary Calculator
                     </Link>
                   </div>
                 )}
@@ -115,7 +127,7 @@ export default function Header() {
                 href="/dashboard/library" 
                 className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
               >
-                Intelligence Library
+                Intel Library
               </Link>
               <Link 
                 href="/dashboard/directory" 
@@ -221,6 +233,15 @@ export default function Header() {
                     <Link href="/dashboard/tools/house-hacking" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
                       House Hacking
                     </Link>
+                    <Link href="/dashboard/tools/pcs-planner" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      PCS Financial Planner
+                    </Link>
+                    <Link href="/dashboard/tools/on-base-savings" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      On-Base Savings
+                    </Link>
+                    <Link href="/dashboard/tools/salary-calculator" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      Salary Calculator
+                    </Link>
                   </div>
                 </div>
                 <div className="px-2 py-2">
@@ -248,7 +269,7 @@ export default function Header() {
                   className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Intelligence Library
+                  Intel Library
                 </Link>
                 <Link 
                   href="/dashboard/directory" 

@@ -137,7 +137,7 @@ function IntelligenceLibraryContent() {
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
-              Intelligence Library
+              Intel Library
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
               Search and explore our entire collection of 400+ expert-curated content blocks
@@ -422,7 +422,7 @@ export default function IntelligenceLibrary() {
         <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-gray-600">Loading Intelligence Library...</p>
+            <p className="text-gray-600">Loading Intel Library...</p>
           </div>
         </div>
         <Footer />
