@@ -34,6 +34,11 @@ export default function Footer() {
                   Your Plan
                 </Link>
               </li>
+              <li>
+                <Link href="/dashboard/upgrade" className="text-text-body hover:text-primary-accent transition-colors">
+                  Upgrade
+                </Link>
+              </li>
             </ul>
           </div>
 

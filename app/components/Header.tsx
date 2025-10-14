@@ -7,6 +7,7 @@ import { useState } from 'react';
 export default function Header() {
   const [toolsOpen, setToolsOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   
   return (
@@ -128,11 +129,32 @@ export default function Header() {
               >
                 Refer & Earn
               </Link>
+              <Link 
+                href="/dashboard/upgrade" 
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-semibold transition-all hover:shadow-lg"
+              >
+                Upgrade
+              </Link>
             </SignedIn>
           </nav>
 
-          {/* Authentication Buttons */}
-          <div className="flex items-center space-x-4">
+          {/* Mobile menu button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden text-gray-700 hover:text-gray-900 p-2"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+
+          {/* Authentication Buttons - Desktop Only */}
+          <div className="hidden lg:flex items-center space-x-4">
             <SignedOut>
               <div className="flex items-center space-x-2">
                 <SignInButton mode="modal">
@@ -159,36 +181,132 @@ export default function Header() {
               />
             </SignedIn>
           </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <SignedOut>
-              <div className="flex items-center space-x-2">
-                <SignInButton mode="modal">
-                  <button className="text-gray-700 hover:text-gray-900 transition-colors text-sm">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition-colors">
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </div>
-            </SignedOut>
-            
-            <SignedIn>
-              <UserButton 
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "w-7 h-7"
-                  }
-                }}
-              />
-            </SignedIn>
-          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-gray-200 py-4">
+            <nav className="flex flex-col space-y-3">
+              <Link 
+                href="/" 
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <SignedIn>
+                <Link 
+                  href="/dashboard" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  href="/dashboard/assessment" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Assessment
+                </Link>
+                <div className="px-2 py-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tools</p>
+                  <div className="pl-3 space-y-2">
+                    <Link href="/dashboard/tools/tsp-modeler" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      TSP Modeler
+                    </Link>
+                    <Link href="/dashboard/tools/sdp-strategist" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      SDP Strategist
+                    </Link>
+                    <Link href="/dashboard/tools/house-hacking" className="block text-gray-700 hover:text-gray-900 py-1" onClick={() => setMobileMenuOpen(false)}>
+                      House Hacking
+                    </Link>
+                  </div>
+                </div>
+                <div className="px-2 py-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Resources</p>
+                  <div className="pl-3 space-y-2">
+                    <a href="/pcs-hub" className="block text-gray-700 hover:text-gray-900 py-1">
+                      PCS Hub
+                    </a>
+                    <a href="/career-hub" className="block text-gray-700 hover:text-gray-900 py-1">
+                      Career Hub
+                    </a>
+                    <a href="/deployment" className="block text-gray-700 hover:text-gray-900 py-1">
+                      Deployment Guide
+                    </a>
+                    <a href="/on-base-shopping" className="block text-gray-700 hover:text-gray-900 py-1">
+                      On-Base Shopping
+                    </a>
+                    <a href="/base-guides" className="block text-gray-700 hover:text-gray-900 py-1">
+                      Base Guides
+                    </a>
+                  </div>
+                </div>
+                <Link 
+                  href="/dashboard/library" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Intelligence Library
+                </Link>
+                <Link 
+                  href="/dashboard/directory" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Directory
+                </Link>
+                <Link 
+                  href="/dashboard/referrals" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Refer & Earn
+                </Link>
+                <Link 
+                  href="/dashboard/upgrade" 
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-semibold transition-all hover:shadow-lg mx-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Upgrade
+                </Link>
+              </SignedIn>
+              
+              {/* Mobile Auth Buttons */}
+              <div className="px-2 py-2 border-t border-gray-200 mt-2 pt-4">
+                <SignedOut>
+                  <div className="flex flex-col space-y-2">
+                    <SignInButton mode="modal">
+                      <button className="w-full text-center text-gray-700 hover:text-gray-900 transition-colors font-medium py-2 border border-gray-300 rounded-lg">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </div>
+                </SignedOut>
+                
+                <SignedIn>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Your Account</span>
+                    <UserButton 
+                      afterSignOutUrl="/"
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-8 h-8"
+                        }
+                      }}
+                    />
+                  </div>
+                </SignedIn>
+              </div>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

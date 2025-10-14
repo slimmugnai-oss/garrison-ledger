@@ -46,7 +46,7 @@ type MilitaryComponents = {
 const ranksData = militaryRanks as MilitaryRanks;
 const componentsData = militaryComponents as MilitaryComponents;
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
-const genders = ['Male','Female','Other','Prefer not to say'];
+const genders = ['Male','Female','Prefer not to say'];
 const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
 const yesNo = [
   { label: 'Yes', value: true },
