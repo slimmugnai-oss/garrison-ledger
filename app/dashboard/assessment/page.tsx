@@ -6,7 +6,6 @@ import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PageHeader from '@/app/components/ui/PageHeader';
-import Section from '@/app/components/ui/Section';
 import Badge from '@/app/components/ui/Badge';
 
 type Question = {

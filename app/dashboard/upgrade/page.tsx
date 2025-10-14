@@ -5,8 +5,6 @@ import { createClient } from '@supabase/supabase-js';
 import Header from '../../components/Header';
 import PaymentButton from '../../components/PaymentButton';
 import BillingPortalButton from '../../components/BillingPortalButton';
-import Testimonials from '../../components/ui/Testimonials';
-import ComparisonTable from '../../components/ui/ComparisonTable';
 import Link from 'next/link';
 import { generatePageMeta } from "@/lib/seo-config";
 
@@ -321,17 +319,17 @@ export default async function UpgradePage() {
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <div className="bg-white border-2 border-blue-200 rounded-xl p-6">
-                <p className="text-gray-700 mb-4">"The PCS calculator helped us budget perfectly for our move. We actually saved money instead of going over."</p>
+                <p className="text-gray-700 mb-4">&ldquo;The PCS calculator helped us budget perfectly for our move. We actually saved money instead of going over.&rdquo;</p>
                 <div className="text-sm font-semibold text-gray-900">Jennifer M.</div>
                 <div className="text-xs text-gray-500">Military Spouse • Fort Hood</div>
               </div>
               <div className="bg-white border-2 border-green-200 rounded-xl p-6">
-                <p className="text-gray-700 mb-4">"Finally found a retirement calculator that understands military pay. Much clearer than generic tools online."</p>
+                <p className="text-gray-700 mb-4">&ldquo;Finally found a retirement calculator that understands military pay. Much clearer than generic tools online.&rdquo;</p>
                 <div className="text-sm font-semibold text-gray-900">Sarah K.</div>
                 <div className="text-xs text-gray-500">Military Spouse • San Diego</div>
               </div>
               <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
-                <p className="text-gray-700 mb-4">"The assessment gave us a clear roadmap for our financial goals. Worth every penny."</p>
+                <p className="text-gray-700 mb-4">&ldquo;The assessment gave us a clear roadmap for our financial goals. Worth every penny.&rdquo;</p>
                 <div className="text-sm font-semibold text-gray-900">Amanda R.</div>
                 <div className="text-xs text-gray-500">Military Spouse • Norfolk</div>
               </div>

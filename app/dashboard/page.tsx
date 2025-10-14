@@ -8,8 +8,6 @@ import { createClient } from '@supabase/supabase-js';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import { generatePageMeta } from "@/lib/seo-config";
 import Icon from '../components/ui/Icon';
-import PageHeader from '../components/ui/PageHeader';
-import Section from '../components/ui/Section';
 import Badge from '../components/ui/Badge';
 
 export const metadata: Metadata = generatePageMeta({
