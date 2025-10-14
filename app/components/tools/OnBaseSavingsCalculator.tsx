@@ -309,7 +309,8 @@ export default function OnBaseSavingsCalculator() {
       </div>
 
       {/* Section 3: Executive Summary */}
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
+      {isPremium ? (
+        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
             <Icon name="Star" className="h-6 w-6 text-gray-700" />
@@ -398,7 +399,130 @@ export default function OnBaseSavingsCalculator() {
         <p className="text-xs text-gray-500 mt-6 text-center">
           <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
         </p>
-      </div>
+        </div>
+      ) : (
+        <div className="relative">
+          <div className="blur-sm pointer-events-none select-none">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
+                  <Icon name="Star" className="h-6 w-6 text-gray-700" />
+                  <span className="text-sm font-black text-amber-900 uppercase tracking-wider">
+                    Executive Summary
+                  </span>
+                </div>
+                <h2 className="text-4xl font-serif font-black text-text-headings mb-3">
+                  Your Annual Savings Command Center
+                </h2>
+                <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                  Here&apos;s the complete picture of your on-base shopping benefits
+                </p>
+              </div>
+
+              {/* Breakdown Cards */}
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-white rounded-xl border-2 border-blue-400 p-6 text-center">
+                  <Icon name="ShoppingCart" className="h-10 w-10 text-gray-700 mb-3" />
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                    Commissary Savings
+                  </p>
+                  <p className="text-4xl font-black text-blue-600 mb-2">
+                    $2,847
+                  </p>
+                  <div className="flex justify-center gap-4 text-xs text-gray-600">
+                    <span>Meat: $1,200</span>
+                    <span>Pantry: $1,647</span>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl border-2 border-green-400 p-6 text-center">
+                  <div className="text-4xl mb-3">🏪</div>
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                    Exchange Savings
+                  </p>
+                  <p className="text-4xl font-black text-green-600 mb-2">
+                    $1,753
+                  </p>
+                  <div className="flex justify-center gap-4 text-xs text-gray-600">
+                    <span>Tax: $1,400</span>
+                    <span>STAR®: $353</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Grand Total */}
+              <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
+                <p className="text-center text-lg font-semibold mb-3 opacity-90">
+                  <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
+                </p>
+                <p className="text-center text-6xl font-black mb-6">
+                  $4,600
+                </p>
+                <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
+                  <p className="text-white text-center text-base leading-relaxed">
+                    <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
+                    <span className="text-2xl font-black">$4,600</span> this year.</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Context */}
+              <div className="mt-6 grid md:grid-cols-3 gap-4 text-center">
+                <div className="bg-white/50 rounded-lg p-3">
+                  <p className="text-xs text-gray-600 mb-1">Monthly Equivalent</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    $383/mo
+                  </p>
+                </div>
+                <div className="bg-white/50 rounded-lg p-3">
+                  <p className="text-xs text-gray-600 mb-1">Weekly Equivalent</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    $88/wk
+                  </p>
+                </div>
+                <div className="bg-white/50 rounded-lg p-3">
+                  <p className="text-xs text-gray-600 mb-1">Per Paycheck (24/year)</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    $192
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 mt-6 text-center">
+                <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
+              </p>
+            </div>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
+            <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+              <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
+              <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                Your Results Are Ready!
+              </h3>
+              <p className="text-lg text-gray-700 mb-2">
+                Unlock to see your complete on-base savings analysis with detailed breakdowns
+              </p>
+              <p className="text-sm text-gray-600 mb-6">
+                <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
+              </p>
+              <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
+                <p className="text-sm font-semibold text-green-800">
+                  <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
+                </p>
+              </div>
+              <p className="text-3xl font-black text-gray-900 mb-6">
+                $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+              </p>
+              <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
+                Unlock Now →
+              </a>
+              <p className="text-xs text-gray-500">
+                Less than a coffee per week · Upgrade anytime
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Educational Tips */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
