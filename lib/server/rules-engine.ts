@@ -10,6 +10,7 @@ import { z } from 'zod';
 // ==================== ZOD SCHEMAS ====================
 
 export const StrategicInputSchema = z.object({
+  // Original assessment formats
   strategic: z.object({
     biggestFocus: z.string().optional(),
     pcsTimeline: z.string().optional(),
@@ -42,7 +43,9 @@ export const StrategicInputSchema = z.object({
       knowledgeLevel: z.string().optional(),
     }).optional(),
   }).optional(),
-});
+  // Adaptive assessment format (flexible key-value pairs)
+  adaptive: z.record(z.union([z.string(), z.array(z.string())])).optional(),
+}).passthrough(); // Allow additional keys for forward compatibility
 
 export const AssembledPlanSchema = z.object({
   primarySituation: z.string(),

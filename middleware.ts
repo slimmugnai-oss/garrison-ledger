@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 // Define which routes should be protected (require authentication)
 const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',  // Protect /dashboard and all its sub-routes
+  '/dashboard(.*)',  // Protect /dashboard and all its sub-routes (includes /profile, /assessment, /referrals)
   '/profile(.*)',    // Protect /profile and all its sub-routes
   '/settings(.*)',   // Protect /settings and all its sub-routes
 ]);

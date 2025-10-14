@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
@@ -25,9 +25,10 @@ export default function AdaptiveAssessmentPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Load first question on mount
-  useState(() => {
+  useEffect(() => {
     loadNextQuestion({}, []);
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function loadNextQuestion(newAnswers: Record<string, string | string[]>, asked: string[]) {
     setLoading(true);

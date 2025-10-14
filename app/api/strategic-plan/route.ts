@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@/lib/supabase-typed";
+import { createClient } from "@supabase/supabase-js";
 import { assemblePlanWithDiversity, type StrategicInput, StrategicInputSchema } from "@/lib/server/rules-engine";
 import { checkAndIncrement } from "@/lib/limits";
 
@@ -223,9 +223,10 @@ async function callAIScoring(
   profile: any | null
 ): Promise<{ scores: any[] } | null> {
   try {
-    // Build user context from assessment
+    // Build user context from assessment (support multiple formats)
     const s = answers?.strategic || {};
     const c = answers?.comprehensive || {};
+    const a = answers?.adaptive || {};
     const foundation = (c.foundation || {}) as any;
     const move = (c.move || {}) as any;
     const deployment = (c.deployment || {}) as any;
@@ -234,15 +235,15 @@ async function callAIScoring(
     const prefs = (c.preferences || {}) as any;
 
     const userContext = {
-      serviceYears: foundation.serviceYears || s.efmpEnrolled ? '5-10' : 'unknown',
-      familySnapshot: foundation.familySnapshot || 'none',
-      pcsSituation: move.pcsSituation || s.pcsTimeline || 'none',
-      deploymentStatus: deployment.status || 'none',
+      serviceYears: foundation.serviceYears || a.rank || s.efmpEnrolled ? '5-10' : 'unknown',
+      familySnapshot: foundation.familySnapshot || a.family_status || 'none',
+      pcsSituation: move.pcsSituation || a.pcs_situation || s.pcsTimeline || 'none',
+      deploymentStatus: deployment.status || a.deployment_status || 'none',
       careerAmbitions: career.ambitions || [],
-      financialPriority: finance.priority || s.financialWorry || 'unknown',
+      financialPriority: finance.priority || a.biggest_concern || s.financialWorry || 'unknown',
       urgencyLevel: prefs.urgencyLevel || 'normal',
-      biggestFocus: s.biggestFocus || 'unknown',
-      // Enrich with profile if present
+      biggestFocus: s.biggestFocus || a.biggest_concern || 'unknown',
+      // Enrich with profile if present (profile takes precedence)
       rank: profile?.rank || null,
       branch: profile?.branch || null,
       currentBase: profile?.current_base || null,

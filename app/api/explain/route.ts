@@ -94,15 +94,11 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  type AssessmentRow = {
-    answers: Record<string, any>;
-  };
-
   const { data: assessment } = await supabase
     .from("assessments")
     .select("answers")
     .eq("user_id", userId)
-    .maybeSingle() as { data: AssessmentRow | null };
+    .maybeSingle() as { data: { answers: Record<string, any> } | null };
 
   type AssessmentAnswers = {
     comprehensive?: Record<string, any>;
