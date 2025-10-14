@@ -117,7 +117,7 @@ export default function ExecutiveBriefing() {
               </h2>
               <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                 <p className="text-lg font-semibold text-blue-900 mb-2">
-                  ✨ AI is analyzing 400+ military resources
+                  ✨ We&apos;re analyzing 400+ military resources
                 </p>
                 <p className="text-blue-700 leading-relaxed">
                   We&apos;re scoring every guide, calculator, and checklist against your unique situation to build your personalized 18-block action plan.
@@ -239,6 +239,15 @@ export default function ExecutiveBriefing() {
           <div className="mb-8">
             <div className="flex flex-wrap gap-3">
               {(() => {
+                // Identify tool blocks (calculators, trackers, generators)
+                const isToolBlock = (block: Block): boolean => {
+                  const toolKeywords = ['calculator', 'tracker', 'generator', 'tool', 'modeler', 'strategist'];
+                  const title = block.title.toLowerCase();
+                  return toolKeywords.some(keyword => title.includes(keyword)) || 
+                         block.type === 'calculator' || 
+                         block.type === 'tool';
+                };
+                
                 const getDomain = (block: Block): string => {
                   if (block.domain) return block.domain;
                   const slug = block.slug;
@@ -248,7 +257,11 @@ export default function ExecutiveBriefing() {
                   return 'finance';
                 };
                 
-                const domainCounts = plan.blocks.reduce((acc, block) => {
+                // Separate tools from content blocks
+                const toolBlocks = plan.blocks.filter(isToolBlock);
+                const contentBlocks = plan.blocks.filter(b => !isToolBlock(b));
+                
+                const domainCounts = contentBlocks.reduce((acc, block) => {
                   const domain = getDomain(block);
                   acc[domain] = (acc[domain] || 0) + 1;
                   return acc;
@@ -256,6 +269,7 @@ export default function ExecutiveBriefing() {
                 
                 const tabs = [
                   { id: 'all', label: 'All Topics', count: plan.blocks.length, icon: '📚' },
+                  ...(toolBlocks.length > 0 ? [{ id: 'tools', label: 'Tools & Calculators', count: toolBlocks.length, icon: '🧰' }] : []),
                   ...(domainCounts.pcs ? [{ id: 'pcs', label: 'PCS & Moving', count: domainCounts.pcs, icon: '🚚' }] : []),
                   ...(domainCounts.deployment ? [{ id: 'deployment', label: 'Deployment', count: domainCounts.deployment, icon: '🌍' }] : []),
                   ...(domainCounts.career ? [{ id: 'career', label: 'Career', count: domainCounts.career, icon: '💼' }] : []),
@@ -323,6 +337,15 @@ export default function ExecutiveBriefing() {
           {/* Content Blocks - Organized by Domain */}
           <div className="space-y-16">
             {(() => {
+              // Identify tool blocks
+              const isToolBlock = (block: Block): boolean => {
+                const toolKeywords = ['calculator', 'tracker', 'generator', 'tool', 'modeler', 'strategist'];
+                const title = block.title.toLowerCase();
+                return toolKeywords.some(keyword => title.includes(keyword)) || 
+                       block.type === 'calculator' || 
+                       block.type === 'tool';
+              };
+              
               // Group blocks by domain (use explicit domain field, fallback to slug detection)
               const getDomain = (block: Block): string => {
                 if (block.domain) return block.domain;
@@ -334,7 +357,101 @@ export default function ExecutiveBriefing() {
                 return 'finance';
               };
 
-              const domainBlocks = plan.blocks.reduce((acc, block) => {
+              // Separate tools from content
+              const toolBlocks = plan.blocks.filter(isToolBlock);
+              const contentBlocks = plan.blocks.filter(b => !isToolBlock(b));
+
+              // If viewing tools tab, show special tools section
+              if (activeTab === 'tools' && toolBlocks.length > 0) {
+                // Remove duplicates by title
+                const uniqueTools = Array.from(
+                  new Map(toolBlocks.map(block => [block.title, block])).values()
+                );
+                
+                return (
+                  <div key="tools" className="border-t-4 border-gray-200 pt-12">
+                    {/* Tools Section Header */}
+                    <div className="mb-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="text-5xl">🧰</span>
+                        <h2 className="text-4xl font-serif font-black text-text-headings">
+                          Tools & Calculators
+                        </h2>
+                      </div>
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-600 rounded-r-xl p-6 shadow-sm">
+                        <p className="text-gray-800 leading-relaxed text-lg font-medium mb-4">
+                          These interactive tools are available in our dedicated resource toolkits. Each toolkit contains comprehensive guides, calculators, and trackers designed for specific military life situations.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                          <a href="/pcs-hub" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
+                            <span className="text-3xl">🚚</span>
+                            <div>
+                              <div className="font-bold text-gray-900">PCS Hub</div>
+                              <div className="text-sm text-gray-600">Moving & relocation tools</div>
+                            </div>
+                          </a>
+                          <a href="/career-hub" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
+                            <span className="text-3xl">💼</span>
+                            <div>
+                              <div className="font-bold text-gray-900">Career Hub</div>
+                              <div className="text-sm text-gray-600">Career & education tools</div>
+                            </div>
+                          </a>
+                          <a href="/deployment" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
+                            <span className="text-3xl">🌍</span>
+                            <div>
+                              <div className="font-bold text-gray-900">Deployment Guide</div>
+                              <div className="text-sm text-gray-600">Deployment prep tools</div>
+                            </div>
+                          </a>
+                          <a href="/base-guides" className="flex items-center gap-3 p-4 bg-white rounded-lg border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-md">
+                            <span className="text-3xl">📍</span>
+                            <div>
+                              <div className="font-bold text-gray-900">Base Guides</div>
+                              <div className="text-sm text-gray-600">Base-specific tools</div>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Unique Tools List */}
+                    <div className="space-y-12">
+                      {uniqueTools.map((block, index) => (
+                        <div key={block.slug}>
+                          {block.aiReason && (
+                            <div className="mb-4 bg-gradient-to-br from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-xl p-6 shadow-sm">
+                              <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-black text-lg">
+                                  {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
+                                    Why This Matters for You
+                                  </div>
+                                  <p className="text-gray-800 leading-relaxed font-medium">
+                                    {block.aiReason}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <ContentCard
+                            title={block.title}
+                            html={block.html}
+                            type={block.type}
+                            topics={block.topics}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              // Normal domain-based display
+              const domainBlocks = contentBlocks.reduce((acc, block) => {
                 const domain = getDomain(block);
                 if (!acc[domain]) acc[domain] = [];
                 acc[domain].push(block);
