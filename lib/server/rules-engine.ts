@@ -44,7 +44,7 @@ export const StrategicInputSchema = z.object({
     }).optional(),
   }).optional(),
   // Adaptive assessment format (flexible key-value pairs)
-  adaptive: z.record(z.union([z.string(), z.array(z.string())])).optional(),
+  adaptive: z.record(z.string(), z.union([z.string(), z.array(z.string())])).optional(),
 }).passthrough(); // Allow additional keys for forward compatibility
 
 export const AssembledPlanSchema = z.object({
