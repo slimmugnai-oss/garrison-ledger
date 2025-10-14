@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient, type TypedSupabaseClient } from "@/lib/supabase-typed";
+import { createClient } from "@supabase/supabase-js";
 import Parser from "rss-parser";
 import * as cheerio from "cheerio";
 import { readFile } from "fs/promises";
