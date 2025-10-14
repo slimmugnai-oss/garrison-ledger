@@ -494,6 +494,17 @@
 </head>
 <body class="antialiased">
 
+<!-- Premium CTA Banner -->
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <span style="font-weight: 600;">✨ Want to calculate your exact savings? Try our premium calculator!</span>
+        <a href="https://app.familymedia.com/dashboard" style="background: white; color: #667eea; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; white-space: nowrap; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            Try Premium Free →
+        </a>
+    </div>
+</div>
+
+
 <!-- Header Component Styles -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -1281,9 +1292,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <section id="savings" class="mb-16 scroll-mt-24">
              <div class="text-center mb-10">
-                <span class="text-sm font-semibold text-purple-600 bg-purple-100 rounded-full px-3 py-1">INTERACTIVE CALCULATOR</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2">Visualize Your Savings</h2>
-                 <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-4">The benefits of on-base shopping add up quickly. Use these interactive calculators to estimate how much your family can save over the course of a year by taking full advantage of your Commissary and Exchange. <strong>Pro tip:</strong> For financial planning strategies, visit our <a href="/career-hub" class="font-semibold text-blue-600 hover:underline">Career Hub</a> for military spouse financial resources.</p>
+                <span class="text-sm font-semibold text-emerald-700 bg-emerald-100/70 ring-1 ring-emerald-200 rounded-full px-3 py-1">PREMIUM CALCULATOR</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mt-2">Calculate Your Exact Savings</h2>
+                 <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-4">See exactly how much you can save annually with our premium interactive calculator.</p>
+            </div>
+            
+            <div class="card p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-green-600 max-w-4xl mx-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">🛒 On-Base Savings Calculator</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-300">
+                            ⭐ PREMIUM TOOL
+                        </span>
+                    </div>
+                </div>
+                <p class="text-gray-700 text-lg mb-6">
+                    Calculate your real annual savings from Commissary and Exchange shopping with our interactive premium calculator.
+                </p>
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg border-2 border-blue-200">
+                        <h4 class="font-bold text-blue-900 mb-2">💰 Commissary Savings</h4>
+                        <p class="text-sm text-gray-600">Track monthly groceries & PCS stock-ups</p>
+                        <p class="text-xs text-gray-500 mt-1">Average: 25% savings on groceries</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border-2 border-green-200">
+                        <h4 class="font-bold text-green-900 mb-2">🏪 Exchange Tax Savings</h4>
+                        <p class="text-sm text-gray-600">Calculate tax savings + MILITARY STAR® rewards</p>
+                        <p class="text-xs text-gray-500 mt-1">Plus: 5¢/gal fuel discount</p>
+                    </div>
+                </div>
+                <a href="https://app.familymedia.com/dashboard/tools/on-base-savings" class="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition-all hover:shadow-xl hover:-translate-y-1" style="text-decoration: none;">
+                    Launch Savings Calculator →
+                </a>
+                <p class="text-sm text-gray-500 mt-4">💡 See your actual potential savings based on your local tax rate and shopping habits</p>
+            </div>
+        </section>
+
+        <!-- OLD CALCULATORS HIDDEN FOR JS COMPATIBILITY -->
+        <div style="display:none;">
+             <div class="text-center mb-10">
+                <span class="text-sm font-semibold text-purple-600 bg-purple-100 rounded-full px-3 py-1">OLD CALCULATOR</span>
+                <h2>Hidden Section</h2>
             </div>
             
             <div class="grid md:grid-cols-2 gap-8">
