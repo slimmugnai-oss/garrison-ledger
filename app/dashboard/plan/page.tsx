@@ -20,11 +20,19 @@ type Block = {
   isRecent?: boolean;
 };
 
+type Section = {
+  domain: string;
+  title: string;
+  intro: string;
+};
+
 type PlanData = {
   primarySituation: string;
   priorityAction: string;
   blocks: Block[];
   aiEnhanced?: boolean; // Flag if AI scoring worked
+  executiveSummary?: string | null;
+  sections?: Section[];
 };
 
 export default function ExecutiveBriefing() {
@@ -117,6 +125,28 @@ export default function ExecutiveBriefing() {
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Executive Summary */}
+          {plan.executiveSummary && (
+            <div className="mb-16 bg-gradient-to-br from-slate-50 to-gray-50 border-2 border-slate-200 rounded-3xl shadow-2xl p-12">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white text-3xl">📋</span>
+                </div>
+                <div>
+                  <div className="inline-flex items-center px-4 py-2 bg-slate-700 text-white rounded-full text-xs font-black mb-2 uppercase tracking-widest shadow-md">
+                    Executive Summary
+                  </div>
+                  <h2 className="text-2xl font-serif font-bold text-text-headings">Your Strategic Overview</h2>
+                </div>
+              </div>
+              <div className="prose prose-lg max-w-none">
+                <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-line font-serif">
+                  {plan.executiveSummary}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Priority Action Card */}
           <div className="mb-20 bg-gradient-to-br from-amber-50 to-orange-50 border-l-8 border-amber-500 rounded-2xl shadow-2xl p-12">
             <div className="flex items-start gap-8">
@@ -153,38 +183,92 @@ export default function ExecutiveBriefing() {
             </div>
           )}
 
-          {/* Content Blocks - Magazine Style */}
-          <div className="space-y-12">
-            {plan.blocks.map((block, index) => (
-              <div key={block.slug}>
-                {/* AI Reasoning (if available) */}
-                {block.aiReason && (
-                  <div className="mb-4 bg-gradient-to-br from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-xl p-6 shadow-sm">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-black text-lg">
-                        {index + 1}
+          {/* Content Blocks - Organized by Domain */}
+          <div className="space-y-16">
+            {(() => {
+              // Group blocks by domain
+              const getDomain = (slug: string): string => {
+                if (slug.includes('pcs') || slug.includes('move') || slug.includes('station')) return 'pcs';
+                if (slug.includes('career') || slug.includes('tsp') || slug.includes('education') || slug.includes('mycaa')) return 'career';
+                if (slug.includes('deploy') || slug.includes('sdp')) return 'deployment';
+                return 'finance';
+              };
+
+              const domainBlocks = plan.blocks.reduce((acc, block) => {
+                const domain = getDomain(block.slug);
+                if (!acc[domain]) acc[domain] = [];
+                acc[domain].push(block);
+                return acc;
+              }, {} as Record<string, Block[]>);
+
+              const domainOrder = ['pcs', 'deployment', 'career', 'finance'];
+              const domainIcons: Record<string, string> = {
+                pcs: '🚚',
+                deployment: '🌍',
+                career: '💼',
+                finance: '💰'
+              };
+
+              return domainOrder.filter(d => domainBlocks[d]?.length > 0).map(domain => {
+                const blocks = domainBlocks[domain];
+                const sectionMeta = plan.sections?.find(s => s.domain === domain);
+
+                return (
+                  <div key={domain} className="border-t-4 border-gray-200 pt-12">
+                    {/* Section Header */}
+                    <div className="mb-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="text-5xl">{domainIcons[domain]}</span>
+                        <h2 className="text-4xl font-serif font-black text-text-headings capitalize">
+                          {sectionMeta?.title || domain}
+                        </h2>
                       </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                          Why This Matters for You
+                      {sectionMeta?.intro && (
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-600 rounded-r-xl p-6 shadow-sm">
+                          <p className="text-gray-800 leading-relaxed text-lg font-medium">
+                            {sectionMeta.intro}
+                          </p>
                         </div>
-                        <p className="text-gray-800 leading-relaxed font-medium">
-                          {block.aiReason}
-                        </p>
-                      </div>
+                      )}
+                    </div>
+
+                    {/* Blocks in this domain */}
+                    <div className="space-y-12">
+                      {blocks.map((block, index) => (
+                        <div key={block.slug}>
+                          {/* AI Reasoning (if available) */}
+                          {block.aiReason && (
+                            <div className="mb-4 bg-gradient-to-br from-indigo-50 to-purple-50 border-l-4 border-indigo-600 rounded-r-xl p-6 shadow-sm">
+                              <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-black text-lg">
+                                  {index + 1}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
+                                    Why This Matters for You
+                                  </div>
+                                  <p className="text-gray-800 leading-relaxed font-medium">
+                                    {block.aiReason}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Content Card */}
+                          <ContentCard
+                            title={block.title}
+                            html={block.html}
+                            type={block.type}
+                            topics={block.topics}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
-                )}
-                
-                {/* Content Card */}
-                <ContentCard
-                  title={block.title}
-                  html={block.html}
-                  type={block.type}
-                  topics={block.topics}
-                />
-              </div>
-            ))}
+                );
+              });
+            })()}
           </div>
 
           {/* Back Link */}

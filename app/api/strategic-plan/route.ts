@@ -87,25 +87,34 @@ export async function GET() {
     .eq('user_id', userId)
     .maybeSingle();
 
-  // PARALLEL PROCESSING: Rules engine + AI scoring
-  const [rulesResult, aiResult] = await Promise.allSettled([
+  // PARALLEL PROCESSING: Rules engine + AI scoring + Roadmap generation
+  const [rulesResult, aiResult, roadmapResult] = await Promise.allSettled([
     // Rules engine (fast, reliable baseline)
     Promise.resolve(assemblePlanWithDiversity(answers, blockMetadata)),
     
     // AI scoring (intelligent, personalized) - pass full blocks
-    callAIScoring(answers, allBlocks || [], profile || null)
+    callAIScoring(answers, allBlocks || [], profile || null),
+    
+    // Executive roadmap generation
+    generateRoadmap(answers, allBlocks || [], profile || null)
   ]);
 
   // Extract results
   const rulesPlan = rulesResult.status === 'fulfilled' ? rulesResult.value : null;
   const aiScores = aiResult.status === 'fulfilled' ? aiResult.value : null;
+  const roadmap = roadmapResult.status === 'fulfilled' ? roadmapResult.value : null;
 
   console.log('[Strategic Plan] Rules result:', rulesResult.status);
   console.log('[Strategic Plan] AI result:', aiResult.status);
+  console.log('[Strategic Plan] Roadmap result:', roadmapResult.status);
   if (aiResult.status === 'rejected') {
     console.error('[Strategic Plan] AI scoring failed:', aiResult.reason);
   }
+  if (roadmapResult.status === 'rejected') {
+    console.error('[Strategic Plan] Roadmap generation failed:', roadmapResult.reason);
+  }
   console.log('[Strategic Plan] AI scores received:', aiScores);
+  console.log('[Strategic Plan] Roadmap received:', roadmap);
 
   if (!rulesPlan) {
     console.error('[Strategic Plan] Rules engine failed');
@@ -179,6 +188,8 @@ export async function GET() {
     priorityAction: rulesPlan.priorityAction,
     blocks: enrichedBlocks,
     aiEnhanced: aiScores ? true : false, // Flag if AI worked
+    executiveSummary: roadmap?.roadmap?.executiveSummary || null,
+    sections: roadmap?.roadmap?.sections || [],
   };
 
   // Cache the generated plan
@@ -288,6 +299,86 @@ async function callAIScoring(
 
   } catch (error) {
     console.error('[AI Score] Exception:', error);
+    return null;
+  }
+}
+
+/**
+ * Generate executive roadmap (summary + section intros)
+ */
+async function generateRoadmap(
+  answers: StrategicInput,
+  blocks: any[],
+  profile: any | null
+): Promise<{ roadmap: any } | null> {
+  try {
+    // Build user context
+    const s = answers?.strategic || {};
+    const c = answers?.comprehensive || {};
+    const foundation = (c.foundation || {}) as any;
+    const move = (c.move || {}) as any;
+    const deployment = (c.deployment || {}) as any;
+    const career = (c.career || {}) as any;
+    const finance = (c.finance || {}) as any;
+
+    const userContext = {
+      rank: profile?.rank || null,
+      branch: profile?.branch || null,
+      currentBase: profile?.current_base || null,
+      nextBase: profile?.next_base || null,
+      pcsDate: profile?.pcs_date || null,
+      childrenCount: profile?.num_children ?? null,
+      efmpEnrolled: profile?.has_efmp ?? null,
+      tspRange: profile?.tsp_balance_range || null,
+      debtRange: profile?.debt_amount_range || null,
+      emergencyFundRange: profile?.emergency_fund_range || null,
+      careerInterests: profile?.career_interests || [],
+      financialPriorities: profile?.financial_priorities || [],
+    };
+
+    // Determine domain for each block based on slug patterns
+    const getDomain = (slug: string): string => {
+      if (slug.includes('pcs') || slug.includes('move') || slug.includes('station')) return 'pcs';
+      if (slug.includes('career') || slug.includes('tsp') || slug.includes('education') || slug.includes('mycaa')) return 'career';
+      if (slug.includes('deploy') || slug.includes('sdp')) return 'deployment';
+      return 'finance';
+    };
+
+    const blocksSummary = blocks.slice(0, 10).map(b => ({
+      slug: b.slug,
+      title: b.title,
+      domain: getDomain(b.slug),
+    }));
+
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    
+    console.log('[Generate Roadmap] Calling endpoint');
+    
+    const response = await fetch(`${baseUrl}/api/plan/generate-roadmap`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-secret': process.env.INTERNAL_API_SECRET || 'dev-secret'
+      },
+      body: JSON.stringify({
+        userContext,
+        blocks: blocksSummary
+      }),
+      signal: AbortSignal.timeout(25000)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Generate Roadmap] Failed:', response.status, errorText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log('[Generate Roadmap] Success!');
+    return data;
+
+  } catch (error) {
+    console.error('[Generate Roadmap] Exception:', error);
     return null;
   }
 }
