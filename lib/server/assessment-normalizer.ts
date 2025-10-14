@@ -34,18 +34,21 @@ export type NormalizedAssessment = {
   financialPriorities?: string[];
 };
 
+type AssessmentRecord = Record<string, unknown>;
+type ProfileRecord = Record<string, unknown> | null;
+
 export function normalizeAssessment(
-  answers: Record<string, any>,
-  profile: Record<string, any> | null
+  answers: AssessmentRecord,
+  profile: ProfileRecord
 ): NormalizedAssessment {
-  const s = answers?.strategic || {};
-  const c = answers?.comprehensive || {};
-  const a = answers?.adaptive || {};
-  const foundation = (c?.foundation || {}) as any;
-  const move = (c?.move || {}) as any;
-  const deployment = (c?.deployment || {}) as any;
-  const career = (c?.career || {}) as any;
-  const finance = (c?.finance || {}) as any;
+  const s = (answers?.strategic || {}) as AssessmentRecord;
+  const c = (answers?.comprehensive || {}) as AssessmentRecord;
+  const a = (answers?.adaptive || {}) as AssessmentRecord;
+  const foundation = (c?.foundation || {}) as AssessmentRecord;
+  const move = (c?.move || {}) as AssessmentRecord;
+  const deployment = (c?.deployment || {}) as AssessmentRecord;
+  const career = (c?.career || {}) as AssessmentRecord;
+  const finance = (c?.finance || {}) as AssessmentRecord;
 
   // Profile data ALWAYS takes precedence
   return {
@@ -80,7 +83,7 @@ export function normalizeAssessment(
 /**
  * Build user context string for AI prompts
  */
-export function buildAIContext(normalized: NormalizedAssessment, profile: Record<string, any> | null): string {
+export function buildAIContext(normalized: NormalizedAssessment, profile: ProfileRecord): string {
   const parts: string[] = [];
   
   // Demographics

@@ -139,7 +139,6 @@ export type Database = {
           spouse_age?: number | null
           current_pay_grade?: string | null
           user_id: string
-          [key: string]: any
         }
         Update: {
           age?: number | null
@@ -148,7 +147,6 @@ export type Database = {
           years_of_service?: number | null
           education_level?: string | null
           spouse_age?: number | null
-          [key: string]: any
         }
         Relationships: []
       }
@@ -166,10 +164,14 @@ export type Database = {
         Insert: {
           referred_id: string
           referrer_id: string
-          [key: string]: any
+          status?: string | null
+          reward_applied?: boolean | null
+          activated_at?: string | null
         }
         Update: {
-          [key: string]: any
+          status?: string | null
+          reward_applied?: boolean | null
+          activated_at?: string | null
         }
         Relationships: []
       }

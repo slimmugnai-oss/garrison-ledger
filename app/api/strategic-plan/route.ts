@@ -2,8 +2,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { assemblePlanWithDiversity, type StrategicInput, StrategicInputSchema } from "@/lib/server/rules-engine";
-import { normalizeAssessment, buildAIContext } from "@/lib/server/assessment-normalizer";
+import { assemblePlanWithDiversity, StrategicInputSchema } from "@/lib/server/rules-engine";
+import { normalizeAssessment } from "@/lib/server/assessment-normalizer";
 import { checkAndIncrement } from "@/lib/limits";
 
 export const runtime = "nodejs";
