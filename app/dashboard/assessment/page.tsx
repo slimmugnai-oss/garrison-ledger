@@ -76,7 +76,7 @@ export default function AdaptiveAssessmentPage() {
       const res = await fetch('/api/assessment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adaptive: finalAnswers })
+        body: JSON.stringify({ answers: finalAnswers })
       });
 
       if (!res.ok) throw new Error('Failed to save');
