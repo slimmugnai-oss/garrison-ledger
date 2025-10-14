@@ -11,7 +11,7 @@ export const runtime = "nodejs";
  * Auto-fill user profile from assessment answers
  * This eliminates redundant questions and keeps profile up-to-date
  */
-async function autoFillProfileFromAssessment(userId: string, answers: any) {
+async function autoFillProfileFromAssessment(userId: string, answers: Record<string, unknown>) {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,7 +19,7 @@ async function autoFillProfileFromAssessment(userId: string, answers: any) {
     );
 
     // Extract data from answers (handle different formats)
-    const profileUpdate: any = {
+    const profileUpdate: Record<string, unknown> = {
       user_id: userId,
       updated_at: new Date().toISOString()
     };

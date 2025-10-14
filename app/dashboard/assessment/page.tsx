@@ -50,7 +50,6 @@ export default function AdaptiveAssessmentPage() {
       }
     }
     init();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadNextQuestion(newAnswers: Record<string, string | string[]>, asked: string[]) {
