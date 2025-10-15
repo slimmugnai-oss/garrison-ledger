@@ -21,6 +21,13 @@ import {
   Pencil,
   Lock,
   RefreshCw,
+  X,
+  Trash2,
+  Edit,
+  Share2,
+  Folder,
+  Image,
+  File,
   
   // Business & Career
   Briefcase,
@@ -78,6 +85,13 @@ export const iconRegistry = {
   Pencil,
   Lock,
   RefreshCw,
+  X,
+  Trash2,
+  Edit,
+  Share2,
+  Folder,
+  Image,
+  File,
   
   // Business & Career
   Briefcase,

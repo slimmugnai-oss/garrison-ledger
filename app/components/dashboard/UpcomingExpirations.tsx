@@ -60,7 +60,7 @@ export default function UpcomingExpirations() {
     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900 flex items-center">
-          <Icon name="calendar" className="w-5 h-5 mr-2 text-blue-600" />
+          <Icon name="Calendar" className="w-5 h-5 mr-2 text-blue-600" />
           Upcoming Expirations
         </h3>
         <Link

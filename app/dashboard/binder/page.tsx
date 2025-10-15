@@ -369,7 +369,7 @@ export default function BinderPage() {
                   onClick={() => setShowUploadModal(true)}
                   className="w-full mb-4 px-4 py-3 bg-[#00E5A0] text-[#0A0F1E] rounded-lg font-medium hover:bg-[#00CC8E] transition-colors flex items-center justify-center"
                 >
-                  <Icon name="plus" className="w-5 h-5 mr-2" />
+                  <Icon name="Plus" className="w-5 h-5 mr-2" />
                   Upload
                 </button>
 
@@ -383,7 +383,7 @@ export default function BinderPage() {
                     }`}
                   >
                     <span className="flex items-center">
-                      <Icon name="folder" className="w-4 h-4 mr-2" />
+                      <Icon name="Folder" className="w-4 h-4 mr-2" />
                       All Files
                     </span>
                     <span className="text-xs">{files.length}</span>
@@ -424,7 +424,7 @@ export default function BinderPage() {
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] p-12 text-center">
-                  <Icon name="folder" className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+                  <Icon name="Folder" className="w-16 h-16 mx-auto mb-4 text-gray-600" />
                   <h3 className="text-xl font-semibold mb-2">No files yet</h3>
                   <p className="text-gray-400 mb-4">
                     Upload your first document to get started
@@ -458,10 +458,10 @@ export default function BinderPage() {
                               <Icon
                                 name={
                                   file.content_type.startsWith("image/")
-                                    ? "image"
+                                    ? "Image"
                                     : file.content_type === "application/pdf"
-                                    ? "file"
-                                    : "file"
+                                    ? "File"
+                                    : "File"
                                 }
                                 className="w-5 h-5 text-[#00E5A0]"
                               />
@@ -501,7 +501,7 @@ export default function BinderPage() {
                               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
                               title="Rename"
                             >
-                              <Icon name="edit" className="w-4 h-4" />
+                              <Icon name="Edit" className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => {
@@ -512,7 +512,7 @@ export default function BinderPage() {
                               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
                               title="Move"
                             >
-                              <Icon name="folder" className="w-4 h-4" />
+                              <Icon name="Folder" className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => {
@@ -523,7 +523,7 @@ export default function BinderPage() {
                               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
                               title="Set Expiry"
                             >
-                              <Icon name="calendar" className="w-4 h-4" />
+                              <Icon name="Calendar" className="w-4 h-4" />
                             </button>
                             {storage?.isPremium && (
                               <button
@@ -535,7 +535,7 @@ export default function BinderPage() {
                                 className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
                                 title="Share"
                               >
-                                <Icon name="share" className="w-4 h-4" />
+                                <Icon name="Share2" className="w-4 h-4" />
                               </button>
                             )}
                             <button
@@ -543,7 +543,7 @@ export default function BinderPage() {
                               className="p-2 hover:bg-red-500/20 rounded-lg transition-colors text-red-500"
                               title="Delete"
                             >
-                              <Icon name="trash" className="w-4 h-4" />
+                              <Icon name="Trash2" className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
@@ -647,7 +647,7 @@ export default function BinderPage() {
                 onClick={() => setShowPreviewModal(false)}
                 className="p-2 hover:bg-[#2A2F3E] rounded-lg"
               >
-                <Icon name="x" className="w-5 h-5" />
+                <Icon name="X" className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-auto p-6">
