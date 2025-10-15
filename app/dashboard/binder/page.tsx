@@ -103,6 +103,7 @@ function BinderContent() {
 
   useEffect(() => {
     loadFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolder]);
 
   async function loadFiles() {

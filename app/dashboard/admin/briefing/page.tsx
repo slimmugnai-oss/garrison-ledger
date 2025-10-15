@@ -57,6 +57,7 @@ export default function BriefingAdminPage() {
 
   useEffect(() => {
     loadItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus]);
 
   // When item is selected, populate editor

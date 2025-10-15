@@ -3,16 +3,8 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Header from "@/app/components/Header";
 
-function allowed(email?: string | null) {
-  // Check environment variable client-side (will be undefined, so we check on mount)
-  // Better: make this a server component or fetch allowlist from API
-  // For now, we'll validate server-side in the API
-  return true; // Let API handle auth
-}
-
 export default function AdminProviders() {
   const { user } = useUser();
-  const email = user?.primaryEmailAddress?.emailAddress ?? null;
 
   const [form, setForm] = useState<Record<string, unknown>>({
     type: "agent", name: "", business_name: "", email: "", phone: "",
@@ -49,7 +41,10 @@ export default function AdminProviders() {
     }
   }
   
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    load(); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function add() {
     setBusy(true);

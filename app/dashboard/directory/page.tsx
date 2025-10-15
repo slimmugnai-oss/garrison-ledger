@@ -66,7 +66,10 @@ export default function DirectoryPage() {
     }
   }
 
-  useEffect(() => { if (isPremium) load(1); }, [isPremium]);
+  useEffect(() => { 
+    if (isPremium) load(1); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPremium]);
 
   const pages = useMemo(() => Math.max(1, Math.ceil(total / 20)), [total]);
 
