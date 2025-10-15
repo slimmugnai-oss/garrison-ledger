@@ -32,6 +32,7 @@
 - None blocking production
 
 ### **📅 Recent Changes**
+- 2025-01-15: ⚡ PERFORMANCE FIX - Use gpt-4o-mini (60s→20s, $0.15→$0.02), no more timeouts
 - 2025-01-15: 🐛 CRITICAL FIX - OpenAI token limit (57k→11k tokens), assessment now works
 - 2025-01-15: FINAL AUDIT - Comprehensive consistency check, all user-facing text updated
 - 2025-01-15: System cleanup - Deprecated old endpoints, updated all terminology
@@ -268,8 +269,9 @@
 ## 📈 **PERFORMANCE METRICS**
 
 ### **AI System**
-- Plan generation time: ~30 seconds
-- AI cost per plan: ~$0.15 (reduced from $0.25 due to optimization)
+- Plan generation time: ~15-20 seconds (optimized with gpt-4o-mini)
+- AI cost per plan: ~$0.02 (87% cheaper than original $0.15!)
+- AI model: GPT-4o-mini (both Curator and Weaver phases)
 - Content blocks analyzed: ~190 (top-rated 3.5+ blocks)
 - Blocks selected per plan: 8-10
 - Token usage: ~11,500 per plan (under 30k limit)
