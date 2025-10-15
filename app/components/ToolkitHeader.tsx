@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Icon from './ui/Icon';
 
 interface ToolkitHeaderProps {
@@ -23,18 +24,18 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
-              <a href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors flex items-center">
+              <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors flex items-center">
                 <Icon name="BarChart" className="h-5 w-5 mr-2" />
                 <span className="hidden sm:inline">Garrison Ledger</span>
                 <span className="sm:hidden">GL</span>
-              </a>
+              </Link>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <a href="/" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+              <Link href="/" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
                 Home
-              </a>
+              </Link>
               
               {/* Tools Dropdown */}
               <div 
@@ -126,10 +127,10 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
           {mobileMenuOpen && (
             <div className="lg:hidden border-t border-gray-200 bg-white">
               <nav className="flex flex-col px-4 py-3 space-y-1">
-                <a href="/" className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <Link href="/" className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                   <Icon name="Home" className="w-5 h-5 mr-3" />
                   Home
-                </a>
+                </Link>
                 
                 <div className="px-3 py-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center">

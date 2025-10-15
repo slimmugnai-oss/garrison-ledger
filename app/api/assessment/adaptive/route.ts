@@ -113,22 +113,22 @@ export async function POST(req: NextRequest) {
   const { answers, questionsAsked } = body;
 
   // Load user profile to skip already-answered questions
-  let profile: any = null;
-  if (questionsAsked.length === 0) {
-    // First question - check if we have profile data
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    const { data: profileData } = await supabase
-      .from('user_profiles')
-      .select('service_status, spouse_service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
-      .eq('user_id', userId)
-      .maybeSingle();
-    profile = profileData;
-    // Profile is loaded but currently not used - reserved for future adaptive logic
-  }
+  // Profile loading reserved for future adaptive logic
+  // let profile: any = null;
+  // if (questionsAsked.length === 0) {
+  //   // First question - check if we have profile data
+  //   const { createClient } = await import('@supabase/supabase-js');
+  //   const supabase = createClient(
+  //     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  //     process.env.SUPABASE_SERVICE_ROLE_KEY!
+  //   );
+  //   const { data: profileData } = await supabase
+  //     .from('user_profiles')
+  //     .select('service_status, spouse_service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
+  //     .eq('user_id', userId)
+  //     .maybeSingle();
+  //   profile = profileData;
+  // }
 
   // If this is the first question, start with the first core question
   // Profile data is already available and doesn't need to be re-asked
