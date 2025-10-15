@@ -379,14 +379,14 @@ function BinderContent() {
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${
                       selectedFolder === "all"
                         ? "bg-[#2A2F3E] text-white"
-                        : "text-gray-400 hover:bg-[#2A2F3E]/50"
+                        : "text-gray-200 hover:bg-[#2A2F3E]/50"
                     }`}
                   >
                     <span className="flex items-center">
                       <Icon name="Folder" className="w-4 h-4 mr-2" />
                       All Files
                     </span>
-                    <span className="text-xs">{files.length}</span>
+                    <span className="text-xs text-gray-300">{files.length}</span>
                   </button>
 
                   {FOLDERS.map((folder) => (
@@ -396,7 +396,7 @@ function BinderContent() {
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center justify-between ${
                         selectedFolder === folder.name
                           ? "bg-[#2A2F3E] text-white"
-                          : "text-gray-400 hover:bg-[#2A2F3E]/50"
+                          : "text-gray-200 hover:bg-[#2A2F3E]/50"
                       }`}
                     >
                       <span className="flex items-center">
@@ -408,7 +408,7 @@ function BinderContent() {
                         </span>
                         {folder.name}
                       </span>
-                      <span className="text-xs">
+                      <span className="text-xs text-gray-300">
                         {folderCounts[folder.name] || 0}
                       </span>
                     </button>
@@ -425,9 +425,9 @@ function BinderContent() {
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] p-12 text-center">
-                  <Icon name="Folder" className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-                  <h3 className="text-xl font-semibold mb-2">No files yet</h3>
-                  <p className="text-gray-400 mb-4">
+                  <Icon name="Folder" className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-xl font-semibold mb-2 text-gray-100">No files yet</h3>
+                  <p className="text-gray-300 mb-4">
                     Upload your first document to get started
                   </p>
                   <button
@@ -468,10 +468,10 @@ function BinderContent() {
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-medium truncate">
+                              <h3 className="font-medium truncate text-gray-100">
                                 {file.display_name}
                               </h3>
-                              <div className="flex items-center gap-3 text-xs text-gray-400">
+                              <div className="flex items-center gap-3 text-xs text-gray-300">
                                 <span>{formatFileSize(file.size_bytes)}</span>
                                 <span>•</span>
                                 <span>{formatDate(file.created_at)}</span>
@@ -566,7 +566,7 @@ function BinderContent() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Folder</label>
+                <label className="block text-sm font-medium mb-2 text-gray-200">Folder</label>
                 <select
                   value={uploadFolder}
                   onChange={(e) => setUploadFolder(e.target.value)}
@@ -581,7 +581,7 @@ function BinderContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-medium mb-2 text-gray-200">
                   Document Type
                 </label>
                 <select
@@ -598,7 +598,7 @@ function BinderContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-medium mb-2 text-gray-200">
                   Expiry Date (optional)
                 </label>
                 <input
