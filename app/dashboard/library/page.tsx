@@ -62,6 +62,33 @@ function IntelligenceLibraryContent() {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams?.get('page') || '1', 10));
   const [activeTab, setActiveTab] = useState<'all' | 'for-you' | 'trending' | 'saved'>('all');
 
+  // Rate limiting state
+  const [canView, setCanView] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
+  const [viewsRemaining, setViewsRemaining] = useState(5);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string>('');
+
+  // Check rate limit on mount
+  useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const response = await fetch('/api/library/can-view');
+        if (response.ok) {
+          const data = await response.json();
+          setCanView(data.canView);
+          setIsPremium(data.isPremium);
+          setViewsRemaining(data.remaining || 0);
+          if (!data.canView) {
+            setRateLimitMessage(data.reason || 'Rate limit exceeded');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check library access:', err);
+      }
+    };
+    checkAccess();
+  }, []);
+
   // Filter options
   const domains = [
     { label: 'Finance', value: 'finance' },
@@ -163,6 +190,7 @@ function IntelligenceLibraryContent() {
   // Track interaction when viewing content
   const trackView = async (contentId: string) => {
     try {
+      // Track content interaction
       await fetch('/api/content/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -171,6 +199,16 @@ function IntelligenceLibraryContent() {
           interactionType: 'view'
         })
       });
+
+      // Record library view for rate limiting (free users only)
+      await fetch('/api/library/record-view', {
+        method: 'POST'
+      });
+
+      // Update local state
+      if (!isPremium) {
+        setViewsRemaining(Math.max(0, viewsRemaining - 1));
+      }
     } catch (err) {
       console.error('Failed to track view:', err);
     }
@@ -247,6 +285,52 @@ function IntelligenceLibraryContent() {
     );
   };
 
+  // Rate limit screen
+  if (!canView) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-white">
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.04),transparent_60%)]" />
+          
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <AnimatedCard className="text-center p-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-full mb-6">
+                <svg className="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h1 className="text-3xl font-serif font-bold text-gray-900 mb-4">Daily Article Limit Reached</h1>
+              <p className="text-lg text-gray-600 mb-2">{rateLimitMessage}</p>
+              <p className="text-sm text-gray-500 mb-6">Come back tomorrow or upgrade to premium for unlimited access</p>
+
+              {!isPremium && (
+                <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                  <p className="text-blue-900 font-semibold mb-3">Want unlimited access to 410+ expert articles?</p>
+                  <p className="text-blue-800 mb-4">Premium members get unlimited library access, plus full AI-curated plans, bookmarking, and priority support.</p>
+                  <a
+                    href="/dashboard/upgrade"
+                    className="inline-block px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Upgrade to Premium - $9.99/month
+                  </a>
+                </div>
+              )}
+
+              <a
+                href="/dashboard"
+                className="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Return to Dashboard
+              </a>
+            </AnimatedCard>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
@@ -255,6 +339,25 @@ function IntelligenceLibraryContent() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.04),transparent_60%)]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+          {/* Rate limit indicator for free users */}
+          {!isPremium && viewsRemaining <= 2 && (
+            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center gap-3">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                  <p className="font-semibold text-yellow-900">
+                    {viewsRemaining} article{viewsRemaining === 1 ? '' : 's'} remaining today
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    Free users can view 5 articles per day. <a href="/dashboard/upgrade" className="underline font-semibold">Upgrade for unlimited access</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
           {/* Hero Header */}
           <div className="mb-12 text-center">
             <div className="mb-4">

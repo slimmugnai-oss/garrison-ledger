@@ -1,8 +1,8 @@
 # 🎯 GARRISON LEDGER - SYSTEM STATUS
 
 **Last Updated:** 2025-01-15  
-**Status:** 🟢 Production Ready - Freemium Model Tested & Working  
-**Version:** 2.1.0 (Freemium Launch - Verified)
+**Status:** 🟢 Production Ready - Freemium Model Complete  
+**Version:** 2.1.1 (Freemium Model - All Features Implemented)
 
 ---
 
@@ -40,8 +40,11 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: ✅ OPTIONAL FEATURES COMPLETE - Intel Library 5/day limit, "Update Plan" button, all tools free
+- 2025-01-15: 🔓 CALCULATORS MADE FREE - Removed paywall from all 6 calculator tools (per freemium model)
+- 2025-01-15: 📚 LIBRARY RATE LIMITING - 5 articles/day for free, unlimited for premium (\$9.99/mo)
 - 2025-01-15: ✨ FREEMIUM MODEL - 2-block preview (free) vs full plan (premium \$9.99/mo)
-- 2025-01-15: ⚡ PERFORMANCE FIX - Use gpt-4o-mini (60s→20s, $0.15→$0.02), no more timeouts
+- 2025-01-15: ⚡ PERFORMANCE FIX - Use gpt-4o-mini (60s→20s, \$0.15→\$0.02), no more timeouts
 - 2025-01-15: 🐛 CRITICAL FIX - OpenAI token limit (57k→11k tokens), assessment now works
 - 2025-01-15: FINAL AUDIT - Comprehensive consistency check, all user-facing text updated
 - 2025-01-15: System cleanup - Deprecated old endpoints, updated all terminology
@@ -280,21 +283,20 @@
 ### **Free Tier (Value Demo)**
 - ✅ Assessment: **1 per week** (rate limited)
 - ✅ Plan preview: **2 curated blocks** + truncated executive summary
-- ✅ All 6 calculators (full access)
-- ✅ Intelligence Library: **5 articles per day**
+- ✅ All 6 calculators (**full access - NO paywall**) ⭐
+- ✅ Intelligence Library: **5 articles per day** (enforced) ⭐
 - ✅ Resource hubs (all 5)
 - ❌ No plan regeneration
-- ❌ No bookmarking/ratings
-- ❌ No advanced calculator features
+- ❌ No bookmarking/ratings (premium only)
 
 ### **Premium Tier ($9.99/month)**
 - ✅ Assessment: **3 per day** (regenerate as situation changes)
 - ✅ Full AI plan: **All 8-10 curated blocks**
 - ✅ Complete executive summary
-- ✅ Intelligence Library: **Unlimited access**
+- ✅ **"Update Plan" button** on dashboard (quick retake) ⭐
+- ✅ Intelligence Library: **Unlimited access** (no 5/day limit) ⭐
 - ✅ Bookmarking & ratings
 - ✅ Personalized recommendations
-- ✅ Advanced calculator features
 - ✅ Priority support
 
 ### **Conversion Strategy**

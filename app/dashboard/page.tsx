@@ -102,12 +102,21 @@ export default async function CommandDashboard() {
                     <p className="text-blue-100 text-base mb-6 leading-relaxed flex-1">
                       AI has analyzed your profile and selected 8-10 expert content blocks tailored specifically to your military situation and goals.
                     </p>
-                    <Link 
-                      href="/dashboard/plan"
-                      className="inline-flex items-center justify-center bg-white text-blue-900 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                    >
-                      View Your Plan →
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Link 
+                        href="/dashboard/plan"
+                        className="inline-flex items-center justify-center bg-white text-blue-900 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                      >
+                        View Your Plan →
+                      </Link>
+                      <Link 
+                        href="/dashboard/assessment"
+                        className="inline-flex items-center justify-center border-2 border-white/30 text-white hover:bg-white/10 px-6 py-3 rounded-xl font-semibold transition-all"
+                      >
+                        <Icon name="RefreshCw" className="w-4 h-4 mr-2" />
+                        Update Plan
+                      </Link>
+                    </div>
                   </div>
                 </AnimatedCard>
               )}

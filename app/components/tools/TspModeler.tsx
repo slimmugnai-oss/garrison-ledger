@@ -355,21 +355,8 @@ export default function TspModeler() {
             )}
           </div>
 
-          {!isPremium && (
-            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <div className="text-center">
-                <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                <h3 className="text-2xl font-bold text-text-headings mb-2">Unlock ROI Analysis</h3>
-                <p className="text-lg text-gray-600 mb-6">
-                  See projected balances and the potential difference at retirement with detailed breakdowns.
-                </p>
-                <div className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-block">
-                  Upgrade to Premium
-                </div>
-              </div>
-            </div>
-          )}
-          {isPremium && (
+          {/* Retirement Projection Results - Available to ALL users (free tier benefit) */}
+          {(
             <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
