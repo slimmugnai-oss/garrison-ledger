@@ -10,6 +10,7 @@ import { generatePageMeta } from "@/lib/seo-config";
 import Icon from '../components/ui/Icon';
 import Badge from '../components/ui/Badge';
 import UpcomingExpirations from '../components/dashboard/UpcomingExpirations';
+import IntelligenceWidget from '../components/dashboard/IntelligenceWidget';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -139,6 +140,13 @@ export default async function CommandDashboard() {
           <div className="mb-12">
             <UpcomingExpirations />
           </div>
+
+          {/* Intelligence Library Widget */}
+          {profileComplete && isPremium && (
+            <div className="mb-12">
+              <IntelligenceWidget userId={user.id} />
+            </div>
+          )}
 
           {/* Profile Snapshot - Always show if profile is completed */}
           {profileComplete && (
