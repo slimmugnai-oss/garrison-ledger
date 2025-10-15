@@ -25,11 +25,11 @@ interface StorageInfo {
 }
 
 const FOLDERS = [
-  { name: "Personal Records", icon: "user" as const, color: "#00E5A0" },
-  { name: "PCS Documents", icon: "map" as const, color: "#0EA5E9" },
-  { name: "Financial Records", icon: "dollar-sign" as const, color: "#F59E0B" },
-  { name: "Housing Records", icon: "home" as const, color: "#8B5CF6" },
-  { name: "Legal", icon: "shield" as const, color: "#EF4444" }
+  { name: "Personal Records", icon: "Target" as const, color: "#00E5A0" },
+  { name: "PCS Documents", icon: "Truck" as const, color: "#0EA5E9" },
+  { name: "Financial Records", icon: "DollarSign" as const, color: "#F59E0B" },
+  { name: "Housing Records", icon: "House" as const, color: "#8B5CF6" },
+  { name: "Legal", icon: "Shield" as const, color: "#EF4444" }
 ];
 
 const DOC_TYPES = [
