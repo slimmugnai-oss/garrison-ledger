@@ -108,6 +108,8 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 📖 INTELLIGENCE LIBRARY FIXED - Saved tab now works, loading skeletons added, improved empty states
+- 2025-01-15: 🔖 BOOKMARKS FUNCTIONAL - Saved tab fetches and displays bookmarked content
 - 2025-01-15: 🎧 LISTENING POST ENHANCED - AI metadata enrichment, 100% coverage on promotion, UI controls added
 - 2025-01-15: 🤖 GEMINI INTEGRATION - Auto-curate now provides domain, difficulty, SEO keywords
 - 2025-01-15: 📚 CONTENT BLOCKS AUDITED - 410 blocks verified, 100% metadata coverage, 98/100 quality score
@@ -194,7 +196,7 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 **Purpose:** AI-powered content discovery and learning platform
 
 **Components:**
-- `/dashboard/library` (page) - Main library UI with rate limiting
+- `/dashboard/library` (page) - Main library UI with rate limiting (882 lines)
 - `/api/library/enhanced` (GET) - Personalized, trending, search
 - `/api/library/can-view` (GET) - Rate limit check (5/day free, unlimited premium)
 - `/api/library/record-view` (POST) - Records library view for rate limiting
@@ -203,21 +205,33 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 - `/api/content/search` (GET) - Semantic search
 - `/api/content/related` (GET) - Related content
 - `/api/content/track` (POST) - User interaction tracking
+- `/api/bookmarks` (GET/POST/DELETE) - Bookmark management
+- `/api/ratings` (POST) - Content rating system
 - `user_content_interactions`, `user_content_preferences`, `content_recommendations` (tables)
+- `user_bookmarks`, `user_content_ratings` (tables)
 - `can_view_library`, `record_library_view` (SQL functions)
 
 **Key Features:**
-- **Personalized "For You" feed**
-- **Trending content section**
+- **4-Tab Navigation:** All, For You, Trending, Saved ⭐ FIXED
+- **Personalized "For You" feed** with loading skeletons ⭐
+- **Trending content section** with loading skeletons ⭐
+- **Saved tab** - View bookmarked content ⭐ FIXED
 - **Semantic search**
-- **Difficulty & Audience filters**
+- **Multi-filter system:** Domain, Difficulty, Audience, Rating
 - **Related content suggestions**
 - **Content quality ratings visible**
+- **Bookmark, Rate, Share actions**
 - **Interaction tracking (views, clicks)**
 - **Content freshness indicators**
 - **Rate-limited:** 5 articles/day (free), unlimited (premium)
 
-**Status:** ✅ Live, Working, Rate-limited
+**Recent Fixes (v2.0):**
+- Fixed Saved tab (now fetches bookmarks) ⭐
+- Added loading skeletons for For You and Trending ⭐
+- Improved empty states (bookmark-specific messaging) ⭐
+- Better loading state management ⭐
+
+**Status:** ✅ Live, Working, Enhanced v2.0 (92/100)
 
 ---
 
@@ -664,7 +678,8 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 
 ### **Internal Docs**
 - `docs/active/` - Current system documentation
-  - `LISTENING_POST_SYSTEM.md` - RSS curation with AI enrichment 🎧 NEW
+  - `INTELLIGENCE_LIBRARY_AUDIT_2025-01-15.md` - Library audit and fixes (92/100 score) 📖 NEW
+  - `LISTENING_POST_SYSTEM.md` - RSS curation with AI enrichment 🎧
   - `CONTENT_BLOCKS_AUDIT_2025-01-15.md` - 410 content blocks audit (98/100 quality) 📚
   - `FINAL_100_AUDIT_2025-01-15.md` - Perfect score site-wide audit 🏆
   - `COMPREHENSIVE_AUDIT_2025-01-15.md` - Complete codebase audit report
@@ -678,8 +693,15 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 
 ## 🔄 **VERSION HISTORY**
 
-### **v2.4.0 (2025-01-15) - Listening Post v2.0** 🎧
-- **RSS Curation System Overhauled:**
+### **v2.4.0 (2025-01-15) - Listening Post v2.0 & Library Fixes** 🎧📖
+- **Intelligence Library Enhanced (v2.0):**
+  - Fixed "Saved" tab - now fetches and displays bookmarked content ⭐
+  - Added loading skeletons for "For You" and "Trending" sections ⭐
+  - Improved empty states (bookmark-specific messaging) ⭐
+  - Better loading state management across all async operations ⭐
+  - Conditional UI elements (hide buttons while loading) ⭐
+  - Score improved: 77.5/100 → 92/100 ⭐
+- **Listening Post Overhauled (v2.0):**
   - AI metadata enrichment (Gemini 2.0 Flash)
   - 100% metadata coverage on promotion (was 43%)
   - Populates all 19 critical content_blocks fields
@@ -687,10 +709,9 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
   - UI controls for domain, difficulty, SEO keywords
   - Enhanced Gemini prompt (6 fields, was 3)
   - Smart fallback detection for all metadata
-  - Word count calculation for read time
   - Freshness tracking from creation (100 score, 90-day review)
-- **Impact:** Can scale content library efficiently (410 → 500+)
-- **Documentation:** LISTENING_POST_SYSTEM.md created
+- **Impact:** Library more functional, curation system scalable (410 → 500+)
+- **Documentation:** INTELLIGENCE_LIBRARY_AUDIT_2025-01-15.md, LISTENING_POST_SYSTEM.md
 - **System Count:** 12 core systems (was 11)
 
 ### **v2.3.1 (2025-01-15) - Perfect Score 100/100** 🏆
