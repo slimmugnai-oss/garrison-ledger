@@ -98,7 +98,38 @@
 
 ---
 
-#### 3. **User Management**
+#### 3. **Intelligence Library**
+**Purpose:** AI-powered content discovery and learning platform
+
+**Components:**
+- `/dashboard/library` (page) - Main library UI with rate limiting
+- `/api/library/enhanced` (GET) - Personalized, trending, search
+- `/api/library/can-view` (GET) - Rate limit check (5/day free, unlimited premium)
+- `/api/library/record-view` (POST) - Records library view for rate limiting
+- `/api/content/personalized` (GET) - Personalized recommendations
+- `/api/content/trending` (GET) - Trending content
+- `/api/content/search` (GET) - Semantic search
+- `/api/content/related` (GET) - Related content
+- `/api/content/track` (POST) - User interaction tracking
+- `user_content_interactions`, `user_content_preferences`, `content_recommendations` (tables)
+- `can_view_library`, `record_library_view` (SQL functions)
+
+**Key Features:**
+- **Personalized "For You" feed**
+- **Trending content section**
+- **Semantic search**
+- **Difficulty & Audience filters**
+- **Related content suggestions**
+- **Content quality ratings visible**
+- **Interaction tracking (views, clicks)**
+- **Content freshness indicators**
+- **Rate-limited:** 5 articles/day (free), unlimited (premium)
+
+**Status:** ✅ Live, Working, Rate-limited
+
+---
+
+#### 4. **User Management**
 **Purpose:** Authentication and profile management
 
 **Components:**
@@ -111,7 +142,7 @@
 
 ---
 
-#### 4. **Premium Subscription**
+#### 5. **Premium Subscription**
 **Purpose:** Monetization via Stripe
 
 **Components:**
@@ -125,7 +156,7 @@
 
 ---
 
-#### 5. **Calculator Tools**
+#### 6. **Calculator Tools**
 **Purpose:** Financial planning and logistics calculators
 
 **Financial Tools (3):**
@@ -149,7 +180,63 @@
 
 ---
 
-#### 6. **Binder System**
+#### 7. **AI Explainer System**
+**Purpose:** AI-powered explanations for calculator results
+
+**Components:**
+- `/api/explain` (POST) - Generates AI explanations using GPT-4o-mini
+- `Explainer` component - Reusable UI component for all tools
+- Integration with all 6 calculator tools
+
+**Features:**
+- **Free users:** Preview mode (first 2-3 sentences)
+- **Premium users:** Full AI analysis
+- **Cost:** ~$0.01 per explanation (GPT-4o-mini)
+- **Tools integrated:** All 6 calculator tools
+
+**Status:** ✅ Live, Working, Preview Mode
+
+---
+
+#### 8. **Directory System**
+**Purpose:** Provider directory and referral management
+
+**Components:**
+- `/dashboard/directory` (page) - Provider directory UI
+- `/api/directory/providers` (GET) - List providers
+- `/api/directory/admin` (GET) - Admin provider management
+- `directory_providers` table
+
+**Features:**
+- Provider listings
+- Contact information
+- Referral tracking
+- Admin management
+
+**Status:** ✅ Live, Working
+
+---
+
+#### 9. **Content Management System**
+**Purpose:** User interactions, bookmarks, and ratings
+
+**Components:**
+- `/api/bookmarks` (GET/POST/DELETE) - Bookmark management
+- `/api/ratings` (POST) - Content rating system
+- `/api/content/track` (POST) - User interaction tracking
+- `user_bookmarks`, `content_ratings`, `user_content_interactions` (tables)
+
+**Features:**
+- Bookmark favorite content
+- Rate content quality
+- Track user interactions
+- Personalized recommendations
+
+**Status:** ✅ Live, Working, Premium Features
+
+---
+
+#### 10. **Binder System**
 **Purpose:** Document management and expiration tracking
 
 **Components:**
@@ -163,7 +250,7 @@
 
 ---
 
-#### 7. **Resource Hubs**
+#### 11. **Resource Hubs**
 **Purpose:** Static content pages for SEO and education
 
 **Pages:**
