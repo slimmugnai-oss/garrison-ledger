@@ -11,6 +11,7 @@ import Icon from '../components/ui/Icon';
 import Badge from '../components/ui/Badge';
 import UpcomingExpirations from '../components/dashboard/UpcomingExpirations';
 import IntelligenceWidget from '../components/dashboard/IntelligenceWidget';
+import OnboardingTour from '../components/dashboard/OnboardingTour';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -53,8 +54,12 @@ export default async function CommandDashboard() {
   const profileComplete = profileRow?.profile_completed || false;
 
   // Check if user has a personalized plan
-  const { data: planRow } = await supabase.from("user_plans").select("generated_at").eq("user_id", user.id).maybeSingle();
-  const hasPlan = !!planRow;
+  const { data: planRow } = await supabase.from("user_plans").select("generated_at, created_at, summary").eq("user_id", user.id).maybeSingle();
+  const hasPlan = !!planRow?.summary; // Plan is complete when summary exists
+  
+  // Check if plan is currently generating (created recently but no summary yet)
+  const planGenerating = planRow && !planRow.summary && planRow.created_at &&
+    (new Date().getTime() - new Date(planRow.created_at).getTime()) < 120000; // 2 minutes
 
   return (
     <>
@@ -83,9 +88,48 @@ export default async function CommandDashboard() {
             </p>
           </div>
 
+          {/* Onboarding Tour - Show for users who haven't completed everything */}
+          {(!hasPlan || !profileComplete || !hasAssessment) && (
+            <OnboardingTour
+              userId={user.id}
+              hasProfile={profileComplete}
+              hasAssessment={hasAssessment}
+              hasPlan={hasPlan}
+            />
+          )}
+
           {/* Onboarding CTAs & Plan Widget */}
-          {(!profileComplete || !hasAssessment || hasPlan) && (
+          {(!profileComplete || !hasAssessment || hasPlan || planGenerating) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {/* Plan Generating Widget */}
+              {planGenerating && (
+                <AnimatedCard className="bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-8 text-white shadow-lg border border-amber-400/50" delay={0}>
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
+                        <svg className="animate-spin h-7 w-7 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                      </div>
+                      <div className="inline-flex items-center px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-white text-xs font-bold uppercase tracking-wider animate-pulse">
+                        Generating...
+                      </div>
+                    </div>
+                    <h2 className="text-2xl font-serif font-black mb-3 text-white">Your Plan is Being Created</h2>
+                    <p className="text-orange-100 text-base mb-6 leading-relaxed flex-1">
+                      Our AI is analyzing 410+ expert content blocks and curating 8-10 specifically for you. This takes ~30 seconds.
+                    </p>
+                    <Link 
+                      href="/dashboard/plan"
+                      className="inline-flex items-center justify-center bg-white text-orange-600 hover:bg-orange-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    >
+                      Check Status →
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              )}
+
               {/* Your Personalized Plan - Show if they have one */}
               {hasPlan && (
                 <AnimatedCard className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-2xl p-8 text-white shadow-lg border border-blue-700/50" delay={0}>
@@ -180,8 +224,8 @@ export default async function CommandDashboard() {
             <UpcomingExpirations />
           </div>
 
-          {/* Intelligence Library Widget */}
-          {profileComplete && isPremium && (
+          {/* Intelligence Library Widget - Show for all users with completed profile */}
+          {profileComplete && (
             <div className="mb-12">
               <IntelligenceWidget userId={user.id} />
             </div>
@@ -334,17 +378,38 @@ export default async function CommandDashboard() {
                   {/* Profile Completion */}
                   <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-blue-100">Profile Completion</span>
+                      <span className="text-sm font-semibold text-blue-100">Profile Depth</span>
                       <span className="text-2xl font-black text-white">
                         {(() => {
-                          let score = 0;
-                          if (profileRow?.rank) score += 20;
-                          if (profileRow?.branch) score += 20;
-                          if (profileRow?.current_base) score += 15;
-                          if (profileRow?.marital_status) score += 10;
-                          if (profileRow?.pcs_date) score += 15;
-                          if (profileRow?.career_interests?.length > 0) score += 10;
-                          if (profileRow?.financial_priorities?.length > 0) score += 10;
+                          // Required fields (70% weight)
+                          let required = 0;
+                          let requiredTotal = 10;
+                          if (profileRow?.age) required++;
+                          if (profileRow?.gender) required++;
+                          if (profileRow?.years_of_service) required++;
+                          if (profileRow?.service_status) required++;
+                          if (profileRow?.branch || profileRow?.service_status === 'military_spouse') required++;
+                          if (profileRow?.rank || profileRow?.service_status === 'military_spouse') required++;
+                          if (profileRow?.marital_status) required++;
+                          if (profileRow?.num_children !== null) required++;
+                          if (profileRow?.tsp_balance_range) required++;
+                          if (profileRow?.debt_amount_range) required++;
+                          
+                          // High-value optional fields (30% weight)
+                          let optional = 0;
+                          let optionalTotal = 10;
+                          if (profileRow?.current_base) optional++;
+                          if (profileRow?.mos_afsc_rate) optional++;
+                          if (profileRow?.clearance_level) optional++;
+                          if (profileRow?.deployment_status) optional++;
+                          if (profileRow?.spouse_employed !== null && profileRow?.marital_status === 'married') optional++;
+                          if (profileRow?.tsp_allocation) optional++;
+                          if (profileRow?.housing_situation) optional++;
+                          if (profileRow?.long_term_goal) optional++;
+                          if (profileRow?.career_interests?.length > 0) optional++;
+                          if (profileRow?.education_level) optional++;
+                          
+                          const score = Math.round((required / requiredTotal) * 70 + (optional / optionalTotal) * 30);
                           return score;
                         })()}%
                       </span>
@@ -353,15 +418,33 @@ export default async function CommandDashboard() {
                       <div 
                         className="bg-white rounded-full h-2 transition-all duration-500"
                         style={{ width: `${(() => {
-                          let score = 0;
-                          if (profileRow?.rank) score += 20;
-                          if (profileRow?.branch) score += 20;
-                          if (profileRow?.current_base) score += 15;
-                          if (profileRow?.marital_status) score += 10;
-                          if (profileRow?.pcs_date) score += 15;
-                          if (profileRow?.career_interests?.length > 0) score += 10;
-                          if (profileRow?.financial_priorities?.length > 0) score += 10;
-                          return score;
+                          let required = 0;
+                          let requiredTotal = 10;
+                          if (profileRow?.age) required++;
+                          if (profileRow?.gender) required++;
+                          if (profileRow?.years_of_service) required++;
+                          if (profileRow?.service_status) required++;
+                          if (profileRow?.branch || profileRow?.service_status === 'military_spouse') required++;
+                          if (profileRow?.rank || profileRow?.service_status === 'military_spouse') required++;
+                          if (profileRow?.marital_status) required++;
+                          if (profileRow?.num_children !== null) required++;
+                          if (profileRow?.tsp_balance_range) required++;
+                          if (profileRow?.debt_amount_range) required++;
+                          
+                          let optional = 0;
+                          let optionalTotal = 10;
+                          if (profileRow?.current_base) optional++;
+                          if (profileRow?.mos_afsc_rate) optional++;
+                          if (profileRow?.clearance_level) optional++;
+                          if (profileRow?.deployment_status) optional++;
+                          if (profileRow?.spouse_employed !== null && profileRow?.marital_status === 'married') optional++;
+                          if (profileRow?.tsp_allocation) optional++;
+                          if (profileRow?.housing_situation) optional++;
+                          if (profileRow?.long_term_goal) optional++;
+                          if (profileRow?.career_interests?.length > 0) optional++;
+                          if (profileRow?.education_level) optional++;
+                          
+                          return Math.round((required / requiredTotal) * 70 + (optional / optionalTotal) * 30);
                         })()}%` }}
                       />
                     </div>
@@ -547,41 +630,6 @@ export default async function CommandDashboard() {
                 </AnimatedCard>
               )}
 
-              {/* Plan Ready - Premium CTA */}
-              <AnimatedCard className="mb-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-10 md:p-12 text-white shadow-2xl border-0" delay={150}>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-                  <div className="flex items-start gap-6">
-                    <div className="flex-shrink-0 w-20 h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/20">
-                      <Icon name="ClipboardList" className="h-12 w-12 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="inline-flex items-center px-3 py-1 bg-blue-600/20 border border-blue-400/30 rounded-full text-blue-200 text-xs font-black mb-3 uppercase tracking-widest">
-                        AI-Curated
-                      </div>
-                      <h2 className="text-3xl md:text-4xl font-serif font-black mb-3">
-                        Your Personalized Plan is Ready
-                      </h2>
-                      <p className="text-xl text-slate-200 leading-relaxed">
-                        AI analyzed your profile and curated 8-10 expert content blocks from our 410+ block Knowledge Graph tailored to your situation.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <Link 
-                      href="/dashboard/plan"
-                      className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl text-center whitespace-nowrap"
-                    >
-                      View Full Plan →
-                    </Link>
-                    <Link 
-                      href="/dashboard/assessment"
-                      className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 rounded-xl font-semibold transition-all text-center whitespace-nowrap"
-                    >
-                      Retake Assessment
-                    </Link>
-                  </div>
-                </div>
-              </AnimatedCard>
             </>
           )}
 
