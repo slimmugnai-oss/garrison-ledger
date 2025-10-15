@@ -701,7 +701,7 @@ function BinderContent() {
               )}
               {!selectedFile.content_type.startsWith("image/") &&
                 selectedFile.content_type !== "application/pdf" && (
-                  <div className="text-center py-12 text-gray-400">
+                  <div className="text-center py-12 text-gray-200">
                     <p>Preview not available for this file type</p>
                     <a
                       href={selectedFile.signedUrl || ""}
