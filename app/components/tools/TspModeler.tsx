@@ -356,8 +356,7 @@ export default function TspModeler() {
           </div>
 
           {/* Retirement Projection Results - Available to ALL users (free tier benefit) */}
-          {(
-            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
                 <>
@@ -396,7 +395,6 @@ export default function TspModeler() {
                 </div>
               )}
             </div>
-          )}
         </div>
       </Section>
     </div>

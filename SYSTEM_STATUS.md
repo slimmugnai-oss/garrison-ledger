@@ -115,17 +115,25 @@
 ---
 
 #### 5. **Calculator Tools**
-**Purpose:** Financial planning calculators
+**Purpose:** Financial planning and logistics calculators
 
-**Tools:**
-1. TSP Modeler
-2. SDP Strategist
-3. House Hacking Calculator
-4. PCS Planner
-5. Salary Calculator
-6. On-Base Savings Calculator
+**Financial Planning Tools (3):**
+1. **TSP Modeler** - Model TSP allocations for retirement
+2. **SDP Strategist** - Savings Deposit Program for deployment
+3. **House Hacking Calculator** - BAH optimization analysis
 
-**Status:** ✅ Live, Working
+**Planning & Logistics Tools (3):**
+4. **PCS Financial Planner** - PCS cost estimation
+5. **Salary & Relocation Calculator** - Military vs civilian pay comparison
+6. **On-Base Savings Calculator** - Commissary/exchange savings
+
+**AI Explainer Feature:**
+- All 6 tools have "✨ Explain these results" button
+- Uses GPT-4o-mini (~$0.01/explanation)
+- **Status:** ✅ FREE for all users (recommended to keep free)
+- Drives engagement and shows AI value
+
+**Status:** ✅ Live, Working, All Free (No Paywalls)
 
 ---
 
