@@ -29,6 +29,8 @@ import {
   Image,
   File,
   CheckCircle,
+  Upload,
+  Download,
   
   // Business & Career
   Briefcase,
@@ -119,6 +121,8 @@ export const iconRegistry = {
   Image,
   File,
   CheckCircle,
+  Upload,
+  Download,
   
   // Business & Career
   Briefcase,

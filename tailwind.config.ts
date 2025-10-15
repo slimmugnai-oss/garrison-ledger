@@ -31,6 +31,25 @@ const config: Config = {
         sans: ["Inter", "system-ui", "sans-serif"],
         serif: ["Lora", "Georgia", "serif"],
       },
+      keyframes: {
+        fadeIn: {
+          'from': { opacity: '0' },
+          'to': { opacity: '1' },
+        },
+        slideInUp: {
+          'from': { transform: 'translateY(10px)', opacity: '0' },
+          'to': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideInLeft: {
+          'from': { transform: 'translateX(-100%)', opacity: '0' },
+          'to': { transform: 'translateX(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.2s ease-out',
+        slideInUp: 'slideInUp 0.3s ease-out',
+        slideInLeft: 'slideInLeft 0.3s ease-out',
+      },
       typography: {
         DEFAULT: {
           css: {
