@@ -24,6 +24,13 @@ interface ContentBlock {
   total_views?: number;
 }
 
+interface RelatedContent {
+  content_id: string;
+  title: string;
+  content_domain: string;
+  similarity_score: number;
+}
+
 interface PaginationInfo {
   page: number;
   pageSize: number;
@@ -37,7 +44,7 @@ function IntelligenceLibraryContent() {
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
   const [personalizedBlocks, setPersonalizedBlocks] = useState<ContentBlock[]>([]);
   const [trendingBlocks, setTrendingBlocks] = useState<ContentBlock[]>([]);
-  const [relatedBlocks, setRelatedBlocks] = useState<Record<string, ContentBlock[]>>({});
+  const [relatedBlocks, setRelatedBlocks] = useState<Record<string, RelatedContent[]>>({});
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -644,7 +651,7 @@ function IntelligenceLibraryContent() {
                               <span>🔗</span> Related Content
                             </h4>
                             <div className="space-y-2">
-                              {relatedBlocks[block.id].map((related: { content_id: string; title: string; content_domain: string; similarity_score: number }) => (
+                              {relatedBlocks[block.id].map((related) => (
                                 <button
                                   key={related.content_id}
                                   onClick={() => toggleExpand(related.content_id)}
