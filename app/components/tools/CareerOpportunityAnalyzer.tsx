@@ -457,163 +457,76 @@ export default function CareerOpportunityAnalyzer() {
 
           {/* Verdict Card */}
           {analysis && (
-            <div>
-              {isPremium ? (
-                <div className={`rounded-xl border-4 p-8 ${
-                  analysis.isPositive 
-                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400' 
-                    : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-400'
-                }`}>
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-text-headings mb-4">
-                      <Icon name="BarChart" className="h-6 w-6 inline mr-2" /> Executive Summary
-                    </h3>
-                    <div className="mb-6">
-                      <div className="text-sm font-semibold text-gray-600 mb-2">
-                        NET FINANCIAL DIFFERENCE
-                      </div>
-                      <div className={`text-6xl font-black mb-2 ${
-                        analysis.isPositive ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        After Taxes & Cost of Living Adjustment
-                      </div>
-                    </div>
+            <div className={`rounded-xl border-4 p-8 ${
+              analysis.isPositive 
+                ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400' 
+                : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-400'
+            }`}>
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-text-headings mb-4">
+                  <Icon name="BarChart" className="h-6 w-6 inline mr-2" /> Executive Summary
+                </h3>
+                <div className="mb-6">
+                  <div className="text-sm font-semibold text-gray-600 mb-2">
+                    NET FINANCIAL DIFFERENCE
                   </div>
-
-                  {/* Breakdown */}
-                  <div className="bg-card rounded-lg p-6 mb-6 border border-border">
-                    <h4 className="font-bold text-text-headings mb-4 text-lg">Financial Breakdown</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-sm text-gray-600 mb-1">Your Current After-Tax Income</div>
-                        <div className="text-2xl font-bold text-blue-600">{fmt(analysis.currentAfterTax)}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-600 mb-1">New Offer (Adjusted to Your City&apos;s COL)</div>
-                        <div className="text-2xl font-bold text-green-600">{fmt(analysis.adjustedNewOffer)}</div>
-                      </div>
-                      <div className="md:col-span-2 pt-4 border-t border-gray-200">
-                        <div className="text-sm text-gray-600 mb-1">Effective Change in Purchasing Power</div>
-                        <div className={`text-3xl font-black ${analysis.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                          {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)} 
-                          <span className="text-xl ml-2">
-                            ({analysis.isPositive ? '+' : ''}{((analysis.netDifference / analysis.currentAfterTax) * 100).toFixed(1)}%)
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* AI-Generated Executive Summary */}
-                  <div className={`rounded-lg p-6 ${
-                    analysis.isPositive 
-                      ? 'bg-green-100 border-2 border-green-300' 
-                      : 'bg-red-100 border-2 border-red-300'
+                  <div className={`text-6xl font-black mb-2 ${
+                    analysis.isPositive ? 'text-green-600' : 'text-red-600'
                   }`}>
-                    <div className="flex items-start gap-3">
-                      <Icon name="Lightbulb" className="h-8 w-8 text-gray-700" />
-                      <div>
-                        <h4 className={`font-bold mb-2 text-lg ${
-                          analysis.isPositive ? 'text-green-900' : 'text-red-900'
-                        }`}>
-                          The Bottom Line
-                        </h4>
-                        <p className={`leading-relaxed ${
-                          analysis.isPositive ? 'text-green-900' : 'text-red-900'
-                        }`}>
-                          {analysis.executiveSummary}
-                        </p>
-                      </div>
+                    {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    After Taxes & Cost of Living Adjustment
+                  </div>
+                </div>
+              </div>
+
+              {/* Breakdown */}
+              <div className="bg-card rounded-lg p-6 mb-6 border border-border">
+                <h4 className="font-bold text-text-headings mb-4 text-lg">Financial Breakdown</h4>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">Your Current After-Tax Income</div>
+                    <div className="text-2xl font-bold text-blue-600">{fmt(analysis.currentAfterTax)}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">New Offer (Adjusted to Your City&apos;s COL)</div>
+                    <div className="text-2xl font-bold text-green-600">{fmt(analysis.adjustedNewOffer)}</div>
+                  </div>
+                  <div className="md:col-span-2 pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-600 mb-1">Effective Change in Purchasing Power</div>
+                    <div className={`text-3xl font-black ${analysis.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                      {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)} 
+                      <span className="text-xl ml-2">
+                        ({analysis.isPositive ? '+' : ''}{((analysis.netDifference / analysis.currentAfterTax) * 100).toFixed(1)}%)
+                      </span>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="relative">
-                  <div className="blur-sm pointer-events-none select-none">
-                    <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-4 h-4 bg-white rounded-full"></div>
-                        <h3 className="text-xl font-bold">Executive Summary</h3>
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-6 mb-6">
-                        {/* Current Situation Summary */}
-                        <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4">
-                          <div className="text-xs font-semibold text-blue-100 mb-2">Current Situation</div>
-                          <div className="space-y-1 text-sm">
-                            <div className="flex justify-between">
-                              <span>Total Compensation:</span>
-                              <span className="font-bold">{fmt(analysis.currentTotalComp)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>After Taxes:</span>
-                              <span className="font-bold">{fmt(analysis.currentAfterTax)}</span>
-                            </div>
-                          </div>
-                        </div>
+              </div>
 
-                        {/* New Offer Summary */}
-                        <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4">
-                          <div className="text-xs font-semibold text-green-100 mb-2">New Offer</div>
-                          <div className="space-y-1 text-sm">
-                            <div className="flex justify-between">
-                              <span>Total Compensation:</span>
-                              <span className="font-bold">{fmt(analysis.newTotalComp)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>After Taxes:</span>
-                              <span className="font-bold">{fmt(analysis.newAfterTax)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Net Difference */}
-                      <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 text-center mb-6">
-                        <div className="text-sm font-semibold text-blue-100 mb-2">Net Financial Difference</div>
-                        <div className={`text-3xl font-black mb-2 ${
-                          analysis.netDifference >= 0 ? 'text-green-300' : 'text-red-300'
-                        }`}>
-                          {analysis.netDifference >= 0 ? '+' : ''}{fmt(analysis.netDifference)}
-                          <span className="text-lg font-normal text-blue-100">/year</span>
-                        </div>
-                        <p className="text-sm text-blue-100">After taxes & cost of living</p>
-                      </div>
-
-                      {/* AI Narrative */}
-                      <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                        <div className="text-sm font-semibold text-blue-100 mb-3">AI Analysis</div>
-                        <p className="text-sm text-blue-100 leading-relaxed">
-                          {analysis?.executiveSummary || 'Complete your analysis to see personalized insights'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                      <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                      <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                        Your Results Are Ready!
-                      </h3>
-                      <p className="text-lg text-gray-700 mb-2">
-                        Unlock to see your complete financial analysis with total compensation comparison
-                      </p>
-                      <p className="text-3xl font-black text-gray-900 mb-6">
-                        $9.99<span className="text-lg font-normal text-gray-600">/month</span>
-                      </p>
-                      <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                        Unlock Now →
-                      </a>
-                      <p className="text-xs text-gray-500">
-                        Less than a coffee per week · Upgrade anytime
-                      </p>
-                    </div>
+              {/* AI-Generated Executive Summary */}
+              <div className={`rounded-lg p-6 ${
+                analysis.isPositive 
+                  ? 'bg-green-100 border-2 border-green-300' 
+                  : 'bg-red-100 border-2 border-red-300'
+              }`}>
+                <div className="flex items-start gap-3">
+                  <Icon name="Lightbulb" className="h-8 w-8 text-gray-700" />
+                  <div>
+                    <h4 className={`font-bold mb-2 text-lg ${
+                      analysis.isPositive ? 'text-green-900' : 'text-red-900'
+                    }`}>
+                      The Bottom Line
+                    </h4>
+                    <p className={`leading-relaxed ${
+                      analysis.isPositive ? 'text-green-900' : 'text-red-900'
+                    }`}>
+                      {analysis.executiveSummary}
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
