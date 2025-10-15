@@ -179,8 +179,7 @@ function BinderContent() {
         method: "PUT",
         body: uploadFile,
         headers: {
-          "Content-Type": uploadFile.type,
-          "x-upsert": "false"
+          "Content-Type": uploadFile.type
         }
       });
 
@@ -192,7 +191,13 @@ function BinderContent() {
       if (storageResponse.status >= 400) {
         const errorText = await storageResponse.text();
         console.error("Storage upload failed:", errorText);
-        alert(`Failed to upload file to storage: ${storageResponse.status} ${storageResponse.statusText}`);
+        console.error("Upload URL:", uploadData.uploadUrl);
+        console.error("File info:", {
+          name: uploadFile.name,
+          type: uploadFile.type,
+          size: uploadFile.size
+        });
+        alert(`Failed to upload file to storage: ${storageResponse.status} ${storageResponse.statusText}\n\nCheck console for details.`);
         return;
       }
       
