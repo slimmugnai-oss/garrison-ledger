@@ -22,15 +22,16 @@ function getAdminClient() {
 }
 
 export async function GET(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const { searchParams } = new URL(req.url);
-  const folder = searchParams.get("folder");
+    const { searchParams } = new URL(req.url);
+    const folder = searchParams.get("folder");
 
-  const supabase = getAdminClient();
+    const supabase = getAdminClient();
 
   // Fetch files
   let query = supabase
@@ -58,20 +59,11 @@ export async function GET(req: NextRequest) {
   const isPremium = await isPremiumServer(userId);
   const storageLimit = isPremium ? PREMIUM_STORAGE_LIMIT : FREE_STORAGE_LIMIT;
 
-  // Generate signed URLs for each file (valid for 1 hour)
-  const filesWithUrls = await Promise.all(
-    (files || []).map(async (file) => {
-      const { data: signedUrl } = await supabase
-        .storage
-        .from("life_binder")
-        .createSignedUrl(file.object_path, 3600);
-
-      return {
-        ...file,
-        signedUrl: signedUrl?.signedUrl || null
-      };
-    })
-  );
+  // For now, return files without signed URLs to isolate the issue
+  const filesWithoutUrls = (files || []).map(file => ({
+    ...file,
+    signedUrl: null
+  }));
 
   // Count files per folder
   const folderCounts = (files || []).reduce((acc, file) => {
@@ -79,14 +71,24 @@ export async function GET(req: NextRequest) {
     return acc;
   }, {} as Record<string, number>);
 
-  return NextResponse.json({
-    files: filesWithUrls,
-    storage: {
-      used: totalUsage,
-      limit: storageLimit,
-      isPremium
-    },
-    folderCounts
-  });
+    return NextResponse.json({
+      files: filesWithoutUrls,
+      storage: {
+        used: totalUsage,
+        limit: storageLimit,
+        isPremium
+      },
+      folderCounts
+    });
+  } catch (error) {
+    console.error("List API error:", error);
+    return NextResponse.json(
+      { 
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    );
+  }
 }
 
