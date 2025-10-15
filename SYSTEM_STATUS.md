@@ -43,6 +43,7 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: ✨ TABBED PLAN LAYOUT - Redesigned plan output with 4 tabs (Overview, Content, Tools, Action Plan) for better UX
 - 2025-01-15: 🔧 LIBRARY PREMIUM ERROR FIXED - Removed premium checks from /api/library/enhanced and /api/library routes
 - 2025-01-15: 🔧 BUILD FIXES - Fixed Supabase import errors in library rate limiting API routes
 - 2025-01-15: 📚 LIBRARY RATE LIMITING RESTORED - Proper 5/day limit for free users, unlimited for premium
@@ -306,11 +307,14 @@
    - Phase 1: AI Master Curator selects 8-10 blocks
    - Phase 2: AI Narrative Weaver creates personalized narrative
    - ~30 seconds processing
-5. View Plan (/dashboard/plan)
-   - Executive summary
-   - Curated content blocks with AI context
-   - Recommended tools
-   - Action plan
+5. View Plan (/dashboard/plan) ⭐ NEW TABBED LAYOUT
+   - **Overview Tab:** Executive summary, plan stats, quick navigation
+   - **Content Tab:** 8-10 curated blocks with progress tracking
+   - **Tools Tab:** Recommended calculators with descriptions
+   - **Action Plan Tab:** Prioritized next steps
+   - URL hash navigation (#overview, #content, #tools, #action)
+   - Reading progress indicator
+   - Mobile-optimized tab bar
 6. Return to Dashboard
    - "Your Personalized Plan" widget shows
 ```
