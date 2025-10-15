@@ -38,12 +38,8 @@ export async function GET(req: NextRequest) {
   const entitlement = entitlementData as EntitlementRow | null;
   const isPremium = entitlement?.tier === "premium" && entitlement?.status === "active";
   
-  if (!isPremium) {
-    return NextResponse.json(
-      { error: "Premium subscription required" },
-      { status: 403 }
-    );
-  }
+  // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
+  // Rate limiting is handled by the frontend and /api/library/can-view endpoint
 
   // Parse query parameters
   const searchParams = req.nextUrl.searchParams;
