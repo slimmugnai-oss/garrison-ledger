@@ -112,15 +112,21 @@ function BinderContent() {
           ? "/api/binder/list"
           : `/api/binder/list?folder=${encodeURIComponent(selectedFolder)}`;
       const response = await fetch(url);
-      const data = await response.json();
-
-      if (response.ok) {
-        setFiles(data.files || []);
-        setStorage(data.storage);
-        setFolderCounts(data.folderCounts || {});
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      
+      const data = await response.json();
+      setFiles(data.files || []);
+      setStorage(data.storage);
+      setFolderCounts(data.folderCounts || {});
     } catch (error) {
       console.error("Error loading files:", error);
+      // Set empty state on error
+      setFiles([]);
+      setStorage(null);
+      setFolderCounts({});
     } finally {
       setLoading(false);
     }
@@ -179,16 +185,26 @@ function BinderContent() {
       });
 
       if (!storageResponse.ok) {
-        alert("Failed to upload file");
+        alert("Failed to upload file to storage");
         return;
       }
 
+      // Success! Close modal and refresh files
       setShowUploadModal(false);
       setUploadFile(null);
       setUploadExpiryDate("");
       setUploadFolder("Personal Records");
       setUploadDocType("other");
-      loadFiles();
+      
+      // Reload files to show the new upload
+      try {
+        await loadFiles();
+        console.log("File uploaded successfully!");
+      } catch (error) {
+        console.error("Error reloading files after upload:", error);
+        // Still show success since the upload worked
+        alert("File uploaded successfully! Please refresh the page to see it.");
+      }
     } catch (error) {
       console.error("Upload error:", error);
       alert("Failed to upload file");
