@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
 import Header from "@/app/components/Header";
 
 export default function AdminProviders() {
-  const { user } = useUser();
 
   const [form, setForm] = useState<Record<string, unknown>>({
     type: "agent", name: "", business_name: "", email: "", phone: "",

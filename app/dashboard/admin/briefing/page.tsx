@@ -94,6 +94,7 @@ export default function BriefingAdminPage() {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = editHTML;
       const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      const wordCount = textContent.split(/\s+/).length;
       
       // Use AI-provided domain or auto-detect from tags
       let domain = editDomain; // Use AI suggestion if available
@@ -108,7 +109,6 @@ export default function BriefingAdminPage() {
       // Use AI-provided difficulty or auto-detect
       let difficulty = editDifficulty; // Use AI suggestion if available
       if (difficulty === 'intermediate') { // If still default, try auto-detect
-        const wordCount = textContent.split(/\s+/).length;
         difficulty = wordCount < 200 ? 'beginner' : wordCount > 400 ? 'advanced' : 'intermediate';
       }
       
