@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Freemium Model Complete  
-**Version:** 2.1.3 (Intelligence Library Rate Limiting - Complete)
+**Version:** 2.2.0 (Tabbed Plan Layout - Complete)
 
 ---
 
@@ -12,8 +12,9 @@
 - ✅ AI Master Curator & Narrative Weaver (GPT-4o) - PRIMARY SYSTEM
 - ✅ Adaptive Assessment (6 questions)
 - ✅ Personalized Plan Generation (`/api/plan/generate`)
+- ✅ **Tabbed Plan Layout** (Overview, Content, Tools, Action Plan) ⭐ NEW
 - ✅ 410 Hand-Curated Content Blocks (100% metadata)
-- ✅ 6 Financial Calculator Tools
+- ✅ 6 Financial Calculator Tools (All free)
 - ✅ Intelligence Library (AI-powered search) - 5/day free, unlimited premium
 - ✅ Binder (Document Management)
 - ✅ Premium Subscription (Stripe)
@@ -36,6 +37,9 @@
 - Plan generation with 190 top-rated blocks
 - Free tier: 2-block preview with upgrade CTA
 - Premium tier: Full 8-10 block plan
+- **Tabbed plan interface with 4 organized sections** ⭐
+- **URL hash navigation (#overview, #content, #tools, #action)** ⭐
+- **Reading progress tracking for premium users** ⭐
 - Rate limiting functions operational
 - All 6 calculator tools free and working
 - AI Explainer preview mode active (2-3 sentences)
@@ -78,9 +82,17 @@
 **Components:**
 - `/api/plan/generate` - Two-phase AI plan generation
 - `/api/assessment/complete` - Save assessment responses
-- `/dashboard/plan` - Display personalized plan
+- `/dashboard/plan` - Display personalized plan with **tabbed interface** ⭐
+- `PlanClient` component - 4-tab layout (Overview, Content, Tools, Action Plan)
 - `user_plans` table - Store AI-generated plans
 - `user_assessments` table - Store assessment responses
+
+**Key Features:**
+- Tabbed navigation for better UX
+- URL hash navigation (#overview, #content, etc.)
+- Reading progress tracking (premium)
+- Mobile-optimized horizontal tabs
+- Cross-tab quick links
 
 **Status:** ✅ Live, Working
 
@@ -544,12 +556,32 @@
 
 ### **Internal Docs**
 - `docs/active/` - Current system documentation
+  - `TABBED_PLAN_LAYOUT.md` - Complete tabbed plan interface documentation ⭐ NEW
+  - `CALCULATOR_TOOLS_REFERENCE.md` - All 6 calculator tools with AI explainers
+  - `FREEMIUM_COMPLETE_FINAL.md` - Freemium model implementation details
 - `docs/guides/` - How-to guides
 - `docs/archive/` - Historical documentation
 
 ---
 
 ## 🔄 **VERSION HISTORY**
+
+### **v2.2.0 (2025-01-15) - Tabbed Plan Layout** ⭐
+- Complete plan UI redesign with 4-tab interface
+- Overview, Content, Tools, and Action Plan tabs
+- URL hash navigation for direct section linking
+- Reading progress tracking for premium users
+- Mobile-optimized horizontal scrollable tabs
+- Reduced scroll fatigue (12-18 screens → 4 tabs)
+- Cross-tab quick navigation
+- All build errors fixed (icon registry compliance)
+
+### **v2.1.0 (2025-01-15) - Intelligence Library & Freemium**
+- Intelligence Library rate limiting (5/day free, unlimited premium)
+- AI Explainer preview mode for all 6 calculators
+- All calculator tools made free (per freemium model)
+- Directory system made public (no paywall)
+- Fixed library premium access errors
 
 ### **v2.0.0 (2025-01-15) - AI Master Curator** ⭐
 - Implemented AI Master Curator & Narrative Weaver
