@@ -144,9 +144,10 @@ export default function AssessmentClient() {
       <>
         <Header />
         <div className="min-h-screen bg-bg flex items-center justify-center">
-          <div className="text-center">
+          <div className="text-center max-w-md mx-auto px-4">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-6"></div>
-            <p className="text-2xl font-serif font-bold text-text">Generating your personalized plan...</p>
+            <p className="text-2xl font-serif font-bold text-text mb-3">Generating your personalized plan...</p>
+            <p className="text-base text-text-body">AI is analyzing your profile and curating 8-10 expert content blocks tailored to your situation. This may take 20-30 seconds.</p>
           </div>
         </div>
       </>
