@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Icon from "@/app/components/ui/Icon";
