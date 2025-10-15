@@ -18,16 +18,16 @@ export async function isPremiumServer(userId: string): Promise<boolean> {
       .from("v_user_access")
       .select("is_premium")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to handle no results
     
-    if (error) {
-      console.log('Premium check - v_user_access error:', error.message);
+    if (error || !access) {
+      console.log('Premium check - v_user_access error or no data:', error?.message || 'no data');
       // Fallback to entitlements table
       const { data: entitlements } = await sb
         .from("entitlements")
         .select("tier, status")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
       
       return entitlements?.tier === 'premium' && entitlements?.status === 'active';
     }

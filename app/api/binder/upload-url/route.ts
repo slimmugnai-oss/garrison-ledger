@@ -65,6 +65,26 @@ export async function POST(req: NextRequest) {
 
   const supabase = getAdminClient();
 
+  // Ensure user profile exists
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .upsert({
+      id: userId,
+      email: "", // Will be updated later
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }, {
+      onConflict: "id"
+    });
+
+  if (profileError) {
+    console.error("Error creating/updating profile:", profileError);
+    return NextResponse.json(
+      { error: "Failed to create user profile" },
+      { status: 500 }
+    );
+  }
+
   // Check current storage usage
   const { data: existingFiles, error: fetchError } = await supabase
     .from("binder_files")
