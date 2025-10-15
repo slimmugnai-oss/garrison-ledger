@@ -12,13 +12,7 @@ export const maxDuration = 30;
  * Reduces assessment from 30 questions to ~10 questions
  */
 
-type Question = {
-  id: string;
-  question: string;
-  type: 'select' | 'multiselect' | 'text' | 'number';
-  options?: string[];
-  context?: string; // Why we're asking this
-};
+// Removed unused type - questions are defined inline in CORE_QUESTIONS
 
 type AssessmentState = {
   answers: Record<string, any>;
@@ -127,12 +121,13 @@ export async function POST(req: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    const { data } = await supabase
+    const { data: profileData } = await supabase
       .from('user_profiles')
       .select('service_status, spouse_service_status, rank, branch, current_base, pcs_date, deployment_status, marital_status, num_children, has_efmp')
       .eq('user_id', userId)
       .maybeSingle();
-    profile = data;
+    profile = profileData;
+    // Profile is loaded but currently not used - reserved for future adaptive logic
   }
 
   // If this is the first question, start with the first core question

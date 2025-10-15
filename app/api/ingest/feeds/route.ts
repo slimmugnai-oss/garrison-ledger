@@ -84,9 +84,9 @@ async function processRSSFeed(
     let feedData;
     try {
       feedData = await parser.parseURL(source.url);
-    } catch (parseError) {
+    } catch (error) {
       // If parsing fails, try to get raw content and clean it
-      console.log(`[RSS] Parse failed for ${source.id}, trying raw fetch...`);
+      console.log(`[RSS] Parse failed for ${source.id}, trying raw fetch...`, error);
       const response = await fetch(source.url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
