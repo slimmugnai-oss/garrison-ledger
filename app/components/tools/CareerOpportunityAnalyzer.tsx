@@ -552,7 +552,8 @@ export default function CareerOpportunityAnalyzer() {
                 currentTotal: analysis.currentTotalComp,
                 newTotal: analysis.newTotalComp,
                 netDifference: analysis.netDifference,
-                recommendation: analysis.recommendation
+                executiveSummary: analysis.executiveSummary,
+                isPositive: analysis.isPositive
               }
             }} />
           )}
