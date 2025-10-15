@@ -538,23 +538,23 @@ export default function CareerOpportunityAnalyzer() {
                 </div>
               </div>
             </PaywallWrapper>
+          )}
 
-            {/* AI Explainer */}
-            {analysis && (
-              <Explainer payload={{
-                tool: "career-analyzer",
-                inputs: {
-                  currentJob: { salary: currentData.salary, bonus: currentData.bonus, city: currentData.city?.city },
-                  newOffer: { salary: newData.salary, bonus: newData.bonus, city: newData.city?.city }
-                },
-                outputs: {
-                  currentTotal: analysis.currentTotalComp,
-                  newTotal: analysis.newTotalComp,
-                  netDifference: analysis.netDifference,
-                  recommendation: analysis.recommendation
-                }
-              }} />
-            )}
+          {/* AI Explainer */}
+          {analysis && (
+            <Explainer payload={{
+              tool: "career-analyzer",
+              inputs: {
+                currentJob: { salary: currentData.salary, bonus: currentData.bonus, city: currentData.city?.city },
+                newOffer: { salary: newData.salary, bonus: newData.bonus, city: newData.city?.city }
+              },
+              outputs: {
+                currentTotal: analysis.currentTotalComp,
+                newTotal: analysis.newTotalComp,
+                netDifference: analysis.netDifference,
+                recommendation: analysis.recommendation
+              }
+            }} />
           )}
         </div>
       </div>
