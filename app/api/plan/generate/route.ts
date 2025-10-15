@@ -134,6 +134,43 @@ interface ContentBlock {
   content_rating: number;
 }
 
+interface SelectedBlock {
+  id: string;
+  title: string;
+  relevanceScore: number;
+  relevanceReason: string;
+}
+
+interface CurationResult {
+  selectedBlocks?: SelectedBlock[];
+  primaryFocus?: string;
+  secondaryFocus?: string;
+  urgencyLevel?: string;
+}
+
+interface SectionIntro {
+  blockId: string;
+  introduction?: string;
+  whyThisMatters?: string;
+  actionableNextStep?: string;
+}
+
+interface NarrativeResult {
+  executiveSummary?: string;
+  sectionIntros?: SectionIntro[];
+  finalRecommendations?: string[];
+  recommendedTools?: Array<{ toolName: string; reason: string }>;
+}
+
+interface FullBlock {
+  id: string;
+  title: string;
+  domain: string;
+  html: string;
+  text_content: string;
+  est_read_min: number;
+}
+
 export async function POST() {
   const { userId } = await auth();
   if (!userId) {
@@ -252,7 +289,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
       response_format: { type: "json_object" }
     });
 
-    const curationResult = JSON.parse(curationCompletion.choices[0]?.message?.content || '{}');
+    const curationResult = JSON.parse(curationCompletion.choices[0]?.message?.content || '{}') as CurationResult;
     console.log(`[Plan Generation] Phase 1 Complete: Selected ${curationResult.selectedBlocks?.length || 0} content blocks`);
 
     // ===================================
@@ -261,15 +298,15 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
     console.log('[Plan Generation] Phase 2: AI Narrative Weaver - Creating personalized narrative');
 
     // Get full content for selected blocks
-    const selectedBlockIds = curationResult.selectedBlocks?.map((b: any) => b.id) || [];
+    const selectedBlockIds = curationResult.selectedBlocks?.map(b => b.id) || [];
     const { data: fullBlocks } = await supabaseAdmin
       .from('content_blocks')
       .select('*')
       .in('id', selectedBlockIds);
 
     // Format curated blocks for narrative generation
-    const curatedBlocksForNarrative = curationResult.selectedBlocks?.map((selected: any) => {
-      const fullBlock = fullBlocks?.find((b: any) => b.id === selected.id);
+    const curatedBlocksForNarrative = curationResult.selectedBlocks?.map(selected => {
+      const fullBlock = (fullBlocks as FullBlock[] | null)?.find(b => b.id === selected.id);
       return {
         id: selected.id,
         title: selected.title,
@@ -299,7 +336,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
       response_format: { type: "json_object" }
     });
 
-    const narrativeResult = JSON.parse(narrativeCompletion.choices[0]?.message?.content || '{}');
+    const narrativeResult = JSON.parse(narrativeCompletion.choices[0]?.message?.content || '{}') as NarrativeResult;
     console.log('[Plan Generation] Phase 2 Complete: Narrative generated');
 
     // ===================================
@@ -316,9 +353,9 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
       urgencyLevel: curationResult.urgencyLevel,
       
       // Hand-curated content blocks with AI-generated context
-      contentBlocks: fullBlocks?.map((block: any) => {
-        const curation = curationResult.selectedBlocks?.find((b: any) => b.id === block.id);
-        const narrative = narrativeResult.sectionIntros?.find((s: any) => s.blockId === block.id);
+      contentBlocks: (fullBlocks as FullBlock[] | null)?.map(block => {
+        const curation = curationResult.selectedBlocks?.find(b => b.id === block.id);
+        const narrative = narrativeResult.sectionIntros?.find(s => s.blockId === block.id);
         
         return {
           id: block.id,
