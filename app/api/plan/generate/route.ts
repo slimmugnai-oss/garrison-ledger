@@ -206,11 +206,15 @@ export async function POST() {
 
     const assessmentResponses = assessmentData?.responses || {};
 
-    // Load all content blocks (Knowledge Graph)
+    // Load top-quality content blocks (Knowledge Graph)
+    // To stay under OpenAI's 30k token limit, we pre-filter to top ~190 blocks (rating 3.5+)
+    // This still gives AI plenty of great content to choose from
     const { data: contentBlocks, error: blocksError } = await supabaseAdmin
       .from('content_blocks')
       .select('id, title, domain, difficulty_level, target_audience, tags, topics, text_content, summary, est_read_min, content_rating')
-      .order('content_rating', { ascending: false });
+      .gte('content_rating', 3.5) // Top ~190 blocks (filters 220 lower-rated blocks)
+      .order('content_rating', { ascending: false })
+      .limit(200); // Hard limit to ensure we stay under token budget
 
     if (blocksError || !contentBlocks) {
       console.error('[Plan Generation] Content blocks load error:', blocksError);
@@ -219,7 +223,7 @@ export async function POST() {
       }, { status: 500 });
     }
 
-    console.log(`[Plan Generation] Loaded ${contentBlocks.length} content blocks for curation`);
+    console.log(`[Plan Generation] Loaded ${contentBlocks.length} content blocks for curation (filtered for quality)`);
 
     // Initialize OpenAI
     const apiKey = process.env.OPENAI_API_KEY;
@@ -257,16 +261,14 @@ Financial Priorities: ${profile.financial_priorities?.join(', ') || 'Not specifi
 Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
 `;
 
-    // Format content blocks for AI (simplified for token efficiency)
+    // Format content blocks for AI (HEAVILY simplified for token efficiency)
+    // Reduced to ~50 tokens per block to stay under 30k token limit
     const blocksForAI = contentBlocks.map((block: ContentBlock) => ({
       id: block.id,
       title: block.title,
       domain: block.domain,
-      difficulty: block.difficulty_level,
-      audience: block.target_audience,
-      tags: block.tags,
-      summary: block.summary || block.text_content.substring(0, 200),
-      rating: block.content_rating
+      tags: block.tags.slice(0, 2), // Only first 2 tags
+      summary: (block.summary || block.text_content).substring(0, 80) // Max 80 chars
     }));
 
     const curationCompletion = await openai.chat.completions.create({
