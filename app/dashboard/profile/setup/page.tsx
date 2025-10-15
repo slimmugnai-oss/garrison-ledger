@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BaseAutocomplete from '@/app/components/ui/BaseAutocomplete';
 import ProfileLoadingSkeleton from '@/app/components/profile/ProfileLoadingSkeleton';
+import ProfileSection from '@/app/components/profile/ProfileSection';
+import ProfileFormField, { getInputClass } from '@/app/components/profile/ProfileFormField';
+import ProfileProgress from '@/app/components/profile/ProfileProgress';
 import militaryRanks from '@/lib/data/military-ranks.json';
 import militaryComponents from '@/lib/data/military-components.json';
 
@@ -134,8 +137,10 @@ export default function ProfileSetupPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [data, setData] = useState<ProfilePayload>({});
+  const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([1]));
 
   useEffect(() => {
     let mounted = true;
@@ -198,6 +203,10 @@ export default function ProfileSetupPage() {
             timezone: json?.timezone ?? null,
             profile_completed: json?.profile_completed ?? false,
           });
+          // Expand all sections if profile exists
+          if (json) {
+            setExpandedSections(new Set([1, 2, 3, 4, 5, 6, 7, 8]));
+          }
         } else if (res.status !== 404) {
           setError('Failed to load profile');
         }
@@ -272,41 +281,142 @@ export default function ProfileSetupPage() {
     }
   }, [data.num_children, data.children]);
 
-  const step = useMemo(() => {
-    // Simple step derivation based on filled fields - now more fields are required
-    if (!data.age || !data.gender || !data.years_of_service) return 1;
-    if (!data.service_status) return 2;
-    if (!data.rank || !data.branch) return 3;
-    if (data.marital_status == null || data.num_children == null || data.has_efmp == null) return 4;
-    if (!data.tsp_balance_range || !data.debt_amount_range || !data.emergency_fund_range) return 5;
-    return 6;
-  }, [data]);
+  // Section completion calculator
+  const getSectionCompletion = (section: number): { complete: number; total: number; percentage: number } => {
+    let complete = 0;
+    let total = 0;
+    
+    switch(section) {
+      case 1: // Basic info
+        total = 3;
+        if (data.age) complete++;
+        if (data.gender) complete++;
+        if (data.years_of_service !== null && data.years_of_service !== undefined) complete++;
+        break;
+      case 2: // Military identity
+        total = data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status) ? 5 : 3;
+        if (data.service_status) complete++;
+        if (data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status)) {
+          if (data.branch) complete++;
+          if (data.rank) complete++;
+          if (data.mos_afsc_rate) complete++;
+          if (data.clearance_level) complete++;
+        } else if (data.service_status === 'dod_civilian') {
+          if (data.clearance_level) complete++;
+        }
+        break;
+      case 3: // Location & Deployment
+        total = 3;
+        if (data.current_base) complete++;
+        if (data.deployment_status) complete++;
+        if (data.deployment_count !== null && data.deployment_count !== undefined) complete++;
+        break;
+      case 4: // Family
+        total = 3 + (data.marital_status === 'married' ? 3 : 0);
+        if (data.marital_status) complete++;
+        if (data.num_children !== null && data.num_children !== undefined) complete++;
+        if (data.has_efmp !== null && data.has_efmp !== undefined) complete++;
+        if (data.marital_status === 'married') {
+          if (data.spouse_age) complete++;
+          if (data.spouse_military !== null && data.spouse_military !== undefined) complete++;
+          if (data.spouse_employed !== null && data.spouse_employed !== undefined) complete++;
+        }
+        break;
+      case 5: // Financial
+        total = 6;
+        if (data.tsp_balance_range) complete++;
+        if (data.tsp_allocation) complete++;
+        if (data.debt_amount_range) complete++;
+        if (data.emergency_fund_range) complete++;
+        if (data.housing_situation) complete++;
+        if (data.monthly_income_range) complete++;
+        break;
+      case 6: // Goals
+        total = 3;
+        if (data.long_term_goal) complete++;
+        if (data.retirement_age_target) complete++;
+        if (data.career_interests && data.career_interests.length > 0) complete++;
+        break;
+      case 7: // Education
+        total = 2;
+        if (data.education_level) complete++;
+        if (data.education_goals && data.education_goals.length > 0) complete++;
+        break;
+      case 8: // Preferences
+        total = 2;
+        if (data.content_difficulty_pref) complete++;
+        if (data.communication_pref) complete++;
+        break;
+    }
+    
+    return { complete, total, percentage: total > 0 ? (complete / total) * 100 : 0 };
+  };
+
+  // Overall progress
+  const overallProgress = useMemo(() => {
+    let totalComplete = 0;
+    let totalFields = 0;
+    for (let i = 1; i <= 8; i++) {
+      const section = getSectionCompletion(i);
+      totalComplete += section.complete;
+      totalFields += section.total;
+    }
+    return { complete: totalComplete, total: totalFields, percentage: (totalComplete / totalFields) * 100 };
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Toggle section expansion
+  function toggleSection(section: number) {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  }
 
   async function submit() {
     // Validate required fields
+    const errors: Record<string, string> = {};
     const requiredFields = [
-      { field: data.age, name: 'Age' },
-      { field: data.gender, name: 'Gender' },
-      { field: data.years_of_service, name: 'Years of service' },
-      { field: data.service_status, name: 'Service status' },
-      { field: data.rank, name: 'Rank' },
-      { field: data.branch, name: 'Branch' },
-      { field: data.marital_status, name: 'Marital status' },
-      { field: data.num_children, name: 'Number of children' },
-      { field: data.has_efmp, name: 'EFMP enrollment' },
-      { field: data.tsp_balance_range, name: 'TSP balance range' },
-      { field: data.debt_amount_range, name: 'Debt amount range' },
-      { field: data.emergency_fund_range, name: 'Emergency fund range' }
+      { field: data.age, name: 'age', label: 'Age' },
+      { field: data.gender, name: 'gender', label: 'Gender' },
+      { field: data.years_of_service, name: 'years_of_service', label: 'Years of service' },
+      { field: data.service_status, name: 'service_status', label: 'Service status' },
+      { field: data.marital_status, name: 'marital_status', label: 'Marital status' },
+      { field: data.num_children, name: 'num_children', label: 'Number of children' },
+      { field: data.has_efmp, name: 'has_efmp', label: 'EFMP enrollment' },
+      { field: data.tsp_balance_range, name: 'tsp_balance_range', label: 'TSP balance' },
+      { field: data.debt_amount_range, name: 'debt_amount_range', label: 'Debt amount' },
+      { field: data.emergency_fund_range, name: 'emergency_fund_range', label: 'Emergency fund' }
     ];
 
-    const missingFields = requiredFields.filter(f => f.field === null || f.field === undefined || f.field === '');
-    if (missingFields.length > 0) {
-      setError(`Please complete the following required fields: ${missingFields.map(f => f.name).join(', ')}`);
+    // Add branch/rank requirements conditionally
+    if (data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status)) {
+      requiredFields.push(
+        { field: data.rank, name: 'rank', label: 'Rank' },
+        { field: data.branch, name: 'branch', label: 'Branch' }
+      );
+    }
+
+    requiredFields.forEach(f => {
+      if (f.field === null || f.field === undefined || f.field === '') {
+        errors[f.name] = `${f.label} is required`;
+      }
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError(`Please complete the following required fields: ${Object.values(errors).join(', ')}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     setSaving(true);
     setError(null);
+    setFieldErrors({});
     setSaved(false);
     try {
       const res = await fetch('/api/user-profile', {
@@ -359,50 +469,107 @@ export default function ProfileSetupPage() {
           </Link>
         </div>
 
-        <div className="mb-6">
-          <div className="text-sm text-muted">Step {step} of 6</div>
-          <div className="w-full bg-gray-100 h-2 rounded">
-            <div className="bg-blue-600 h-2 rounded" style={{ width: `${(step/6)*100}%` }} />
-          </div>
+        {/* Overall Progress */}
+        <div className="mb-8">
+          <ProfileProgress
+            complete={overallProgress.complete}
+            total={overallProgress.total}
+            percentage={overallProgress.percentage}
+          />
         </div>
 
+        {/* Error Messages */}
         {error && (
-          <div className="mb-6 p-3 border border-red-200 bg-red-50 text-red-800 rounded">{error}</div>
+          <div className="mb-6 p-4 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
+            <div className="flex items-start gap-3">
+              <span className="text-red-500 text-xl">⚠️</span>
+              <div className="flex-1">
+                <p className="font-medium text-red-900">Please complete required fields</p>
+                <p className="text-sm text-red-700 mt-1">{error}</p>
+              </div>
+            </div>
+          </div>
         )}
+        {/* Success Message */}
         {saved && (
-          <div className="mb-6 p-4 border-2 border-green-300 bg-green-50 text-green-900 rounded-xl">
+          <div className="mb-6 p-4 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
             <div className="flex items-center gap-3">
               <span className="text-2xl">✅</span>
               <div>
-                <p className="font-bold">Profile saved successfully!</p>
+                <p className="font-bold text-green-900">Profile saved successfully!</p>
                 <p className="text-sm text-green-700">Redirecting to dashboard...</p>
               </div>
             </div>
           </div>
         )}
 
-        <div className="space-y-8">
-          <section>
-            <h2 className="text-xl font-bold mb-4">About you</h2>
-            <p className="text-sm text-muted mb-4">Basic info helps us tailor calculations and advice</p>
+        {/* Form Sections */}
+        <div className="space-y-4">
+          {/* Section 1: Basic Info */}
+          <ProfileSection
+            number={1}
+            title="About You"
+            icon="👤"
+            description="Basic information to personalize your experience"
+            required
+            expanded={expandedSections.has(1)}
+            onToggle={() => toggleSection(1)}
+            completion={getSectionCompletion(1)}
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Age <span className="text-red-500">*</span></label>
-                <input type="number" min={17} max={100} placeholder="e.g., 28" className="w-full border border-border rounded-lg px-3 py-2" value={data.age ?? ''} onChange={e => setData(d => ({ ...d, age: e.target.value ? Number(e.target.value) : null }))} />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Gender <span className="text-red-500">*</span></label>
-                <select className="w-full border border-border rounded-lg px-3 py-2" value={data.gender ?? ''} onChange={e => setData(d => ({ ...d, gender: e.target.value || null }))}>
+              <ProfileFormField
+                label="Age"
+                required
+                error={fieldErrors.age}
+                description="Helps with retirement planning"
+                success={!!data.age}
+              >
+                <input
+                  type="number"
+                  min={17}
+                  max={100}
+                  placeholder="e.g., 28"
+                  className={getInputClass(!!fieldErrors.age, !!data.age)}
+                  value={data.age ?? ''}
+                  onChange={e => setData(d => ({ ...d, age: e.target.value ? Number(e.target.value) : null }))}
+                />
+              </ProfileFormField>
+
+              <ProfileFormField
+                label="Gender"
+                required
+                error={fieldErrors.gender}
+                success={!!data.gender}
+              >
+                <select
+                  className={getInputClass(!!fieldErrors.gender, !!data.gender)}
+                  value={data.gender ?? ''}
+                  onChange={e => setData(d => ({ ...d, gender: e.target.value || null }))}
+                >
                   <option value="">Select</option>
                   {genders.map(g => <option key={g} value={g.toLowerCase()}>{g}</option>)}
                 </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Years of service <span className="text-red-500">*</span></label>
-                <input type="number" min={0} max={40} placeholder="e.g., 6" className="w-full border border-border rounded-lg px-3 py-2" value={data.years_of_service ?? ''} onChange={e => setData(d => ({ ...d, years_of_service: e.target.value ? Number(e.target.value) : null }))} />
-              </div>
+              </ProfileFormField>
+
+              <ProfileFormField
+                label="Years of Service"
+                required
+                error={fieldErrors.years_of_service}
+                description="Total military service time"
+                success={!!data.years_of_service}
+              >
+                <input
+                  type="number"
+                  min={0}
+                  max={40}
+                  placeholder="e.g., 6"
+                  className={getInputClass(!!fieldErrors.years_of_service, !!data.years_of_service)}
+                  value={data.years_of_service ?? ''}
+                  onChange={e => setData(d => ({ ...d, years_of_service: e.target.value ? Number(e.target.value) : null }))}
+                />
+              </ProfileFormField>
             </div>
-          </section>
+          </ProfileSection>
 
           <section>
             <h2 className="text-xl font-bold mb-4">Military identity</h2>
