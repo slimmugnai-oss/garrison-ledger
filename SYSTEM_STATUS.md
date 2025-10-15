@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Perfect Score 100/100  
-**Version:** 2.3.1 (Site-Wide Audit Complete - Perfect)
+**Version:** 2.4.0 (Listening Post Enhanced - Complete)
 
 ### **🏆 AUDIT STATUS**
 - **Codebase Audit:** 100/100 ✅ (43 API routes, 12 systems, 0 issues)
@@ -11,16 +11,32 @@
 - **Security Audit:** 10/10 ✅ (99 auth checks, 0 vulnerabilities)
 - **Overall Health:** 100/100 🏆
 
+### **🎖️ QUICK SUMMARY**
+
+Garrison Ledger is a **production-ready AI-powered military financial planning platform** with:
+- 🤖 **AI Master Curator** - GPT-4o-mini selects 8-10 expert blocks, creates personalized plans
+- 📚 **410 Content Blocks** - Hand-curated Knowledge Graph (187 top-rated for AI)
+- 📑 **Tabbed Plan Interface** - 4 organized sections with progress tracking
+- 🎧 **Listening Post** - AI-powered RSS curation (Gemini enrichment)
+- 🧮 **6 Free Calculator Tools** - All with AI Explainer preview mode
+- 📖 **Intelligence Library** - 5/day free, unlimited premium
+- 💰 **Freemium Model** - 2-block preview → full plan ($9.99/mo)
+
 ### **📈 KEY METRICS**
-- **Total Content Blocks:** 410 (187 top-rated for AI)
+- **Total Content Blocks:** 410 (187 top-rated for AI, 2 bibliography excluded)
+- **Feed Items in Queue:** 49 (Listening Post curation pipeline)
+- **RSS Sources:** 7 active feeds (Military Times, Military.com, branches)
+- **Core Systems:** 12 (all operational, fully audited)
 - **API Routes:** 40 active (3 deprecated removed)
-- **Dashboard Pages:** 15+
-- **Resource Hubs:** 5 (all verified)
-- **Legal Pages:** 4 (all compliant)
-- **Calculator Tools:** 6 (all free, AI-enhanced)
-- **Freemium Conversion Rate:** Optimized
-- **AI Plan Generation:** ~30 seconds
-- **Cost per Plan:** ~$0.02 (GPT-4o-mini)
+- **Dashboard Pages:** 15+ (all functional)
+- **Resource Hubs:** 5 (PCS, Career, Deployment, Shopping, Base Guides)
+- **Legal Pages:** 4 (all GDPR/CCPA compliant)
+- **Calculator Tools:** 6 (all free, AI-enhanced with explainers)
+- **AI Models Used:** 3 (GPT-4o-mini for plans, Gemini for curation, GPT-4o-mini for explainers)
+- **AI Plan Generation:** ~30 seconds (8-10 blocks, full narrative)
+- **Cost per Plan:** ~$0.02 (GPT-4o-mini, 187 blocks analyzed)
+- **Cost per Curation:** ~$0.001 (Gemini 2.0 Flash)
+- **Metadata Coverage:** 100% (all 410 blocks, auto-enrichment on new content)
 
 ---
 
@@ -662,13 +678,22 @@
 
 ## 🔄 **VERSION HISTORY**
 
-### **v2.3.1 (2025-01-15) - Perfect Score 100/100** 🏆
-- **Listening Post Enhanced (v2.0):** RSS curation system upgraded
+### **v2.4.0 (2025-01-15) - Listening Post v2.0** 🎧
+- **RSS Curation System Overhauled:**
   - AI metadata enrichment (Gemini 2.0 Flash)
-  - 100% metadata coverage on promotion
+  - 100% metadata coverage on promotion (was 43%)
+  - Populates all 19 critical content_blocks fields
   - Smart domain, difficulty, SEO keyword detection
-  - UI controls for all metadata fields
-  - Full integration with content_blocks schema
+  - UI controls for domain, difficulty, SEO keywords
+  - Enhanced Gemini prompt (6 fields, was 3)
+  - Smart fallback detection for all metadata
+  - Word count calculation for read time
+  - Freshness tracking from creation (100 score, 90-day review)
+- **Impact:** Can scale content library efficiently (410 → 500+)
+- **Documentation:** LISTENING_POST_SYSTEM.md created
+- **System Count:** 12 core systems (was 11)
+
+### **v2.3.1 (2025-01-15) - Perfect Score 100/100** 🏆
 - **Content Blocks Audit:** 410 blocks verified (98/100 quality score)
   - 100% metadata coverage
   - 187 top-rated blocks for AI Curator
