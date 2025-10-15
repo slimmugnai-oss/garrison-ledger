@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import Icon from './ui/Icon';
 
 export default function Header() {
+  const [dashboardOpen, setDashboardOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -79,39 +80,54 @@ export default function Header() {
               {isActivePath('/') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
             </Link>
             <SignedIn>
-              <Link 
-                href="/dashboard" 
-                className={`transition-colors font-medium relative ${
+              {/* Command Center Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 200); setCloseTimeout(t); }}
+              >
+                <button className={`transition-colors flex items-center font-medium relative ${
                   isActivePath('/dashboard') 
                     ? 'text-blue-600 font-semibold' 
                     : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                Dashboard
-                {isActivePath('/dashboard') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
-              </Link>
-              <Link 
-                href="/dashboard/assessment" 
-                className={`transition-colors font-medium relative ${
-                  isActivePath('/dashboard/assessment') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                Assessment
-                {isActivePath('/dashboard/assessment') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
-              </Link>
-              <Link 
-                href="/dashboard/binder" 
-                className={`transition-colors font-medium relative ${
-                  isActivePath('/dashboard/binder') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                My Binder
-                {isActivePath('/dashboard/binder') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
-              </Link>
+                }`}>
+                  Command Center
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  {isActivePath('/dashboard') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+                </button>
+                {dashboardOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-3 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center">
+                      <Icon name="LayoutDashboard" className="w-3 h-3 mr-1" />
+                      Your Command Center
+                    </div>
+                    <Link href="/dashboard" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-blue-500" />
+                      Dashboard Overview
+                    </Link>
+                    <Link href="/dashboard/assessment" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500" />
+                      Military Assessment
+                    </Link>
+                    <Link href="/dashboard/binder" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500" />
+                      My Binder
+                    </Link>
+                  </div>
+                )}
+              </div>
               
               {/* Search Button */}
               <button 
@@ -384,36 +400,45 @@ export default function Header() {
                   Home
                 </Link>
                 <SignedIn>
-                  <Link 
-                    href="/dashboard" 
-                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
-                      isActivePath('/dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Icon name="LayoutDashboard" className="w-5 h-5 mr-3" />
-                    Dashboard
-                  </Link>
-                  <Link 
-                    href="/dashboard/assessment" 
-                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
-                      isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Icon name="ClipboardCheck" className="w-5 h-5 mr-3" />
-                    Assessment
-                  </Link>
-                  <Link 
-                    href="/dashboard/binder" 
-                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
-                      isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Icon name="FolderOpen" className="w-5 h-5 mr-3" />
-                    My Binder
-                  </Link>
+                  {/* Command Center Section */}
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center">
+                      <Icon name="LayoutDashboard" className="w-3 h-3 mr-1" />
+                      Command Center
+                    </p>
+                    <div className="space-y-1">
+                      <Link 
+                        href="/dashboard" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-blue-500" />
+                        Dashboard Overview
+                      </Link>
+                      <Link 
+                        href="/dashboard/assessment" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500" />
+                        Military Assessment
+                      </Link>
+                      <Link 
+                        href="/dashboard/binder" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500" />
+                        My Binder
+                      </Link>
+                    </div>
+                  </div>
                   {/* Tools Section */}
                   <div className="px-3 py-2">
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center">
