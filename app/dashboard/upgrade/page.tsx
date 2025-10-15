@@ -144,8 +144,8 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Daily Strategic Plans</div>
-                      <p className="text-sm text-gray-600">AI-personalized roadmaps, regenerate daily</p>
+                      <div className="text-gray-900 font-semibold">AI Plan Regeneration</div>
+                      <p className="text-sm text-gray-600">Regenerate your AI-curated plan daily as your situation changes</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -217,8 +217,8 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Daily Strategic Plans</div>
-                      <p className="text-sm text-gray-600">AI-personalized roadmaps, regenerate daily</p>
+                      <div className="text-gray-900 font-semibold">AI Plan Regeneration</div>
+                      <p className="text-sm text-gray-600">Regenerate your AI-curated plan daily as your situation changes</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -294,7 +294,7 @@ export default async function UpgradePage() {
                 <div className="text-xs text-gray-500">Military Spouse • San Diego</div>
               </div>
               <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
-                <p className="text-gray-700 mb-4">&ldquo;The assessment gave us a clear roadmap for our financial goals. Worth every penny.&rdquo;</p>
+                <p className="text-gray-700 mb-4">&ldquo;The AI-curated plan gave us a clear path forward for our financial goals. Worth every penny.&rdquo;</p>
                 <div className="text-sm font-semibold text-gray-900">Amanda R.</div>
                 <div className="text-xs text-gray-500">Military Spouse • Norfolk</div>
               </div>
@@ -323,7 +323,7 @@ export default async function UpgradePage() {
                       <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ All 5 Hubs</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-sm text-gray-900">Strategic Plan Generation</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">AI Plan Generation</td>
                       <td className="px-6 py-4 text-center text-gray-400">Not Available</td>
                       <td className="px-6 py-4 text-center text-green-600 font-semibold">✓ 1x per day</td>
                     </tr>

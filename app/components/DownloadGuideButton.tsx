@@ -22,7 +22,7 @@ export default function DownloadGuideButton() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Your-Military-Financial-Roadmap-${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.download = `Your-AI-Curated-Plan-${new Date().toISOString().slice(0, 10)}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -47,9 +47,9 @@ export default function DownloadGuideButton() {
     return (
       <div className="text-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
         <div className="text-4xl mb-3">📄</div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2">Premium Feature: Personalized PDF Guide</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-2">Premium Feature: AI-Curated Plan PDF</h3>
         <p className="text-sm text-gray-600 mb-4">
-          Upgrade to download your custom Military Financial Roadmap as a professional PDF
+          Upgrade to download your AI-curated personalized plan as a professional PDF
         </p>
         <a
           href="/dashboard/upgrade"
@@ -76,7 +76,7 @@ export default function DownloadGuideButton() {
           Generating your personalized guide...
         </>
       ) : (
-        <>📥 Download Your Military Financial Roadmap (PDF)</>
+        <>📥 Download Your AI-Curated Plan (PDF)</>
       )}
     </button>
   );

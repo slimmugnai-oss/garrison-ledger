@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import AssessmentClient from './AssessmentClient';
+
+export const metadata: Metadata = {
+  title: 'Military Assessment | Garrison Ledger',
+  description: 'Quick adaptive assessment to generate your AI-curated personalized financial plan with expert content tailored to your military situation.',
+};
 
 type Question = {
   id: string;

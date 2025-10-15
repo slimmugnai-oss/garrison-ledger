@@ -66,7 +66,7 @@ export async function POST() {
     return new NextResponse(buffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="Your-Military-Financial-Roadmap-${new Date().toISOString().slice(0, 10)}.pdf"`,
+        "Content-Disposition": `attachment; filename="Your-AI-Curated-Plan-${new Date().toISOString().slice(0, 10)}.pdf"`,
         "Cache-Control": "no-store"
       }
     });

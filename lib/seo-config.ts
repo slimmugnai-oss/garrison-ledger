@@ -8,8 +8,8 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://app.familymedia.com";
 
 export const SITE_NAME = "Garrison Ledger";
-export const SITE_TAGLINE = "Intelligent Planning for Military Life";
-export const SITE_DESCRIPTION = "Comprehensive planning platform for military families. Get personalized guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization. Includes TSP calculator, SDP strategist, and house hacking tools.";
+export const SITE_TAGLINE = "AI-Powered Financial Planning for Military Life";
+export const SITE_DESCRIPTION = "AI-powered military financial planning platform. Get your personalized plan with 8-10 expert content blocks curated specifically for your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS planner, and house hacking tools.";
 
 export const SOCIAL_IMAGE = `${SITE_URL}/og-image.png`;
 export const TWITTER_HANDLE = "@GarrisonLedger"; // Update when you have one
@@ -18,7 +18,10 @@ export const DEFAULT_META = {
   title: `${SITE_NAME} - ${SITE_TAGLINE}`,
   description: SITE_DESCRIPTION,
   keywords: [
-    // Primary
+    // Primary - AI-focused
+    "AI military financial planning",
+    "AI-powered military planning",
+    "personalized military plan",
     "military financial planning",
     "military life planning",
     "TSP calculator",
@@ -211,14 +214,14 @@ export const softwareAppSchema = {
   description: SITE_DESCRIPTION,
   screenshot: `${SITE_URL}/screenshot.png`,
   featureList: [
-    "Personalized Military Life Action Plans",
-    "PCS Move Planning & Checklists",
+    "AI-Curated Personalized Financial Plans",
+    "Adaptive Assessment (6 Questions)",
+    "410+ Expert-Curated Content Blocks",
+    "6 Military-Specific Calculators",
+    "PCS Move Planning & Tools",
     "Career Development Guidance",
-    "Deployment Preparation Tools",
-    "On-Base Shopping & Benefits Guide",
-    "TSP Allocation Optimizer",
-    "SDP Payout Calculator",
-    "House Hacking ROI Analysis"
+    "Deployment Preparation Resources",
+    "Document Management (Binder)"
   ],
   author: organizationSchema
 };

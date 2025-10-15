@@ -553,7 +553,7 @@ export default async function CommandDashboard() {
                         Your Personalized Plan is Ready
                       </h2>
                       <p className="text-xl text-slate-200 leading-relaxed">
-                        GPT-4o analyzed your profile and curated the most relevant content from 379 expert blocks.
+                        AI analyzed your profile and curated 8-10 expert content blocks from our 410+ block Knowledge Graph tailored to your situation.
                       </p>
                     </div>
                   </div>

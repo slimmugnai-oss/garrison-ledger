@@ -9,7 +9,7 @@ type Feature = {
 const features: Feature[] = [
   { name: "Resource Hubs (PCS, Career, Deployment, Shopping, Base Guides)", free: true, premium: true },
   { name: "Personal Assessment", free: "1x per day", premium: "Unlimited" },
-  { name: "AI-Generated Strategic Plan", free: "1x per day", premium: "Unlimited regeneration" },
+  { name: "AI-Curated Personalized Plan", free: "1x per day", premium: "Unlimited regeneration" },
   { name: "TSP Retirement Calculator", free: "Preview only (5 years)", premium: "Full projection (30+ years)" },
   { name: "SDP Deployment Savings Calculator", free: false, premium: true },
   { name: "House Hacking ROI Calculator", free: false, premium: true },

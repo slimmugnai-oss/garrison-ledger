@@ -148,11 +148,11 @@ export default function AssessmentClient() {
         
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
-            <Badge variant="primary">Strategic Assessment</Badge>
+            <Badge variant="primary">AI-Powered Assessment</Badge>
           </div>
           <PageHeader 
             title="Quick Assessment"
-            subtitle="Intelligent assessment that adapts to your situation"
+            subtitle="Adaptive questions that generate your AI-curated personalized plan"
           />
 
           {/* Progress Bar */}

@@ -264,12 +264,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimatedCard delay={0}>
               <div>
-                <Badge variant="success">Strategic Assessment</Badge>
+                <Badge variant="success">AI-Powered Planning</Badge>
                 <h2 className="text-4xl font-serif font-black text-text-headings mt-4 mb-6">
-                  Your Personalized Military Financial Roadmap
+                  Your AI-Curated Personalized Plan
                 </h2>
                 <p className="text-lg text-text-body mb-8 leading-relaxed">
-                  Complete our comprehensive 6-section assessment and receive a curated action plan with 3-5 specific resources from our PCS, Career, Deployment, and Financial hubs.
+                  Take our quick adaptive assessment (~6 questions, 5 minutes) and AI will analyze your profile to curate 8-10 expert content blocks with personalized narrative tailored to your military situation.
                 </p>
                 <Link 
                   href="/dashboard/assessment"
