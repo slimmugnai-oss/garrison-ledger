@@ -32,6 +32,7 @@
 - None blocking production
 
 ### **📅 Recent Changes**
+- 2025-01-15: ✨ FREEMIUM MODEL - 2-block preview (free) vs full plan (premium \$9.99/mo)
 - 2025-01-15: ⚡ PERFORMANCE FIX - Use gpt-4o-mini (60s→20s, $0.15→$0.02), no more timeouts
 - 2025-01-15: 🐛 CRITICAL FIX - OpenAI token limit (57k→11k tokens), assessment now works
 - 2025-01-15: FINAL AUDIT - Comprehensive consistency check, all user-facing text updated
@@ -263,6 +264,42 @@
 - Profile completion CTA
 - Assessment CTA
 - **Your Personalized Plan** widget ⭐ NEW
+
+---
+
+## 💰 **FREEMIUM MODEL**
+
+### **Free Tier (Value Demo)**
+- ✅ Assessment: **1 per week** (rate limited)
+- ✅ Plan preview: **2 curated blocks** + truncated executive summary
+- ✅ All 6 calculators (full access)
+- ✅ Intelligence Library: **5 articles per day**
+- ✅ Resource hubs (all 5)
+- ❌ No plan regeneration
+- ❌ No bookmarking/ratings
+- ❌ No advanced calculator features
+
+### **Premium Tier ($9.99/month)**
+- ✅ Assessment: **3 per day** (regenerate as situation changes)
+- ✅ Full AI plan: **All 8-10 curated blocks**
+- ✅ Complete executive summary
+- ✅ Intelligence Library: **Unlimited access**
+- ✅ Bookmarking & ratings
+- ✅ Personalized recommendations
+- ✅ Advanced calculator features
+- ✅ Priority support
+
+### **Conversion Strategy**
+- Free users see **AI works** (2 blocks prove intelligence)
+- Clear **upgrade CTA** showing locked blocks count
+- **Strong incentive:** "Unlock 6-8 more curated blocks"
+- **Impulse pricing:** $9.99/month (not $29)
+- **No print button:** Forces return visits (retention)
+
+### **Cost Control**
+- Free tier: 1 assessment/week × $0.02 = $0.08/user/month
+- Premium tier: Up to 3/day × $0.02 = $1.80/user/month (worst case)
+- Revenue: $9.99 - $1.80 = $8.19 margin per premium user (82%)
 
 ---
 
