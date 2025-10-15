@@ -269,21 +269,6 @@ export default function CareerOpportunityAnalyzer() {
                   </p>
                 </div>
 
-                {/* Total Compensation Summary */}
-                {analysis && (
-                  <div className="bg-blue-100 border-2 border-blue-300 rounded-lg p-4 mt-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">Total Compensation:</span>
-                        <span className="font-bold text-blue-900">{fmt(analysis.currentTotalComp)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">After Taxes:</span>
-                        <span className="font-bold text-blue-900">{fmt(analysis.currentAfterTax)}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -394,21 +379,6 @@ export default function CareerOpportunityAnalyzer() {
                   </p>
                 </div>
 
-                {/* Total Compensation Summary */}
-                {analysis && (
-                  <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4 mt-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">Total Compensation:</span>
-                        <span className="font-bold text-green-900">{fmt(analysis.newTotalComp)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">After Taxes:</span>
-                        <span className="font-bold text-green-900">{fmt(analysis.newAfterTax)}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
