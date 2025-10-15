@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST() {
   try {
@@ -9,7 +9,7 @@ export async function POST() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const supabase = createClient();
+    const supabase = supabaseAdmin;
     
     // Check if user is premium
     const { data: entitlement } = await supabase
