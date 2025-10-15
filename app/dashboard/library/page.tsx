@@ -11,12 +11,17 @@ interface ContentBlock {
   title: string;
   summary: string | null;
   html: string;
-  source_page: string;
-  type: string | null;
-  topics: string[] | null;
-  tags: string[];
+  domain: string;
+  difficulty_level: string;
+  target_audience: string[];
+  content_rating: number;
+  content_freshness_score: number;
   est_read_min: number;
-  block_type: string;
+  tags: string[];
+  seo_keywords: string[];
+  relevance_score?: number;
+  trend_score?: number;
+  total_views?: number;
 }
 
 interface PaginationInfo {
@@ -30,6 +35,9 @@ function IntelligenceLibraryContent() {
   const searchParams = useSearchParams();
   
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+  const [personalizedBlocks, setPersonalizedBlocks] = useState<ContentBlock[]>([]);
+  const [trendingBlocks, setTrendingBlocks] = useState<ContentBlock[]>([]);
+  const [relatedBlocks, setRelatedBlocks] = useState<Record<string, ContentBlock[]>>({});
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,21 +45,72 @@ function IntelligenceLibraryContent() {
   
   // Filter states
   const [search, setSearch] = useState(searchParams?.get('search') || '');
-  const [selectedSource, setSelectedSource] = useState(searchParams?.get('source') || '');
-  const [selectedType, setSelectedType] = useState(searchParams?.get('type') || '');
+  const [selectedDomain, setSelectedDomain] = useState(searchParams?.get('domain') || '');
+  const [selectedDifficulty, setSelectedDifficulty] = useState(searchParams?.get('difficulty') || '');
+  const [selectedAudience, setSelectedAudience] = useState(searchParams?.get('audience') || '');
+  const [minRating, setMinRating] = useState(3.0);
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams?.get('page') || '1', 10));
+  const [activeTab, setActiveTab] = useState<'all' | 'for-you' | 'trending'>('all');
 
-  // Available filter options (based on actual source_page values)
-  const sources = [
-    { label: 'PCS Hub', value: 'pcs-hub' },
-    { label: 'Career Hub', value: 'career-hub' },
+  // Filter options
+  const domains = [
+    { label: 'Finance', value: 'finance' },
+    { label: 'Career', value: 'career' },
+    { label: 'PCS', value: 'pcs' },
     { label: 'Deployment', value: 'deployment' },
-    { label: 'Shopping & Finance', value: 'on-base-shopping' },
-    { label: 'Base Guides', value: 'base-guides' },
+    { label: 'Lifestyle', value: 'lifestyle' },
   ];
-  const types = ['tool', 'checklist', 'pro_tip_list', 'faq_section', 'guide', 'calculator'];
 
-  // Fetch content blocks
+  const difficulties = [
+    { label: 'Beginner', value: 'beginner', icon: '🌱' },
+    { label: 'Intermediate', value: 'intermediate', icon: '⚡' },
+    { label: 'Advanced', value: 'advanced', icon: '🎯' },
+  ];
+
+  const audiences = [
+    { label: 'Military Member', value: 'military-member' },
+    { label: 'Military Spouse', value: 'military-spouse' },
+    { label: 'Family', value: 'family' },
+    { label: 'Veteran', value: 'veteran' },
+    { label: 'Officer', value: 'officer' },
+    { label: 'Enlisted', value: 'enlisted' },
+  ];
+
+  // Fetch personalized recommendations on mount
+  useEffect(() => {
+    const fetchPersonalized = async () => {
+      try {
+        const response = await fetch('/api/library/enhanced?section=personalized&limit=5');
+        const data = await response.json();
+        if (response.ok) {
+          setPersonalizedBlocks(data.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch personalized content:', err);
+      }
+    };
+
+    fetchPersonalized();
+  }, []);
+
+  // Fetch trending content on mount
+  useEffect(() => {
+    const fetchTrending = async () => {
+      try {
+        const response = await fetch('/api/library/enhanced?section=trending&limit=5');
+        const data = await response.json();
+        if (response.ok) {
+          setTrendingBlocks(data.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch trending content:', err);
+      }
+    };
+
+    fetchTrending();
+  }, []);
+
+  // Fetch main content blocks
   useEffect(() => {
     const fetchBlocks = async () => {
       setLoading(true);
@@ -60,11 +119,19 @@ function IntelligenceLibraryContent() {
       try {
         const params = new URLSearchParams();
         if (search) params.set('search', search);
-        if (selectedSource) params.set('source', selectedSource);
-        if (selectedType) params.set('type', selectedType);
+        if (selectedDomain) params.set('domain', selectedDomain);
+        if (selectedDifficulty) params.set('difficulty', selectedDifficulty);
+        if (selectedAudience) params.set('audience', selectedAudience);
+        if (minRating > 0) params.set('minRating', minRating.toString());
         params.set('page', currentPage.toString());
 
-        const response = await fetch(`/api/library?${params.toString()}`);
+        if (activeTab === 'for-you') {
+          params.set('section', 'personalized');
+        } else if (activeTab === 'trending') {
+          params.set('section', 'trending');
+        }
+
+        const response = await fetch(`/api/library/enhanced?${params.toString()}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -81,44 +148,93 @@ function IntelligenceLibraryContent() {
     };
 
     fetchBlocks();
-  }, [search, selectedSource, selectedType, currentPage]);
+  }, [search, selectedDomain, selectedDifficulty, selectedAudience, minRating, currentPage, activeTab]);
 
-  // Update URL when filters change
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (search) params.set('search', search);
-    if (selectedSource) params.set('source', selectedSource);
-    if (selectedType) params.set('type', selectedType);
-    if (currentPage > 1) params.set('page', currentPage.toString());
-
-    const newUrl = params.toString() ? `?${params.toString()}` : '/dashboard/library';
-    window.history.replaceState({}, '', newUrl);
-  }, [search, selectedSource, selectedType, currentPage]);
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    setCurrentPage(1);
+  // Track interaction when viewing content
+  const trackView = async (contentId: string) => {
+    try {
+      await fetch('/api/content/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentId,
+          interactionType: 'view'
+        })
+      });
+    } catch (err) {
+      console.error('Failed to track view:', err);
+    }
   };
 
-  const handleSourceChange = (source: string) => {
-    setSelectedSource(source === selectedSource ? '' : source);
-    setCurrentPage(1);
+  // Fetch related content when expanding
+  const fetchRelated = async (contentId: string) => {
+    if (relatedBlocks[contentId]) return; // Already fetched
+
+    try {
+      const response = await fetch(`/api/content/related?id=${contentId}&limit=3`);
+      const data = await response.json();
+      if (response.ok && data.related) {
+        setRelatedBlocks(prev => ({
+          ...prev,
+          [contentId]: data.related
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch related content:', err);
+    }
   };
 
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type === selectedType ? '' : type);
-    setCurrentPage(1);
+  const toggleExpand = async (id: string) => {
+    if (expandedId !== id) {
+      setExpandedId(id);
+      await trackView(id);
+      await fetchRelated(id);
+    } else {
+      setExpandedId(null);
+    }
   };
 
   const clearFilters = () => {
     setSearch('');
-    setSelectedSource('');
-    setSelectedType('');
+    setSelectedDomain('');
+    setSelectedDifficulty('');
+    setSelectedAudience('');
+    setMinRating(3.0);
     setCurrentPage(1);
   };
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'beginner': return 'bg-green-100 text-green-700 border-green-300';
+      case 'intermediate': return 'bg-blue-100 text-blue-700 border-blue-300';
+      case 'advanced': return 'bg-purple-100 text-purple-700 border-purple-300';
+      default: return 'bg-gray-100 text-gray-700 border-gray-300';
+    }
+  };
+
+  const getDomainColor = (domain: string) => {
+    switch (domain) {
+      case 'finance': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'career': return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'pcs': return 'bg-sky-50 text-sky-700 border-sky-200';
+      case 'deployment': return 'bg-rose-50 text-rose-700 border-rose-200';
+      case 'lifestyle': return 'bg-violet-50 text-violet-700 border-violet-200';
+      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
+
+  const renderContentRating = (rating: number) => {
+    const stars = Math.round(rating);
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <span key={i} className={i < stars ? 'text-yellow-400' : 'text-gray-300'}>
+            ★
+          </span>
+        ))}
+        <span className="text-xs text-gray-600 ml-1">({rating.toFixed(1)})</span>
+      </div>
+    );
   };
 
   return (
@@ -133,25 +249,149 @@ function IntelligenceLibraryContent() {
           <div className="mb-12 text-center">
             <div className="mb-4">
               <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                <span>⭐</span> Premium Feature
+                <span>⭐</span> AI-Powered Intelligence
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
               Intel Library
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
-              Search and explore our entire collection of 400+ expert-curated content blocks
+              Personalized, intelligent content discovery powered by AI
             </p>
           </div>
 
+          {/* Personalized Recommendations Section */}
+          {personalizedBlocks.length > 0 && (
+            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200" delay={0}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  <span>🎯</span> For You
+                </h2>
+                <button
+                  onClick={() => setActiveTab('for-you')}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  View All →
+                </button>
+              </div>
+              <p className="text-gray-600 mb-4">Based on your profile and interests</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {personalizedBlocks.map((block) => (
+                  <button
+                    key={block.id}
+                    onClick={() => {
+                      setExpandedId(block.id);
+                      setActiveTab('all');
+                      window.scrollTo({ top: 600, behavior: 'smooth' });
+                    }}
+                    className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all text-left"
+                  >
+                    <div className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {block.title}
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className={`px-2 py-1 rounded ${getDomainColor(block.domain)}`}>
+                        {block.domain}
+                      </span>
+                      {block.relevance_score && (
+                        <span className="text-blue-600 font-bold">
+                          {(block.relevance_score * 10).toFixed(0)}% match
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </AnimatedCard>
+          )}
+
+          {/* Trending Content Section */}
+          {trendingBlocks.length > 0 && (
+            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200" delay={50}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  <span>🔥</span> Trending Now
+                </h2>
+                <button
+                  onClick={() => setActiveTab('trending')}
+                  className="text-sm text-orange-600 hover:text-orange-700 font-semibold"
+                >
+                  View All →
+                </button>
+              </div>
+              <p className="text-gray-600 mb-4">Most popular content this week</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {trendingBlocks.map((block) => (
+                  <button
+                    key={block.id}
+                    onClick={() => {
+                      setExpandedId(block.id);
+                      setActiveTab('all');
+                      window.scrollTo({ top: 600, behavior: 'smooth' });
+                    }}
+                    className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all text-left"
+                  >
+                    <div className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {block.title}
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className={`px-2 py-1 rounded ${getDomainColor(block.domain)}`}>
+                        {block.domain}
+                      </span>
+                      {block.total_views && (
+                        <span className="text-orange-600 font-bold">
+                          {block.total_views} views
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </AnimatedCard>
+          )}
+
+          {/* Tabs */}
+          <div className="mb-6 flex items-center gap-2 border-b border-gray-200">
+            <button
+              onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'all'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              All Content
+            </button>
+            <button
+              onClick={() => { setActiveTab('for-you'); setCurrentPage(1); }}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'for-you'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              🎯 For You
+            </button>
+            <button
+              onClick={() => { setActiveTab('trending'); setCurrentPage(1); }}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'trending'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              🔥 Trending
+            </button>
+          </div>
+
           {/* Search Bar */}
-          <AnimatedCard className="mb-8 p-6 bg-white border border-gray-200" delay={0}>
+          <AnimatedCard className="mb-6 p-6 bg-white border border-gray-200" delay={100}>
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search by keyword (e.g., TSP, PCS, deployment)..."
+                placeholder="Search by keyword (uses AI semantic search)..."
                 value={search}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                 className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-600 focus:outline-none transition-colors"
               />
               <svg
@@ -170,55 +410,97 @@ function IntelligenceLibraryContent() {
             </div>
           </AnimatedCard>
 
-          {/* Filters */}
-          <AnimatedCard className="mb-8 p-6 bg-white border border-gray-200" delay={50}>
+          {/* Smart Filters */}
+          <AnimatedCard className="mb-8 p-6 bg-white border border-gray-200" delay={150}>
             <div className="space-y-6">
-              {/* Source Filters */}
+              {/* Domain Filters */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
-                  Content Hub
+                  Content Area
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {sources.map((source) => (
+                  {domains.map((domain) => (
                     <button
-                      key={source.value}
-                      onClick={() => handleSourceChange(source.value)}
+                      key={domain.value}
+                      onClick={() => { setSelectedDomain(selectedDomain === domain.value ? '' : domain.value); setCurrentPage(1); }}
                       className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                        selectedSource === source.value
+                        selectedDomain === domain.value
                           ? 'bg-blue-600 text-white border-2 border-blue-600'
                           : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      {source.label}
+                      {domain.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Type Filters */}
+              {/* Difficulty Filters */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
-                  Content Type
+                  Difficulty Level
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {types.map((type) => (
+                  {difficulties.map((difficulty) => (
                     <button
-                      key={type}
-                      onClick={() => handleTypeChange(type)}
-                      className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
-                        selectedType === type
-                          ? 'bg-indigo-600 text-white border-2 border-indigo-600'
+                      key={difficulty.value}
+                      onClick={() => { setSelectedDifficulty(selectedDifficulty === difficulty.value ? '' : difficulty.value); setCurrentPage(1); }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                        selectedDifficulty === difficulty.value
+                          ? 'bg-purple-600 text-white border-2 border-purple-600'
                           : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      {type.replace('_', ' ')}
+                      <span>{difficulty.icon}</span>
+                      {difficulty.label}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Audience Filters */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                  Target Audience
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {audiences.map((audience) => (
+                    <button
+                      key={audience.value}
+                      onClick={() => { setSelectedAudience(selectedAudience === audience.value ? '' : audience.value); setCurrentPage(1); }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        selectedAudience === audience.value
+                          ? 'bg-green-600 text-white border-2 border-green-600'
+                          : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {audience.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quality Filter */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                  Minimum Quality Rating
+                </h3>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max="5"
+                    step="0.5"
+                    value={minRating}
+                    onChange={(e) => { setMinRating(parseFloat(e.target.value)); setCurrentPage(1); }}
+                    className="flex-1"
+                  />
+                  <span className="font-bold text-gray-900 w-20">{minRating.toFixed(1)} / 5.0</span>
                 </div>
               </div>
 
               {/* Clear Filters */}
-              {(search || selectedSource || selectedType) && (
+              {(search || selectedDomain || selectedDifficulty || selectedAudience || minRating > 0) && (
                 <div className="pt-4 border-t border-gray-200">
                   <button
                     onClick={clearFilters}
@@ -288,11 +570,21 @@ function IntelligenceLibraryContent() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
+                          <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h3 className="text-xl font-bold text-gray-900">{block.title}</h3>
                             {block.est_read_min > 0 && (
                               <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-medium">
                                 {block.est_read_min} min
+                              </span>
+                            )}
+                            {block.relevance_score && (
+                              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-bold">
+                                {(block.relevance_score * 10).toFixed(0)}% match
+                              </span>
+                            )}
+                            {block.trend_score && (
+                              <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-bold">
+                                🔥 Trending
                               </span>
                             )}
                           </div>
@@ -301,25 +593,19 @@ function IntelligenceLibraryContent() {
                             <p className="text-gray-600 mb-3">{block.summary}</p>
                           )}
                           
-                          <div className="flex flex-wrap gap-2">
-                            {block.source_page && (
-                              <span className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs font-semibold capitalize">
-                                {block.source_page.replace(/-/g, ' ')}
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <span className={`px-2 py-1 rounded text-xs font-semibold capitalize border ${getDomainColor(block.domain)}`}>
+                              {block.domain}
+                            </span>
+                            <span className={`px-2 py-1 rounded text-xs font-semibold capitalize border ${getDifficultyColor(block.difficulty_level)}`}>
+                              {block.difficulty_level}
+                            </span>
+                            {block.content_rating > 0 && renderContentRating(block.content_rating)}
+                            {block.content_freshness_score >= 90 && (
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                                ✨ Fresh
                               </span>
                             )}
-                            {block.type && (
-                              <span className="px-2 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-xs font-semibold capitalize">
-                                {block.type.replace('_', ' ')}
-                              </span>
-                            )}
-                            {block.topics?.slice(0, 3).map((topic) => (
-                              <span
-                                key={topic}
-                                className="px-2 py-1 bg-green-50 text-green-700 border border-green-200 rounded text-xs font-medium"
-                              >
-                                {topic}
-                              </span>
-                            ))}
                           </div>
                         </div>
                         
@@ -350,6 +636,36 @@ function IntelligenceLibraryContent() {
                           className="prose prose-sm max-w-none mt-6 text-gray-700"
                           dangerouslySetInnerHTML={{ __html: block.html }}
                         />
+                        
+                        {/* Related Content */}
+                        {relatedBlocks[block.id] && relatedBlocks[block.id].length > 0 && (
+                          <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                              <span>🔗</span> Related Content
+                            </h4>
+                            <div className="space-y-2">
+                              {relatedBlocks[block.id].map((related: any) => (
+                                <button
+                                  key={related.content_id}
+                                  onClick={() => toggleExpand(related.content_id)}
+                                  className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-all"
+                                >
+                                  <div className="font-semibold text-gray-900 text-sm mb-1">
+                                    {related.title}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <span className={`px-2 py-1 rounded ${getDomainColor(related.content_domain)}`}>
+                                      {related.content_domain}
+                                    </span>
+                                    <span className="text-gray-500">
+                                      {(related.similarity_score * 20).toFixed(0)}% similar
+                                    </span>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </AnimatedCard>
