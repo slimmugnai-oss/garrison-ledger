@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
   const pageSize = 20;
 
   try {
-    let data = [];
+    let data: ContentBlock[] = [];
     let count = 0;
 
     // Get personalized recommendations
