@@ -52,6 +52,7 @@ import {
   
   // Time
   Timer,
+  Calendar,
   
   // General
   Zap,
@@ -108,6 +109,7 @@ export const iconRegistry = {
   
   // Time
   Timer,
+  Calendar,
   
   // General
   Zap,
