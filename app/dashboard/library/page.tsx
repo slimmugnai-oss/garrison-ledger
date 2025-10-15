@@ -5,9 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import BookmarkButton from '@/app/components/library/BookmarkButton';
-import RatingButton from '@/app/components/library/RatingButton';
-import ShareButton from '@/app/components/library/ShareButton';
+import ContentBlockCard from '@/app/components/library/ContentBlockCard';
+import LibraryFilters from '@/app/components/library/LibraryFilters';
 
 interface ContentBlock {
   id: string;
