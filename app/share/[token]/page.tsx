@@ -33,7 +33,7 @@ export default function SharePage() {
         }
 
         setShareData(data);
-      } catch (err) {
+      } catch {
         setError("Failed to load share");
       } finally {
         setLoading(false);

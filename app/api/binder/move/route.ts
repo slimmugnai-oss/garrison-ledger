@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!FOLDER_NAMES.includes(newFolder as any)) {
+  if (!FOLDER_NAMES.includes(newFolder as typeof FOLDER_NAMES[number])) {
     return NextResponse.json({ error: "Invalid folder" }, { status: 400 });
   }
 

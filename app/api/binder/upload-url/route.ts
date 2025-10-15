@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const { folder, displayName, contentType, sizeBytes, docType, expiresOn } = body;
 
   // Validate folder
-  if (!FOLDER_NAMES.includes(folder as any)) {
+  if (!FOLDER_NAMES.includes(folder as typeof FOLDER_NAMES[number])) {
     return NextResponse.json({ error: "Invalid folder" }, { status: 400 });
   }
 

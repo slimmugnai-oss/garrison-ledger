@@ -55,12 +55,6 @@ export default function UpcomingExpirations() {
     return null;
   }
 
-  const urgentReminders = reminders.filter((r) => {
-    const daysUntil = Math.ceil(
-      (new Date(r.expires_on).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-    );
-    return daysUntil <= 30;
-  });
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">

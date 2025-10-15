@@ -65,9 +65,7 @@ function formatDate(dateString: string): string {
 }
 
 export default function BinderPage() {
-  const { user } = useUser();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<BinderFile[]>([]);
