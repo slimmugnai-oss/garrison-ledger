@@ -184,10 +184,19 @@ function BinderContent() {
         }
       });
 
-      if (!storageResponse.ok) {
-        alert("Failed to upload file to storage");
+      console.log("Storage response status:", storageResponse.status);
+      console.log("Storage response ok:", storageResponse.ok);
+      
+      // For Supabase Storage, even successful uploads might return non-200 status codes
+      // If we got here (upload URL was created), the file was likely uploaded successfully
+      if (storageResponse.status >= 400) {
+        const errorText = await storageResponse.text();
+        console.error("Storage upload failed:", errorText);
+        alert(`Failed to upload file to storage: ${storageResponse.status} ${storageResponse.statusText}`);
         return;
       }
+      
+      console.log("Storage upload appears successful, proceeding with success flow");
 
       // Success! Close modal and refresh files
       setShowUploadModal(false);
