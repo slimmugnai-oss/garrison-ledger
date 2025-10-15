@@ -545,12 +545,12 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
                                   <p className="font-bold text-text text-lg">{tool.toolName}</p>
-                                  <Icon name="ArrowRight" className="w-4 h-4 text-blue-600" />
+                                  <Icon name="ChevronRight" className="w-4 h-4 text-blue-600" />
                                 </div>
                                 <p className="text-sm text-text-body mb-3">{tool.reason}</p>
                                 <div className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
                                   <span>Try Calculator</span>
-                                  <Icon name="ExternalLink" className="w-3 h-3" />
+                                  <Icon name="ChevronRight" className="w-3 h-3" />
                                 </div>
                               </div>
                             </div>
