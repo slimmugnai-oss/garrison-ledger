@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Icon from './ui/Icon';
+import { IconName } from './ui/icon-registry';
 
 interface BreadcrumbItem {
   label: string;
   href?: string;
-  icon?: string;
+  icon?: IconName;
 }
 
 export default function Breadcrumbs() {
@@ -26,7 +27,7 @@ export default function Breadcrumbs() {
       
       // Map segments to readable labels
       let label = segment;
-      let icon: string | undefined;
+      let icon: IconName | undefined;
       
       switch (segment) {
         case 'dashboard':
@@ -140,12 +141,12 @@ export default function Breadcrumbs() {
                   href={breadcrumb.href}
                   className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
                 >
-                  {breadcrumb.icon && <Icon name={breadcrumb.icon as keyof typeof Icon} className="w-4 h-4 mr-1.5" />}
+                  {breadcrumb.icon && <Icon name={breadcrumb.icon} className="w-4 h-4 mr-1.5" />}
                   {breadcrumb.label}
                 </Link>
               ) : (
                 <span className="flex items-center text-gray-900 font-medium">
-                  {breadcrumb.icon && <Icon name={breadcrumb.icon as keyof typeof Icon} className="w-4 h-4 mr-1.5" />}
+                  {breadcrumb.icon && <Icon name={breadcrumb.icon} className="w-4 h-4 mr-1.5" />}
                   {breadcrumb.label}
                 </span>
               )}
