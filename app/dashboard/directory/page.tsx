@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
-import PremiumGate from "@/app/components/premium/PremiumGate";
-import { usePremiumStatus } from "@/lib/hooks/usePremiumStatus";
 import { track } from "@/lib/track";
 import Header from "@/app/components/Header";
 
@@ -28,7 +26,6 @@ type Provider = {
 };
 
 export default function DirectoryPage() {
-  const { isPremium } = usePremiumStatus();
   const [q, setQ] = useState("");
   const [type, setType] = useState("");
   const [state, setState] = useState("");
@@ -67,9 +64,9 @@ export default function DirectoryPage() {
   }
 
   useEffect(() => { 
-    if (isPremium) load(1); 
+    load(1); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPremium]);
+  }, []);
 
   const pages = useMemo(() => Math.max(1, Math.ceil(total / 20)), [total]);
 
@@ -142,28 +139,24 @@ export default function DirectoryPage() {
         </SignedOut>
 
         <SignedIn>
-          <PremiumGate
-            placeholder={<div><div className="font-semibold mb-1">Premium directory</div><p className="text-sm text-gray-600">Unlock access to vetted providers and search by location.</p></div>}
-          >
-            {Filters}
+          {Filters}
 
-            {items.length === 0 && !loading ? (
-              <div className="text-sm text-gray-600">No results yet. Try broadening your search.</div>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {items.map(p => <Card key={p.id} p={p} />)}
-              </div>
-            )}
+          {items.length === 0 && !loading ? (
+            <div className="text-sm text-gray-600">No results yet. Try broadening your search.</div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {items.map(p => <Card key={p.id} p={p} />)}
+            </div>
+          )}
 
-            {pages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-4">
-                <button disabled={page <= 1} onClick={() => load(page - 1)} className="px-3 py-1 rounded border disabled:opacity-50">Prev</button>
-                <div className="text-sm text-gray-600">Page {page} of {pages}</div>
-                <button disabled={page >= pages} onClick={() => load(page + 1)} className="px-3 py-1 rounded border disabled:opacity-50">Next</button>
-              </div>
-            )}
-            <div className="text-xs text-gray-500 mt-4">Listings are informational and not endorsements. Verify licenses independently.</div>
-          </PremiumGate>
+          {pages > 1 && (
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <button disabled={page <= 1} onClick={() => load(page - 1)} className="px-3 py-1 rounded border disabled:opacity-50">Prev</button>
+              <div className="text-sm text-gray-600">Page {page} of {pages}</div>
+              <button disabled={page >= pages} onClick={() => load(page + 1)} className="px-3 py-1 rounded border disabled:opacity-50">Next</button>
+            </div>
+          )}
+          <div className="text-xs text-gray-500 mt-4">Listings are informational and not endorsements. Verify licenses independently.</div>
         </SignedIn>
       </div>
     </>

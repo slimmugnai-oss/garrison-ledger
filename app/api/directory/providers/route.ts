@@ -22,24 +22,10 @@ export async function GET(req: NextRequest) {
   const pageSize = Math.min(50, Math.max(5, parseInt(url.searchParams.get("size") || "20")));
   const offset = (page - 1) * pageSize;
 
-  // Premium gate
-  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  
-  let isPremium = false;
-  try {
-    const { data: access } = await sb.from("v_user_access").select("is_premium").eq("user_id", userId).single();
-    isPremium = !!access?.is_premium;
-  } catch {
-    const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
-    isPremium = premiumUsers.includes(userId);
-  }
-  isPremium = true; // TEMPORARY
-  
-  if (!isPremium) return NextResponse.json({ error: "Premium required" }, { status: 402 });
-
   await checkAndIncrement(userId, "/api/directory/providers", 400);
 
   // Query approved providers
+  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   let query = sb.from("providers").select(`
     id, type, name, business_name, email, phone, website, calendly,
     state, city, zip, stations, coverage_states,
