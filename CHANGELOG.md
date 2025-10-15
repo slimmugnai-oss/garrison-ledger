@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.1] - 2025-01-15 - System Cleanup & Consistency
+
+### 🧹 Cleanup
+- **Deprecated Old Plan Endpoints**
+  - Marked `/api/strategic-plan`, `/api/plan/ai-score`, `/api/plan/generate-roadmap` as deprecated
+  - Added deprecation warnings with 30-day removal timeline
+  - Created new `/api/plan/regenerate-ai` for AI Master Curator system
+- **Updated User-Facing Text**
+  - Changed "Strategic Plan" → "AI-Curated Plan" 
+  - Changed "roadmap" → "personalized plan"
+  - Updated all dashboard terminology for consistency
+- **Organized Documentation**
+  - Moved 30+ docs from root to `docs/` directory
+  - Created `docs/active/`, `docs/archive/`, `docs/guides/`, `docs/planning/`
+  - Root now has only 4 essential files
+
+### 📚 Documentation
+- Created `START_HERE.md` - Personal quick reference
+- Created `docs/AUTOMATION_SUMMARY.md` - What AI does vs you
+- Created `docs/DEVELOPMENT_WORKFLOW.md` - Standard process
+- Created `docs/ORGANIZATION_SUMMARY.md` - Organization guide
+- Created `docs/active/SYSTEM_CLEANUP_COMPLETE.md` - Cleanup audit
+- Set up git commit template with doc reminders
+
+---
+
 ## [2.0.0] - 2025-01-15 - AI Master Curator Launch
 
 ### 🚀 Added

@@ -7,9 +7,19 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 /**
- * AI PLAN SCORING ENGINE - GPT-4o
- * Intelligently scores all content blocks based on user situation
- * Returns top-scored blocks with personalized reasoning
+ * ⚠️ DEPRECATED - AI PLAN SCORING ENGINE
+ * 
+ * This endpoint is DEPRECATED and will be removed in a future version.
+ * It has been replaced by the new AI Master Curator system.
+ * 
+ * OLD APPROACH: Separate scoring endpoint
+ * NEW APPROACH: /api/plan/generate (two-phase Master Curator + Narrative Weaver)
+ * 
+ * DO NOT USE THIS ENDPOINT FOR NEW FEATURES.
+ * Use /api/plan/generate instead.
+ * 
+ * Deprecation Date: 2025-01-15
+ * Planned Removal: 2025-02-15 (30 days)
  */
 
 type BlockMetadata = {

@@ -150,8 +150,8 @@ export default async function CommandDashboard() {
                     <h2 className="text-2xl font-serif font-black mb-3 text-white">Get Your Personalized Plan</h2>
                     <p className="text-indigo-100 text-base mb-6 leading-relaxed flex-1">
                       {profileComplete 
-                        ? "Complete the assessment to unlock your tailored Military Life Roadmap with curated content from our toolkit hubs."
-                        : "Complete your profile first, then take the assessment to unlock your tailored Military Life Roadmap."
+                        ? "Complete the assessment and AI will curate 8-10 expert content blocks tailored specifically to your military situation and goals."
+                        : "Complete your profile first, then take the assessment to unlock your AI-curated personalized plan."
                       }
                     </p>
                     <Link 
@@ -361,10 +361,10 @@ export default async function CommandDashboard() {
                   {/* Assessment Status */}
                   <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-blue-100">Strategic Plan</span>
+                      <span className="text-sm font-semibold text-blue-100">AI-Curated Plan</span>
                       <span className="text-lg font-black text-green-300"><Icon name="Check" className="h-5 w-5 inline" /> Active</span>
                     </div>
-                    <p className="text-sm text-blue-100">AI-personalized roadmap generated</p>
+                    <p className="text-sm text-blue-100">Personalized plan with expert content</p>
                   </div>
 
                   {/* Premium Status */}
@@ -547,10 +547,10 @@ export default async function CommandDashboard() {
                     </div>
                     <div className="flex-1">
                       <div className="inline-flex items-center px-3 py-1 bg-blue-600/20 border border-blue-400/30 rounded-full text-blue-200 text-xs font-black mb-3 uppercase tracking-widest">
-                        Intelligent Roadmap
+                        AI-Curated
                       </div>
                       <h2 className="text-3xl md:text-4xl font-serif font-black mb-3">
-                        Your Strategic Plan is Ready
+                        Your Personalized Plan is Ready
                       </h2>
                       <p className="text-xl text-slate-200 leading-relaxed">
                         GPT-4o analyzed your profile and curated the most relevant content from 379 expert blocks.
@@ -667,9 +667,9 @@ export default async function CommandDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <AnimatedCard delay={0} className="border border-gray-200 bg-white hover:shadow-lg transition-all">
                 <Link href="/dashboard/plan" className="block p-6 text-center">
-                  <Icon name="ClipboardList" className="h-10 w-10 text-gray-700 mb-3 mx-auto" />
-                  <h3 className="text-lg font-bold text-text-headings mb-1">Strategic Plan</h3>
-                  <p className="text-sm text-text-body">View your roadmap</p>
+                  <Icon name="Sparkles" className="h-10 w-10 text-indigo-600 mb-3 mx-auto" />
+                  <h3 className="text-lg font-bold text-text-headings mb-1">Your AI Plan</h3>
+                  <p className="text-sm text-text-body">AI-curated content</p>
                 </Link>
               </AnimatedCard>
 

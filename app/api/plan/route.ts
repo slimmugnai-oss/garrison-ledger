@@ -1,3 +1,20 @@
+/**
+ * ⚠️ DEPRECATED - RULE-BASED PLAN GENERATOR
+ * 
+ * This endpoint is DEPRECATED and will be removed in a future version.
+ * It has been replaced by the new AI Master Curator system.
+ * 
+ * OLD APPROACH: Hard-coded rules to select content blocks
+ * NEW APPROACH: /api/plan/generate (AI-powered selection and narrative)
+ * 
+ * KEPT FOR: Backward compatibility with old assessments
+ * 
+ * DO NOT USE THIS ENDPOINT FOR NEW FEATURES.
+ * Use /api/plan/generate instead.
+ * 
+ * Deprecation Date: 2025-01-15
+ * Planned Removal: TBD (after old assessment migration)
+ */
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";

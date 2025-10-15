@@ -6,8 +6,19 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 /**
- * EXECUTIVE ROADMAP GENERATOR - GPT-4o
- * Generates executive summary + section introductions for personalized plan
+ * ⚠️ DEPRECATED - EXECUTIVE ROADMAP GENERATOR
+ * 
+ * This endpoint is DEPRECATED and will be removed in a future version.
+ * It has been replaced by the AI Narrative Weaver in the Master Curator system.
+ * 
+ * OLD APPROACH: Separate roadmap generation
+ * NEW APPROACH: /api/plan/generate (integrated Narrative Weaver)
+ * 
+ * DO NOT USE THIS ENDPOINT FOR NEW FEATURES.
+ * Use /api/plan/generate instead.
+ * 
+ * Deprecation Date: 2025-01-15
+ * Planned Removal: 2025-02-15 (30 days)
  */
 
 type UserContext = {

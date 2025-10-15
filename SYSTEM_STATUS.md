@@ -9,9 +9,9 @@
 ## 📊 **CURRENT STATE**
 
 ### **🚀 What's Live**
-- ✅ AI Master Curator & Narrative Weaver (GPT-4o)
+- ✅ AI Master Curator & Narrative Weaver (GPT-4o) - PRIMARY SYSTEM
 - ✅ Adaptive Assessment (6 questions)
-- ✅ Personalized Plan Generation
+- ✅ Personalized Plan Generation (`/api/plan/generate`)
 - ✅ 410 Hand-Curated Content Blocks (100% metadata)
 - ✅ 6 Financial Calculator Tools
 - ✅ Intelligence Library (AI-powered search)
@@ -22,14 +22,22 @@
 ### **🔧 In Development**
 - None currently
 
+### **⚠️ Deprecated Systems (30-day removal timeline)**
+- `/api/strategic-plan` - Old hybrid AI system (replaced by Master Curator)
+- `/api/plan/ai-score` - Old scoring endpoint
+- `/api/plan/generate-roadmap` - Old narrative endpoint
+- `plan_cache` table - Old caching system
+
 ### **🐛 Known Issues**
 - None blocking production
 
 ### **📅 Recent Changes**
+- 2025-01-15: System cleanup - Deprecated old endpoints, updated all terminology
 - 2025-01-15: Deep dive site audit - All systems AI-integrated
 - 2025-01-15: AI Master Curator system implemented
 - 2025-01-15: Navigation enhanced with "Your AI Plan" link
 - 2025-01-15: Homepage updated to emphasize AI positioning
+- 2025-01-15: Documentation organized - 30+ files moved to docs/
 
 ---
 
@@ -196,10 +204,20 @@
 
 ## 🔑 **API ENDPOINTS**
 
-### **AI System** ⭐
-- `POST /api/assessment/complete` - Save assessment
-- `POST /api/plan/generate` - Generate AI plan
-- `POST /api/assessment/adaptive` - Get next question
+### **AI System** ⭐ (PRIMARY - Use These)
+- `POST /api/assessment/complete` - Save assessment to `user_assessments`
+- `POST /api/plan/generate` - Generate AI plan (Master Curator + Narrative Weaver)
+- `POST /api/plan/regenerate-ai` - Regenerate AI plan (24-hour rate limit)
+- `POST /api/assessment/adaptive` - Get next adaptive question
+
+### **Deprecated Endpoints** ⚠️ (DO NOT USE - Removal: 2025-02-15)
+- `GET /api/strategic-plan` - Old hybrid AI system
+- `POST /api/plan/ai-score` - Old AI scoring
+- `POST /api/plan/generate-roadmap` - Old AI narrative
+- `POST /api/plan/regenerate` - Old regenerate (for plan_cache)
+
+### **Legacy Endpoints** 🔄 (Backward Compatibility Only)
+- `GET /api/plan` - Rule-based plan (for 4 old assessment users)
 
 ### **Content**
 - `GET /api/content/personalized` - Personalized recommendations

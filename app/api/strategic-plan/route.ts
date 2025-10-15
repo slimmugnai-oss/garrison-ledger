@@ -1,4 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * ⚠️ DEPRECATED - STRATEGIC PLAN (HYBRID AI + RULES)
+ * 
+ * This endpoint is DEPRECATED and will be removed in a future version.
+ * It has been completely replaced by the new AI Master Curator system.
+ * 
+ * OLD APPROACH: Rules + AI scoring + AI roadmap (3 separate processes)
+ * NEW APPROACH: /api/plan/generate (unified two-phase Master Curator + Narrative Weaver)
+ * 
+ * DIFFERENCES:
+ * - Old: Rules select blocks → AI scores → AI writes roadmap
+ * - New: AI selects blocks → AI writes complete narrative
+ * 
+ * MIGRATION:
+ * - All new assessments use /api/plan/generate
+ * - This endpoint kept temporarily for backward compatibility
+ * - No frontend code calls this anymore
+ * 
+ * DO NOT USE THIS ENDPOINT FOR NEW FEATURES.
+ * Use /api/plan/generate instead.
+ * 
+ * Deprecation Date: 2025-01-15
+ * Planned Removal: 2025-02-15 (30 days)
+ */
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
