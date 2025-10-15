@@ -25,41 +25,15 @@ type AssessmentState = {
   questionsAsked: string[];
 };
 
+// Core questions that are NOT covered in profile setup
+// Profile already covers: service_status, branch, rank, marital_status, num_children, has_efmp, pcs_date
 const CORE_QUESTIONS = [
   {
-    id: 'service_status',
-    question: 'What is your current service status?',
+    id: 'biggest_concern',
+    question: 'What is your biggest financial concern right now?',
     type: 'select' as const,
-    options: ['Active Duty', 'Reserve', 'National Guard', 'Retired', 'Veteran (Separated)', 'Separating (within 12 months)', 'Military Spouse / Dependent', 'DoD Civilian / Contractor'],
-    context: 'Determines available benefits and relevant planning needs'
-  },
-  {
-    id: 'branch',
-    question: 'What branch did you serve in?',
-    type: 'select' as const,
-    options: ['Army', 'Navy', 'Air Force', 'Marines', 'Coast Guard', 'Space Force'],
-    context: 'Determines which rank structure and benefits apply'
-  },
-  {
-    id: 'rank',
-    question: 'What is/was your rank?',
-    type: 'select' as const,
-    options: ['E-1 to E-4', 'E-5 to E-6', 'E-7 to E-9', 'W-1 to W-5 (Warrant)', 'O-1 to O-3', 'O-4 to O-6', 'O-7+'],
-    context: 'Helps determine appropriate financial strategies'
-  },
-  {
-    id: 'pcs_situation',
-    question: 'What is your PCS situation?',
-    type: 'select' as const,
-    options: ['Just arrived (0-6 months)', 'Dwell time (settled)', 'PCS window (6-18 months)', 'Orders in hand', 'No PCS expected'],
-    context: 'Determines move-related priorities'
-  },
-  {
-    id: 'family_status',
-    question: 'What is your family situation?',
-    type: 'select' as const,
-    options: ['Single, no kids', 'Married, no kids', 'Married with young kids (0-5)', 'Married with school-age kids (6-18)', 'Single parent'],
-    context: 'Affects planning needs and PCS complexity'
+    options: ['Debt payoff', 'Emergency fund', 'TSP/retirement', 'House purchase', 'Career transition', 'Deployment prep'],
+    context: 'Sets primary focus for your plan'
   },
   {
     id: 'deployment_status',
@@ -69,31 +43,40 @@ const CORE_QUESTIONS = [
     context: 'Impacts financial and family planning needs'
   },
   {
-    id: 'biggest_concern',
-    question: 'What is your biggest financial concern right now?',
+    id: 'financial_goals',
+    question: 'What are your primary financial goals for the next 2-3 years?',
     type: 'select' as const,
-    options: ['Debt payoff', 'Emergency fund', 'TSP/retirement', 'House purchase', 'Career transition', 'Deployment prep'],
-    context: 'Sets primary focus for your plan'
+    options: ['Pay off debt', 'Build emergency fund', 'Maximize TSP contributions', 'Save for house down payment', 'Prepare for career transition', 'Deployment financial prep'],
+    context: 'Helps prioritize recommendations and timeline'
+  },
+  {
+    id: 'urgency_level',
+    question: 'How urgent is your need for financial guidance?',
+    type: 'select' as const,
+    options: ['Just planning ahead', 'Have some concerns', 'Need help soon', 'Crisis situation'],
+    context: 'Determines prioritization of recommendations'
   }
 ];
 
 const ADAPTIVE_PROMPT = `You are an expert military financial advisor conducting an adaptive assessment.
 
-Your task: Based on the user's previous answers, determine the NEXT most important question to ask.
+IMPORTANT: The user has already completed their profile with basic information (rank, branch, service status, family situation, PCS info, etc.). Do NOT ask questions that are already covered in their profile.
+
+Your task: Based on the user's previous assessment answers, determine the NEXT most important question to ask.
 
 RULES:
 - Ask ONLY questions that are relevant based on their previous answers
-- Skip questions where the answer is already known or obvious
+- Skip questions where the answer is already known from their profile
 - Prioritize questions that will significantly change the recommendations
-- Maximum 10 total questions (5 core + 5 adaptive)
+- Maximum 6 total assessment questions (4 core + 2 adaptive)
 - Questions should be specific and tactical
+- Focus on financial goals, concerns, and priorities not covered in profile
 
 EXAMPLE LOGIC:
-- If they said "Orders in hand" → Ask about school-age kids for enrollment planning
-- If they said "Pre-deployment" → Ask about SDP and legal prep
-- If they said "Married with kids" + "PCS window" → Ask about EFMP enrollment
 - If they said "Debt payoff" concern → Ask about debt amount ranges
 - If they said "Career transition" → Ask about federal employment interest
+- If they said "Pre-deployment" → Ask about SDP setup and deployment prep
+- If they said "House purchase" → Ask about timeline and down payment goals
 
 PREVIOUS ANSWERS:
 {previousAnswers}
@@ -106,11 +89,11 @@ If more questions needed:
 {
   "needsMore": true,
   "nextQuestion": {
-    "id": "efmp_enrolled",
-    "question": "Is anyone in your family enrolled in EFMP (Exceptional Family Member Program)?",
+    "id": "debt_amount_range",
+    "question": "What is your approximate debt amount?",
     "type": "select",
-    "options": ["Yes", "No", "Not sure"],
-    "context": "With school-age kids and PCS orders, EFMP status affects enrollment timelines"
+    "options": ["Under $5,000", "$5,000-$15,000", "$15,000-$30,000", "$30,000-$50,000", "Over $50,000", "Prefer not to say"],
+    "context": "Helps prioritize debt payoff strategies"
   }
 }
 
@@ -152,71 +135,9 @@ export async function POST(req: NextRequest) {
     profile = data;
   }
 
-  // If this is the first question, check profile and skip answered questions
+  // If this is the first question, start with the first core question
+  // Profile data is already available and doesn't need to be re-asked
   if (questionsAsked.length === 0) {
-    // Build pre-answered data from profile
-    const preAnswered: Record<string, string> = {};
-    if (profile) {
-      // Map service_status to assessment options
-      if (profile.service_status) {
-        const statusMap: Record<string, string> = {
-          'active_duty': 'Active Duty',
-          'reserve': 'Reserve',
-          'national_guard': 'National Guard',
-          'retired': 'Retired',
-          'veteran': 'Veteran (Separated)',
-          'separating': 'Separating (within 12 months)',
-          'military_spouse': 'Military Spouse / Dependent',
-          'dod_civilian': 'DoD Civilian / Contractor'
-        };
-        preAnswered.service_status = statusMap[profile.service_status] || profile.service_status;
-      }
-      if (profile.branch) preAnswered.branch = profile.branch;
-      if (profile.rank) {
-        // Map specific rank to rank range for assessment
-        const rankUpper = profile.rank.toUpperCase();
-        if (rankUpper.includes('E-1') || rankUpper.includes('E-2') || rankUpper.includes('E-3') || rankUpper.includes('E-4')) {
-          preAnswered.rank = 'E-1 to E-4';
-        } else if (rankUpper.includes('E-5') || rankUpper.includes('E-6')) {
-          preAnswered.rank = 'E-5 to E-6';
-        } else if (rankUpper.includes('E-7') || rankUpper.includes('E-8') || rankUpper.includes('E-9')) {
-          preAnswered.rank = 'E-7 to E-9';
-        } else if (rankUpper.includes('W-') || rankUpper.includes('WO') || rankUpper.includes('CW')) {
-          preAnswered.rank = 'W-1 to W-5 (Warrant)';
-        } else if (rankUpper.includes('O-1') || rankUpper.includes('O-2') || rankUpper.includes('O-3')) {
-          preAnswered.rank = 'O-1 to O-3';
-        } else if (rankUpper.includes('O-4') || rankUpper.includes('O-5') || rankUpper.includes('O-6')) {
-          preAnswered.rank = 'O-4 to O-6';
-        } else if (rankUpper.includes('O-7') || rankUpper.includes('O-8') || rankUpper.includes('O-9') || rankUpper.includes('O-10')) {
-          preAnswered.rank = 'O-7+';
-        }
-      }
-      if (profile.pcs_date) preAnswered.pcs_situation = 'Orders in hand';
-      if (profile.deployment_status) preAnswered.deployment_status = profile.deployment_status;
-      if (profile.marital_status) {
-        const maritalMap: Record<string, string> = {
-          'single': 'Single, no kids',
-          'married': profile.num_children > 0 
-            ? (profile.num_children <= 5 ? 'Married with young kids (0-5)' : 'Married with school-age kids (6-18)')
-            : 'Married, no kids',
-          'single_parent': 'Single parent'
-        };
-        preAnswered.family_status = maritalMap[profile.marital_status] || profile.marital_status;
-      }
-    }
-    
-    // Find first unanswered core question
-    const firstUnanswered = CORE_QUESTIONS.find(q => !preAnswered[q.id]);
-    
-    if (firstUnanswered) {
-      return NextResponse.json({
-        needsMore: true,
-        nextQuestion: firstUnanswered,
-        preAnswered // Send pre-filled answers to frontend
-      });
-    }
-    
-    // If all core questions answered via profile, return first core question anyway
     return NextResponse.json({
       needsMore: true,
       nextQuestion: CORE_QUESTIONS[0]
@@ -238,8 +159,8 @@ export async function POST(req: NextRequest) {
   }
 
   // All core questions asked - use AI for adaptive questions
-  if (questionsAsked.length >= 10) {
-    // Max questions reached
+  if (questionsAsked.length >= 6) {
+    // Max questions reached (4 core + 2 adaptive)
     return NextResponse.json({
       needsMore: false,
       reason: 'Assessment complete - enough data to generate personalized plan'

@@ -113,7 +113,7 @@ export default function AssessmentClient() {
     }
   }
 
-  const progress = Math.round((questionsAsked.length / 10) * 100);
+  const progress = Math.round((questionsAsked.length / 6) * 100);
 
   if (saving) {
     return (
@@ -149,7 +149,7 @@ export default function AssessmentClient() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-text-body">Progress</span>
-              <span className="text-sm font-bold text-blue-600">{questionsAsked.length} / ~10 questions</span>
+              <span className="text-sm font-bold text-blue-600">{questionsAsked.length} / ~6 questions</span>
             </div>
             <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
               <div 

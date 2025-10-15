@@ -186,16 +186,38 @@ export default function ProfileSetupPage() {
   }, [data.num_children, data.children]);
 
   const step = useMemo(() => {
-    // Simple step derivation based on filled fields
-    if (!data.age || !data.gender) return 1;
-    if (!data.rank || !data.branch) return 2;
-    if (!data.current_base) return 3;
+    // Simple step derivation based on filled fields - now more fields are required
+    if (!data.age || !data.gender || !data.years_of_service) return 1;
+    if (!data.service_status) return 2;
+    if (!data.rank || !data.branch) return 3;
     if (data.marital_status == null || data.num_children == null || data.has_efmp == null) return 4;
     if (!data.tsp_balance_range || !data.debt_amount_range || !data.emergency_fund_range) return 5;
     return 6;
   }, [data]);
 
   async function submit() {
+    // Validate required fields
+    const requiredFields = [
+      { field: data.age, name: 'Age' },
+      { field: data.gender, name: 'Gender' },
+      { field: data.years_of_service, name: 'Years of service' },
+      { field: data.service_status, name: 'Service status' },
+      { field: data.rank, name: 'Rank' },
+      { field: data.branch, name: 'Branch' },
+      { field: data.marital_status, name: 'Marital status' },
+      { field: data.num_children, name: 'Number of children' },
+      { field: data.has_efmp, name: 'EFMP enrollment' },
+      { field: data.tsp_balance_range, name: 'TSP balance range' },
+      { field: data.debt_amount_range, name: 'Debt amount range' },
+      { field: data.emergency_fund_range, name: 'Emergency fund range' }
+    ];
+
+    const missingFields = requiredFields.filter(f => f.field === null || f.field === undefined || f.field === '');
+    if (missingFields.length > 0) {
+      setError(`Please complete the following required fields: ${missingFields.map(f => f.name).join(', ')}`);
+      return;
+    }
+
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -272,18 +294,18 @@ export default function ProfileSetupPage() {
             <p className="text-sm text-muted mb-4">Basic info helps us tailor calculations and advice</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Age</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Age <span className="text-red-500">*</span></label>
                 <input type="number" min={17} max={100} placeholder="e.g., 28" className="w-full border border-border rounded-lg px-3 py-2" value={data.age ?? ''} onChange={e => setData(d => ({ ...d, age: e.target.value ? Number(e.target.value) : null }))} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Gender</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Gender <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.gender ?? ''} onChange={e => setData(d => ({ ...d, gender: e.target.value || null }))}>
                   <option value="">Select</option>
                   {genders.map(g => <option key={g} value={g.toLowerCase()}>{g}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Years of service</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Years of service <span className="text-red-500">*</span></label>
                 <input type="number" min={0} max={40} placeholder="e.g., 6" className="w-full border border-border rounded-lg px-3 py-2" value={data.years_of_service ?? ''} onChange={e => setData(d => ({ ...d, years_of_service: e.target.value ? Number(e.target.value) : null }))} />
               </div>
             </div>
@@ -291,10 +313,10 @@ export default function ProfileSetupPage() {
 
           <section>
             <h2 className="text-xl font-bold mb-4">Military identity</h2>
-            <p className="text-sm text-muted mb-4">Optional - helps us personalize your plan</p>
+            <p className="text-sm text-muted mb-4">Required - helps us personalize your plan</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Service Status</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Service Status <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.service_status ?? ''} onChange={e => setData(d => ({ ...d, service_status: e.target.value || null }))}>
                   <option value="">Select</option>
                   {serviceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -329,16 +351,16 @@ export default function ProfileSetupPage() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-sm font-semibold text-muted mb-2">Branch</label>
+                    <label className="block text-sm font-semibold text-muted mb-2">Branch <span className="text-red-500">*</span></label>
                     <select className="w-full border border-border rounded-lg px-3 py-2" value={data.branch ?? ''} onChange={e => setData(d => ({ ...d, branch: e.target.value || null }))}>
                       <option value="">Select</option>
                       {branches.map(b => <option key={b} value={b}>{b}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-muted mb-2">Rank</label>
+                    <label className="block text-sm font-semibold text-muted mb-2">Rank <span className="text-red-500">*</span></label>
                     <select className="w-full border border-border rounded-lg px-3 py-2" value={data.rank ?? ''} onChange={e => setData(d => ({ ...d, rank: e.target.value || null }))} disabled={!data.branch}>
-                      <option value="">Select {!data.branch ? '(select branch first)' : '(optional)'}</option>
+                      <option value="">Select {!data.branch ? '(select branch first)' : ''}</option>
                       {availableRanks.length > 0 && (
                         <>
                           {ranksData[data.branch!]?.enlisted && ranksData[data.branch!].enlisted!.length > 0 && (
@@ -430,10 +452,10 @@ export default function ProfileSetupPage() {
 
           <section>
             <h2 className="text-xl font-bold mb-4">Family</h2>
-            <p className="text-sm text-muted mb-4">Optional - helps with family-specific recommendations</p>
+            <p className="text-sm text-muted mb-4">Required - helps with family-specific recommendations</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Marital status</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Marital status <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.marital_status ?? ''} onChange={e => setData(d => ({ ...d, marital_status: e.target.value || null }))}>
                   <option value="">Select</option>
                   <option value="single">Single</option>
@@ -444,7 +466,7 @@ export default function ProfileSetupPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Number of children</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Number of children <span className="text-red-500">*</span></label>
                 <input type="number" min={0} max={10} placeholder="0" className="w-full border border-border rounded-lg px-3 py-2" value={data.num_children ?? 0} onChange={e => setData(d => ({ ...d, num_children: Number(e.target.value) }))} />
               </div>
               {data.marital_status === 'married' && (
@@ -454,7 +476,7 @@ export default function ProfileSetupPage() {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">EFMP enrolled</label>
+                <label className="block text-sm font-semibold text-muted mb-2">EFMP enrolled <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.has_efmp === null || data.has_efmp === undefined ? '' : String(data.has_efmp)} onChange={e => setData(d => ({ ...d, has_efmp: e.target.value === '' ? null : e.target.value === 'true' }))}>
                   <option value="">Select</option>
                   {yesNo.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
@@ -495,24 +517,24 @@ export default function ProfileSetupPage() {
 
           <section>
             <h2 className="text-xl font-bold mb-4">Financial snapshot</h2>
-            <p className="text-sm text-muted mb-4">Optional - use ranges for privacy. This helps tailor financial advice.</p>
+            <p className="text-sm text-muted mb-4">Required - use ranges for privacy. This helps tailor financial advice.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">TSP balance</label>
+                <label className="block text-sm font-semibold text-muted mb-2">TSP balance <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.tsp_balance_range ?? ''} onChange={e => setData(d => ({ ...d, tsp_balance_range: e.target.value || null }))}>
                   <option value="">Select</option>
                   {tspRanges.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Debt amount</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Debt amount <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.debt_amount_range ?? ''} onChange={e => setData(d => ({ ...d, debt_amount_range: e.target.value || null }))}>
                   <option value="">Select</option>
                   {ranges.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-muted mb-2">Emergency fund</label>
+                <label className="block text-sm font-semibold text-muted mb-2">Emergency fund <span className="text-red-500">*</span></label>
                 <select className="w-full border border-border rounded-lg px-3 py-2" value={data.emergency_fund_range ?? ''} onChange={e => setData(d => ({ ...d, emergency_fund_range: e.target.value || null }))}>
                   <option value="">Select</option>
                   {ranges.map(r => <option key={r} value={r}>{r}</option>)}
