@@ -357,7 +357,7 @@ function IntelligenceLibraryContent() {
               </div>
             </div>
           )}
-        </div>
+
           {/* Hero Header */}
           <div className="mb-12 text-center">
             <div className="mb-4">
