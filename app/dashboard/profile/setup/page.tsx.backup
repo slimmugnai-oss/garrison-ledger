@@ -9,64 +9,30 @@ import militaryRanks from '@/lib/data/military-ranks.json';
 import militaryComponents from '@/lib/data/military-components.json';
 
 type ProfilePayload = {
-  // Basic info
   age?: number | null;
   gender?: string | null;
   years_of_service?: number | null;
   education_level?: string | null;
-  
-  // Military identity
   service_status?: string | null;
   spouse_service_status?: string | null;
   branch?: string | null;
   rank?: string | null;
   component?: string | null;
-  mos_afsc_rate?: string | null;
-  clearance_level?: string | null;
-  time_in_service_months?: number | null;
-  
-  // Location & Deployment
   current_base?: string | null;
   next_base?: string | null;
   pcs_date?: string | null;
-  deployment_count?: number | null;
-  deployment_status?: string | null;
-  last_deployment_date?: string | null;
-  
-  // Family
   marital_status?: string | null;
   spouse_age?: number | null;
-  spouse_military?: boolean | null;
-  spouse_employed?: boolean | null;
-  spouse_career_field?: string | null;
   num_children?: number | null;
   children?: Array<{ age: number }> | null;
   has_efmp?: boolean | null;
-  
-  // Financial
   tsp_balance_range?: string | null;
-  tsp_allocation?: string | null;
   debt_amount_range?: string | null;
   emergency_fund_range?: string | null;
-  monthly_income_range?: string | null;
-  bah_amount?: number | null;
   housing_situation?: string | null;
-  owns_rental_properties?: boolean | null;
-  
-  // Goals
-  long_term_goal?: string | null;
-  retirement_age_target?: number | null;
   career_interests?: string[] | null;
   financial_priorities?: string[] | null;
-  education_goals?: string[] | null;
-  
-  // Preferences
-  content_difficulty_pref?: string | null;
   urgency_level?: string | null;
-  communication_pref?: string | null;
-  timezone?: string | null;
-  
-  // System
   profile_completed?: boolean | null;
 };
 
@@ -106,28 +72,14 @@ const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force
 const civilianBranches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force','Multiple / Joint','N/A (not service-specific)'];
 const genders = ['Male','Female','Prefer not to say'];
 const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
-
-// New field options
-const clearanceLevels = ['None','Secret','Top Secret','TS/SCI','Q Clearance','Other'];
-const deploymentStatuses = ['Never deployed','Pre-deployment','Currently deployed','Post-deployment','Multiple deployments'];
-const housingOptions = ['On-base housing','Rent off-base','Own primary residence','Own rental property','Living with family','Other'];
-const longTermGoals = ['Retire at 20 years','Retire at 30 years','Transition to civilian (soon)','Continue indefinitely','Unsure'];
-const tspAllocations = ['Lifecycle Fund (L2030/L2040/L2050/etc)','G Fund (Government Securities)','F Fund (Fixed Income)','C Fund (Common Stock)','S Fund (Small Cap)','I Fund (International)','Custom mix','Not sure'];
-const communicationPrefs = ['Email','SMS/Text','In-app notifications','Phone call','No preference'];
-const contentDifficultyPrefs = ['Beginner-friendly','Intermediate','Advanced','All levels'];
-const urgencyLevels = ['Low (just browsing)','Normal','High (need help soon)','Crisis (urgent assistance needed)'];
-const educationGoalsList = ['Complete degree','Professional certification','Use MyCAA','Maximize GI Bill','TA/Tuition Assistance','Spouse education','Children college planning'];
-
 const yesNo = [
   { label: 'Yes', value: true },
   { label: 'No', value: false },
 ];
-
 const ranges = ['none','1-5k','5-10k','10-25k','25-50k','50k+','prefer-not-to-say'];
 const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+','prefer-not-to-say'];
-const incomeRanges = ['<50k','50k-75k','75k-100k','100k-150k','150k+','prefer-not-to-say'];
-const interests = ['federal','entrepreneur','remote','education','transition'];
-const priorities = ['tsp','debt','emergency','house-hack','budget','sdp','investment'];
+const interests = ['federal','entrepreneur','remote','education'];
+const priorities = ['tsp','debt','emergency','house-hack','budget','sdp'];
 
 export default function ProfileSetupPage() {
   const router = useRouter();
@@ -146,57 +98,26 @@ export default function ProfileSetupPage() {
         if (res.ok) {
           const json = await res.json();
           setData({
-            // Basic
-            age: json?.age ?? null,
-            gender: json?.gender ?? null,
-            years_of_service: json?.years_of_service ?? null,
-            education_level: json?.education_level ?? null,
-            // Military
-            service_status: json?.service_status ?? null,
-            spouse_service_status: json?.spouse_service_status ?? null,
-            branch: json?.branch ?? null,
-            rank: json?.rank ?? null,
-            component: json?.component ?? null,
-            mos_afsc_rate: json?.mos_afsc_rate ?? null,
-            clearance_level: json?.clearance_level ?? null,
-            time_in_service_months: json?.time_in_service_months ?? null,
-            // Location & Deployment
-            current_base: json?.current_base ?? null,
-            next_base: json?.next_base ?? null,
-            pcs_date: json?.pcs_date ?? null,
-            deployment_count: json?.deployment_count ?? null,
-            deployment_status: json?.deployment_status ?? null,
-            last_deployment_date: json?.last_deployment_date ?? null,
-            // Family
-            marital_status: json?.marital_status ?? null,
-            spouse_age: json?.spouse_age ?? null,
-            spouse_military: json?.spouse_military ?? null,
-            spouse_employed: json?.spouse_employed ?? null,
-            spouse_career_field: json?.spouse_career_field ?? null,
+            service_status: json?.service_status || null,
+            spouse_service_status: json?.spouse_service_status || null,
+            branch: json?.branch || null,
+            rank: json?.rank || null,
+            component: json?.component || null,
+            current_base: json?.current_base || null,
+            next_base: json?.next_base || null,
+            pcs_date: json?.pcs_date || null,
+            marital_status: json?.marital_status || null,
             num_children: json?.num_children ?? null,
-            children: json?.children ?? null,
+            children: json?.children || null,
             has_efmp: json?.has_efmp ?? null,
-            // Financial
-            tsp_balance_range: json?.tsp_balance_range ?? null,
-            tsp_allocation: json?.tsp_allocation ?? null,
-            debt_amount_range: json?.debt_amount_range ?? null,
-            emergency_fund_range: json?.emergency_fund_range ?? null,
-            monthly_income_range: json?.monthly_income_range ?? null,
-            bah_amount: json?.bah_amount ?? null,
-            housing_situation: json?.housing_situation ?? null,
-            owns_rental_properties: json?.owns_rental_properties ?? null,
-            // Goals
-            long_term_goal: json?.long_term_goal ?? null,
-            retirement_age_target: json?.retirement_age_target ?? null,
-            career_interests: json?.career_interests ?? [],
-            financial_priorities: json?.financial_priorities ?? [],
-            education_goals: json?.education_goals ?? [],
-            // Preferences
-            content_difficulty_pref: json?.content_difficulty_pref ?? 'all',
-            urgency_level: json?.urgency_level ?? 'normal',
-            communication_pref: json?.communication_pref ?? null,
-            timezone: json?.timezone ?? null,
-            profile_completed: json?.profile_completed ?? false,
+            tsp_balance_range: json?.tsp_balance_range || null,
+            debt_amount_range: json?.debt_amount_range || null,
+            emergency_fund_range: json?.emergency_fund_range || null,
+            housing_situation: json?.housing_situation || null,
+            career_interests: json?.career_interests || [],
+            financial_priorities: json?.financial_priorities || [],
+            urgency_level: json?.urgency_level || 'normal',
+            profile_completed: json?.profile_completed || false,
           });
         } else if (res.status !== 404) {
           setError('Failed to load profile');
@@ -247,13 +168,6 @@ export default function ProfileSetupPage() {
       }
     }
   }, [data.branch, data.component, availableComponents]);
-
-  // Calculate time in service months from years
-  useEffect(() => {
-    if (data.years_of_service !== null && data.years_of_service !== undefined) {
-      setData(d => ({ ...d, time_in_service_months: data.years_of_service! * 12 }));
-    }
-  }, [data.years_of_service]);
 
   // Initialize children array when num_children changes
   useEffect(() => {
