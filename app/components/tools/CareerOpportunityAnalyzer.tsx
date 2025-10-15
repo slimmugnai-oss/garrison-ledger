@@ -513,28 +513,6 @@ export default function CareerOpportunityAnalyzer() {
                     </div>
                   </div>
 
-                  {/* AI-Generated Executive Summary */}
-                  <div className={`rounded-lg p-6 ${
-                    analysis.isPositive 
-                      ? 'bg-green-100 border-2 border-green-300' 
-                      : 'bg-red-100 border-2 border-red-300'
-                  }`}>
-                    <div className="flex items-start gap-3">
-                      <Icon name="Lightbulb" className="h-8 w-8 text-gray-700" />
-                      <div>
-                        <h4 className={`font-bold mb-2 text-lg ${
-                          analysis.isPositive ? 'text-green-900' : 'text-red-900'
-                        }`}>
-                          The Bottom Line
-                        </h4>
-                        <p className={`leading-relaxed ${
-                          analysis.isPositive ? 'text-green-900' : 'text-red-900'
-                        }`}>
-                          {analysis.executiveSummary}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </PaywallWrapper>
