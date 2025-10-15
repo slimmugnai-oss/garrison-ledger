@@ -194,7 +194,7 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
         {/* Bottom note */}
         <div className="mt-6 pt-6 border-t border-white/20 flex items-center justify-between">
           <p className="text-sm text-indigo-200">
-            <Icon name="Info" className="w-4 h-4 inline mr-1" />
+            <Icon name="HelpCircle" className="w-4 h-4 inline mr-1" />
             You can skip steps and return anytime
           </p>
           <button

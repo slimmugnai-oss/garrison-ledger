@@ -41,7 +41,7 @@ export default function AdminProviders() {
   
   useEffect(() => { 
     load(); 
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   async function add() {
     setBusy(true);
