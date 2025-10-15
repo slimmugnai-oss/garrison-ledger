@@ -1,0 +1,71 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { supabaseAdmin } from '@/lib/supabase';
+
+export const runtime = "nodejs";
+
+/**
+ * ASSESSMENT COMPLETION ENDPOINT
+ * Saves assessment responses and triggers AI plan generation
+ */
+
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { responses } = body;
+
+    if (!responses || typeof responses !== 'object') {
+      return NextResponse.json({ 
+        error: "Invalid assessment responses" 
+      }, { status: 400 });
+    }
+
+    // Save assessment responses
+    const { error: saveError } = await supabaseAdmin
+      .from('user_assessments')
+      .upsert({
+        user_id: userId,
+        responses,
+        completed: true,
+        completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      });
+
+    if (saveError) {
+      console.error('[Assessment Complete] Save error:', saveError);
+      return NextResponse.json({ 
+        error: "Failed to save assessment" 
+      }, { status: 500 });
+    }
+
+    // Update user profile
+    await supabaseAdmin
+      .from('user_profiles')
+      .update({ 
+        last_assessment_at: new Date().toISOString()
+      })
+      .eq('user_id', userId);
+
+    console.log('[Assessment Complete] ✅ Assessment saved for user:', userId);
+
+    return NextResponse.json({
+      success: true,
+      message: "Assessment completed successfully"
+    });
+
+  } catch (error: any) {
+    console.error('[Assessment Complete] Error:', error);
+    return NextResponse.json({ 
+      error: "Failed to complete assessment",
+      details: error.message 
+    }, { status: 500 });
+  }
+}
+

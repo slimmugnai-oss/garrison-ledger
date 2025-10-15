@@ -52,6 +52,10 @@ export default async function CommandDashboard() {
   const { data: profileRow } = await supabase.from("user_profiles").select("*").eq("user_id", user.id).maybeSingle();
   const profileComplete = profileRow?.profile_completed || false;
 
+  // Check if user has a personalized plan
+  const { data: planRow } = await supabase.from("user_plans").select("generated_at").eq("user_id", user.id).maybeSingle();
+  const hasPlan = !!planRow;
+
   return (
     <>
       <Header />
@@ -79,12 +83,38 @@ export default async function CommandDashboard() {
             </p>
           </div>
 
-          {/* Onboarding CTAs - Sophisticated Two-Column Layout */}
-          {(!profileComplete || !hasAssessment) && (
+          {/* Onboarding CTAs & Plan Widget */}
+          {(!profileComplete || !hasAssessment || hasPlan) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {/* Your Personalized Plan - Show if they have one */}
+              {hasPlan && (
+                <AnimatedCard className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-2xl p-8 text-white shadow-lg border border-blue-700/50" delay={0}>
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
+                        <Icon name="Sparkles" className="h-7 w-7 text-white" />
+                      </div>
+                      <div className="inline-flex items-center px-2.5 py-1 bg-emerald-500/20 border border-emerald-400/30 rounded-full text-emerald-200 text-xs font-bold uppercase tracking-wider">
+                        AI-Curated
+                      </div>
+                    </div>
+                    <h2 className="text-2xl font-serif font-black mb-3 text-white">Your Personalized Plan</h2>
+                    <p className="text-blue-100 text-base mb-6 leading-relaxed flex-1">
+                      AI has analyzed your profile and selected 8-10 expert content blocks tailored specifically to your military situation and goals.
+                    </p>
+                    <Link 
+                      href="/dashboard/plan"
+                      className="inline-flex items-center justify-center bg-white text-blue-900 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    >
+                      View Your Plan →
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              )}
+
               {/* Profile Completion CTA */}
               {!profileComplete && (
-                <AnimatedCard className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-600 rounded-2xl p-8 text-white shadow-lg border border-slate-600/50" delay={0}>
+                <AnimatedCard className="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-600 rounded-2xl p-8 text-white shadow-lg border border-slate-600/50" delay={hasPlan ? 50 : 0}>
                   <div className="flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
@@ -107,7 +137,7 @@ export default async function CommandDashboard() {
 
               {/* Assessment CTA */}
               {!hasAssessment && (
-                <AnimatedCard className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-2xl p-8 text-white shadow-lg border border-indigo-700/50" delay={50}>
+                <AnimatedCard className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-2xl p-8 text-white shadow-lg border border-indigo-700/50" delay={hasPlan || !profileComplete ? 100 : 50}>
                   <div className="flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">

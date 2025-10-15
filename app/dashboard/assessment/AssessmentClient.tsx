@@ -97,18 +97,28 @@ export default function AssessmentClient() {
   async function saveAssessment(finalAnswers: Record<string, string | string[]>) {
     setSaving(true);
     try {
-      const res = await fetch('/api/assessment', {
+      // Save assessment responses
+      const saveRes = await fetch('/api/assessment/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: finalAnswers })
+        body: JSON.stringify({ responses: finalAnswers })
       });
 
-      if (!res.ok) throw new Error('Failed to save');
+      if (!saveRes.ok) throw new Error('Failed to save assessment');
+
+      // Generate AI-powered personalized plan
+      const planRes = await fetch('/api/plan/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!planRes.ok) throw new Error('Failed to generate plan');
 
       // Redirect to plan
       router.push('/dashboard/plan');
-    } catch {
-      setError('Failed to save assessment');
+    } catch (err) {
+      console.error('Assessment save error:', err);
+      setError('Failed to complete assessment');
       setSaving(false);
     }
   }

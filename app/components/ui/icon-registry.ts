@@ -28,6 +28,7 @@ import {
   Folder,
   Image,
   File,
+  CheckCircle,
   
   // Business & Career
   Briefcase,
@@ -41,6 +42,7 @@ import {
   TrendingUp,
   TrendingDown,
   PiggyBank,
+  Calculator,
   
   // PCS & Moving
   Truck,
@@ -66,6 +68,8 @@ import {
   
   // Navigation
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Search,
   Menu,
   
@@ -74,6 +78,7 @@ import {
   Users,
   HelpCircle,
   Crown,
+  Sparkles,
   
   // Layout & Structure
   LayoutDashboard,
@@ -113,6 +118,7 @@ export const iconRegistry = {
   Folder,
   Image,
   File,
+  CheckCircle,
   
   // Business & Career
   Briefcase,
@@ -126,6 +132,7 @@ export const iconRegistry = {
   TrendingUp,
   TrendingDown,
   PiggyBank,
+  Calculator,
   
   // PCS & Moving
   Truck,
@@ -151,6 +158,8 @@ export const iconRegistry = {
   
   // Navigation
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Search,
   Menu,
   
@@ -159,6 +168,7 @@ export const iconRegistry = {
   Users,
   HelpCircle,
   Crown,
+  Sparkles,
   
   // Layout & Structure
   LayoutDashboard,
