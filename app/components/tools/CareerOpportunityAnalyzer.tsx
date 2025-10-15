@@ -490,14 +490,52 @@ export default function CareerOpportunityAnalyzer() {
               ) : (
                 <div className="relative">
                   <div className="blur-sm pointer-events-none select-none">
-                    <div className="grid md:grid-cols-2 gap-8 mb-8">
-                      {/* Net Financial Difference */}
-                      <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm font-semibold text-blue-100">Net Financial Difference</span>
-                          <span className={`text-3xl font-black ${(analysis?.netDifference || 0) >= 0 ? 'text-green-300' : 'text-red-300'}`}>
-                            {(analysis?.netDifference || 0) >= 0 ? '+' : ''}${Math.abs(analysis?.netDifference || 0).toLocaleString()}
-                          </span>
+                    <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-4 h-4 bg-white rounded-full"></div>
+                        <h3 className="text-xl font-bold">Executive Summary</h3>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6 mb-6">
+                        {/* Current Situation Summary */}
+                        <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4">
+                          <div className="text-xs font-semibold text-blue-100 mb-2">Current Situation</div>
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span>Total Compensation:</span>
+                              <span className="font-bold">{fmt(analysis.currentTotalComp)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>After Taxes:</span>
+                              <span className="font-bold">{fmt(analysis.currentAfterTax)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* New Offer Summary */}
+                        <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4">
+                          <div className="text-xs font-semibold text-green-100 mb-2">New Offer</div>
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span>Total Compensation:</span>
+                              <span className="font-bold">{fmt(analysis.newTotalComp)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>After Taxes:</span>
+                              <span className="font-bold">{fmt(analysis.newAfterTax)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Net Difference */}
+                      <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 text-center mb-6">
+                        <div className="text-sm font-semibold text-blue-100 mb-2">Net Financial Difference</div>
+                        <div className={`text-3xl font-black mb-2 ${
+                          analysis.netDifference >= 0 ? 'text-green-300' : 'text-red-300'
+                        }`}>
+                          {analysis.netDifference >= 0 ? '+' : ''}{fmt(analysis.netDifference)}
+                          <span className="text-lg font-normal text-blue-100">/year</span>
                         </div>
                         <p className="text-sm text-blue-100">After taxes & cost of living</p>
                       </div>
