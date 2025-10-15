@@ -288,10 +288,10 @@ export default function SalaryRelocationCalculator() {
       </div>
 
       {/* AI Explainer */}
-      {showResult && (
+      {showResult && result && (
         <Explainer payload={{
           tool: "salary",
-          inputs: { militarySalary, civilianSalary: newSalary, currentCity, newCity },
+          inputs: { currentSalary, newSalary, currentCity, newCity },
           outputs: { adjustedMilitary: result.adjustedMilitary, adjustedNew: result.adjustedNew, difference: result.difference }
         }} />
       )}
