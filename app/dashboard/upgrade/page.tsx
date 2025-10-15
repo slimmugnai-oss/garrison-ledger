@@ -165,6 +165,13 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
+                      <div className="text-gray-900 font-semibold">Full AI Calculator Explanations</div>
+                      <p className="text-sm text-gray-600">Complete AI analysis (free shows preview only)</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
                       <div className="text-gray-900 font-semibold">Bookmarking & Ratings</div>
                       <p className="text-sm text-gray-600">Save favorites and rate content quality</p>
                     </div>
@@ -247,6 +254,13 @@ export default async function UpgradePage() {
                     <div>
                       <div className="text-gray-900 font-semibold">Unlimited Intel Library</div>
                       <p className="text-sm text-gray-600">410+ articles (free limited to 5/day)</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Full AI Calculator Explanations</div>
+                      <p className="text-sm text-gray-600">Complete AI analysis (free shows preview only)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">

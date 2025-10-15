@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Freemium Model Complete  
-**Version:** 2.1.1 (Freemium Model - All Features Implemented)
+**Version:** 2.1.2 (AI Explainer Preview Mode - Complete)
 
 ---
 
@@ -37,6 +37,9 @@
 - Free tier: 2-block preview with upgrade CTA
 - Premium tier: Full 8-10 block plan
 - Rate limiting functions operational
+- All 6 calculator tools free and working
+- AI Explainer preview mode active (2-3 sentences)
+- Library 5/day rate limit enforced
 - All user flows tested and working
 
 ### **📅 Recent Changes**

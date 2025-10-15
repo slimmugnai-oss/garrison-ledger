@@ -12,10 +12,10 @@ const features: Feature[] = [
   { name: "AI-Curated Personalized Plan", free: "Preview (2 blocks)", premium: "Full plan (8-10 blocks)" },
   { name: "Executive Summary", free: "First 2 paragraphs", premium: "Complete summary" },
   { name: "All 6 Financial Calculators", free: true, premium: true },
+  { name: "AI Calculator Explanations", free: "Preview (2-3 sentences)", premium: "Full AI analysis" },
   { name: "Intel Library (410+ Content Blocks)", free: "5 articles/day", premium: "Unlimited access" },
   { name: "Bookmarking & Ratings", free: false, premium: true },
   { name: "Personalized Recommendations", free: false, premium: true },
-  { name: "Advanced Calculator Features", free: false, premium: true },
   { name: "Priority Support", free: false, premium: true },
 ];
 
