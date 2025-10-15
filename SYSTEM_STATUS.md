@@ -43,6 +43,7 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🔧 LIBRARY PREMIUM ERROR FIXED - Removed premium checks from /api/library/enhanced and /api/library routes
 - 2025-01-15: 🔧 BUILD FIXES - Fixed Supabase import errors in library rate limiting API routes
 - 2025-01-15: 📚 LIBRARY RATE LIMITING RESTORED - Proper 5/day limit for free users, unlimited for premium
 - 2025-01-15: 🗑️ REMOVED "Bottom Line" - Career Opportunity Analyzer cleaned up (AI Explainer handles analysis)
