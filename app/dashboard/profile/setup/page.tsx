@@ -1457,7 +1457,6 @@ export default function ProfileSetupPage() {
             </Link>
           )}
         </div>
-        </div>
       </div>
     </div>
   );
