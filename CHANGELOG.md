@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2025-01-15 - Freemium Model Launch
+
+### 🚀 Added
+- **Freemium Tier System**
+  - Free tier: 2-block plan preview, 1 assessment/week
+  - Premium tier: Full 8-10 blocks, 3 assessments/day
+  - Assessment rate limiting with database functions
+  - Rate limit check endpoint `/api/assessment/can-take`
+  - Rate limit UI with upgrade path
+- **Plan Preview Experience**
+  - Free users see 2 curated blocks + truncated executive summary
+  - Prominent upgrade CTA showing locked blocks count
+  - "Unlock X more curated blocks" messaging
+- **Assessment Tracking**
+  - `assessment_count_today`, `assessment_date` columns on user_profiles
+  - `can_take_assessment()` SQL function
+  - `record_assessment_taken()` SQL function
+
+### 🔧 Changed
+- **Removed print button** - Retention strategy (users must log in to view plan)
+- **Comparison table updated** - Accurate free vs premium features
+- **Executive summary** - Truncated to 2 paragraphs for free users
+- **Plan display** - Shows "X of Y articles" for free users
+- **Premium pricing** - Positioned at $9.99/month (impulse pricing)
+
+### ⚡ Performance
+- **Switched to GPT-4o-mini** - Both Curator and Weaver phases
+- **Generation time:** 60s → 15-20 seconds (3-4x faster)
+- **AI cost:** $0.25 → $0.02 per plan (92% reduction!)
+- **Token usage:** 57k → 11.5k tokens (fits free-tier limits)
+- **Content filtering:** 410 → 190 top-rated blocks (quality focus)
+
+### 🐛 Fixed
+- **Assessment completion** - Fixed database upsert conflict
+- **504 timeouts** - Resolved with faster gpt-4o-mini
+- **429 token limit** - Reduced token usage by 80%
+- **Better error messages** - Shows specific failure details
+- **Icon imports** - Fixed PlanClient import path
+- **TypeScript errors** - Removed all 'any' types, proper interfaces
+
+### 💰 Business Model
+- **Free tier:** $0.08/user/month (sustainable)
+- **Premium tier:** 82% margin ($8.19 profit per user)
+- **Conversion strategy:** 2-block preview proves AI intelligence
+- **Retention:** No print, must log in to access plan
+
+---
+
 ## [2.0.1] - 2025-01-15 - System Cleanup & Full Consistency
 
 ### 🧹 Cleanup
