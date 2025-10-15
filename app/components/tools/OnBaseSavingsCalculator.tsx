@@ -579,7 +579,7 @@ export default function OnBaseSavingsCalculator() {
         tool: "on-base-savings",
         inputs: {
           commissary: { meatProduce, pantryStaples, diapersBaby },
-          exchange: { shoppingTotal, totalGallons }
+          exchange: { majorPurchases, clothingApparel, weeklyGasGallons }
         },
         outputs: {
           commissarySavings: totalCommissarySavings,
