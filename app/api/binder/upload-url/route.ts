@@ -29,6 +29,7 @@ function getAdminClient() {
   );
 }
 
+
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
@@ -99,7 +100,7 @@ export async function POST(req: NextRequest) {
   const extension = displayName.split(".").pop() || "bin";
   const objectPath = `${userId}/${folder}/${fileId}.${extension}`;
 
-  // Insert metadata record
+  // Insert metadata record using service role (bypasses RLS)
   const { data: fileRecord, error: insertError } = await supabase
     .from("binder_files")
     .insert({
@@ -117,8 +118,22 @@ export async function POST(req: NextRequest) {
 
   if (insertError) {
     console.error("Error inserting file record:", insertError);
+    console.error("Insert data:", {
+      user_id: userId,
+      object_path: objectPath,
+      folder,
+      doc_type: docType || "other",
+      display_name: displayName,
+      size_bytes: sizeBytes,
+      content_type: contentType,
+      expires_on: expiresOn || null
+    });
     return NextResponse.json(
-      { error: "Failed to create file record" },
+      { 
+        error: "Failed to create file record",
+        details: insertError.message,
+        code: insertError.code
+      },
       { status: 500 }
     );
   }
