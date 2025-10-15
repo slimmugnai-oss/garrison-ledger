@@ -32,6 +32,7 @@
 - None blocking production
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🐛 CRITICAL FIX - OpenAI token limit (57k→11k tokens), assessment now works
 - 2025-01-15: FINAL AUDIT - Comprehensive consistency check, all user-facing text updated
 - 2025-01-15: System cleanup - Deprecated old endpoints, updated all terminology
 - 2025-01-15: Deep dive site audit - All systems AI-integrated
@@ -268,9 +269,10 @@
 
 ### **AI System**
 - Plan generation time: ~30 seconds
-- AI cost per plan: ~$0.25
-- Content blocks analyzed: 410
+- AI cost per plan: ~$0.15 (reduced from $0.25 due to optimization)
+- Content blocks analyzed: ~190 (top-rated 3.5+ blocks)
 - Blocks selected per plan: 8-10
+- Token usage: ~11,500 per plan (under 30k limit)
 
 ### **Content Quality**
 - Total content blocks: 410
