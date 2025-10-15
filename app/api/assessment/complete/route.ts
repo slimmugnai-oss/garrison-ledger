@@ -25,17 +25,15 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Save assessment responses
+    // Save assessment responses (insert new record each time)
     const { error: saveError } = await supabaseAdmin
       .from('user_assessments')
-      .upsert({
+      .insert({
         user_id: userId,
         responses,
         completed: true,
         completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id'
       });
 
     if (saveError) {

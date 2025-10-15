@@ -98,13 +98,20 @@ export default function AssessmentClient() {
     setSaving(true);
     try {
       // Save assessment responses
+      console.log('[Assessment] Saving responses:', finalAnswers);
       const saveRes = await fetch('/api/assessment/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ responses: finalAnswers })
       });
 
-      if (!saveRes.ok) throw new Error('Failed to save assessment');
+      if (!saveRes.ok) {
+        const errorData = await saveRes.json();
+        console.error('[Assessment] Save failed:', errorData);
+        throw new Error(errorData.details || 'Failed to save assessment');
+      }
+
+      console.log('[Assessment] ✅ Responses saved, generating AI plan...');
 
       // Generate AI-powered personalized plan
       const planRes = await fetch('/api/plan/generate', {
@@ -112,13 +119,20 @@ export default function AssessmentClient() {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!planRes.ok) throw new Error('Failed to generate plan');
+      if (!planRes.ok) {
+        const errorData = await planRes.json();
+        console.error('[Assessment] Plan generation failed:', errorData);
+        throw new Error(errorData.details || 'Failed to generate plan');
+      }
+
+      console.log('[Assessment] ✅ AI plan generated!');
 
       // Redirect to plan
       router.push('/dashboard/plan');
     } catch (err) {
       console.error('Assessment save error:', err);
-      setError('Failed to complete assessment');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to complete assessment';
+      setError(errorMessage);
       setSaving(false);
     }
   }
