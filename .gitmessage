@@ -1,0 +1,19 @@
+# Commit message template
+# After committing, did you:
+# [ ] Update SYSTEM_STATUS.md if you changed systems?
+# [ ] Update CHANGELOG.md if you deployed a feature?
+# [ ] Create/update docs in docs/active/ if significant?
+#
+# Commit format:
+# <emoji> <type>: <subject>
+#
+# Emojis:
+# ✨ New feature
+# 🐛 Bug fix
+# 📚 Documentation
+# ♻️  Refactor
+# 🎨 UI/Design
+# 🔒 Security
+# ⚡ Performance
+# 🔧 Configuration
+
