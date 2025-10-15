@@ -21,27 +21,24 @@ Successfully implemented complete freemium model with intelligent conversion dri
 
 ## 🔓 **ALL PAYWALLS REMOVED - FINAL VERIFICATION**
 
-### **The 6 Main Calculator Tools**
+### **The 6 Calculator Tools**
 
-**Financial Planning Tools (3):**
+**Financial Tools (3):**
 1. ✅ **TSP Modeler** - API paywall removed, full projections for all
 2. ✅ **SDP Strategist** - PaywallWrapper deprecated (shows all)
-3. ✅ **House Hacking** - PaywallWrapper deprecated (shows all)
+3. ✅ **House Hacking Calculator** - PaywallWrapper deprecated (shows all)
 
-**Planning & Logistics Tools (3):**
+**Planning Tools (3):**
 4. ✅ **PCS Financial Planner** - UI paywall removed, full access
-5. ✅ **Salary & Relocation** - Never had paywall, full access
-6. ✅ **On-Base Savings** - PaywallWrapper deprecated (shows all)
-
-**Bonus Tool:**
-7. ✅ **Career Opportunity Analyzer** - No paywall, full access
+5. ✅ **Annual Savings Command Center** - PaywallWrapper deprecated (shows all)
+6. ✅ **Career Opportunity Analyzer** - No paywall, full access
 
 ---
 
 ## 🤖 **AI EXPLAINER - PREVIEW MODE COMPLETE**
 
 ### **Implementation**
-- ✅ All 7 tools have AI Explainer
+- ✅ All 6 tools have AI Explainer
 - ✅ Free users: First 2-3 sentences
 - ✅ Premium users: Complete explanation
 - ✅ Beautiful upgrade CTA with lock icon
@@ -52,11 +49,10 @@ Successfully implemented complete freemium model with intelligent conversion dri
 |------|------------------|--------------|
 | TSP Modeler | ✅ Working | ✅ Active |
 | SDP Strategist | ✅ Working | ✅ Active |
-| House Hacking | ✅ Working | ✅ Active |
-| PCS Planner | ✅ Added | ✅ Active |
-| Salary Calculator | ✅ Added | ✅ Active |
-| On-Base Savings | ✅ Added | ✅ Active |
-| Career Analyzer | ✅ Added | ✅ Active |
+| House Hacking Calculator | ✅ Working | ✅ Active |
+| PCS Financial Planner | ✅ Added | ✅ Active |
+| Annual Savings Command Center | ✅ Added | ✅ Active |
+| Career Opportunity Analyzer | ✅ Added | ✅ Active |
 
 ---
 
@@ -110,7 +106,7 @@ Successfully implemented complete freemium model with intelligent conversion dri
 - ❌ No mention of AI Explainer
 
 ### **After**
-- ✅ "All 6 Calculator Tools - Full access to TSP, SDP, House Hacking, PCS, Salary, Savings"
+- ✅ "All 6 Calculator Tools - TSP, SDP, House Hacking, PCS, Annual Savings, Career Analyzer"
 - ✅ "Intel Library (410+ articles) - 5 articles per day"
 - ✅ "AI Explainer Previews - First 2-3 sentences"
 - ✅ "5 Resource Hub Pages - PCS, Career, Deployment, Shopping, Base Guides"

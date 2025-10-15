@@ -84,7 +84,7 @@ export default async function UpgradePage() {
                   <span className="text-blue-500 text-xl mt-1">✓</span>
                   <div>
                     <div className="font-semibold text-gray-900">All 6 Calculator Tools</div>
-                    <p className="text-sm text-gray-600">Full access to TSP, SDP, House Hacking, PCS, Salary, Savings</p>
+                    <p className="text-sm text-gray-600">TSP, SDP, House Hacking, PCS, Annual Savings, Career Analyzer</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

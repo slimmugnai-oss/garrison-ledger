@@ -37,32 +37,32 @@ Investment and wealth-building focused
    - **API:** `/api/calculators/househack`
    - **Uses:** `PaywallWrapper` (deprecated, now shows all content)
 
-### **Planning & Logistics Tools (3)**
-PCS and career planning focused
+### **Planning Tools (3)**
+PCS, career, and annual savings planning
 
 4. **PCS Financial Planner** (`/dashboard/tools/pcs-planner`)
    - **Component:** `PcsFinancialPlanner.tsx`
    - **Purpose:** Estimate PCS (Permanent Change of Station) costs and reimbursements
-   - **Inputs:** Distance, household goods weight, dependents, DITY move
-   - **Outputs:** Estimated costs, reimbursements, out-of-pocket expenses
+   - **Inputs:** Rank group, dependency status, DLA, per diem, PPM incentive
+   - **Outputs:** Total income, total expenses, net estimate
    - **AI Explainer:** ✅ Yes (ADDED)
    - **Paywall:** ✅ REMOVED
 
-5. **Salary & Relocation Calculator** (`/dashboard/tools/salary-calculator`)
-   - **Component:** `SalaryRelocationCalculator.tsx`
-   - **Purpose:** Compare military vs civilian compensation with location adjustments
-   - **Inputs:** Military pay, civilian offer, locations, benefits
-   - **Outputs:** Total compensation comparison, cost of living adjusted
-   - **AI Explainer:** ✅ Yes (ADDED)
-   - **Paywall:** ✅ None (never had one)
-
-6. **On-Base Savings Calculator** (`/dashboard/tools/on-base-savings`)
+5. **Annual Savings Command Center** (`/dashboard/tools/on-base-savings`)
    - **Component:** `OnBaseSavingsCalculator.tsx`
-   - **Purpose:** Calculate savings from on-base shopping (commissary, exchange)
-   - **Inputs:** Monthly grocery spend, gas spend, other shopping
-   - **Outputs:** Annual savings vs off-base, percentage saved
+   - **Purpose:** Calculate annual savings from on-base shopping (commissary, exchange)
+   - **Inputs:** Commissary spending (meat, pantry, baby), exchange spending, gas gallons
+   - **Outputs:** Commissary savings, exchange savings, grand total annual savings
    - **AI Explainer:** ✅ Yes (ADDED)
    - **Paywall:** ✅ Uses `PaywallWrapper` (deprecated, shows all content)
+
+6. **Career Opportunity Analyzer** (`/dashboard/tools/salary-calculator`)
+   - **Component:** `CareerOpportunityAnalyzer.tsx`
+   - **Purpose:** Compare job offers with total compensation analysis (salary, bonuses, taxes, COL)
+   - **Inputs:** Current job (salary, bonus, city, taxes), new offer (salary, bonus, city, taxes)
+   - **Outputs:** Total compensation, after-tax income, adjusted comparison, executive summary
+   - **AI Explainer:** ✅ Yes (ADDED)
+   - **Paywall:** ✅ None (never had one)
 
 ---
 
@@ -170,12 +170,12 @@ PCS and career planning focused
 ### **Paywall Status**
 | Tool | Component | Paywall Status | Explainer |
 |------|-----------|----------------|-----------|
-| TSP Modeler | `TspModeler.tsx` | ✅ FREE (fixed) | ✅ Preview |
+| TSP Modeler | `TspModeler.tsx` | ✅ FREE (API fixed) | ✅ Preview |
 | SDP Strategist | `SdpStrategist.tsx` | ✅ FREE | ✅ Preview |
 | House Hacking | `HouseHack.tsx` | ✅ FREE | ✅ Preview |
-| PCS Planner | `PcsFinancialPlanner.tsx` | ✅ FREE (fixed) | ✅ Preview (ADDED) |
-| Salary Calculator | `SalaryRelocationCalculator.tsx` | ✅ FREE | ✅ Preview (ADDED) |
-| On-Base Savings | `OnBaseSavingsCalculator.tsx` | ✅ FREE | ✅ Preview (ADDED) |
+| PCS Planner | `PcsFinancialPlanner.tsx` | ✅ FREE (UI fixed) | ✅ Preview (ADDED) |
+| Annual Savings Center | `OnBaseSavingsCalculator.tsx` | ✅ FREE | ✅ Preview (ADDED) |
+| Career Analyzer | `CareerOpportunityAnalyzer.tsx` | ✅ FREE | ✅ Preview (ADDED) |
 
 ### **PaywallWrapper Usage**
 - `SdpStrategist.tsx`: Uses `PaywallWrapper` (deprecated, shows all)

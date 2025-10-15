@@ -123,15 +123,15 @@
 #### 5. **Calculator Tools**
 **Purpose:** Financial planning and logistics calculators
 
-**Financial Planning Tools (3):**
+**Financial Tools (3):**
 1. **TSP Modeler** - Model TSP allocations for retirement
 2. **SDP Strategist** - Savings Deposit Program for deployment
 3. **House Hacking Calculator** - BAH optimization analysis
 
-**Planning & Logistics Tools (3):**
+**Planning Tools (3):**
 4. **PCS Financial Planner** - PCS cost estimation
-5. **Salary & Relocation Calculator** - Military vs civilian pay comparison
-6. **On-Base Savings Calculator** - Commissary/exchange savings
+5. **Annual Savings Command Center** - Commissary/exchange savings calculator
+6. **Career Opportunity Analyzer** - Total compensation comparison (job offers)
 
 **AI Explainer Feature:**
 - All 6 tools have "✨ Explain these results" button
