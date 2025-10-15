@@ -611,7 +611,7 @@ function BinderContent() {
                   type="date"
                   value={uploadExpiryDate}
                   onChange={(e) => setUploadExpiryDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-100"
+                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-100 [color-scheme:dark]"
                 />
               </div>
 
@@ -620,7 +620,7 @@ function BinderContent() {
                   ref={fileInputRef}
                   type="file"
                   onChange={handleFileSelect}
-                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#00E5A0] file:text-[#0A0F1E] hover:file:bg-[#00CC8E]"
+                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#00E5A0] file:text-[#0A0F1E] hover:file:bg-[#00CC8E]"
                 />
                 {uploadFile && (
                   <div className="mt-2 text-sm text-gray-300">
