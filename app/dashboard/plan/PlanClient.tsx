@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
@@ -57,8 +56,6 @@ const toolPaths: Record<string, string> = {
 };
 
 export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
   const [readBlocks, setReadBlocks] = useState<Set<string>>(new Set());
@@ -630,7 +627,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                 {/* Next Steps */}
                 <AnimatedCard>
                   <div className="p-8">
-                    <h3 className="text-xl font-serif font-bold text-text mb-4">What's Next?</h3>
+                    <h3 className="text-xl font-serif font-bold text-text mb-4">What&apos;s Next?</h3>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="bg-blue-50 rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">

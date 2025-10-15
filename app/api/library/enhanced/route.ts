@@ -44,14 +44,6 @@ export async function GET(req: NextRequest) {
   // Check premium status
   // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
   // Rate limiting is handled by the frontend and /api/library/can-view endpoint
-  
-  const { data: entitlementData } = await supabaseAdmin
-    .from("entitlements")
-    .select("tier, status")
-    .eq("user_id", userId)
-    .maybeSingle();
-  
-  const isPremium = entitlementData?.tier === "premium" && entitlementData?.status === "active";
 
   const searchParams = req.nextUrl.searchParams;
   const section = searchParams.get("section") || "all"; // all, personalized, trending
