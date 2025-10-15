@@ -108,10 +108,16 @@ export default function Header() {
                       Your Command Center
                     </div>
                     <Link href="/dashboard" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
-                      isActivePath('/dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                      pathname === '/dashboard' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                     }`}>
                       <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-blue-500" />
                       Dashboard Overview
+                    </Link>
+                    <Link href="/dashboard/plan" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/plan') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500" />
+                      Your AI Plan
                     </Link>
                     <Link href="/dashboard/assessment" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
                       isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
@@ -410,12 +416,22 @@ export default function Header() {
                       <Link 
                         href="/dashboard" 
                         className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
-                          isActivePath('/dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                          pathname === '/dashboard' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-blue-500" />
                         Dashboard Overview
+                      </Link>
+                      <Link 
+                        href="/dashboard/plan" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/plan') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500" />
+                        Your AI Plan
                       </Link>
                       <Link 
                         href="/dashboard/assessment" 

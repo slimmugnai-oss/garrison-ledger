@@ -9,22 +9,22 @@ import Badge from './components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Garrison Ledger - Intelligent Planning for Military Life",
-  description: "Comprehensive planning platform for military families. Personalized guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization. Includes TSP calculator, SDP strategist, house hacking tools, and curated content across 5 military life domains.",
+  title: "Garrison Ledger - AI-Powered Financial Planning for Military Life",
+  description: "Get your personalized military financial plan in minutes. AI analyzes your profile and curates 8-10 expert content blocks tailored to your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS planner, and house hacking tools.",
   path: "/",
   keywords: [
+    "AI military financial planning",
+    "personalized military planning",
     "military life planning",
     "military PCS planning",
-    "deployment preparation",
-    "military spouse career",
     "TSP optimizer",
     "SDP calculator",
     "house hacking military",
-    "on-base shopping guide",
+    "military financial advisor",
+    "deployment preparation",
+    "military spouse career",
     "military base guides",
-    "military family resources",
-    "BRS retirement calculator",
-    "military relocation"
+    "military family resources"
   ]
 });
 
@@ -51,7 +51,7 @@ export default function Home() {
 
           {/* Subtitle - Readable muted tone */}
           <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
-            Personalized planning for every aspect of military life. Get guidance for PCS moves, career development, deployment prep, on-base living, and financial optimization.
+            AI-powered financial planning for military life. Get your personalized plan with expert content curated specifically for your rank, situation, and goals.
           </p>
 
           {/* CTAs */}
@@ -101,7 +101,7 @@ export default function Home() {
               How It Works
             </h2>
             <p className="text-xl text-text-body max-w-2xl mx-auto">
-              Get your personalized military financial roadmap in three simple steps
+              AI analyzes your military profile and curates a personalized financial plan in minutes
             </p>
           </div>
 
@@ -111,8 +111,8 @@ export default function Home() {
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
                   1
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Take Assessment</h3>
-                <p className="text-text-body">Complete our 6-section strategic assessment (5-7 minutes) to share your situation and goals.</p>
+                <h3 className="text-2xl font-bold text-text-headings mb-3">Complete Your Profile</h3>
+                <p className="text-text-body">Share your rank, branch, base, family situation, and financial goals (3 minutes).</p>
               </div>
             </AnimatedCard>
 
@@ -121,8 +121,8 @@ export default function Home() {
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
                   2
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Get Your Plan</h3>
-                <p className="text-text-body">Our intelligent engine curates 3-5 specific resources from our toolkit hubs tailored to your needs.</p>
+                <h3 className="text-2xl font-bold text-text-headings mb-3">Take Quick Assessment</h3>
+                <p className="text-text-body">Answer ~6 adaptive questions about your biggest concerns and priorities (5 minutes).</p>
               </div>
             </AnimatedCard>
 
@@ -131,8 +131,8 @@ export default function Home() {
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
                   3
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Take Action</h3>
-                <p className="text-text-body">Use our Wealth-Builder tools and your personalized roadmap to optimize your financial future.</p>
+                <h3 className="text-2xl font-bold text-text-headings mb-3">Get AI-Curated Plan</h3>
+                <p className="text-text-body">AI selects 8-10 expert content blocks and weaves them into your personalized action plan.</p>
               </div>
             </AnimatedCard>
           </div>
