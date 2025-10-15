@@ -74,6 +74,7 @@ function BinderContent() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<BinderFile | null>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
@@ -128,6 +129,7 @@ function BinderContent() {
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setUploadFile(file);
 
     if (!storage) return;
 
@@ -137,6 +139,10 @@ function BinderContent() {
       );
       return;
     }
+  }
+
+  async function handleUpload() {
+    if (!uploadFile || !storage) return;
 
     setUploading(true);
 
@@ -147,9 +153,9 @@ function BinderContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           folder: uploadFolder,
-          displayName: file.name,
-          contentType: file.type,
-          sizeBytes: file.size,
+          displayName: uploadFile.name,
+          contentType: uploadFile.type,
+          sizeBytes: uploadFile.size,
           docType: uploadDocType,
           expiresOn: uploadExpiryDate || null
         })
@@ -163,14 +169,11 @@ function BinderContent() {
       }
 
       // Upload file to Supabase Storage
-      const formData = new FormData();
-      formData.append("file", file);
-
       const storageResponse = await fetch(uploadData.uploadUrl, {
         method: "PUT",
-        body: file,
+        body: uploadFile,
         headers: {
-          "Content-Type": file.type,
+          "Content-Type": uploadFile.type,
           "x-upsert": "false"
         }
       });
@@ -181,7 +184,10 @@ function BinderContent() {
       }
 
       setShowUploadModal(false);
+      setUploadFile(null);
       setUploadExpiryDate("");
+      setUploadFolder("Personal Records");
+      setUploadDocType("other");
       loadFiles();
     } catch (error) {
       console.error("Upload error:", error);
@@ -616,9 +622,9 @@ function BinderContent() {
                   onChange={handleFileSelect}
                   className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#00E5A0] file:text-[#0A0F1E] hover:file:bg-[#00CC8E]"
                 />
-                {selectedFile && (
+                {uploadFile && (
                   <div className="mt-2 text-sm text-gray-300">
-                    Selected: {selectedFile.name}
+                    Selected: {uploadFile.name}
                   </div>
                 )}
               </div>
@@ -631,6 +637,13 @@ function BinderContent() {
                 className="flex-1 px-4 py-2 bg-[#2A2F3E] text-gray-100 rounded-lg hover:bg-[#3A3F4E] transition-colors disabled:opacity-50"
               >
                 Cancel
+              </button>
+              <button
+                onClick={handleUpload}
+                disabled={uploading || !uploadFile}
+                className="flex-1 px-4 py-2 bg-[#00E5A0] text-[#0A0F1E] rounded-lg hover:bg-[#00CC8E] transition-colors disabled:opacity-50"
+              >
+                {uploading ? "Uploading..." : "Upload"}
               </button>
             </div>
 
