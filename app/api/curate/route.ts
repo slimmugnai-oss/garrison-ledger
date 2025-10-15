@@ -12,10 +12,13 @@ export const maxDuration = 30;
 
 const SYSTEM_PROMPT = `You are the Lead Staff Writer for the Garrison Ledger, an expert on military family life. Your task is to take a raw article and transform it into a hand-curated "atomic" content block.
 
-Your output must be a valid JSON object with exactly three keys:
+Your output must be a valid JSON object with these keys:
 1. "html" - A 200-350 word, professionally formatted HTML article in our brand voice. Use semantic HTML tags (h3, p, ul, li, strong, em). Write in a clear, authoritative, but warm tone. Focus on actionable guidance.
 2. "summary" - A 1-2 sentence concise summary (under 150 characters).
 3. "tags" - An array of 3-7 relevant keywords (lowercase, hyphenated format like "pcs-planning", "tsp-allocation").
+4. "domain" - Primary category: "finance", "pcs", "career", "deployment", or "lifestyle"
+5. "difficulty" - Content complexity: "beginner", "intermediate", or "advanced"
+6. "seoKeywords" - Array of 4-5 SEO-optimized keywords for search discoverability
 
 Guidelines:
 - Write for E-3 to O-6 audience (accessible but professional)
@@ -24,6 +27,9 @@ Guidelines:
 - Use military-specific keywords naturally
 - Keep HTML clean and semantic (no inline styles)
 - Tags should be specific and useful for categorization
+- Domain should match the primary topic (finance is most common)
+- Difficulty based on content complexity (most should be intermediate)
+- SEO keywords should include variations and related terms
 
 Return ONLY valid JSON. No markdown code blocks, no explanations outside the JSON.`;
 
@@ -114,12 +120,15 @@ Please analyze this article and create a curated atomic content block following 
       );
     }
 
-    // Return curated content
+    // Return curated content with enhanced metadata
     return NextResponse.json({
       success: true,
       html: curated.html,
       summary: curated.summary,
       tags: Array.isArray(curated.tags) ? curated.tags : [],
+      domain: curated.domain || 'finance',
+      difficulty: curated.difficulty || 'intermediate',
+      seoKeywords: Array.isArray(curated.seoKeywords) ? curated.seoKeywords : curated.tags?.slice(0, 5) || [],
     });
 
   } catch (error) {

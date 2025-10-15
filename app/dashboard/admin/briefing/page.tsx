@@ -30,6 +30,9 @@ export default function BriefingAdminPage() {
   const [editSummary, setEditSummary] = useState('');
   const [editHTML, setEditHTML] = useState('');
   const [editTags, setEditTags] = useState<string[]>([]);
+  const [editDomain, setEditDomain] = useState<string>('finance');
+  const [editDifficulty, setEditDifficulty] = useState<string>('intermediate');
+  const [editSEOKeywords, setEditSEOKeywords] = useState<string[]>([]);
   const [promoting, setPromoting] = useState(false);
   const [curating, setCurating] = useState(false);
 
@@ -67,6 +70,10 @@ export default function BriefingAdminPage() {
       setEditSummary(selectedItem.summary || '');
       setEditHTML(selectedItem.raw_html || '');
       setEditTags(selectedItem.tags || []);
+      // Reset AI-suggested fields
+      setEditDomain('finance');
+      setEditDifficulty('intermediate');
+      setEditSEOKeywords([]);
     }
   }, [selectedItem]);
 
@@ -83,7 +90,39 @@ export default function BriefingAdminPage() {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
       
-      // Insert into content_blocks
+      // Extract text content from HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = editHTML;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      // Use AI-provided domain or auto-detect from tags
+      let domain = editDomain; // Use AI suggestion if available
+      if (domain === 'finance') { // If still default, try auto-detect
+        const tagString = editTags.join(' ').toLowerCase();
+        if (tagString.includes('pcs') || tagString.includes('relocation')) domain = 'pcs';
+        else if (tagString.includes('career') || tagString.includes('employment')) domain = 'career';
+        else if (tagString.includes('deployment') || tagString.includes('combat')) domain = 'deployment';
+        else if (tagString.includes('lifestyle') || tagString.includes('family')) domain = 'lifestyle';
+      }
+      
+      // Use AI-provided difficulty or auto-detect
+      let difficulty = editDifficulty; // Use AI suggestion if available
+      if (difficulty === 'intermediate') { // If still default, try auto-detect
+        const wordCount = textContent.split(/\s+/).length;
+        difficulty = wordCount < 200 ? 'beginner' : wordCount > 400 ? 'advanced' : 'intermediate';
+      }
+      
+      // Auto-detect audience (AI doesn't provide this yet)
+      const tagString = editTags.join(' ').toLowerCase();
+      const audience = ['military-member', 'military-spouse']; // Default to both
+      if (tagString.includes('officer')) audience.push('officer');
+      if (tagString.includes('spouse')) audience.push('military-spouse');
+      if (tagString.includes('family') || tagString.includes('children')) audience.push('family');
+      
+      // Use AI-provided SEO keywords or generate from tags
+      const seoKeywords = editSEOKeywords.length > 0 ? editSEOKeywords : editTags.slice(0, 5);
+      
+      // Insert into content_blocks with enhanced metadata
       const { error: insertError } = await supabase
         .from('content_blocks')
         .insert({
@@ -91,11 +130,21 @@ export default function BriefingAdminPage() {
           title: editTitle,
           summary: editSummary,
           html: editHTML,
-          type: 'article', // Default type, admin can change later
+          text_content: textContent,
+          block_type: 'guide', // Default type
           tags: editTags,
           topics: editTags.slice(0, 3), // Use first 3 tags as topics
           source_page: selectedItem.source_id,
-          est_read_min: Math.ceil(editHTML.length / 1000), // Rough estimate
+          est_read_min: Math.max(1, Math.ceil(wordCount / 200)), // 200 words per minute
+          domain,
+          difficulty_level: difficulty,
+          target_audience: audience,
+          seo_keywords: seoKeywords,
+          content_rating: 3.0, // Default rating, can be adjusted later
+          content_freshness_score: 100, // New content gets max freshness
+          content_version: 1,
+          last_reviewed_at: new Date().toISOString(),
+          next_review_due: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days
         });
       
       if (insertError) {
@@ -168,12 +217,15 @@ export default function BriefingAdminPage() {
         return;
       }
       
-      // Populate editor with AI-curated content
+      // Populate editor with AI-curated content and metadata
       setEditHTML(data.html);
       setEditSummary(data.summary);
       setEditTags(data.tags);
+      setEditDomain(data.domain || 'finance');
+      setEditDifficulty(data.difficulty || 'intermediate');
+      setEditSEOKeywords(data.seoKeywords || data.tags?.slice(0, 5) || []);
       
-      alert('✨ Content curated by AI! Review and edit before promoting.');
+      alert('✨ Content curated by AI with smart metadata! Review and edit before promoting.');
       
     } catch (error) {
       console.error('Auto-curation error:', error);
@@ -352,6 +404,50 @@ export default function BriefingAdminPage() {
                       onChange={(e) => setEditTags(e.target.value.split(',').map(t => t.trim()).filter(Boolean))}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
+                  </div>
+
+                  {/* Metadata Controls */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Domain</label>
+                      <select
+                        value={editDomain}
+                        onChange={(e) => setEditDomain(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      >
+                        <option value="finance">Finance</option>
+                        <option value="pcs">PCS</option>
+                        <option value="career">Career</option>
+                        <option value="deployment">Deployment</option>
+                        <option value="lifestyle">Lifestyle</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Difficulty</label>
+                      <select
+                        value={editDifficulty}
+                        onChange={(e) => setEditDifficulty(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      >
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">SEO Keywords (comma-separated)</label>
+                    <input
+                      type="text"
+                      value={editSEOKeywords.join(', ')}
+                      onChange={(e) => setEditSEOKeywords(e.target.value.split(',').map(k => k.trim()).filter(Boolean))}
+                      placeholder="Auto-populated by AI or uses tags"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      ✨ Auto-populated when you use AI curation
+                    </p>
                   </div>
 
                   {/* Preview */}

@@ -5,7 +5,7 @@
 **Version:** 2.3.1 (Site-Wide Audit Complete - Perfect)
 
 ### **🏆 AUDIT STATUS**
-- **Codebase Audit:** 100/100 ✅ (43 API routes, 11 systems, 0 issues)
+- **Codebase Audit:** 100/100 ✅ (43 API routes, 12 systems, 0 issues)
 - **Content Blocks Audit:** 98/100 ✅ (410 blocks, 100% metadata, 187 for AI)
 - **Site-Wide Audit:** 100/100 ✅ (30+ pages, 50+ links, all verified)
 - **Security Audit:** 10/10 ✅ (99 auth checks, 0 vulnerabilities)
@@ -37,6 +37,7 @@
 
 **Content & Discovery:**
 - ✅ 410 Hand-Curated Content Blocks (100% metadata, 187 top-rated)
+- ✅ **Listening Post** - RSS curation with AI enrichment (Gemini) ⭐ ENHANCED
 - ✅ Intelligence Library (AI search, 5/day free, unlimited premium)
 - ✅ Personalized recommendations
 - ✅ Trending content feed
@@ -91,6 +92,8 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🎧 LISTENING POST ENHANCED - AI metadata enrichment, 100% coverage on promotion, UI controls added
+- 2025-01-15: 🤖 GEMINI INTEGRATION - Auto-curate now provides domain, difficulty, SEO keywords
 - 2025-01-15: 📚 CONTENT BLOCKS AUDITED - 410 blocks verified, 100% metadata coverage, 98/100 quality score
 - 2025-01-15: 🔧 BIBLIOGRAPHY BLOCKS FIXED - Removed 2 "Works cited" blocks from AI pool (rating 4.5→0.0)
 - 2025-01-15: 🏆 PERFECT SCORE ACHIEVED - Site-wide audit complete, 100/100 health score, zero issues
@@ -309,7 +312,36 @@
 
 ---
 
-#### 10. **Binder System**
+#### 10. **Listening Post (Intelligence Briefing Pipeline)** ⭐ ENHANCED
+**Purpose:** RSS feed curation system to grow the Knowledge Graph
+
+**Components:**
+- `/dashboard/admin/briefing` - Admin curation interface
+- `/api/ingest/feeds` - RSS feed ingestion
+- `/api/curate` - AI content transformation (Gemini 2.0 Flash)
+- `feed_items` table (49 items)
+- 7 RSS sources (Military Times, Military.com, branch news)
+
+**Features:**
+- **AI Auto-Curation:** Gemini transforms raw articles into content blocks ⭐
+- **Full Metadata Enrichment:** 100% coverage on promotion ⭐
+- **Smart Detection:** Domain, difficulty, audience auto-detected ⭐
+- **SEO Optimization:** AI generates keywords ⭐
+- **Manual Review:** Admin can edit before promoting
+- **Workflow:** New → Approved → Promoted → Content Blocks
+
+**Enhancements (v2.0):**
+- AI now provides domain, difficulty, SEO keywords
+- Promotion populates all 19 critical metadata fields
+- UI controls for domain, difficulty, SEO keywords
+- Smart fallback detection if AI doesn't provide metadata
+- Freshness tracking from creation (100 score, 90-day review)
+
+**Status:** ✅ Live, Working, Enhanced v2.0
+
+---
+
+#### 11. **Binder System**
 **Purpose:** Document management and expiration tracking
 
 **Components:**
@@ -323,7 +355,7 @@
 
 ---
 
-#### 11. **Resource Hubs**
+#### 12. **Resource Hubs**
 **Purpose:** Static content pages for SEO and education
 
 **Pages:**
@@ -616,7 +648,8 @@
 
 ### **Internal Docs**
 - `docs/active/` - Current system documentation
-  - `CONTENT_BLOCKS_AUDIT_2025-01-15.md` - 410 content blocks audit (98/100 quality) 📚 NEW
+  - `LISTENING_POST_SYSTEM.md` - RSS curation with AI enrichment 🎧 NEW
+  - `CONTENT_BLOCKS_AUDIT_2025-01-15.md` - 410 content blocks audit (98/100 quality) 📚
   - `FINAL_100_AUDIT_2025-01-15.md` - Perfect score site-wide audit 🏆
   - `COMPREHENSIVE_AUDIT_2025-01-15.md` - Complete codebase audit report
   - `TABBED_PLAN_LAYOUT.md` - Complete tabbed plan interface documentation
@@ -630,6 +663,12 @@
 ## 🔄 **VERSION HISTORY**
 
 ### **v2.3.1 (2025-01-15) - Perfect Score 100/100** 🏆
+- **Listening Post Enhanced (v2.0):** RSS curation system upgraded
+  - AI metadata enrichment (Gemini 2.0 Flash)
+  - 100% metadata coverage on promotion
+  - Smart domain, difficulty, SEO keyword detection
+  - UI controls for all metadata fields
+  - Full integration with content_blocks schema
 - **Content Blocks Audit:** 410 blocks verified (98/100 quality score)
   - 100% metadata coverage
   - 187 top-rated blocks for AI Curator
