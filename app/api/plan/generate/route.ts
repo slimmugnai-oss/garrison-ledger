@@ -272,7 +272,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
     }));
 
     const curationCompletion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini", // Use mini for speed and cost (curation is simpler task)
       messages: [
         {
           role: "system",
@@ -287,7 +287,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
         }
       ],
       temperature: 0.4,
-      max_tokens: 2000,
+      max_tokens: 1500, // Reduced - we only need block IDs and reasons
       response_format: { type: "json_object" }
     });
 
@@ -319,7 +319,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
     });
 
     const narrativeCompletion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini", // Use mini for speed - narrative writing is well within mini's capability
       messages: [
         {
           role: "system",
@@ -334,7 +334,7 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
         }
       ],
       temperature: 0.6,
-      max_tokens: 3000,
+      max_tokens: 2500, // Reduced slightly for speed
       response_format: { type: "json_object" }
     });
 
