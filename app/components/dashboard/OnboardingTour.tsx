@@ -13,7 +13,6 @@ interface OnboardingTourProps {
 
 export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasPlan }: OnboardingTourProps) {
   const [dismissed, setDismissed] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
 
   // Check if user has seen the tour before
   useEffect(() => {
@@ -22,21 +21,6 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
       setDismissed(true);
     }
   }, [userId]);
-
-  // Auto-dismiss if user has completed everything
-  useEffect(() => {
-    if (hasProfile && hasAssessment && hasPlan) {
-      handleComplete();
-    }
-  }, [hasProfile, hasAssessment, hasPlan]);
-
-  // Update current step based on progress
-  useEffect(() => {
-    if (!hasProfile) setCurrentStep(1);
-    else if (!hasAssessment) setCurrentStep(2);
-    else if (!hasPlan) setCurrentStep(3);
-    else setCurrentStep(4); // Complete
-  }, [hasProfile, hasAssessment, hasPlan]);
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -47,6 +31,13 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
     setDismissed(true);
     localStorage.setItem(`gl:onboarding-tour-${userId}`, 'completed');
   };
+
+  // Auto-dismiss if user has completed everything
+  useEffect(() => {
+    if (hasProfile && hasAssessment && hasPlan) {
+      handleComplete();
+    }
+  }, [hasProfile, hasAssessment, hasPlan, handleComplete]);
 
   if (dismissed || (hasProfile && hasAssessment && hasPlan)) {
     return null;

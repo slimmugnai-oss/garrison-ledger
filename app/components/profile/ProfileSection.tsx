@@ -13,7 +13,6 @@ interface ProfileSectionProps {
 }
 
 export default function ProfileSection({
-  number,
   title,
   icon,
   description,

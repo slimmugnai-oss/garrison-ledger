@@ -383,7 +383,7 @@ export default async function CommandDashboard() {
                         {(() => {
                           // Required fields (70% weight)
                           let required = 0;
-                          let requiredTotal = 10;
+                          const requiredTotal = 10;
                           if (profileRow?.age) required++;
                           if (profileRow?.gender) required++;
                           if (profileRow?.years_of_service) required++;
@@ -397,7 +397,7 @@ export default async function CommandDashboard() {
                           
                           // High-value optional fields (30% weight)
                           let optional = 0;
-                          let optionalTotal = 10;
+                          const optionalTotal = 10;
                           if (profileRow?.current_base) optional++;
                           if (profileRow?.mos_afsc_rate) optional++;
                           if (profileRow?.clearance_level) optional++;
