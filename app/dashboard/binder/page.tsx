@@ -570,7 +570,7 @@ function BinderContent() {
                 <select
                   value={uploadFolder}
                   onChange={(e) => setUploadFolder(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg"
+                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-100"
                 >
                   {FOLDERS.map((folder) => (
                     <option key={folder.name} value={folder.name}>
@@ -587,7 +587,7 @@ function BinderContent() {
                 <select
                   value={uploadDocType}
                   onChange={(e) => setUploadDocType(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg"
+                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-100"
                 >
                   {DOC_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -605,7 +605,7 @@ function BinderContent() {
                   type="date"
                   value={uploadExpiryDate}
                   onChange={(e) => setUploadExpiryDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg"
+                  className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-gray-100"
                 />
               </div>
 
@@ -623,14 +623,14 @@ function BinderContent() {
               <button
                 onClick={() => setShowUploadModal(false)}
                 disabled={uploading}
-                className="flex-1 px-4 py-2 bg-[#2A2F3E] rounded-lg hover:bg-[#3A3F4E] transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-[#2A2F3E] text-gray-100 rounded-lg hover:bg-[#3A3F4E] transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
             </div>
 
             {uploading && (
-              <div className="mt-4 text-center text-sm text-gray-400">
+              <div className="mt-4 text-center text-sm text-gray-300">
                 Uploading...
               </div>
             )}
