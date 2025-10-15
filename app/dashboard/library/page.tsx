@@ -644,7 +644,7 @@ function IntelligenceLibraryContent() {
                               <span>🔗</span> Related Content
                             </h4>
                             <div className="space-y-2">
-                              {relatedBlocks[block.id].map((related: any) => (
+                              {relatedBlocks[block.id].map((related: { content_id: string; title: string; content_domain: string; similarity_score: number }) => (
                                 <button
                                   key={related.content_id}
                                   onClick={() => toggleExpand(related.content_id)}

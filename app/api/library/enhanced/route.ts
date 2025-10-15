@@ -10,6 +10,30 @@ export const maxDuration = 30;
  * Provides personalized, trending, and intelligent content discovery
  */
 
+interface PersonalizedContent {
+  content_id: string;
+  relevance_score: number;
+}
+
+interface TrendingContent {
+  content_id: string;
+  trend_score: number;
+  total_views: number;
+}
+
+interface SearchContent {
+  content_id: string;
+  relevance_score: number;
+}
+
+interface ContentBlock {
+  id: string;
+  relevance_score?: number;
+  trend_score?: number;
+  total_views?: number;
+  [key: string]: unknown;
+}
+
 export async function GET(req: NextRequest) {
   // Auth check
   const { userId } = await auth();
@@ -59,15 +83,16 @@ export async function GET(req: NextRequest) {
       
       // Fetch full content details
       if (personalizedData && personalizedData.length > 0) {
-        const ids = personalizedData.map((item: any) => item.content_id);
+        const typedData = personalizedData as PersonalizedContent[];
+        const ids = typedData.map((item) => item.content_id);
         const { data: fullData } = await supabaseAdmin
           .from('content_blocks')
           .select('id, title, summary, html, domain, difficulty_level, target_audience, content_rating, content_freshness_score, est_read_min, tags, seo_keywords')
           .in('id', ids);
         
         // Merge relevance scores with full data
-        data = fullData?.map((block: any) => {
-          const match = personalizedData.find((p: any) => p.content_id === block.id);
+        data = fullData?.map((block) => {
+          const match = typedData.find((p) => p.content_id === block.id);
           return {
             ...block,
             relevance_score: match?.relevance_score || 0
@@ -75,7 +100,7 @@ export async function GET(req: NextRequest) {
         }) || [];
         
         // Sort by relevance score
-        data.sort((a: any, b: any) => b.relevance_score - a.relevance_score);
+        data.sort((a: ContentBlock, b: ContentBlock) => (b.relevance_score || 0) - (a.relevance_score || 0));
         count = data.length;
       }
     }
@@ -91,15 +116,16 @@ export async function GET(req: NextRequest) {
       
       // Fetch full content details
       if (trendingData && trendingData.length > 0) {
-        const ids = trendingData.map((item: any) => item.content_id);
+        const typedData = trendingData as TrendingContent[];
+        const ids = typedData.map((item) => item.content_id);
         const { data: fullData } = await supabaseAdmin
           .from('content_blocks')
           .select('id, title, summary, html, domain, difficulty_level, target_audience, content_rating, content_freshness_score, est_read_min, tags, seo_keywords')
           .in('id', ids);
         
         // Merge trend scores with full data
-        data = fullData?.map((block: any) => {
-          const match = trendingData.find((t: any) => t.content_id === block.id);
+        data = fullData?.map((block) => {
+          const match = typedData.find((t) => t.content_id === block.id);
           return {
             ...block,
             trend_score: match?.trend_score || 0,
@@ -108,7 +134,7 @@ export async function GET(req: NextRequest) {
         }) || [];
         
         // Sort by trend score
-        data.sort((a: any, b: any) => b.trend_score - a.trend_score);
+        data.sort((a: ContentBlock, b: ContentBlock) => (b.trend_score || 0) - (a.trend_score || 0));
         count = data.length;
       }
     }
@@ -128,15 +154,16 @@ export async function GET(req: NextRequest) {
       
       // Fetch full content details
       if (searchData && searchData.length > 0) {
-        const ids = searchData.map((item: any) => item.content_id);
+        const typedData = searchData as SearchContent[];
+        const ids = typedData.map((item) => item.content_id);
         const { data: fullData } = await supabaseAdmin
           .from('content_blocks')
           .select('id, title, summary, html, domain, difficulty_level, target_audience, content_rating, content_freshness_score, est_read_min, tags, seo_keywords')
           .in('id', ids);
         
         // Merge relevance scores with full data
-        data = fullData?.map((block: any) => {
-          const match = searchData.find((s: any) => s.content_id === block.id);
+        data = fullData?.map((block) => {
+          const match = typedData.find((s) => s.content_id === block.id);
           return {
             ...block,
             relevance_score: match?.relevance_score || 0
@@ -144,7 +171,7 @@ export async function GET(req: NextRequest) {
         }) || [];
         
         // Sort by relevance score
-        data.sort((a: any, b: any) => b.relevance_score - a.relevance_score);
+        data.sort((a: ContentBlock, b: ContentBlock) => (b.relevance_score || 0) - (a.relevance_score || 0));
         count = data.length;
         
         // Apply pagination
