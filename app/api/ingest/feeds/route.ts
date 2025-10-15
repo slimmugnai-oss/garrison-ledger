@@ -143,10 +143,19 @@ async function processWebScrape(
   try {
     console.log(`[Scrape] Processing: ${source.id}`);
     
-    // Fetch the index page
+    // Fetch the index page with realistic browser headers
     const response = await fetch(source.url, {
       headers: {
-        'User-Agent': 'GarrisonLedger/1.0 (+https://app.familymedia.com)'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Upgrade-Insecure-Requests': '1'
       }
     });
     
@@ -201,9 +210,14 @@ async function processWebScrape(
       try {
         const articleResponse = await fetch(link, {
           headers: {
-            'User-Agent': 'GarrisonLedger/1.0 (+https://app.familymedia.com)'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           },
-          signal: AbortSignal.timeout(10000) // 10s timeout per article
+          signal: AbortSignal.timeout(15000) // 15s timeout per article
         });
         
         if (!articleResponse.ok) continue;
@@ -256,8 +270,8 @@ async function processWebScrape(
           errors.push(`${link}: ${insertError.message}`);
         }
         
-        // Rate limit: wait 1s between article fetches
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Rate limit: wait 2s between article fetches to be respectful
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
       } catch (articleError) {
         console.error(`[Scrape] Failed to fetch article ${link}:`, articleError);
@@ -301,9 +315,14 @@ export async function GET(req: NextRequest) {
   }
   
   const parser = new Parser({
-    timeout: 10000,
+    timeout: 15000,
     headers: {
-      'User-Agent': 'GarrisonLedger/1.0 (+https://app.familymedia.com)'
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
     }
   });
   
@@ -311,8 +330,9 @@ export async function GET(req: NextRequest) {
   let totalNew = 0;
   const allErrors: string[] = [];
   
-  // Process each source based on type
-  for (const source of sources) {
+  // Process each source based on type with rate limiting
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i];
     try {
       let result;
       
@@ -328,6 +348,11 @@ export async function GET(req: NextRequest) {
       totalProcessed += result.processed;
       totalNew += result.new;
       allErrors.push(...result.errors);
+      
+      // Rate limit: wait 3s between sources to be respectful
+      if (i < sources.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
       
     } catch (error) {
       console.error(`[Ingest] Fatal error processing ${source.id}:`, error);
