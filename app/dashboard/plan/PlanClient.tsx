@@ -145,7 +145,7 @@ export default function PlanClient({ initialPlan }: PlanClientProps) {
                           <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm">
                             {index + 1}
                           </span>
-                          <Badge variant="secondary" className="capitalize">{block.domain}</Badge>
+                          <Badge variant="secondary"><span className="capitalize">{block.domain}</span></Badge>
                           <span className="text-sm text-text-muted">{block.est_read_min} min read</span>
                         </div>
                         <h3 className="text-xl font-serif font-bold text-text mb-2">
