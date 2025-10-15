@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 import { supabaseAdmin } from '@/lib/supabase';
@@ -135,7 +134,7 @@ interface ContentBlock {
   content_rating: number;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -372,11 +371,11 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
       plan: personalizedPlan
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Plan Generation] Error:', error);
     return NextResponse.json({ 
       error: "Failed to generate personalized plan",
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

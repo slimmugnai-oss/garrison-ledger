@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from '@/lib/supabase';
 
@@ -17,7 +17,7 @@ export const runtime = "nodejs";
  * 4. Trigger new plan generation via /api/plan/generate
  */
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -83,11 +83,11 @@ export async function POST(req: NextRequest) {
       message: "Plan regenerated successfully" 
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Plan Regenerate] Error:', error);
     return NextResponse.json({ 
       error: "Failed to regenerate plan",
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

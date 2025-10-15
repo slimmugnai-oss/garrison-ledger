@@ -4,7 +4,6 @@ import Footer from "./components/Footer";
 import { SignedIn, SignedOut, SignUpButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import AnimatedCard from './components/ui/AnimatedCard';
-import StatCard from './components/ui/StatCard';
 import Badge from './components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
 

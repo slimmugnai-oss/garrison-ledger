@@ -60,11 +60,11 @@ export async function POST(req: NextRequest) {
       message: "Assessment completed successfully"
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Assessment Complete] Error:', error);
     return NextResponse.json({ 
       error: "Failed to complete assessment",
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

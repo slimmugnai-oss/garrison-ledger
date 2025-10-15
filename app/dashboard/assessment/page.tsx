@@ -9,14 +9,6 @@ export const metadata: Metadata = {
   description: 'Quick adaptive assessment to generate your AI-curated personalized financial plan with expert content tailored to your military situation.',
 };
 
-type Question = {
-  id: string;
-  question: string;
-  type: 'select' | 'multiselect' | 'text' | 'number';
-  options?: string[];
-  context?: string;
-};
-
 export default async function AdaptiveAssessmentPage() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');
