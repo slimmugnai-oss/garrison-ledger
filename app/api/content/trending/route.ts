@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -7,10 +7,8 @@ export async function GET(request: Request) {
     const days = parseInt(searchParams.get('days') || '7');
     const limit = parseInt(searchParams.get('limit') || '10');
 
-    const supabase = createClient();
-
     // Get trending content
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .rpc('get_trending_content', {
         p_days: days,
         p_limit: limit

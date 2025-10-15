@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -13,10 +13,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
 
-    const supabase = createClient();
-
     // Get personalized content recommendations
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .rpc('get_personalized_content', {
         p_user_id: userId,
         p_limit: limit

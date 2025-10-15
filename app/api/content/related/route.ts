@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -14,10 +14,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const supabase = createClient();
-
     // Get related content
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .rpc('get_related_content', {
         p_content_id: contentId,
         p_limit: limit

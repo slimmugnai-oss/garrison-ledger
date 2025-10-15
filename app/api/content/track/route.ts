@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -29,10 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createClient();
-
     // Track the interaction
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .rpc('track_content_interaction', {
         p_user_id: userId,
         p_content_id: contentId,

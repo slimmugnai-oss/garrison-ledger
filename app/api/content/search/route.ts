@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -18,10 +18,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const supabase = createClient();
-
     // Use advanced search function
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .rpc('search_content', {
         p_search_query: query,
         p_domain: domain,
