@@ -79,7 +79,37 @@ async function processRSSFeed(
   
   try {
     console.log(`[RSS] Processing: ${source.id}`);
-    const feedData = await parser.parseURL(source.url);
+    
+    // Try to fetch and parse the feed with better error handling
+    let feedData;
+    try {
+      feedData = await parser.parseURL(source.url);
+    } catch (parseError) {
+      // If parsing fails, try to get raw content and clean it
+      console.log(`[RSS] Parse failed for ${source.id}, trying raw fetch...`);
+      const response = await fetch(source.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+          'Accept-Language': 'en-US,en;q=0.9'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      let xmlContent = await response.text();
+      
+      // Clean up common XML issues
+      xmlContent = xmlContent
+        .replace(/^\s*[\u0000-\u001F\u007F-\u009F]+/, '') // Remove control characters at start
+        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove all control characters
+        .trim();
+      
+      // Try parsing the cleaned content
+      feedData = await parser.parseString(xmlContent);
+    }
     
     for (const item of feedData.items.slice(0, 10)) {
       if (!item.link) continue;
@@ -323,6 +353,10 @@ export async function GET(req: NextRequest) {
       'Accept-Encoding': 'gzip, deflate, br',
       'Cache-Control': 'no-cache',
       'Pragma': 'no-cache'
+    },
+    customFields: {
+      feed: ['title', 'description', 'link'],
+      item: ['title', 'link', 'pubDate', 'content', 'contentSnippet', 'summary']
     }
   });
   

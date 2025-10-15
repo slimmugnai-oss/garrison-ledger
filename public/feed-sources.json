@@ -14,7 +14,7 @@
   {
     "id": "military_com_news",
     "type": "rss",
-    "url": "https://www.military.com/rss-feeds",
+    "url": "https://www.military.com/rss-feeds/all",
     "tags": ["military-news", "lifestyle"]
   },
   {
@@ -26,7 +26,7 @@
   {
     "id": "army_news",
     "type": "rss", 
-    "url": "https://www.army.mil/rss/",
+    "url": "https://www.army.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=1&Max=20",
     "tags": ["army", "military-news"]
   },
   {
