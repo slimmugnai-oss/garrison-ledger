@@ -5,6 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import BookmarkButton from '@/app/components/library/BookmarkButton';
+import RatingButton from '@/app/components/library/RatingButton';
+import ShareButton from '@/app/components/library/ShareButton';
 
 interface ContentBlock {
   id: string;
@@ -57,7 +60,7 @@ function IntelligenceLibraryContent() {
   const [selectedAudience, setSelectedAudience] = useState(searchParams?.get('audience') || '');
   const [minRating, setMinRating] = useState(3.0);
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams?.get('page') || '1', 10));
-  const [activeTab, setActiveTab] = useState<'all' | 'for-you' | 'trending'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'for-you' | 'trending' | 'saved'>('all');
 
   // Filter options
   const domains = [
@@ -389,6 +392,16 @@ function IntelligenceLibraryContent() {
             >
               🔥 Trending
             </button>
+            <button
+              onClick={() => { setActiveTab('saved'); setCurrentPage(1); }}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'saved'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              🔖 Saved
+            </button>
           </div>
 
           {/* Search Bar */}
@@ -613,6 +626,13 @@ function IntelligenceLibraryContent() {
                                 ✨ Fresh
                               </span>
                             )}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex flex-wrap items-center gap-2">
+                            <BookmarkButton contentId={block.id} />
+                            <ShareButton contentId={block.id} title={block.title} />
+                            <RatingButton contentId={block.id} initialRating={block.content_rating} />
                           </div>
                         </div>
                         
