@@ -114,6 +114,13 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🔧 BUILD ERRORS FIXED - All ESLint & TypeScript errors resolved, build passing ✅
+- 2025-01-15: 🔄 ONBOARDING TOUR CREATED - 3-step visual guide for new users, auto-advancing, dismissible
+- 2025-01-15: 📊 PROFILE COMPLETION ENHANCED - Weighted 20-field calculation (was 7 fields)
+- 2025-01-15: ⏳ PLAN GENERATING STATE ADDED - Amber widget shows 30s wait during AI generation
+- 2025-01-15: 🎨 DASHBOARD REFINED - Removed redundant CTA, intelligence widget for all users
+- 2025-01-15: 👤 PROFILE SYSTEM REBUILT - Complete v2.0 rebuild (1,466 lines, 4 new components, 93/100)
+- 2025-01-15: 📁 DIRECTORY POLISHED - Mobile drawer, 'New' badges, icon enhancements (93/100)
 - 2025-01-15: 🎨 LIBRARY COMPONENTS CREATED - ContentBlockCard & LibraryFilters with mobile drawer, filter count preview
 - 2025-01-15: 📱 MOBILE FILTER DRAWER - Slide-out filter panel for mobile, better UX
 - 2025-01-15: 📖 INTELLIGENCE LIBRARY FIXED - Saved tab now works, loading skeletons added, improved empty states
@@ -810,6 +817,13 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
   - Onboarding tour for first-time users
   - No confusion during plan generation
   - Free users see personalized recommendations
+- **Build Fixes:**
+  - Fixed 4 ESLint errors (const declarations, unused vars)
+  - Fixed icon type error (Info → HelpCircle)
+  - Fixed useCallback dependency stabilization
+  - Fixed eslint-disable directive format
+  - All TypeScript errors resolved
+  - Build passing successfully ✅
 - **Documentation:** USER_FLOW_AUDIT_2025-01-15.md created
 
 ### **v2.5.0 (2025-01-15) - Profile System v2.0 Complete Rebuild** 👤✨
