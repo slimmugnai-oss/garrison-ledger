@@ -1,43 +1,74 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase-typed';
 
-/**
- * Record a library content view
- * Only tracks for free users (premium has unlimited)
- */
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
-
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Check premium status
-    const { data: entitlement } = await supabaseAdmin
+    const supabase = createClient();
+    
+    // Check if user is premium
+    const { data: entitlement } = await supabase
       .from('entitlements')
-      .select('tier, status')
+      .select('is_premium')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
-    const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+    const isPremium = entitlement?.is_premium || false;
 
-    // Record the view
-    const { error } = await supabaseAdmin.rpc('record_library_view', {
-      p_user_id: userId,
-      p_is_premium: isPremium
-    });
+    // Premium users don't need tracking
+    if (isPremium) {
+      return NextResponse.json({ success: true });
+    }
 
-    if (error) {
-      console.error('Error recording library view:', error);
-      return NextResponse.json({ error: 'Failed to record view' }, { status: 500 });
+    // Record view for free users
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Get current profile
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('library_views_today, library_view_date')
+      .eq('user_id', userId)
+      .single();
+
+    if (!profile) {
+      // Create new profile entry
+      await supabase
+        .from('user_profiles')
+        .insert({
+          user_id: userId,
+          library_views_today: 1,
+          library_view_date: today
+        });
+    } else if (profile.library_view_date !== today) {
+      // Reset for new day
+      await supabase
+        .from('user_profiles')
+        .update({
+          library_views_today: 1,
+          library_view_date: today
+        })
+        .eq('user_id', userId);
+    } else {
+      // Increment for same day
+      await supabase
+        .from('user_profiles')
+        .update({
+          library_views_today: (profile.library_views_today || 0) + 1
+        })
+        .eq('user_id', userId);
     }
 
     return NextResponse.json({ success: true });
+
   } catch (error) {
-    console.error('Error in record-view:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error recording library view:', error);
+    return NextResponse.json({ 
+      error: 'Failed to record view' 
+    }, { status: 500 });
   }
 }
-

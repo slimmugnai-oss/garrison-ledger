@@ -285,6 +285,7 @@ function IntelligenceLibraryContent() {
     );
   };
 
+
   // Rate limit screen
   if (!canView) {
     return (

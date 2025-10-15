@@ -1,68 +1,74 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase-typed';
 
-/**
- * Check if user can view library content
- * Free users: 5 articles per day
- * Premium users: Unlimited
- */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
-
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ canView: false, reason: 'Not authenticated' }, { status: 401 });
     }
 
-    // Check premium status
-    const { data: entitlement } = await supabaseAdmin
+    const supabase = createClient();
+    
+    // Check if user is premium
+    const { data: entitlement } = await supabase
       .from('entitlements')
-      .select('tier, status')
+      .select('is_premium')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
-    const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+    const isPremium = entitlement?.is_premium || false;
 
-    // Check if user can view library
-    const { data, error } = await supabaseAdmin.rpc('can_view_library', {
-      p_user_id: userId,
-      p_is_premium: isPremium
-    });
-
-    if (error) {
-      console.error('Error checking library access:', error);
-      return NextResponse.json({ error: 'Failed to check access' }, { status: 500 });
+    // Premium users have unlimited access
+    if (isPremium) {
+      return NextResponse.json({ 
+        canView: true, 
+        isPremium: true,
+        remaining: null 
+      });
     }
 
-    // Get current view count for free users
-    let viewsToday = 0;
-    if (!isPremium) {
-      const { data: profile } = await supabaseAdmin
-        .from('user_profiles')
-        .select('library_views_today, library_view_date')
-        .eq('user_id', userId)
-        .maybeSingle();
+    // Check rate limit for free users
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('library_views_today, library_view_date')
+      .eq('user_id', userId)
+      .single();
 
-      // Reset if new day
-      if (profile && profile.library_view_date < new Date().toISOString().split('T')[0]) {
-        viewsToday = 0;
-      } else {
-        viewsToday = profile?.library_views_today || 0;
-      }
+    if (!profile) {
+      return NextResponse.json({ 
+        canView: true, 
+        isPremium: false,
+        remaining: 5 
+      });
     }
 
-    return NextResponse.json({
-      canView: data,
-      isPremium,
-      viewsToday,
-      limit: isPremium ? null : 5,
-      remaining: isPremium ? null : Math.max(0, 5 - viewsToday),
-      reason: data ? null : 'Daily limit reached (5 articles per day for free users)'
+    // Reset if it's a new day
+    const today = new Date().toISOString().split('T')[0];
+    if (profile.library_view_date !== today) {
+      return NextResponse.json({ 
+        canView: true, 
+        isPremium: false,
+        remaining: 5 
+      });
+    }
+
+    const remaining = Math.max(0, 5 - (profile.library_views_today || 0));
+    const canView = remaining > 0;
+
+    return NextResponse.json({ 
+      canView, 
+      isPremium: false,
+      remaining,
+      reason: canView ? null : 'Daily limit of 5 articles reached'
     });
+
   } catch (error) {
-    console.error('Error in can-view:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error checking library access:', error);
+    return NextResponse.json({ 
+      canView: false, 
+      reason: 'Server error' 
+    }, { status: 500 });
   }
 }
-

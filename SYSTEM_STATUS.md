@@ -14,7 +14,7 @@
 - ✅ Personalized Plan Generation (`/api/plan/generate`)
 - ✅ 410 Hand-Curated Content Blocks (100% metadata)
 - ✅ 6 Financial Calculator Tools
-- ✅ Intelligence Library (AI-powered search)
+- ✅ Intelligence Library (AI-powered search) - 5/day free, unlimited premium
 - ✅ Binder (Document Management)
 - ✅ Premium Subscription (Stripe)
 - ✅ 5 Resource Hub Pages (HTML)
@@ -39,7 +39,7 @@
 - Rate limiting functions operational
 - All 6 calculator tools free and working
 - AI Explainer preview mode active (2-3 sentences)
-- Library 5/day rate limit enforced
+- Intelligence Library 5/day rate limit enforced for free users
 - All user flows tested and working
 
 ### **📅 Recent Changes**
@@ -48,7 +48,7 @@
 - 2025-01-15: 🔓 ALL PAYWALLS REMOVED - Deep audit confirmed all 6 tools fully accessible
 - 2025-01-15: ✅ OPTIONAL FEATURES COMPLETE - Intel Library 5/day limit, "Update Plan" button, all tools free
 - 2025-01-15: 🔓 CALCULATORS MADE FREE - Removed paywall from all 6 calculator tools (per freemium model)
-- 2025-01-15: 📚 LIBRARY RATE LIMITING - 5 articles/day for free, unlimited for premium (\$9.99/mo)
+- 2025-01-15: 📚 LIBRARY RATE LIMITING IMPLEMENTED - 5 articles/day for free users, unlimited for premium
 - 2025-01-15: ✨ FREEMIUM MODEL - 2-block preview (free) vs full plan (premium \$9.99/mo)
 - 2025-01-15: ⚡ PERFORMANCE FIX - Use gpt-4o-mini (60s→20s, \$0.15→\$0.02), no more timeouts
 - 2025-01-15: 🐛 CRITICAL FIX - OpenAI token limit (57k→11k tokens), assessment now works
@@ -299,7 +299,7 @@
 - ✅ Assessment: **1 per week** (rate limited)
 - ✅ Plan preview: **2 curated blocks** + truncated executive summary
 - ✅ All 6 calculators (**full access - NO paywall**) ⭐
-- ✅ Intelligence Library: **5 articles per day** (enforced) ⭐
+- ✅ Intelligence Library: **5 articles per day** (rate limited) ⭐
 - ✅ Resource hubs (all 5)
 - ❌ No plan regeneration
 - ❌ No bookmarking/ratings (premium only)
