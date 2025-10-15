@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { checkAndIncrement } from "@/lib/limits";
 
@@ -34,26 +33,14 @@ export async function POST(req: NextRequest) {
   const piti = pmt(rMo, 360, price) + tax / 12 + ins / 12;
   const income = bah + rent;
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  let isPremium = false;
-  try {
-    const { data: access, error } = await supabase.from("v_user_access").select("is_premium").eq("user_id", userId).single();
-    if (error) {
-      console.log('House API: Error querying v_user_access:', error);
-      const { data: entitlements } = await supabase.from("entitlements").select("tier, status").eq("user_id", userId).single();
-      isPremium = entitlements?.tier === 'premium' && entitlements?.status === 'active';
-    } else {
-      isPremium = !!access?.is_premium;
-    }
-  } catch (error) {
-    console.error('House API: Database error:', error);
-    const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
-    isPremium = premiumUsers.includes(userId);
-  }
-  console.log('House API premium check:', { userId, isPremium });
-  // TEMPORARY: Force premium to fix the issue
-  isPremium = true;
-
-  if (!isPremium) return NextResponse.json({ partial:true, costs:piti, income });
-  return NextResponse.json({ partial:false, costs:piti, income, verdict: income - piti });
+  // ALL USERS GET FULL ACCESS (freemium model v2.2.0)
+  // Calculators are free for everyone - no premium checks needed
+  
+  // Always return full data (all calculators are free)
+  return NextResponse.json({ 
+    partial: false, 
+    costs: piti, 
+    income, 
+    verdict: income - piti 
+  });
 }
