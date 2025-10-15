@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Freemium Model Complete  
-**Version:** 2.1.2 (AI Explainer Preview Mode - Complete)
+**Version:** 2.1.3 (Intelligence Library Rate Limiting - Complete)
 
 ---
 
@@ -43,6 +43,10 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🔧 BUILD FIXES - Fixed Supabase import errors in library rate limiting API routes
+- 2025-01-15: 📚 LIBRARY RATE LIMITING RESTORED - Proper 5/day limit for free users, unlimited for premium
+- 2025-01-15: 🗑️ REMOVED "Bottom Line" - Career Opportunity Analyzer cleaned up (AI Explainer handles analysis)
+- 2025-01-15: 📝 TOOL NAMES CORRECTED - Fixed naming consistency across all documentation
 - 2025-01-15: 🤖 AI EXPLAINER ENHANCED - Preview mode (2-3 sentences) for free, full explanation for premium
 - 2025-01-15: ➕ EXPLAINERS ADDED - PCS Planner, Salary Calculator, On-Base Savings now have AI explanations
 - 2025-01-15: 🔓 ALL PAYWALLS REMOVED - Deep audit confirmed all 6 tools fully accessible
