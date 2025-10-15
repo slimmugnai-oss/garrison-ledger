@@ -735,18 +735,18 @@ function BinderContent() {
       {showRenameModal && selectedFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] max-w-md w-full p-6">
-            <h2 className="text-xl font-bold mb-4">Rename File</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-100">Rename File</h2>
             <input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4"
+              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4 text-gray-100"
               placeholder="New name"
             />
             <div className="flex gap-3">
               <button
                 onClick={() => setShowRenameModal(false)}
-                className="flex-1 px-4 py-2 bg-[#2A2F3E] rounded-lg hover:bg-[#3A3F4E]"
+                className="flex-1 px-4 py-2 bg-[#2A2F3E] text-gray-100 rounded-lg hover:bg-[#3A3F4E]"
               >
                 Cancel
               </button>
@@ -799,17 +799,17 @@ function BinderContent() {
       {showExpiryModal && selectedFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] max-w-md w-full p-6">
-            <h2 className="text-xl font-bold mb-4">Set Expiry Date</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-100">Set Expiry Date</h2>
             <input
               type="date"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4"
+              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4 text-gray-100 [color-scheme:dark]"
             />
             <div className="flex gap-3">
               <button
                 onClick={() => setShowExpiryModal(false)}
-                className="flex-1 px-4 py-2 bg-[#2A2F3E] rounded-lg hover:bg-[#3A3F4E]"
+                className="flex-1 px-4 py-2 bg-[#2A2F3E] text-gray-100 rounded-lg hover:bg-[#3A3F4E]"
               >
                 Cancel
               </button>
