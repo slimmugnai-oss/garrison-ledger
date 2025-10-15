@@ -8,6 +8,7 @@ import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
+import { IconName } from '@/app/components/ui/icon-registry';
 
 interface ContentBlock {
   id: string;
@@ -103,30 +104,36 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
     critical: 'bg-red-100 text-red-800',
   }[initialPlan.urgencyLevel] || 'bg-blue-100 text-blue-800';
 
-  const tabs = [
+  const tabs: Array<{
+    id: TabType;
+    label: string;
+    icon: IconName;
+    count: number | string | null;
+    locked?: boolean;
+  }> = [
     { 
       id: 'overview' as TabType, 
       label: 'Overview', 
-      icon: 'FileText',
+      icon: 'FileText' as IconName,
       count: null 
     },
     { 
       id: 'content' as TabType, 
       label: 'Content', 
-      icon: 'BookOpen',
+      icon: 'BookOpen' as IconName,
       count: isPremium ? initialPlan.contentBlocks.length : `${visibleBlocks.length}/${initialPlan.contentBlocks.length}`,
       locked: !isPremium
     },
     { 
       id: 'tools' as TabType, 
       label: 'Tools', 
-      icon: 'Calculator',
+      icon: 'Calculator' as IconName,
       count: initialPlan.recommendedTools?.length || 0 
     },
     { 
       id: 'action' as TabType, 
       label: 'Action Plan', 
-      icon: 'CheckCircle',
+      icon: 'CheckCircle' as IconName,
       count: initialPlan.finalRecommendations?.length || 0 
     },
   ];
