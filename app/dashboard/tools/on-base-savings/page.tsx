@@ -48,11 +48,6 @@ export default function Page() {
               <p className="text-sm text-gray-600 mb-6">
                 💡 Most families save <strong className="text-green-600">$2,000-4,000/year</strong> - find your number
               </p>
-              <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                <p className="text-sm font-semibold text-green-800">
-                  🛡️ 7-Day Money-Back Guarantee · Free Forever Tier Available
-                </p>
-              </div>
               <p className="text-3xl font-black text-gray-900 mb-6">
                 $9.99<span className="text-lg font-normal text-gray-600">/month</span>
               </p>

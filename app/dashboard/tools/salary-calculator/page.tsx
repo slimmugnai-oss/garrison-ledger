@@ -47,11 +47,6 @@ export default function Page() {
               <p className="text-sm text-gray-600 mb-6">
                 Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
               </p>
-              <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                <p className="text-sm font-semibold text-green-800">
-                  7-Day Money-Back Guarantee · Free Forever Tier Available
-                </p>
-              </div>
               <p className="text-3xl font-black text-gray-900 mb-6">
                 $9.99<span className="text-lg font-normal text-gray-600">/month</span>
               </p>

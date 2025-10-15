@@ -43,8 +43,8 @@ export default function RefundPage() {
         <h1 className="text-2xl font-bold">Request a Refund</h1>
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
           <p className="text-sm text-blue-800">
-            <strong>7-Day Money-Back Guarantee:</strong> If you&apos;re not satisfied within 7 days of purchase, 
-            we&apos;ll refund your payment in full, no questions asked.
+            <strong>Refund Policy:</strong> If you&apos;re not satisfied with your purchase, 
+            we&apos;ll work with you to resolve any issues or provide a refund as appropriate.
           </p>
         </div>
         

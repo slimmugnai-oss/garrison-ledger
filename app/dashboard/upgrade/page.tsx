@@ -459,7 +459,6 @@ export default async function UpgradePage() {
                   buttonText="Start Annual Plan"
                   className="bg-white text-purple-600 hover:bg-gray-100 px-12 py-5 rounded-xl font-black text-xl shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1"
                 />
-                <p className="text-sm text-indigo-200">7-Day Money-Back Guarantee</p>
               </div>
             </div>
           )}

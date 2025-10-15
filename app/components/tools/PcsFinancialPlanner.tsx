@@ -474,14 +474,6 @@ export default function PcsFinancialPlanner() {
                       <p className="text-lg text-gray-700 mb-2">
                         Unlock to see your complete PCS financial estimate with detailed breakdowns
                       </p>
-                      <p className="text-sm text-gray-600 mb-6">
-                        <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
-                      </p>
-                      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                        <p className="text-sm font-semibold text-green-800">
-                          <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
-                        </p>
-                      </div>
                       <p className="text-3xl font-black text-gray-900 mb-6">
                         $9.99<span className="text-lg font-normal text-gray-600">/month</span>
                       </p>
@@ -724,14 +716,6 @@ export default function PcsFinancialPlanner() {
                       <p className="text-lg text-gray-700 mb-2">
                         Unlock to see your complete PPM profit analysis with detailed breakdowns
                       </p>
-                      <p className="text-sm text-gray-600 mb-6">
-                        <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> This analysis would cost <strong className="text-indigo-600">$200+ from a financial advisor</strong>
-                      </p>
-                      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-3 mb-6">
-                        <p className="text-sm font-semibold text-green-800">
-                          <Icon name="Shield" className="h-4 w-4 inline mr-1" /> 7-Day Money-Back Guarantee · Cancel Anytime
-                        </p>
-                      </div>
                       <p className="text-3xl font-black text-gray-900 mb-6">
                         $9.99<span className="text-lg font-normal text-gray-600">/month</span>
                       </p>
