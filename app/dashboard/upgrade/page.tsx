@@ -83,8 +83,22 @@ export default async function UpgradePage() {
                 <div className="flex items-start gap-3">
                   <span className="text-blue-500 text-xl mt-1">✓</span>
                   <div>
-                    <div className="font-semibold text-gray-900">Tool Previews</div>
-                    <p className="text-sm text-gray-600">Limited access to TSP, SDP, House Hacking calculators</p>
+                    <div className="font-semibold text-gray-900">All 6 Calculator Tools</div>
+                    <p className="text-sm text-gray-600">Full access to TSP, SDP, House Hacking, PCS, Salary, Savings</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">Intel Library (410+ articles)</div>
+                    <p className="text-sm text-gray-600">5 articles per day - unlimited with premium</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-blue-500 text-xl mt-1">✓</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">AI Explainer Previews</div>
+                    <p className="text-sm text-gray-600">First 2-3 sentences - full analysis with premium</p>
                   </div>
                 </div>
               </div>

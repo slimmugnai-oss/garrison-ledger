@@ -52,26 +52,9 @@ export async function POST(req: NextRequest) {
   const body = parsed.data;
   const years = Math.max(0, Math.min(60, body.retire - body.age));
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  let isPremium = false;
-  try {
-    const { data: access, error } = await supabase.from("v_user_access").select("is_premium").eq("user_id", userId).single();
-    if (error) {
-      console.log('TSP API: Error querying v_user_access:', error);
-      const { data: entitlements } = await supabase.from("entitlements").select("tier, status").eq("user_id", userId).single();
-      isPremium = entitlements?.tier === 'premium' && entitlements?.status === 'active';
-    } else {
-      isPremium = !!access?.is_premium;
-    }
-  } catch (error) {
-    console.error('TSP API: Database error:', error);
-    const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
-    isPremium = premiumUsers.includes(userId);
-  }
-  console.log('TSP API premium check:', { userId, isPremium });
-  // TEMPORARY: Force premium to fix the issue
-  isPremium = true;
-
+  // ALL USERS GET FULL ACCESS (freemium model v2.1.2)
+  // Calculators are free for everyone - no premium checks needed
+  
   const rDefault = L2050.C*R.C + L2050.S*R.S + L2050.I*R.I + L2050.F*R.F + L2050.G*R.G;
   const sum = Math.max(1, body.mix.C + body.mix.S + body.mix.I + body.mix.F + body.mix.G);
   const w = { C:body.mix.C/sum, S:body.mix.S/sum, I:body.mix.I/sum, F:body.mix.F/sum, G:body.mix.G/sum };
@@ -80,27 +63,16 @@ export async function POST(req: NextRequest) {
   const A = fvSeries(body.balance, body.monthly, years, rDefault);
   const B = fvSeries(body.balance, body.monthly, years, rCustom);
 
-  const visible = isPremium ? A.length : Math.max(2, Math.ceil(A.length*0.33));
-  const payload: {
-    partial: boolean;
-    yearsVisible: number;
-    seriesDefault: number[];
-    seriesCustom: number[];
-    endDefault?: number;
-    endCustom?: number;
-    diff?: number;
-  } = {
-    partial: !isPremium,
-    yearsVisible: visible-1,
-    seriesDefault: A.slice(0, visible),
-    seriesCustom:  B.slice(0, visible),
+  // Always return full data (all calculators are free)
+  const payload = {
+    partial: false,
+    yearsVisible: A.length - 1,
+    seriesDefault: A,
+    seriesCustom: B,
+    endDefault: A[A.length-1],
+    endCustom: B[B.length-1],
+    diff: B[B.length-1] - A[A.length-1]
   };
-
-  if (isPremium) {
-    payload.endDefault = A[A.length-1];
-    payload.endCustom  = B[B.length-1];
-    payload.diff       = payload.endCustom - payload.endDefault;
-  }
 
   return NextResponse.json(payload, { headers: { "Cache-Control":"no-store" } });
 }
