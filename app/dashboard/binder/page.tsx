@@ -400,11 +400,12 @@ export default function BinderPage() {
                       }`}
                     >
                       <span className="flex items-center">
-                        <Icon
-                          name={folder.icon}
-                          className="w-4 h-4 mr-2"
-                          style={{ color: folder.color }}
-                        />
+                        <span style={{ color: folder.color }}>
+                          <Icon
+                            name={folder.icon}
+                            className="w-4 h-4 mr-2"
+                          />
+                        </span>
                         {folder.name}
                       </span>
                       <span className="text-xs">
