@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 import { track } from "@/lib/track";
 import Header from "@/app/components/Header";
+import DirectoryFilters from "@/app/components/directory/DirectoryFilters";
 
 type Provider = {
   id: string;
@@ -112,81 +113,141 @@ export default function DirectoryPage() {
     </div>
   );
 
-  const Card = ({ p }: { p: Provider }) => (
-    <div className="rounded border bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-lg font-semibold">{p.business_name || p.name || "Provider"}</div>
-          <div className="text-xs text-gray-500">{(p.type || "").replace("_", " ")} · {p.city || ""}{p.city && p.state ? ", " : ""}{p.state || ""}</div>
-        </div>
-        <div className="flex gap-2 text-xs flex-wrap justify-end">
-          {p.military_friendly && <span className="rounded bg-green-100 text-green-700 px-2 py-1">Military-friendly</span>}
-          {p.va_expert && <span className="rounded bg-blue-100 text-blue-700 px-2 py-1">VA-savvy</span>}
-          {p.spouse_owned && <span className="rounded bg-purple-100 text-purple-700 px-2 py-1">Spouse-owned</span>}
-        </div>
-      </div>
-      <div className="mt-2 text-sm">
-        {p.notes && <p className="text-gray-700">{p.notes}</p>}
-        {p.stations && p.stations.length > 0 && <p className="text-gray-500 mt-1">Stations: {p.stations.join(", ")}</p>}
-        {p.coverage_states && p.coverage_states.length > 0 && <p className="text-gray-500">Coverage: {p.coverage_states.join(", ")}</p>}
-        {p.license_id && <p className="text-gray-500">License: {p.license_id}</p>}
-      </div>
-      <div className="mt-3 flex flex-wrap gap-3 text-sm">
-        {p.website && <a className="underline text-blue-600 hover:text-blue-700" href={p.website} target="_blank" rel="noreferrer">Website</a>}
-        {p.email && <a className="underline text-blue-600 hover:text-blue-700" href={`mailto:${p.email}`}>Email</a>}
-        {p.phone && <a className="underline text-blue-600 hover:text-blue-700" href={`tel:${p.phone}`}>Call</a>}
-        {p.calendly && <a className="underline text-blue-600 hover:text-blue-700" href={p.calendly} target="_blank" rel="noreferrer">Book</a>}
-      </div>
-    </div>
-  );
+  const Card = ({ p }: { p: Provider }) => {
+    // Check if provider has created_at for "New" badge
+    const providerData = p as Provider & { created_at?: string };
+    const showNewBadge = providerData.created_at && isNew(providerData.created_at);
 
-  const Filters = (
-    <div className="rounded border bg-white p-4 shadow-sm">
-      <div className="grid gap-3 sm:grid-cols-5">
-        <input 
-          placeholder="Search name, city, notes…" 
-          value={q} 
-          onChange={e => setQ(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && load(1)} 
-          className="border rounded px-3 py-2 sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-        />
-        <select value={type} onChange={e => setType(e.target.value)} className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="">Any type</option>
-          <option value="agent">Agent</option>
-          <option value="lender">Lender</option>
-          <option value="property_manager">Property Manager</option>
-          <option value="other">Other</option>
-        </select>
-        <input 
-          placeholder="State (e.g., TX)" 
-          maxLength={2} 
-          value={state} 
-          onChange={e => setState(e.target.value.toUpperCase())} 
-          className="border rounded px-3 py-2 uppercase focus:outline-none focus:ring-2 focus:ring-blue-500" 
-        />
-        <label className="inline-flex items-center gap-2 text-sm cursor-pointer">
-          <input type="checkbox" checked={mil} onChange={e => setMil(e.target.checked)} className="w-4 h-4" />
-          Military-friendly
-        </label>
+    return (
+      <div className="rounded-lg border bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-200">
+        {/* Header with badges */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 break-words">
+                {p.business_name || p.name || "Provider"}
+              </h3>
+              {showNewBadge && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-medium whitespace-nowrap">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  New
+                </span>
+              )}
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500 mt-1 capitalize">
+              {(p.type || "").replace("_", " ")} 
+              {(p.city || p.state) && <span> · {p.city || ""}{p.city && p.state ? ", " : ""}{p.state || ""}</span>}
+            </div>
+          </div>
+        </div>
+
+        {/* Attribute badges */}
+        <div className="flex gap-2 flex-wrap mb-3">
+          {p.military_friendly && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 text-xs font-medium">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              Military-friendly
+            </span>
+          )}
+          {p.va_expert && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 text-xs font-medium">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+              </svg>
+              VA Expert
+            </span>
+          )}
+          {p.spouse_owned && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 text-xs font-medium">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+              </svg>
+              Spouse-owned
+            </span>
+          )}
+        </div>
+
+        {/* Details */}
+        {(p.notes || (p.stations && p.stations.length > 0) || (p.coverage_states && p.coverage_states.length > 0) || p.license_id) && (
+          <div className="text-sm space-y-1.5 mb-3 pb-3 border-b">
+            {p.notes && <p className="text-gray-700 leading-relaxed">{p.notes}</p>}
+            {p.stations && p.stations.length > 0 && (
+              <p className="text-gray-600">
+                <span className="font-medium">Stations:</span> {p.stations.join(", ")}
+              </p>
+            )}
+            {p.coverage_states && p.coverage_states.length > 0 && (
+              <p className="text-gray-600">
+                <span className="font-medium">Coverage:</span> {p.coverage_states.join(", ")}
+              </p>
+            )}
+            {p.license_id && (
+              <p className="text-gray-600">
+                <span className="font-medium">License:</span> {p.license_id}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Contact buttons */}
+        <div className="flex flex-wrap gap-2">
+          {p.website && (
+            <a 
+              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 text-white px-3 py-2 text-sm font-medium hover:bg-blue-700 transition-colors" 
+              href={p.website} 
+              target="_blank" 
+              rel="noreferrer"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              Website
+            </a>
+          )}
+          {p.email && (
+            <a 
+              className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white text-gray-700 px-3 py-2 text-sm font-medium hover:bg-gray-50 transition-colors" 
+              href={`mailto:${p.email}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Email
+            </a>
+          )}
+          {p.phone && (
+            <a 
+              className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white text-gray-700 px-3 py-2 text-sm font-medium hover:bg-gray-50 transition-colors" 
+              href={`tel:${p.phone}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              Call
+            </a>
+          )}
+          {p.calendly && (
+            <a 
+              className="inline-flex items-center gap-1.5 rounded-md bg-green-600 text-white px-3 py-2 text-sm font-medium hover:bg-green-700 transition-colors" 
+              href={p.calendly} 
+              target="_blank" 
+              rel="noreferrer"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Book
+            </a>
+          )}
+        </div>
       </div>
-      <div className="mt-3 flex gap-2">
-        <button 
-          onClick={() => load(1)} 
-          disabled={loading}
-          className="rounded bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
-        >
-          {loading ? "Searching…" : "Search"}
-        </button>
-        <button 
-          onClick={clearFilters} 
-          disabled={loading}
-          className="rounded border border-gray-300 text-gray-700 px-4 py-2 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-        >
-          Clear Filters
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
+
 
   return (
     <>
@@ -203,14 +264,22 @@ export default function DirectoryPage() {
         </SignedOut>
 
         <SignedIn>
-          {Filters}
-
-          {/* Provider count */}
-          {!initialLoad && !loading && total > 0 && (
-            <div className="text-sm text-gray-600">
-              Found <span className="font-semibold">{total}</span> {total === 1 ? 'provider' : 'providers'}
-            </div>
-          )}
+          <DirectoryFilters
+            search={q}
+            onSearchChange={setQ}
+            onSearchKeyDown={(e) => e.key === 'Enter' && load(1)}
+            type={type}
+            onTypeChange={setType}
+            state={state}
+            onStateChange={setState}
+            militaryFriendly={mil}
+            onMilitaryFriendlyChange={setMil}
+            onSearch={() => load(1)}
+            onClearFilters={clearFilters}
+            loading={loading}
+            totalCount={total}
+            hasSearched={!initialLoad}
+          />
 
           {/* Loading skeleton */}
           {loading && initialLoad && <LoadingSkeleton />}

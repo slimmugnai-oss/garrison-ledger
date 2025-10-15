@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   let query = sb.from("providers").select(`
     id, type, name, business_name, email, phone, website, calendly,
     state, city, zip, stations, coverage_states,
-    military_friendly, spouse_owned, va_expert, notes, license_id
+    military_friendly, spouse_owned, va_expert, notes, license_id, created_at
   `, { count: "exact" }).eq("status", "approved");
 
   if (type) query = query.eq("type", type);
