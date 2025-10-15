@@ -22,7 +22,8 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 - 📑 **Tabbed Plan Interface** - 4 organized sections with progress tracking
 - 🎧 **Listening Post** - AI-powered RSS curation (Gemini enrichment)
 - 🧮 **6 Free Calculator Tools** - All with AI Explainer preview mode
-- 📖 **Intelligence Library** - 5/day free, unlimited premium
+- 📖 **Intelligence Library** - 5/day free, unlimited premium (95/100)
+- 📁 **Directory System** - Free vetted provider directory (93/100)
 - 💰 **Freemium Model** - 2-block preview → full plan ($9.99/mo)
 
 ### **📈 KEY METRICS**
@@ -72,7 +73,7 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 
 **Document & User Management:**
 - ✅ Binder System (Upload, organize, track expiration)
-- ✅ Directory (Provider listings, no paywall)
+- ✅ Directory System (Free vetted providers, mobile-optimized, 93/100)
 - ✅ Referral Program (Refer & Earn)
 - ✅ Profile Management (Comprehensive data)
 
@@ -769,6 +770,7 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 - **Components Created:** DirectoryFilters.tsx (reusable, mobile-optimized)
 - **Mobile UX:** 4/10 → 9/10 (+5 points!)
 - **UI Polish:** 6/10 → 9/10 (+3 points!)
+- **Build Fix:** Escaped apostrophe in empty state message
 - **Status:** EXCEPTIONAL ✅
 
 ### **v2.4.2 (2025-01-15) - Directory System Enhanced** 📁
