@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Icon from '../ui/Icon';
 
@@ -27,10 +27,10 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
     localStorage.setItem(`gl:onboarding-tour-${userId}`, 'dismissed');
   };
 
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     setDismissed(true);
     localStorage.setItem(`gl:onboarding-tour-${userId}`, 'completed');
-  };
+  }, [userId]);
 
   // Auto-dismiss if user has completed everything
   useEffect(() => {

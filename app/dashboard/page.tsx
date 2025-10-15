@@ -419,7 +419,7 @@ export default async function CommandDashboard() {
                         className="bg-white rounded-full h-2 transition-all duration-500"
                         style={{ width: `${(() => {
                           let required = 0;
-                          let requiredTotal = 10;
+                          const requiredTotal = 10;
                           if (profileRow?.age) required++;
                           if (profileRow?.gender) required++;
                           if (profileRow?.years_of_service) required++;
@@ -432,7 +432,7 @@ export default async function CommandDashboard() {
                           if (profileRow?.debt_amount_range) required++;
                           
                           let optional = 0;
-                          let optionalTotal = 10;
+                          const optionalTotal = 10;
                           if (profileRow?.current_base) optional++;
                           if (profileRow?.mos_afsc_rate) optional++;
                           if (profileRow?.clearance_level) optional++;
