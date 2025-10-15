@@ -137,29 +137,43 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">All 6 Premium Calculators</div>
-                      <p className="text-sm text-gray-600">TSP, SDP, House Hacking, PCS, Savings, Salary</p>
+                      <div className="text-gray-900 font-semibold">Full AI-Curated Plan</div>
+                      <p className="text-sm text-gray-600">All 8-10 expert content blocks (free shows only 2)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">AI Plan Regeneration</div>
-                      <p className="text-sm text-gray-600">Regenerate your AI-curated plan daily as your situation changes</p>
+                      <div className="text-gray-900 font-semibold">Complete Executive Summary</div>
+                      <p className="text-sm text-gray-600">Full personalized analysis (free shows preview only)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Intel Directory</div>
-                      <p className="text-sm text-gray-600">Searchable database of expert content</p>
+                      <div className="text-gray-900 font-semibold">Unlimited Assessments</div>
+                      <p className="text-sm text-gray-600">3 per day vs 1 per week for free users</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Unlimited Intel Library</div>
+                      <p className="text-sm text-gray-600">410+ articles (free limited to 5/day)</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Bookmarking & Ratings</div>
+                      <p className="text-sm text-gray-600">Save favorites and rate content quality</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
                       <div className="text-gray-900 font-semibold">Priority Support</div>
-                      <p className="text-sm text-gray-600">Email support with 24-hour response time</p>
+                      <p className="text-sm text-gray-600">24-hour response time</p>
                     </div>
                   </li>
                 </ul>
@@ -210,29 +224,43 @@ export default async function UpgradePage() {
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">All 6 Premium Calculators</div>
-                      <p className="text-sm text-gray-600">TSP, SDP, House Hacking, PCS, Savings, Salary</p>
+                      <div className="text-gray-900 font-semibold">Full AI-Curated Plan</div>
+                      <p className="text-sm text-gray-600">All 8-10 expert content blocks (free shows only 2)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">AI Plan Regeneration</div>
-                      <p className="text-sm text-gray-600">Regenerate your AI-curated plan daily as your situation changes</p>
+                      <div className="text-gray-900 font-semibold">Complete Executive Summary</div>
+                      <p className="text-sm text-gray-600">Full personalized analysis (free shows preview only)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
-                      <div className="text-gray-900 font-semibold">Intel Directory</div>
-                      <p className="text-sm text-gray-600">Searchable database of expert content</p>
+                      <div className="text-gray-900 font-semibold">Unlimited Assessments</div>
+                      <p className="text-sm text-gray-600">3 per day vs 1 per week for free users</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Unlimited Intel Library</div>
+                      <p className="text-sm text-gray-600">410+ articles (free limited to 5/day)</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    <div>
+                      <div className="text-gray-900 font-semibold">Bookmarking & Ratings</div>
+                      <p className="text-sm text-gray-600">Save favorites and rate content quality</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-green-500 text-xl mt-0.5">✓</span>
                     <div>
                       <div className="text-gray-900 font-semibold">Priority Support</div>
-                      <p className="text-sm text-gray-600">24-hour email response time</p>
+                      <p className="text-sm text-gray-600">24-hour response time</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
