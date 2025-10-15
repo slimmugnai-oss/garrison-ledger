@@ -1,11 +1,14 @@
+import { injectBinderCTAs } from '@/lib/binder-ctas';
+
 type Props = {
   title: string;
   html: string;
   type: string;
   topics?: string[];
+  slug?: string;
 };
 
-export default function ContentCard({ title, html, type, topics = [] }: Props) {
+export default function ContentCard({ title, html, type, topics = [], slug = '' }: Props) {
   // Visual accent by type for magazine-style diversity
   const borderAccent = {
     'checklist': 'border-l-4 border-green-500',
@@ -40,7 +43,7 @@ export default function ContentCard({ title, html, type, topics = [] }: Props) {
       {/* Rich HTML Content - Custom prose-ledger class */}
       <div
         className="prose-ledger"
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: injectBinderCTAs(html, title, slug) }}
       />
     </article>
   );

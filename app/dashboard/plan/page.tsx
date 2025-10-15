@@ -466,6 +466,7 @@ export default function ExecutiveBriefing() {
                             html={block.html}
                             type={block.type}
                             topics={block.topics}
+                            slug={block.slug}
                           />
                         </div>
                       ))}
@@ -547,6 +548,7 @@ export default function ExecutiveBriefing() {
                             html={block.html}
                             type={block.type}
                             topics={block.topics}
+                            slug={block.slug}
                           />
                         </div>
                       ))}

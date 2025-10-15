@@ -9,6 +9,7 @@ import AnimatedCard from '../components/ui/AnimatedCard';
 import { generatePageMeta } from "@/lib/seo-config";
 import Icon from '../components/ui/Icon';
 import Badge from '../components/ui/Badge';
+import UpcomingExpirations from '../components/dashboard/UpcomingExpirations';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -130,6 +131,11 @@ export default async function CommandDashboard() {
               )}
             </div>
           )}
+
+          {/* Upcoming Expirations Widget */}
+          <div className="mb-12">
+            <UpcomingExpirations />
+          </div>
 
           {hasAssessment && (
             <>

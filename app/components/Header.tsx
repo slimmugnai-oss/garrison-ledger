@@ -43,6 +43,12 @@ export default function Header() {
               >
                 Assessment
               </Link>
+              <Link 
+                href="/dashboard/binder" 
+                className="text-gray-700 hover:text-gray-900 transition-colors font-medium"
+              >
+                My Binder
+              </Link>
               
               {/* Tools Dropdown */}
               <div 
@@ -221,6 +227,13 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Assessment
+                </Link>
+                <Link 
+                  href="/dashboard/binder" 
+                  className="text-gray-700 hover:text-gray-900 transition-colors font-medium px-2 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Binder
                 </Link>
                 <div className="px-2 py-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tools</p>
