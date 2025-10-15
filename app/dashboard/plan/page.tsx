@@ -15,6 +15,15 @@ export default async function PlanPage() {
     redirect('/sign-in');
   }
 
+  // Check premium status
+  const { data: entitlement } = await supabaseAdmin
+    .from('entitlements')
+    .select('tier, status')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+
   // Load user's personalized plan
   const { data: plan, error } = await supabaseAdmin
     .from('user_plans')
@@ -42,5 +51,5 @@ export default async function PlanPage() {
       .eq('user_id', userId);
   }
 
-  return <PlanClient initialPlan={plan.plan_data} />;
+  return <PlanClient initialPlan={plan.plan_data} isPremium={isPremium} />;
 }

@@ -41,6 +41,7 @@ interface PlanData {
 
 interface PlanClientProps {
   initialPlan: PlanData;
+  isPremium: boolean;
 }
 
 const toolPaths: Record<string, string> = {
@@ -52,8 +53,12 @@ const toolPaths: Record<string, string> = {
   'On-Base Savings': '/dashboard/tools/on-base-savings',
 };
 
-export default function PlanClient({ initialPlan }: PlanClientProps) {
+export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) {
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
+  
+  // Free users see 2 blocks, premium users see all
+  const visibleBlocks = isPremium ? initialPlan.contentBlocks : initialPlan.contentBlocks.slice(0, 2);
+  const lockedBlocksCount = isPremium ? 0 : Math.max(0, initialPlan.contentBlocks.length - 2);
 
   const toggleBlock = (blockId: string) => {
     setExpandedBlocks(prev => {
@@ -102,7 +107,14 @@ export default function PlanClient({ initialPlan }: PlanClientProps) {
               </div>
               
               <div className="prose prose-lg max-w-none text-text-body whitespace-pre-line">
-                {initialPlan.executiveSummary}
+                {isPremium 
+                  ? initialPlan.executiveSummary 
+                  : initialPlan.executiveSummary?.split('\n\n').slice(0, 2).join('\n\n')}
+                {!isPremium && initialPlan.executiveSummary?.split('\n\n').length > 2 && (
+                  <div className="mt-4 text-blue-600 font-semibold">
+                    ... Upgrade to read complete executive summary
+                  </div>
+                )}
               </div>
 
               {/* Focus Areas */}
@@ -128,14 +140,16 @@ export default function PlanClient({ initialPlan }: PlanClientProps) {
           {/* Content Blocks */}
           <div className="mb-8">
             <h2 className="text-2xl font-serif font-bold text-text mb-4">
-              Your Curated Content ({initialPlan.contentBlocks.length} Articles)
+              Your Curated Content ({isPremium ? initialPlan.contentBlocks.length : `${visibleBlocks.length} of ${initialPlan.contentBlocks.length}`} Articles)
             </h2>
             <p className="text-text-body mb-6">
-              Each piece of content has been hand-selected by AI based on your specific military situation, goals, and priorities.
+              {isPremium 
+                ? 'Each piece of content has been hand-selected by AI based on your specific military situation, goals, and priorities.'
+                : 'Preview of AI-curated content blocks. Upgrade to unlock all blocks with complete analysis and recommendations.'}
             </p>
 
             <div className="space-y-4">
-              {initialPlan.contentBlocks.map((block, index) => (
+              {visibleBlocks.map((block, index) => (
                 <AnimatedCard key={block.id} className="overflow-hidden">
                   <div className="p-6">
                     {/* Block Header */}
@@ -226,6 +240,37 @@ export default function PlanClient({ initialPlan }: PlanClientProps) {
                   </div>
                 </AnimatedCard>
               ))}
+              
+              {/* Upgrade CTA for Free Users */}
+              {!isPremium && lockedBlocksCount > 0 && (
+                <AnimatedCard className="mt-6 bg-gradient-to-br from-blue-900 to-indigo-900 text-white">
+                  <div className="p-8 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
+                      <Icon name="Lock" className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold mb-3">
+                      Unlock {lockedBlocksCount} More Curated Blocks
+                    </h3>
+                    <p className="text-blue-100 text-lg mb-6 max-w-2xl mx-auto">
+                      AI has selected {lockedBlocksCount} additional expert content blocks specifically for your situation. Upgrade to premium to access your complete personalized plan with all recommendations and action items.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                      <Link
+                        href="/dashboard/upgrade"
+                        className="px-8 py-4 bg-white text-blue-900 font-bold rounded-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                      >
+                        Unlock Full Plan - $9.99/month
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
+                      >
+                        Back to Dashboard
+                      </Link>
+                    </div>
+                  </div>
+                </AnimatedCard>
+              )}
             </div>
           </div>
 
@@ -275,19 +320,21 @@ export default function PlanClient({ initialPlan }: PlanClientProps) {
               </div>
 
               <div className="mt-6 pt-6 border-t border-border">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4">
                   <Link
                     href="/dashboard"
-                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center"
                   >
                     Return to Dashboard
                   </Link>
-                  <button
-                    onClick={() => window.print()}
-                    className="px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
-                  >
-                    Print Plan
-                  </button>
+                  {!isPremium && (
+                    <Link
+                      href="/dashboard/upgrade"
+                      className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-center"
+                    >
+                      Upgrade to See Full Plan
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

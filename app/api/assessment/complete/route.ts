@@ -43,13 +43,20 @@ export async function POST(req: NextRequest) {
       }, { status: 500 });
     }
 
-    // Update user profile
-    await supabaseAdmin
-      .from('user_profiles')
-      .update({ 
-        last_assessment_at: new Date().toISOString()
-      })
-      .eq('user_id', userId);
+    // Check premium status for rate limiting
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+
+    // Record assessment taken (for rate limiting)
+    await supabaseAdmin.rpc('record_assessment_taken', {
+      p_user_id: userId,
+      p_is_premium: isPremium
+    });
 
     console.log('[Assessment Complete] ✅ Assessment saved for user:', userId);
 

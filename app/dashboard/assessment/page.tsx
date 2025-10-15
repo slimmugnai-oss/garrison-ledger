@@ -28,6 +28,15 @@ export default async function AdaptiveAssessmentPage() {
     redirect('/dashboard/profile/setup');
   }
 
-  return <AssessmentClient />;
+  // Check premium status
+  const { data: entitlement } = await supabase
+    .from('entitlements')
+    .select('tier, status')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+
+  return <AssessmentClient isPremium={isPremium} />;
 }
 

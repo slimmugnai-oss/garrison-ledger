@@ -16,7 +16,11 @@ type Question = {
   context?: string;
 };
 
-export default function AssessmentClient() {
+interface AssessmentClientProps {
+  isPremium: boolean;
+}
+
+export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [questionsAsked, setQuestionsAsked] = useState<string[]>([]);
@@ -25,9 +29,32 @@ export default function AssessmentClient() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [canTakeAssessment, setCanTakeAssessment] = useState(true);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string>('');
+
+  // Check eligibility on mount
+  useEffect(() => {
+    async function checkEligibility() {
+      try {
+        const res = await fetch('/api/assessment/can-take');
+        if (res.ok) {
+          const data = await res.json();
+          setCanTakeAssessment(data.canTake);
+          if (!data.canTake) {
+            setRateLimitMessage(data.reason || 'Rate limit exceeded');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check eligibility:', err);
+      }
+    }
+    checkEligibility();
+  }, []);
 
   // Load first question on mount
   useEffect(() => {
+    if (!canTakeAssessment) return; // Don't load questions if rate limited
+    
     async function init() {
       const res = await fetch('/api/assessment/adaptive', {
         method: 'POST',
@@ -52,7 +79,7 @@ export default function AssessmentClient() {
       }
     }
     init();
-  }, []);
+  }, [canTakeAssessment]);
 
   async function loadNextQuestion(newAnswers: Record<string, string | string[]>, asked: string[]) {
     setLoading(true);
@@ -138,6 +165,48 @@ export default function AssessmentClient() {
   }
 
   const progress = Math.round((questionsAsked.length / 6) * 100);
+
+  // Rate limit screen
+  if (!canTakeAssessment) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background">
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+          
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <AnimatedCard className="text-center p-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-100 rounded-full mb-6">
+                <Icon name="Timer" className="w-10 h-10 text-orange-600" />
+              </div>
+              <h1 className="text-3xl font-serif font-bold text-text mb-4">Assessment Limit Reached</h1>
+              <p className="text-lg text-text-body mb-6">{rateLimitMessage}</p>
+              
+              {!isPremium && (
+                <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                  <p className="text-blue-900 font-semibold mb-3">Want to regenerate your plan more often?</p>
+                  <p className="text-blue-800 mb-4">Premium members can take assessments up to 3 times per day to keep their plans current as situations change.</p>
+                  <Link
+                    href="/dashboard/upgrade"
+                    className="inline-block px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Upgrade to Premium - $9.99/month
+                  </Link>
+                </div>
+              )}
+              
+              <Link
+                href="/dashboard"
+                className="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Return to Dashboard
+              </Link>
+            </AnimatedCard>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (saving) {
     return (

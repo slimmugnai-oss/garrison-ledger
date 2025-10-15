@@ -8,18 +8,15 @@ type Feature = {
 
 const features: Feature[] = [
   { name: "Resource Hubs (PCS, Career, Deployment, Shopping, Base Guides)", free: true, premium: true },
-  { name: "Personal Assessment", free: "1x per day", premium: "Unlimited" },
-  { name: "AI-Curated Personalized Plan", free: "1x per day", premium: "Unlimited regeneration" },
-  { name: "TSP Retirement Calculator", free: "Preview only (5 years)", premium: "Full projection (30+ years)" },
-  { name: "SDP Deployment Savings Calculator", free: false, premium: true },
-  { name: "House Hacking ROI Calculator", free: false, premium: true },
-  { name: "PCS Financial Planner & PPM Estimator", free: false, premium: true },
-  { name: "On-Base Savings Calculator", free: false, premium: true },
-  { name: "Salary & Relocation Calculator", free: false, premium: true },
-  { name: "Intel Library (400+ Searchable Content Blocks)", free: false, premium: true },
-  { name: "Save & Export Calculations", free: false, premium: true },
-  { name: "Priority Email Support (24-hour response)", free: false, premium: true },
-  { name: "Future Tools & Features", free: false, premium: true },
+  { name: "Personal Assessment", free: "1x per week", premium: "3x per day" },
+  { name: "AI-Curated Personalized Plan", free: "Preview (2 blocks)", premium: "Full plan (8-10 blocks)" },
+  { name: "Executive Summary", free: "First 2 paragraphs", premium: "Complete summary" },
+  { name: "All 6 Financial Calculators", free: true, premium: true },
+  { name: "Intel Library (410+ Content Blocks)", free: "5 articles/day", premium: "Unlimited access" },
+  { name: "Bookmarking & Ratings", free: false, premium: true },
+  { name: "Personalized Recommendations", free: false, premium: true },
+  { name: "Advanced Calculator Features", free: false, premium: true },
+  { name: "Priority Support", free: false, premium: true },
 ];
 
 export default function ComparisonTable() {
