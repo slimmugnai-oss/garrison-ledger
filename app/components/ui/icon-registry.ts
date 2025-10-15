@@ -40,10 +40,12 @@ import {
   Landmark,
   TrendingUp,
   TrendingDown,
+  PiggyBank,
   
   // PCS & Moving
   Truck,
   House,
+  Home,
   
   // Shopping & Commissary
   ShoppingCart,
@@ -56,10 +58,29 @@ import {
   Wrench,
   Lightbulb,
   AlertTriangle,
+  Settings,
   
   // Time
   Timer,
   Calendar,
+  
+  // Navigation
+  ChevronRight,
+  Search,
+  Menu,
+  
+  // User & Interface
+  User,
+  Users,
+  HelpCircle,
+  Crown,
+  
+  // Layout & Structure
+  LayoutDashboard,
+  ClipboardCheck,
+  FolderOpen,
+  Library,
+  MapPin,
   
   // General
   Zap,
@@ -104,10 +125,12 @@ export const iconRegistry = {
   Landmark,
   TrendingUp,
   TrendingDown,
+  PiggyBank,
   
   // PCS & Moving
   Truck,
   House,
+  Home,
   
   // Shopping & Commissary
   ShoppingCart,
@@ -120,10 +143,29 @@ export const iconRegistry = {
   Wrench,
   Lightbulb,
   AlertTriangle,
+  Settings,
   
   // Time
   Timer,
   Calendar,
+  
+  // Navigation
+  ChevronRight,
+  Search,
+  Menu,
+  
+  // User & Interface
+  User,
+  Users,
+  HelpCircle,
+  Crown,
+  
+  // Layout & Structure
+  LayoutDashboard,
+  ClipboardCheck,
+  FolderOpen,
+  Library,
+  MapPin,
   
   // General
   Zap,
