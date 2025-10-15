@@ -12,12 +12,6 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
   const [userRating, setUserRating] = useState<number | null>(initialRating || null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-
-  useEffect(() => {
-    // Fetch user's existing rating
-    fetchUserRating();
-  }, [contentId]);
 
   const fetchUserRating = async () => {
     try {
@@ -31,6 +25,12 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
       console.error('Error fetching user rating:', error);
     }
   };
+
+  useEffect(() => {
+    // Fetch user's existing rating
+    fetchUserRating();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentId]);
 
   const submitRating = async (rating: number) => {
     setIsLoading(true);
@@ -50,7 +50,6 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
       if (response.ok) {
         setUserRating(rating);
         onRatingChange?.(rating);
-        setShowFeedback(false);
       }
     } catch (error) {
       console.error('Error submitting rating:', error);

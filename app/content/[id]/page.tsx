@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
@@ -208,12 +209,12 @@ export default async function SharedContentPage({ params }: PageProps) {
             <p className="text-gray-600 mb-4">
               Sign up for Garrison Ledger to get AI-powered content recommendations tailored to your military journey.
             </p>
-            <a
+            <Link
               href="/sign-up"
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
             >
               Get Started Free
-            </a>
+            </Link>
           </div>
         </div>
       </div>
