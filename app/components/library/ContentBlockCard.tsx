@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import BookmarkButton from './BookmarkButton';
 import RatingButton from './RatingButton';

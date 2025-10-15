@@ -5,8 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import ContentBlockCard from '@/app/components/library/ContentBlockCard';
-import LibraryFilters from '@/app/components/library/LibraryFilters';
+import BookmarkButton from '@/app/components/library/BookmarkButton';
+import RatingButton from '@/app/components/library/RatingButton';
+import ShareButton from '@/app/components/library/ShareButton';
 
 interface ContentBlock {
   id: string;
@@ -166,7 +167,7 @@ function IntelligenceLibraryContent() {
           const data = await response.json();
           if (response.ok && data.bookmarks) {
             // Extract content blocks from bookmarks
-            const blocks = data.bookmarks.map((b: any) => b.content_block).filter(Boolean);
+            const blocks = data.bookmarks.map((b: { content_block: ContentBlock }) => b.content_block).filter(Boolean);
             setBookmarkedBlocks(blocks);
           } else {
             setBookmarkedBlocks([]);
