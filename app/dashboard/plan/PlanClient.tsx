@@ -7,7 +7,7 @@ import Footer from '@/app/components/Footer';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
-import { Icon } from '@/app/components/ui/icon-registry';
+import Icon from '@/app/components/ui/Icon';
 
 interface ContentBlock {
   id: string;
