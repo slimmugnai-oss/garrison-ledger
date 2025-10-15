@@ -449,7 +449,7 @@ export default function PcsFinancialPlanner() {
               {/* AI Explainer */}
               <Explainer payload={{
                 tool: "pcs",
-                inputs: { rank, dependencyStatus, distance, hhgWeight, dityMove },
+                inputs: { rankGroup, dependencyStatus, dla, perDiem, ppmIncentive },
                 outputs: { totalIncome, totalExpenses, netEstimate }
               }} />
             </div>
