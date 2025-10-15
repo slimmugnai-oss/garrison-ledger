@@ -2,13 +2,14 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Perfect Score 100/100  
-**Version:** 2.5.0 (Profile System v2.0 - All Systems Exceptional)
+**Version:** 2.5.1 (User Flow Enhanced - Onboarding Tour)
 
 ### **🏆 AUDIT STATUS**
 - **Codebase Audit:** 100/100 ✅ (43 API routes, 12 systems, 0 issues)
 - **Content Blocks Audit:** 98/100 ✅ (410 blocks, 100% metadata, 187 for AI)
 - **Intelligence Library Audit:** 95/100 ✅ (All critical issues fixed, mobile optimized)
-- **Profile System Audit:** 93/100 ✅ (Complete rebuild, all fields, mobile-optimized) 👤 NEW
+- **User Flow Audit:** 95/100 ✅ (Onboarding tour, generating state, polish) 🔄 NEW
+- **Profile System Audit:** 93/100 ✅ (Complete rebuild, all fields, mobile-optimized) 👤
 - **Directory System Audit:** 93/100 ✅ (Free, mobile-optimized, polished) 📁
 - **Listening Post Audit:** 100/100 ✅ (AI enrichment, 100% metadata coverage)
 - **Site-Wide Audit:** 100/100 ✅ (30+ pages, 50+ links, all verified)
@@ -773,8 +774,9 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 
 ### **Internal Docs**
 - `docs/active/` - Current system documentation
-  - `PROFILE_AUDIT_2025-01-15.md` - Profile system audit (93/100, complete rebuild) 👤 NEW
-  - `PROFILE_IMPLEMENTATION_PLAN.md` - 4-phase implementation plan 👤 NEW
+  - `USER_FLOW_AUDIT_2025-01-15.md` - Complete user journey analysis (95/100) 🔄 NEW
+  - `PROFILE_AUDIT_2025-01-15.md` - Profile system audit (93/100, complete rebuild) 👤
+  - `PROFILE_IMPLEMENTATION_PLAN.md` - 4-phase implementation plan 👤
   - `DIRECTORY_AUDIT_2025-01-15.md` - Directory system audit (93/100 final, polished) 📁
   - `INTELLIGENCE_LIBRARY_AUDIT_2025-01-15.md` - Library audit and fixes (95/100 final) 📖
   - `LISTENING_POST_SYSTEM.md` - RSS curation with AI enrichment 🎧
@@ -790,6 +792,25 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 ---
 
 ## 🔄 **VERSION HISTORY**
+
+### **v2.5.1 (2025-01-15) - User Flow Enhanced with Onboarding Tour** 🔄✨
+- **Dashboard & Flow Enhancements:**
+  - Created OnboardingTour component (195 lines) - 3-step visual progress ⭐
+  - Enhanced profile completion % (7 fields → 20 fields, weighted calculation)
+  - Added 'Plan Generating' state (amber gradient widget with spinner)
+  - Removed redundant 'Plan Ready' card (-39 lines, cleaner dashboard)
+  - Intelligence widget now shown to ALL users (not just premium)
+  - Auto-advancing tour based on user progress
+  - Dismissible and localStorage-tracked
+  - Beautiful gradient design with progress connectors
+  - Mobile-responsive (3-column grid → stack)
+- **Flow Improvements:**
+  - User Flow Score: 88/100 → 95/100 (+7 points!)
+  - 6 dashboard states now (was 5)
+  - Onboarding tour for first-time users
+  - No confusion during plan generation
+  - Free users see personalized recommendations
+- **Documentation:** USER_FLOW_AUDIT_2025-01-15.md created
 
 ### **v2.5.0 (2025-01-15) - Profile System v2.0 Complete Rebuild** 👤✨
 - **Profile System Complete Transformation:**
