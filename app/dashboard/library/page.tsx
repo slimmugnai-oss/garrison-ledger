@@ -47,9 +47,13 @@ function IntelligenceLibraryContent() {
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
   const [personalizedBlocks, setPersonalizedBlocks] = useState<ContentBlock[]>([]);
   const [trendingBlocks, setTrendingBlocks] = useState<ContentBlock[]>([]);
+  const [bookmarkedBlocks, setBookmarkedBlocks] = useState<ContentBlock[]>([]);
   const [relatedBlocks, setRelatedBlocks] = useState<Record<string, RelatedContent[]>>({});
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingPersonalized, setLoadingPersonalized] = useState(true);
+  const [loadingTrending, setLoadingTrending] = useState(true);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   
@@ -116,6 +120,7 @@ function IntelligenceLibraryContent() {
   // Fetch personalized recommendations on mount
   useEffect(() => {
     const fetchPersonalized = async () => {
+      setLoadingPersonalized(true);
       try {
         const response = await fetch('/api/library/enhanced?section=personalized&limit=5');
         const data = await response.json();
@@ -124,6 +129,8 @@ function IntelligenceLibraryContent() {
         }
       } catch (err) {
         console.error('Failed to fetch personalized content:', err);
+      } finally {
+        setLoadingPersonalized(false);
       }
     };
 
@@ -133,6 +140,7 @@ function IntelligenceLibraryContent() {
   // Fetch trending content on mount
   useEffect(() => {
     const fetchTrending = async () => {
+      setLoadingTrending(true);
       try {
         const response = await fetch('/api/library/enhanced?section=trending&limit=5');
         const data = await response.json();
@@ -141,11 +149,40 @@ function IntelligenceLibraryContent() {
         }
       } catch (err) {
         console.error('Failed to fetch trending content:', err);
+      } finally {
+        setLoadingTrending(false);
       }
     };
 
     fetchTrending();
   }, []);
+
+  // Fetch bookmarked content when "Saved" tab is active
+  useEffect(() => {
+    if (activeTab === 'saved') {
+      const fetchBookmarks = async () => {
+        setLoadingBookmarks(true);
+        try {
+          const response = await fetch('/api/bookmarks');
+          const data = await response.json();
+          if (response.ok && data.bookmarks) {
+            // Extract content blocks from bookmarks
+            const blocks = data.bookmarks.map((b: any) => b.content_block).filter(Boolean);
+            setBookmarkedBlocks(blocks);
+          } else {
+            setBookmarkedBlocks([]);
+          }
+        } catch (err) {
+          console.error('Failed to fetch bookmarks:', err);
+          setBookmarkedBlocks([]);
+        } finally {
+          setLoadingBookmarks(false);
+        }
+      };
+
+      fetchBookmarks();
+    }
+  }, [activeTab]);
 
   // Fetch main content blocks
   useEffect(() => {
@@ -375,22 +412,34 @@ function IntelligenceLibraryContent() {
           </div>
 
           {/* Personalized Recommendations Section */}
-          {personalizedBlocks.length > 0 && (
+          {(loadingPersonalized || personalizedBlocks.length > 0) && (
             <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200" delay={0}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                   <span>🎯</span> For You
                 </h2>
-                <button
-                  onClick={() => setActiveTab('for-you')}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
-                >
-                  View All →
-                </button>
+                {!loadingPersonalized && (
+                  <button
+                    onClick={() => setActiveTab('for-you')}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                  >
+                    View All →
+                  </button>
+                )}
               </div>
               <p className="text-gray-600 mb-4">Based on your profile and interests</p>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {personalizedBlocks.map((block) => (
+                {loadingPersonalized ? (
+                  [...Array(5)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-32 bg-white rounded-lg border border-gray-200 p-4">
+                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  personalizedBlocks.map((block) => (
                   <button
                     key={block.id}
                     onClick={() => {
@@ -414,28 +463,41 @@ function IntelligenceLibraryContent() {
                       )}
                     </div>
                   </button>
-                ))}
+                  ))
+                )}
               </div>
             </AnimatedCard>
           )}
 
           {/* Trending Content Section */}
-          {trendingBlocks.length > 0 && (
+          {(loadingTrending || trendingBlocks.length > 0) && (
             <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200" delay={50}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                   <span>🔥</span> Trending Now
                 </h2>
-                <button
-                  onClick={() => setActiveTab('trending')}
-                  className="text-sm text-orange-600 hover:text-orange-700 font-semibold"
-                >
-                  View All →
-                </button>
+                {!loadingTrending && (
+                  <button
+                    onClick={() => setActiveTab('trending')}
+                    className="text-sm text-orange-600 hover:text-orange-700 font-semibold"
+                  >
+                    View All →
+                  </button>
+                )}
               </div>
               <p className="text-gray-600 mb-4">Most popular content this week</p>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {trendingBlocks.map((block) => (
+                {loadingTrending ? (
+                  [...Array(5)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-32 bg-white rounded-lg border border-gray-200 p-4">
+                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  trendingBlocks.map((block) => (
                   <button
                     key={block.id}
                     onClick={() => {
@@ -459,7 +521,8 @@ function IntelligenceLibraryContent() {
                       )}
                     </div>
                   </button>
-                ))}
+                  ))
+                )}
               </div>
             </AnimatedCard>
           )}
@@ -644,8 +707,16 @@ function IntelligenceLibraryContent() {
           {pagination && (
             <div className="mb-6 text-center">
               <p className="text-gray-600">
-                Showing <span className="font-bold text-gray-900">{blocks.length}</span> of{' '}
-                <span className="font-bold text-gray-900">{pagination.totalCount}</span> results
+                {activeTab === 'saved' ? (
+                  <>
+                    <span className="font-bold text-gray-900">{bookmarkedBlocks.length}</span> saved article{bookmarkedBlocks.length !== 1 ? 's' : ''}
+                  </>
+                ) : (
+                  <>
+                    Showing <span className="font-bold text-gray-900">{blocks.length}</span> of{' '}
+                    <span className="font-bold text-gray-900">{pagination.totalCount}</span> results
+                  </>
+                )}
               </p>
             </div>
           )}
@@ -667,22 +738,47 @@ function IntelligenceLibraryContent() {
           )}
 
           {/* Content Blocks Grid */}
-          {!loading && !error && (
+          {!loading && !loadingBookmarks && !error && (
             <div className="space-y-4 mb-12">
-              {blocks.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No results found</h3>
-                  <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
-                  <button
-                    onClick={clearFilters}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-                  >
-                    Clear filters
-                  </button>
-                </div>
-              ) : (
-                blocks.map((block, index) => (
+              {/* Show appropriate blocks based on active tab */}
+              {(() => {
+                const displayBlocks = activeTab === 'saved' ? bookmarkedBlocks : blocks;
+                
+                if (displayBlocks.length === 0) {
+                  if (activeTab === 'saved') {
+                    return (
+                      <div className="text-center py-16">
+                        <div className="text-6xl mb-4">🔖</div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">No saved content yet</h3>
+                        <p className="text-gray-600 mb-6">
+                          Click the bookmark icon on any article to save it for later
+                        </p>
+                        <button
+                          onClick={() => setActiveTab('all')}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                        >
+                          Explore Content
+                        </button>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <div className="text-center py-16">
+                      <div className="text-6xl mb-4">🔍</div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">No results found</h3>
+                      <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
+                      <button
+                        onClick={clearFilters}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                      >
+                        Clear filters
+                      </button>
+                    </div>
+                  );
+                }
+                
+                return displayBlocks.map((block, index) => (
                   <AnimatedCard
                     key={block.id}
                     className="bg-white border border-gray-200 hover:shadow-lg transition-all"
@@ -800,13 +896,13 @@ function IntelligenceLibraryContent() {
                       </div>
                     )}
                   </AnimatedCard>
-                ))
-              )}
+                ));
+              })()}
             </div>
           )}
 
-          {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && (
+          {/* Pagination (hide on Saved tab) */}
+          {pagination && pagination.totalPages > 1 && activeTab !== 'saved' && (
             <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
