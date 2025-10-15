@@ -308,7 +308,7 @@ export default function DirectoryPage() {
                 <>
                   <h3 className="text-lg font-semibold mb-2">No providers yet</h3>
                   <p className="text-gray-600 text-sm">
-                    We're actively building our directory of vetted military-friendly providers.
+                    We&apos;re actively building our directory of vetted military-friendly providers.
                     Check back soon!
                   </p>
                 </>
