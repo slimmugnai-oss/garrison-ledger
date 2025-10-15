@@ -45,24 +45,24 @@ PCS and career planning focused
    - **Purpose:** Estimate PCS (Permanent Change of Station) costs and reimbursements
    - **Inputs:** Distance, household goods weight, dependents, DITY move
    - **Outputs:** Estimated costs, reimbursements, out-of-pocket expenses
-   - **AI Explainer:** ✅ Yes
-   - **API:** `/api/calculators/pcs`
+   - **AI Explainer:** ✅ Yes (ADDED)
+   - **Paywall:** ✅ REMOVED
 
 5. **Salary & Relocation Calculator** (`/dashboard/tools/salary-calculator`)
    - **Component:** `SalaryRelocationCalculator.tsx`
    - **Purpose:** Compare military vs civilian compensation with location adjustments
    - **Inputs:** Military pay, civilian offer, locations, benefits
    - **Outputs:** Total compensation comparison, cost of living adjusted
-   - **AI Explainer:** ✅ Yes
-   - **API:** `/api/calculators/salary`
+   - **AI Explainer:** ✅ Yes (ADDED)
+   - **Paywall:** ✅ None (never had one)
 
 6. **On-Base Savings Calculator** (`/dashboard/tools/on-base-savings`)
    - **Component:** `OnBaseSavingsCalculator.tsx`
    - **Purpose:** Calculate savings from on-base shopping (commissary, exchange)
    - **Inputs:** Monthly grocery spend, gas spend, other shopping
    - **Outputs:** Annual savings vs off-base, percentage saved
-   - **AI Explainer:** ❓ (Need to verify)
-   - **Uses:** `PaywallWrapper` (deprecated, now shows all content)
+   - **AI Explainer:** ✅ Yes (ADDED)
+   - **Paywall:** ✅ Uses `PaywallWrapper` (deprecated, shows all content)
 
 ---
 
@@ -73,15 +73,18 @@ PCS and career planning focused
 - Streams explanation in real-time
 - Button: "✨ Explain these results"
 - API: `/api/explain` (POST)
+- **Free users:** See first 2-3 sentences + upgrade CTA
+- **Premium users:** See complete AI explanation
 
 ### **Cost Structure**
 - Model: GPT-4o-mini
 - Estimated cost: ~$0.01-0.02 per explanation
-- Currently available on 5/6 tools (need to verify On-Base Savings)
+- Now available on ALL 6 tools ✅
 
 ### **Current Status**
-- ✅ **Available to ALL users** (free and premium)
-- No paywall or restrictions
+- ✅ **Preview mode for free users** (first 2-3 sentences)
+- ✅ **Full explanation for premium** ($9.99/month)
+- Shows AI quality to drive conversions
 
 ---
 
@@ -167,12 +170,12 @@ PCS and career planning focused
 ### **Paywall Status**
 | Tool | Component | Paywall Status | Explainer |
 |------|-----------|----------------|-----------|
-| TSP Modeler | `TspModeler.tsx` | ✅ FREE (fixed) | ✅ Free |
-| SDP Strategist | `SdpStrategist.tsx` | ✅ FREE | ✅ Free |
-| House Hacking | `HouseHack.tsx` | ✅ FREE | ✅ Free |
-| PCS Planner | `PcsFinancialPlanner.tsx` | ✅ FREE | ✅ Free |
-| Salary Calculator | `SalaryRelocationCalculator.tsx` | ✅ FREE | ✅ Free |
-| On-Base Savings | `OnBaseSavingsCalculator.tsx` | ✅ FREE | ❓ Verify |
+| TSP Modeler | `TspModeler.tsx` | ✅ FREE (fixed) | ✅ Preview |
+| SDP Strategist | `SdpStrategist.tsx` | ✅ FREE | ✅ Preview |
+| House Hacking | `HouseHack.tsx` | ✅ FREE | ✅ Preview |
+| PCS Planner | `PcsFinancialPlanner.tsx` | ✅ FREE (fixed) | ✅ Preview (ADDED) |
+| Salary Calculator | `SalaryRelocationCalculator.tsx` | ✅ FREE | ✅ Preview (ADDED) |
+| On-Base Savings | `OnBaseSavingsCalculator.tsx` | ✅ FREE | ✅ Preview (ADDED) |
 
 ### **PaywallWrapper Usage**
 - `SdpStrategist.tsx`: Uses `PaywallWrapper` (deprecated, shows all)

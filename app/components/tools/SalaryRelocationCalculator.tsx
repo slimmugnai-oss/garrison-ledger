@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
+import Explainer from '@/app/components/ai/Explainer';
 
 const CITY_DATA = [
   { value: "100.0", label: "National Average" },
@@ -285,6 +286,15 @@ export default function SalaryRelocationCalculator() {
           </div>
         )}
       </div>
+
+      {/* AI Explainer */}
+      {showResults && (
+        <Explainer payload={{
+          tool: "salary",
+          inputs: { militarySalary, civilianSalary: newSalary, currentCity, newCity },
+          outputs: { adjustedMilitary: result.adjustedMilitary, adjustedNew: result.adjustedNew, difference: result.difference }
+        }} />
+      )}
 
       {/* Educational Content */}
       <div className="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-6">

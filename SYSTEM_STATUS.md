@@ -40,6 +40,9 @@
 - All user flows tested and working
 
 ### **📅 Recent Changes**
+- 2025-01-15: 🤖 AI EXPLAINER ENHANCED - Preview mode (2-3 sentences) for free, full explanation for premium
+- 2025-01-15: ➕ EXPLAINERS ADDED - PCS Planner, Salary Calculator, On-Base Savings now have AI explanations
+- 2025-01-15: 🔓 ALL PAYWALLS REMOVED - Deep audit confirmed all 6 tools fully accessible
 - 2025-01-15: ✅ OPTIONAL FEATURES COMPLETE - Intel Library 5/day limit, "Update Plan" button, all tools free
 - 2025-01-15: 🔓 CALCULATORS MADE FREE - Removed paywall from all 6 calculator tools (per freemium model)
 - 2025-01-15: 📚 LIBRARY RATE LIMITING - 5 articles/day for free, unlimited for premium (\$9.99/mo)
@@ -130,8 +133,9 @@
 **AI Explainer Feature:**
 - All 6 tools have "✨ Explain these results" button
 - Uses GPT-4o-mini (~$0.01/explanation)
-- **Status:** ✅ FREE for all users (recommended to keep free)
-- Drives engagement and shows AI value
+- **Status:** ✅ PREVIEW for free users (first 2-3 sentences)
+- **Premium:** Full AI explanation with all details
+- Shows AI value, drives conversions
 
 **Status:** ✅ Live, Working, All Free (No Paywalls)
 

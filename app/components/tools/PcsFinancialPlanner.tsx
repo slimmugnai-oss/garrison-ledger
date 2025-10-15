@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import Explainer from '@/app/components/ai/Explainer';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -426,67 +427,31 @@ export default function PcsFinancialPlanner() {
               </div>
             </div>
 
-            {/* Results */}
+            {/* Results - Available to ALL users */}
             <div className="pt-6 border-t-2 border-gray-200">
-              {isPremium ? (
-                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
-                      <p className="text-xs text-gray-600">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {netEstimate >= 0 ? '+' : ''}${netEstimate.toLocaleString()}
-                      </p>
-                    </div>
+              <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
+                    <p className="text-xs text-gray-600">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
                   </div>
-                  <p className="text-xs text-gray-500 mt-4 text-center">
-                    This is an estimate for planning purposes only. Actual costs may vary.
-                  </p>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div className="blur-sm pointer-events-none select-none">
-                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
-                          <p className="text-xs text-gray-600">Total Income: $15,247 − Total Expenses: $8,934</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-4xl font-black text-green-600">
-                            +$6,313
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-4 text-center">
-                        This is an estimate for planning purposes only. Actual costs may vary.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                      <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                      <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                        Your Results Are Ready!
-                      </h3>
-                      <p className="text-lg text-gray-700 mb-2">
-                        Unlock to see your complete PCS financial estimate with detailed breakdowns
-                      </p>
-                      <p className="text-3xl font-black text-gray-900 mb-6">
-                        $9.99<span className="text-lg font-normal text-gray-600">/month</span>
-                      </p>
-                      <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                        Unlock Now →
-                      </a>
-                      <p className="text-xs text-gray-500">
-                        Less than a coffee per week · Upgrade anytime
-                      </p>
-                    </div>
+                  <div className="text-right">
+                    <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {netEstimate >= 0 ? '+' : ''}${netEstimate.toLocaleString()}
+                    </p>
                   </div>
                 </div>
-              )}
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                  This is an estimate for planning purposes only. Actual costs may vary.
+                </p>
+              </div>
+
+              {/* AI Explainer */}
+              <Explainer payload={{
+                tool: "pcs",
+                inputs: { rank, dependencyStatus, distance, hhgWeight, dityMove },
+                outputs: { totalIncome, totalExpenses, netEstimate }
+              }} />
             </div>
           </div>
         </div>

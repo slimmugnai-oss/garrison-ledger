@@ -5,6 +5,7 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
+import Explainer from '@/app/components/ai/Explainer';
 
 export default function OnBaseSavingsCalculator() {
   const { isPremium } = usePremiumStatus();
@@ -572,6 +573,20 @@ export default function OnBaseSavingsCalculator() {
           </p>
         </div>
       </PaywallWrapper>
+
+      {/* AI Explainer */}
+      <Explainer payload={{
+        tool: "on-base-savings",
+        inputs: {
+          commissary: { meatProduce, pantryStaples, diapersBaby },
+          exchange: { shoppingTotal, totalGallons }
+        },
+        outputs: {
+          commissarySavings: totalCommissarySavings,
+          exchangeSavings: totalExchangeSavings,
+          grandTotal
+        }
+      }} />
 
       {/* Educational Tips */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
