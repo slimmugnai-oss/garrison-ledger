@@ -292,7 +292,7 @@ export default function SalaryRelocationCalculator() {
         <Explainer payload={{
           tool: "salary",
           inputs: { currentSalary, newSalary, currentCity, newCity },
-          outputs: { adjustedMilitary: result.adjustedMilitary, adjustedNew: result.adjustedNew, difference: result.difference }
+          outputs: { equivalentSalary: result.equivalentSalary, difference: result.difference }
         }} />
       )}
 
