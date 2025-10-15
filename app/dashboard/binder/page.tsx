@@ -765,11 +765,11 @@ function BinderContent() {
       {showMoveModal && selectedFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] max-w-md w-full p-6">
-            <h2 className="text-xl font-bold mb-4">Move File</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-100">Move File</h2>
             <select
               value={newFolder}
               onChange={(e) => setNewFolder(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4"
+              className="w-full px-3 py-2 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg mb-4 text-gray-100"
             >
               {FOLDERS.map((folder) => (
                 <option key={folder.name} value={folder.name}>
@@ -780,7 +780,7 @@ function BinderContent() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowMoveModal(false)}
-                className="flex-1 px-4 py-2 bg-[#2A2F3E] rounded-lg hover:bg-[#3A3F4E]"
+                className="flex-1 px-4 py-2 bg-[#2A2F3E] text-gray-100 rounded-lg hover:bg-[#3A3F4E]"
               >
                 Cancel
               </button>
