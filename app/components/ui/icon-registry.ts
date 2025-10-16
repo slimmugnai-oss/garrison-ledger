@@ -34,9 +34,7 @@ import {
   Upload,
   Download,
   Send,
-  Tool,
   Quote,
-  Lightbulb,
   
   // Business & Career
   Briefcase,
@@ -59,7 +57,6 @@ import {
   
   // Shopping & Commissary
   ShoppingCart,
-  Monitor,
   
   // Military & Deployment
   Shield,
@@ -157,9 +154,7 @@ export const iconRegistry = {
   Upload,
   Download,
   Send,
-  Tool,
   Quote,
-  Lightbulb,
   Heart,
   Info,
   Link,
@@ -189,7 +184,6 @@ export const iconRegistry = {
   
   // Shopping & Commissary
   ShoppingCart,
-  Monitor,
   
   // Military & Deployment
   Shield,
