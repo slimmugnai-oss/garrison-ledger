@@ -6,7 +6,7 @@
 -- 1. REFERRAL CODES TABLE
 CREATE TABLE IF NOT EXISTS public.referral_codes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL,
+    user_id TEXT NOT NULL, -- No foreign key constraint (Clerk user IDs are TEXT)
     code TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMPTZ,
@@ -41,7 +41,7 @@ CREATE INDEX idx_referral_conversions_code ON public.referral_conversions(code_u
 
 -- 3. USER REFERRAL STATS TABLE
 CREATE TABLE IF NOT EXISTS public.user_referral_stats (
-    user_id TEXT PRIMARY KEY,
+    user_id TEXT PRIMARY KEY, -- No foreign key constraint (Clerk user IDs are TEXT)
     total_referrals_sent INTEGER NOT NULL DEFAULT 0,
     total_conversions INTEGER NOT NULL DEFAULT 0,
     total_earnings_cents INTEGER NOT NULL DEFAULT 0,
@@ -55,7 +55,7 @@ CREATE INDEX idx_user_referral_stats_earnings ON public.user_referral_stats(tota
 -- 4. USER REWARD CREDITS TABLE
 CREATE TABLE IF NOT EXISTS public.user_reward_credits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL,
+    user_id TEXT NOT NULL, -- No foreign key constraint (Clerk user IDs are TEXT)
     amount_cents INTEGER NOT NULL,
     source TEXT NOT NULL,
     description TEXT,
