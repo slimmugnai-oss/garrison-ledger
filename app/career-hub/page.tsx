@@ -6,7 +6,6 @@ import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import Badge from '../components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
-import RelatedResources from '../components/ui/RelatedResources';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Military Career Hub - Portable Careers & Remote Jobs for Military Spouses | Garrison Ledger",
@@ -240,7 +239,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="Heart" className="h-8 w-8" />
-                  <Badge variant="success" className="bg-green-400 text-green-900 border-green-500">Always Hiring</Badge>
+                  <Badge variant="success">Always Hiring</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Registered Nurse (RN)</h3>
                 <div className="text-3xl font-black text-teal-100 mb-4">$70K-$95K</div>
@@ -256,7 +255,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="Calculator" className="h-8 w-8" />
-                  <Badge variant="primary" className="bg-blue-400 text-blue-900 border-blue-500">Remote Friendly</Badge>
+                  <Badge variant="primary">Remote Friendly</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Accountant/Bookkeeper</h3>
                 <div className="text-3xl font-black text-green-100 mb-4">$45K-$75K</div>
@@ -272,7 +271,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="Users" className="h-8 w-8" />
-                  <Badge variant="warning" className="bg-amber-400 text-amber-900 border-amber-500">Low Barrier</Badge>
+                  <Badge variant="warning">Low Barrier</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Virtual Assistant</h3>
                 <div className="text-3xl font-black text-purple-100 mb-4">$35K-$55K</div>
@@ -288,7 +287,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="TrendingUp" className="h-8 w-8" />
-                  <Badge variant="primary" className="bg-blue-400 text-blue-900 border-blue-500">Growing Field</Badge>
+                  <Badge variant="primary">Growing Field</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Marketing Specialist</h3>
                 <div className="text-3xl font-black text-orange-100 mb-4">$50K-$80K</div>
@@ -304,7 +303,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-amber-500 to-yellow-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="BookOpen" className="h-8 w-8" />
-                  <Badge variant="success" className="bg-green-400 text-green-900 border-green-500">Stable Demand</Badge>
+                  <Badge variant="success">Stable Demand</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Teacher/Online Tutor</h3>
                 <div className="text-3xl font-black text-amber-100 mb-4">$40K-$65K</div>
