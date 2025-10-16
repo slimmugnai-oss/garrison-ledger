@@ -120,12 +120,13 @@ export default function MultiStepProfileWizard() {
                 'bg-gray-200'
               }`} />
               {step < totalSteps && (
-                <Icon 
-                  name={step < currentStep ? "CheckCircle" : "Circle"} 
-                  className={`w-5 h-5 flex-shrink-0 ${
-                    step < currentStep ? 'text-green-500' : 'text-gray-300'
-                  }`} 
-                />
+                <div className={`w-5 h-5 flex-shrink-0 rounded-full border-2 flex items-center justify-center ${
+                  step < currentStep ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                }`}>
+                  {step < currentStep && (
+                    <Icon name="Check" className="w-3 h-3 text-white" />
+                  )}
+                </div>
               )}
             </div>
           ))}
