@@ -4,6 +4,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 import CareerOpportunityAnalyzer from '@/app/components/tools/CareerOpportunityAnalyzer';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
+import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
@@ -25,8 +26,8 @@ export default function Page() {
           {/* Hero Header */}
           <div className="mb-12 text-center">
             <div className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                Premium Tool
+              <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold text-green-700 uppercase tracking-wider">
+                ✓ Free Tool
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary mb-4">
@@ -39,25 +40,23 @@ export default function Page() {
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-surface rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
-              <h2 className="text-3xl font-bold text-primary mb-3">Analyze Career Opportunities Intelligently</h2>
+            <div className="max-w-2xl mx-auto bg-card rounded-xl p-10 shadow-lg border border-border text-center">
+              <Icon name="Calculator" className="h-16 w-16 text-primary mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-primary mb-3">Compare Career Opportunities</h2>
               <p className="text-lg text-body mb-2">
-                Complete financial analysis across 70+ military cities with total compensation, tax, and cost of living insights
+                Sign in to access this free calculator with complete financial analysis across 70+ military cities
               </p>
               <p className="text-sm text-body mb-6">
-                Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
-              </p>
-              <p className="text-3xl font-black text-primary mb-6">
-                $9.99<span className="text-lg font-normal text-body">/month</span>
+                Make informed career decisions worth <strong className="text-success">$15K+ in lifetime earnings</strong>
               </p>
               <Link
                 href="/sign-in"
-                className="inline-block w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4"
+                className="btn-primary inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 mb-4"
               >
-                Start Free, Upgrade Anytime →
+                Sign In to Get Started
               </Link>
-              <p className="text-xs text-muted">
-                No credit card required for free tier · Less than a coffee per week for premium
+              <p className="text-sm text-muted">
+                Free account • No credit card required
               </p>
             </div>
           </SignedOut>

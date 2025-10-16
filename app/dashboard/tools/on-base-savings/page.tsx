@@ -4,6 +4,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs';
 import OnBaseSavingsCalculator from '@/app/components/tools/OnBaseSavingsCalculator';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
+import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
@@ -25,8 +26,8 @@ export default function Page() {
           {/* Hero Header */}
           <div className="mb-12 text-center">
             <div className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                <span>⭐</span> Premium Tool
+              <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold text-green-700 uppercase tracking-wider">
+                ✓ Free Tool
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary mb-4">
@@ -39,26 +40,23 @@ export default function Page() {
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-surface rounded-2xl p-10 shadow-2xl border-2 border-green-400">
-              <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-3xl font-bold text-primary mb-3">Your Strategic Savings Dashboard</h2>
+            <div className="max-w-2xl mx-auto bg-card rounded-xl p-10 shadow-lg border border-border text-center">
+              <Icon name="Calculator" className="h-16 w-16 text-primary mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-primary mb-3">Calculate Your Annual Savings</h2>
               <p className="text-lg text-body mb-2">
-                Get granular breakdowns of exactly where your savings come from
+                Sign in to access this free calculator and discover your exact on-base savings
               </p>
               <p className="text-sm text-body mb-6">
                 💡 Most families save <strong className="text-success">$2,000-4,000/year</strong> - find your number
               </p>
-              <p className="text-3xl font-black text-primary mb-6">
-                $9.99<span className="text-lg font-normal text-body">/month</span>
-              </p>
               <Link
                 href="/sign-in"
-                className="inline-block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4"
+                className="btn-primary inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 mb-4"
               >
-                Start Free, Upgrade Anytime →
+                Sign In to Get Started
               </Link>
-              <p className="text-xs text-muted">
-                No credit card required for free tier · Less than a coffee per week for premium
+              <p className="text-sm text-muted">
+                Free account • No credit card required
               </p>
             </div>
           </SignedOut>
