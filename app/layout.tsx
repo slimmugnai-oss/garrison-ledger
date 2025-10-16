@@ -55,6 +55,7 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${lora.variable} font-sans antialiased bg-background text-text-body`}
         >
+          <ReferralCapture />
           {children}
           <GoogleAnalytics gaId="G-TCPN1EGMD8" />
         </body>

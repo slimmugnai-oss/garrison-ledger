@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Anonymize user IDs (show only first 8 chars)
-    const anonymizedData = (data || []).map((entry: any, index: number) => ({
+    const anonymizedData = (data || []).map((entry: { user_id: string; total_conversions: number; total_earnings_cents: number }, index: number) => ({
       rank: index + 1,
       userId: entry.user_id?.slice(0, 8) + "...",
       conversions: entry.total_conversions,

@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const { userId } = await auth();
   
   if (!userId || !ADMIN_USER_IDS.includes(userId)) {

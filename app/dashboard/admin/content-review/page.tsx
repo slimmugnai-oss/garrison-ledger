@@ -22,7 +22,6 @@ interface FeedItem {
 export default function ContentReviewPage() {
   const [pendingItems, setPendingItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<FeedItem | null>(null);
   const [triaging, setTriaging] = useState<string | null>(null);
   const [converting, setConverting] = useState<string | null>(null);
 

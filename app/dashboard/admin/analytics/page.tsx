@@ -5,7 +5,6 @@ import Footer from '@/app/components/Footer';
 import { supabaseAdmin } from '@/lib/supabase';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 

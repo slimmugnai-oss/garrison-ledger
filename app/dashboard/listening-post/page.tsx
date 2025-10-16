@@ -23,7 +23,6 @@ function ListeningPostContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string>('all');
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // Load feed items
   useEffect(() => {
@@ -148,7 +147,7 @@ function ListeningPostContent() {
                       : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-600'
                   }`}
                 >
-                  <Icon name={tag.icon as any} className="h-4 w-4" />
+                  <Icon name={tag.icon as 'Globe' | 'Truck' | 'TrendingUp' | 'Shield' | 'Home' | 'Briefcase' | 'ShoppingCart'} className="h-4 w-4" />
                   {tag.label}
                 </button>
               ))}

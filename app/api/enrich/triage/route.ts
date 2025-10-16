@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
         .replace(/```\n?/g, '')
         .trim();
       triageData = JSON.parse(cleanJson);
-    } catch (parseError) {
+    } catch {
       console.error("[Triage] Failed to parse Gemini response:", responseText);
       return NextResponse.json({ 
         error: "Failed to parse AI response",

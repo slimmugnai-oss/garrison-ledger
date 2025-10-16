@@ -7,8 +7,18 @@ import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import type { Metadata } from "next";
 
+interface CaseStudyData {
+  meta: { title: string; description: string };
+  hero: { name: string; rank: string; branch: string; base: string; years: number; stat: string; statLabel: string; category: string; gradient: string };
+  challenge: { title: string; points: string[]; quote: string };
+  solution: { title: string; steps: Array<{ icon: string; title: string; description: string }> };
+  results: { title: string; metrics: Array<{ label: string; value: string; description: string }>; timeline: string; impact: string };
+  tools: Array<{ name: string; link: string; description: string }>;
+  testimonial: { quote: string; author: string };
+}
+
 // Define case study data (in real app, this would be in a database)
-const caseStudiesData: Record<string, any> = {
+const caseStudiesData: Record<string, CaseStudyData> = {
   'ssgt-martinez-pcs-savings': {
     meta: {
       title: "How SSgt Martinez Saved $8,400 on 3 PCS Moves - Garrison Ledger",
@@ -143,7 +153,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{solution.title}</h2>
               </div>
               <div className="space-y-6">
-                {solution.steps.map((step: any, index: number) => (
+                {solution.steps.map((step, index: number) => (
                   <div key={index} className="flex gap-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
                       <Icon name={step.icon} className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -166,7 +176,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{results.title}</h2>
               </div>
               <div className="grid md:grid-cols-2 gap-6 mb-8">
-                {results.metrics.map((metric: any, index: number) => (
+                {results.metrics.map((metric, index: number) => (
                   <div key={index} className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-green-200 dark:border-green-700">
                     <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{metric.label}</div>
                     <div className="text-4xl font-black text-green-600 dark:text-green-400 mb-2">{metric.value}</div>
@@ -196,7 +206,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-600">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tools & Resources Used</h2>
               <div className="space-y-4">
-                {tools.map((tool: any, index: number) => (
+                {tools.map((tool, index: number) => (
                   <Link key={index} href={tool.link}>
                     <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
                       <Icon name="Tool" className="h-6 w-6 text-blue-600 dark:text-blue-400" />
