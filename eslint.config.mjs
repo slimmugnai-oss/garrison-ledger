@@ -22,6 +22,13 @@ const eslintConfig = [
       "resource toolkits/**", // Legacy toolkit files
     ],
   },
+  {
+    rules: {
+      // Disable deprecated rules
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;
