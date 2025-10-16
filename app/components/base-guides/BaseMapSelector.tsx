@@ -1,73 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
-
-interface BaseData {
-  id: string;
-  title: string;
-  branch: string;
-  state: string;
-  city: string;
-  url: string;
-  lat: number;
-  lng: number;
-}
-
-const basesData: BaseData[] = [
-  { id: 'jblm', title: "Joint Base Lewis-McChord", branch: "Army", state: "WA", city: "Tacoma", url: "https://familymedia.com/article/base-guides-joint-base-lewis-mcchord", lat: 47.11, lng: -122.55 },
-  { id: 'fort-carson', title: "Fort Carson", branch: "Army", state: "CO", city: "Colorado Springs", url: "https://familymedia.com/article/base-guides-fort-carson", lat: 38.737, lng: -104.79 },
-  { id: 'jbsa', title: "Joint Base San Antonio", branch: "Army", state: "TX", city: "San Antonio", url: "https://familymedia.com/article/base-guides-joint-base-san-antonio", lat: 29.383, lng: -98.613 },
-  { id: 'fort-stewart', title: "Fort Stewart", branch: "Army", state: "GA", city: "Hinesville", url: "https://familymedia.com/article/base-guides-fort-stewart", lat: 31.869, lng: -81.613 },
-  { id: 'fort-belvoir', title: "Fort Belvoir", branch: "Army", state: "VA", city: "Fairfax County", url: "https://familymedia.com/article/base-guides-fort-belvoir", lat: 38.711, lng: -77.145 },
-  { id: 'fort-liberty', title: "Fort Liberty", branch: "Army", state: "NC", city: "Fayetteville", url: "https://familymedia.com/article/base-guides-fort-liberty", lat: 35.141, lng: -79.006 },
-  { id: 'fort-cavazos', title: "Fort Cavazos", branch: "Army", state: "TX", city: "Killeen", url: "https://familymedia.com/article/base-guides-fort-cavazos", lat: 31.134, lng: -97.77 },
-  { id: 'fort-moore', title: "Fort Moore", branch: "Army", state: "GA", city: "Columbus", url: "https://familymedia.com/article/base-guides-fort-moore", lat: 32.35, lng: -84.97 },
-  { id: 'fort-campbell', title: "Fort Campbell", branch: "Army", state: "KY/TN", city: "Hopkinsville/Clarksville", url: "https://familymedia.com/article/base-guides-fort-campbell", lat: 36.653, lng: -87.46 },
-  { id: 'fort-drum', title: "Fort Drum", branch: "Army", state: "NY", city: "Watertown", url: "https://familymedia.com/article/base-guides-fort-drum", lat: 44.05, lng: -75.79 },
-  { id: 'fort-eisenhower', title: "Fort Eisenhower", branch: "Army", state: "GA", city: "Augusta", url: "https://familymedia.com/article/base-guides-fort-eisenhower", lat: 33.417, lng: -82.141 },
-  { id: 'fort-novosel', title: "Fort Novosel", branch: "Army", state: "AL", city: "Dale County", url: "https://familymedia.com/article/base-guides-fort-novosel", lat: 31.319, lng: -85.713 },
-  { id: 'fort-johnson', title: "Fort Johnson", branch: "Army", state: "LA", city: "Leesville", url: "https://familymedia.com/article/base-guides-fort-johnson", lat: 31.044, lng: -93.191 },
-  { id: 'fort-gregg-adams', title: "Fort Gregg-Adams", branch: "Army", state: "VA", city: "Prince George", url: "https://familymedia.com/article/base-guides-fort-gregg-adams", lat: 37.244, lng: -77.335 },
-  { id: 'fort-walker', title: "Fort Walker", branch: "Army", state: "VA", city: "Caroline County", url: "https://familymedia.com/article/base-guides-fort-walker", lat: 38.07, lng: -77.35 },
-  { id: 'fort-bliss', title: "Fort Bliss", branch: "Army", state: "TX", city: "El Paso", url: "https://familymedia.com/article/base-guides-fort-bliss", lat: 31.813, lng: -106.42 },
-  { id: 'eglin-afb', title: "Eglin AFB", branch: "Air Force", state: "FL", city: "Valparaiso", url: "https://familymedia.com/article/base-guides-eglin-air-force-base", lat: 30.46, lng: -86.55 },
-  { id: 'nellis-afb', title: "Nellis AFB", branch: "Air Force", state: "NV", city: "Las Vegas", url: "https://familymedia.com/article/base-guides-nellis-air-force-base", lat: 36.246, lng: -115.033 },
-  { id: 'edwards-afb', title: "Edwards AFB", branch: "Air Force", state: "CA", city: "Kern County", url: "https://familymedia.com/article/base-guides-edwards-air-force-base", lat: 34.913, lng: -117.936 },
-  { id: 'hill-afb', title: "Hill AFB", branch: "Air Force", state: "UT", city: "Ogden", url: "https://familymedia.com/article/base-guides-hill-air-force-base", lat: 41.125, lng: -111.973 },
-  { id: 'travis-afb', title: "Travis AFB", branch: "Air Force", state: "CA", city: "Fairfield", url: "https://familymedia.com/article/base-guides-travis-air-force-base", lat: 38.272, lng: -121.93 },
-  { id: 'camp-pendleton', title: "MCB Camp Pendleton", branch: "Marine Corps", state: "CA", city: "Oceanside", url: "https://familymedia.com/article/base-guides-marine-corps-base-camp-pendleton", lat: 33.304, lng: -117.304 },
-  { id: 'camp-lejeune', title: "MCB Camp Lejeune", branch: "Marine Corps", state: "NC", city: "Jacksonville", url: "https://familymedia.com/article/base-guides-marine-corps-base-camp-lejeune", lat: 34.639, lng: -77.321 },
-  { id: 'mcas-miramar', title: "MCAS Miramar", branch: "Marine Corps", state: "CA", city: "San Diego", url: "https://familymedia.com/article/base-guides-marine-corps-air-station-miramar", lat: 32.868, lng: -117.142 },
-  { id: 'ns-norfolk', title: "Naval Station Norfolk", branch: "Navy", state: "VA", city: "Norfolk", url: "https://familymedia.com/article/base-guides-naval-station-norfolk", lat: 36.943, lng: -76.305 },
-  { id: 'nb-san-diego', title: "Naval Base San Diego", branch: "Navy", state: "CA", city: "San Diego", url: "https://familymedia.com/article/base-guides-naval-base-san-diego", lat: 32.676, lng: -117.141 },
-];
-
-const branchColors = {
-  'Army': '#1e293b',
-  'Air Force': '#2563eb',
-  'Navy': '#1e3a8a',
-  'Marine Corps': '#dc2626',
-  'Joint': '#059669'
-};
-
-const badgeColors = {
-  'Army': 'bg-slate-900',
-  'Air Force': 'bg-blue-600',
-  'Navy': 'bg-blue-800',
-  'Marine Corps': 'bg-red-600',
-  'Joint': 'bg-emerald-600'
-};
+import { basesData, oconusBases, branchColors, badgeColors, type BaseData } from '@/app/data/bases';
+import { trackBaseView, trackBaseSearch, trackFilterUsage, trackGuideClickthrough, addToComparison, getComparisonList } from '@/app/lib/base-analytics';
+import { useAuth } from '@clerk/nextjs';
 
 export default function BaseMapSelector() {
   const svgRef = useRef<SVGSVGElement>(null);
+  const { userId } = useAuth();
   const [selectedBranch, setSelectedBranch] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [filteredBases, setFilteredBases] = useState<BaseData[]>(basesData);
+  const [showMobileList, setShowMobileList] = useState<boolean>(false);
+  const [comparisonCount, setComparisonCount] = useState<number>(0);
 
-  // Filter bases based on branch and search
-  useEffect(() => {
+  // Memoized filtered bases for performance
+  const filteredBases = useMemo(() => {
     let filtered = basesData;
     
     if (selectedBranch !== 'All') {
@@ -83,12 +32,12 @@ export default function BaseMapSelector() {
       );
     }
     
-    setFilteredBases(filtered);
+    return filtered;
   }, [selectedBranch, searchQuery]);
 
   // Initialize D3 map
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || showMobileList) return;
 
     const W = 960;
     const H = 560;
@@ -134,9 +83,9 @@ export default function BaseMapSelector() {
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
             .style('cursor', 'pointer');
 
-          // Pin circle
+          // Pin circle with mobile-optimized size
           pinGroup.append('circle')
-            .attr('r', 8)
+            .attr('r', 10) // Increased from 8px to 10px for better mobile tap
             .attr('fill', branchColors[base.branch as keyof typeof branchColors])
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 2)
@@ -172,7 +121,7 @@ export default function BaseMapSelector() {
             d3.select(this).select('circle')
               .transition()
               .duration(200)
-              .attr('r', 12);
+              .attr('r', 15); // Increased from 12px
             
             tooltip
               .transition()
@@ -182,20 +131,46 @@ export default function BaseMapSelector() {
             d3.select(this).select('circle')
               .transition()
               .duration(200)
-              .attr('r', 8);
+              .attr('r', 10);
             
             tooltip
               .transition()
               .duration(200)
               .style('opacity', 0);
           }).on('click', () => {
-            scrollToCard(base.id);
+            scrollToCard(base.id, base.title);
           });
         });
       });
-  }, [filteredBases]);
+  }, [filteredBases, showMobileList]);
 
-  const scrollToCard = (baseId: string) => {
+  // Load comparison count
+  useEffect(() => {
+    const updateCount = () => {
+      setComparisonCount(getComparisonList().length);
+    };
+    
+    updateCount();
+    window.addEventListener('comparison-updated', updateCount);
+    
+    return () => window.removeEventListener('comparison-updated', updateCount);
+  }, []);
+
+  // Track search with debounce
+  useEffect(() => {
+    if (!searchQuery) return;
+    
+    const timer = setTimeout(() => {
+      trackBaseSearch(searchQuery, filteredBases.length, userId || undefined);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredBases.length, userId]);
+
+  const scrollToCard = (baseId: string, baseName: string) => {
+    // Track base view
+    trackBaseView(baseId, baseName, userId || undefined);
+    
     const element = document.getElementById(`base-card-${baseId}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -206,6 +181,28 @@ export default function BaseMapSelector() {
     }
   };
 
+  const handleBranchFilter = (branch: string) => {
+    setSelectedBranch(branch);
+    trackFilterUsage('branch', branch, userId || undefined);
+  };
+
+  const handleAddToComparison = (base: BaseData, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const result = addToComparison(base.id, base.title, base.branch);
+    if (result.success) {
+      setComparisonCount(result.count || 0);
+      window.dispatchEvent(new Event('comparison-updated'));
+    } else {
+      alert(result.message);
+    }
+  };
+
+  const handleCardClick = (base: BaseData) => {
+    trackGuideClickthrough(base.id, base.title, base.url, userId || undefined);
+  };
+
   return (
     <div className="space-y-12">
       {/* Map Container */}
@@ -214,91 +211,310 @@ export default function BaseMapSelector() {
           <h2 className="text-3xl font-serif font-black text-gray-900 mb-4">
             Interactive Base Map
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore 25+ military installations across the United States. Click a base to view details and guide links.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
+            Explore {basesData.length}+ military installations across the United States. Click a base to view details and guide links.
+          </p>
+          {/* Results Count */}
+          <p className="text-sm font-medium text-emerald-600">
+            {filteredBases.length === basesData.length 
+              ? `Showing all ${basesData.length} bases` 
+              : `Showing ${filteredBases.length} of ${basesData.length} bases`}
           </p>
         </div>
 
-        <div className="relative mx-auto max-w-6xl">
-          <svg
-            ref={svgRef}
-            className="w-full h-auto block mx-auto"
-            viewBox="0 0 960 560"
-            preserveAspectRatio="xMidYMid meet"
-          />
+        {/* Map or Mobile List Toggle */}
+        <div className="lg:hidden mb-6 flex justify-center gap-4">
+          <button
+            onClick={() => setShowMobileList(false)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              !showMobileList 
+                ? 'bg-slate-800 text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Map View
+          </button>
+          <button
+            onClick={() => setShowMobileList(true)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+              showMobileList 
+                ? 'bg-slate-800 text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            List View
+          </button>
         </div>
+
+        {!showMobileList && (
+          <>
+            <div className="relative mx-auto max-w-6xl mb-6">
+              <svg
+                ref={svgRef}
+                className="w-full h-auto block mx-auto"
+                viewBox="0 0 960 560"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </div>
+
+            {/* Map Legend */}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-gray-200">
+              <span className="text-sm font-medium text-gray-600">Branch Colors:</span>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-slate-900"></div>
+                <span className="text-sm text-gray-700">Army</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-blue-600"></div>
+                <span className="text-sm text-gray-700">Air Force</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-blue-800"></div>
+                <span className="text-sm text-gray-700">Navy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-red-600"></div>
+                <span className="text-sm text-gray-700">Marine Corps</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-emerald-600"></div>
+                <span className="text-sm text-gray-700">Joint</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Filters & Search */}
       <div className="flex flex-col items-center gap-6">
-        {/* Branch Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <span className="text-sm font-medium text-slate-600">Filter by Branch:</span>
-          {['All', 'Army', 'Air Force', 'Navy', 'Marine Corps', 'Joint'].map(branch => (
-            <button
-              key={branch}
-              onClick={() => setSelectedBranch(branch)}
-              className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedBranch === branch
-                  ? 'bg-slate-800 text-white shadow-lg scale-105'
-                  : 'border border-slate-300 bg-white text-gray-700 hover:border-slate-400'
-              }`}
-            >
-              {branch}
-            </button>
-          ))}
+        {/* Branch Filters - Responsive */}
+        <div className="w-full">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="text-sm font-medium text-slate-600 hidden sm:inline">Filter by Branch:</span>
+            {['All', 'Army', 'Air Force', 'Navy', 'Marine Corps', 'Joint'].map(branch => (
+              <button
+                key={branch}
+                onClick={() => handleBranchFilter(branch)}
+                className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
+                  selectedBranch === branch
+                    ? 'bg-slate-800 text-white shadow-lg scale-105'
+                    : 'border border-slate-300 bg-white text-gray-700 hover:border-slate-400 hover:shadow-md'
+                }`}
+              >
+                {branch}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Search Bar */}
         <div className="w-full max-w-lg">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by base name, state, or city…"
-            className="w-full px-6 py-3 border border-slate-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by base name, state, or city…"
+              className="w-full px-6 py-3 pl-12 border border-slate-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+            <svg 
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Pro Tip Callout */}
+      <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl">
+        <div className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          <div>
+            <h4 className="font-bold text-blue-900 mb-1">💡 Pro Tip</h4>
+            <p className="text-sm text-blue-800">
+              Click any base pin on the map to instantly jump to its detailed card below. Use filters to narrow down by military branch, or search by location to find bases near you!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Comparison Counter */}
+      {comparisonCount > 0 && (
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-300 text-emerald-800 px-4 py-2 rounded-full shadow-lg">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span className="font-bold text-sm">
+              {comparisonCount} base{comparisonCount > 1 ? 's' : ''} added to comparison
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Base Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredBases.length > 0 ? (
           filteredBases.map(base => (
-            <a
+            <div
               key={base.id}
               id={`base-card-${base.id}`}
-              href={base.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-slate-50 rounded-xl shadow-md p-6 hover:shadow-xl transition-all hover:-translate-y-1 group"
+              className="relative bg-slate-50 rounded-xl shadow-md hover:shadow-xl transition-all group"
             >
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+              {/* Featured Badge */}
+              {base.featured && (
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    Featured
+                  </span>
+                </div>
+              )}
+
+              {/* Add to Comparison Button */}
+              <button
+                onClick={(e) => handleAddToComparison(base, e)}
+                className="absolute top-4 left-4 z-10 flex items-center gap-1 bg-white border border-gray-300 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
+                title="Add to comparison"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Compare
+              </button>
+
+              <a
+                href={base.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleCardClick(base)}
+                className="block p-6 hover:-translate-y-1 transition-all"
+              >
+                <div className="flex items-start justify-between mb-2 mt-4">
+                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors pr-16">
+                    {base.title}
+                  </h3>
+                  <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
+                    {base.branch}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-slate-500 mb-4">
+                  {base.city}, {base.state}
+                </p>
+                {/* Size indicator */}
+                {base.size && (
+                  <p className="text-xs text-gray-500 mb-3">
+                    Installation Size: <span className="font-semibold">{base.size}</span>
+                  </p>
+                )}
+                <span className="inline-flex items-center text-blue-600 group-hover:text-blue-800 font-semibold transition-colors text-sm">
+                  View Full Guide
+                  <svg className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              </a>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full">
+            <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">No bases match your search</h3>
+              <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+              <button
+                onClick={() => {
+                  setSelectedBranch('All');
+                  setSearchQuery('');
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-700 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* OCONUS Bases Section */}
+      <div className="mt-16">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full mb-4">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clipRule="evenodd" />
+            </svg>
+            <span className="font-bold text-sm">OCONUS & INTERNATIONAL</span>
+          </div>
+          <h3 className="text-3xl font-serif font-black text-gray-900 mb-4">
+            Overseas Duty Stations
+          </h3>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Researching an overseas move? We&apos;re expanding to major OCONUS installations. Check back soon for comprehensive guides!
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {oconusBases.map(base => (
+            <div
+              key={base.id}
+              className="block bg-slate-50 rounded-xl shadow-md p-6 opacity-70 cursor-not-allowed relative overflow-hidden"
+            >
+              {/* Coming Soon Badge */}
+              <div className="absolute top-0 right-0">
+                <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  Coming Soon
+                </div>
+              </div>
+
+              <div className="flex items-start justify-between mb-2 mt-4">
+                <h4 className="text-xl font-bold text-slate-800">
                   {base.title}
-                </h3>
+                </h4>
                 <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
                   {base.branch}
                 </span>
               </div>
-              <p className="text-sm font-medium text-slate-500 mb-4">
-                {base.city}, {base.state}
+              <p className="text-sm font-medium text-slate-500 mb-2">
+                {base.city}, {base.country}
               </p>
-              <span className="inline-flex items-center text-blue-600 group-hover:text-blue-800 font-semibold transition-colors text-sm">
-                View Guide
-                <svg className="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              {base.size && (
+                <p className="text-xs text-gray-500 mb-4">
+                  Installation Size: <span className="font-semibold">{base.size}</span>
+                </p>
+              )}
+              <div className="inline-flex items-center text-slate-500 font-semibold text-sm">
+                Guide In Progress
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </span>
-            </a>
-          ))
-        ) : (
-          <div className="col-span-full text-center text-slate-500 py-12">
-            No bases match your search criteria.
-          </div>
-        )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
-

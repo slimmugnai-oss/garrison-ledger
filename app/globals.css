@@ -177,3 +177,19 @@ button, a, [role="button"] {
   transform: translateY(-5px);
   box-shadow: 0 12px 22px -6px rgba(0,0,0,.12), 0 6px 12px -6px rgba(0,0,0,.08);
 }
+
+/* Comparison bar slide-up animation */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
