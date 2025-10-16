@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* Premium Light Theme - WCAG AA Compliant */
+  /* Light Theme - WCAG AA Compliant */
   --bg: #F7F8FA;
   --card: #FFFFFF;
   --border: #E6E9EE;
@@ -24,6 +24,29 @@
   --primary-hover: #082055;
 }
 
+/* Dark Theme - Military Navy-Black Aesthetic */
+.dark {
+  --bg: #0F172A;           /* Navy-black background (military aesthetic) */
+  --card: #1E293B;         /* Slate gray cards */
+  --border: #334155;       /* Dark borders */
+  --text: #F1F5F9;         /* Light gray text (WCAG AAA: 15:1 contrast) */
+  --muted: #94A3B8;        /* Lighter gray for muted text */
+  --primary: #60A5FA;      /* Lighter blue (maintains contrast in dark) */
+  --accent: #FCD34D;       /* Brighter gold (visible in dark) */
+  --success: #34D399;      /* Brighter green */
+  --danger: #F87171;       /* Lighter red */
+  --shadow: 0 8px 24px rgba(0,0,0,0.4);
+  
+  /* Legacy compat dark */
+  --background: #0F172A;
+  --card-bg: #1E293B;
+  --text-headings: #F1F5F9;
+  --text-body: #CBD5E1;
+  --text-muted: #94A3B8;
+  --primary-accent: #60A5FA;
+  --primary-hover: #93C5FD;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-card: var(--card);
@@ -39,8 +62,6 @@
   --font-sans: var(--font-inter);
   --font-serif: var(--font-lora);
 }
-
-/* Dark mode disabled - keeping light theme consistent across all pages */
 
 /* Premium prose wrapper for inline toolkit HTML */
 .prose-ledger :where(h1,h2,h3) {

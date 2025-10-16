@@ -112,6 +112,10 @@ import {
   Rss,
   XCircle,
   
+  // Theme Toggle
+  Moon,
+  Sun,
+  
   type LucideIcon,
 } from 'lucide-react';
 
@@ -220,6 +224,10 @@ export const iconRegistry = {
   MessageSquare,
   Rss,
   XCircle,
+  
+  // Theme Toggle
+  Moon,
+  Sun,
 } as const;
 
 // Export the type of valid icon names
