@@ -113,7 +113,7 @@ export default function SocialProofStats() {
           <div className="text-sm font-semibold text-gray-700">This Week</div>
           <div className="text-xs text-gray-500 mt-1">
             <span className="inline-flex items-center text-green-600 font-semibold">
-              <Icon name="ArrowUp" className="w-3 h-3 mr-1" />
+              <Icon name="TrendingUp" className="w-3 h-3 mr-1" />
               Active growth
             </span>
           </div>
