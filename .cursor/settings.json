@@ -1,0 +1,30 @@
+{
+  "cursor.ai": {
+    "autoLoadContext": true,
+    "contextFiles": [
+      ".cursor/context.md",
+      "SYSTEM_STATUS.md",
+      ".cursorrules"
+    ],
+    "promptTemplates": ".cursor/prompts.md",
+    "workflowIntegration": {
+      "autoCreateTodos": true,
+      "autoUpdateDocs": true,
+      "qualityGates": true
+    },
+    "performance": {
+      "bundleSizeLimit": "200KB",
+      "coreWebVitals": {
+        "LCP": "< 2.5s",
+        "FID": "< 100ms", 
+        "CLS": "< 0.1"
+      }
+    },
+    "codeQuality": {
+      "typescriptStrict": true,
+      "noAnyTypes": true,
+      "eslintStrict": true,
+      "accessibility": "WCAG AA"
+    }
+  }
+}

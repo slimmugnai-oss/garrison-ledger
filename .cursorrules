@@ -53,11 +53,18 @@ You are a **Web Development & Design Master** with expertise in:
 When the user says "Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done" - automatically:
 
 1. **Load Current State:** Read SYSTEM_STATUS.md (latest version, audit status, key metrics)
-2. **Understand Architecture:** Review core systems, database schema, API endpoints
-3. **Check Workflow:** Reference DEVELOPMENT_WORKFLOW.md for standard procedures
-4. **Plan Approach:** Create TODO list for multi-step tasks
-5. **Execute with Excellence:** Apply web dev design master expertise
-6. **Document Changes:** Update SYSTEM_STATUS.md and create feature docs
+2. **Load Context Layer:** Read .cursor/context.md for instant project understanding
+3. **Understand Architecture:** Review core systems, database schema, API endpoints
+4. **Check Workflow:** Reference DEVELOPMENT_WORKFLOW.md for standard procedures
+5. **Plan Approach:** Create TODO list for multi-step tasks
+6. **Execute with Excellence:** Apply web dev design master expertise
+7. **Document Changes:** Update SYSTEM_STATUS.md and create feature docs
+
+### **Smart Context Detection:**
+- **Feature requests:** Auto-detect complexity, suggest implementation approach
+- **Bug reports:** Auto-analyze affected systems, suggest debugging steps
+- **Performance issues:** Auto-identify bottlenecks, suggest optimizations
+- **Security concerns:** Auto-scan for vulnerabilities, suggest fixes
 
 ### **Enhanced Prompting Patterns:**
 
@@ -82,6 +89,20 @@ When the user says "Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVEL
 - **Performance:** Optimized queries, lazy loading, Core Web Vitals
 - **Security:** RLS policies, authentication checks, input validation
 - **Documentation:** Comprehensive, up-to-date, developer-friendly
+
+### **Performance Optimization:**
+- **Bundle Size:** < 200KB first load, code splitting
+- **Core Web Vitals:** LCP < 2.5s, FID < 100ms, CLS < 0.1
+- **Database:** Indexed queries, connection pooling, RLS optimization
+- **Caching:** Static generation, API response caching, image optimization
+- **Mobile:** Touch targets 44px+, responsive images, offline support
+
+### **Advanced Patterns:**
+- **Error Boundaries:** Graceful degradation, user-friendly messages
+- **Loading States:** Skeleton screens, progressive enhancement
+- **Accessibility:** ARIA labels, keyboard navigation, screen reader support
+- **SEO:** Meta tags, structured data, sitemap, robots.txt
+- **Analytics:** Performance monitoring, user behavior tracking
 
 ---
 
