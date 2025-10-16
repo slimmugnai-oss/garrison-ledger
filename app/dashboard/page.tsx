@@ -14,6 +14,7 @@ import IntelligenceWidget from '../components/dashboard/IntelligenceWidget';
 import OnboardingTour from '../components/dashboard/OnboardingTour';
 import StreakTracker from '../components/dashboard/StreakTracker';
 import DailyTip from '../components/dashboard/DailyTip';
+import FinancialReadinessScore from '../components/dashboard/FinancialReadinessScore';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -221,10 +222,21 @@ export default async function CommandDashboard() {
             </div>
           )}
 
-          {/* Gamification Widgets - Streak Tracker & Daily Tip */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* Gamification Widgets - Streak, Daily Tip, Financial Score */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <StreakTracker userId={user.id} />
             <DailyTip />
+            <FinancialReadinessScore 
+              userId={user.id}
+              profileData={{
+                hasCompletedProfile: profileComplete,
+                hasCompletedAssessment: hasAssessment,
+                hasPlan: hasPlan,
+                hasTSP: !!profileRow?.tsp_balance_range && profileRow.tsp_balance_range !== 'prefer-not-to-say' && profileRow.tsp_balance_range !== '$0',
+                hasEmergencyFund: !!profileRow?.emergency_fund_range && profileRow.emergency_fund_range !== 'prefer-not-to-say' && profileRow.emergency_fund_range !== '$0',
+                hasDebt: !!profileRow?.debt_amount_range && profileRow.debt_amount_range !== 'prefer-not-to-say' && profileRow.debt_amount_range !== '$0'
+              }}
+            />
           </div>
 
           {/* Upcoming Expirations Widget */}

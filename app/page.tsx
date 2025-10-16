@@ -7,6 +7,7 @@ import AnimatedCard from './components/ui/AnimatedCard';
 import Badge from './components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
 import SocialProofStats from './components/home/SocialProofStats';
+import ExitIntentPopup from './components/home/ExitIntentPopup';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Garrison Ledger - AI-Powered Financial Planning for Military Life",
@@ -355,6 +356,11 @@ export default function Home() {
       </section>
 
       <Footer />
+      
+      {/* Exit Intent Popup - Only for non-signed-in users */}
+      <SignedOut>
+        <ExitIntentPopup />
+      </SignedOut>
     </>
   );
 }
