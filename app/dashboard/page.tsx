@@ -12,6 +12,8 @@ import Badge from '../components/ui/Badge';
 import UpcomingExpirations from '../components/dashboard/UpcomingExpirations';
 import IntelligenceWidget from '../components/dashboard/IntelligenceWidget';
 import OnboardingTour from '../components/dashboard/OnboardingTour';
+import StreakTracker from '../components/dashboard/StreakTracker';
+import DailyTip from '../components/dashboard/DailyTip';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -218,6 +220,12 @@ export default async function CommandDashboard() {
               )}
             </div>
           )}
+
+          {/* Gamification Widgets - Streak Tracker & Daily Tip */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <StreakTracker userId={user.id} />
+            <DailyTip />
+          </div>
 
           {/* Upcoming Expirations Widget */}
           <div className="mb-12">
