@@ -36,7 +36,7 @@ export default function RelatedResources({
               <div className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-blue-200 dark:border-slate-600 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-lg group">
                 <div className="flex items-start gap-3 mb-3">
                   <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                    <Icon name={resource.icon as 'Calculator' | 'Star' | 'Map' | 'Home' | 'Briefcase' | 'Sparkles' | 'Truck' | 'Tool'} className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Icon name={resource.icon as 'Calculator' | 'Star' | 'MapPin' | 'Home' | 'Briefcase' | 'Sparkles' | 'Truck' | 'Wrench'} className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     {resource.category && (
