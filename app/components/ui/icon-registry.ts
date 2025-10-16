@@ -164,6 +164,7 @@ export const iconRegistry = {
   Calendar,
   
   // Navigation
+  ChevronLeft,
   ChevronRight,
   ChevronUp,
   ChevronDown,
