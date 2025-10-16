@@ -225,7 +225,7 @@ export default function PCSHub() {
               <div className="space-y-6 mt-8">
                 <div className="bg-white rounded-xl p-6 border border-blue-200">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Icon name="FileText" className="h-5 w-5 text-blue-600" />
+                    <Icon name="File" className="h-5 w-5 text-blue-600" />
                     Critical Actions
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">

@@ -114,7 +114,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
     { 
       id: 'overview' as TabType, 
       label: 'Overview', 
-      icon: 'FileText' as IconName,
+      icon: 'File' as IconName,
       count: null 
     },
     { 
