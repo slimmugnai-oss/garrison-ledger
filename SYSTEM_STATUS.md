@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-01-15  
 **Status:** 🟢 Production Ready - Perfect Score 100/100  
-**Version:** 2.7.0 (Contact System Added - Professional Support)
+**Version:** 2.7.1 (Settings Widget Visibility Fixed - Dashboard UX)
 
 ### **🏆 AUDIT STATUS**
 - **Codebase Audit:** 100/100 ✅ (44 API routes, 13 systems, 0 issues)
@@ -898,6 +898,21 @@ Garrison Ledger is a **production-ready AI-powered military financial planning p
 ---
 
 ## 🔄 **VERSION HISTORY**
+
+### **v2.7.1 (2025-01-15) - Settings Widget Visibility Fix** 🎨✨
+- **UX Fix:**
+  - Fixed invisible Settings widget on dashboard
+  - Widget was using dark theme colors on light dashboard
+  - Now properly visible with light theme styling
+- **Styling Updates:**
+  - Changed background: `bg-card` (matches dashboard)
+  - Updated text: `text-text-headings/text-body` (light theme)
+  - Maintained gradient icon and button for contrast
+- **Build Fix:**
+  - Fixed Server Component onClick error in contact success page
+  - Added 'use client' directive for copy functionality
+  - Removed unused Metadata import
+- **Result:** Settings widget now clearly visible and discoverable ✅
 
 ### **v2.7.0 (2025-01-15) - Contact & Support System** 📞✨
 - **Contact System Created:**
