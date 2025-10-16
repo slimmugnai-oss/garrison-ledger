@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
+import RelatedResources from '../components/ui/RelatedResources';
 
 export const metadata: Metadata = generatePageMeta({
   title: "PCS Hub - Complete Military Relocation & Moving Guide | Garrison Ledger",
@@ -847,6 +848,55 @@ export default function PCSHub() {
             </div>
           </AnimatedCard>
         </section>
+
+        {/* Related Resources - Internal Linking */}
+        <RelatedResources
+          title="Tools & Resources to Maximize Your PCS"
+          resources={[
+            {
+              title: 'PCS Financial Planner',
+              description: 'Calculate DITY vs government move costs. See your potential profit: $1,200-$4,500 per PCS.',
+              href: '/dashboard/tools/pcs-planner',
+              icon: 'Calculator',
+              category: 'Tool'
+            },
+            {
+              title: 'SSgt Martinez Case Study',
+              description: 'How an Air Force E-6 saved $8,400 across 3 PCS moves using DITY/PPM strategy.',
+              href: '/case-studies/ssgt-martinez-pcs-savings',
+              icon: 'Star',
+              category: 'Success Story'
+            },
+            {
+              title: 'Base Guides',
+              description: 'Research your next duty station: housing, schools, neighborhoods, BAH rates.',
+              href: '/base-guides',
+              icon: 'Map',
+              category: 'Guide'
+            },
+            {
+              title: 'House Hacking Calculator',
+              description: 'Analyze multi-unit property investments at your next base. Turn BAH into passive income.',
+              href: '/dashboard/tools/house-hacking',
+              icon: 'Home',
+              category: 'Tool'
+            },
+            {
+              title: 'Career Opportunities',
+              description: 'Compare job offers with cost-of-living adjustments for your next duty station.',
+              href: '/career-hub',
+              icon: 'Briefcase',
+              category: 'Guide'
+            },
+            {
+              title: 'Get Your AI Plan',
+              description: 'Personalized PCS financial strategy with 8-10 expert content blocks curated for you.',
+              href: '/dashboard/plan',
+              icon: 'Sparkles',
+              category: 'AI Plan'
+            },
+          ]}
+        />
 
       </div>
 

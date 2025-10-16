@@ -6,6 +6,7 @@ import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import Badge from '../components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
+import RelatedResources from '../components/ui/RelatedResources';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Military Career Hub - Portable Careers & Remote Jobs for Military Spouses | Garrison Ledger",
