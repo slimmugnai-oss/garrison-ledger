@@ -264,35 +264,20 @@ ALTER TABLE public.referral_conversions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_referral_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_reward_credits ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can read their own referral code"
-    ON public.referral_codes FOR SELECT
-    USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can read their own referral stats"
-    ON public.user_referral_stats FOR SELECT
-    USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can read their referrals"
-    ON public.referral_conversions FOR SELECT
-    USING (auth.uid() = referrer_user_id OR auth.uid() = referred_user_id);
-
-CREATE POLICY "Users can read their own credits"
-    ON public.user_reward_credits FOR SELECT
-    USING (auth.uid() = user_id);
-
-CREATE POLICY "Service role has full access to referral_codes"
+-- Service role has full access (API routes use Clerk auth + service role)
+CREATE POLICY "Service role full access referral_codes"
     ON public.referral_codes FOR ALL
     USING (true);
 
-CREATE POLICY "Service role has full access to referral_conversions"
+CREATE POLICY "Service role full access referral_conversions"
     ON public.referral_conversions FOR ALL
     USING (true);
 
-CREATE POLICY "Service role has full access to user_referral_stats"
+CREATE POLICY "Service role full access user_referral_stats"
     ON public.user_referral_stats FOR ALL
     USING (true);
 
-CREATE POLICY "Service role has full access to user_reward_credits"
+CREATE POLICY "Service role full access user_reward_credits"
     ON public.user_reward_credits FOR ALL
     USING (true);
 
