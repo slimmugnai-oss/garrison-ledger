@@ -142,7 +142,7 @@ export default async function AnalyticsAdminPage() {
                   At-Risk Users (Churn Risk ≥ 60%)
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Users who haven't engaged recently - consider re-engagement campaigns
+                  Users who haven&apos;t engaged recently - consider re-engagement campaigns
                 </p>
               </div>
               
