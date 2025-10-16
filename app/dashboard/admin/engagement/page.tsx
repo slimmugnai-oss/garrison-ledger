@@ -169,7 +169,7 @@ export default async function AdminEngagementPage() {
             
             {metrics.topStreakers.length > 0 ? (
               <div className="space-y-3">
-                {metrics.topStreakers.map((streaker: any, idx: number) => (
+                {metrics.topStreakers.map((streaker: { user_id: string; current_streak: number; longest_streak: number; total_logins: number; badges?: string[] }, idx: number) => (
                   <div key={streaker.user_id} className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-all">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${

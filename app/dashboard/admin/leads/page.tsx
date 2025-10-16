@@ -128,7 +128,7 @@ export default async function AdminLeadsPage() {
           <AnimatedCard delay={300} className="mb-8">
             <h2 className="text-2xl font-bold text-text-headings mb-6">Leads by Source</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {Object.entries(metrics.sourceCounts).map(([source, count], idx) => (
+              {Object.entries(metrics.sourceCounts).map(([source, count]) => (
                 <div key={source} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <div className="text-sm font-semibold text-gray-600 capitalize mb-1">
                     {source.replace('_', ' ')}
@@ -165,7 +165,7 @@ export default async function AdminLeadsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {metrics.recentLeads.map((lead: any) => (
+                    {metrics.recentLeads.map((lead: { id: string; email: string; source: string; lead_magnet: string | null; status: string; created_at: string }) => (
                       <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-4 text-sm font-medium text-gray-900">
                           {lead.email}
