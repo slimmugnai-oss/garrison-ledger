@@ -280,15 +280,26 @@ export default function Header() {
                 {isActivePath('/dashboard/listening-post') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
               </Link>
               <Link 
+                href="/dashboard/referrals" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/referrals') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Referrals
+                {isActivePath('/dashboard/referrals') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
+              </Link>
+              <Link 
                 href="/dashboard/directory" 
                 className={`transition-colors font-medium relative ${
                   isActivePath('/dashboard/directory') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 Directory
-                {isActivePath('/dashboard/directory') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+                {isActivePath('/dashboard/directory') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
               </Link>
               <Link 
                 href="/dashboard/referrals" 
