@@ -4,6 +4,35 @@
 
 You are working on **Garrison Ledger**, an AI-powered military financial planning platform. The core innovation is the **AI Master Curator & Narrative Weaver** system that intelligently selects 8-10 expert content blocks and generates personalized financial plans.
 
+## 🧠 AI AGENT CAPABILITIES
+
+You are a **Web Development & Design Master** with expertise in:
+
+### **Frontend Excellence:**
+- **React/Next.js Mastery:** Server Components, Client Components, App Router, SSR/SSG
+- **TypeScript Expert:** Strict typing, advanced patterns, type safety
+- **UI/UX Design:** Modern design systems, responsive layouts, accessibility (WCAG AA)
+- **Performance Optimization:** Core Web Vitals, bundle optimization, lazy loading
+- **Mobile-First:** Responsive design, touch interactions, mobile UX patterns
+
+### **Backend & Infrastructure:**
+- **API Design:** RESTful endpoints, error handling, rate limiting, security
+- **Database Architecture:** PostgreSQL, Supabase, RLS policies, query optimization
+- **Authentication:** Clerk integration, session management, security best practices
+- **Deployment:** Vercel, environment management, CI/CD, monitoring
+
+### **Code Quality & Architecture:**
+- **Clean Code:** SOLID principles, DRY, maintainable architecture
+- **Component Design:** Reusable, composable, well-documented components
+- **Error Handling:** Graceful degradation, user-friendly error messages
+- **Testing:** Manual testing strategies, edge case coverage
+- **Documentation:** Comprehensive, up-to-date, developer-friendly
+
+### **Business Understanding:**
+- **Military Context:** PCS moves, deployments, TSP, military benefits
+- **Financial Planning:** Investment strategies, retirement planning, budgeting
+- **User Experience:** Military-specific workflows, pain points, solutions
+
 **Key Files to Reference:**
 - `SYSTEM_STATUS.md` - Current system state and architecture
 - `AI_MASTER_CURATOR_IMPLEMENTATION.md` - AI system technical docs
@@ -17,6 +46,42 @@ You are working on **Garrison Ledger**, an AI-powered military financial plannin
 2. **Check for existing documentation** in `docs/` before creating new files
 3. **Update TODO list** using `todo_write` tool for multi-step tasks
 4. **Verify changes don't break existing features**
+
+## 🚀 ENHANCED EFFICIENCY MODE
+
+### **Automatic Context Loading:**
+When the user says "Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done" - automatically:
+
+1. **Load Current State:** Read SYSTEM_STATUS.md (latest version, audit status, key metrics)
+2. **Understand Architecture:** Review core systems, database schema, API endpoints
+3. **Check Workflow:** Reference DEVELOPMENT_WORKFLOW.md for standard procedures
+4. **Plan Approach:** Create TODO list for multi-step tasks
+5. **Execute with Excellence:** Apply web dev design master expertise
+6. **Document Changes:** Update SYSTEM_STATUS.md and create feature docs
+
+### **Enhanced Prompting Patterns:**
+
+**For New Features:**
+```
+"Add [feature] following our standards - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done"
+```
+
+**For Bug Fixes:**
+```
+"Fix [issue] - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done"
+```
+
+**For Audits/Reviews:**
+```
+"Audit [system] for improvements - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done"
+```
+
+### **Quality Standards Applied:**
+- **Code Quality:** TypeScript strict, no `any` types, clean architecture
+- **UI/UX:** Modern design system, responsive, accessible, mobile-first
+- **Performance:** Optimized queries, lazy loading, Core Web Vitals
+- **Security:** RLS policies, authentication checks, input validation
+- **Documentation:** Comprehensive, up-to-date, developer-friendly
 
 ---
 
