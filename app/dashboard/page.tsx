@@ -233,15 +233,15 @@ export default async function CommandDashboard() {
 
           {/* Settings Widget - Always show */}
           <div className="mb-12">
-            <AnimatedCard delay={300} className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
+            <AnimatedCard delay={300} className="bg-card border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
                     <Icon name="Settings" className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">Account Settings</h3>
-                    <p className="text-sm text-gray-300">Manage your profile, billing, and preferences</p>
+                    <h3 className="text-lg font-bold text-text-headings">Account Settings</h3>
+                    <p className="text-sm text-text-body">Manage your profile, billing, and preferences</p>
                   </div>
                 </div>
                 <Link
