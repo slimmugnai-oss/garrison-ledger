@@ -228,6 +228,10 @@ export const iconRegistry = {
   // Theme Toggle
   Moon,
   Sun,
+  // Listening Post
+  Radio,
+  Globe,
+  Newspaper,
 } as const;
 
 // Export the type of valid icon names

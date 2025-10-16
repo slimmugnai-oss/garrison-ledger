@@ -261,12 +261,23 @@ export default function Header() {
                 href="/dashboard/library" 
                 className={`transition-colors font-medium relative ${
                   isActivePath('/dashboard/library') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 Intel Library
-                {isActivePath('/dashboard/library') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+                {isActivePath('/dashboard/library') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
+              </Link>
+              <Link 
+                href="/dashboard/listening-post" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/listening-post') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Listening Post
+                {isActivePath('/dashboard/listening-post') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
               </Link>
               <Link 
                 href="/dashboard/directory" 
@@ -543,6 +554,16 @@ export default function Header() {
                   >
                     <Icon name="Library" className="w-5 h-5 mr-3" />
                     Intel Library
+                  </Link>
+                  <Link 
+                    href="/dashboard/listening-post" 
+                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActivePath('/dashboard/listening-post') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon name="Radio" className="w-5 h-5 mr-3" />
+                    Listening Post
                   </Link>
                   <Link 
                     href="/dashboard/directory" 
