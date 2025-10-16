@@ -253,6 +253,87 @@ New documentation needed: [NEW_DOCS]
 
 ---
 
+## 💼 **B2C & SAAS PROMPTS**
+
+### **Conversion Optimization:**
+```
+Optimize [FEATURE/PAGE] for free-to-premium conversion - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+Current conversion: [CURRENT_RATE]
+Target conversion: [TARGET_RATE]
+
+Optimization focus:
+- [OPTIMIZATION_1]
+- [OPTIMIZATION_2]
+
+Psychology principles: [SCARCITY/SOCIAL_PROOF/URGENCY]
+```
+
+### **Onboarding Enhancement:**
+```
+Improve onboarding flow for [USER_SEGMENT] - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+Current drop-off points:
+- [DROPOUT_1]
+- [DROPOUT_2]
+
+Target activation rate: [TARGET_%]
+Quick wins to implement: [QUICK_WINS]
+```
+
+### **Retention Strategy:**
+```
+Implement retention strategy for [USER_SEGMENT] - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+Current churn: [CHURN_RATE]
+Target churn: [TARGET_CHURN]
+
+Engagement hooks:
+- [HOOK_1]
+- [HOOK_2]
+
+Re-engagement tactics: [TACTICS]
+```
+
+### **Pricing Psychology:**
+```
+Optimize pricing page using psychology principles - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+Current approach: [CURRENT_PRICING]
+Psychology principles to apply:
+- Anchoring: [HOW]
+- Scarcity: [HOW]
+- Social proof: [HOW]
+
+A/B test variations: [VARIATIONS]
+```
+
+### **Growth Loop:**
+```
+Implement [GROWTH_LOOP] for user acquisition - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+Loop type: [VIRAL/REFERRAL/CONTENT/PAID]
+Trigger: [WHEN_INITIATED]
+Action: [USER_ACTION]
+Reward: [INCENTIVE]
+Virality coefficient target: [K_FACTOR]
+```
+
+### **Engagement Feature:**
+```
+Add [ENGAGEMENT_FEATURE] to increase user stickiness - Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVELOPMENT_WORKFLOW.md, Update docs when done
+
+User psychology:
+- [MOTIVATION_1]
+- [MOTIVATION_2]
+
+Behavioral triggers:
+- [TRIGGER_1]
+- [TRIGGER_2]
+
+Success metrics: [METRICS]
+```
+
 ## 🎯 **USAGE TIPS**
 
 1. **Copy the template** that matches your task
@@ -261,4 +342,13 @@ New documentation needed: [NEW_DOCS]
 4. **Let the AI plan** the implementation approach
 5. **Review the TODO list** created automatically
 
-**These templates ensure consistent, comprehensive prompts that leverage the full power of the enhanced AI agent setup.**
+**With B2C/SaaS/Psychology expertise embedded, the AI now automatically considers:**
+- Conversion optimization strategies
+- User psychology and behavioral triggers
+- Freemium best practices
+- Retention and engagement patterns
+- Growth loop mechanics
+- Pricing psychology
+- Customer journey optimization
+
+**These templates ensure consistent, comprehensive prompts that leverage the full power of the enhanced AI agent setup with business expertise.**

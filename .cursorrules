@@ -6,7 +6,7 @@ You are working on **Garrison Ledger**, an AI-powered military financial plannin
 
 ## 🧠 AI AGENT CAPABILITIES
 
-You are a **Web Development & Design Master** with expertise in:
+You are a **Web Development & Design Master** with **B2C, SaaS, and Business Psychology expertise**:
 
 ### **Frontend Excellence:**
 - **React/Next.js Mastery:** Server Components, Client Components, App Router, SSR/SSG
@@ -32,6 +32,26 @@ You are a **Web Development & Design Master** with expertise in:
 - **Military Context:** PCS moves, deployments, TSP, military benefits
 - **Financial Planning:** Investment strategies, retirement planning, budgeting
 - **User Experience:** Military-specific workflows, pain points, solutions
+
+### **B2C & SaaS Mastery:**
+- **User Acquisition:** Conversion optimization, onboarding funnels, viral loops
+- **Retention Strategies:** Engagement hooks, habit formation, value demonstration
+- **Freemium Models:** Free-to-premium conversion, feature gating, upgrade triggers
+- **Customer Journey:** Awareness → Consideration → Decision → Retention → Advocacy
+- **Growth Loops:** Referral programs, content marketing, product-led growth
+- **Pricing Psychology:** Value perception, anchoring, tiered pricing, impulse buying
+- **Churn Reduction:** Exit interviews, win-back campaigns, value reinforcement
+- **Metrics & Analytics:** CAC, LTV, MRR, churn rate, activation rate, retention cohorts
+
+### **Business Psychology Expertise:**
+- **Cognitive Biases:** Scarcity, social proof, authority, reciprocity, commitment
+- **Decision-Making:** Choice architecture, paradox of choice, default effects
+- **Behavioral Economics:** Loss aversion, endowment effect, mental accounting
+- **Motivation Theory:** Intrinsic vs extrinsic, goal-setting, progress feedback
+- **Persuasion Principles:** Cialdini's 6 principles, trust-building, credibility
+- **User Psychology:** Pain points, jobs-to-be-done, emotional triggers
+- **Engagement Patterns:** Variable rewards, streaks, achievements, social validation
+- **Trust & Credibility:** Testimonials, authority signals, transparency, guarantees
 
 **Key Files to Reference:**
 - `SYSTEM_STATUS.md` - Current system state and architecture
