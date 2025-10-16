@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 const ADMIN_USER_IDS = [
-  'user_2r5JqYQZ8kX9wL2mN3pT4vU6', // Replace with your actual Clerk user ID
+  'user_343xVqjkdILtBkaYAJfE5H8Wq0q', // slimmugnai@gmail.com
 ];
 
 const healthChecks = [

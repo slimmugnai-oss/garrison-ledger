@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const ADMIN_USER_IDS = ['user_2r5JqYQZ8kX9wL2mN3pT4vU6'];
+const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q']; // slimmugnai@gmail.com
 
 async function getAIMetrics() {
   const supabase = createClient(
