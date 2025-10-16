@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 interface ShareData {
   file: {
@@ -101,11 +102,17 @@ export default function SharePage() {
             />
           )}
           {isImage && (
-            <img
-              src={shareData.signedUrl}
-              alt={shareData.file.display_name}
-              className="max-w-full h-auto rounded"
-            />
+            <div className="relative min-h-[400px] flex items-center justify-center">
+              <Image
+                src={shareData.signedUrl}
+                alt={shareData.file.display_name}
+                width={1200}
+                height={800}
+                className="max-w-full h-auto rounded object-contain"
+                style={{ maxHeight: '800px' }}
+                priority
+              />
+            </div>
           )}
           {!isPdf && !isImage && (
             <div className="text-center py-12 text-gray-400">

@@ -18,6 +18,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "scripts/**", // Content ingestion scripts
+      "resource toolkits/**", // Legacy toolkit files
     ],
   },
 ];

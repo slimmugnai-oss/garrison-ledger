@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Icon from '../ui/Icon';
 
 interface BinderFile {
@@ -79,11 +80,15 @@ export default function FilePreview({ file, isOpen, onClose }: FilePreviewProps)
           )}
           
           {file.content_type.startsWith('image/') && file.signedUrl && (
-            <div className="flex items-center justify-center">
-              <img
+            <div className="flex items-center justify-center relative min-h-[400px]">
+              <Image
                 src={file.signedUrl}
                 alt={file.display_name}
-                className="max-w-full h-auto rounded-lg shadow-2xl"
+                width={1200}
+                height={800}
+                className="max-w-full h-auto rounded-lg shadow-2xl object-contain"
+                style={{ maxHeight: '70vh' }}
+                priority
               />
             </div>
           )}
