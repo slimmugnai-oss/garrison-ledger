@@ -137,6 +137,7 @@ import {
 export const iconRegistry = {
   // Navigation & Brand
   BarChart,
+  Monitor,
   
   // Actions & Status
   Check,
@@ -156,6 +157,16 @@ export const iconRegistry = {
   Upload,
   Download,
   Send,
+  Tool,
+  Quote,
+  Lightbulb,
+  Heart,
+  Info,
+  Link,
+  ArrowRight,
+  ArrowLeft,
+  Copy,
+  AlertCircle,
   
   // Business & Career
   Briefcase,
