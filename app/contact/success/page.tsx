@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Message Sent | Garrison Ledger',
-  description: 'Your message has been sent successfully. We\'ll get back to you soon.',
+  description: 'Your message has been sent successfully. We will get back to you soon.',
 };
 
 export default function ContactSuccessPage({
@@ -32,7 +32,7 @@ export default function ContactSuccessPage({
             </h1>
             
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Thank you for contacting us. We've received your message and will respond as soon as possible.
+              Thank you for contacting us. We&apos;ve received your message and will respond as soon as possible.
             </p>
           </div>
 
@@ -71,7 +71,7 @@ export default function ContactSuccessPage({
               <p className="text-sm text-blue-200 flex items-start gap-2">
                 <Icon name="HelpCircle" className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <span>
-                  You'll receive a confirmation email shortly. Please check your spam folder if you don't see it in your inbox.
+                  You&apos;ll receive a confirmation email shortly. Please check your spam folder if you don&apos;t see it in your inbox.
                 </span>
               </p>
             </div>
@@ -102,9 +102,9 @@ export default function ContactSuccessPage({
                   <span className="text-[#00E5A0] font-bold">2</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white mb-1">You'll Receive a Response</h3>
+                  <h3 className="font-semibold text-white mb-1">You&apos;ll Receive a Response</h3>
                   <p className="text-sm text-gray-400">
-                    We'll email you directly with our response or ask for more information if needed.
+                    We&apos;ll email you directly with our response or ask for more information if needed.
                   </p>
                 </div>
               </div>
@@ -116,7 +116,7 @@ export default function ContactSuccessPage({
                 <div>
                   <h3 className="font-semibold text-white mb-1">Issue Resolved</h3>
                   <p className="text-sm text-gray-400">
-                    We'll work with you until your question is answered or issue is resolved.
+                    We&apos;ll work with you until your question is answered or issue is resolved.
                   </p>
                 </div>
               </div>

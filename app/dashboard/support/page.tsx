@@ -111,7 +111,7 @@ export default async function DashboardSupportPage() {
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-2">Submit a Support Request</h2>
                   <p className="text-gray-400">
-                    Describe your issue or question and we'll get back to you as soon as possible.
+                    Describe your issue or question and we&apos;ll get back to you as soon as possible.
                   </p>
                 </div>
 
@@ -140,7 +140,7 @@ export default async function DashboardSupportPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <Icon name="Check" className="w-4 h-4 text-[#00E5A0] flex-shrink-0 mt-0.5" />
-                    <span>Let us know what device/browser you're using</span>
+                    <span>Let us know what device/browser you&apos;re using</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Icon name="Check" className="w-4 h-4 text-[#00E5A0] flex-shrink-0 mt-0.5" />

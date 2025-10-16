@@ -6,7 +6,7 @@ import Icon from '../components/ui/Icon';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Garrison Ledger',
-  description: 'Get in touch with the Garrison Ledger team. We\'re here to help with questions about our military financial planning platform.',
+  description: 'Get in touch with the Garrison Ledger team. We are here to help with questions about our military financial planning platform.',
 };
 
 export default function ContactPage() {
