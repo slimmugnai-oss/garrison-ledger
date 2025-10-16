@@ -115,7 +115,7 @@ export default function ContactPage() {
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-2">Send Us a Message</h2>
                   <p className="text-gray-400">
-                    Fill out the form below and we'll get back to you as soon as possible.
+                    Fill out the form below and we&apos;ll get back to you as soon as possible.
                   </p>
                 </div>
                 
