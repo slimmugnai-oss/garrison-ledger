@@ -93,7 +93,7 @@ export default async function SupportTicketsPage() {
           {/* Header */}
           <div className="mb-8 flex items-center gap-3">
             <Link href="/dashboard/admin" className="text-text-muted hover:text-text-body">
-              <Icon name="ArrowLeft" className="h-6 w-6" />
+              <Icon name="ChevronLeft" className="h-6 w-6" />
             </Link>
             <PageHeader 
               title="Support Tickets" 

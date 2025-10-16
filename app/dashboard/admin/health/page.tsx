@@ -111,7 +111,7 @@ export default async function SystemHealthPage() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Link href="/dashboard/admin" className="text-text-muted hover:text-text-body">
-                  <Icon name="ArrowLeft" className="h-6 w-6" />
+                  <Icon name="ChevronLeft" className="h-6 w-6" />
                 </Link>
                 <Icon name="Activity" className="h-8 w-8 text-primary" />
                 <h1 className="text-4xl font-serif font-black text-text-headings">
