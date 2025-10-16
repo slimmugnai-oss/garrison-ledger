@@ -83,7 +83,7 @@ export default function Home() {
             <SignedIn>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center rounded-xl bg-primary-accent px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-primary-hover hover:-translate-y-[2px] hover:shadow-xl"
+                className="btn-primary inline-flex items-center rounded-xl px-8 py-4 font-bold shadow-lg hover:-translate-y-[2px] hover:shadow-xl"
               >
                 Go to Dashboard
               </Link>

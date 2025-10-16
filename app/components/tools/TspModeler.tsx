@@ -310,44 +310,7 @@ export default function TspModeler() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : apiData ? (
-              <>
-                {isPremium ? (
-                  <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
-                ) : (
-                  <div className="relative">
-                    <div className="blur-sm pointer-events-none select-none">
-                      <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center bg-surface-hover/90 backdrop-blur-sm">
-                      <div className="bg-surface rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                        <Icon name="Lock" className="h-16 w-16 text-body mb-4 mx-auto" />
-                        <h3 className="text-3xl font-bold text-primary mb-3">
-                          Your Results Are Ready!
-                        </h3>
-                        <p className="text-lg text-body mb-2">
-                          Unlock to see your complete 30-year retirement projection + unlimited scenario comparisons
-                        </p>
-                        <p className="text-3xl font-black text-primary mb-6">
-                          $9.99<span className="text-lg font-normal text-body">/month</span>
-                        </p>
-                        <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                          Unlock Now →
-                        </a>
-                        <p className="text-xs text-muted">
-                          Less than a coffee per week · Upgrade anytime
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {apiData.partial && (
-                  <div className="mt-4 p-4 bg-info-subtle rounded-lg border border-info">
-                    <p className="text-info font-medium">
-                      <Icon name="BarChart" className="h-4 w-4 inline mr-1" /> Preview shows {apiData.yearsVisible} years. Unlock to view full {Math.max(0, ret - age)}-year projection and ROI analysis.
-                    </p>
-                  </div>
-                )}
-              </>
+              <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
             ) : (
               <div className="flex items-center justify-center h-60 text-muted">
                 Enter your information above to see projections
