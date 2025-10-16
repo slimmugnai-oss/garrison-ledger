@@ -28,6 +28,7 @@ import {
   Folder,
   Image,
   File,
+  ChevronLeft,
   CheckCircle,
   Upload,
   Download,
