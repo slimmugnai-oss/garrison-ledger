@@ -13,7 +13,7 @@ export const runtime = "nodejs";
  * This is a "quick win" - user sees AI capability in 30 seconds
  * Motivates them to complete profile for personalized version
  */
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const { userId } = await auth();
     

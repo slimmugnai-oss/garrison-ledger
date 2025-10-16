@@ -157,7 +157,7 @@ export default function MultiStepProfileWizard({ userId }: MultiStepProfileWizar
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Let's Start with the Basics</h2>
+              <h2 className="text-3xl font-black text-gray-900 mb-2">Let&apos;s Start with the Basics</h2>
               <p className="text-gray-600">This helps AI understand your military context</p>
             </div>
 
@@ -438,7 +438,7 @@ export default function MultiStepProfileWizard({ userId }: MultiStepProfileWizar
                 onChange={(e) => setFormData({ ...formData, content_difficulty: e.target.value })}
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
               >
-                <option value="beginner">Beginner - I'm just starting out</option>
+                <option value="beginner">Beginner - I&apos;m just starting out</option>
                 <option value="intermediate">Intermediate - I know the basics</option>
                 <option value="advanced">Advanced - Give me the deep dive</option>
               </select>

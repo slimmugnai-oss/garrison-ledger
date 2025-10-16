@@ -18,7 +18,7 @@ interface FinancialReadinessScoreProps {
   profileData: FinancialData;
 }
 
-export default function FinancialReadinessScore({ userId, profileData }: FinancialReadinessScoreProps) {
+export default function FinancialReadinessScore({ profileData }: FinancialReadinessScoreProps) {
   const [score, setScore] = useState(0);
   const [displayScore, setDisplayScore] = useState(0);
 
@@ -158,10 +158,10 @@ export default function FinancialReadinessScore({ userId, profileData }: Financi
             Next Steps to Improve
           </div>
           <div className="space-y-2">
-            {nextSteps.slice(0, 3).map((step, idx) => (
-              <div key={idx} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <Icon name={step.icon as any} className="w-4 h-4" />
+              {nextSteps.slice(0, 3).map((step, idx) => (
+                <div key={idx} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Icon name={step.icon as 'User' | 'ClipboardList' | 'FileText' | 'TrendingUp' | 'Shield' | 'DollarSign'} className="w-4 h-4" />
                   <span>{step.text}</span>
                 </div>
                 <span className="text-xs font-bold bg-white/20 px-2 py-1 rounded">

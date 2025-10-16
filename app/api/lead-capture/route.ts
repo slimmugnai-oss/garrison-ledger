@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Store lead in database
-    const { data: lead, error: insertError } = await supabaseAdmin
+    const { error: insertError } = await supabaseAdmin
       .from('email_leads')
       .insert({
         email: email.toLowerCase().trim(),

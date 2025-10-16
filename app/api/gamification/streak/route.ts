@@ -12,7 +12,7 @@ export const runtime = "nodejs";
  * - Updates last_active timestamp
  * - Returns streak count and badges earned
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
     
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
     if (!gamification) {
       // Create new record
-      const { data: newGamification } = await supabaseAdmin
+      await supabaseAdmin
         .from('user_gamification')
         .insert({
           user_id: userId,

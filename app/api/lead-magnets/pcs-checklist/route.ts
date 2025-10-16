@@ -8,7 +8,7 @@ export const runtime = "nodejs";
  * Returns PCS Financial Checklist as downloadable content
  * Can be PDF, markdown, or HTML - keeping it simple with HTML for now
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
   const html = `
 <!DOCTYPE html>
 <html>
