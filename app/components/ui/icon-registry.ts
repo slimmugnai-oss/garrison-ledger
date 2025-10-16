@@ -13,6 +13,7 @@
 import {
   // Navigation & Brand
   BarChart,
+  Monitor,
   
   // Actions & Status
   Check,
@@ -33,6 +34,9 @@ import {
   Upload,
   Download,
   Send,
+  Tool,
+  Quote,
+  Lightbulb,
   
   // Business & Career
   Briefcase,
@@ -232,6 +236,11 @@ export const iconRegistry = {
   Radio,
   Globe,
   Newspaper,
+  // Additional
+  Monitor,
+  Quote,
+  Lightbulb,
+  Tool,
 } as const;
 
 // Export the type of valid icon names
