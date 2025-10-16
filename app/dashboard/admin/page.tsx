@@ -221,8 +221,72 @@ export default async function AdminDashboard() {
               </Link>
             </AnimatedCard>
 
+            {/* Email Leads */}
+            <AnimatedCard className="bg-gradient-to-br from-teal-50 to-cyan-50 border-2 border-teal-200 hover:shadow-xl transition-all" delay={200}>
+              <Link href="/dashboard/admin/leads" className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center">
+                    <Icon name="Mail" className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge variant="success">NEW</Badge>
+                </div>
+                <h3 className="text-xl font-bold text-text-headings mb-2">Email Leads</h3>
+                <p className="text-text-body">
+                  Track exit-intent captures and lead magnets
+                </p>
+              </Link>
+            </AnimatedCard>
+
+            {/* Engagement Analytics */}
+            <AnimatedCard className="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 hover:shadow-xl transition-all" delay={250}>
+              <Link href="/dashboard/admin/engagement" className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center">
+                    <Icon name="TrendingUp" className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge variant="success">NEW</Badge>
+                </div>
+                <h3 className="text-xl font-bold text-text-headings mb-2">User Engagement</h3>
+                <p className="text-text-body">
+                  Gamification analytics and streak leaderboards
+                </p>
+              </Link>
+            </AnimatedCard>
+
+            {/* Revenue Dashboard */}
+            <AnimatedCard className="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-200 hover:shadow-xl transition-all" delay={300}>
+              <Link href="/dashboard/admin/revenue" className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center">
+                    <Icon name="DollarSign" className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge variant="success">NEW</Badge>
+                </div>
+                <h3 className="text-xl font-bold text-text-headings mb-2">Revenue Dashboard</h3>
+                <p className="text-text-body">
+                  MRR tracking, conversion rates, and projections
+                </p>
+              </Link>
+            </AnimatedCard>
+
+            {/* Email Campaigns */}
+            <AnimatedCard className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 hover:shadow-xl transition-all" delay={350}>
+              <Link href="/dashboard/admin/campaigns" className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center">
+                    <Icon name="Send" className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge variant="success">NEW</Badge>
+                </div>
+                <h3 className="text-xl font-bold text-text-headings mb-2">Email Campaigns</h3>
+                <p className="text-text-body">
+                  Manage automated sequences and send campaigns
+                </p>
+              </Link>
+            </AnimatedCard>
+
             {/* Provider Directory */}
-            <AnimatedCard className="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200 hover:shadow-xl transition-all" delay={200}>
+            <AnimatedCard className="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200 hover:shadow-xl transition-all" delay={400}>
               <Link href="/dashboard/admin/providers" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-cyan-600 rounded-xl flex items-center justify-center">
@@ -238,7 +302,7 @@ export default async function AdminDashboard() {
             </AnimatedCard>
 
             {/* AI Monitoring */}
-            <AnimatedCard className="bg-gradient-to-br from-rose-50 to-red-50 border-2 border-rose-200 hover:shadow-xl transition-all" delay={250}>
+            <AnimatedCard className="bg-gradient-to-br from-rose-50 to-red-50 border-2 border-rose-200 hover:shadow-xl transition-all" delay={450}>
               <Link href="/dashboard/admin/ai-monitoring" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-rose-600 rounded-xl flex items-center justify-center">
