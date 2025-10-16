@@ -6,12 +6,13 @@ import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import type { Metadata } from "next";
+import type { IconName } from '@/app/components/ui/icon-registry';
 
 interface CaseStudyData {
   meta: { title: string; description: string };
   hero: { name: string; rank: string; branch: string; base: string; years: number; stat: string; statLabel: string; category: string; gradient: string };
   challenge: { title: string; points: string[]; quote: string };
-  solution: { title: string; steps: Array<{ icon: string; title: string; description: string }> };
+  solution: { title: string; steps: Array<{ icon: IconName; title: string; description: string }> };
   results: { title: string; metrics: Array<{ label: string; value: string; description: string }>; timeline: string; impact: string };
   tools: Array<{ name: string; link: string; description: string }>;
   testimonial: { quote: string; author: string };
@@ -49,10 +50,10 @@ const caseStudiesData: Record<string, CaseStudyData> = {
     solution: {
       title: 'The Solution: Garrison Ledger\'s PCS Planner',
       steps: [
-        { icon: 'Calculator', title: 'Discovered DITY/PPM Strategy', description: 'Used PCS Financial Planner to compare government move vs DITY. Saw he could pocket the difference if he moved himself efficiently.' },
-        { icon: 'Truck', title: 'Optimized Move Logistics', description: 'Rented U-Haul truck + trailer for $800, drove himself. Government would have paid $3,600 for movers. Kept $2,800 profit.' },
-        { icon: 'FileText', title: 'Documented Everything', description: 'Kept receipts for fuel, truck rental, tolls. Filed proper paperwork for full reimbursement plus incentive pay.' },
-        { icon: 'Target', title: 'Repeated the System', description: 'Used same strategy on next 2 PCS moves. Refined process each time, increased profit margins.' },
+        { icon: 'Calculator' as const, title: 'Discovered DITY/PPM Strategy', description: 'Used PCS Financial Planner to compare government move vs DITY. Saw he could pocket the difference if he moved himself efficiently.' },
+        { icon: 'Truck' as const, title: 'Optimized Move Logistics', description: 'Rented U-Haul truck + trailer for $800, drove himself. Government would have paid $3,600 for movers. Kept $2,800 profit.' },
+        { icon: 'File' as const, title: 'Documented Everything', description: 'Kept receipts for fuel, truck rental, tolls. Filed proper paperwork for full reimbursement plus incentive pay.' },
+        { icon: 'Target' as const, title: 'Repeated the System', description: 'Used same strategy on next 2 PCS moves. Refined process each time, increased profit margins.' },
       ],
     },
     results: {
