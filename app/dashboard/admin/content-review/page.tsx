@@ -139,7 +139,7 @@ export default function ContentReviewPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <Icon name="FileCheck" className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                  <Icon name="CheckCircle" className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                   <h1 className="text-4xl font-bold text-gray-900 dark:text-white font-serif">
                     Content Review Queue
                   </h1>
