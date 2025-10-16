@@ -254,7 +254,7 @@ export default function ShoppingHub() {
 
               <div className="bg-white border-2 border-indigo-200 rounded-xl p-6 text-center hover:shadow-xl transition-all">
                 <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Icon name="Ship" className="h-10 w-10 text-white" />
+                  <Icon name="Shield" className="h-10 w-10 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">NEX</h3>
                 <p className="text-sm text-gray-600 mb-3">Navy Exchange</p>
