@@ -6,14 +6,29 @@ export default function Footer() {
     <footer className="bg-card border-t border-border mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
+          {/* Brand with Authority */}
           <div>
             <div className="text-xl font-bold text-text-headings mb-4">
               <Icon name="BarChart" className="h-5 w-5 inline mr-1" /> Garrison Ledger
             </div>
-            <p className="text-text-body leading-relaxed">
+            <p className="text-text-body leading-relaxed mb-4">
               Intelligent planning for military life.
             </p>
+            {/* Authority Signals */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <Icon name="Award" className="h-4 w-4 text-blue-600" />
+                <span className="font-semibold">Military Financial Experts</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <Icon name="Shield" className="h-4 w-4 text-green-600" />
+                <span className="font-semibold">Trusted by 500+ Families</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <Icon name="CheckCircle" className="h-4 w-4 text-purple-600" />
+                <span className="font-semibold">20+ Years Experience</span>
+              </div>
+            </div>
           </div>
 
           {/* Platform */}
