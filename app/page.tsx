@@ -9,6 +9,7 @@ import { generatePageMeta } from "@/lib/seo-config";
 import SocialProofStats from './components/home/SocialProofStats';
 import ExitIntentPopup from './components/home/ExitIntentPopup';
 import SavingsCounter from './components/home/SavingsCounter';
+import TestimonialsSection from './components/home/TestimonialsSection';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Garrison Ledger - AI-Powered Financial Planning for Military Life",
@@ -156,6 +157,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Tools Preview */}
       <section className="bg-background dark:bg-slate-900 py-20 transition-colors">
