@@ -407,9 +407,45 @@ function IntelligenceLibraryContent() {
               Intel Library
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-gray-600">
-              Personalized, intelligent content discovery powered by AI
+              410+ expert-curated content blocks that power your AI-generated plan
             </p>
           </div>
+
+          {/* What's the Difference Explainer */}
+          <AnimatedCard delay={0} className="mb-8">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                <span className="text-3xl flex-shrink-0">📚</span>
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-2">Expert-Curated Financial Guidance</h3>
+                  <p className="text-gray-700 mb-3">
+                    This library contains <strong>410+ hand-curated content blocks</strong> written by military financial experts. 
+                    When you take your assessment, our AI Master Curator selects 8-10 of these blocks and weaves them into 
+                    your personalized financial plan.
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <div className="font-semibold text-green-600 mb-1">✅ Intelligence Library (This Page)</div>
+                      <p className="text-gray-700">
+                        <strong>Evergreen expert content</strong> - Your AI plan pulls from these 410+ curated blocks. 
+                        Browse, search, bookmark, and discover the knowledge base that powers your personalized guidance.
+                      </p>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-blue-600 mb-1">📡 Listening Post</div>
+                      <p className="text-gray-700">
+                        <strong>Current military financial news</strong> - Breaking updates from Military Times, Stars & Stripes, etc. 
+                        Great for staying informed, but separate from your AI plan.
+                        <a href="/dashboard/listening-post" className="ml-1 underline font-semibold">
+                          Visit Listening Post →
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AnimatedCard>
 
           {/* Personalized Recommendations Section */}
           {(loadingPersonalized || personalizedBlocks.length > 0) && (
