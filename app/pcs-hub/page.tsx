@@ -871,7 +871,7 @@ export default function PCSHub() {
               title: 'Base Guides',
               description: 'Research your next duty station: housing, schools, neighborhoods, BAH rates.',
               href: '/base-guides',
-              icon: 'Map',
+              icon: 'MapPin',
               category: 'Guide'
             },
             {
