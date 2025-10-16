@@ -402,6 +402,14 @@ When the user says "Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVEL
 - Use Next.js App Router conventions
 - Prefer `Link` over `<a>` tags
 
+### **🎨 ICON USAGE (CRITICAL)**
+- **ALWAYS check `docs/ICON_USAGE_GUIDE.md` before using icons**
+- **NEVER use these icons:** `Ship`, `Anchor`, `FileText`, `FileCheck`, `Clock`
+- **Safe replacements:** `Shield` (military), `File` (documents), `CheckCircle` (approval), `Timer` (time)
+- **Before deployment:** Run `npm run check-icons` to validate all icons
+- **Use existing icons when possible** - don't add new ones unless necessary
+- **All icons must be in `app/components/ui/icon-registry.ts`**
+
 ### **Database**
 - Always use Supabase RLS policies
 - Use `supabaseAdmin` for server-side operations
