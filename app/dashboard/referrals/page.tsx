@@ -1,119 +1,141 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import type { Metadata } from "next";
+import { currentUser } from '@clerk/nextjs/server';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
+import { redirect } from 'next/navigation';
+import { supabaseAdmin } from '@/lib/supabase';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Icon from '@/app/components/ui/Icon';
+import { generatePageMeta } from "@/lib/seo-config";
+import ReferralDashboard from '@/app/components/referrals/ReferralDashboard';
 
-type ReferralData = {
-  referralCode: string;
-  referralLink: string;
+export const metadata: Metadata = generatePageMeta({
+  title: "Referrals - Help a Battle Buddy Save Money",
+  description: "Share Garrison Ledger with your military friends and earn $10 when they upgrade. They get $10 too! Join 47 military members earning rewards.",
+  path: "/dashboard/referrals",
+  keywords: ["military referral", "refer a friend", "military rewards", "referral program"]
+});
+
+interface ReferralData {
+  code: string;
   totalReferrals: number;
-  activeReferrals: number;
-};
+  totalConversions: number;
+  totalEarnings: number;
+  availableCredits: number;
+  referrals: Array<{
+    id: string;
+    referred_user_id: string;
+    created_at: string;
+    status: string;
+    conversion_date: string | null;
+  }>;
+}
 
-export default function ReferralsPage() {
-  const [data, setData] = useState<ReferralData | null>(null);
-  const [copied, setCopied] = useState(false);
+async function getReferralData(userId: string): Promise<ReferralData> {
+  // Get or create referral code
+  const { data: codeData } = await supabaseAdmin
+    .rpc('get_or_create_referral_code', { p_user_id: userId });
+  
+  const code = codeData || '';
+  
+  // Get user stats
+  const { data: statsData } = await supabaseAdmin
+    .from('user_referral_stats')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  
+  // Get referral list
+  const { data: referralsData } = await supabaseAdmin
+    .from('referral_conversions')
+    .select('id, referred_user_id, created_at, status, conversion_date')
+    .eq('referrer_user_id', userId)
+    .order('created_at', { ascending: false });
+  
+  // Get available credits
+  const { data: creditsData } = await supabaseAdmin
+    .rpc('get_user_credit_balance', { p_user_id: userId });
+  
+  return {
+    code,
+    totalReferrals: statsData?.total_referrals_sent || 0,
+    totalConversions: statsData?.total_conversions || 0,
+    totalEarnings: statsData?.total_earnings_cents || 0,
+    availableCredits: creditsData || 0,
+    referrals: referralsData || [],
+  };
+}
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch('/api/referral');
-      if (res.ok) {
-        setData(await res.json());
-      }
-    }
-    load();
-  }, []);
-
-  async function copyLink() {
-    if (!data) return;
-    await navigator.clipboard.writeText(data.referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
+export default async function ReferralsPage() {
+  const user = await currentUser();
+  if (!user) redirect('/sign-in');
+  
+  const referralData = await getReferralData(user.id);
+  
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-bg">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-serif font-black text-text mb-3">
-              Refer & Earn
+      <div className="min-h-screen bg-background dark:bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Hero Header */}
+          <div className="mb-12 text-center">
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700 px-4 py-1.5 text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wider">
+                <span>🤝</span> Dual Rewards
+              </span>
+            </div>
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white mb-4">
+              Help a Battle Buddy
             </h1>
-            <p className="text-xl text-muted">
-              Share Garrison Ledger with fellow service members and earn rewards
+            <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-gray-300">
+              Share Garrison Ledger with your military friends. When they upgrade, <strong className="text-green-600 dark:text-green-400">you both get $10!</strong>
             </p>
           </div>
-
-          {data && (
-            <>
-              {/* Referral Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <AnimatedCard className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
-                  <div className="text-sm text-blue-600 font-bold uppercase tracking-wider mb-2">Total Referrals</div>
-                  <div className="text-5xl font-black text-blue-600">{data.totalReferrals}</div>
-                </AnimatedCard>
-                <AnimatedCard className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200" delay={100}>
-                  <div className="text-sm text-green-600 font-bold uppercase tracking-wider mb-2">Active Members</div>
-                  <div className="text-5xl font-black text-green-600">{data.activeReferrals}</div>
-                </AnimatedCard>
+          
+          {/* Explainer Card */}
+          <AnimatedCard delay={0} className="mb-8">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                <Icon name="Info" className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">How It Works</h3>
+                  <div className="grid md:grid-cols-3 gap-6 text-sm">
+                    <div>
+                      <div className="font-semibold text-blue-600 dark:text-blue-400 mb-1">1. Share Your Code</div>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        Give your unique referral code to military friends, family, or share on social media.
+                      </p>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-green-600 dark:text-green-400 mb-1">2. They Sign Up & Upgrade</div>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        When they create an account with your code and upgrade to premium, rewards unlock!
+                      </p>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-amber-600 dark:text-amber-400 mb-1">3. You Both Get $10</div>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        You get $10 credit, they get $10 credit. Use it towards premium or save it up!
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              {/* Referral Link */}
-              <AnimatedCard className="p-10 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl" delay={200}>
-                <h2 className="text-2xl font-serif font-black mb-4">Your Referral Link</h2>
-                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 border border-white/20">
-                  <code className="text-blue-200 text-lg break-all">{data.referralLink}</code>
-                </div>
-                <button
-                  onClick={copyLink}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg"
-                >
-                  {copied ? '✓ Copied!' : 'Copy Link'}
-                </button>
-              </AnimatedCard>
-
-              {/* How It Works */}
-              <AnimatedCard className="p-10 mt-10" delay={300}>
-                <h2 className="text-2xl font-serif font-black text-text mb-6">How It Works</h2>
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black flex-shrink-0">
-                      1
-                    </div>
-                    <div>
-                      <div className="font-bold text-text mb-1">Share your link</div>
-                      <div className="text-muted">Send to friends, post in unit Facebook groups, or share on social media</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-green-600 text-white rounded-xl flex items-center justify-center font-black flex-shrink-0">
-                      2
-                    </div>
-                    <div>
-                      <div className="font-bold text-text mb-1">They sign up</div>
-                      <div className="text-muted">When someone creates an account using your link, you&apos;re credited</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-amber-600 text-white rounded-xl flex items-center justify-center font-black flex-shrink-0">
-                      3
-                    </div>
-                    <div>
-                      <div className="font-bold text-text mb-1">Both get rewarded</div>
-                      <div className="text-muted">You get 1 month free Premium. They get 10% off their first year.</div>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedCard>
-            </>
-          )}
+            </div>
+          </AnimatedCard>
+          
+          {/* Pass referral data to client component */}
+          <ReferralDashboard
+            code={referralData.code}
+            totalReferrals={referralData.totalReferrals}
+            totalConversions={referralData.totalConversions}
+            totalEarnings={referralData.totalEarnings}
+            availableCredits={referralData.availableCredits}
+            referrals={referralData.referrals}
+          />
         </div>
       </div>
       <Footer />
     </>
   );
 }
-
