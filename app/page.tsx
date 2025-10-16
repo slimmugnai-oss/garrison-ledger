@@ -35,24 +35,24 @@ export default function Home() {
       <Header />
       
       {/* Hero - Light, High-Contrast */}
-      <section className="relative isolate overflow-hidden">
-        {/* Subtle light radial gradient - contrast-safe */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+      <section className="relative isolate overflow-hidden bg-white dark:bg-slate-900 transition-colors">
+        {/* Subtle radial gradient - works in both modes */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)] dark:bg-[radial-gradient(120%_70%_at_50%_0%,rgba(96,165,250,0.15),transparent_60%)]" />
 
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
           {/* Kicker Badge */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 uppercase tracking-wider">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
             Intelligent Military Life Planning
           </span>
 
           {/* Main Heading - Lora serif, full contrast */}
-          <h1 className="mt-6 font-serif text-6xl md:text-7xl font-black tracking-tight text-gray-900">
+          <h1 className="mt-6 font-serif text-6xl md:text-7xl font-black tracking-tight text-gray-900 dark:text-white">
             Garrison Ledger
           </h1>
 
           {/* Subtitle - Readable muted tone with loss aversion */}
-          <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
-            <strong className="text-red-600">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
+          <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700 dark:text-gray-300">
+            <strong className="text-red-600 dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
           </p>
 
           {/* CTAs with loss aversion */}
@@ -87,7 +87,7 @@ export default function Home() {
             </SignedIn>
           </div>
 
-          <p className="mt-6 text-sm text-gray-600">
+          <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
             <strong>Free Forever</strong> · No Credit Card Required · Upgrade Anytime
           </p>
 
@@ -100,45 +100,45 @@ export default function Home() {
 
 
       {/* How It Works */}
-      <section className="bg-card border-y border-border py-20">
+      <section className="bg-card dark:bg-slate-800 border-y border-border dark:border-slate-700 py-20 transition-colors">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-serif font-black text-text-headings mb-4">
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-text-headings dark:text-white mb-4">
               How It Works
             </h2>
-            <p className="text-xl text-text-body max-w-2xl mx-auto">
+            <p className="text-xl text-text-body dark:text-gray-300 max-w-2xl mx-auto">
               AI analyzes your military profile and curates a personalized financial plan in minutes
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
-              <div className="bg-background rounded-xl p-8 border border-border">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
+              <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-blue-500 rounded-lg text-white font-black text-xl mb-4">
                   1
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Complete Your Profile</h3>
-                <p className="text-text-body">Share your rank, branch, base, family situation, and financial goals (3 minutes).</p>
+                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Complete Your Profile</h3>
+                <p className="text-text-body dark:text-gray-300">Share your rank, branch, base, family situation, and financial goals (3 minutes).</p>
               </div>
             </AnimatedCard>
 
             <AnimatedCard delay={100}>
-              <div className="bg-background rounded-xl p-8 border border-border">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
+              <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-blue-500 rounded-lg text-white font-black text-xl mb-4">
                   2
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Take Quick Assessment</h3>
-                <p className="text-text-body">Answer ~6 adaptive questions about your biggest concerns and priorities (5 minutes).</p>
+                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Take Quick Assessment</h3>
+                <p className="text-text-body dark:text-gray-300">Answer ~6 adaptive questions about your biggest concerns and priorities (5 minutes).</p>
               </div>
             </AnimatedCard>
 
             <AnimatedCard delay={200}>
-              <div className="bg-background rounded-xl p-8 border border-border">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent rounded-lg text-white font-black text-xl mb-4">
+              <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-blue-500 rounded-lg text-white font-black text-xl mb-4">
                   3
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings mb-3">Get AI-Curated Plan</h3>
-                <p className="text-text-body">AI selects 8-10 expert content blocks and weaves them into your personalized action plan.</p>
+                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Get AI-Curated Plan</h3>
+                <p className="text-text-body dark:text-gray-300">AI selects 8-10 expert content blocks and weaves them into your personalized action plan.</p>
               </div>
             </AnimatedCard>
           </div>
@@ -146,30 +146,30 @@ export default function Home() {
       </section>
 
       {/* Tools Preview */}
-      <section className="bg-background py-20">
+      <section className="bg-background dark:bg-slate-900 py-20 transition-colors">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge variant="primary">Wealth-Builder Tools</Badge>
-            <h2 className="text-4xl md:text-5xl font-serif font-black text-text-headings mt-4 mb-4">
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-text-headings dark:text-white mt-4 mb-4">
               Military-Specific Financial Calculators
             </h2>
-            <p className="text-xl text-text-body max-w-2xl mx-auto">
+            <p className="text-xl text-text-body dark:text-gray-300 max-w-2xl mx-auto">
               Purpose-built tools that understand the unique aspects of military compensation
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
-              <div className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
-                <h3 className="text-2xl font-bold text-text-headings mb-4">TSP Modeler</h3>
-                <ul className="space-y-2 text-text-body mb-6 text-sm">
+              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-4">TSP Modeler</h3>
+                <ul className="space-y-2 text-text-body dark:text-gray-300 mb-6 text-sm">
                   <li>• Model C, S, I, F, and L fund allocations</li>
                   <li>• Project growth to retirement age</li>
                   <li>• Compare aggressive vs. conservative strategies</li>
                 </ul>
                 <Link 
                   href="/dashboard/tools/tsp-modeler"
-                  className="inline-flex items-center text-primary-accent hover:text-primary-hover font-semibold group-hover:underline"
+                  className="inline-flex items-center text-primary-accent dark:text-blue-400 hover:text-primary-hover dark:hover:text-blue-300 font-semibold group-hover:underline"
                 >
                   Try TSP Tool →
                 </Link>
@@ -265,16 +265,16 @@ export default function Home() {
       </section>
 
       {/* Assessment Teaser */}
-      <section className="bg-card border-t border-border py-20">
+      <section className="bg-card dark:bg-slate-800 border-t border-border dark:border-slate-700 py-20 transition-colors">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimatedCard delay={0}>
               <div>
                 <Badge variant="success">AI-Powered Planning</Badge>
-                <h2 className="text-4xl font-serif font-black text-text-headings mt-4 mb-6">
+                <h2 className="text-4xl font-serif font-black text-text-headings dark:text-white mt-4 mb-6">
                   Your AI-Curated Personalized Plan
                 </h2>
-                <p className="text-lg text-text-body mb-8 leading-relaxed">
+                <p className="text-lg text-text-body dark:text-gray-300 mb-8 leading-relaxed">
                   Take our quick adaptive assessment (~6 questions, 5 minutes) and AI will analyze your profile to curate 8-10 expert content blocks with personalized narrative tailored to your military situation.
                 </p>
                 <Link 
@@ -287,8 +287,8 @@ export default function Home() {
             </AnimatedCard>
 
             <AnimatedCard delay={200}>
-              <div className="bg-background rounded-xl p-8 border-2 border-border">
-                <h4 className="font-bold text-text-headings mb-4">Assessment Topics</h4>
+              <div className="bg-background dark:bg-slate-900 rounded-xl p-8 border-2 border-border dark:border-slate-600">
+                <h4 className="font-bold text-text-headings dark:text-white mb-4">Assessment Topics</h4>
                 <ul className="space-y-3">
                   {[
                     'Your Foundation (service years, family, EFMP)',
@@ -298,9 +298,9 @@ export default function Home() {
                     'Your Financial Picture (priorities)',
                     'Personalization Preferences (interests, urgency)'
                   ].map((topic, idx) => (
-                    <li key={idx} className="flex items-center text-text-body">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                        <span className="text-green-600 text-sm font-bold">•</span>
+                    <li key={idx} className="flex items-center text-text-body dark:text-gray-300">
+                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-green-600 dark:text-green-400 text-sm font-bold">•</span>
                       </span>
                       <span className="text-sm">{topic}</span>
                     </li>
@@ -313,7 +313,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA with Social Proof */}
-      <section className="bg-background py-20">
+      <section className="bg-background dark:bg-slate-900 py-20 transition-colors">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimatedCard delay={0}>
             <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-12 md:p-16 text-center text-white shadow-2xl">
