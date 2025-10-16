@@ -28,10 +28,12 @@ export async function POST(req: NextRequest) {
       
       // Update entitlements for the user
       if (session.metadata?.userId) {
+        const userId = session.metadata.userId;
+        
         await supabaseAdmin
           .from('entitlements')
           .upsert({
-            user_id: session.metadata.userId,
+            user_id: userId,
             tier: 'premium',
             status: 'active',
             current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
@@ -40,7 +42,25 @@ export async function POST(req: NextRequest) {
             updated_at: new Date().toISOString()
           });
         
-        console.log('Updated entitlements for user:', session.metadata.userId);
+        console.log('Updated entitlements for user:', userId);
+        
+        // 🎯 PROCESS REFERRAL CONVERSION (Give $10 rewards to both users)
+        try {
+          const { data: conversionResult } = await supabaseAdmin
+            .rpc('process_referral_conversion', {
+              p_referred_user_id: userId
+            });
+          
+          if (conversionResult) {
+            console.log('✅ Referral rewards processed for user:', userId);
+            // TODO: Send email notifications to both users about their $10 credit
+          } else {
+            console.log('ℹ️ No pending referral found for user:', userId);
+          }
+        } catch (refError) {
+          console.error('⚠️ Referral conversion error (non-critical):', refError);
+          // Don't fail the webhook if referral processing fails
+        }
       }
       
       break;
