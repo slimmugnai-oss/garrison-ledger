@@ -187,7 +187,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-green-200 dark:border-green-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon name="Clock" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  <Icon name="Timer" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   <span className="font-semibold text-gray-900 dark:text-white">Timeline:</span>
                   <span className="text-gray-700 dark:text-gray-300">{results.timeline}</span>
                 </div>
