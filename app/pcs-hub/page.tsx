@@ -746,7 +746,7 @@ export default function PCSHub() {
                     </div>
                   </div>
                   <p className="text-sm">
-                    <strong>What to bring to TMO:</strong> Copy of orders, weight estimate, desired pack/pickup dates, destination address (if known), and list of high-value items (>$100 each).
+                    <strong>What to bring to TMO:</strong> Copy of orders, weight estimate, desired pack/pickup dates, destination address (if known), and list of high-value items (&gt;$100 each).
                   </p>
                 </div>
               </details>
