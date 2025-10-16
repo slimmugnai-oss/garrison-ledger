@@ -4,11 +4,7 @@ import { useState } from 'react';
 import Icon from '../ui/Icon';
 import { useRouter } from 'next/navigation';
 
-interface MultiStepProfileWizardProps {
-  userId: string;
-}
-
-export default function MultiStepProfileWizard({ userId }: MultiStepProfileWizardProps) {
+export default function MultiStepProfileWizard() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);

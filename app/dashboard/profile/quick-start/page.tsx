@@ -39,7 +39,7 @@ export default async function QuickStartProfilePage() {
           </div>
 
           {/* Wizard */}
-          <MultiStepProfileWizard userId={user.id} />
+          <MultiStepProfileWizard />
 
           {/* Trust signals */}
           <div className="mt-12 text-center">
