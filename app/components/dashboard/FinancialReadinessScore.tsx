@@ -79,7 +79,7 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
     const steps = [];
     if (!profileData.hasCompletedProfile) steps.push({ icon: 'User', text: 'Complete your profile', points: 20 });
     if (!profileData.hasCompletedAssessment) steps.push({ icon: 'ClipboardList', text: 'Take the assessment', points: 15 });
-    if (!profileData.hasPlan) steps.push({ icon: 'FileText', text: 'Generate your AI plan', points: 15 });
+    if (!profileData.hasPlan) steps.push({ icon: 'File', text: 'Generate your AI plan', points: 15 });
     if (!profileData.hasTSP) steps.push({ icon: 'TrendingUp', text: 'Start TSP contributions', points: 20 });
     if (!profileData.hasEmergencyFund) steps.push({ icon: 'Shield', text: 'Build emergency fund', points: 20 });
     if (profileData.hasDebt) steps.push({ icon: 'DollarSign', text: 'Create debt payoff plan', points: 10 });
@@ -161,7 +161,7 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
               {nextSteps.slice(0, 3).map((step, idx) => (
                 <div key={idx} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
-                    <Icon name={step.icon as 'User' | 'ClipboardList' | 'FileText' | 'TrendingUp' | 'Shield' | 'DollarSign'} className="w-4 h-4" />
+                    <Icon name={step.icon as 'User' | 'ClipboardList' | 'File' | 'TrendingUp' | 'Shield' | 'DollarSign'} className="w-4 h-4" />
                   <span>{step.text}</span>
                 </div>
                 <span className="text-xs font-bold bg-white/20 px-2 py-1 rounded">
