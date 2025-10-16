@@ -115,6 +115,13 @@ import {
   MessageSquare,
   Rss,
   XCircle,
+  Heart,
+  Info,
+  Link,
+  ArrowRight,
+  ArrowLeft,
+  Copy,
+  AlertCircle,
   
   // Theme Toggle
   Moon,
