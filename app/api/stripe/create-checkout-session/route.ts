@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { currentUser } from '@clerk/nextjs/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,6 +19,43 @@ export async function POST(req: NextRequest) {
       userEmail: user.emailAddresses[0]?.emailAddress,
       userId: user.id
     });
+
+    // 🎯 CHECK REFERRAL CREDITS - Auto-apply discount
+    let discountCouponId: string | undefined;
+    try {
+      const { data: creditBalance } = await supabaseAdmin
+        .rpc('get_user_credit_balance', { p_user_id: user.id });
+      
+      if (creditBalance && creditBalance > 0) {
+        console.log(`💰 User has ${creditBalance} cents in referral credits`);
+        
+        // Create one-time Stripe coupon for their credit amount
+        const coupon = await stripe.coupons.create({
+          amount_off: creditBalance, // Amount in cents
+          currency: 'usd',
+          duration: 'once',
+          name: `Referral Credit - $${(creditBalance / 100).toFixed(2)}`,
+        });
+        
+        discountCouponId = coupon.id;
+        console.log('✅ Created discount coupon:', coupon.id, `for $${(creditBalance / 100).toFixed(2)}`);
+        
+        // Mark credits as used (negative entry)
+        await supabaseAdmin
+          .from('user_reward_credits')
+          .insert({
+            user_id: user.id,
+            amount_cents: -creditBalance, // Negative = used
+            source: 'used_for_premium',
+            description: `Applied $${(creditBalance / 100).toFixed(2)} credit to premium purchase`,
+          });
+      } else {
+        console.log('ℹ️ No referral credits available for user');
+      }
+    } catch (creditError) {
+      console.error('⚠️ Credit check error (non-critical):', creditError);
+      // Continue without discount if credit check fails
+    }
 
     // Test if the price ID exists
     try {
@@ -50,6 +88,10 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: user.id,
       },
+      // 🎯 AUTO-APPLY REFERRAL CREDIT DISCOUNT
+      ...(discountCouponId && {
+        discounts: [{ coupon: discountCouponId }],
+      }),
     });
 
     console.log('Checkout session created successfully:', {
