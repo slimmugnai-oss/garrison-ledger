@@ -97,6 +97,19 @@ import {
   ClipboardList,
   Gift,
   
+  // Admin & Monitoring (NEW)
+  Activity,
+  Brain,
+  CheckCircle2,
+  CreditCard,
+  Database,
+  ExternalLink,
+  Globe,
+  Key,
+  Mail,
+  MessageSquare,
+  Rss,
+  
   type LucideIcon,
 } from 'lucide-react';
 
@@ -190,6 +203,19 @@ export const iconRegistry = {
   BookOpen,
   ClipboardList,
   Gift,
+  
+  // Admin & Monitoring
+  Activity,
+  Brain,
+  CheckCircle2,
+  CreditCard,
+  Database,
+  ExternalLink,
+  Globe,
+  Key,
+  Mail,
+  MessageSquare,
+  Rss,
 } as const;
 
 // Export the type of valid icon names

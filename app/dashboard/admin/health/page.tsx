@@ -212,7 +212,7 @@ export default async function SystemHealthPage() {
               className="p-4 bg-card border border-border rounded-lg hover:shadow-md transition-all flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <Icon name="ArrowLeft" className="h-5 w-5 text-text-muted" />
+                <Icon name="ChevronLeft" className="h-5 w-5 text-text-muted" />
                 <span className="font-semibold text-text-body">Back to Admin</span>
               </div>
             </Link>
