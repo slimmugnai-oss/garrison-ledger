@@ -581,7 +581,7 @@ export default function DeploymentHub() {
                     <li><strong>Special Operations:</strong> Variable (3-12+ months)</li>
                   </ul>
                   <p className="mt-3 text-sm">
-                    Your unit will provide specific timeline during pre-deployment briefings. Extensions (\"stop-loss\") can occur but are now rare.
+                    Your unit will provide specific timeline during pre-deployment briefings. Extensions (&ldquo;stop-loss&rdquo;) can occur but are now rare.
                   </p>
                 </div>
               </details>
