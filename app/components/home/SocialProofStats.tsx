@@ -93,7 +93,7 @@ export default function SocialProofStats() {
         {/* Total Plans */}
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-xl mb-3">
-            <Icon name="FileText" className="w-6 h-6 text-white" />
+            <Icon name="File" className="w-6 h-6 text-white" />
           </div>
           <div className="text-3xl md:text-4xl font-black text-green-600 mb-1">
             {displayedPlans.toLocaleString()}+
