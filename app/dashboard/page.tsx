@@ -231,6 +231,30 @@ export default async function CommandDashboard() {
             </div>
           )}
 
+          {/* Settings Widget - Always show */}
+          <div className="mb-12">
+            <AnimatedCard delay={300} className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <Icon name="Settings" className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Account Settings</h3>
+                    <p className="text-sm text-gray-300">Manage your profile, billing, and preferences</p>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard/settings"
+                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                  <Icon name="Settings" className="w-4 h-4" />
+                  Go to Settings
+                </Link>
+              </div>
+            </AnimatedCard>
+          </div>
+
           {/* Profile Snapshot - Always show if profile is completed */}
           {profileComplete && (
             <AnimatedCard className="mb-12 p-10 md:p-12 bg-card border border-border shadow-sm" delay={0}>
