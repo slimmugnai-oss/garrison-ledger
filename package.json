@@ -8,7 +8,8 @@
     "lint": "next lint",
     "start": "next start",
     "check-icons": "node scripts/check-icons.js",
-    "pre-deploy": "npm run check-icons && npm run lint && npm run build"
+    "health-check": "node scripts/build-health-check.js",
+    "pre-deploy": "npm run health-check && npm run check-icons && npm run build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.7.2",
