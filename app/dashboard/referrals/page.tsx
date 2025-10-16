@@ -80,41 +80,41 @@ export default async function ReferralsPage() {
           {/* Hero Header */}
           <div className="mb-12 text-center">
             <div className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700 px-4 py-1.5 text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wider">
+              <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-success-subtle dark:bg-green-900/20 dark:border-green-700 px-4 py-1.5 text-xs font-semibold text-success dark:text-green-400 uppercase tracking-wider">
                 <span>🤝</span> Dual Rewards
               </span>
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary dark:text-white mb-4">
               Help a Battle Buddy
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-gray-300">
-              Share Garrison Ledger with your military friends. When they upgrade, <strong className="text-green-600 dark:text-green-400">you both get $10!</strong>
+            <p className="mx-auto max-w-2xl text-xl text-body dark:text-muted">
+              Share Garrison Ledger with your military friends. When they upgrade, <strong className="text-success dark:text-green-400">you both get $10!</strong>
             </p>
           </div>
           
           {/* Explainer Card */}
           <AnimatedCard delay={0} className="mb-8">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-6">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-info dark:border-blue-700 rounded-xl p-6">
               <div className="flex items-start gap-4">
-                <Icon name="Info" className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                <Icon name="Info" className="h-6 w-6 text-info dark:text-info flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">How It Works</h3>
+                  <h3 className="font-bold text-primary dark:text-white mb-2">How It Works</h3>
                   <div className="grid md:grid-cols-3 gap-6 text-sm">
                     <div>
-                      <div className="font-semibold text-blue-600 dark:text-blue-400 mb-1">1. Share Your Code</div>
-                      <p className="text-gray-700 dark:text-gray-300">
+                      <div className="font-semibold text-info dark:text-info mb-1">1. Share Your Code</div>
+                      <p className="text-body dark:text-muted">
                         Give your unique referral code to military friends, family, or share on social media.
                       </p>
                     </div>
                     <div>
-                      <div className="font-semibold text-green-600 dark:text-green-400 mb-1">2. They Sign Up & Upgrade</div>
-                      <p className="text-gray-700 dark:text-gray-300">
+                      <div className="font-semibold text-success dark:text-green-400 mb-1">2. They Sign Up & Upgrade</div>
+                      <p className="text-body dark:text-muted">
                         When they create an account with your code and upgrade to premium, rewards unlock!
                       </p>
                     </div>
                     <div>
                       <div className="font-semibold text-amber-600 dark:text-amber-400 mb-1">3. You Both Get $10</div>
-                      <p className="text-gray-700 dark:text-gray-300">
+                      <p className="text-body dark:text-muted">
                         You get $10 credit, they get $10 credit. Use it towards premium or save it up!
                       </p>
                     </div>

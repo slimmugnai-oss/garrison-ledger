@@ -45,15 +45,15 @@ export default function DownloadGuideButton() {
 
   if (!isPremium) {
     return (
-      <div className="text-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
+      <div className="text-center p-6 bg-info-subtle rounded-lg border-2 border-info">
         <div className="text-4xl mb-3">📄</div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2">Premium Feature: AI-Curated Plan PDF</h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <h3 className="text-lg font-bold text-primary mb-2">Premium Feature: AI-Curated Plan PDF</h3>
+        <p className="text-sm text-body mb-4">
           Upgrade to download your AI-curated personalized plan as a professional PDF
         </p>
         <a
           href="/dashboard/upgrade"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          className="inline-block bg-info hover:bg-info text-white px-6 py-3 rounded-lg font-semibold transition-colors"
         >
           Upgrade to Premium
         </a>

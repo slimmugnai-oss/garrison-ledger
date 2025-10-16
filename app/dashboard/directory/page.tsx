@@ -103,11 +103,11 @@ export default function DirectoryPage() {
   const LoadingSkeleton = () => (
     <div className="grid gap-4 sm:grid-cols-2">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="rounded border bg-white p-4 shadow-sm animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        <div key={i} className="rounded border bg-surface p-4 shadow-sm animate-pulse">
+          <div className="h-6 bg-surface-hover rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-surface-hover rounded w-1/2 mb-4"></div>
+          <div className="h-4 bg-surface-hover rounded w-full mb-2"></div>
+          <div className="h-4 bg-surface-hover rounded w-2/3"></div>
         </div>
       ))}
     </div>
@@ -119,16 +119,16 @@ export default function DirectoryPage() {
     const showNewBadge = providerData.created_at && isNew(providerData.created_at);
 
     return (
-      <div className="rounded-lg border bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-200">
+      <div className="rounded-lg border bg-surface p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:border-info">
         {/* Header with badges */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 break-words">
+              <h3 className="text-lg sm:text-xl font-semibold text-primary break-words">
                 {p.business_name || p.name || "Provider"}
               </h3>
               {showNewBadge && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-medium whitespace-nowrap">
+                <span className="inline-flex items-center gap-1 rounded-full bg-success-subtle text-success px-2 py-0.5 text-xs font-medium whitespace-nowrap">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
@@ -136,7 +136,7 @@ export default function DirectoryPage() {
                 </span>
               )}
             </div>
-            <div className="text-xs sm:text-sm text-gray-500 mt-1 capitalize">
+            <div className="text-xs sm:text-sm text-muted mt-1 capitalize">
               {(p.type || "").replace("_", " ")} 
               {(p.city || p.state) && <span> · {p.city || ""}{p.city && p.state ? ", " : ""}{p.state || ""}</span>}
             </div>
@@ -146,7 +146,7 @@ export default function DirectoryPage() {
         {/* Attribute badges */}
         <div className="flex gap-2 flex-wrap mb-3">
           {p.military_friendly && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 text-xs font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-subtle text-success border border-success px-2.5 py-1 text-xs font-medium">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
@@ -154,7 +154,7 @@ export default function DirectoryPage() {
             </span>
           )}
           {p.va_expert && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 text-xs font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full bg-info-subtle text-info border border-info px-2.5 py-1 text-xs font-medium">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
               </svg>
@@ -174,19 +174,19 @@ export default function DirectoryPage() {
         {/* Details */}
         {(p.notes || (p.stations && p.stations.length > 0) || (p.coverage_states && p.coverage_states.length > 0) || p.license_id) && (
           <div className="text-sm space-y-1.5 mb-3 pb-3 border-b">
-            {p.notes && <p className="text-gray-700 leading-relaxed">{p.notes}</p>}
+            {p.notes && <p className="text-body leading-relaxed">{p.notes}</p>}
             {p.stations && p.stations.length > 0 && (
-              <p className="text-gray-600">
+              <p className="text-body">
                 <span className="font-medium">Stations:</span> {p.stations.join(", ")}
               </p>
             )}
             {p.coverage_states && p.coverage_states.length > 0 && (
-              <p className="text-gray-600">
+              <p className="text-body">
                 <span className="font-medium">Coverage:</span> {p.coverage_states.join(", ")}
               </p>
             )}
             {p.license_id && (
-              <p className="text-gray-600">
+              <p className="text-body">
                 <span className="font-medium">License:</span> {p.license_id}
               </p>
             )}
@@ -197,7 +197,7 @@ export default function DirectoryPage() {
         <div className="flex flex-wrap gap-2">
           {p.website && (
             <a 
-              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 text-white px-3 py-2 text-sm font-medium hover:bg-blue-700 transition-colors" 
+              className="inline-flex items-center gap-1.5 rounded-md bg-info text-white px-3 py-2 text-sm font-medium hover:bg-info transition-colors" 
               href={p.website} 
               target="_blank" 
               rel="noreferrer"
@@ -210,7 +210,7 @@ export default function DirectoryPage() {
           )}
           {p.email && (
             <a 
-              className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white text-gray-700 px-3 py-2 text-sm font-medium hover:bg-gray-50 transition-colors" 
+              className="inline-flex items-center gap-1.5 rounded-md border border-default bg-surface text-body px-3 py-2 text-sm font-medium hover:bg-surface-hover transition-colors" 
               href={`mailto:${p.email}`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +221,7 @@ export default function DirectoryPage() {
           )}
           {p.phone && (
             <a 
-              className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white text-gray-700 px-3 py-2 text-sm font-medium hover:bg-gray-50 transition-colors" 
+              className="inline-flex items-center gap-1.5 rounded-md border border-default bg-surface text-body px-3 py-2 text-sm font-medium hover:bg-surface-hover transition-colors" 
               href={`tel:${p.phone}`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ export default function DirectoryPage() {
           )}
           {p.calendly && (
             <a 
-              className="inline-flex items-center gap-1.5 rounded-md bg-green-600 text-white px-3 py-2 text-sm font-medium hover:bg-green-700 transition-colors" 
+              className="inline-flex items-center gap-1.5 rounded-md bg-success text-white px-3 py-2 text-sm font-medium hover:bg-success transition-colors" 
               href={p.calendly} 
               target="_blank" 
               rel="noreferrer"
@@ -254,10 +254,10 @@ export default function DirectoryPage() {
       <Header />
       <div className="max-w-5xl mx-auto p-6 space-y-6">
         <h1 className="text-2xl font-bold">Vetted Pros Directory</h1>
-        <p className="text-gray-600">Agents, lenders, and property managers who understand military families and VA loans.</p>
+        <p className="text-body">Agents, lenders, and property managers who understand military families and VA loans.</p>
 
         <SignedOut>
-          <div className="rounded border bg-white p-6 shadow-sm">
+          <div className="rounded border bg-surface p-6 shadow-sm">
             <p className="mb-4">Please sign in to view the directory.</p>
             <SignIn />
           </div>
@@ -293,7 +293,7 @@ export default function DirectoryPage() {
 
           {/* Loading indicator for subsequent searches */}
           {loading && !initialLoad && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               <div className="mt-2">Searching providers...</div>
             </div>
@@ -301,13 +301,13 @@ export default function DirectoryPage() {
 
           {/* Empty states */}
           {!loading && !initialLoad && items.length === 0 && (
-            <div className="rounded-lg border bg-white p-8 text-center shadow-sm">
+            <div className="rounded-lg border bg-surface p-8 text-center shadow-sm">
               <div className="text-4xl mb-3">🔍</div>
               {total === 0 && !q && !type && !state ? (
                 // No providers in database at all
                 <>
                   <h3 className="text-lg font-semibold mb-2">No providers yet</h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-body text-sm">
                     We&apos;re actively building our directory of vetted military-friendly providers.
                     Check back soon!
                   </p>
@@ -316,12 +316,12 @@ export default function DirectoryPage() {
                 // No results for current filters
                 <>
                   <h3 className="text-lg font-semibold mb-2">No providers match your search</h3>
-                  <p className="text-gray-600 text-sm mb-4">
+                  <p className="text-body text-sm mb-4">
                     Try adjusting your filters or search term.
                   </p>
                   <button 
                     onClick={clearFilters}
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="text-info hover:text-info text-sm font-medium"
                   >
                     Clear all filters
                   </button>
@@ -336,17 +336,17 @@ export default function DirectoryPage() {
               <button 
                 disabled={page <= 1} 
                 onClick={() => load(page - 1)} 
-                className="px-4 py-2 rounded border bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 rounded border bg-surface hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-body">
                 Page <span className="font-semibold">{page}</span> of <span className="font-semibold">{pages}</span>
               </div>
               <button 
                 disabled={page >= pages} 
                 onClick={() => load(page + 1)} 
-                className="px-4 py-2 rounded border bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 rounded border bg-surface hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -355,7 +355,7 @@ export default function DirectoryPage() {
 
           {/* Disclaimer */}
           {!initialLoad && (
-            <div className="text-xs text-gray-500 text-center mt-6">
+            <div className="text-xs text-muted text-center mt-6">
               Listings are informational and not endorsements. Verify licenses independently.
             </div>
           )}

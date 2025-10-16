@@ -129,11 +129,11 @@ export default async function AdminLeadsPage() {
             <h2 className="text-2xl font-bold text-text-headings mb-6">Leads by Source</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {Object.entries(metrics.sourceCounts).map(([source, count]) => (
-                <div key={source} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm font-semibold text-gray-600 capitalize mb-1">
+                <div key={source} className="bg-surface-hover border border-subtle rounded-lg p-4">
+                  <div className="text-sm font-semibold text-body capitalize mb-1">
                     {source.replace('_', ' ')}
                   </div>
-                  <div className="text-2xl font-black text-gray-900">{count as number}</div>
+                  <div className="text-2xl font-black text-primary">{count as number}</div>
                 </div>
               ))}
             </div>
@@ -145,7 +145,7 @@ export default async function AdminLeadsPage() {
               <h2 className="text-2xl font-bold text-text-headings">Recent Leads</h2>
               <Link
                 href="/api/admin/export-leads"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-info hover:bg-info text-white rounded-lg font-semibold transition-all"
               >
                 <Icon name="Download" className="w-4 h-4" />
                 Export CSV
@@ -156,26 +156,26 @@ export default async function AdminLeadsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b-2 border-gray-200">
-                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">Email</th>
-                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">Source</th>
-                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">Lead Magnet</th>
-                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700">Captured</th>
+                    <tr className="border-b-2 border-subtle">
+                      <th className="text-left py-3 px-4 text-sm font-bold text-body">Email</th>
+                      <th className="text-left py-3 px-4 text-sm font-bold text-body">Source</th>
+                      <th className="text-left py-3 px-4 text-sm font-bold text-body">Lead Magnet</th>
+                      <th className="text-left py-3 px-4 text-sm font-bold text-body">Status</th>
+                      <th className="text-left py-3 px-4 text-sm font-bold text-body">Captured</th>
                     </tr>
                   </thead>
                   <tbody>
                     {metrics.recentLeads.map((lead: { id: string; email: string; source: string; lead_magnet: string | null; status: string; created_at: string }) => (
-                      <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                      <tr key={lead.id} className="border-b border-subtle hover:bg-surface-hover">
+                        <td className="py-3 px-4 text-sm font-medium text-primary">
                           {lead.email}
                         </td>
                         <td className="py-3 px-4">
-                          <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full capitalize">
+                          <span className="inline-flex items-center px-2 py-1 bg-info-subtle text-info text-xs font-semibold rounded-full capitalize">
                             {(lead.source || 'unknown').replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-600 capitalize">
+                        <td className="py-3 px-4 text-sm text-body capitalize">
                           {lead.lead_magnet ? lead.lead_magnet.replace('_', ' ') : '-'}
                         </td>
                         <td className="py-3 px-4">
@@ -187,7 +187,7 @@ export default async function AdminLeadsPage() {
                             {lead.status}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-600">
+                        <td className="py-3 px-4 text-sm text-body">
                           {new Date(lead.created_at).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -203,60 +203,60 @@ export default async function AdminLeadsPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Icon name="Mail" className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">No email leads captured yet</p>
-                <p className="text-sm text-gray-500 mt-2">Exit-intent popup will start capturing leads once deployed</p>
+                <Icon name="Mail" className="h-16 w-16 text-muted mx-auto mb-4" />
+                <p className="text-body">No email leads captured yet</p>
+                <p className="text-sm text-muted mt-2">Exit-intent popup will start capturing leads once deployed</p>
               </div>
             )}
           </AnimatedCard>
 
           {/* Quick Actions */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <AnimatedCard delay={500} className="bg-blue-50 border-2 border-blue-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Icon name="Lightbulb" className="h-5 w-5 text-blue-600" />
+            <AnimatedCard delay={500} className="bg-info-subtle border-2 border-info p-6">
+              <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                <Icon name="Lightbulb" className="h-5 w-5 text-info" />
                 Lead Capture Tips
               </h3>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <ul className="space-y-2 text-sm text-body">
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span className="text-info mt-0.5">•</span>
                   <span>Exit-intent popup triggers after 3 seconds on homepage</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span className="text-info mt-0.5">•</span>
                   <span>Each visitor only sees popup once (localStorage)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span className="text-info mt-0.5">•</span>
                   <span>Test in incognito mode to see it again</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-0.5">•</span>
+                  <span className="text-info mt-0.5">•</span>
                   <span>Leads auto-receive PCS checklist via email</span>
                 </li>
               </ul>
             </AnimatedCard>
 
-            <AnimatedCard delay={600} className="bg-green-50 border-2 border-green-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Icon name="Target" className="h-5 w-5 text-green-600" />
+            <AnimatedCard delay={600} className="bg-success-subtle border-2 border-success p-6">
+              <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                <Icon name="Target" className="h-5 w-5 text-success" />
                 Conversion Goals
               </h3>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <ul className="space-y-2 text-sm text-body">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-success mt-0.5">•</span>
                   <span><strong>Target:</strong> 5-10% of visitors capture</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-success mt-0.5">•</span>
                   <span><strong>Goal:</strong> 300-600 leads/month (1,000 visitors)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-success mt-0.5">•</span>
                   <span><strong>Email → Signup:</strong> Target 10-15% conversion</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-0.5">•</span>
+                  <span className="text-success mt-0.5">•</span>
                   <span><strong>ROI:</strong> Each lead worth ~$5-10 LTV</span>
                 </li>
               </ul>

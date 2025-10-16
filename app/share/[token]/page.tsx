@@ -49,7 +49,7 @@ export default function SharePage() {
       <div className="min-h-screen flex items-center justify-center bg-[#0A0F1E]">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#00E5A0] border-r-transparent"></div>
-          <p className="mt-4 text-gray-400">Loading...</p>
+          <p className="mt-4 text-muted">Loading...</p>
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export default function SharePage() {
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-gray-400">{error}</p>
+          <p className="text-muted">{error}</p>
         </div>
       </div>
     );
@@ -75,7 +75,7 @@ export default function SharePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] p-6 mb-6">
           <h1 className="text-2xl font-bold mb-2">{shareData.file.display_name}</h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-muted text-sm">
             {(shareData.file.size_bytes / 1024).toFixed(1)} KB • {shareData.file.content_type}
           </p>
           {shareData.canDownload && (
@@ -115,7 +115,7 @@ export default function SharePage() {
             </div>
           )}
           {!isPdf && !isImage && (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-muted">
               <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>

@@ -45,7 +45,7 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
         e.stopPropagation();
         handleShare();
       }}
-      className="px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 text-sm bg-gray-50 text-gray-700 border-2 border-gray-200 hover:border-gray-300"
+      className="px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 text-sm bg-surface-hover text-body border-2 border-subtle hover:border-default"
       title="Share this content"
     >
       <span>🔗</span>

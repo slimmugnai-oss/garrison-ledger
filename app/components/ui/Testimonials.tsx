@@ -37,10 +37,10 @@ const testimonials: Testimonial[] = [
 export default function Testimonials() {
   return (
     <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-10">
-      <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
+      <h2 className="text-3xl font-bold text-center text-primary mb-3">
         Real Results from Military Families
       </h2>
-      <p className="text-center text-gray-600 mb-10">
+      <p className="text-center text-body mb-10">
         See how service members are using our tools to make smarter financial decisions
       </p>
       
@@ -48,21 +48,21 @@ export default function Testimonials() {
         {testimonials.map((testimonial, index) => (
           <div 
             key={index}
-            className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all"
+            className="bg-surface border border-subtle rounded-xl p-6 hover:shadow-lg transition-all"
           >
             <div className="mb-4">
-              <p className="text-gray-700 leading-relaxed italic">
+              <p className="text-body leading-relaxed italic">
                 &quot;{testimonial.quote}&quot;
               </p>
             </div>
-            <div className="border-t border-gray-200 pt-4">
+            <div className="border-t border-subtle pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-gray-900">{testimonial.author}</p>
-                  <p className="text-sm text-gray-600">{testimonial.rank}</p>
+                  <p className="font-bold text-primary">{testimonial.author}</p>
+                  <p className="text-sm text-body">{testimonial.rank}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-green-600">{testimonial.impact}</p>
+                  <p className="text-sm font-semibold text-success">{testimonial.impact}</p>
                 </div>
               </div>
             </div>
@@ -71,7 +71,7 @@ export default function Testimonials() {
       </div>
       
       <div className="mt-8 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-body">
           <Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /><Icon name="Star" className="h-4 w-4 inline" /> <strong>4.8/5 average rating</strong> from 127 reviews
         </p>
       </div>

@@ -76,7 +76,7 @@ export default async function SharedContentPage({ params }: PageProps) {
             ★
           </span>
         ))}
-        <span className="text-xs text-gray-600 ml-1">({rating.toFixed(1)})</span>
+        <span className="text-xs text-body ml-1">({rating.toFixed(1)})</span>
       </div>
     );
   };
@@ -86,22 +86,22 @@ export default async function SharedContentPage({ params }: PageProps) {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-surface">
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.04),transparent_60%)]" />
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
           {/* Header */}
           <div className="mb-8">
             <div className="mb-4">
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-4 py-1.5 text-xs font-semibold text-blue-700 uppercase tracking-wider">
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-info-subtle px-4 py-1.5 text-xs font-semibold text-info uppercase tracking-wider">
                 <span>🔗</span> Shared Content
               </span>
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-black tracking-tight text-gray-900 mb-4">
+            <h1 className="font-serif text-4xl md:text-5xl font-black tracking-tight text-primary mb-4">
               {content.title}
             </h1>
             {content.summary && (
-              <p className="text-xl text-gray-600 mb-4">{content.summary}</p>
+              <p className="text-xl text-body mb-4">{content.summary}</p>
             )}
             
             {/* Metadata */}
@@ -113,7 +113,7 @@ export default async function SharedContentPage({ params }: PageProps) {
                 {content.difficulty_level}
               </span>
               {content.est_read_min > 0 && (
-                <span className="text-sm bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg font-medium">
+                <span className="text-sm bg-surface-hover text-body px-3 py-1.5 rounded-lg font-medium">
                   ⏱️ {content.est_read_min} min read
                 </span>
               )}
@@ -123,7 +123,7 @@ export default async function SharedContentPage({ params }: PageProps) {
                 </div>
               )}
               {content.content_freshness_score >= 90 && (
-                <span className="text-sm bg-green-100 text-green-700 px-3 py-1.5 rounded-lg font-medium">
+                <span className="text-sm bg-success-subtle text-success px-3 py-1.5 rounded-lg font-medium">
                   ✨ Fresh Content
                 </span>
               )}
@@ -135,7 +135,7 @@ export default async function SharedContentPage({ params }: PageProps) {
                 {content.tags.slice(0, 5).map((tag: string) => (
                   <span
                     key={tag}
-                    className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium"
+                    className="px-2 py-1 bg-surface-hover text-body rounded text-xs font-medium"
                   >
                     {tag}
                   </span>
@@ -150,13 +150,13 @@ export default async function SharedContentPage({ params }: PageProps) {
                   navigator.clipboard.writeText(shareUrl);
                   alert('Link copied to clipboard!');
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <span>📋</span> Copy Link
               </button>
               <a
                 href="/dashboard/library"
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-semibold transition-colors"
+                className="px-4 py-2 bg-surface-hover hover:bg-surface-hover text-primary rounded-lg font-semibold transition-colors"
               >
                 Browse More Content
               </a>
@@ -164,7 +164,7 @@ export default async function SharedContentPage({ params }: PageProps) {
           </div>
 
           {/* Main Content */}
-          <AnimatedCard className="mb-8 p-8 bg-white border border-gray-200">
+          <AnimatedCard className="mb-8 p-8 bg-surface border border-subtle">
             <div
               className="prose prose-lg max-w-none"
               dangerouslySetInnerHTML={{ __html: content.html }}
@@ -173,8 +173,8 @@ export default async function SharedContentPage({ params }: PageProps) {
 
           {/* Related Content */}
           {related.length > 0 && (
-            <AnimatedCard className="p-6 bg-blue-50 border border-blue-200" delay={100}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <AnimatedCard className="p-6 bg-info-subtle border border-info" delay={100}>
+              <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
                 <span>🔗</span> Related Content
               </h2>
               <div className="space-y-3">
@@ -182,16 +182,16 @@ export default async function SharedContentPage({ params }: PageProps) {
                   <a
                     key={item.content_id}
                     href={`/content/${item.content_id}`}
-                    className="block p-4 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-all"
+                    className="block p-4 bg-surface rounded-lg border border-info hover:shadow-md transition-all"
                   >
-                    <div className="font-semibold text-gray-900 mb-2">
+                    <div className="font-semibold text-primary mb-2">
                       {item.title}
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <span className={`px-2 py-1 rounded ${getDomainColor(item.content_domain)}`}>
                         {item.content_domain}
                       </span>
-                      <span className="text-gray-500">
+                      <span className="text-muted">
                         {(item.similarity_score * 20).toFixed(0)}% similar
                       </span>
                     </div>
@@ -202,16 +202,16 @@ export default async function SharedContentPage({ params }: PageProps) {
           )}
 
           {/* CTA */}
-          <div className="mt-12 text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="mt-12 text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-info">
+            <h3 className="text-2xl font-bold text-primary mb-2">
               Want personalized recommendations?
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-body mb-4">
               Sign up for Garrison Ledger to get AI-powered content recommendations tailored to your military journey.
             </p>
             <Link
               href="/sign-up"
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+              className="inline-block px-6 py-3 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors"
             >
               Get Started Free
             </Link>

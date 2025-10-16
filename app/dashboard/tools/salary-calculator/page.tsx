@@ -29,26 +29,26 @@ export default function Page() {
                 Premium Tool
               </span>
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary mb-4">
               Career Opportunity Analyzer
             </h1>
-            <p className="mx-auto max-w-3xl text-xl text-gray-600">
+            <p className="mx-auto max-w-3xl text-xl text-body">
               Compare job offers with complete financial analysis including total compensation, state taxes, and cost of living. 
               Get real-time insights to make smarter career decisions.
             </p>
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Analyze Career Opportunities Intelligently</h2>
-              <p className="text-lg text-gray-700 mb-2">
+            <div className="max-w-2xl mx-auto bg-surface rounded-2xl p-10 shadow-2xl border-2 border-purple-400">
+              <h2 className="text-3xl font-bold text-primary mb-3">Analyze Career Opportunities Intelligently</h2>
+              <p className="text-lg text-body mb-2">
                 Complete financial analysis across 70+ military cities with total compensation, tax, and cost of living insights
               </p>
-              <p className="text-sm text-gray-600 mb-6">
+              <p className="text-sm text-body mb-6">
                 Make informed career decisions worth <strong className="text-purple-600">$15K+ in lifetime earnings</strong>
               </p>
-              <p className="text-3xl font-black text-gray-900 mb-6">
-                $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+              <p className="text-3xl font-black text-primary mb-6">
+                $9.99<span className="text-lg font-normal text-body">/month</span>
               </p>
               <Link
                 href="/sign-in"
@@ -56,7 +56,7 @@ export default function Page() {
               >
                 Start Free, Upgrade Anytime →
               </Link>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted">
                 No credit card required for free tier · Less than a coffee per week for premium
               </p>
             </div>
@@ -67,25 +67,25 @@ export default function Page() {
             
             {/* Use Cases */}
             <div className="mt-16">
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Perfect For:</h2>
+              <h2 className="text-2xl font-bold text-primary text-center mb-8">Perfect For:</h2>
               <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Military Transition</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="bg-surface border border-subtle rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                  <h3 className="text-lg font-bold text-primary mb-2">Military Transition</h3>
+                  <p className="text-body text-sm">
                     Comparing civilian job offers as you transition out? Understand how salaries translate across different locations before accepting an offer.
                   </p>
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Military Spouse Career</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="bg-surface border border-subtle rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                  <h3 className="text-lg font-bold text-primary mb-2">Military Spouse Career</h3>
+                  <p className="text-body text-sm">
                     Remote work opening up new opportunities? See how your current salary compares to offers in high or low cost-of-living areas.
                   </p>
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">PCS Planning</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="bg-surface border border-subtle rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow">
+                  <h3 className="text-lg font-bold text-primary mb-2">PCS Planning</h3>
+                  <p className="text-body text-sm">
                     Moving to a new duty station? Understand how the local economy and cost of living will affect your family&apos;s budget and lifestyle.
                   </p>
                 </div>
@@ -119,9 +119,9 @@ export default function Page() {
 
             {/* Resources */}
             <div className="mt-8 grid md:grid-cols-2 gap-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <div className="bg-info-subtle border border-info rounded-xl p-6">
                 <h3 className="text-lg font-bold text-blue-900 mb-3">Cost of Living Data</h3>
-                <p className="text-sm text-blue-800 mb-3">
+                <p className="text-sm text-info mb-3">
                   Want more detailed cost breakdowns? Check these resources for housing, transportation, and daily expenses.
                 </p>
                 <div className="space-y-2">
@@ -129,7 +129,7 @@ export default function Page() {
                     href="https://www.nerdwallet.com/cost-of-living-calculator"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
+                    className="block text-info hover:text-info text-sm font-semibold underline"
                   >
                     NerdWallet COL Calculator →
                   </a>
@@ -137,16 +137,16 @@ export default function Page() {
                     href="https://www.bestplaces.net/cost-of-living/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
+                    className="block text-info hover:text-info text-sm font-semibold underline"
                   >
                     BestPlaces Cost of Living →
                   </a>
                 </div>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-green-900 mb-3">Transition Resources</h3>
-                <p className="text-sm text-green-800 mb-3">
+              <div className="bg-success-subtle border border-success rounded-xl p-6">
+                <h3 className="text-lg font-bold text-success mb-3">Transition Resources</h3>
+                <p className="text-sm text-success mb-3">
                   Transitioning from military to civilian career? These resources can help you navigate the process.
                 </p>
                 <div className="space-y-2">
@@ -154,7 +154,7 @@ export default function Page() {
                     href="https://www.dol.gov/agencies/vets/programs/tap"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-green-600 hover:text-green-800 text-sm font-semibold underline"
+                    className="block text-success hover:text-success text-sm font-semibold underline"
                   >
                     TAP (Transition Assistance) →
                   </a>
@@ -162,7 +162,7 @@ export default function Page() {
                     href="https://www.hiringourheroes.org/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-green-600 hover:text-green-800 text-sm font-semibold underline"
+                    className="block text-success hover:text-success text-sm font-semibold underline"
                   >
                     Hiring Our Heroes →
                   </a>

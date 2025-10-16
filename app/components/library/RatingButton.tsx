@@ -81,7 +81,7 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
         ))}
       </div>
       {userRating && (
-        <span className="text-xs text-gray-600 font-medium">
+        <span className="text-xs text-body font-medium">
           Your rating: {userRating}/5
         </span>
       )}

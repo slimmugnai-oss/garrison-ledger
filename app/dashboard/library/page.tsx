@@ -317,7 +317,7 @@ function IntelligenceLibraryContent() {
             ★
           </span>
         ))}
-        <span className="text-xs text-gray-600 ml-1">({rating.toFixed(1)})</span>
+        <span className="text-xs text-body ml-1">({rating.toFixed(1)})</span>
       </div>
     );
   };
@@ -328,7 +328,7 @@ function IntelligenceLibraryContent() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-surface">
           <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.04),transparent_60%)]" />
           
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -338,17 +338,17 @@ function IntelligenceLibraryContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h1 className="text-3xl font-serif font-bold text-gray-900 mb-4">Daily Article Limit Reached</h1>
-              <p className="text-lg text-gray-600 mb-2">{rateLimitMessage}</p>
-              <p className="text-sm text-gray-500 mb-6">Come back tomorrow or upgrade to premium for unlimited access</p>
+              <h1 className="text-3xl font-serif font-bold text-primary mb-4">Daily Article Limit Reached</h1>
+              <p className="text-lg text-body mb-2">{rateLimitMessage}</p>
+              <p className="text-sm text-muted mb-6">Come back tomorrow or upgrade to premium for unlimited access</p>
 
               {!isPremium && (
-                <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                <div className="bg-info-subtle rounded-lg p-6 mb-6">
                   <p className="text-blue-900 font-semibold mb-3">Want unlimited access to 410+ expert articles?</p>
-                  <p className="text-blue-800 mb-4">Premium members get unlimited library access, plus full AI-curated plans, bookmarking, and priority support.</p>
+                  <p className="text-info mb-4">Premium members get unlimited library access, plus full AI-curated plans, bookmarking, and priority support.</p>
                   <a
                     href="/dashboard/upgrade"
-                    className="inline-block px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-block px-6 py-3 bg-info text-white font-bold rounded-lg hover:bg-info transition-colors"
                   >
                     Upgrade to Premium - $9.99/month
                   </a>
@@ -357,7 +357,7 @@ function IntelligenceLibraryContent() {
 
               <a
                 href="/dashboard"
-                className="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+                className="inline-block px-6 py-3 border-2 border-blue-600 text-info font-semibold rounded-lg hover:bg-info-subtle transition-colors"
               >
                 Return to Dashboard
               </a>
@@ -372,23 +372,23 @@ function IntelligenceLibraryContent() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-surface">
         {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.04),transparent_60%)]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
           {/* Rate limit indicator for free users */}
           {!isPremium && viewsRemaining <= 2 && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="mb-6 bg-warning-subtle border border-warning rounded-lg p-4">
               <div className="flex items-center gap-3">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <div>
-                  <p className="font-semibold text-yellow-900">
+                  <p className="font-semibold text-warning">
                     {viewsRemaining} article{viewsRemaining === 1 ? '' : 's'} remaining today
                   </p>
-                  <p className="text-sm text-yellow-800">
+                  <p className="text-sm text-warning">
                     Free users can view 5 articles per day. <a href="/dashboard/upgrade" className="underline font-semibold">Upgrade for unlimited access</a>
                   </p>
                 </div>
@@ -403,37 +403,37 @@ function IntelligenceLibraryContent() {
                 <span>⭐</span> AI-Powered Intelligence
               </span>
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary mb-4">
               Intel Library
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            <p className="mx-auto max-w-2xl text-xl text-body">
               410+ expert-curated content blocks that power your AI-generated plan
             </p>
           </div>
 
           {/* What's the Difference Explainer */}
           <AnimatedCard delay={0} className="mb-8">
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-success rounded-xl p-6">
               <div className="flex items-start gap-4">
                 <span className="text-3xl flex-shrink-0">📚</span>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-2">Expert-Curated Financial Guidance</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="font-bold text-primary mb-2">Expert-Curated Financial Guidance</h3>
+                  <p className="text-body mb-3">
                     This library contains <strong>410+ hand-curated content blocks</strong> written by military financial experts. 
                     When you take your assessment, our AI Master Curator selects 8-10 of these blocks and weaves them into 
                     your personalized financial plan.
                   </p>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <div className="font-semibold text-green-600 mb-1">✅ Intelligence Library (This Page)</div>
-                      <p className="text-gray-700">
+                      <div className="font-semibold text-success mb-1">✅ Intelligence Library (This Page)</div>
+                      <p className="text-body">
                         <strong>Evergreen expert content</strong> - Your AI plan pulls from these 410+ curated blocks. 
                         Browse, search, bookmark, and discover the knowledge base that powers your personalized guidance.
                       </p>
                     </div>
                     <div>
-                      <div className="font-semibold text-blue-600 mb-1">📡 Listening Post</div>
-                      <p className="text-gray-700">
+                      <div className="font-semibold text-info mb-1">📡 Listening Post</div>
+                      <p className="text-body">
                         <strong>Current military financial news</strong> - Breaking updates from Military Times, Stars & Stripes, etc. 
                         Great for staying informed, but separate from your AI plan.
                         <a href="/dashboard/listening-post" className="ml-1 underline font-semibold">
@@ -449,28 +449,28 @@ function IntelligenceLibraryContent() {
 
           {/* Personalized Recommendations Section */}
           {(loadingPersonalized || personalizedBlocks.length > 0) && (
-            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200" delay={0}>
+            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-info" delay={0}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
                   <span>🎯</span> For You
                 </h2>
                 {!loadingPersonalized && (
                   <button
                     onClick={() => setActiveTab('for-you')}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                    className="text-sm text-info hover:text-info font-semibold"
                   >
                     View All →
                   </button>
                 )}
               </div>
-              <p className="text-gray-600 mb-4">Based on your profile and interests</p>
+              <p className="text-body mb-4">Based on your profile and interests</p>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {loadingPersonalized ? (
                   [...Array(5)].map((_, i) => (
                     <div key={i} className="animate-pulse">
-                      <div className="h-32 bg-white rounded-lg border border-gray-200 p-4">
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-32 bg-surface rounded-lg border border-subtle p-4">
+                        <div className="h-4 bg-surface-hover rounded mb-2"></div>
+                        <div className="h-3 bg-surface-hover rounded w-3/4"></div>
                       </div>
                     </div>
                   ))
@@ -483,9 +483,9 @@ function IntelligenceLibraryContent() {
                       setActiveTab('all');
                       window.scrollTo({ top: 600, behavior: 'smooth' });
                     }}
-                    className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all text-left"
+                    className="p-4 bg-surface rounded-lg border border-subtle hover:shadow-md transition-all text-left"
                   >
-                    <div className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <div className="text-sm font-semibold text-primary mb-2 line-clamp-2">
                       {block.title}
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -493,7 +493,7 @@ function IntelligenceLibraryContent() {
                         {block.domain}
                       </span>
                       {block.relevance_score && (
-                        <span className="text-blue-600 font-bold">
+                        <span className="text-info font-bold">
                           {(block.relevance_score * 10).toFixed(0)}% match
                         </span>
                       )}
@@ -509,7 +509,7 @@ function IntelligenceLibraryContent() {
           {(loadingTrending || trendingBlocks.length > 0) && (
             <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200" delay={50}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
                   <span>🔥</span> Trending Now
                 </h2>
                 {!loadingTrending && (
@@ -521,14 +521,14 @@ function IntelligenceLibraryContent() {
                   </button>
                 )}
               </div>
-              <p className="text-gray-600 mb-4">Most popular content this week</p>
+              <p className="text-body mb-4">Most popular content this week</p>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {loadingTrending ? (
                   [...Array(5)].map((_, i) => (
                     <div key={i} className="animate-pulse">
-                      <div className="h-32 bg-white rounded-lg border border-gray-200 p-4">
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-32 bg-surface rounded-lg border border-subtle p-4">
+                        <div className="h-4 bg-surface-hover rounded mb-2"></div>
+                        <div className="h-3 bg-surface-hover rounded w-3/4"></div>
                       </div>
                     </div>
                   ))
@@ -541,9 +541,9 @@ function IntelligenceLibraryContent() {
                       setActiveTab('all');
                       window.scrollTo({ top: 600, behavior: 'smooth' });
                     }}
-                    className="p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-all text-left"
+                    className="p-4 bg-surface rounded-lg border border-subtle hover:shadow-md transition-all text-left"
                   >
-                    <div className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <div className="text-sm font-semibold text-primary mb-2 line-clamp-2">
                       {block.title}
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -564,7 +564,7 @@ function IntelligenceLibraryContent() {
           )}
 
           {/* Tabs */}
-          <div className="mb-6 flex items-center gap-2 border-b border-gray-200">
+          <div className="mb-6 flex items-center gap-2 border-b border-subtle">
             <button
               onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
               className={`px-6 py-3 font-semibold transition-all ${
@@ -608,17 +608,17 @@ function IntelligenceLibraryContent() {
           </div>
 
           {/* Search Bar */}
-          <AnimatedCard className="mb-6 p-6 bg-white border border-gray-200" delay={100}>
+          <AnimatedCard className="mb-6 p-6 bg-surface border border-subtle" delay={100}>
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search by keyword (uses AI semantic search)..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-                className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-600 focus:outline-none transition-colors"
+                className="w-full px-6 py-4 text-lg border-2 border-default rounded-xl focus:border-blue-600 focus:outline-none transition-colors"
               />
               <svg
-                className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400"
+                className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -634,11 +634,11 @@ function IntelligenceLibraryContent() {
           </AnimatedCard>
 
           {/* Smart Filters */}
-          <AnimatedCard className="mb-8 p-6 bg-white border border-gray-200" delay={150}>
+          <AnimatedCard className="mb-8 p-6 bg-surface border border-subtle" delay={150}>
             <div className="space-y-6">
               {/* Domain Filters */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-body uppercase tracking-wider mb-3">
                   Content Area
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -660,7 +660,7 @@ function IntelligenceLibraryContent() {
 
               {/* Difficulty Filters */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-body uppercase tracking-wider mb-3">
                   Difficulty Level
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -683,7 +683,7 @@ function IntelligenceLibraryContent() {
 
               {/* Audience Filters */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-body uppercase tracking-wider mb-3">
                   Target Audience
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -705,7 +705,7 @@ function IntelligenceLibraryContent() {
 
               {/* Quality Filter */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-body uppercase tracking-wider mb-3">
                   Minimum Quality Rating
                 </h3>
                 <div className="flex items-center gap-4">
@@ -718,16 +718,16 @@ function IntelligenceLibraryContent() {
                     onChange={(e) => { setMinRating(parseFloat(e.target.value)); setCurrentPage(1); }}
                     className="flex-1"
                   />
-                  <span className="font-bold text-gray-900 w-20">{minRating.toFixed(1)} / 5.0</span>
+                  <span className="font-bold text-primary w-20">{minRating.toFixed(1)} / 5.0</span>
                 </div>
               </div>
 
               {/* Clear Filters */}
               {(search || selectedDomain || selectedDifficulty || selectedAudience || minRating > 0) && (
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-subtle">
                   <button
                     onClick={clearFilters}
-                    className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-2"
+                    className="text-info hover:text-info font-semibold text-sm flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -742,15 +742,15 @@ function IntelligenceLibraryContent() {
           {/* Results Count */}
           {pagination && (
             <div className="mb-6 text-center">
-              <p className="text-gray-600">
+              <p className="text-body">
                 {activeTab === 'saved' ? (
                   <>
-                    <span className="font-bold text-gray-900">{bookmarkedBlocks.length}</span> saved article{bookmarkedBlocks.length !== 1 ? 's' : ''}
+                    <span className="font-bold text-primary">{bookmarkedBlocks.length}</span> saved article{bookmarkedBlocks.length !== 1 ? 's' : ''}
                   </>
                 ) : (
                   <>
-                    Showing <span className="font-bold text-gray-900">{blocks.length}</span> of{' '}
-                    <span className="font-bold text-gray-900">{pagination.totalCount}</span> results
+                    Showing <span className="font-bold text-primary">{blocks.length}</span> of{' '}
+                    <span className="font-bold text-primary">{pagination.totalCount}</span> results
                   </>
                 )}
               </p>
@@ -761,15 +761,15 @@ function IntelligenceLibraryContent() {
           {loading && (
             <div className="text-center py-16">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="mt-4 text-gray-600">Loading content...</p>
+              <p className="mt-4 text-body">Loading content...</p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
             <div className="text-center py-16">
-              <div className="text-red-600 text-lg font-semibold mb-2">⚠️ Error</div>
-              <p className="text-gray-600">{error}</p>
+              <div className="text-danger text-lg font-semibold mb-2">⚠️ Error</div>
+              <p className="text-body">{error}</p>
             </div>
           )}
 
@@ -785,13 +785,13 @@ function IntelligenceLibraryContent() {
                     return (
                       <div className="text-center py-16">
                         <div className="text-6xl mb-4">🔖</div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">No saved content yet</h3>
-                        <p className="text-gray-600 mb-6">
+                        <h3 className="text-2xl font-bold text-primary mb-2">No saved content yet</h3>
+                        <p className="text-body mb-6">
                           Click the bookmark icon on any article to save it for later
                         </p>
                         <button
                           onClick={() => setActiveTab('all')}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                          className="bg-info hover:bg-info text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                         >
                           Explore Content
                         </button>
@@ -802,11 +802,11 @@ function IntelligenceLibraryContent() {
                   return (
                     <div className="text-center py-16">
                       <div className="text-6xl mb-4">🔍</div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">No results found</h3>
-                      <p className="text-gray-600 mb-6">Try adjusting your search or filters</p>
+                      <h3 className="text-2xl font-bold text-primary mb-2">No results found</h3>
+                      <p className="text-body mb-6">Try adjusting your search or filters</p>
                       <button
                         onClick={clearFilters}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                        className="bg-info hover:bg-info text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                       >
                         Clear filters
                       </button>
@@ -817,7 +817,7 @@ function IntelligenceLibraryContent() {
                 return displayBlocks.map((block, index) => (
                   <AnimatedCard
                     key={block.id}
-                    className="bg-white border border-gray-200 hover:shadow-lg transition-all"
+                    className="bg-surface border border-subtle hover:shadow-lg transition-all"
                     delay={index * 20}
                   >
                     <button
@@ -827,14 +827,14 @@ function IntelligenceLibraryContent() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <h3 className="text-xl font-bold text-gray-900">{block.title}</h3>
+                            <h3 className="text-xl font-bold text-primary">{block.title}</h3>
                             {block.est_read_min > 0 && (
-                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-medium">
+                              <span className="text-xs bg-surface-hover text-body px-2 py-1 rounded-full font-medium">
                                 {block.est_read_min} min
                               </span>
                             )}
                             {block.relevance_score && (
-                              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-bold">
+                              <span className="text-xs bg-info-subtle text-info px-2 py-1 rounded-full font-bold">
                                 {(block.relevance_score * 10).toFixed(0)}% match
                               </span>
                             )}
@@ -846,7 +846,7 @@ function IntelligenceLibraryContent() {
                           </div>
                           
                           {block.summary && (
-                            <p className="text-gray-600 mb-3">{block.summary}</p>
+                            <p className="text-body mb-3">{block.summary}</p>
                           )}
                           
                           <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -858,7 +858,7 @@ function IntelligenceLibraryContent() {
                             </span>
                             {block.content_rating > 0 && renderContentRating(block.content_rating)}
                             {block.content_freshness_score >= 90 && (
-                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                              <span className="text-xs bg-success-subtle text-success px-2 py-1 rounded-full font-medium">
                                 ✨ Fresh
                               </span>
                             )}
@@ -894,16 +894,16 @@ function IntelligenceLibraryContent() {
 
                     {/* Expanded Content */}
                     {expandedId === block.id && (
-                      <div className="px-6 pb-6 border-t border-gray-200">
+                      <div className="px-6 pb-6 border-t border-subtle">
                         <div
-                          className="prose prose-sm max-w-none mt-6 text-gray-700"
+                          className="prose prose-sm max-w-none mt-6 text-body"
                           dangerouslySetInnerHTML={{ __html: block.html }}
                         />
                         
                         {/* Related Content */}
                         {relatedBlocks[block.id] && relatedBlocks[block.id].length > 0 && (
-                          <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                          <div className="mt-8 p-4 bg-info-subtle rounded-lg border border-info">
+                            <h4 className="font-bold text-primary mb-3 flex items-center gap-2">
                               <span>🔗</span> Related Content
                             </h4>
                             <div className="space-y-2">
@@ -911,16 +911,16 @@ function IntelligenceLibraryContent() {
                                 <button
                                   key={related.content_id}
                                   onClick={() => toggleExpand(related.content_id)}
-                                  className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-all"
+                                  className="w-full text-left p-3 bg-surface rounded-lg border border-info hover:shadow-md transition-all"
                                 >
-                                  <div className="font-semibold text-gray-900 text-sm mb-1">
+                                  <div className="font-semibold text-primary text-sm mb-1">
                                     {related.title}
                                   </div>
                                   <div className="flex items-center gap-2 text-xs">
                                     <span className={`px-2 py-1 rounded ${getDomainColor(related.content_domain)}`}>
                                       {related.content_domain}
                                     </span>
-                                    <span className="text-gray-500">
+                                    <span className="text-muted">
                                       {(related.similarity_score * 20).toFixed(0)}% similar
                                     </span>
                                   </div>
@@ -943,7 +943,7 @@ function IntelligenceLibraryContent() {
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-default rounded-lg font-medium text-body hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
@@ -980,7 +980,7 @@ function IntelligenceLibraryContent() {
               <button
                 onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
                 disabled={currentPage === pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-default rounded-lg font-medium text-body hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -998,10 +998,10 @@ export default function IntelligenceLibrary() {
     <Suspense fallback={
       <>
         <Header />
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen bg-surface flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-gray-600">Loading Intel Library...</p>
+            <p className="text-body">Loading Intel Library...</p>
           </div>
         </div>
         <Footer />

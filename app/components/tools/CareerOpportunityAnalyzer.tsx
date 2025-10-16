@@ -164,9 +164,9 @@ export default function CareerOpportunityAnalyzer() {
           {/* Input Grid */}
           <div className="grid lg:grid-cols-2 gap-8 mb-8">
             {/* Current Situation */}
-            <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-info rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                <div className="w-4 h-4 bg-info rounded-full"></div>
                 <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
               </div>
               
@@ -181,7 +181,7 @@ export default function CareerOpportunityAnalyzer() {
                 />
                 
                 {currentData.city && (
-                  <div className="bg-blue-100 border border-blue-300 rounded-lg p-3">
+                  <div className="bg-info-subtle border border-blue-300 rounded-lg p-3">
                     <p className="text-xs font-semibold text-blue-900">
                       Cost of Living Index: {currentData.city.cost_of_living_index}
                       {currentData.city.cost_of_living_index > 100 && 
@@ -200,12 +200,12 @@ export default function CareerOpportunityAnalyzer() {
                     Base Annual Salary
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                     <input
                       type="number"
                       value={currentData.salary}
                       onChange={(e) => setCurrentData({ ...currentData, salary: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
                       placeholder="60000"
                     />
                   </div>
@@ -217,12 +217,12 @@ export default function CareerOpportunityAnalyzer() {
                     Annual Bonus (if applicable)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                     <input
                       type="number"
                       value={currentData.bonus}
                       onChange={(e) => setCurrentData({ ...currentData, bonus: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-base"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
                       placeholder="0"
                     />
                   </div>
@@ -239,12 +239,12 @@ export default function CareerOpportunityAnalyzer() {
                       value={currentData.retirementMatchPercent}
                       onChange={(e) => setCurrentData({ ...currentData, retirementMatchPercent: Number(e.target.value) })}
                       step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-base"
+                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
                       placeholder="5"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Value: {fmt(currentData.salary * (currentData.retirementMatchPercent / 100))}
                   </p>
                 </div>
@@ -260,12 +260,12 @@ export default function CareerOpportunityAnalyzer() {
                       value={currentData.stateTaxPercent}
                       onChange={(e) => setCurrentData({ ...currentData, stateTaxPercent: Number(e.target.value) })}
                       step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-base"
+                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
                       placeholder="5"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
                   </p>
                 </div>
@@ -274,9 +274,9 @@ export default function CareerOpportunityAnalyzer() {
             </div>
 
             {/* New Offer */}
-            <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-green-50 to-white border-2 border-success rounded-xl p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+                <div className="w-4 h-4 bg-success rounded-full"></div>
                 <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
               </div>
               
@@ -291,8 +291,8 @@ export default function CareerOpportunityAnalyzer() {
                 />
                 
                 {newData.city && (
-                  <div className="bg-green-100 border border-green-300 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-green-900">
+                  <div className="bg-success-subtle border border-green-300 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-success">
                       Cost of Living Index: {newData.city.cost_of_living_index}
                       {newData.city.cost_of_living_index > 100 && 
                         ` (${(newData.city.cost_of_living_index - 100).toFixed(0)}% above national average)`}
@@ -310,12 +310,12 @@ export default function CareerOpportunityAnalyzer() {
                     Base Annual Salary
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                     <input
                       type="number"
                       value={newData.salary}
                       onChange={(e) => setNewData({ ...newData, salary: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
                       placeholder="70000"
                     />
                   </div>
@@ -327,12 +327,12 @@ export default function CareerOpportunityAnalyzer() {
                     Annual Bonus (if applicable)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                     <input
                       type="number"
                       value={newData.bonus}
                       onChange={(e) => setNewData({ ...newData, bonus: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-base"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
                       placeholder="0"
                     />
                   </div>
@@ -349,12 +349,12 @@ export default function CareerOpportunityAnalyzer() {
                       value={newData.retirementMatchPercent}
                       onChange={(e) => setNewData({ ...newData, retirementMatchPercent: Number(e.target.value) })}
                       step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-base"
+                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
                       placeholder="5"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Value: {fmt(newData.salary * (newData.retirementMatchPercent / 100))}
                   </p>
                 </div>
@@ -370,12 +370,12 @@ export default function CareerOpportunityAnalyzer() {
                       value={newData.stateTaxPercent}
                       onChange={(e) => setNewData({ ...newData, stateTaxPercent: Number(e.target.value) })}
                       step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-base"
+                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
                       placeholder="0"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
                   </p>
                 </div>
@@ -394,29 +394,29 @@ export default function CareerOpportunityAnalyzer() {
               sampleData={
                 <div className="space-y-8">
                   {/* Sample Current Situation Summary */}
-                  <div className="bg-blue-100 border-2 border-blue-300 rounded-lg p-4">
+                  <div className="bg-info-subtle border-2 border-blue-300 rounded-lg p-4">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">Total Compensation:</span>
+                        <span className="font-semibold text-body">Total Compensation:</span>
                         <span className="font-bold text-blue-900">$63,000</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">After Taxes:</span>
+                        <span className="font-semibold text-body">After Taxes:</span>
                         <span className="font-bold text-blue-900">$60,000</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Sample New Offer Summary */}
-                  <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4">
+                  <div className="bg-success-subtle border-2 border-green-300 rounded-lg p-4">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">Total Compensation:</span>
-                        <span className="font-bold text-green-900">$79,200</span>
+                        <span className="font-semibold text-body">Total Compensation:</span>
+                        <span className="font-bold text-success">$79,200</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="font-semibold text-gray-700">After Taxes:</span>
-                        <span className="font-bold text-green-900">$67,320</span>
+                        <span className="font-semibold text-body">After Taxes:</span>
+                        <span className="font-bold text-success">$67,320</span>
                       </div>
                     </div>
                   </div>
@@ -424,11 +424,11 @@ export default function CareerOpportunityAnalyzer() {
                   {/* Sample Executive Summary */}
                   <div className="rounded-xl border-4 p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-green-400">
                     <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Executive Summary</h3>
+                      <h3 className="text-2xl font-bold text-primary mb-4">Executive Summary</h3>
                       <div className="mb-6">
-                        <div className="text-sm font-semibold text-gray-600 mb-2">NET FINANCIAL DIFFERENCE</div>
-                        <div className="text-6xl font-black mb-2 text-green-600">+$7,320</div>
-                        <div className="text-sm text-gray-600">After Taxes & Cost of Living Adjustment</div>
+                        <div className="text-sm font-semibold text-body mb-2">NET FINANCIAL DIFFERENCE</div>
+                        <div className="text-6xl font-black mb-2 text-success">+$7,320</div>
+                        <div className="text-sm text-body">After Taxes & Cost of Living Adjustment</div>
                       </div>
                     </div>
                   </div>
@@ -437,29 +437,29 @@ export default function CareerOpportunityAnalyzer() {
             >
               <div className="space-y-8">
                 {/* Current Situation Summary */}
-                <div className="bg-blue-100 border-2 border-blue-300 rounded-lg p-4">
+                <div className="bg-info-subtle border-2 border-blue-300 rounded-lg p-4">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="font-semibold text-gray-700">Total Compensation:</span>
+                      <span className="font-semibold text-body">Total Compensation:</span>
                       <span className="font-bold text-blue-900">{fmt(analysis.currentTotalComp)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-semibold text-gray-700">After Taxes:</span>
+                      <span className="font-semibold text-body">After Taxes:</span>
                       <span className="font-bold text-blue-900">{fmt(analysis.currentAfterTax)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* New Offer Summary */}
-                <div className="bg-green-100 border-2 border-green-300 rounded-lg p-4">
+                <div className="bg-success-subtle border-2 border-green-300 rounded-lg p-4">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="font-semibold text-gray-700">Total Compensation:</span>
-                      <span className="font-bold text-green-900">{fmt(analysis.newTotalComp)}</span>
+                      <span className="font-semibold text-body">Total Compensation:</span>
+                      <span className="font-bold text-success">{fmt(analysis.newTotalComp)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-semibold text-gray-700">After Taxes:</span>
-                      <span className="font-bold text-green-900">{fmt(analysis.newAfterTax)}</span>
+                      <span className="font-semibold text-body">After Taxes:</span>
+                      <span className="font-bold text-success">{fmt(analysis.newAfterTax)}</span>
                     </div>
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export default function CareerOpportunityAnalyzer() {
                       <Icon name="BarChart" className="h-6 w-6 inline mr-2" /> Executive Summary
                     </h3>
                     <div className="mb-6">
-                      <div className="text-sm font-semibold text-gray-600 mb-2">
+                      <div className="text-sm font-semibold text-body mb-2">
                         NET FINANCIAL DIFFERENCE
                       </div>
                       <div className={`text-6xl font-black mb-2 ${
@@ -483,7 +483,7 @@ export default function CareerOpportunityAnalyzer() {
                       }`}>
                         {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-body">
                         After Taxes & Cost of Living Adjustment
                       </div>
                     </div>
@@ -494,15 +494,15 @@ export default function CareerOpportunityAnalyzer() {
                     <h4 className="font-bold text-text-headings mb-4 text-lg">Financial Breakdown</h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <div className="text-sm text-gray-600 mb-1">Your Current After-Tax Income</div>
-                        <div className="text-2xl font-bold text-blue-600">{fmt(analysis.currentAfterTax)}</div>
+                        <div className="text-sm text-body mb-1">Your Current After-Tax Income</div>
+                        <div className="text-2xl font-bold text-info">{fmt(analysis.currentAfterTax)}</div>
                       </div>
                       <div>
-                        <div className="text-sm text-gray-600 mb-1">New Offer (Adjusted to Your City&apos;s COL)</div>
-                        <div className="text-2xl font-bold text-green-600">{fmt(analysis.adjustedNewOffer)}</div>
+                        <div className="text-sm text-body mb-1">New Offer (Adjusted to Your City&apos;s COL)</div>
+                        <div className="text-2xl font-bold text-success">{fmt(analysis.adjustedNewOffer)}</div>
                       </div>
-                      <div className="md:col-span-2 pt-4 border-t border-gray-200">
-                        <div className="text-sm text-gray-600 mb-1">Effective Change in Purchasing Power</div>
+                      <div className="md:col-span-2 pt-4 border-t border-subtle">
+                        <div className="text-sm text-body mb-1">Effective Change in Purchasing Power</div>
                         <div className={`text-3xl font-black ${analysis.isPositive ? 'text-green-600' : 'text-red-600'}`}>
                           {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)} 
                           <span className="text-xl ml-2">

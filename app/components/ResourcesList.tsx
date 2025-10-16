@@ -6,7 +6,7 @@ type Item = { title: string; url: string; tags: string[] };
 export default function ResourcesList({ ranked }: { ranked: Item[] }) {
   if (ranked.length === 0) {
     return (
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-body">
         No resources matched yet — complete the assessment to get personalized recommendations.
       </p>
     );
@@ -19,11 +19,11 @@ export default function ResourcesList({ ranked }: { ranked: Item[] }) {
           key={r.url}
           href={r.url}
           title={r.title}
-          className="rounded-lg border-2 border-gray-200 p-4 hover:bg-slate-50 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md block"
+          className="rounded-lg border-2 border-subtle p-4 hover:bg-slate-50 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md block"
           eventName="plan_resource_click"
         >
-          <div className="font-semibold text-gray-900 mb-1">{r.title}</div>
-          <div className="text-xs text-gray-500">{(r.tags || []).join(" · ")}</div>
+          <div className="font-semibold text-primary mb-1">{r.title}</div>
+          <div className="text-xs text-muted">{(r.tags || []).join(" · ")}</div>
         </TrackedLink>
       ))}
     </div>

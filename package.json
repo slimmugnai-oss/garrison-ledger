@@ -8,6 +8,8 @@
     "lint": "next lint",
     "start": "next start",
     "check-icons": "node scripts/check-icons.js",
+    "check-contrast": "node scripts/check-contrast.js",
+    "fix-contrast": "node scripts/fix-contrast.js",
     "health-check": "node scripts/build-health-check.js",
     "pre-deploy": "npm run health-check && npm run check-icons && npm run build"
   },

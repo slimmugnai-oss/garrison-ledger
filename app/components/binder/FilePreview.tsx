@@ -41,7 +41,7 @@ export default function FilePreview({ file, isOpen, onClose }: FilePreviewProps)
         <div className="p-6 border-b border-[#2A2F3E] flex items-center justify-between bg-[#1A1F2E]/50 backdrop-blur">
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold text-white truncate">{file.display_name}</h2>
-            <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
+            <div className="flex items-center gap-3 text-sm text-muted mt-1">
               <span>{formatFileSize(file.size_bytes)}</span>
               <span>•</span>
               <span className="capitalize">{file.doc_type.replace('_', ' ')}</span>
@@ -64,7 +64,7 @@ export default function FilePreview({ file, isOpen, onClose }: FilePreviewProps)
               onClick={onClose}
               className="p-2.5 hover:bg-[#2A2F3E] rounded-lg transition-colors"
             >
-              <Icon name="X" className="w-5 h-5 text-gray-400" />
+              <Icon name="X" className="w-5 h-5 text-muted" />
             </button>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function FilePreview({ file, isOpen, onClose }: FilePreviewProps)
           {file.content_type === 'application/pdf' && file.signedUrl && (
             <iframe
               src={file.signedUrl}
-              className="w-full h-full min-h-[600px] rounded-lg border border-[#2A2F3E] bg-white"
+              className="w-full h-full min-h-[600px] rounded-lg border border-[#2A2F3E] bg-surface"
               title={file.display_name}
             />
           )}
@@ -96,12 +96,12 @@ export default function FilePreview({ file, isOpen, onClose }: FilePreviewProps)
           {!canPreview && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="bg-[#2A2F3E] p-6 rounded-full mb-6">
-                <Icon name="File" className="w-12 h-12 text-gray-400" />
+                <Icon name="File" className="w-12 h-12 text-muted" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Preview Not Available
               </h3>
-              <p className="text-gray-400 mb-6 max-w-md">
+              <p className="text-muted mb-6 max-w-md">
                 This file type cannot be previewed in the browser. Download it to view the contents.
               </p>
               {file.signedUrl && (

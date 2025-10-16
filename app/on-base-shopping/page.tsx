@@ -49,7 +49,7 @@ export default function ShoppingHub() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/dashboard/tools/on-base-savings"
-                className="inline-flex items-center justify-center gap-2 bg-white text-orange-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                className="inline-flex items-center justify-center gap-2 bg-surface text-orange-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
               >
                 <Icon name="Calculator" className="h-5 w-5" />
                 Calculate Annual Savings
@@ -66,24 +66,24 @@ export default function ShoppingHub() {
       </section>
 
       {/* Quick Stats */}
-      <section className="bg-white border-b border-gray-200 py-8">
+      <section className="bg-surface border-b border-subtle py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-black text-green-600 mb-1">25%</div>
-              <div className="text-sm text-gray-600">Avg Commissary Savings</div>
+              <div className="text-3xl font-black text-success mb-1">25%</div>
+              <div className="text-sm text-body">Avg Commissary Savings</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-blue-600 mb-1">6-10%</div>
-              <div className="text-sm text-gray-600">Tax-Free Exchange</div>
+              <div className="text-3xl font-black text-info mb-1">6-10%</div>
+              <div className="text-sm text-body">Tax-Free Exchange</div>
             </div>
             <div>
               <div className="text-3xl font-black text-purple-600 mb-1">5¢/gal</div>
-              <div className="text-sm text-gray-600">Gas Discount (STAR)</div>
+              <div className="text-sm text-body">Gas Discount (STAR)</div>
             </div>
             <div>
               <div className="text-3xl font-black text-amber-600 mb-1">$2,400+</div>
-              <div className="text-sm text-gray-600">Annual Savings Potential</div>
+              <div className="text-sm text-body">Annual Savings Potential</div>
             </div>
           </div>
         </div>
@@ -95,53 +95,53 @@ export default function ShoppingHub() {
         {/* Commissary Deep Dive */}
         <section id="commissary" className="mb-20">
           <AnimatedCard delay={0}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Commissary: Your 25% Savings Superpower
             </h2>
             
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-8">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-success rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center">
+                  <div className="w-16 h-16 bg-success rounded-xl flex items-center justify-center">
                     <Icon name="DollarSign" className="h-10 w-10 text-white" />
                   </div>
                   <div>
-                    <div className="text-4xl font-black text-green-600">25%</div>
-                    <div className="text-sm text-gray-700">Average Savings vs Civilian Stores</div>
+                    <div className="text-4xl font-black text-success">25%</div>
+                    <div className="text-sm text-body">Average Savings vs Civilian Stores</div>
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed mb-4">
+                <p className="text-body leading-relaxed mb-4">
                   The Defense Commissary Agency (DeCA) sells groceries <strong>at cost</strong> - no markup. You only pay a 5% surcharge which funds facility construction and modernization.
                 </p>
-                <div className="bg-white rounded-lg p-4 border border-green-300">
-                  <div className="text-sm text-gray-700">
-                    <strong className="text-green-900">Example:</strong> A family spending $600/month at civilian grocery stores would spend ~$450 at commissary.
+                <div className="bg-surface rounded-lg p-4 border border-green-300">
+                  <div className="text-sm text-body">
+                    <strong className="text-success">Example:</strong> A family spending $600/month at civilian grocery stores would spend ~$450 at commissary.
                   </div>
-                  <div className="text-2xl font-black text-green-600 mt-2">$1,800/year saved</div>
+                  <div className="text-2xl font-black text-success mt-2">$1,800/year saved</div>
                 </div>
               </div>
 
-              <div className="bg-white border-2 border-blue-200 rounded-xl p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Maximize Commissary Savings</h3>
-                <ul className="space-y-3 text-gray-700 text-sm">
+              <div className="bg-surface border-2 border-info rounded-xl p-8">
+                <h3 className="text-xl font-bold text-primary mb-4">Maximize Commissary Savings</h3>
+                <ul className="space-y-3 text-body text-sm">
                   <li className="flex items-start gap-3">
-                    <Icon name="Check" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Icon name="Check" className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
                     <span><strong>Stack coupons:</strong> Manufacturer coupons + Commissary app + Family Magazine coupons</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Icon name="Check" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Icon name="Check" className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
                     <span><strong>Buy store brands:</strong> Additional 10-15% savings over name brands</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Icon name="Check" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Icon name="Check" className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
                     <span><strong>Case Lot sales:</strong> Buy in bulk during special events (save 20-40%)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Icon name="Check" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Icon name="Check" className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
                     <span><strong>Shop Tuesday-Thursday:</strong> Best selection, shortest lines</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <Icon name="Check" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <Icon name="Check" className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
                     <span><strong>Get Commissary Rewards Card:</strong> Earn points on purchases</span>
                   </li>
                 </ul>
@@ -159,21 +159,21 @@ export default function ShoppingHub() {
         {/* Exchange Benefits */}
         <section id="exchange" className="mb-20">
           <AnimatedCard delay={100}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Exchange: Tax-Free Shopping & MILITARY STAR Perks
             </h2>
             
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl p-8">
                 <h3 className="text-2xl font-bold mb-6">Tax-Free Savings</h3>
-                <p className="text-blue-50 mb-6 leading-relaxed">
+                <p className="text-white/95 mb-6 leading-relaxed">
                   Every purchase at the Exchange (AAFES, NEX, MCX) is <strong>tax-free</strong>. This saves you 6-10% depending on your state&apos;s sales tax rate.
                 </p>
                 <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6">
-                  <div className="text-sm text-blue-100 mb-2">Example: Big-Ticket Purchase</div>
+                  <div className="text-sm text-white/90 mb-2">Example: Big-Ticket Purchase</div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-blue-100">Laptop at Best Buy:</span>
+                      <span className="text-white/90">Laptop at Best Buy:</span>
                       <span className="font-bold">$1,000 + $80 tax</span>
                     </div>
                     <div className="flex justify-between border-t border-white/20 pt-2">
@@ -183,17 +183,17 @@ export default function ShoppingHub() {
                     <div className="text-right text-green-300 font-bold">Save: $80</div>
                   </div>
                 </div>
-                <p className="mt-4 text-xs text-blue-100">
+                <p className="mt-4 text-xs text-white/90">
                   Electronics, appliances, furniture, clothing, toys - all tax-free. Annual savings on big purchases can easily exceed $500-1,000 per year.
                 </p>
               </div>
 
-              <div className="bg-white border-2 border-purple-200 rounded-xl p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">MILITARY STAR Card Benefits</h3>
+              <div className="bg-surface border-2 border-purple-200 rounded-xl p-8">
+                <h3 className="text-2xl font-bold text-primary mb-6">MILITARY STAR Card Benefits</h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-bold text-purple-900 mb-2">Card Perks:</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-2 text-sm text-body">
                       <li className="flex items-start gap-2">
                         <Icon name="Check" className="h-4 w-4 text-purple-600 flex-shrink-0 mt-0.5" />
                         <span><strong>No annual fee</strong> - Free to apply and maintain</span>
@@ -221,8 +221,8 @@ export default function ShoppingHub() {
                     </ul>
                   </div>
                   
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <p className="text-sm text-green-900">
+                  <div className="bg-success-subtle border border-success rounded-lg p-4">
+                    <p className="text-sm text-success">
                       <strong>Gas Savings Example:</strong> Fill up twice per week (30 gallons) = $0.05 × 30 × 52 weeks = <strong>$78/year savings</strong> just on gas!
                     </p>
                   </div>
@@ -235,51 +235,51 @@ export default function ShoppingHub() {
         {/* Branch-Specific Exchanges */}
         <section className="mb-20">
           <AnimatedCard delay={200}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Exchange by Branch (All Offer Same Benefits)
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white border-2 border-blue-200 rounded-xl p-6 text-center hover:shadow-xl transition-all">
-                <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-surface border-2 border-info rounded-xl p-6 text-center hover:shadow-xl transition-all">
+                <div className="w-16 h-16 bg-info rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Icon name="Shield" className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">AAFES</h3>
-                <p className="text-sm text-gray-600 mb-3">Army & Air Force Exchange Service</p>
-                <div className="text-xs text-gray-500 space-y-1">
+                <h3 className="text-xl font-bold text-primary mb-2">AAFES</h3>
+                <p className="text-sm text-body mb-3">Army & Air Force Exchange Service</p>
+                <div className="text-xs text-muted space-y-1">
                   <div>Serves: Army, Air Force, Space Force</div>
                   <div>Locations: Worldwide</div>
                 </div>
               </div>
 
-              <div className="bg-white border-2 border-indigo-200 rounded-xl p-6 text-center hover:shadow-xl transition-all">
+              <div className="bg-surface border-2 border-indigo-200 rounded-xl p-6 text-center hover:shadow-xl transition-all">
                 <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Icon name="Shield" className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">NEX</h3>
-                <p className="text-sm text-gray-600 mb-3">Navy Exchange</p>
-                <div className="text-xs text-gray-500 space-y-1">
+                <h3 className="text-xl font-bold text-primary mb-2">NEX</h3>
+                <p className="text-sm text-body mb-3">Navy Exchange</p>
+                <div className="text-xs text-muted space-y-1">
                   <div>Serves: Navy</div>
                   <div>Locations: Naval stations worldwide</div>
                 </div>
               </div>
 
-              <div className="bg-white border-2 border-red-200 rounded-xl p-6 text-center hover:shadow-xl transition-all">
-                <div className="w-16 h-16 bg-red-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-surface border-2 border-danger rounded-xl p-6 text-center hover:shadow-xl transition-all">
+                <div className="w-16 h-16 bg-danger rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Icon name="Star" className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">MCX</h3>
-                <p className="text-sm text-gray-600 mb-3">Marine Corps Exchange</p>
-                <div className="text-xs text-gray-500 space-y-1">
+                <h3 className="text-xl font-bold text-primary mb-2">MCX</h3>
+                <p className="text-sm text-body mb-3">Marine Corps Exchange</p>
+                <div className="text-xs text-muted space-y-1">
                   <div>Serves: Marine Corps</div>
                   <div>Locations: Marine bases worldwide</div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl">
-              <p className="text-center text-gray-700">
-                <Icon name="Info" className="h-5 w-5 text-blue-600 inline mr-2" />
+            <div className="mt-6 p-6 bg-info-subtle border-2 border-info rounded-xl">
+              <p className="text-center text-body">
+                <Icon name="Info" className="h-5 w-5 text-info inline mr-2" />
                 <strong>100% of Exchange profits</strong> fund Morale, Welfare & Recreation (MWR) programs: youth programs, fitness centers, pools, sports equipment, and recreation facilities. Your shopping supports your community!
               </p>
             </div>
@@ -289,67 +289,67 @@ export default function ShoppingHub() {
         {/* Shopping Strategy */}
         <section className="mb-20">
           <AnimatedCard delay={300}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Strategic Shopping: When to Buy Where
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-green-900 mb-4">
-                  <Icon name="CheckCircle" className="h-6 w-6 text-green-600 inline mr-2" />
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-success rounded-xl p-6">
+                <h3 className="text-xl font-bold text-success mb-4">
+                  <Icon name="CheckCircle" className="h-6 w-6 text-success inline mr-2" />
                   Buy at Commissary
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-body">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">▸</span>
+                    <span className="text-success">▸</span>
                     <span><strong>Groceries:</strong> Meat, produce, dairy, pantry staples</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">▸</span>
+                    <span className="text-success">▸</span>
                     <span><strong>Baby products:</strong> Diapers, formula, baby food</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">▸</span>
+                    <span className="text-success">▸</span>
                     <span><strong>Household goods:</strong> Cleaning supplies, paper products</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">▸</span>
+                    <span className="text-success">▸</span>
                     <span><strong>Specialty items:</strong> Organic, gluten-free usually cheaper</span>
                   </li>
                 </ul>
-                <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-lg text-xs text-green-900">
+                <div className="mt-4 p-3 bg-success-subtle border border-green-300 rounded-lg text-xs text-success">
                   Typical family of 4 saves <strong>$150-250/month</strong> vs civilian grocery stores
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl p-6">
                 <h3 className="text-xl font-bold text-blue-900 mb-4">
-                  <Icon name="ShoppingCart" className="h-6 w-6 text-blue-600 inline mr-2" />
+                  <Icon name="ShoppingCart" className="h-6 w-6 text-info inline mr-2" />
                   Buy at Exchange
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <ul className="space-y-2 text-sm text-body">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">▸</span>
+                    <span className="text-info">▸</span>
                     <span><strong>Electronics:</strong> Laptops, phones, TVs (save 6-10% tax)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">▸</span>
+                    <span className="text-info">▸</span>
                     <span><strong>Appliances:</strong> Fridges, washers, dryers (big tax savings)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">▸</span>
+                    <span className="text-info">▸</span>
                     <span><strong>Furniture:</strong> Couches, beds, dining sets</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">▸</span>
+                    <span className="text-info">▸</span>
                     <span><strong>Clothing:</strong> Uniforms, athletic wear, kids clothes</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">▸</span>
+                    <span className="text-info">▸</span>
                     <span><strong>Gas:</strong> Use STAR card for 5¢/gal discount</span>
                   </li>
                 </ul>
-                <div className="mt-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-xs text-blue-900">
+                <div className="mt-4 p-3 bg-info-subtle border border-blue-300 rounded-lg text-xs text-blue-900">
                   Price match guarantee ensures you get best deal (local + online competitors)
                 </div>
               </div>
@@ -360,19 +360,19 @@ export default function ShoppingHub() {
         {/* FAQ Section */}
         <section id="faq" className="mb-20">
           <AnimatedCard delay={400}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Shopping Benefits FAQs
             </h2>
             
             <div className="space-y-4">
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-orange-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-orange-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>Who is eligible to shop on base?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-blue-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-info">
                   <p className="mb-3"><strong>Eligible to Shop Commissary & Exchange:</strong></p>
-                  <ul className="space-y-2 bg-blue-50 rounded-lg p-4 text-sm">
+                  <ul className="space-y-2 bg-info-subtle rounded-lg p-4 text-sm">
                     <li>✓ Active duty service members (all branches)</li>
                     <li>✓ Guard and Reserve members</li>
                     <li>✓ Retirees and their dependents</li>
@@ -387,17 +387,17 @@ export default function ShoppingHub() {
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-orange-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-orange-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>How much can I save shopping at the commissary vs civilian stores?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-green-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-success">
                   <p className="mb-4">
                     The Defense Commissary Agency (DeCA) targets approximately <strong>25% average savings</strong> compared to civilian grocery stores. The 5% surcharge is already included in this calculation.
                   </p>
-                  <div className="bg-green-50 rounded-lg p-4 mb-4">
-                    <strong className="text-green-900">Real Example:</strong>
+                  <div className="bg-success-subtle rounded-lg p-4 mb-4">
+                    <strong className="text-success">Real Example:</strong>
                     <div className="mt-2 space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span>Monthly grocery budget (civilian):</span>
@@ -405,15 +405,15 @@ export default function ShoppingHub() {
                       </div>
                       <div className="flex justify-between">
                         <span>Same groceries at commissary:</span>
-                        <span className="font-bold text-green-600">~$600</span>
+                        <span className="font-bold text-success">~$600</span>
                       </div>
-                      <div className="flex justify-between border-t border-green-200 mt-2 pt-2">
+                      <div className="flex justify-between border-t border-success mt-2 pt-2">
                         <span className="font-bold">Monthly Savings:</span>
-                        <span className="font-black text-green-600">$200</span>
+                        <span className="font-black text-success">$200</span>
                       </div>
                       <div className="flex justify-between text-lg">
                         <span className="font-bold">Annual Savings:</span>
-                        <span className="font-black text-green-600">$2,400</span>
+                        <span className="font-black text-success">$2,400</span>
                       </div>
                     </div>
                   </div>
@@ -423,12 +423,12 @@ export default function ShoppingHub() {
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-orange-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-orange-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>Can I use coupons at the commissary?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-purple-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-purple-500">
                   <p className="mb-4">
                     <strong>Yes!</strong> Commissaries accept manufacturer coupons and you can stack them for maximum savings.
                   </p>
@@ -449,16 +449,16 @@ export default function ShoppingHub() {
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-orange-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-orange-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>Does the Exchange price match online stores?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-blue-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-info">
                   <p className="mb-3">
                     <strong>Yes.</strong> The Exchange matches identical items from local competitors and select online retailers under its price match policy.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-4 mb-3">
+                  <div className="bg-info-subtle rounded-lg p-4 mb-3">
                     <strong className="text-blue-900">How to Price Match:</strong>
                     <ol className="mt-2 space-y-1 text-sm list-decimal ml-4">
                       <li>Find lower price at competitor (Best Buy, Walmart, Amazon, etc.)</li>
@@ -467,7 +467,7 @@ export default function ShoppingHub() {
                       <li>Present at checkout for price adjustment</li>
                     </ol>
                   </div>
-                  <p className="text-sm bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm bg-success-subtle border border-success rounded-lg p-3">
                     <strong>Stack savings:</strong> Price match + tax-free = potentially 6-15% cheaper than civilian stores for big-ticket items!
                   </p>
                 </div>
@@ -490,11 +490,11 @@ export default function ShoppingHub() {
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <Link
                   href="/dashboard/tools/on-base-savings"
-                  className="bg-white text-gray-900 rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
+                  className="bg-surface text-primary rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
                 >
                   <Icon name="Calculator" className="h-8 w-8 text-amber-600 mb-3" />
                   <h3 className="text-xl font-bold mb-2 group-hover:text-amber-600 transition-colors">On-Base Savings Calculator</h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-body">
                     Calculate your annual savings from commissary, exchange, and STAR card benefits.
                   </p>
                 </Link>

@@ -206,12 +206,12 @@ export default function BaseMapSelector() {
   return (
     <div className="space-y-12">
       {/* Map Container */}
-      <div className="bg-white rounded-3xl shadow-2xl p-8">
+      <div className="bg-surface rounded-3xl shadow-2xl p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-serif font-black text-gray-900 mb-4">
+          <h2 className="text-3xl font-serif font-black text-primary mb-4">
             Interactive Base Map
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
+          <p className="text-lg text-body max-w-2xl mx-auto mb-4">
             Explore {basesData.length}+ military installations across the United States. Click a base to view details and guide links.
           </p>
           {/* Results Count */}
@@ -258,27 +258,27 @@ export default function BaseMapSelector() {
             </div>
 
             {/* Map Legend */}
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-gray-200">
-              <span className="text-sm font-medium text-gray-600">Branch Colors:</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-subtle">
+              <span className="text-sm font-medium text-body">Branch Colors:</span>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-slate-900"></div>
-                <span className="text-sm text-gray-700">Army</span>
+                <span className="text-sm text-body">Army</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full bg-blue-600"></div>
-                <span className="text-sm text-gray-700">Air Force</span>
+                <div className="w-4 h-4 rounded-full bg-info"></div>
+                <span className="text-sm text-body">Air Force</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full bg-blue-800"></div>
-                <span className="text-sm text-gray-700">Navy</span>
+                <div className="w-4 h-4 rounded-full bg-info"></div>
+                <span className="text-sm text-body">Navy</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full bg-red-600"></div>
-                <span className="text-sm text-gray-700">Marine Corps</span>
+                <div className="w-4 h-4 rounded-full bg-danger"></div>
+                <span className="text-sm text-body">Marine Corps</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-emerald-600"></div>
-                <span className="text-sm text-gray-700">Joint</span>
+                <span className="text-sm text-body">Joint</span>
               </div>
             </div>
           </>
@@ -315,10 +315,10 @@ export default function BaseMapSelector() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by base name, state, or city…"
-              className="w-full px-6 py-3 pl-12 border border-slate-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              className="w-full px-6 py-3 pl-12 border border-slate-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-info transition"
             />
             <svg 
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -328,7 +328,7 @@ export default function BaseMapSelector() {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-body"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -340,14 +340,14 @@ export default function BaseMapSelector() {
       </div>
 
       {/* Pro Tip Callout */}
-      <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl">
+      <div className="bg-info-subtle border-l-4 border-info p-6 rounded-r-xl">
         <div className="flex items-start gap-3">
-          <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-6 h-6 text-info flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
           <div>
             <h4 className="font-bold text-blue-900 mb-1">💡 Pro Tip</h4>
-            <p className="text-sm text-blue-800">
+            <p className="text-sm text-info">
               Click any base pin on the map to instantly jump to its detailed card below. Use filters to narrow down by military branch, or search by location to find bases near you!
             </p>
           </div>
@@ -380,7 +380,7 @@ export default function BaseMapSelector() {
               {/* Featured Badge */}
               {base.featured && (
                 <div className="absolute top-4 right-4 z-10">
-                  <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
+                  <span className="inline-flex items-center gap-1 bg-warning-subtle text-warning text-xs font-bold px-2 py-1 rounded-full">
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
@@ -392,7 +392,7 @@ export default function BaseMapSelector() {
               {/* Add to Comparison Button */}
               <button
                 onClick={(e) => handleAddToComparison(base, e)}
-                className="absolute top-4 left-4 z-10 flex items-center gap-1 bg-white border border-gray-300 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
+                className="absolute top-4 left-4 z-10 flex items-center gap-1 bg-surface border border-default text-body text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
                 title="Add to comparison"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -405,11 +405,11 @@ export default function BaseMapSelector() {
                 href={base.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => handleCardClick(base)}
                 className="block p-6 hover:-translate-y-1 transition-all"
+                onMouseDown={() => handleCardClick(base)}
               >
                 <div className="flex items-start justify-between mb-2 mt-4">
-                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors pr-16">
+                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-info transition-colors pr-16">
                     {base.title}
                   </h3>
                   <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
@@ -421,11 +421,11 @@ export default function BaseMapSelector() {
                 </p>
                 {/* Size indicator */}
                 {base.size && (
-                  <p className="text-xs text-gray-500 mb-3">
+                  <p className="text-xs text-muted mb-3">
                     Installation Size: <span className="font-semibold">{base.size}</span>
                   </p>
                 )}
-                <span className="inline-flex items-center text-blue-600 group-hover:text-blue-800 font-semibold transition-colors text-sm">
+                <span className="inline-flex items-center text-info group-hover:text-info font-semibold transition-colors text-sm">
                   View Full Guide
                   <svg className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -436,12 +436,12 @@ export default function BaseMapSelector() {
           ))
         ) : (
           <div className="col-span-full">
-            <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="text-center py-16 bg-surface-hover rounded-xl border-2 border-dashed border-default">
+              <svg className="mx-auto h-12 w-12 text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">No bases match your search</h3>
-              <p className="text-gray-500 mb-4">Try adjusting your filters or search terms</p>
+              <h3 className="text-lg font-semibold text-body mb-2">No bases match your search</h3>
+              <p className="text-muted mb-4">Try adjusting your filters or search terms</p>
               <button
                 onClick={() => {
                   setSelectedBranch('All');
@@ -468,10 +468,10 @@ export default function BaseMapSelector() {
             </svg>
             <span className="font-bold text-sm">OCONUS & INTERNATIONAL</span>
           </div>
-          <h3 className="text-3xl font-serif font-black text-gray-900 mb-4">
+          <h3 className="text-3xl font-serif font-black text-primary mb-4">
             Overseas Duty Stations
           </h3>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-body max-w-2xl mx-auto">
             Researching an overseas move? We&apos;re expanding to major OCONUS installations. Check back soon for comprehensive guides!
           </p>
         </div>
@@ -501,7 +501,7 @@ export default function BaseMapSelector() {
                 {base.city}, {base.country}
               </p>
               {base.size && (
-                <p className="text-xs text-gray-500 mb-4">
+                <p className="text-xs text-muted mb-4">
                   Installation Size: <span className="font-semibold">{base.size}</span>
                 </p>
               )}

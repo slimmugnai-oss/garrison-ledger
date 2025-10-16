@@ -133,32 +133,32 @@ export default async function AdminEngagementPage() {
           <AnimatedCard delay={400} className="mb-8">
             <h2 className="text-2xl font-bold text-text-headings mb-6">Achievement Badges Earned</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-success rounded-xl">
                 <div className="text-4xl mb-2">🎯</div>
-                <div className="text-2xl font-black text-gray-900 mb-1">{metrics.badgeCounts.week_warrior}</div>
-                <div className="text-sm font-semibold text-gray-600">Week Warriors</div>
-                <div className="text-xs text-gray-500">7+ day streaks</div>
+                <div className="text-2xl font-black text-primary mb-1">{metrics.badgeCounts.week_warrior}</div>
+                <div className="text-sm font-semibold text-body">Week Warriors</div>
+                <div className="text-xs text-muted">7+ day streaks</div>
               </div>
 
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl">
                 <div className="text-4xl mb-2">⭐</div>
-                <div className="text-2xl font-black text-gray-900 mb-1">{metrics.badgeCounts.month_master}</div>
-                <div className="text-sm font-semibold text-gray-600">Month Masters</div>
-                <div className="text-xs text-gray-500">30+ day streaks</div>
+                <div className="text-2xl font-black text-primary mb-1">{metrics.badgeCounts.month_master}</div>
+                <div className="text-sm font-semibold text-body">Month Masters</div>
+                <div className="text-xs text-muted">30+ day streaks</div>
               </div>
 
               <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
                 <div className="text-4xl mb-2">👑</div>
-                <div className="text-2xl font-black text-gray-900 mb-1">{metrics.badgeCounts.quarter_champion}</div>
-                <div className="text-sm font-semibold text-gray-600">Quarter Champions</div>
-                <div className="text-xs text-gray-500">90+ day streaks</div>
+                <div className="text-2xl font-black text-primary mb-1">{metrics.badgeCounts.quarter_champion}</div>
+                <div className="text-sm font-semibold text-body">Quarter Champions</div>
+                <div className="text-xs text-muted">90+ day streaks</div>
               </div>
 
               <div className="text-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl">
                 <div className="text-4xl mb-2">🏆</div>
-                <div className="text-2xl font-black text-gray-900 mb-1">{metrics.badgeCounts.year_legend}</div>
-                <div className="text-sm font-semibold text-gray-600">Year Legends</div>
-                <div className="text-xs text-gray-500">365+ day streaks</div>
+                <div className="text-2xl font-black text-primary mb-1">{metrics.badgeCounts.year_legend}</div>
+                <div className="text-sm font-semibold text-body">Year Legends</div>
+                <div className="text-xs text-muted">365+ day streaks</div>
               </div>
             </div>
           </AnimatedCard>
@@ -170,7 +170,7 @@ export default async function AdminEngagementPage() {
             {metrics.topStreakers.length > 0 ? (
               <div className="space-y-3">
                 {metrics.topStreakers.map((streaker: { user_id: string; current_streak: number; longest_streak: number; total_logins: number; badges?: string[] }, idx: number) => (
-                  <div key={streaker.user_id} className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-all">
+                  <div key={streaker.user_id} className="flex items-center justify-between p-4 bg-surface-hover border border-subtle rounded-lg hover:shadow-md transition-all">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${
                         idx === 0 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white' :
@@ -181,10 +181,10 @@ export default async function AdminEngagementPage() {
                         {idx + 1}
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-primary">
                           User {streaker.user_id.substring(0, 12)}...
                         </div>
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-body">
                           {streaker.total_logins || 0} total logins
                         </div>
                       </div>
@@ -194,13 +194,13 @@ export default async function AdminEngagementPage() {
                         <div className="text-2xl font-black text-orange-600">
                           {streaker.current_streak} 🔥
                         </div>
-                        <div className="text-xs text-gray-500">Current</div>
+                        <div className="text-xs text-muted">Current</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold text-gray-700">
+                        <div className="text-lg font-bold text-body">
                           {streaker.longest_streak}
                         </div>
-                        <div className="text-xs text-gray-500">Best</div>
+                        <div className="text-xs text-muted">Best</div>
                       </div>
                       {streaker.badges && streaker.badges.length > 0 && (
                         <div className="flex gap-1">
@@ -217,8 +217,8 @@ export default async function AdminEngagementPage() {
             ) : (
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🔥</div>
-                <p className="text-gray-600">No active streaks yet</p>
-                <p className="text-sm text-gray-500 mt-2">Users will start building streaks as they return daily</p>
+                <p className="text-body">No active streaks yet</p>
+                <p className="text-sm text-muted mt-2">Users will start building streaks as they return daily</p>
               </div>
             )}
           </AnimatedCard>

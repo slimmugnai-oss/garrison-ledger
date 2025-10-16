@@ -17,7 +17,7 @@ export default function ProTipCard({ title, html }: Props) {
         <h4 className="text-2xl font-bold text-amber-900">{title}</h4>
       </div>
       <div 
-        className="prose prose-lg max-w-none prose-blockquote:border-l-4 prose-blockquote:border-amber-400 prose-blockquote:bg-white prose-blockquote:p-4 prose-blockquote:my-4 prose-headings:text-amber-900 prose-p:text-amber-900 prose-a:text-amber-700 hover:prose-a:text-amber-800"
+        className="prose prose-lg max-w-none prose-blockquote:border-l-4 prose-blockquote:border-amber-400 prose-blockquote:bg-surface prose-blockquote:p-4 prose-blockquote:my-4 prose-headings:text-amber-900 prose-p:text-amber-900 prose-a:text-amber-700 hover:prose-a:text-amber-800"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

@@ -23,10 +23,10 @@ export default function RefundPage() {
       <>
         <Header />
         <div className="max-w-xl mx-auto p-6">
-          <div className="rounded-lg border-2 border-green-200 bg-green-50 p-6 text-center">
+          <div className="rounded-lg border-2 border-success bg-success-subtle p-6 text-center">
             <div className="text-4xl mb-4">✅</div>
-            <h2 className="text-xl font-bold text-green-900 mb-2">Refund Request Submitted</h2>
-            <p className="text-green-800">
+            <h2 className="text-xl font-bold text-success mb-2">Refund Request Submitted</h2>
+            <p className="text-success">
               Thanks — we&apos;ve logged your refund request. We honor 7-day refunds in full. 
               You&apos;ll receive confirmation at your registered email within 24 hours.
             </p>
@@ -41,8 +41,8 @@ export default function RefundPage() {
       <Header />
       <div className="max-w-xl mx-auto p-6 space-y-4">
         <h1 className="text-2xl font-bold">Request a Refund</h1>
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-sm text-blue-800">
+        <div className="rounded-lg border border-info bg-info-subtle p-4">
+          <p className="text-sm text-info">
             <strong>Refund Policy:</strong> If you&apos;re not satisfied with your purchase, 
             we&apos;ll work with you to resolve any issues or provide a refund as appropriate.
           </p>
@@ -50,14 +50,14 @@ export default function RefundPage() {
         
         <div className="space-y-3">
           <label className="block">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-body">
               Tell us why you&apos;re canceling (optional)
             </span>
             <textarea 
               value={reason} 
               onChange={e => setReason(e.target.value)} 
               rows={5}
-              className="mt-1 w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+              className="mt-1 w-full border border-default rounded-lg p-3 text-primary focus:ring-2 focus:ring-blue-500 focus:border-info" 
               placeholder="Your feedback helps us improve..."
             />
           </label>
@@ -71,7 +71,7 @@ export default function RefundPage() {
           </button>
         </div>
         
-        <p className="text-xs text-gray-500 text-center">
+        <p className="text-xs text-muted text-center">
           Your request will be processed within 24 hours. Refunds typically appear in 5-10 business days.
         </p>
       </div>

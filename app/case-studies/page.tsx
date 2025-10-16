@@ -103,10 +103,10 @@ export default function CaseStudiesPage() {
             <div className="mb-4">
               <Badge variant="success">Real Success Stories</Badge>
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary dark:text-white mb-4">
               Military Families Winning with Money
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-gray-300">
+            <p className="mx-auto max-w-2xl text-xl text-body dark:text-muted">
               See how service members and military spouses used expert guidance to save $4K-$120K
             </p>
           </div>
@@ -116,19 +116,19 @@ export default function CaseStudiesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <div className="text-4xl font-black text-white mb-1">500+</div>
-                <div className="text-blue-100 text-sm">Military Families</div>
+                <div className="text-white/90 text-sm">Military Families</div>
               </div>
               <div>
                 <div className="text-4xl font-black text-white mb-1">$1.2M+</div>
-                <div className="text-blue-100 text-sm">Collective Savings</div>
+                <div className="text-white/90 text-sm">Collective Savings</div>
               </div>
               <div>
                 <div className="text-4xl font-black text-white mb-1">$2,400</div>
-                <div className="text-blue-100 text-sm">Avg Savings/Year</div>
+                <div className="text-white/90 text-sm">Avg Savings/Year</div>
               </div>
               <div>
                 <div className="text-4xl font-black text-white mb-1">5★</div>
-                <div className="text-blue-100 text-sm">Average Rating</div>
+                <div className="text-white/90 text-sm">Average Rating</div>
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function CaseStudiesPage() {
             {caseStudies.map((caseStudy, index) => (
               <AnimatedCard key={caseStudy.slug} delay={index * 100}>
                 <Link href={`/case-studies/${caseStudy.slug}`}>
-                  <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-600 overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1 group">
+                  <div className="bg-surface dark:bg-slate-800 rounded-2xl border border-subtle dark:border-slate-600 overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1 group">
                     <div className="grid md:grid-cols-3 gap-6">
                       {/* Image Placeholder */}
                       <div className={`bg-gradient-to-br ${caseStudy.image_placeholder} p-12 flex items-center justify-center`}>
@@ -154,16 +154,16 @@ export default function CaseStudiesPage() {
                           <Badge variant="secondary">{caseStudy.rank}</Badge>
                           <Badge variant="primary">{caseStudy.branch}</Badge>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <h2 className="text-3xl font-bold text-primary dark:text-white mb-2 group-hover:text-info dark:group-hover:text-info transition-colors">
                           {caseStudy.title}
                         </h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+                        <p className="text-lg text-body dark:text-muted mb-4">
                           {caseStudy.subtitle}
                         </p>
-                        <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+                        <p className="text-body dark:text-muted mb-6 leading-relaxed">
                           {caseStudy.preview}
                         </p>
-                        <div className="flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:underline">
+                        <div className="flex items-center text-info dark:text-info font-semibold group-hover:underline">
                           Read Full Story
                           <Icon name="ArrowRight" className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                         </div>
@@ -178,17 +178,17 @@ export default function CaseStudiesPage() {
           {/* CTA */}
           <div className="mt-16 text-center">
             <AnimatedCard delay={600}>
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 rounded-xl p-12">
-                <Icon name="Sparkles" className="h-16 w-16 text-green-600 dark:text-green-400 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-success dark:border-green-700 rounded-xl p-12">
+                <Icon name="Sparkles" className="h-16 w-16 text-success dark:text-green-400 mx-auto mb-6" />
+                <h2 className="text-3xl font-bold text-primary dark:text-white mb-4">
                   Ready to Write Your Success Story?
                 </h2>
-                <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                <p className="text-body dark:text-muted mb-8 max-w-2xl mx-auto">
                   Get your free personalized financial plan in minutes. AI-curated expert guidance for your military situation.
                 </p>
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                  className="inline-flex items-center gap-2 bg-success hover:bg-success dark:bg-success dark:hover:bg-success text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
                 >
                   <Icon name="Zap" className="h-5 w-5" />
                   Get Your Free Plan

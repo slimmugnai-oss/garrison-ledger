@@ -128,13 +128,13 @@ export default async function UserManagementPage() {
 
             <AnimatedCard className="bg-card border border-border p-6" delay={25}>
               <div className="text-text-muted text-sm font-semibold mb-2">Premium</div>
-              <div className="text-3xl font-black text-green-600">{analytics.premiumUsers}</div>
+              <div className="text-3xl font-black text-success">{analytics.premiumUsers}</div>
               <div className="text-xs text-text-muted mt-1">{conversionRate}% conversion</div>
             </AnimatedCard>
 
             <AnimatedCard className="bg-card border border-border p-6" delay={50}>
               <div className="text-text-muted text-sm font-semibold mb-2">With Plans</div>
-              <div className="text-3xl font-black text-blue-600">{analytics.usersWithPlans}</div>
+              <div className="text-3xl font-black text-info">{analytics.usersWithPlans}</div>
             </AnimatedCard>
 
             <AnimatedCard className="bg-card border border-border p-6" delay={75}>
@@ -177,7 +177,7 @@ export default async function UserManagementPage() {
                   </thead>
                   <tbody>
                     {analytics.recentUsers.map((u) => (
-                      <tr key={u.user_id} className="border-b border-border hover:bg-gray-50">
+                      <tr key={u.user_id} className="border-b border-border hover:bg-surface-hover">
                         <td className="py-3 text-sm font-mono text-text-body">
                           {u.user_id.substring(0, 12)}...
                         </td>
@@ -211,12 +211,12 @@ export default async function UserManagementPage() {
               Run these in Supabase SQL Editor for detailed analytics
             </p>
             <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2 flex items-center gap-2">
                   <Icon name="TrendingUp" className="h-4 w-4" />
                   User Growth by Month
                 </div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   DATE_TRUNC('month', created_at) as month,
   COUNT(*) as new_users
@@ -227,12 +227,12 @@ LIMIT 12;`}
                 </pre>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2 flex items-center gap-2">
                   <Icon name="DollarSign" className="h-4 w-4" />
                   Premium Conversion Funnel
                 </div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   COUNT(*) as total_users,
   SUM(CASE WHEN profile_completed THEN 1 ELSE 0 END) as completed_profile,
@@ -242,12 +242,12 @@ FROM user_profiles;`}
                 </pre>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2 flex items-center gap-2">
                   <Icon name="Activity" className="h-4 w-4" />
                   Most Engaged Users
                 </div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   up.user_id,
   up.rank,

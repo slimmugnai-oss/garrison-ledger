@@ -96,7 +96,7 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="py-20 bg-white dark:bg-slate-900">
+    <section className="py-20 bg-surface dark:bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -104,21 +104,21 @@ export default function TestimonialsSection() {
           <h2 className="text-4xl md:text-5xl font-serif font-black text-text-headings dark:text-white mt-4 mb-4">
             Trusted by 500+ Military Families
           </h2>
-          <p className="text-xl text-text-body dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-text-body dark:text-muted max-w-2xl mx-auto">
             See how service members and military spouses are saving thousands with expert guidance
           </p>
         </div>
 
         {/* Featured Testimonial (Large) */}
         <AnimatedCard delay={0} className="mb-8">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 md:p-12 border-2 border-blue-200 dark:border-blue-700">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 md:p-12 border-2 border-info dark:border-blue-700">
             <div className="grid md:grid-cols-3 gap-8 items-center">
               {/* Profile */}
               <div className="text-center md:text-left">
                 <div className="w-24 h-24 mx-auto md:mx-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-black mb-4">
                   {testimonials[activeIndex].name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                <h3 className="text-2xl font-bold text-primary dark:text-white mb-1">
                   {testimonials[activeIndex].name}
                 </h3>
                 <div className="inline-flex items-center gap-2 mb-2">
@@ -126,7 +126,7 @@ export default function TestimonialsSection() {
                     {testimonials[activeIndex].rank}
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-body dark:text-muted text-sm">
                   {testimonials[activeIndex].branch}<br />
                   {testimonials[activeIndex].base}<br />
                   {testimonials[activeIndex].yearsOfService} years of service
@@ -136,19 +136,19 @@ export default function TestimonialsSection() {
               {/* Quote */}
               <div className="md:col-span-2">
                 <div className="mb-4">
-                  <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-bold">
+                  <span className="inline-block px-3 py-1 bg-success-subtle dark:bg-green-900/30 text-success dark:text-green-400 rounded-full text-sm font-bold">
                     {testimonials[activeIndex].category}
                   </span>
                 </div>
-                <blockquote className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed italic">
+                <blockquote className="text-xl md:text-2xl text-body dark:text-muted mb-6 leading-relaxed italic">
                   &ldquo;{testimonials[activeIndex].quote}&rdquo;
                 </blockquote>
                 <div className="flex items-center gap-2">
-                  <Icon name="DollarSign" className="h-6 w-6 text-green-600 dark:text-green-400" />
-                  <span className="text-3xl font-black text-green-600 dark:text-green-400">
+                  <Icon name="DollarSign" className="h-6 w-6 text-success dark:text-green-400" />
+                  <span className="text-3xl font-black text-success dark:text-green-400">
                     {testimonials[activeIndex].savings}
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400">saved</span>
+                  <span className="text-body dark:text-muted">saved</span>
                 </div>
               </div>
             </div>
@@ -167,13 +167,13 @@ export default function TestimonialsSection() {
                   : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-500'
               }`}
             >
-              <div className="font-bold text-gray-900 dark:text-white text-sm mb-1">
+              <div className="font-bold text-primary dark:text-white text-sm mb-1">
                 {testimonial.rank}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              <div className="text-xs text-body dark:text-muted mb-2">
                 {testimonial.branch}
               </div>
-              <div className="text-lg font-black text-green-600 dark:text-green-400">
+              <div className="text-lg font-black text-success dark:text-green-400">
                 {testimonial.savings}
               </div>
             </button>
@@ -182,12 +182,12 @@ export default function TestimonialsSection() {
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-body dark:text-muted mb-4">
             Join 500+ military families already saving money
           </p>
           <a
             href="/dashboard"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+            className="inline-flex items-center gap-2 bg-info hover:bg-info dark:bg-info dark:hover:bg-info text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
           >
             Get Your Free Plan
             <Icon name="ArrowRight" className="h-5 w-5" />

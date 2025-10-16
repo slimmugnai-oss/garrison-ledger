@@ -20,8 +20,8 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
     <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] p-6 mb-6 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <span className="text-sm font-medium text-gray-300">Storage Used</span>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <span className="text-sm font-medium text-muted">Storage Used</span>
+          <p className="text-xs text-muted mt-0.5">
             {isPremium ? '10 GB Premium Storage' : '100 MB Free Storage'}
           </p>
         </div>
@@ -29,7 +29,7 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
           <span className="text-lg font-bold text-white">
             {formatFileSize(used)}
           </span>
-          <span className="text-sm text-gray-400"> / {formatFileSize(limit)}</span>
+          <span className="text-sm text-muted"> / {formatFileSize(limit)}</span>
           {!isPremium && (
             <a
               href="/dashboard/upgrade"

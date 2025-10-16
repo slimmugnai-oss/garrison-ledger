@@ -452,7 +452,7 @@ export default function ProfileSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-hover">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -460,11 +460,11 @@ export default function ProfileSetupPage() {
               👤
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Set up your profile</h1>
-              <p className="text-sm text-gray-600">Help us personalize your experience</p>
+              <h1 className="text-3xl font-bold text-primary">Set up your profile</h1>
+              <p className="text-sm text-body">Help us personalize your experience</p>
             </div>
           </div>
-          <Link href="/dashboard" className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+          <Link href="/dashboard" className="text-sm text-info hover:text-info hover:underline transition-colors">
             Skip for now
           </Link>
         </div>
@@ -480,24 +480,24 @@ export default function ProfileSetupPage() {
 
         {/* Error Messages */}
         {error && (
-          <div className="mb-6 p-4 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
+          <div className="mb-6 p-4 border-l-4 border-danger bg-danger-subtle rounded-r-lg">
             <div className="flex items-start gap-3">
               <span className="text-red-500 text-xl">⚠️</span>
               <div className="flex-1">
-                <p className="font-medium text-red-900">Please complete required fields</p>
-                <p className="text-sm text-red-700 mt-1">{error}</p>
+                <p className="font-medium text-danger">Please complete required fields</p>
+                <p className="text-sm text-danger mt-1">{error}</p>
               </div>
             </div>
           </div>
         )}
         {/* Success Message */}
         {saved && (
-          <div className="mb-6 p-4 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
+          <div className="mb-6 p-4 border-l-4 border-success bg-success-subtle rounded-r-lg">
             <div className="flex items-center gap-3">
               <span className="text-2xl">✅</span>
               <div>
-                <p className="font-bold text-green-900">Profile saved successfully!</p>
-                <p className="text-sm text-green-700">Redirecting to dashboard...</p>
+                <p className="font-bold text-success">Profile saved successfully!</p>
+                <p className="text-sm text-success">Redirecting to dashboard...</p>
               </div>
             </div>
           </div>
@@ -616,7 +616,7 @@ export default function ProfileSetupPage() {
                         {spouseServiceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </ProfileFormField>
-                    <div className="flex items-center justify-center text-sm text-gray-500 italic md:col-span-1">
+                    <div className="flex items-center justify-center text-sm text-muted italic md:col-span-1">
                       Branch/rank not applicable
                     </div>
                   </>
@@ -636,7 +636,7 @@ export default function ProfileSetupPage() {
                         {civilianBranches.map(b => <option key={b} value={b}>{b}</option>)}
                       </select>
                     </ProfileFormField>
-                    <div className="flex items-center justify-center text-sm text-gray-500 italic md:col-span-1">
+                    <div className="flex items-center justify-center text-sm text-muted italic md:col-span-1">
                       Rank not applicable
                     </div>
                   </>
@@ -744,13 +744,13 @@ export default function ProfileSetupPage() {
               </div>
             )}
             {data.service_status === 'retired' && (
-              <div className="mt-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4">
+              <div className="mt-4 bg-info-subtle border-l-4 border-info rounded-r-lg p-4">
                 <p className="text-sm text-blue-900"><strong>Thank you for your service!</strong> We&apos;ll tailor content for your retirement phase, including continued benefits, VA resources, and transition planning.</p>
               </div>
             )}
             {data.service_status === 'veteran' && (
-              <div className="mt-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4">
-                <p className="text-sm text-green-900"><strong>Thank you for your service!</strong> We&apos;ll focus on veteran benefits, civilian career transition, and post-service life planning.</p>
+              <div className="mt-4 bg-success-subtle border-l-4 border-success rounded-r-lg p-4">
+                <p className="text-sm text-success"><strong>Thank you for your service!</strong> We&apos;ll focus on veteran benefits, civilian career transition, and post-service life planning.</p>
               </div>
             )}
             {data.service_status === 'separating' && (
@@ -821,7 +821,7 @@ export default function ProfileSetupPage() {
               </div>
 
               {/* NEW: Deployment fields */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-subtle">
                 <ProfileFormField
                   label="Deployment Status"
                   description="Current deployment status"
@@ -939,7 +939,7 @@ export default function ProfileSetupPage() {
 
               {/* NEW: Spouse details (conditional) */}
               {data.marital_status === 'married' && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-subtle">
                   <ProfileFormField
                     label="Spouse Age"
                     description="For planning purposes"
@@ -1402,7 +1402,7 @@ export default function ProfileSetupPage() {
         </div>
 
         {/* Mobile Sticky Save Button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden shadow-lg z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-surface border-t border-subtle p-4 md:hidden shadow-lg z-50">
           <button
             onClick={submit}
             disabled={saving || saved}
@@ -1452,7 +1452,7 @@ export default function ProfileSetupPage() {
             )}
           </button>
           {!saved && (
-            <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900 hover:underline transition-colors">
+            <Link href="/dashboard" className="text-sm text-body hover:text-primary hover:underline transition-colors">
               Back to dashboard
             </Link>
           )}

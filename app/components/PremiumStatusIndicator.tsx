@@ -7,7 +7,7 @@ export default function PremiumStatusIndicator() {
 
   if (loading) {
     return (
-      <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600 animate-pulse">
+      <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-surface-hover text-body animate-pulse">
         <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
         Checking status...
       </div>
@@ -24,7 +24,7 @@ export default function PremiumStatusIndicator() {
   }
 
   return (
-    <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+    <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-surface-hover text-body">
       <span className="mr-2">👤</span>
       Free Account
     </div>

@@ -213,11 +213,11 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         ? initialPlan.executiveSummary 
                         : initialPlan.executiveSummary?.split('\n\n').slice(0, 2).join('\n\n')}
                       {!isPremium && initialPlan.executiveSummary?.split('\n\n').length > 2 && (
-                        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="mt-4 p-4 bg-info-subtle rounded-lg border border-info">
                           <p className="text-blue-900 font-semibold mb-2">💎 Complete summary available with premium</p>
                           <Link 
                             href="/dashboard/upgrade"
-                            className="text-blue-600 hover:text-blue-700 font-semibold text-sm underline"
+                            className="text-info hover:text-info font-semibold text-sm underline"
                           >
                             Unlock full executive summary →
                           </Link>
@@ -227,16 +227,16 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
 
                     {/* Focus Areas */}
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="bg-info-subtle rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon name="Target" className="w-5 h-5 text-blue-600" />
+                          <Icon name="Target" className="w-5 h-5 text-info" />
                           <span className="font-semibold text-text">Primary Focus</span>
                         </div>
                         <p className="text-text-body">{initialPlan.primaryFocus}</p>
                       </div>
-                      <div className="bg-green-50 rounded-lg p-4">
+                      <div className="bg-success-subtle rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon name="TrendingUp" className="w-5 h-5 text-green-600" />
+                          <Icon name="TrendingUp" className="w-5 h-5 text-success" />
                           <span className="font-semibold text-text">Secondary Focus</span>
                         </div>
                         <p className="text-text-body">{initialPlan.secondaryFocus}</p>
@@ -251,8 +251,8 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                     <h3 className="text-xl font-serif font-bold text-text mb-6">Your Plan at a Glance</h3>
                     <div className="grid sm:grid-cols-3 gap-6">
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-3">
-                          <Icon name="BookOpen" className="w-8 h-8 text-blue-600" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-info-subtle rounded-full mb-3">
+                          <Icon name="BookOpen" className="w-8 h-8 text-info" />
                         </div>
                         <div className="text-3xl font-bold text-text mb-1">
                           {isPremium ? initialPlan.contentBlocks.length : `${visibleBlocks.length}/${initialPlan.contentBlocks.length}`}
@@ -261,21 +261,21 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         {!isPremium && lockedBlocksCount > 0 && (
                           <button
                             onClick={() => changeTab('content')}
-                            className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                            className="mt-2 text-xs text-info hover:text-info font-semibold"
                           >
                             Preview available →
                           </button>
                         )}
                       </div>
                       <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-3">
-                          <Icon name="Calculator" className="w-8 h-8 text-green-600" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-success-subtle rounded-full mb-3">
+                          <Icon name="Calculator" className="w-8 h-8 text-success" />
                         </div>
                         <div className="text-3xl font-bold text-text mb-1">{initialPlan.recommendedTools?.length || 0}</div>
                         <div className="text-sm text-text-muted">Recommended Tools</div>
                         <button
                           onClick={() => changeTab('tools')}
-                          className="mt-2 text-xs text-green-600 hover:text-green-700 font-semibold"
+                          className="mt-2 text-xs text-success hover:text-success font-semibold"
                         >
                           View tools →
                         </button>
@@ -304,9 +304,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <button
                         onClick={() => changeTab('content')}
-                        className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors text-left"
+                        className="flex items-start gap-4 p-4 bg-info-subtle rounded-lg hover:bg-info-subtle transition-colors text-left"
                       >
-                        <Icon name="BookOpen" className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                        <Icon name="BookOpen" className="w-6 h-6 text-info flex-shrink-0 mt-1" />
                         <div>
                           <div className="font-semibold text-text mb-1">Read Curated Content</div>
                           <div className="text-sm text-text-body">
@@ -319,9 +319,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                       </button>
                       <button
                         onClick={() => changeTab('tools')}
-                        className="flex items-start gap-4 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors text-left"
+                        className="flex items-start gap-4 p-4 bg-success-subtle rounded-lg hover:bg-success-subtle transition-colors text-left"
                       >
-                        <Icon name="Calculator" className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                        <Icon name="Calculator" className="w-6 h-6 text-success flex-shrink-0 mt-1" />
                         <div>
                           <div className="font-semibold text-text mb-1">Try Recommended Calculators</div>
                           <div className="text-sm text-text-body">Use AI-recommended tools for your situation</div>
@@ -341,12 +341,12 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                       <h3 className="text-2xl font-serif font-bold mb-3">
                         Unlock Your Complete Plan
                       </h3>
-                      <p className="text-blue-100 text-lg mb-6 max-w-2xl mx-auto">
+                      <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
                         Get access to {lockedBlocksCount} more curated articles, complete executive summary, and full AI analysis tailored to your military financial situation.
                       </p>
                       <Link
                         href="/dashboard/upgrade"
-                        className="inline-block px-8 py-4 bg-white text-blue-900 font-bold rounded-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                        className="inline-block px-8 py-4 bg-surface text-blue-900 font-bold rounded-lg hover:bg-info-subtle transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                       >
                         Upgrade to Premium - $9.99/month
                       </Link>
@@ -376,9 +376,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                     <div className="text-right">
                       <div className="text-sm text-text-muted mb-1">Reading Progress</div>
                       <div className="flex items-center gap-2">
-                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="w-32 h-2 bg-surface-hover rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-blue-600 transition-all duration-300"
+                            className="h-full bg-info transition-all duration-300"
                             style={{ width: `${(readBlocks.size / initialPlan.contentBlocks.length) * 100}%` }}
                           />
                         </div>
@@ -424,9 +424,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         </div>
 
                         {/* AI-Generated Personalized Context */}
-                        <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                        <div className="bg-info-subtle rounded-lg p-4 mb-4">
                           <div className="flex items-start gap-3">
-                            <Icon name="Sparkles" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
+                            <Icon name="Sparkles" className="w-5 h-5 text-info flex-shrink-0 mt-1" />
                             <div>
                               <p className="text-sm font-semibold text-text mb-1">Why This Matters For You</p>
                               <p className="text-sm text-text-body">{block.whyThisMatters}</p>
@@ -457,7 +457,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         {/* Expand/Collapse Button */}
                         <button
                           onClick={() => toggleBlock(block.id)}
-                          className="mt-4 text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-2"
+                          className="mt-4 text-info hover:text-info font-semibold text-sm flex items-center gap-2"
                         >
                           {expandedBlocks.has(block.id) ? (
                             <>
@@ -474,9 +474,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
 
                         {/* Action Step */}
                         {block.actionableNextStep && (
-                          <div className="mt-4 bg-green-50 rounded-lg p-4">
+                          <div className="mt-4 bg-success-subtle rounded-lg p-4">
                             <div className="flex items-start gap-3">
-                              <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                              <Icon name="CheckCircle" className="w-5 h-5 text-success flex-shrink-0 mt-1" />
                               <div>
                                 <p className="text-sm font-semibold text-text mb-1">Your Next Step</p>
                                 <p className="text-sm text-text-body">{block.actionableNextStep}</p>
@@ -498,13 +498,13 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         <h3 className="text-2xl font-serif font-bold mb-3">
                           Unlock {lockedBlocksCount} More Curated Blocks
                         </h3>
-                        <p className="text-blue-100 text-lg mb-6 max-w-2xl mx-auto">
+                        <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
                           AI has selected {lockedBlocksCount} additional expert content blocks specifically for your situation. Upgrade to premium to access your complete personalized plan with all recommendations and action items.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                           <Link
                             href="/dashboard/upgrade"
-                            className="px-8 py-4 bg-white text-blue-900 font-bold rounded-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                            className="px-8 py-4 bg-surface text-blue-900 font-bold rounded-lg hover:bg-info-subtle transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                           >
                             Unlock Full Plan - $9.99/month
                           </Link>
@@ -539,16 +539,16 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                             className="block bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 hover:shadow-lg hover:-translate-y-1 transition-all border border-blue-100"
                           >
                             <div className="flex items-start gap-4">
-                              <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                              <div className="flex-shrink-0 w-12 h-12 bg-info rounded-lg flex items-center justify-center">
                                 <Icon name="Calculator" className="w-6 h-6 text-white" />
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
                                   <p className="font-bold text-text text-lg">{tool.toolName}</p>
-                                  <Icon name="ChevronRight" className="w-4 h-4 text-blue-600" />
+                                  <Icon name="ChevronRight" className="w-4 h-4 text-info" />
                                 </div>
                                 <p className="text-sm text-text-body mb-3">{tool.reason}</p>
-                                <div className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
+                                <div className="inline-flex items-center gap-1 text-xs font-semibold text-info">
                                   <span>Try Calculator</span>
                                   <Icon name="ChevronRight" className="w-3 h-3" />
                                 </div>
@@ -559,17 +559,17 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                       </div>
                     ) : (
                       <div className="text-center py-12">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                          <Icon name="Calculator" className="w-8 h-8 text-gray-400" />
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-surface-hover rounded-full mb-4">
+                          <Icon name="Calculator" className="w-8 h-8 text-muted" />
                         </div>
                         <p className="text-text-muted">No specific calculator recommendations for this plan.</p>
                       </div>
                     )}
 
                     <div className="mt-8 pt-8 border-t border-border">
-                      <div className="bg-green-50 rounded-lg p-6">
+                      <div className="bg-success-subtle rounded-lg p-6">
                         <div className="flex items-start gap-3">
-                          <Icon name="HelpCircle" className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Icon name="HelpCircle" className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
                           <div>
                             <p className="font-semibold text-text mb-1">All calculators are free to use</p>
                             <p className="text-sm text-text-body">
@@ -592,7 +592,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                       </div>
                       <Link
                         href="/dashboard"
-                        className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                        className="px-6 py-3 bg-info text-white font-semibold rounded-lg hover:bg-info transition-colors"
                       >
                         View All Tools
                       </Link>
@@ -619,7 +619,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                     <div className="space-y-4">
                       {initialPlan.finalRecommendations.map((rec, index) => (
                         <div key={index} className="flex items-start gap-4 p-4 bg-gradient-to-r from-blue-50 to-transparent rounded-lg border border-blue-100">
-                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-info text-white flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>
                           <div className="flex-1">
@@ -636,9 +636,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                   <div className="p-8">
                     <h3 className="text-xl font-serif font-bold text-text mb-4">What&apos;s Next?</h3>
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="bg-info-subtle rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon name="BookOpen" className="w-5 h-5 text-blue-600" />
+                          <Icon name="BookOpen" className="w-5 h-5 text-info" />
                           <span className="font-semibold text-text">Read the Content</span>
                         </div>
                         <p className="text-sm text-text-body mb-3">
@@ -646,14 +646,14 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         </p>
                         <button
                           onClick={() => changeTab('content')}
-                          className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+                          className="text-sm text-info hover:text-info font-semibold"
                         >
                           Go to Content →
                         </button>
                       </div>
-                      <div className="bg-green-50 rounded-lg p-4">
+                      <div className="bg-success-subtle rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon name="Calculator" className="w-5 h-5 text-green-600" />
+                          <Icon name="Calculator" className="w-5 h-5 text-success" />
                           <span className="font-semibold text-text">Use the Tools</span>
                         </div>
                         <p className="text-sm text-text-body mb-3">
@@ -661,7 +661,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                         </p>
                         <button
                           onClick={() => changeTab('tools')}
-                          className="text-sm text-green-600 hover:text-green-700 font-semibold"
+                          className="text-sm text-success hover:text-success font-semibold"
                         >
                           Go to Tools →
                         </button>
@@ -686,14 +686,14 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                       <div className="flex gap-3">
                         <Link
                           href="/dashboard"
-                          className="px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors text-center"
+                          className="px-6 py-3 border-2 border-blue-600 text-info font-semibold rounded-lg hover:bg-info-subtle transition-colors text-center"
                         >
                           Return to Dashboard
                         </Link>
                         {!isPremium && (
                           <Link
                             href="/dashboard/upgrade"
-                            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center"
+                            className="px-6 py-3 bg-info text-white font-semibold rounded-lg hover:bg-info transition-colors text-center"
                           >
                             Upgrade to Premium
                           </Link>

@@ -49,7 +49,7 @@ export default function ComparisonBar() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-4 border-emerald-500 shadow-2xl animate-slide-up">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface border-t-4 border-emerald-500 shadow-2xl animate-slide-up">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Title & Count */}
@@ -60,8 +60,8 @@ export default function ComparisonBar() {
               </svg>
             </div>
             <div>
-              <h3 className="font-bold text-gray-900">Compare Bases</h3>
-              <p className="text-xs text-gray-500">
+              <h3 className="font-bold text-primary">Compare Bases</h3>
+              <p className="text-xs text-muted">
                 {comparisonBases.length} of 3 selected
               </p>
             </div>
@@ -72,13 +72,13 @@ export default function ComparisonBar() {
             {comparisonBases.map((base) => (
               <div
                 key={base.baseId}
-                className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5 whitespace-nowrap"
+                className="flex items-center gap-2 bg-surface-hover rounded-full px-3 py-1.5 whitespace-nowrap"
               >
                 <span className={`w-2 h-2 rounded-full ${badgeColors[base.branch as keyof typeof badgeColors].replace('bg-', 'bg-opacity-100 bg-')}`}></span>
-                <span className="text-sm font-medium text-gray-700">{base.baseName}</span>
+                <span className="text-sm font-medium text-body">{base.baseName}</span>
                 <button
                   onClick={() => handleRemove(base.baseId)}
-                  className="ml-1 text-gray-400 hover:text-red-600 transition-colors"
+                  className="ml-1 text-muted hover:text-danger transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -92,7 +92,7 @@ export default function ComparisonBar() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleClear}
-              className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-sm font-medium text-muted hover:text-body transition-colors"
             >
               Clear All
             </button>

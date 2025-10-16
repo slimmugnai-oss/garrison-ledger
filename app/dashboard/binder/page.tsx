@@ -390,7 +390,7 @@ function BinderContent() {
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               My Binder
             </h1>
-            <p className="text-gray-400">
+            <p className="text-muted">
               Secure storage for your important military documents
             </p>
           </div>
@@ -411,7 +411,7 @@ function BinderContent() {
               <div className="flex-1 relative">
                 <Icon
                   name="Search"
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted"
                 />
                 <input
                   type="text"
@@ -481,7 +481,7 @@ function BinderContent() {
             {/* Selection Mode Controls */}
             {selectionMode && (
               <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#2A2F3E]">
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-muted">
                   {selectedFiles.size} selected
                 </span>
                 <button
@@ -499,7 +499,7 @@ function BinderContent() {
                 {selectedFiles.size > 0 && (
                   <button
                     onClick={handleBulkDelete}
-                    className="ml-auto px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center gap-2"
+                    className="ml-auto px-4 py-2 bg-danger/20 text-red-400 rounded-lg hover:bg-danger/30 transition-colors flex items-center gap-2"
                   >
                     <Icon name="Trash2" className="w-4 h-4" />
                     Delete Selected
@@ -511,7 +511,7 @@ function BinderContent() {
             {/* Active Filters */}
             {(searchQuery || filterDocType !== 'all' || showExpiringOnly) && (
               <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#2A2F3E]">
-                <span className="text-sm text-gray-400">Active filters:</span>
+                <span className="text-sm text-muted">Active filters:</span>
                 {searchQuery && (
                   <span className="px-2 py-1 bg-[#2A2F3E] rounded text-xs text-white">
                     Search: {searchQuery}
@@ -728,7 +728,7 @@ function BinderContent() {
             <h2 className="text-xl font-bold mb-4 text-white">Share File</h2>
             {shareUrl ? (
               <>
-                <p className="text-sm text-gray-400 mb-2">
+                <p className="text-sm text-muted mb-2">
                   Share this link with others:
                 </p>
                 <div className="flex gap-2 mb-4">
@@ -750,7 +750,7 @@ function BinderContent() {
                 </div>
               </>
             ) : (
-              <p className="text-sm text-gray-400 mb-4">
+              <p className="text-sm text-muted mb-4">
                 Create a secure share link for this file
               </p>
             )}
@@ -786,7 +786,7 @@ export default function BinderPage() {
         <div className="min-h-screen bg-[#0A0F1E] flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#00E5A0] border-r-transparent"></div>
-            <p className="mt-4 text-gray-400">Loading your binder...</p>
+            <p className="mt-4 text-muted">Loading your binder...</p>
           </div>
         </div>
       }

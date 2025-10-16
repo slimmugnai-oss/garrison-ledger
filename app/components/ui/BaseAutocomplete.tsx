@@ -152,7 +152,7 @@ export default function BaseAutocomplete({
       {isOpen && filteredBases.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-surface border border-subtle rounded-lg shadow-lg max-h-60 overflow-y-auto"
         >
           {filteredBases.map((base, index) => (
             <div
@@ -166,7 +166,7 @@ export default function BaseAutocomplete({
               onMouseEnter={() => setHighlightedIndex(index)}
             >
               <div className="font-medium text-sm">{base.name}</div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted">
                 {base.city}, {base.state} • {base.service}
                 {base.code && <span> • {base.code}</span>}
               </div>

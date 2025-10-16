@@ -134,14 +134,14 @@ export default async function SystemHealthPage() {
           <AnimatedCard className="bg-gradient-to-br from-green-600 to-emerald-700 p-8 mb-8 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-semibold text-green-100 mb-2">Overall Health Score</div>
+                <div className="text-sm font-semibold text-white/90 mb-2">Overall Health Score</div>
                 <div className="text-6xl font-black mb-2">100/100</div>
-                <div className="text-lg text-green-100">Perfect Health - Production Ready 🏆</div>
+                <div className="text-lg text-white/90">Perfect Health - Production Ready 🏆</div>
               </div>
               <div className="text-right">
-                <div className="text-sm font-semibold text-green-100 mb-2">Uptime</div>
+                <div className="text-sm font-semibold text-white/90 mb-2">Uptime</div>
                 <div className="text-4xl font-black">99.9%</div>
-                <div className="text-sm text-green-100 mt-1">Last 30 days</div>
+                <div className="text-sm text-white/90 mt-1">Last 30 days</div>
               </div>
             </div>
           </AnimatedCard>

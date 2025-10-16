@@ -97,35 +97,35 @@ export default function ReferralDashboard({
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <AnimatedCard delay={100}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-600">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 border border-subtle dark:border-slate-600">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Referrals</span>
-              <Icon name="Users" className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <span className="text-body dark:text-muted text-sm font-medium">Total Referrals</span>
+              <Icon name="Users" className="h-5 w-5 text-info dark:text-info" />
             </div>
-            <div className="text-3xl font-black text-gray-900 dark:text-white">{totalReferrals}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Friends signed up</div>
+            <div className="text-3xl font-black text-primary dark:text-white">{totalReferrals}</div>
+            <div className="text-xs text-muted dark:text-muted mt-1">Friends signed up</div>
           </div>
         </AnimatedCard>
         
         <AnimatedCard delay={150}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-600">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 border border-subtle dark:border-slate-600">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 dark:text-gray-400 text-sm font-medium">Conversions</span>
-              <Icon name="CheckCircle" className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <span className="text-body dark:text-muted text-sm font-medium">Conversions</span>
+              <Icon name="CheckCircle" className="h-5 w-5 text-success dark:text-green-400" />
             </div>
-            <div className="text-3xl font-black text-gray-900 dark:text-white">{totalConversions}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Upgraded to premium</div>
+            <div className="text-3xl font-black text-primary dark:text-white">{totalConversions}</div>
+            <div className="text-xs text-muted dark:text-muted mt-1">Upgraded to premium</div>
           </div>
         </AnimatedCard>
         
         <AnimatedCard delay={200}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-600">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 border border-subtle dark:border-slate-600">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Earned</span>
+              <span className="text-body dark:text-muted text-sm font-medium">Total Earned</span>
               <Icon name="DollarSign" className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-            <div className="text-3xl font-black text-gray-900 dark:text-white">${(totalEarnings / 100).toFixed(0)}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Lifetime rewards</div>
+            <div className="text-3xl font-black text-primary dark:text-white">${(totalEarnings / 100).toFixed(0)}</div>
+            <div className="text-xs text-muted dark:text-muted mt-1">Lifetime rewards</div>
           </div>
         </AnimatedCard>
         
@@ -143,20 +143,20 @@ export default function ReferralDashboard({
       
       {/* Share Section */}
       <AnimatedCard delay={300} className="mb-8">
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-gray-200 dark:border-slate-600">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+        <div className="bg-surface dark:bg-slate-800 rounded-xl p-8 border border-subtle dark:border-slate-600">
+          <h2 className="text-2xl font-bold text-primary dark:text-white mb-6 flex items-center gap-2">
             <Icon name="Share2" className="h-6 w-6" />
             Your Referral Code
           </h2>
           
           {/* Code Display */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-body dark:text-muted mb-2">
               Referral Code
             </label>
             <div className="flex items-center gap-3">
-              <div className="flex-1 bg-gray-50 dark:bg-slate-900 border-2 border-gray-300 dark:border-slate-600 rounded-lg px-6 py-4">
-                <span className="text-3xl font-black text-blue-600 dark:text-blue-400 tracking-widest">{code}</span>
+              <div className="flex-1 bg-surface-hover dark:bg-slate-900 border-2 border-default dark:border-slate-600 rounded-lg px-6 py-4">
+                <span className="text-3xl font-black text-info dark:text-info tracking-widest">{code}</span>
               </div>
               <button
                 onClick={copyCode}
@@ -183,12 +183,12 @@ export default function ReferralDashboard({
           
           {/* Link Display */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-body dark:text-muted mb-2">
               Referral Link
             </label>
             <div className="flex items-center gap-3">
-              <div className="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-3">
-                <span className="text-sm text-gray-600 dark:text-gray-400 break-all">{referralUrl}</span>
+              <div className="flex-1 bg-surface-hover dark:bg-slate-900 border border-default dark:border-slate-600 rounded-lg px-4 py-3">
+                <span className="text-sm text-body dark:text-muted break-all">{referralUrl}</span>
               </div>
               <button
                 onClick={copyLink}
@@ -215,7 +215,7 @@ export default function ReferralDashboard({
           
           {/* Social Share Buttons */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-semibold text-body dark:text-muted mb-3">
               Share with Military Friends
             </label>
             <div className="flex flex-wrap gap-3">
@@ -228,14 +228,14 @@ export default function ReferralDashboard({
               </button>
               <button
                 onClick={shareTwitter}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors"
               >
                 <Icon name="MessageSquare" className="h-5 w-5" />
                 Twitter
               </button>
               <button
                 onClick={shareFacebook}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-semibold transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors"
               >
                 <Icon name="Share2" className="h-5 w-5" />
                 Facebook
@@ -248,8 +248,8 @@ export default function ReferralDashboard({
       {/* Referrals List */}
       {referrals.length > 0 && (
         <AnimatedCard delay={400}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 border border-gray-200 dark:border-slate-600">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-8 border border-subtle dark:border-slate-600">
+            <h2 className="text-2xl font-bold text-primary dark:text-white mb-6 flex items-center gap-2">
               <Icon name="Users" className="h-6 w-6" />
               Your Referrals ({referrals.length})
             </h2>
@@ -258,17 +258,17 @@ export default function ReferralDashboard({
               {referrals.map((referral) => (
                 <div
                   key={referral.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-700"
+                  className="flex items-center justify-between p-4 bg-surface-hover dark:bg-slate-900 rounded-lg border border-subtle dark:border-slate-700"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <Icon name="User" className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 bg-info-subtle dark:bg-info/30 rounded-full flex items-center justify-center">
+                      <Icon name="User" className="h-5 w-5 text-info dark:text-info" />
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
+                      <div className="font-semibold text-primary dark:text-white">
                         Referral #{referral.id.slice(0, 8)}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-body dark:text-muted">
                         Signed up {formatDate(referral.created_at)}
                         {referral.conversion_date && (
                           <span className="ml-2">• Upgraded {formatDate(referral.conversion_date)}</span>
@@ -289,17 +289,17 @@ export default function ReferralDashboard({
       {/* Empty State */}
       {referrals.length === 0 && (
         <AnimatedCard delay={400}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-12 border border-gray-200 dark:border-slate-600 text-center">
-            <Icon name="Users" className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-12 border border-subtle dark:border-slate-600 text-center">
+            <Icon name="Users" className="h-16 w-16 text-muted dark:text-muted mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-primary dark:text-white mb-2">
               No referrals yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            <p className="text-body dark:text-muted mb-6 max-w-md mx-auto">
               Share your code with military friends and start earning $10 for every friend who upgrades to premium!
             </p>
             <button
               onClick={copyCode}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-bold transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-info hover:bg-info dark:bg-info dark:hover:bg-info text-white rounded-lg font-bold transition-colors"
             >
               <Icon name="Copy" className="h-5 w-5" />
               Copy Your Code

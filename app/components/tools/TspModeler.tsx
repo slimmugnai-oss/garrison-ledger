@@ -211,40 +211,40 @@ export default function TspModeler() {
 
         <div className="space-y-8">
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Personal Information</h2>
+            <h2 className="text-2xl font-bold text-primary mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Current Age</label>
+                <label className="block text-sm font-semibold text-body">Current Age</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
                   value={age} 
                   onChange={e => setAge(Number(e.target.value))} 
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Retirement Age</label>
+                <label className="block text-sm font-semibold text-body">Retirement Age</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
                   value={ret} 
                   onChange={e => setRet(Number(e.target.value))} 
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Current Balance</label>
+                <label className="block text-sm font-semibold text-body">Current Balance</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
                   value={bal} 
                   onChange={e => setBal(Number(e.target.value))} 
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Monthly Contribution</label>
+                <label className="block text-sm font-semibold text-body">Monthly Contribution</label>
                 <input 
                   type="number" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
                   value={cont} 
                   onChange={e => setCont(Number(e.target.value))} 
                 />
@@ -253,7 +253,7 @@ export default function TspModeler() {
           </div>
 
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Custom Allocation Mix</h2>
+            <h2 className="text-2xl font-bold text-primary mb-6">Custom Allocation Mix</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <Range label="C Fund" v={wC} set={setWC} />
               <Range label="S Fund" v={wS} set={setWS} />
@@ -261,7 +261,7 @@ export default function TspModeler() {
               <Range label="F Fund" v={wF} set={setWF} />
               <Range label="G Fund" v={wG} set={setWG} />
             </div>
-            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg mt-4">
+            <div className="text-sm text-body p-4 bg-surface-hover rounded-lg mt-4">
               <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Weights normalize automatically. This is for educational purposes only. Past performance is not predictive of future results.
             </div>
             
@@ -296,7 +296,7 @@ export default function TspModeler() {
                   }
                 }}
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-info hover:bg-info text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '🔄 Calculating...' : '🚀 Generate TSP Analysis'}
               </button>
@@ -304,7 +304,7 @@ export default function TspModeler() {
           </div>
 
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Growth Projection</h2>
+            <h2 className="text-2xl font-bold text-primary mb-6">Growth Projection</h2>
             {loading ? (
               <div className="flex items-center justify-center h-60">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -318,22 +318,22 @@ export default function TspModeler() {
                     <div className="blur-sm pointer-events-none select-none">
                       <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm">
-                      <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                        <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                        <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                    <div className="absolute inset-0 flex items-center justify-center bg-surface-hover/90 backdrop-blur-sm">
+                      <div className="bg-surface rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                        <Icon name="Lock" className="h-16 w-16 text-body mb-4 mx-auto" />
+                        <h3 className="text-3xl font-bold text-primary mb-3">
                           Your Results Are Ready!
                         </h3>
-                        <p className="text-lg text-gray-700 mb-2">
+                        <p className="text-lg text-body mb-2">
                           Unlock to see your complete 30-year retirement projection + unlimited scenario comparisons
                         </p>
-                        <p className="text-3xl font-black text-gray-900 mb-6">
-                          $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                        <p className="text-3xl font-black text-primary mb-6">
+                          $9.99<span className="text-lg font-normal text-body">/month</span>
                         </p>
                         <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
                           Unlock Now →
                         </a>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted">
                           Less than a coffee per week · Upgrade anytime
                         </p>
                       </div>
@@ -341,15 +341,15 @@ export default function TspModeler() {
                   </div>
                 )}
                 {apiData.partial && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-blue-800 font-medium">
+                  <div className="mt-4 p-4 bg-info-subtle rounded-lg border border-info">
+                    <p className="text-info font-medium">
                       <Icon name="BarChart" className="h-4 w-4 inline mr-1" /> Preview shows {apiData.yearsVisible} years. Unlock to view full {Math.max(0, ret - age)}-year projection and ROI analysis.
                     </p>
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex items-center justify-center h-60 text-gray-500">
+              <div className="flex items-center justify-center h-60 text-muted">
                 Enter your information above to see projections
               </div>
             )}
@@ -357,16 +357,16 @@ export default function TspModeler() {
 
           {/* Retirement Projection Results - Available to ALL users (free tier benefit) */}
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Retirement Projection Results</h2>
+              <h2 className="text-2xl font-bold text-primary mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Default Mix (L2050)</h3>
-                      <p className="text-3xl font-bold text-gray-900">{fmt(apiData.endDefault)}</p>
+                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
+                      <h3 className="text-lg font-semibold text-primary mb-2">Default Mix (L2050)</h3>
+                      <p className="text-3xl font-bold text-primary">{fmt(apiData.endDefault)}</p>
                     </div>
-                    <div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
-                      <h3 className="text-lg font-semibold text-blue-800 mb-2">Custom Mix</h3>
+                    <div className="p-6 bg-info-subtle rounded-lg border border-info">
+                      <h3 className="text-lg font-semibold text-info mb-2">Custom Mix</h3>
                       <p className="text-3xl font-bold text-blue-900">{fmt(apiData.endCustom)}</p>
                     </div>
                   </div>
@@ -377,7 +377,7 @@ export default function TspModeler() {
                     <div className={`text-4xl font-bold mb-4 ${apiData.diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {apiData.diff >= 0 ? '+' : ''}{fmt(apiData.diff)}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-body">
                       <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
                       Consider factors like your risk tolerance, time horizon, and other retirement accounts when making allocation decisions.
                     </div>
@@ -390,7 +390,7 @@ export default function TspModeler() {
                   <FootNote />
                 </>
               ) : (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-muted py-8">
                   Complete the form above to see detailed retirement projections
                 </div>
               )}
@@ -405,8 +405,8 @@ function Range({ label, v, set }: { label: string; v: number; set: (n: number) =
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <label className="text-sm font-semibold text-gray-700">{label}</label>
-        <span className="text-lg font-bold text-blue-600">{v}%</span>
+        <label className="text-sm font-semibold text-body">{label}</label>
+        <span className="text-lg font-bold text-info">{v}%</span>
       </div>
       <input 
         type="range" 
@@ -414,7 +414,7 @@ function Range({ label, v, set }: { label: string; v: number; set: (n: number) =
         max={100} 
         value={v} 
         onChange={e => set(Number(e.target.value))}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider" 
+        className="w-full h-2 bg-surface-hover rounded-lg appearance-none cursor-pointer slider" 
       />
     </div>
   );

@@ -19,12 +19,12 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
   return (
     <>
       {/* Modern Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-surface shadow-sm border-b border-subtle sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors flex items-center">
+              <Link href="/" className="text-xl font-bold text-primary hover:text-info transition-colors flex items-center">
                 <Icon name="BarChart" className="h-5 w-5 mr-2" />
                 <span className="hidden sm:inline">Garrison Ledger</span>
                 <span className="sm:hidden">GL</span>
@@ -33,7 +33,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <Link href="/" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">
+              <Link href="/" className="text-body hover:text-primary transition-colors font-medium">
                 Home
               </Link>
               
@@ -43,7 +43,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
                 onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); }}
                 onMouseLeave={() => { const t = setTimeout(() => setMobileMenuOpen(false), 200); setCloseTimeout(t); }}
               >
-                <button className="text-gray-700 hover:text-gray-900 transition-colors flex items-center font-medium">
+                <button className="text-body hover:text-primary transition-colors flex items-center font-medium">
                   Tools
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -61,15 +61,15 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 py-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center">
+                <div className="absolute top-full left-0 mt-2 w-64 bg-surface rounded-xl shadow-xl border border-subtle py-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                  <div className="px-4 py-2 text-xs font-semibold text-muted uppercase tracking-wider flex items-center">
                     <Icon name="BookOpen" className="w-3 h-3 mr-1" />
                     Resource Hubs
                   </div>
                   <a href="/pcs-hub" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
                     isActivePage('pcs-hub') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                   }`}>
-                    <Icon name="Truck" className="w-4 h-4 mr-3 text-blue-500" />
+                    <Icon name="Truck" className="w-4 h-4 mr-3 text-info" />
                     PCS Hub
                   </a>
                   <a href="/career-hub" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
@@ -110,7 +110,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
             {/* Mobile menu button */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden text-gray-700 hover:text-gray-900 p-2"
+              className="lg:hidden text-body hover:text-primary p-2"
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,15 +125,15 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-gray-200 bg-white">
+            <div className="lg:hidden border-t border-subtle bg-surface">
               <nav className="flex flex-col px-4 py-3 space-y-1">
-                <Link href="/" className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <Link href="/" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
                   <Icon name="Home" className="w-5 h-5 mr-3" />
                   Home
                 </Link>
                 
                 <div className="px-3 py-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center">
+                  <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center">
                     <Icon name="BookOpen" className="w-3 h-3 mr-1" />
                     Resource Hubs
                   </p>
@@ -141,7 +141,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
                     <a href="/pcs-hub" className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
                       isActivePage('pcs-hub') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                     }`}>
-                      <Icon name="Truck" className="w-4 h-4 mr-3 text-blue-500" />
+                      <Icon name="Truck" className="w-4 h-4 mr-3 text-info" />
                       PCS Hub
                     </a>
                     <a href="/career-hub" className={`flex items-center px-3 py-2 rounded-lg transition-colors ${
@@ -188,7 +188,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4">{title}</h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">{description}</p>
+            <p className="text-xl text-white/90 max-w-3xl mx-auto">{description}</p>
           </div>
         </div>
       </div>

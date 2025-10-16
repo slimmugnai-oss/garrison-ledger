@@ -30,7 +30,7 @@ export default function ContactSuccessPage({
               Message Sent Successfully!
             </h1>
             
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl text-muted max-w-2xl mx-auto">
               Thank you for contacting us. We&apos;ve received your message and will respond as soon as possible.
             </p>
           </div>
@@ -43,14 +43,14 @@ export default function ContactSuccessPage({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Your Reference Number</h2>
-                <p className="text-sm text-gray-400">Save this for your records</p>
+                <p className="text-sm text-muted">Save this for your records</p>
               </div>
             </div>
 
             <div className="bg-[#0A0F1E] rounded-lg p-4 border border-[#2A2F3E]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Ticket ID</p>
+                  <p className="text-xs text-muted mb-1">Ticket ID</p>
                   <p className="text-2xl font-mono font-bold text-[#00E5A0]">{ticketId}</p>
                 </div>
                 <button
@@ -66,8 +66,8 @@ export default function ContactSuccessPage({
               </div>
             </div>
 
-            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-              <p className="text-sm text-blue-200 flex items-start gap-2">
+            <div className="mt-6 p-4 bg-info/10 border border-info/30 rounded-lg">
+              <p className="text-sm text-white/80 flex items-start gap-2">
                 <Icon name="HelpCircle" className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <span>
                   You&apos;ll receive a confirmation email shortly. Please check your spam folder if you don&apos;t see it in your inbox.
@@ -90,7 +90,7 @@ export default function ContactSuccessPage({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">We Review Your Message</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-muted">
                     Our team will review your inquiry and determine the best way to help.
                   </p>
                 </div>
@@ -102,7 +102,7 @@ export default function ContactSuccessPage({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">You&apos;ll Receive a Response</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-muted">
                     We&apos;ll email you directly with our response or ask for more information if needed.
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export default function ContactSuccessPage({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">Issue Resolved</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-muted">
                     We&apos;ll work with you until your question is answered or issue is resolved.
                   </p>
                 </div>
@@ -125,15 +125,15 @@ export default function ContactSuccessPage({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div>
                   <p className="text-2xl font-bold text-[#00E5A0]">24-48h</p>
-                  <p className="text-xs text-gray-400">General Inquiries</p>
+                  <p className="text-xs text-muted">General Inquiries</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[#00E5A0]">12-24h</p>
-                  <p className="text-xs text-gray-400">Technical Support</p>
+                  <p className="text-xs text-muted">Technical Support</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[#00E5A0]">4-12h</p>
-                  <p className="text-xs text-gray-400">Urgent Issues</p>
+                  <p className="text-xs text-muted">Urgent Issues</p>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function ContactSuccessPage({
 
           {/* Additional Help */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-muted mb-4">
               Need immediate assistance while you wait?
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
@@ -165,12 +165,12 @@ export default function ContactSuccessPage({
                 <Icon name="Library" className="w-4 h-4" />
                 Browse Help Articles
               </Link>
-              <span className="text-gray-600">•</span>
+              <span className="text-body">•</span>
               <Link href="/pcs-hub" className="text-[#00E5A0] hover:underline flex items-center gap-1">
                 <Icon name="BookOpen" className="w-4 h-4" />
                 Resource Hubs
               </Link>
-              <span className="text-gray-600">•</span>
+              <span className="text-body">•</span>
               <Link href="/dashboard/tools" className="text-[#00E5A0] hover:underline flex items-center gap-1">
                 <Icon name="Calculator" className="w-4 h-4" />
                 Calculator Tools

@@ -121,7 +121,7 @@ export default function CitySearchInput({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="block text-sm font-semibold text-gray-700 mb-2">
+      <label className="block text-sm font-semibold text-body mb-2">
         {label}
       </label>
       <input
@@ -141,7 +141,7 @@ export default function CitySearchInput({
       />
       
       {isOpen && filteredCities.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-surface border-2 border-subtle rounded-lg shadow-xl max-h-64 overflow-y-auto">
           {filteredCities.map((city, index) => (
             <button
               key={`${city.city}-${city.state}-${city.cost_of_living_index}`}
@@ -153,23 +153,23 @@ export default function CitySearchInput({
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="font-semibold text-gray-900">
+                  <div className="font-semibold text-primary">
                     {city.city}, {city.state}
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">
+                  <div className="text-xs text-muted mt-0.5">
                     Cost of Living Index: {city.cost_of_living_index}
                   </div>
                 </div>
                 {city.cost_of_living_index > 100 ? (
-                  <span className="text-xs font-semibold text-red-600 ml-2">
+                  <span className="text-xs font-semibold text-danger ml-2">
                     {((city.cost_of_living_index - 100)).toFixed(0)}% above avg
                   </span>
                 ) : city.cost_of_living_index < 100 ? (
-                  <span className="text-xs font-semibold text-green-600 ml-2">
+                  <span className="text-xs font-semibold text-success ml-2">
                     {((100 - city.cost_of_living_index)).toFixed(0)}% below avg
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold text-gray-600 ml-2">
+                  <span className="text-xs font-semibold text-body ml-2">
                     Average
                   </span>
                 )}
@@ -180,7 +180,7 @@ export default function CitySearchInput({
       )}
       
       {searchTerm.length > 0 && searchTerm.length < 3 && (
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-muted mt-1">
           Type at least 3 characters to search...
         </p>
       )}

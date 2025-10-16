@@ -44,43 +44,43 @@ export default async function AdminCampaignsPage() {
             <h2 className="text-2xl font-bold text-text-headings mb-6">Automated Email Sequences</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {/* 7-Day Onboarding */}
-              <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+              <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <Icon name="Mail" className="h-8 w-8 text-blue-600" />
+                    <Icon name="Mail" className="h-8 w-8 text-info" />
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">7-Day Onboarding</h3>
-                      <p className="text-sm text-gray-600">New user welcome sequence</p>
+                      <h3 className="text-lg font-bold text-primary">7-Day Onboarding</h3>
+                      <p className="text-sm text-body">New user welcome sequence</p>
                     </div>
                   </div>
-                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                  <div className="bg-success-subtle text-success px-3 py-1 rounded-full text-xs font-bold">
                     READY
                   </div>
                 </div>
-                <div className="space-y-2 text-sm text-gray-700">
+                <div className="space-y-2 text-sm text-body">
                   <div className="flex justify-between">
                     <span>Day 1: Welcome + Profile CTA</span>
-                    <Icon name="Check" className="h-4 w-4 text-green-600" />
+                    <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
                     <span>Day 2: Assessment Preview</span>
-                    <Icon name="Check" className="h-4 w-4 text-green-600" />
+                    <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
                     <span>Day 3: Success Story</span>
-                    <Icon name="Check" className="h-4 w-4 text-green-600" />
+                    <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
                     <span>Day 5: Free Tools Showcase</span>
-                    <Icon name="Check" className="h-4 w-4 text-green-600" />
+                    <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
                     <span>Day 7: Premium Upgrade</span>
-                    <Icon name="Check" className="h-4 w-4 text-green-600" />
+                    <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-blue-200">
-                  <p className="text-xs text-gray-600">
+                <div className="mt-4 pt-4 border-t border-info">
+                  <p className="text-xs text-body">
                     <strong>Status:</strong> Templates ready. Requires cron job or manual triggering.
                   </p>
                 </div>
@@ -92,15 +92,15 @@ export default async function AdminCampaignsPage() {
                   <div className="flex items-center gap-3">
                     <Icon name="Calendar" className="h-8 w-8 text-purple-600" />
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">Weekly Digest</h3>
-                      <p className="text-sm text-gray-600">Every Sunday at 7pm UTC</p>
+                      <h3 className="text-lg font-bold text-primary">Weekly Digest</h3>
+                      <p className="text-sm text-body">Every Sunday at 7pm UTC</p>
                     </div>
                   </div>
-                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                  <div className="bg-success-subtle text-success px-3 py-1 rounded-full text-xs font-bold">
                     ACTIVE
                   </div>
                 </div>
-                <div className="space-y-2 text-sm text-gray-700 mb-4">
+                <div className="space-y-2 text-sm text-body mb-4">
                   <div className="flex items-start gap-2">
                     <Icon name="Check" className="h-4 w-4 text-purple-600 mt-0.5" />
                     <span>Plan update notifications</span>
@@ -115,7 +115,7 @@ export default async function AdminCampaignsPage() {
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-purple-200">
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-body">
                     <strong>Status:</strong> Configured in vercel.json. Runs automatically.
                   </p>
                 </div>
@@ -127,22 +127,22 @@ export default async function AdminCampaignsPage() {
           <AnimatedCard delay={200} className="mb-8">
             <h2 className="text-2xl font-bold text-text-headings mb-6">Manual Campaign Tools</h2>
             <div className="grid md:grid-cols-3 gap-4">
-              <button className="p-6 bg-white border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all text-left">
-                <Icon name="Send" className="h-8 w-8 text-blue-600 mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Send Test Email</h3>
-                <p className="text-sm text-gray-600">Preview email templates</p>
+              <button className="p-6 bg-surface border-2 border-info rounded-xl hover:shadow-lg transition-all text-left">
+                <Icon name="Send" className="h-8 w-8 text-info mb-3" />
+                <h3 className="font-bold text-primary mb-2">Send Test Email</h3>
+                <p className="text-sm text-body">Preview email templates</p>
               </button>
 
-              <button className="p-6 bg-white border-2 border-green-200 rounded-xl hover:shadow-lg transition-all text-left">
-                <Icon name="Users" className="h-8 w-8 text-green-600 mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Bulk Announcement</h3>
-                <p className="text-sm text-gray-600">Email all subscribers</p>
+              <button className="p-6 bg-surface border-2 border-success rounded-xl hover:shadow-lg transition-all text-left">
+                <Icon name="Users" className="h-8 w-8 text-success mb-3" />
+                <h3 className="font-bold text-primary mb-2">Bulk Announcement</h3>
+                <p className="text-sm text-body">Email all subscribers</p>
               </button>
 
-              <button className="p-6 bg-white border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all text-left">
+              <button className="p-6 bg-surface border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all text-left">
                 <Icon name="Target" className="h-8 w-8 text-purple-600 mb-3" />
-                <h3 className="font-bold text-gray-900 mb-2">Targeted Campaign</h3>
-                <p className="text-sm text-gray-600">Segment and send</p>
+                <h3 className="font-bold text-primary mb-2">Targeted Campaign</h3>
+                <p className="text-sm text-body">Segment and send</p>
               </button>
             </div>
           </AnimatedCard>
@@ -151,26 +151,26 @@ export default async function AdminCampaignsPage() {
           <AnimatedCard delay={300}>
             <h2 className="text-2xl font-bold text-text-headings mb-6">Available Email Templates</h2>
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="p-4 bg-surface-hover border border-subtle rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-semibold text-gray-900">onboarding_day_1</h4>
-                    <p className="text-sm text-gray-600">Welcome email + profile completion CTA</p>
+                    <h4 className="font-semibold text-primary">onboarding_day_1</h4>
+                    <p className="text-sm text-body">Welcome email + profile completion CTA</p>
                   </div>
                   <Link
                     href="/api/emails/onboarding"
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold"
+                    className="px-4 py-2 bg-info hover:bg-info text-white rounded-lg text-sm font-semibold"
                   >
                     View Template
                   </Link>
                 </div>
               </div>
 
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="p-4 bg-surface-hover border border-subtle rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-semibold text-gray-900">weekly_digest</h4>
-                    <p className="text-sm text-gray-600">Weekly plan updates and new content</p>
+                    <h4 className="font-semibold text-primary">weekly_digest</h4>
+                    <p className="text-sm text-body">Weekly plan updates and new content</p>
                   </div>
                   <Link
                     href="/api/emails/weekly-digest"
@@ -181,15 +181,15 @@ export default async function AdminCampaignsPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="p-4 bg-surface-hover border border-subtle rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-semibold text-gray-900">pcs_checklist_delivery</h4>
-                    <p className="text-sm text-gray-600">Free PCS checklist lead magnet</p>
+                    <h4 className="font-semibold text-primary">pcs_checklist_delivery</h4>
+                    <p className="text-sm text-body">Free PCS checklist lead magnet</p>
                   </div>
                   <Link
                     href="/api/lead-magnets/pcs-checklist"
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold"
+                    className="px-4 py-2 bg-success hover:bg-success text-white rounded-lg text-sm font-semibold"
                   >
                     View Checklist
                   </Link>
@@ -202,14 +202,14 @@ export default async function AdminCampaignsPage() {
           <AnimatedCard delay={400} className="mt-8 bg-amber-50 border-2 border-amber-200">
             <div className="flex items-center gap-3 mb-4">
               <Icon name="Lightbulb" className="h-6 w-6 text-amber-600" />
-              <h3 className="text-xl font-bold text-gray-900">Email Automation Setup</h3>
+              <h3 className="text-xl font-bold text-primary">Email Automation Setup</h3>
             </div>
-            <div className="space-y-4 text-sm text-gray-700">
+            <div className="space-y-4 text-sm text-body">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Automated Sequences:</h4>
+                <h4 className="font-semibold text-primary mb-2">Automated Sequences:</h4>
                 <ul className="space-y-1 ml-4">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">✓</span>
+                    <span className="text-success">✓</span>
                     <span><strong>Weekly Digest:</strong> Configured in vercel.json (runs automatically)</span>
                   </li>
                   <li className="flex items-start gap-2">
@@ -219,18 +219,18 @@ export default async function AdminCampaignsPage() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Manual Campaign Options:</h4>
+                <h4 className="font-semibold text-primary mb-2">Manual Campaign Options:</h4>
                 <ul className="space-y-1 ml-4">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>Use Resend Dashboard to send one-off campaigns</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>Export leads from /admin/leads and import to email service</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>Future enhancement: In-app email composer</span>
                   </li>
                 </ul>

@@ -93,7 +93,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
       {text && (
         <div className="mt-4">
           <div 
-            className="rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md text-sm leading-relaxed text-gray-700"
+            className="rounded-lg border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/30 p-5 shadow-md text-sm leading-relaxed text-body"
             dangerouslySetInnerHTML={{ __html: text }}
           />
           
@@ -108,10 +108,10 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold mb-2">Upgrade to Read Full AI Analysis</h3>
-                  <p className="text-blue-100 mb-4">
+                  <p className="text-white/90 mb-4">
                     This is just a preview. Premium members get complete AI explanations for all calculator results, plus:
                   </p>
-                  <ul className="space-y-2 text-sm text-blue-50 mb-4">
+                  <ul className="space-y-2 text-sm text-white/95 mb-4">
                     <li className="flex items-center gap-2">
                       <span className="text-emerald-300">✓</span>
                       Full AI-curated financial plan (8-10 expert blocks)
@@ -127,7 +127,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
                   </ul>
                   <Link
                     href="/dashboard/upgrade"
-                    className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg"
+                    className="inline-block bg-surface text-info px-6 py-3 rounded-lg font-bold hover:bg-info-subtle transition-colors shadow-lg"
                   >
                     Upgrade to Premium - $9.99/month →
                   </Link>

@@ -69,37 +69,37 @@ export default function SocialProofStats() {
   }, [isLoading, stats]);
 
   return (
-    <div className="mt-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-8 shadow-lg">
+    <div className="mt-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-info rounded-2xl p-8 shadow-lg">
       <div className="text-center mb-8">
-        <h3 className="text-2xl md:text-3xl font-serif font-black text-gray-900 mb-2">
+        <h3 className="text-2xl md:text-3xl font-serif font-black text-primary mb-2">
           Trusted by Military Families Nationwide
         </h3>
-        <p className="text-gray-600">Real-time platform statistics</p>
+        <p className="text-body">Real-time platform statistics</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {/* Total Users */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-info rounded-xl mb-3">
             <Icon name="Users" className="w-6 h-6 text-white" />
           </div>
-          <div className="text-3xl md:text-4xl font-black text-blue-600 mb-1">
+          <div className="text-3xl md:text-4xl font-black text-info mb-1">
             {displayedUsers.toLocaleString()}+
           </div>
-          <div className="text-sm font-semibold text-gray-700">Military Families</div>
-          <div className="text-xs text-gray-500 mt-1">Using Garrison Ledger</div>
+          <div className="text-sm font-semibold text-body">Military Families</div>
+          <div className="text-xs text-muted mt-1">Using Garrison Ledger</div>
         </div>
 
         {/* Total Plans */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-xl mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-success rounded-xl mb-3">
             <Icon name="File" className="w-6 h-6 text-white" />
           </div>
-          <div className="text-3xl md:text-4xl font-black text-green-600 mb-1">
+          <div className="text-3xl md:text-4xl font-black text-success mb-1">
             {displayedPlans.toLocaleString()}+
           </div>
-          <div className="text-sm font-semibold text-gray-700">Plans Generated</div>
-          <div className="text-xs text-gray-500 mt-1">AI-curated strategies</div>
+          <div className="text-sm font-semibold text-body">Plans Generated</div>
+          <div className="text-xs text-muted mt-1">AI-curated strategies</div>
         </div>
 
         {/* Weekly Plans */}
@@ -110,9 +110,9 @@ export default function SocialProofStats() {
           <div className="text-3xl md:text-4xl font-black text-purple-600 mb-1">
             {stats.weeklyPlans}
           </div>
-          <div className="text-sm font-semibold text-gray-700">This Week</div>
-          <div className="text-xs text-gray-500 mt-1">
-            <span className="inline-flex items-center text-green-600 font-semibold">
+          <div className="text-sm font-semibold text-body">This Week</div>
+          <div className="text-xs text-muted mt-1">
+            <span className="inline-flex items-center text-success font-semibold">
               <Icon name="TrendingUp" className="w-3 h-3 mr-1" />
               Active growth
             </span>
@@ -127,20 +127,20 @@ export default function SocialProofStats() {
           <div className="text-3xl md:text-4xl font-black text-amber-600 mb-1">
             {stats.contentBlocks}+
           </div>
-          <div className="text-sm font-semibold text-gray-700">Expert Articles</div>
-          <div className="text-xs text-gray-500 mt-1">Hand-curated content</div>
+          <div className="text-sm font-semibold text-body">Expert Articles</div>
+          <div className="text-xs text-muted mt-1">Hand-curated content</div>
         </div>
       </div>
 
       {/* Trust badges */}
-      <div className="mt-8 pt-8 border-t-2 border-blue-200">
-        <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600">
+      <div className="mt-8 pt-8 border-t-2 border-info">
+        <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-body">
           <div className="flex items-center gap-2">
-            <Icon name="Shield" className="w-5 h-5 text-blue-600" />
+            <Icon name="Shield" className="w-5 h-5 text-info" />
             <span className="font-semibold">Bank-Level Security</span>
           </div>
           <div className="flex items-center gap-2">
-            <Icon name="Lock" className="w-5 h-5 text-green-600" />
+            <Icon name="Lock" className="w-5 h-5 text-success" />
             <span className="font-semibold">256-bit Encryption</span>
           </div>
           <div className="flex items-center gap-2">

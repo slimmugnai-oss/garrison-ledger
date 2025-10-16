@@ -121,7 +121,7 @@ export default function FileCard({
               <h3 className="font-semibold truncate text-white group-hover:text-[#00E5A0] transition-colors">
                 {file.display_name}
               </h3>
-              <div className="flex items-center gap-3 text-xs text-gray-400 mt-1">
+              <div className="flex items-center gap-3 text-xs text-muted mt-1">
                 <span className="font-medium">{formatFileSize(file.size_bytes)}</span>
                 <span>•</span>
                 <span>{formatDate(file.created_at)}</span>
@@ -154,21 +154,21 @@ export default function FileCard({
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
               title="Rename"
             >
-              <Icon name="Edit" className="w-4 h-4 text-gray-400 hover:text-white" />
+              <Icon name="Edit" className="w-4 h-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onMove(file)}
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
               title="Move"
             >
-              <Icon name="Folder" className="w-4 h-4 text-gray-400 hover:text-white" />
+              <Icon name="Folder" className="w-4 h-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onSetExpiry(file)}
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
               title="Set Expiry"
             >
-              <Icon name="Calendar" className="w-4 h-4 text-gray-400 hover:text-white" />
+              <Icon name="Calendar" className="w-4 h-4 text-muted hover:text-white" />
             </button>
             {isPremium && onShare && (
               <button
@@ -176,12 +176,12 @@ export default function FileCard({
                 className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
                 title="Share"
               >
-                <Icon name="Share2" className="w-4 h-4 text-gray-400 hover:text-white" />
+                <Icon name="Share2" className="w-4 h-4 text-muted hover:text-white" />
               </button>
             )}
             <button
               onClick={() => onDelete(file)}
-              className="p-2 hover:bg-red-500/20 rounded-lg transition-all hover:scale-110 text-red-400"
+              className="p-2 hover:bg-danger/20 rounded-lg transition-all hover:scale-110 text-red-400"
               title="Delete"
             >
               <Icon name="Trash2" className="w-4 h-4" />

@@ -99,14 +99,14 @@ export default function DirectoryFilters({
         <button 
           onClick={onSearch} 
           disabled={loading}
-          className="rounded bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="rounded bg-info text-white px-4 py-2 hover:bg-info disabled:opacity-50 transition-colors"
         >
           {loading ? "Searching…" : "Search"}
         </button>
         <button 
           onClick={onClearFilters} 
           disabled={loading}
-          className="rounded border border-gray-300 text-gray-700 px-4 py-2 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          className="rounded border border-default text-body px-4 py-2 hover:bg-surface-hover disabled:opacity-50 transition-colors"
         >
           Clear Filters
         </button>
@@ -114,7 +114,7 @@ export default function DirectoryFilters({
       
       {/* Filter count preview */}
       {hasSearched && (
-        <div className="mt-3 pt-3 border-t text-sm text-gray-600">
+        <div className="mt-3 pt-3 border-t text-sm text-body">
           {totalCount > 0 ? (
             <>Found <span className="font-semibold">{totalCount}</span> {totalCount === 1 ? 'provider' : 'providers'}</>
           ) : (
@@ -138,20 +138,20 @@ export default function DirectoryFilters({
       <div className="md:hidden">
         <button
           onClick={() => setMobileFiltersOpen(true)}
-          className="w-full rounded border bg-white p-4 shadow-sm flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="w-full rounded border bg-surface p-4 shadow-sm flex items-center justify-between hover:bg-surface-hover transition-colors"
         >
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-body" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             <span className="font-medium">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+              <span className="bg-info text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                 {activeFilterCount}
               </span>
             )}
           </div>
-          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -167,23 +167,23 @@ export default function DirectoryFilters({
           />
           
           {/* Drawer */}
-          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-xl overflow-y-auto">
+          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-surface shadow-xl overflow-y-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
+            <div className="sticky top-0 bg-surface border-b px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-body" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
                 <h2 className="text-lg font-semibold">Filters</h2>
                 {activeFilterCount > 0 && (
-                  <span className="bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                  <span className="bg-info text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                     {activeFilterCount}
                   </span>
                 )}
               </div>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-surface-hover rounded-full transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -197,10 +197,10 @@ export default function DirectoryFilters({
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-white border-t px-4 py-3">
+            <div className="sticky bottom-0 bg-surface border-t px-4 py-3">
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full rounded bg-blue-600 text-white px-4 py-3 hover:bg-blue-700 transition-colors font-medium"
+                className="w-full rounded bg-info text-white px-4 py-3 hover:bg-info transition-colors font-medium"
               >
                 Apply Filters
               </button>

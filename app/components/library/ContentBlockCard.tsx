@@ -81,7 +81,7 @@ export default function ContentBlockCard({
 
   return (
     <AnimatedCard
-      className="bg-white border border-gray-200 hover:shadow-lg transition-all"
+      className="bg-surface border border-subtle hover:shadow-lg transition-all"
       delay={index * 20}
     >
       <button
@@ -91,14 +91,14 @@ export default function ContentBlockCard({
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h3 className="text-xl font-bold text-gray-900">{block.title}</h3>
+              <h3 className="text-xl font-bold text-primary">{block.title}</h3>
               {block.est_read_min > 0 && (
-                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-medium">
+                <span className="text-xs bg-surface-hover text-body px-2 py-1 rounded-full font-medium">
                   {block.est_read_min} min
                 </span>
               )}
               {block.relevance_score && (
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-bold">
+                <span className="text-xs bg-info-subtle text-info px-2 py-1 rounded-full font-bold">
                   {(block.relevance_score * 10).toFixed(0)}% match
                 </span>
               )}
@@ -110,7 +110,7 @@ export default function ContentBlockCard({
             </div>
             
             {block.summary && (
-              <p className="text-gray-600 mb-3">{block.summary}</p>
+              <p className="text-body mb-3">{block.summary}</p>
             )}
             
             <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -122,7 +122,7 @@ export default function ContentBlockCard({
               </span>
               {block.content_rating > 0 && renderContentRating(block.content_rating)}
               {block.content_freshness_score >= 90 && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                <span className="text-xs bg-success-subtle text-success px-2 py-1 rounded-full font-medium">
                   ✨ Fresh
                 </span>
               )}
@@ -158,16 +158,16 @@ export default function ContentBlockCard({
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="px-6 pb-6 border-t border-gray-200">
+        <div className="px-6 pb-6 border-t border-subtle">
           <div
-            className="prose prose-sm max-w-none mt-6 text-gray-700"
+            className="prose prose-sm max-w-none mt-6 text-body"
             dangerouslySetInnerHTML={{ __html: block.html }}
           />
           
           {/* Related Content */}
           {relatedBlocks && relatedBlocks.length > 0 && (
-            <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <div className="mt-8 p-4 bg-info-subtle rounded-lg border border-info">
+              <h4 className="font-bold text-primary mb-3 flex items-center gap-2">
                 <span>🔗</span> Related Content
               </h4>
               <div className="space-y-2">
@@ -178,16 +178,16 @@ export default function ContentBlockCard({
                       e.stopPropagation();
                       onToggleExpand(related.content_id);
                     }}
-                    className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-all"
+                    className="w-full text-left p-3 bg-surface rounded-lg border border-info hover:shadow-md transition-all"
                   >
-                    <div className="font-semibold text-gray-900 text-sm mb-1">
+                    <div className="font-semibold text-primary text-sm mb-1">
                       {related.title}
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                       <span className={`px-2 py-1 rounded ${getDomainColor(related.content_domain)}`}>
                         {related.content_domain}
                       </span>
-                      <span className="text-gray-500">
+                      <span className="text-muted">
                         {(related.similarity_score * 20).toFixed(0)}% similar
                       </span>
                     </div>

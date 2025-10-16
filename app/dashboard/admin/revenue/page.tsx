@@ -153,53 +153,53 @@ export default async function AdminRevenuePage() {
               {/* Total Users */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-gray-700">Total Users</span>
-                  <span className="text-lg font-black text-gray-900">{metrics.totalUsers}</span>
+                  <span className="text-sm font-semibold text-body">Total Users</span>
+                  <span className="text-lg font-black text-primary">{metrics.totalUsers}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div className="bg-blue-600 h-3 rounded-full" style={{ width: '100%' }}></div>
+                <div className="w-full bg-surface-hover rounded-full h-3">
+                  <div className="bg-info h-3 rounded-full" style={{ width: '100%' }}></div>
                 </div>
               </div>
 
               {/* Premium Conversion */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-gray-700">Premium Users</span>
-                  <span className="text-lg font-black text-green-600">{metrics.premiumUsers}</span>
+                  <span className="text-sm font-semibold text-body">Premium Users</span>
+                  <span className="text-lg font-black text-success">{metrics.premiumUsers}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-surface-hover rounded-full h-3">
                   <div 
-                    className="bg-green-600 h-3 rounded-full transition-all" 
+                    className="bg-success h-3 rounded-full transition-all" 
                     style={{ width: `${metrics.conversionRate}%` }}
                   ></div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">{metrics.conversionRate}% conversion rate</div>
+                <div className="text-xs text-muted mt-1">{metrics.conversionRate}% conversion rate</div>
               </div>
             </div>
 
             {/* Conversion Target */}
-            <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+            <div className="mt-6 p-4 bg-info-subtle border-2 border-info rounded-lg">
               <div className="flex items-center gap-3 mb-3">
-                <Icon name="Target" className="h-5 w-5 text-blue-600" />
-                <h3 className="font-bold text-gray-900">Conversion Goals</h3>
+                <Icon name="Target" className="h-5 w-5 text-info" />
+                <h3 className="font-bold text-primary">Conversion Goals</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <div className="text-gray-600">Current</div>
-                  <div className="text-xl font-black text-blue-600">{metrics.conversionRate}%</div>
+                  <div className="text-body">Current</div>
+                  <div className="text-xl font-black text-info">{metrics.conversionRate}%</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">Target</div>
-                  <div className="text-xl font-black text-green-600">8-10%</div>
+                  <div className="text-body">Target</div>
+                  <div className="text-xl font-black text-success">8-10%</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">Gap</div>
+                  <div className="text-body">Gap</div>
                   <div className="text-xl font-black text-orange-600">
                     {(8 - metrics.conversionRate).toFixed(1)}%
                   </div>
                 </div>
                 <div>
-                  <div className="text-gray-600">Potential MRR</div>
+                  <div className="text-body">Potential MRR</div>
                   <div className="text-xl font-black text-purple-600">
                     ${((metrics.totalUsers * 0.08 * 9.99) - metrics.mrr).toFixed(0)}
                   </div>
@@ -213,16 +213,16 @@ export default async function AdminRevenuePage() {
             <AnimatedCard delay={400}>
               <h3 className="text-xl font-bold text-text-headings mb-4">This Month&apos;s Growth</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                  <span className="text-sm font-semibold text-gray-700">New Users</span>
-                  <span className="text-2xl font-black text-blue-600">+{metrics.newUsersThisMonth}</span>
+                <div className="flex items-center justify-between p-4 bg-info-subtle rounded-lg">
+                  <span className="text-sm font-semibold text-body">New Users</span>
+                  <span className="text-2xl font-black text-info">+{metrics.newUsersThisMonth}</span>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                  <span className="text-sm font-semibold text-gray-700">New Premium</span>
-                  <span className="text-2xl font-black text-green-600">+{metrics.newPremiumThisMonth}</span>
+                <div className="flex items-center justify-between p-4 bg-success-subtle rounded-lg">
+                  <span className="text-sm font-semibold text-body">New Premium</span>
+                  <span className="text-2xl font-black text-success">+{metrics.newPremiumThisMonth}</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-                  <span className="text-sm font-semibold text-gray-700">MRR Growth</span>
+                  <span className="text-sm font-semibold text-body">MRR Growth</span>
                   <span className="text-2xl font-black text-purple-600">
                     +${(metrics.newPremiumThisMonth * 9.99).toFixed(2)}
                   </span>
@@ -233,19 +233,19 @@ export default async function AdminRevenuePage() {
             <AnimatedCard delay={500}>
               <h3 className="text-xl font-bold text-text-headings mb-4">12-Month Projection</h3>
               <div className="space-y-4">
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">If growth continues...</div>
-                  <div className="text-3xl font-black text-blue-600">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-info rounded-lg">
+                  <div className="text-sm text-body mb-1">If growth continues...</div>
+                  <div className="text-3xl font-black text-info">
                     ${(metrics.projectedMRR * 12).toFixed(0)}
                   </div>
-                  <div className="text-xs text-gray-500">ARR in 12 months</div>
+                  <div className="text-xs text-muted">ARR in 12 months</div>
                 </div>
-                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">With 8% conversion...</div>
-                  <div className="text-3xl font-black text-green-600">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-success rounded-lg">
+                  <div className="text-sm text-body mb-1">With 8% conversion...</div>
+                  <div className="text-3xl font-black text-success">
                     ${((metrics.totalUsers * 3) * 0.08 * 9.99 * 12).toFixed(0)}
                   </div>
-                  <div className="text-xs text-gray-500">Potential ARR (3x users)</div>
+                  <div className="text-xs text-muted">Potential ARR (3x users)</div>
                 </div>
               </div>
             </AnimatedCard>
@@ -255,39 +255,39 @@ export default async function AdminRevenuePage() {
           <AnimatedCard delay={600} className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
             <div className="flex items-center gap-3 mb-4">
               <Icon name="Lightbulb" className="h-6 w-6 text-amber-600" />
-              <h3 className="text-xl font-bold text-gray-900">Revenue Insights</h3>
+              <h3 className="text-xl font-bold text-primary">Revenue Insights</h3>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Current Performance</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h4 className="font-semibold text-primary mb-2">Current Performance</h4>
+                <ul className="space-y-2 text-sm text-body">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>Current MRR: <strong>${metrics.mrr.toFixed(2)}</strong></span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>ARPU: <strong>${metrics.avgRevenuePerUser}</strong> per user</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600">•</span>
+                    <span className="text-info">•</span>
                     <span>Conversion: <strong>{metrics.conversionRate}%</strong> (target: 8-10%)</span>
                   </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Growth Opportunities</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h4 className="font-semibold text-primary mb-2">Growth Opportunities</h4>
+                <ul className="space-y-2 text-sm text-body">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">•</span>
+                    <span className="text-success">•</span>
                     <span>Reaching 8% conversion = <strong>+${((metrics.totalUsers * 0.08 * 9.99) - metrics.mrr).toFixed(0)} MRR</strong></span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">•</span>
+                    <span className="text-success">•</span>
                     <span>100 more users = <strong>+$80 MRR</strong> (8% conversion)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600">•</span>
+                    <span className="text-success">•</span>
                     <span>1,000 users at 8% = <strong>$799 MRR</strong></span>
                   </li>
                 </ul>

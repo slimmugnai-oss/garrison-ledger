@@ -96,10 +96,10 @@ export default async function AIMonitoringPage() {
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Icon name="DollarSign" className="h-6 w-6 text-white" />
                 </div>
-                <div className="text-sm font-semibold text-blue-100">Total AI Costs (All Time)</div>
+                <div className="text-sm font-semibold text-white/90">Total AI Costs (All Time)</div>
               </div>
               <div className="text-5xl font-black mb-2">${(costAllTime + curationCost).toFixed(2)}</div>
-              <div className="text-blue-100">
+              <div className="text-white/90">
                 Plans: ${costAllTime.toFixed(2)} + Curation: ${curationCost.toFixed(2)}
               </div>
             </AnimatedCard>
@@ -109,10 +109,10 @@ export default async function AIMonitoringPage() {
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Icon name="TrendingUp" className="h-6 w-6 text-white" />
                 </div>
-                <div className="text-sm font-semibold text-green-100">This Month</div>
+                <div className="text-sm font-semibold text-white/90">This Month</div>
               </div>
               <div className="text-5xl font-black mb-2">${costThisMonth.toFixed(2)}</div>
-              <div className="text-green-100">
+              <div className="text-white/90">
                 {metrics.plansThisMonth} plans × $0.02 each
               </div>
             </AnimatedCard>
@@ -122,7 +122,7 @@ export default async function AIMonitoringPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <AnimatedCard className="bg-card border border-border p-6" delay={100}>
               <div className="flex items-center gap-2 mb-2">
-                <Icon name="Zap" className="h-5 w-5 text-blue-600" />
+                <Icon name="Zap" className="h-5 w-5 text-info" />
                 <span className="text-text-muted text-sm font-semibold">Plans Today</span>
               </div>
               <div className="text-3xl font-black text-text-headings">{metrics.plansToday}</div>
@@ -131,7 +131,7 @@ export default async function AIMonitoringPage() {
 
             <AnimatedCard className="bg-card border border-border p-6" delay={125}>
               <div className="flex items-center gap-2 mb-2">
-                <Icon name="Calendar" className="h-5 w-5 text-green-600" />
+                <Icon name="Calendar" className="h-5 w-5 text-success" />
                 <span className="text-text-muted text-sm font-semibold">Plans This Month</span>
               </div>
               <div className="text-3xl font-black text-text-headings">{metrics.plansThisMonth}</div>
@@ -163,8 +163,8 @@ export default async function AIMonitoringPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Icon name="Brain" className="h-5 w-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-info-subtle rounded-lg flex items-center justify-center">
+                    <Icon name="Brain" className="h-5 w-5 text-info" />
                   </div>
                   <div>
                     <div className="font-bold text-text-headings">GPT-4o-mini</div>
@@ -199,8 +199,8 @@ export default async function AIMonitoringPage() {
 
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Icon name="MessageSquare" className="h-5 w-5 text-green-600" />
+                  <div className="w-10 h-10 bg-success-subtle rounded-lg flex items-center justify-center">
+                    <Icon name="MessageSquare" className="h-5 w-5 text-success" />
                   </div>
                   <div>
                     <div className="font-bold text-text-headings">GPT-4o-mini</div>
@@ -223,28 +223,28 @@ export default async function AIMonitoringPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-bold text-text-headings mb-3 flex items-center gap-2">
-                  <Icon name="CheckCircle2" className="h-5 w-5 text-green-600" />
+                  <Icon name="CheckCircle2" className="h-5 w-5 text-success" />
                   Currently Implemented
                 </h3>
                 <ul className="space-y-2 text-sm text-text-body">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                     Using GPT-4o-mini (87% cheaper than GPT-4)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                     Pre-filtering to top 187 blocks (token efficiency)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                     Rate limiting (1/week free, 3/day premium)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                     Gemini for curation (99% cheaper than GPT-4)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                     Storing plans (no re-generation needed)
                   </li>
                 </ul>
@@ -280,29 +280,29 @@ export default async function AIMonitoringPage() {
           <AnimatedCard className="bg-card border border-border p-6 mt-8" delay={300}>
             <h2 className="text-2xl font-serif font-black text-text-headings mb-6">Budget Tracking</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-border">
+              <div className="flex items-center justify-between p-4 bg-surface-hover rounded-lg border border-border">
                 <div>
                   <div className="font-semibold text-text-headings">Today&apos;s AI Costs</div>
                   <div className="text-sm text-text-muted">{metrics.plansToday} plans generated</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-black text-blue-600">${costToday.toFixed(2)}</div>
+                  <div className="text-2xl font-black text-info">${costToday.toFixed(2)}</div>
                   <div className="text-xs text-text-muted">Target: &lt; $2.00</div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-border">
+              <div className="flex items-center justify-between p-4 bg-surface-hover rounded-lg border border-border">
                 <div>
                   <div className="font-semibold text-text-headings">This Month&apos;s AI Costs</div>
                   <div className="text-sm text-text-muted">{metrics.plansThisMonth} plans generated</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-black text-green-600">${costThisMonth.toFixed(2)}</div>
+                  <div className="text-2xl font-black text-success">${costThisMonth.toFixed(2)}</div>
                   <div className="text-xs text-text-muted">Target: &lt; $50.00</div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-border">
+              <div className="flex items-center justify-between p-4 bg-surface-hover rounded-lg border border-border">
                 <div>
                   <div className="font-semibold text-text-headings">All-Time AI Investment</div>
                   <div className="text-sm text-text-muted">{metrics.totalPlans} plans + {metrics.curatedItems} curated</div>
@@ -322,9 +322,9 @@ export default async function AIMonitoringPage() {
               Run these in Supabase SQL Editor for detailed AI usage analytics
             </p>
             <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2">Daily Plan Generation Trend</div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   DATE(created_at) as date,
   COUNT(*) as plans,
@@ -336,9 +336,9 @@ ORDER BY date DESC;`}
                 </pre>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2">Top AI Users (Check for Abuse)</div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   user_id,
   COUNT(*) as plan_count,
@@ -351,9 +351,9 @@ ORDER BY plan_count DESC;`}
                 </pre>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg border border-border">
+              <div className="bg-surface-hover p-4 rounded-lg border border-border">
                 <div className="font-semibold text-text-headings mb-2">Monthly AI Cost Projection</div>
-                <pre className="text-xs bg-white p-3 rounded border border-border overflow-x-auto">
+                <pre className="text-xs bg-surface p-3 rounded border border-border overflow-x-auto">
 {`SELECT 
   DATE_TRUNC('month', created_at) as month,
   COUNT(*) as plans,

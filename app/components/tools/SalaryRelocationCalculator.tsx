@@ -86,47 +86,47 @@ export default function SalaryRelocationCalculator() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">Salary & Relocation Calculator</h2>
-        <p className="text-gray-600 mb-8">
+      <div className="bg-surface rounded-xl border border-subtle p-8 shadow-sm">
+        <h2 className="text-3xl font-bold text-primary mb-3">Salary & Relocation Calculator</h2>
+        <p className="text-body mb-8">
           Compare your current salary to a new job offer, adjusted for cost of living differences. 
           Is that civilian job really worth the move?
         </p>
 
         {/* Input Grid */}
-        <div className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-8 mb-8">
+        <div className="bg-gradient-to-br from-gray-50 to-white border-2 border-subtle rounded-xl p-8 mb-8">
           <div className="grid md:grid-cols-2 gap-8 items-end">
             {/* Current Situation */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                <h3 className="text-lg font-semibold text-gray-800">Current Situation</h3>
+                <div className="w-3 h-3 bg-info rounded-full"></div>
+                <h3 className="text-lg font-semibold text-primary">Current Situation</h3>
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-body mb-2">
                   Current Annual Salary
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                   <input
                     type="number"
                     value={currentSalary}
                     onChange={(e) => setCurrentSalary(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                    className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
                     placeholder="60000"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-body mb-2">
                   Current City
                 </label>
                 <select
                   value={currentCity}
                   onChange={(e) => setCurrentCity(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none text-base"
+                  className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
                 >
                   {CITY_DATA.map((city) => (
                     <option key={city.value} value={city.value}>
@@ -134,7 +134,7 @@ export default function SalaryRelocationCalculator() {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted mt-1">
                   Cost of living index: {currentCity}
                 </p>
               </div>
@@ -143,34 +143,34 @@ export default function SalaryRelocationCalculator() {
             {/* New Offer */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                <h3 className="text-lg font-semibold text-gray-800">New Offer</h3>
+                <div className="w-3 h-3 bg-success rounded-full"></div>
+                <h3 className="text-lg font-semibold text-primary">New Offer</h3>
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-body mb-2">
                   New Salary Offer
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
                   <input
                     type="number"
                     value={newSalary}
                     onChange={(e) => setNewSalary(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                    className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
                     placeholder="65000"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-body mb-2">
                   New City
                 </label>
                 <select
                   value={newCity}
                   onChange={(e) => setNewCity(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none text-base"
+                  className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
                 >
                   {CITY_DATA.map((city) => (
                     <option key={city.value} value={city.value}>
@@ -178,7 +178,7 @@ export default function SalaryRelocationCalculator() {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted mt-1">
                   Cost of living index: {newCity}
                 </p>
               </div>
@@ -186,15 +186,15 @@ export default function SalaryRelocationCalculator() {
           </div>
 
           {/* Custom COL Option */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 pt-6 border-t border-subtle">
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={useCustom}
                 onChange={(e) => setUseCustom(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 rounded border-default text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">
+              <span className="ml-2 text-sm font-medium text-body">
                 Use custom cost-of-living indices
               </span>
             </label>
@@ -202,7 +202,7 @@ export default function SalaryRelocationCalculator() {
             {useCustom && (
               <div className="mt-4 grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                  <label className="block text-xs font-medium text-body mb-1">
                     Current City COL Index
                   </label>
                   <input
@@ -210,12 +210,12 @@ export default function SalaryRelocationCalculator() {
                     value={customCurrentCOL}
                     onChange={(e) => setCustomCurrentCOL(Number(e.target.value))}
                     step="0.1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                    className="w-full px-3 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                     placeholder="100.0"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                  <label className="block text-xs font-medium text-body mb-1">
                     New City COL Index
                   </label>
                   <input
@@ -223,7 +223,7 @@ export default function SalaryRelocationCalculator() {
                     value={customNewCOL}
                     onChange={(e) => setCustomNewCOL(Number(e.target.value))}
                     step="0.1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                    className="w-full px-3 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                     placeholder="100.0"
                   />
                 </div>
@@ -245,9 +245,9 @@ export default function SalaryRelocationCalculator() {
         {/* Results */}
         {showResult && result && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-8">
-            <h4 className="text-2xl font-bold text-gray-900 mb-4">Here&apos;s the breakdown:</h4>
+            <h4 className="text-2xl font-bold text-primary mb-4">Here&apos;s the breakdown:</h4>
             
-            <p className="text-gray-700 mb-6 text-lg">
+            <p className="text-body mb-6 text-lg">
               To maintain your current lifestyle in <strong>{result.newCityLabel}</strong>, 
               you would need a salary of approximately{' '}
               <span className="text-indigo-600 font-black text-2xl">
@@ -256,27 +256,27 @@ export default function SalaryRelocationCalculator() {
             </p>
 
             {result.difference > 100 && (
-              <div className="bg-green-100 border-2 border-green-300 rounded-xl p-6">
-                <p className="font-bold text-green-900 text-lg">
+              <div className="bg-success-subtle border-2 border-green-300 rounded-xl p-6">
+                <p className="font-bold text-success text-lg">
                   <Icon name="CircleCheck" className="h-5 w-5 inline mr-1" /> Good news! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
-                  <span className="text-2xl text-green-700">{fmt(result.difference)}</span> more 
+                  <span className="text-2xl text-success">{fmt(result.difference)}</span> more 
                   than you need, giving you increased purchasing power.
                 </p>
               </div>
             )}
 
             {result.difference < -100 && (
-              <div className="bg-red-100 border-2 border-red-300 rounded-xl p-6">
-                <p className="font-bold text-red-900 text-lg">
+              <div className="bg-danger-subtle border-2 border-red-300 rounded-xl p-6">
+                <p className="font-bold text-danger text-lg">
                   <Icon name="AlertTriangle" className="h-5 w-5 inline mr-1" /> Heads up! Your offer of <strong>{fmt(newSalary)}</strong> is about{' '}
-                  <span className="text-2xl text-red-700">{fmt(Math.abs(result.difference))}</span> short 
+                  <span className="text-2xl text-danger">{fmt(Math.abs(result.difference))}</span> short 
                   of maintaining your current lifestyle in the new city.
                 </p>
               </div>
             )}
 
             {result.difference >= -100 && result.difference <= 100 && (
-              <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-6">
+              <div className="bg-info-subtle border-2 border-blue-300 rounded-xl p-6">
                 <p className="font-bold text-blue-900 text-lg">
                   <Icon name="Target" className="h-5 w-5 inline mr-1" /> It&apos;s a match! Your offer of <strong>{fmt(newSalary)}</strong> should provide 
                   a similar standard of living in your new location.

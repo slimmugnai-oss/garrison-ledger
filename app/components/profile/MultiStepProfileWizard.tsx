@@ -102,10 +102,10 @@ export default function MultiStepProfileWizard() {
       {/* Progress Bar */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-semibold text-gray-600">
+          <div className="text-sm font-semibold text-body">
             Step {currentStep} of {totalSteps}
           </div>
-          <div className="text-sm font-semibold text-gray-600">
+          <div className="text-sm font-semibold text-body">
             {Math.round((currentStep / totalSteps) * 100)}% Complete
           </div>
         </div>
@@ -150,22 +150,22 @@ export default function MultiStepProfileWizard() {
       </div>
 
       {/* Step Content */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+      <div className="bg-surface rounded-2xl shadow-lg p-8 mb-6">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Let&apos;s Start with the Basics</h2>
-              <p className="text-gray-600">This helps AI understand your military context</p>
+              <h2 className="text-3xl font-black text-primary mb-2">Let&apos;s Start with the Basics</h2>
+              <p className="text-body">This helps AI understand your military context</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Service Status *
               </label>
               <select
                 value={formData.service_status}
                 onChange={(e) => setFormData({ ...formData, service_status: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select status</option>
@@ -180,13 +180,13 @@ export default function MultiStepProfileWizard() {
             {formData.service_status && formData.service_status !== 'military-spouse' && (
               <>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-body mb-2">
                     Branch *
                   </label>
                   <select
                     value={formData.branch}
                     onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                    className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                     required
                   >
                     <option value="">Select branch</option>
@@ -200,7 +200,7 @@ export default function MultiStepProfileWizard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-body mb-2">
                     Rank *
                   </label>
                   <input
@@ -208,13 +208,13 @@ export default function MultiStepProfileWizard() {
                     value={formData.rank}
                     onChange={(e) => setFormData({ ...formData, rank: e.target.value })}
                     placeholder="e.g., E-5, O-3, W-2"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                    className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-body mb-2">
                     Years of Service *
                   </label>
                   <input
@@ -224,7 +224,7 @@ export default function MultiStepProfileWizard() {
                     placeholder="e.g., 8"
                     min="0"
                     max="40"
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                    className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                     required
                   />
                 </div>
@@ -232,7 +232,7 @@ export default function MultiStepProfileWizard() {
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Current Duty Station
               </label>
               <input
@@ -240,7 +240,7 @@ export default function MultiStepProfileWizard() {
                 value={formData.current_base}
                 onChange={(e) => setFormData({ ...formData, current_base: e.target.value })}
                 placeholder="e.g., Fort Hood, Camp Pendleton, etc."
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
               />
             </div>
           </div>
@@ -249,18 +249,18 @@ export default function MultiStepProfileWizard() {
         {currentStep === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Family & Timeline</h2>
-              <p className="text-gray-600">Help us personalize your plan</p>
+              <h2 className="text-3xl font-black text-primary mb-2">Family & Timeline</h2>
+              <p className="text-body">Help us personalize your plan</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Marital Status *
               </label>
               <select
                 value={formData.marital_status}
                 onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select status</option>
@@ -272,7 +272,7 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Number of Children *
               </label>
               <input
@@ -281,7 +281,7 @@ export default function MultiStepProfileWizard() {
                 onChange={(e) => setFormData({ ...formData, num_children: e.target.value })}
                 min="0"
                 max="10"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               />
             </div>
@@ -292,28 +292,28 @@ export default function MultiStepProfileWizard() {
                   type="checkbox"
                   checked={formData.has_efmp}
                   onChange={(e) => setFormData({ ...formData, has_efmp: e.target.checked })}
-                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-5 h-5 text-info border-default rounded focus:ring-blue-500"
                 />
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-sm font-semibold text-body">
                   Family member enrolled in EFMP
                 </span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Next PCS Date (if known)
               </label>
               <input
                 type="date"
                 value={formData.pcs_date}
                 onChange={(e) => setFormData({ ...formData, pcs_date: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Next Duty Station (if known)
               </label>
               <input
@@ -321,7 +321,7 @@ export default function MultiStepProfileWizard() {
                 value={formData.next_base}
                 onChange={(e) => setFormData({ ...formData, next_base: e.target.value })}
                 placeholder="e.g., Fort Bragg, Norfolk, etc."
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
               />
             </div>
           </div>
@@ -330,19 +330,19 @@ export default function MultiStepProfileWizard() {
         {currentStep === 3 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Financial Snapshot</h2>
-              <p className="text-gray-600">This helps AI curate relevant strategies</p>
-              <p className="text-xs text-gray-500 mt-2">All information is private and encrypted</p>
+              <h2 className="text-3xl font-black text-primary mb-2">Financial Snapshot</h2>
+              <p className="text-body">This helps AI curate relevant strategies</p>
+              <p className="text-xs text-muted mt-2">All information is private and encrypted</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 TSP Balance Range *
               </label>
               <select
                 value={formData.tsp_balance_range}
                 onChange={(e) => setFormData({ ...formData, tsp_balance_range: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select range</option>
@@ -357,13 +357,13 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Emergency Fund Range *
               </label>
               <select
                 value={formData.emergency_fund_range}
                 onChange={(e) => setFormData({ ...formData, emergency_fund_range: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select range</option>
@@ -377,13 +377,13 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Total Debt Range *
               </label>
               <select
                 value={formData.debt_amount_range}
                 onChange={(e) => setFormData({ ...formData, debt_amount_range: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select range</option>
@@ -401,18 +401,18 @@ export default function MultiStepProfileWizard() {
         {currentStep === 4 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">Your Goals & Preferences</h2>
-              <p className="text-gray-600">Almost done! This personalizes your AI plan</p>
+              <h2 className="text-3xl font-black text-primary mb-2">Your Goals & Preferences</h2>
+              <p className="text-body">Almost done! This personalizes your AI plan</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Primary Long-Term Goal *
               </label>
               <select
                 value={formData.long_term_goal}
                 onChange={(e) => setFormData({ ...formData, long_term_goal: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
                 required
               >
                 <option value="">Select your primary goal</option>
@@ -427,13 +427,13 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-body mb-2">
                 Content Difficulty Preference
               </label>
               <select
                 value={formData.content_difficulty}
                 onChange={(e) => setFormData({ ...formData, content_difficulty: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
               >
                 <option value="beginner">Beginner - I&apos;m just starting out</option>
                 <option value="intermediate">Intermediate - I know the basics</option>
@@ -444,12 +444,12 @@ export default function MultiStepProfileWizard() {
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between mt-8 pt-8 border-t-2 border-gray-200">
+        <div className="flex items-center justify-between mt-8 pt-8 border-t-2 border-subtle">
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:border-gray-400 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-default rounded-xl font-semibold text-body hover:border-strong transition-all"
             >
               <Icon name="ChevronLeft" className="w-4 h-4" />
               Back
@@ -496,8 +496,8 @@ export default function MultiStepProfileWizard() {
 
       {/* Value preview */}
       <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 text-center">
-        <p className="text-sm text-gray-700">
-          <strong className="text-blue-600">Why we ask:</strong> AI uses this information to curate the most relevant financial strategies from our library of 410+ expert content blocks.
+        <p className="text-sm text-body">
+          <strong className="text-info">Why we ask:</strong> AI uses this information to curate the most relevant financial strategies from our library of 410+ expert content blocks.
         </p>
       </div>
     </div>

@@ -20,8 +20,8 @@ export default function ContentBlock({ children, className = '' }: Props) {
           prose-strong:text-text-headings prose-strong:font-bold
           prose-blockquote:border-l-4 prose-blockquote:border-primary-accent prose-blockquote:bg-indigo-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:my-6
           prose-table:w-full prose-table:border-collapse
-          prose-th:bg-gray-100 prose-th:p-4 prose-th:text-left prose-th:font-bold prose-th:text-text-headings
-          prose-td:p-4 prose-td:border-t prose-td:border-gray-200 prose-td:text-text-body"
+          prose-th:bg-surface-hover prose-th:p-4 prose-th:text-left prose-th:font-bold prose-th:text-text-headings
+          prose-td:p-4 prose-td:border-t prose-td:border-subtle prose-td:text-text-body"
       >
         {children}
       </div>

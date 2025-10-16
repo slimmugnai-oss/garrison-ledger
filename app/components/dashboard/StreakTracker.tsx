@@ -53,7 +53,7 @@ export default function StreakTracker({ userId }: StreakTrackerProps) {
         </div>
         <div className="w-full bg-white/20 rounded-full h-2">
           <div 
-            className="bg-white rounded-full h-2 transition-all duration-500"
+            className="bg-surface rounded-full h-2 transition-all duration-500"
             style={{ width: `${Math.min((streak % 7) / 7 * 100, 100)}%` }}
           />
         </div>

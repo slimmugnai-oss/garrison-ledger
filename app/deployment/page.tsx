@@ -49,7 +49,7 @@ export default function DeploymentHub() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/dashboard/tools/sdp-strategist"
-                className="inline-flex items-center justify-center gap-2 bg-white text-teal-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                className="inline-flex items-center justify-center gap-2 bg-surface text-teal-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
               >
                 <Icon name="DollarSign" className="h-5 w-5" />
                 Use SDP Calculator (10% Return)
@@ -66,24 +66,24 @@ export default function DeploymentHub() {
       </section>
 
       {/* Quick Stats */}
-      <section className="bg-white border-b border-gray-200 py-8">
+      <section className="bg-surface border-b border-subtle py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-black text-teal-600 mb-1">6-12</div>
-              <div className="text-sm text-gray-600">Months (Typical)</div>
+              <div className="text-sm text-body">Months (Typical)</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-green-600 mb-1">10%</div>
-              <div className="text-sm text-gray-600">SDP Return Rate</div>
+              <div className="text-3xl font-black text-success mb-1">10%</div>
+              <div className="text-sm text-body">SDP Return Rate</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-blue-600 mb-1">$10K</div>
-              <div className="text-sm text-gray-600">Max SDP Deposit</div>
+              <div className="text-3xl font-black text-info mb-1">$10K</div>
+              <div className="text-sm text-body">Max SDP Deposit</div>
             </div>
             <div>
               <div className="text-3xl font-black text-purple-600 mb-1">90</div>
-              <div className="text-sm text-gray-600">Days to Submit SDP</div>
+              <div className="text-sm text-body">Days to Submit SDP</div>
             </div>
           </div>
         </div>
@@ -94,33 +94,33 @@ export default function DeploymentHub() {
         
         {/* Quick Navigation */}
         <div className="mb-16 bg-teal-50 border-2 border-teal-200 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-3">
             <Icon name="MapPin" className="h-6 w-6 text-teal-600" />
             Deployment Cycle Phases
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <a href="#before" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Before Deployment</span>
+            <a href="#before" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Before Deployment</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#during" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">During Deployment</span>
+            <a href="#during" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">During Deployment</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#after" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Reintegration</span>
+            <a href="#after" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Reintegration</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#financial" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Financial Planning</span>
+            <a href="#financial" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Financial Planning</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#legal" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Legal Prep (POA)</span>
+            <a href="#legal" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Legal Prep (POA)</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#faq" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">FAQs</span>
+            <a href="#faq" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">FAQs</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           </div>
@@ -129,62 +129,62 @@ export default function DeploymentHub() {
         {/* Before Deployment */}
         <section id="before" className="mb-20">
           <AnimatedCard delay={0}>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-2xl p-8 md:p-12">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
+                <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center text-white font-black text-xl">
                   1
                 </div>
-                <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">
+                <h2 className="text-3xl md:text-4xl font-serif font-black text-primary">
                   Before Deployment: Preparation Phase
                 </h2>
               </div>
               
               <div className="grid md:grid-cols-2 gap-6 mt-8">
-                <div className="bg-white rounded-xl p-6 border border-blue-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Icon name="File" className="h-5 w-5 text-blue-600" />
+                <div className="bg-surface rounded-xl p-6 border border-info">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                    <Icon name="File" className="h-5 w-5 text-info" />
                     Legal Preparations
                   </h3>
-                  <ul className="space-y-3 text-gray-700">
+                  <ul className="space-y-3 text-body">
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Power of Attorney (POA):</strong> Visit base legal to prepare Special or General POA (free for active duty)</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Update will:</strong> Review beneficiaries and estate planning</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>SGLI review:</strong> Confirm $500K life insurance and beneficiaries current</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Document copies:</strong> Birth certificates, passports, marriage certificate, medical records</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 border border-green-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                <div className="bg-surface rounded-xl p-6 border border-success">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
+                    <Icon name="DollarSign" className="h-5 w-5 text-success" />
                     Financial Setup
                   </h3>
-                  <ul className="space-y-3 text-gray-700">
+                  <ul className="space-y-3 text-body">
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Set up allotments:</strong> Automate bill payments (rent, car, insurance)</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Emergency fund:</strong> Build 3-6 months expenses before deploying</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>Joint accounts:</strong> Ensure spouse has access to all financial accounts</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <Icon name="Check" className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <Icon name="Check" className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
                       <span><strong>SCRA benefits:</strong> Contact creditors to reduce interest to 6% max on pre-service debts</span>
                     </li>
                   </ul>
@@ -206,7 +206,7 @@ export default function DeploymentHub() {
                   <h2 className="text-3xl md:text-4xl font-serif font-black">
                     SDP: The 10% Guaranteed Return
                   </h2>
-                  <p className="text-green-100 font-semibold">Savings Deposit Program - Military&apos;s Best-Kept Secret</p>
+                  <p className="text-white/90 font-semibold">Savings Deposit Program - Military&apos;s Best-Kept Secret</p>
                 </div>
               </div>
               
@@ -216,7 +216,7 @@ export default function DeploymentHub() {
                   <p className="text-green-50 mb-4 leading-relaxed">
                     The Savings Deposit Program (SDP) allows service members deployed to designated combat zones to deposit up to <strong className="text-white">$10,000</strong> and earn a <strong className="text-yellow-300">guaranteed 10% annual return</strong>.
                   </p>
-                  <p className="text-sm text-green-100">
+                  <p className="text-sm text-white/90">
                     This is <strong>risk-free, tax-free money</strong> - one of the best financial benefits available to deployed service members.
                   </p>
                 </div>
@@ -248,17 +248,17 @@ export default function DeploymentHub() {
                 </div>
               </div>
 
-              <div className="mt-8 bg-gradient-to-r from-yellow-400 to-amber-500 text-gray-900 rounded-xl p-6">
+              <div className="mt-8 bg-gradient-to-r from-yellow-400 to-amber-500 text-primary rounded-xl p-6">
                 <div className="flex items-start gap-4">
                   <Icon name="Calculator" className="h-8 w-8 flex-shrink-0 mt-1" />
                   <div className="flex-1">
                     <h3 className="text-xl font-bold mb-2">Calculate Your SDP Potential</h3>
-                    <p className="text-sm text-gray-800 mb-4">
+                    <p className="text-sm text-primary mb-4">
                       A 12-month deployment with maximum $10,000 contribution earns you <strong>$1,000+ guaranteed</strong>. Our SDP Strategist helps you optimize your contribution strategy.
                     </p>
                     <Link
                       href="/dashboard/tools/sdp-strategist"
-                      className="inline-flex items-center gap-2 bg-white text-amber-700 px-6 py-3 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-lg"
+                      className="inline-flex items-center gap-2 bg-surface text-amber-700 px-6 py-3 rounded-lg font-bold hover:bg-surface-hover transition-colors shadow-lg"
                     >
                       <Icon name="Calculator" className="h-5 w-5" />
                       Calculate My SDP Growth
@@ -278,18 +278,18 @@ export default function DeploymentHub() {
                 <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
                   2
                 </div>
-                <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">
+                <h2 className="text-3xl md:text-4xl font-serif font-black text-primary">
                   During Deployment: Staying Connected
                 </h2>
               </div>
               
               <div className="grid md:grid-cols-2 gap-6 mt-8">
-                <div className="bg-white rounded-xl p-6 border border-purple-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-xl p-6 border border-purple-200">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <Icon name="MessageSquare" className="h-5 w-5 text-purple-600" />
                     Communication Options
                   </h3>
-                  <div className="space-y-3 text-gray-700 text-sm">
+                  <div className="space-y-3 text-body text-sm">
                     <div className="flex items-start gap-2">
                       <span className="text-purple-600 font-bold">•</span>
                       <div>
@@ -316,48 +316,48 @@ export default function DeploymentHub() {
                     </div>
                   </div>
                   
-                  <div className="mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                  <div className="mt-4 p-4 bg-danger-subtle border-2 border-danger rounded-lg">
                     <div className="flex items-start gap-2">
-                      <Icon name="AlertTriangle" className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-red-900">
+                      <Icon name="AlertTriangle" className="h-5 w-5 text-danger flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-danger">
                         <strong>OPSEC Warning:</strong> Never post specific dates, locations, troop movements, or mission details online. When in doubt, don&apos;t post it.
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6 border border-purple-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-xl p-6 border border-purple-200">
+                  <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <Icon name="Heart" className="h-5 w-5 text-purple-600" />
                     For Families at Home
                   </h3>
-                  <div className="space-y-3 text-gray-700 text-sm">
+                  <div className="space-y-3 text-body text-sm">
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-success font-bold">✓</span>
                       <div>
                         <strong>Maintain routines:</strong> Keep normal schedules for children (school, activities, bedtime)
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-success font-bold">✓</span>
                       <div>
                         <strong>Join FRG:</strong> Family Readiness Group provides support, updates, community
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-success font-bold">✓</span>
                       <div>
                         <strong>Self-care:</strong> Exercise, hobbies, friendships - don&apos;t neglect your own needs
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-success font-bold">✓</span>
                       <div>
                         <strong>Seek support:</strong> Military OneSource counseling (free, confidential, 24/7)
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-success font-bold">✓</span>
                       <div>
                         <strong>Financial management:</strong> Review budget monthly, track expenses, adjust as needed
                       </div>
@@ -372,42 +372,42 @@ export default function DeploymentHub() {
         {/* Deployment Special Pays */}
         <section className="mb-20">
           <AnimatedCard delay={300}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Deployment Financial Benefits
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* IDP */}
-              <div className="bg-white border-2 border-blue-200 rounded-xl p-6">
-                <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="bg-surface border-2 border-info rounded-xl p-6">
+                <div className="w-14 h-14 bg-info rounded-xl flex items-center justify-center mb-4">
                   <Icon name="Shield" className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">IDP</h3>
-                <p className="text-xs text-gray-600 mb-3">Imminent Danger Pay</p>
-                <div className="text-2xl font-black text-blue-600">$225/mo</div>
-                <p className="text-xs text-gray-500 mt-2">Designated hostile fire zones</p>
+                <h3 className="text-lg font-bold text-primary mb-2">IDP</h3>
+                <p className="text-xs text-body mb-3">Imminent Danger Pay</p>
+                <div className="text-2xl font-black text-info">$225/mo</div>
+                <p className="text-xs text-muted mt-2">Designated hostile fire zones</p>
               </div>
 
               {/* HDP */}
-              <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+              <div className="bg-surface border-2 border-purple-200 rounded-xl p-6">
                 <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
                   <Icon name="AlertTriangle" className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">HDP</h3>
-                <p className="text-xs text-gray-600 mb-3">Hardship Duty Pay</p>
+                <h3 className="text-lg font-bold text-primary mb-2">HDP</h3>
+                <p className="text-xs text-body mb-3">Hardship Duty Pay</p>
                 <div className="text-2xl font-black text-purple-600">$50-$150/mo</div>
-                <p className="text-xs text-gray-500 mt-2">Difficult living conditions</p>
+                <p className="text-xs text-muted mt-2">Difficult living conditions</p>
               </div>
 
               {/* FSA */}
-              <div className="bg-white border-2 border-green-200 rounded-xl p-6">
-                <div className="w-14 h-14 bg-green-600 rounded-xl flex items-center justify-center mb-4">
+              <div className="bg-surface border-2 border-success rounded-xl p-6">
+                <div className="w-14 h-14 bg-success rounded-xl flex items-center justify-center mb-4">
                   <Icon name="Home" className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">FSA</h3>
-                <p className="text-xs text-gray-600 mb-3">Family Separation Allowance</p>
-                <div className="text-2xl font-black text-green-600">$250/mo</div>
-                <p className="text-xs text-gray-500 mt-2">30+ days away from dependents</p>
+                <h3 className="text-lg font-bold text-primary mb-2">FSA</h3>
+                <p className="text-xs text-body mb-3">Family Separation Allowance</p>
+                <div className="text-2xl font-black text-success">$250/mo</div>
+                <p className="text-xs text-muted mt-2">30+ days away from dependents</p>
               </div>
 
               {/* CZTE */}
@@ -422,12 +422,12 @@ export default function DeploymentHub() {
               </div>
             </div>
 
-            <div className="mt-8 bg-white rounded-xl p-6 border-2 border-gray-200">
+            <div className="mt-8 bg-surface rounded-xl p-6 border-2 border-subtle">
               <div className="flex items-start gap-4">
-                <Icon name="Calculator" className="h-8 w-8 text-green-600 flex-shrink-0 mt-1" />
+                <Icon name="Calculator" className="h-8 w-8 text-success flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Example: 12-Month Deployment</h3>
-                  <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
+                  <h3 className="text-xl font-bold text-primary mb-2">Example: 12-Month Deployment</h3>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm text-body">
                     <div>
                       <div className="font-semibold mb-2">Monthly Pays:</div>
                       <ul className="space-y-1">
@@ -436,7 +436,7 @@ export default function DeploymentHub() {
                         <li>BAS: $460</li>
                         <li>IDP: $225</li>
                         <li>FSA: $250</li>
-                        <li className="pt-2 border-t border-gray-200 font-bold">Total: $5,935/mo</li>
+                        <li className="pt-2 border-t border-subtle font-bold">Total: $5,935/mo</li>
                       </ul>
                     </div>
                     <div>
@@ -445,7 +445,7 @@ export default function DeploymentHub() {
                         <li>Regular Pay: $71,220</li>
                         <li>Tax Savings (CZTE): ~$8,500</li>
                         <li>SDP Growth ($10K @ 10%): $1,000</li>
-                        <li className="pt-2 border-t border-gray-200 font-bold text-green-600">Extra Income: ~$9,500</li>
+                        <li className="pt-2 border-t border-subtle font-bold text-success">Extra Income: ~$9,500</li>
                       </ul>
                     </div>
                   </div>
@@ -463,21 +463,21 @@ export default function DeploymentHub() {
                 <div className="w-12 h-12 bg-rose-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
                   3
                 </div>
-                <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">
+                <h2 className="text-3xl md:text-4xl font-serif font-black text-primary">
                   Reintegration: Coming Home
                 </h2>
               </div>
               
-              <div className="bg-white rounded-xl p-6 border border-rose-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Homecoming is a Process, Not an Event</h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">
+              <div className="bg-surface rounded-xl p-6 border border-rose-200">
+                <h3 className="text-xl font-bold text-primary mb-4">Homecoming is a Process, Not an Event</h3>
+                <p className="text-body mb-6 leading-relaxed">
                   It&apos;s normal to feel awkward or experience tension when the service member returns. The deployed member has been in a highly structured environment with specific mission focus, while the at-home spouse has been managing everything solo and establishing new routines. <strong>Give it time and communicate openly.</strong>
                 </p>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-bold text-rose-900 mb-3">For the Service Member:</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-2 text-sm text-body">
                       <li className="flex items-start gap-2">
                         <span className="text-rose-600">•</span>
                         <span>Ease back into family roles gradually</span>
@@ -499,7 +499,7 @@ export default function DeploymentHub() {
                   
                   <div>
                     <h4 className="font-bold text-rose-900 mb-3">For the At-Home Spouse:</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-2 text-sm text-body">
                       <li className="flex items-start gap-2">
                         <span className="text-rose-600">•</span>
                         <span>Allow time for readjustment (3-6 months normal)</span>
@@ -520,7 +520,7 @@ export default function DeploymentHub() {
                   </div>
                 </div>
                 
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mt-6 p-4 bg-info-subtle border border-info rounded-lg">
                   <p className="text-sm text-blue-900">
                     <strong>Resources:</strong> Military OneSource (24/7 counseling), Chaplain services, TRICARE behavioral health, Fleet & Family Support Center.
                   </p>
@@ -533,21 +533,21 @@ export default function DeploymentHub() {
         {/* FAQ Section */}
         <section id="faq" className="mb-20">
           <AnimatedCard delay={500}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Deployment FAQs
             </h2>
             
             <div className="space-y-4">
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-teal-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-teal-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>What is a Power of Attorney (POA) and which type do I need?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-blue-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-info">
                   <p className="mb-3">
                     A POA is a legal document giving someone (usually your spouse) authority to make financial or legal decisions on your behalf while you&apos;re deployed.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-4 mb-3">
+                  <div className="bg-info-subtle rounded-lg p-4 mb-3">
                     <div className="font-bold text-blue-900 mb-2">Two Types:</div>
                     <div className="space-y-2 text-sm">
                       <div>
@@ -558,22 +558,22 @@ export default function DeploymentHub() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-sm bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm bg-success-subtle border border-success rounded-lg p-3">
                     <strong>Free Service:</strong> Your base legal office can prepare POA documents for free. Schedule appointment 30+ days before deployment if possible.
                   </p>
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-teal-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-teal-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>How long does a typical military deployment last?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-purple-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-purple-500">
                   <p className="mb-3">
                     Standard deployments typically last <strong>6-12 months</strong>, though length varies by branch, mission type, and unit rotation schedule.
                   </p>
-                  <ul className="space-y-2 text-sm bg-gray-50 rounded-lg p-4">
+                  <ul className="space-y-2 text-sm bg-surface-hover rounded-lg p-4">
                     <li><strong>Army:</strong> 9-12 months typical</li>
                     <li><strong>Navy:</strong> 6-9 months (carrier deployments)</li>
                     <li><strong>Air Force:</strong> 4-6 months (rotating squadrons)</li>
@@ -586,15 +586,15 @@ export default function DeploymentHub() {
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-teal-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-teal-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>What financial support is available during deployment?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-green-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-success">
                   <div className="space-y-3">
-                    <div className="bg-green-50 rounded-lg p-4">
-                      <strong className="text-green-900">Special Pays:</strong>
+                    <div className="bg-success-subtle rounded-lg p-4">
+                      <strong className="text-success">Special Pays:</strong>
                       <ul className="mt-2 space-y-1 text-sm">
                         <li>• <strong>IDP:</strong> $225/month (imminent danger zones)</li>
                         <li>• <strong>HDP:</strong> $50-$150/month (hardship duty)</li>
@@ -608,7 +608,7 @@ export default function DeploymentHub() {
                         <li>• <strong>TSP contributions:</strong> Can contribute tax-free combat pay to Roth TSP</li>
                       </ul>
                     </div>
-                    <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="bg-info-subtle rounded-lg p-4">
                       <strong className="text-blue-900">Savings Opportunities:</strong>
                       <ul className="mt-2 space-y-1 text-sm">
                         <li>• <strong>SDP:</strong> 10% guaranteed return on up to $10,000</li>
@@ -637,11 +637,11 @@ export default function DeploymentHub() {
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <Link
                   href="/dashboard/tools/sdp-strategist"
-                  className="bg-white text-gray-900 rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
+                  className="bg-surface text-primary rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
                 >
-                  <Icon name="PiggyBank" className="h-8 w-8 text-green-600 mb-3" />
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-green-600 transition-colors">SDP Strategist</h3>
-                  <p className="text-sm text-gray-600">
+                  <Icon name="PiggyBank" className="h-8 w-8 text-success mb-3" />
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-success transition-colors">SDP Strategist</h3>
+                  <p className="text-sm text-body">
                     Calculate your 10% deployment savings growth and contribution strategy.
                   </p>
                 </Link>

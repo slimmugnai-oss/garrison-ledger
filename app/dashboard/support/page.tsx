@@ -36,7 +36,7 @@ export default async function DashboardSupportPage() {
                   </div>
                   <h3 className="text-lg font-bold text-white">Priority Support</h3>
                 </div>
-                <p className="text-sm text-gray-300 mb-4">
+                <p className="text-sm text-muted mb-4">
                   As a registered user, your support requests receive priority handling.
                 </p>
                 <div className="flex items-center gap-2 text-sm">
@@ -56,7 +56,7 @@ export default async function DashboardSupportPage() {
                     <Icon name="Library" className="w-5 h-5 text-[#00E5A0] group-hover:scale-110 transition-transform" />
                     <div>
                       <p className="text-sm font-semibold text-white">Intelligence Library</p>
-                      <p className="text-xs text-gray-400">Browse help articles</p>
+                      <p className="text-xs text-muted">Browse help articles</p>
                     </div>
                   </Link>
                   <Link
@@ -66,7 +66,7 @@ export default async function DashboardSupportPage() {
                     <Icon name="BookOpen" className="w-5 h-5 text-[#00E5A0] group-hover:scale-110 transition-transform" />
                     <div>
                       <p className="text-sm font-semibold text-white">Resource Hubs</p>
-                      <p className="text-xs text-gray-400">Guides and tutorials</p>
+                      <p className="text-xs text-muted">Guides and tutorials</p>
                     </div>
                   </Link>
                   <Link
@@ -76,7 +76,7 @@ export default async function DashboardSupportPage() {
                     <Icon name="Settings" className="w-5 h-5 text-[#00E5A0] group-hover:scale-110 transition-transform" />
                     <div>
                       <p className="text-sm font-semibold text-white">Account Settings</p>
-                      <p className="text-xs text-gray-400">Manage your account</p>
+                      <p className="text-xs text-muted">Manage your account</p>
                     </div>
                   </Link>
                 </div>
@@ -86,19 +86,19 @@ export default async function DashboardSupportPage() {
               <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white">Common Topics</h3>
                 <div className="space-y-2 text-sm">
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-gray-300 hover:text-white">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
                     • How to retake my assessment
                   </button>
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-gray-300 hover:text-white">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
                     • Understanding my plan
                   </button>
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-gray-300 hover:text-white">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
                     • Billing and subscriptions
                   </button>
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-gray-300 hover:text-white">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
                     • Calculator tool help
                   </button>
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-gray-300 hover:text-white">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
                     • Data privacy & security
                   </button>
                 </div>
@@ -110,7 +110,7 @@ export default async function DashboardSupportPage() {
               <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-2">Submit a Support Request</h2>
-                  <p className="text-gray-400">
+                  <p className="text-muted">
                     Describe your issue or question and we&apos;ll get back to you as soon as possible.
                   </p>
                 </div>
@@ -124,12 +124,12 @@ export default async function DashboardSupportPage() {
               </div>
 
               {/* Support Tips */}
-              <div className="mt-6 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-2xl p-6 shadow-lg">
+              <div className="mt-6 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-info/30 rounded-2xl p-6 shadow-lg">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Icon name="Lightbulb" className="w-5 h-5 text-blue-400" />
+                  <Icon name="Lightbulb" className="w-5 h-5 text-info" />
                   Tips for Better Support
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-muted">
                   <li className="flex items-start gap-2">
                     <Icon name="Check" className="w-4 h-4 text-[#00E5A0] flex-shrink-0 mt-0.5" />
                     <span>Be specific about what you were trying to do when the issue occurred</span>

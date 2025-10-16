@@ -29,27 +29,27 @@ export default function Page() {
                 <span>⭐</span> Premium Tool
               </span>
             </div>
-            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-gray-900 mb-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-black tracking-tight text-primary mb-4">
               PCS Financial Planner
             </h1>
-            <p className="mx-auto max-w-3xl text-xl text-gray-600">
+            <p className="mx-auto max-w-3xl text-xl text-body">
               Plan your PCS move finances with confidence. Calculate your budget, estimate PPM profits, 
               and ensure you&apos;re financially prepared for your next duty station.
             </p>
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400">
+            <div className="max-w-2xl mx-auto bg-surface rounded-2xl p-10 shadow-2xl border-2 border-indigo-400">
               <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Plan Your PCS Finances</h2>
-              <p className="text-lg text-gray-700 mb-2">
+              <h2 className="text-3xl font-bold text-primary mb-3">Plan Your PCS Finances</h2>
+              <p className="text-lg text-body mb-2">
                 Calculate your move budget and PPM profit potential
               </p>
-              <p className="text-sm text-gray-600 mb-6">
-                💡 Our PPM calculator has helped members profit <strong className="text-green-600">$1,500-3,000</strong> per move
+              <p className="text-sm text-body mb-6">
+                💡 Our PPM calculator has helped members profit <strong className="text-success">$1,500-3,000</strong> per move
               </p>
-              <p className="text-3xl font-black text-gray-900 mb-6">
-                $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+              <p className="text-3xl font-black text-primary mb-6">
+                $9.99<span className="text-lg font-normal text-body">/month</span>
               </p>
               <Link
                 href="/sign-in"
@@ -57,7 +57,7 @@ export default function Page() {
               >
                 Start Free, Upgrade Anytime →
               </Link>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted">
                 No credit card required for free tier · Less than a coffee per week for premium
               </p>
             </div>
@@ -68,31 +68,31 @@ export default function Page() {
             
             {/* Educational Content */}
             <div className="mt-16 grid md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <div className="bg-info-subtle border border-info rounded-xl p-6">
                 <h3 className="text-lg font-bold text-blue-900 mb-3">💰 DLA (Dislocation Allowance)</h3>
-                <p className="text-sm text-blue-800 mb-3">
+                <p className="text-sm text-info mb-3">
                   A one-time payment to help offset costs of relocating your household. Amount varies by rank and dependents.
                 </p>
                 <a 
                   href="https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/DLA/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
+                  className="text-info hover:text-info text-sm font-semibold underline"
                 >
                   View DLA Rates →
                 </a>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-green-900 mb-3">🚚 PPM/DITY Moves</h3>
-                <p className="text-sm text-green-800 mb-3">
+              <div className="bg-success-subtle border border-success rounded-xl p-6">
+                <h3 className="text-lg font-bold text-success mb-3">🚚 PPM/DITY Moves</h3>
+                <p className="text-sm text-success mb-3">
                   Personally Procured Moves let you handle your own relocation and pocket any savings. Government pays ~95% of what it would cost them.
                 </p>
                 <a 
                   href="https://www.move.mil/moving-guide/dity-ppm"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-600 hover:text-green-800 text-sm font-semibold underline"
+                  className="text-success hover:text-success text-sm font-semibold underline"
                 >
                   Learn About PPM →
                 </a>

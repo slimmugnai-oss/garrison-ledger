@@ -66,17 +66,17 @@ export default function LibraryFilters({
     <>
       {/* Search */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
+        <label className="block text-sm font-semibold text-body mb-2">Search</label>
         <div className="relative">
           <input
             type="text"
             placeholder="Search content..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-3 border border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -88,7 +88,7 @@ export default function LibraryFilters({
 
       {/* Domain Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">Domain</label>
+        <label className="block text-sm font-semibold text-body mb-3">Domain</label>
         <div className="flex flex-wrap gap-2">
           {domains.map((domain) => (
             <button
@@ -108,7 +108,7 @@ export default function LibraryFilters({
 
       {/* Difficulty Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">Difficulty</label>
+        <label className="block text-sm font-semibold text-body mb-3">Difficulty</label>
         <div className="flex flex-wrap gap-2">
           {difficulties.map((difficulty) => (
             <button
@@ -129,7 +129,7 @@ export default function LibraryFilters({
 
       {/* Audience Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">Audience</label>
+        <label className="block text-sm font-semibold text-body mb-3">Audience</label>
         <div className="flex flex-wrap gap-2">
           {audiences.map((audience) => (
             <button
@@ -149,7 +149,7 @@ export default function LibraryFilters({
 
       {/* Rating Filter */}
       <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-body mb-3">
           Minimum Rating
         </label>
         <div className="flex flex-wrap gap-2">
@@ -173,7 +173,7 @@ export default function LibraryFilters({
       {activeFiltersCount > 0 && (
         <button
           onClick={onClearFilters}
-          className="w-full px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full px-4 py-3 bg-danger-subtle hover:bg-danger-subtle text-danger font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -184,16 +184,16 @@ export default function LibraryFilters({
 
       {/* Results Count */}
       {resultCount !== undefined && totalCount !== undefined && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mt-4 p-3 bg-info-subtle rounded-lg border border-info">
           <p className="text-sm text-blue-900 font-semibold text-center">
             {activeFiltersCount > 0 ? (
               <>
-                Found <span className="text-blue-600">{resultCount}</span> of{' '}
-                <span className="text-blue-600">{totalCount}</span> articles
+                Found <span className="text-info">{resultCount}</span> of{' '}
+                <span className="text-info">{totalCount}</span> articles
               </>
             ) : (
               <>
-                Showing <span className="text-blue-600">{totalCount}</span> articles
+                Showing <span className="text-info">{totalCount}</span> articles
               </>
             )}
           </p>
@@ -207,7 +207,7 @@ export default function LibraryFilters({
       {/* Desktop Filters */}
       <div className="hidden lg:block">
         <AnimatedCard className="p-6 sticky top-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Filters</h3>
+          <h3 className="text-lg font-bold text-primary mb-4">Filters</h3>
           <FilterContent />
         </AnimatedCard>
       </div>
@@ -216,14 +216,14 @@ export default function LibraryFilters({
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setMobileFiltersOpen(true)}
-          className="w-full px-6 py-4 bg-white border-2 border-blue-600 text-blue-600 font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-blue-50 transition-colors shadow-sm"
+          className="w-full px-6 py-4 bg-surface border-2 border-blue-600 text-info font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-info-subtle transition-colors shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
           <span>Filters</span>
           {activeFiltersCount > 0 && (
-            <span className="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+            <span className="px-2 py-1 bg-info text-white text-xs font-bold rounded-full">
               {activeFiltersCount}
             </span>
           )}
@@ -234,16 +234,16 @@ export default function LibraryFilters({
       {mobileFiltersOpen && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setMobileFiltersOpen(false)}>
           <div 
-            className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-2xl overflow-y-auto"
+            className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-surface shadow-2xl overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
-              <h3 className="text-lg font-bold text-gray-900">Filters</h3>
+            <div className="sticky top-0 bg-surface border-b border-subtle p-4 flex items-center justify-between z-10">
+              <h3 className="text-lg font-bold text-primary">Filters</h3>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-hover rounded-lg transition-colors"
               >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-body" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -252,7 +252,7 @@ export default function LibraryFilters({
               <FilterContent />
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full mt-6 px-6 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                className="w-full mt-6 px-6 py-4 bg-info text-white font-bold rounded-lg hover:bg-info transition-colors"
               >
                 Apply Filters
               </button>

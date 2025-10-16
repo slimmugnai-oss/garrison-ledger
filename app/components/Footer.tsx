@@ -8,23 +8,23 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand with Authority */}
           <div>
-            <div className="text-xl font-bold text-text-headings dark:text-gray-100 mb-4">
+            <div className="text-xl font-bold text-text-headings dark:text-white/90 mb-4">
               <Icon name="BarChart" className="h-5 w-5 inline mr-1" /> Garrison Ledger
             </div>
-            <p className="text-text-body dark:text-gray-300 leading-relaxed mb-4">
+            <p className="text-text-body dark:text-muted leading-relaxed mb-4">
               Intelligent planning for military life.
             </p>
             {/* Authority Signals */}
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                <Icon name="Star" className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center gap-2 text-xs text-body dark:text-muted">
+                <Icon name="Star" className="h-4 w-4 text-info dark:text-info" />
                 <span className="font-semibold">Military Financial Experts</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                <Icon name="Shield" className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <div className="flex items-center gap-2 text-xs text-body dark:text-muted">
+                <Icon name="Shield" className="h-4 w-4 text-success dark:text-green-400" />
                 <span className="font-semibold">Trusted by 500+ Families</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-xs text-body dark:text-muted">
                 <Icon name="CheckCircle" className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <span className="font-semibold">20+ Years Experience</span>
               </div>
@@ -33,10 +33,10 @@ export default function Footer() {
 
           {/* Platform */}
           <div>
-            <h3 className="font-bold text-text-headings dark:text-gray-100 mb-4">Platform</h3>
+            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Platform</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/dashboard" className="text-text-body dark:text-gray-300 hover:text-primary-accent dark:hover:text-blue-400 transition-colors">
+                <Link href="/dashboard" className="text-text-body dark:text-muted hover:text-primary-accent dark:hover:text-info transition-colors">
                   Dashboard
                 </Link>
               </li>
@@ -60,7 +60,7 @@ export default function Footer() {
 
           {/* Resources */}
           <div>
-            <h3 className="font-bold text-text-headings dark:text-gray-100 mb-4">Resources</h3>
+            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/career-hub" className="text-text-body hover:text-primary-accent transition-colors">
@@ -92,7 +92,7 @@ export default function Footer() {
 
           {/* Support & Legal */}
           <div>
-            <h3 className="font-bold text-text-headings dark:text-gray-100 mb-4">Support & Legal</h3>
+            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Support & Legal</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/contact" className="text-text-body hover:text-primary-accent transition-colors font-semibold">
@@ -100,22 +100,22 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/disclosures" className="text-gray-700 hover:text-primary transition-colors font-semibold">
+                <Link href="/disclosures" className="text-body hover:text-primary transition-colors font-semibold">
                   Disclosures
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-700 hover:text-primary transition-colors">
+                <Link href="/privacy" className="text-body hover:text-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/privacy/cookies" className="text-gray-700 hover:text-primary transition-colors">
+                <Link href="/privacy/cookies" className="text-body hover:text-primary transition-colors">
                   Cookie Policy
                 </Link>
               </li>
               <li>
-                <Link href="/privacy/do-not-sell" className="text-gray-700 hover:text-primary transition-colors text-sm">
+                <Link href="/privacy/do-not-sell" className="text-body hover:text-primary transition-colors text-sm">
                   Do Not Sell (CA)
                 </Link>
               </li>
@@ -125,10 +125,10 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-border dark:border-slate-700 text-center">
-          <p className="text-text-muted dark:text-gray-400 text-sm">
+          <p className="text-text-muted dark:text-muted text-sm">
             © {new Date().getFullYear()} Garrison Ledger by FamilyMedia, LLC. All rights reserved.
           </p>
-          <p className="text-text-muted dark:text-gray-500 text-xs mt-2">
+          <p className="text-text-muted dark:text-muted text-xs mt-2">
             Not affiliated with the U.S. Department of Defense or any branch of the Armed Forces.
           </p>
         </div>

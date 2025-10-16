@@ -26,14 +26,14 @@ export default async function QuickStartProfilePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold mb-4">
-              <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <div className="inline-flex items-center gap-2 bg-success-subtle text-success px-4 py-2 rounded-full text-sm font-bold mb-4">
+              <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse"></span>
               Quick Setup - Just 2 Minutes
             </div>
-            <h1 className="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-4">
+            <h1 className="text-4xl md:text-5xl font-serif font-black text-primary mb-4">
               Let&apos;s Get You Set Up
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-body max-w-2xl mx-auto">
               Answer a few quick questions so AI can curate the perfect financial plan for your military situation
             </p>
           </div>
@@ -43,17 +43,17 @@ export default async function QuickStartProfilePage() {
 
           {/* Trust signals */}
           <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-6 text-sm text-gray-600">
+            <div className="inline-flex items-center gap-6 text-sm text-body">
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✓</span>
+                <span className="text-success">✓</span>
                 <span>Bank-level encryption</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✓</span>
+                <span className="text-success">✓</span>
                 <span>Never shared</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-600">✓</span>
+                <span className="text-success">✓</span>
                 <span>100% private</span>
               </div>
             </div>

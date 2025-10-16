@@ -122,7 +122,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Name */}
       <div>
-        <label htmlFor="name" className="block text-sm font-semibold mb-2 text-gray-200">
+        <label htmlFor="name" className="block text-sm font-semibold mb-2 text-disabled">
           Your Name <span className="text-red-400">*</span>
         </label>
         <input
@@ -148,7 +148,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
 
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-semibold mb-2 text-gray-200">
+        <label htmlFor="email" className="block text-sm font-semibold mb-2 text-disabled">
           Email Address <span className="text-red-400">*</span>
         </label>
         <input
@@ -174,7 +174,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
 
       {/* Subject */}
       <div>
-        <label htmlFor="subject" className="block text-sm font-semibold mb-2 text-gray-200">
+        <label htmlFor="subject" className="block text-sm font-semibold mb-2 text-disabled">
           Subject
         </label>
         <select
@@ -195,7 +195,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
       {/* Urgency (Dashboard only) */}
       {isDashboard && (
         <div>
-          <label className="block text-sm font-semibold mb-3 text-gray-200">
+          <label className="block text-sm font-semibold mb-3 text-disabled">
             Priority Level
           </label>
           <div className="space-y-2">
@@ -229,7 +229,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
 
       {/* Message */}
       <div>
-        <label htmlFor="message" className="block text-sm font-semibold mb-2 text-gray-200">
+        <label htmlFor="message" className="block text-sm font-semibold mb-2 text-disabled">
           Message <span className="text-red-400">*</span>
         </label>
         <textarea
@@ -251,14 +251,14 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
             {fieldErrors.message}
           </p>
         )}
-        <p className="mt-2 text-xs text-gray-400">
+        <p className="mt-2 text-xs text-muted">
           {formData.message.length} characters (minimum 10)
         </p>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+        <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg">
           <p className="text-sm text-red-400 flex items-center gap-2">
             <Icon name="AlertTriangle" className="w-5 h-5" />
             {error}
@@ -286,7 +286,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
       </button>
 
       {/* Privacy Note */}
-      <p className="text-xs text-gray-400 text-center">
+      <p className="text-xs text-muted text-center">
         Your information is secure and will only be used to respond to your inquiry.
       </p>
     </form>

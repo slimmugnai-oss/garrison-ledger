@@ -49,7 +49,7 @@ export default function CareerHub() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/dashboard/tools/salary-calculator"
-                className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                className="inline-flex items-center justify-center gap-2 bg-surface text-purple-700 px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
               >
                 <Icon name="Calculator" className="h-5 w-5" />
                 Career Opportunity Analyzer
@@ -66,24 +66,24 @@ export default function CareerHub() {
       </section>
 
       {/* Quick Stats */}
-      <section className="bg-white border-b border-gray-200 py-8">
+      <section className="bg-surface border-b border-subtle py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-black text-purple-600 mb-1">21-24%</div>
-              <div className="text-sm text-gray-600">Spouse Unemployment</div>
+              <div className="text-sm text-body">Spouse Unemployment</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-green-600 mb-1">$4,000</div>
-              <div className="text-sm text-gray-600">MyCAA Funding</div>
+              <div className="text-3xl font-black text-success mb-1">$4,000</div>
+              <div className="text-sm text-body">MyCAA Funding</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-blue-600 mb-1">$35K-$120K</div>
-              <div className="text-sm text-gray-600">Remote Career Range</div>
+              <div className="text-3xl font-black text-info mb-1">$35K-$120K</div>
+              <div className="text-sm text-body">Remote Career Range</div>
             </div>
             <div>
               <div className="text-3xl font-black text-amber-600 mb-1">500+</div>
-              <div className="text-sm text-gray-600">MSEP Employers</div>
+              <div className="text-sm text-body">MSEP Employers</div>
             </div>
           </div>
         </div>
@@ -94,33 +94,33 @@ export default function CareerHub() {
         
         {/* Quick Navigation */}
         <div className="mb-16 bg-purple-50 border-2 border-purple-200 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-3">
             <Icon name="MapPin" className="h-6 w-6 text-purple-600" />
             Jump to Section
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <a href="#portable" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Portable Careers</span>
+            <a href="#portable" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Portable Careers</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#mycaa" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">MyCAA Funding</span>
+            <a href="#mycaa" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">MyCAA Funding</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#remote" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Remote Jobs</span>
+            <a href="#remote" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Remote Jobs</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#resume" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Resume Guide</span>
+            <a href="#resume" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Resume Guide</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#transition" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">Military Transition</span>
+            <a href="#transition" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">Military Transition</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
-            <a href="#faq" className="flex items-center justify-between px-4 py-3 bg-white rounded-lg hover:shadow-md transition-all group">
-              <span className="font-semibold text-gray-700">FAQs</span>
+            <a href="#faq" className="flex items-center justify-between px-4 py-3 bg-surface rounded-lg hover:shadow-md transition-all group">
+              <span className="font-semibold text-body">FAQs</span>
               <Icon name="ChevronRight" className="h-5 w-5 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           </div>
@@ -130,14 +130,14 @@ export default function CareerHub() {
         <section className="mb-16">
           <AnimatedCard delay={0}>
             <div className="bg-gradient-to-br from-rose-50 to-pink-50 border-2 border-rose-200 rounded-2xl p-8 md:p-12">
-              <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-serif font-black text-primary mb-6">
                 The Military Spouse Career Reality
               </h2>
               
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-xl font-bold text-rose-900 mb-4">The Challenge</h3>
-                  <div className="space-y-3 text-gray-700">
+                  <div className="space-y-3 text-body">
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-6 h-6 bg-rose-100 rounded-full flex items-center justify-center mt-0.5">
                         <span className="text-rose-600 font-bold text-sm">!</span>
@@ -172,35 +172,35 @@ export default function CareerHub() {
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-bold text-green-900 mb-4">The Solution: Portable Careers</h3>
-                  <div className="space-y-3 text-gray-700">
+                  <h3 className="text-xl font-bold text-success mb-4">The Solution: Portable Careers</h3>
+                  <div className="space-y-3 text-body">
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                        <Icon name="Check" className="h-4 w-4 text-green-600" />
+                      <span className="flex-shrink-0 w-6 h-6 bg-success-subtle rounded-full flex items-center justify-center mt-0.5">
+                        <Icon name="Check" className="h-4 w-4 text-success" />
                       </span>
                       <span><strong>Remote work</strong> survives every PCS move</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                        <Icon name="Check" className="h-4 w-4 text-green-600" />
+                      <span className="flex-shrink-0 w-6 h-6 bg-success-subtle rounded-full flex items-center justify-center mt-0.5">
+                        <Icon name="Check" className="h-4 w-4 text-success" />
                       </span>
                       <span><strong>National certifications</strong> transfer across state lines</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                        <Icon name="Check" className="h-4 w-4 text-green-600" />
+                      <span className="flex-shrink-0 w-6 h-6 bg-success-subtle rounded-full flex items-center justify-center mt-0.5">
+                        <Icon name="Check" className="h-4 w-4 text-success" />
                       </span>
                       <span><strong>Freelance/consulting</strong> provides location flexibility</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                        <Icon name="Check" className="h-4 w-4 text-green-600" />
+                      <span className="flex-shrink-0 w-6 h-6 bg-success-subtle rounded-full flex items-center justify-center mt-0.5">
+                        <Icon name="Check" className="h-4 w-4 text-success" />
                       </span>
                       <span><strong>Federal employment</strong> preference programs help spouses</span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                        <Icon name="Check" className="h-4 w-4 text-green-600" />
+                      <span className="flex-shrink-0 w-6 h-6 bg-success-subtle rounded-full flex items-center justify-center mt-0.5">
+                        <Icon name="Check" className="h-4 w-4 text-success" />
                       </span>
                       <span><strong>MyCAA provides $4,000</strong> for training/certifications</span>
                     </div>
@@ -214,7 +214,7 @@ export default function CareerHub() {
         {/* Top Portable Careers */}
         <section id="portable" className="mb-20">
           <AnimatedCard delay={100}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Top Portable Careers for Military Spouses (2025)
             </h2>
             
@@ -226,8 +226,8 @@ export default function CareerHub() {
                   <Badge variant="success">High Demand</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Software Developer</h3>
-                <div className="text-3xl font-black text-blue-100 mb-4">$85K-$120K</div>
-                <ul className="space-y-2 text-sm text-blue-50">
+                <div className="text-3xl font-black text-white/90 mb-4">$85K-$120K</div>
+                <ul className="space-y-2 text-sm text-white/95">
                   <li>✓ 100% remote work standard</li>
                   <li>✓ High salary, strong benefits</li>
                   <li>✓ Bootcamps covered by MyCAA</li>
@@ -258,7 +258,7 @@ export default function CareerHub() {
                   <Badge variant="primary">Remote Friendly</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Accountant/Bookkeeper</h3>
-                <div className="text-3xl font-black text-green-100 mb-4">$45K-$75K</div>
+                <div className="text-3xl font-black text-white/90 mb-4">$45K-$75K</div>
                 <ul className="space-y-2 text-sm text-green-50">
                   <li>✓ Fully remote capable</li>
                   <li>✓ QuickBooks certification via MyCAA</li>
@@ -321,37 +321,37 @@ export default function CareerHub() {
         {/* MyCAA Funding */}
         <section id="mycaa" className="mb-20">
           <AnimatedCard delay={200}>
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-success rounded-2xl p-8 md:p-12">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-success rounded-xl flex items-center justify-center">
                   <Icon name="DollarSign" className="h-10 w-10 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-serif font-black text-gray-900">
+                  <h2 className="text-3xl md:text-4xl font-serif font-black text-primary">
                     MyCAA: $4,000 Free Career Training
                   </h2>
-                  <p className="text-green-700 font-semibold">Military Spouse Career Advancement Accounts</p>
+                  <p className="text-success font-semibold">Military Spouse Career Advancement Accounts</p>
                 </div>
               </div>
               
               <div className="grid md:grid-cols-2 gap-8 mt-8">
-                <div className="bg-white rounded-xl p-6 border border-green-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Who&apos;s Eligible?</h3>
-                  <div className="space-y-3 text-gray-700">
+                <div className="bg-surface rounded-xl p-6 border border-success">
+                  <h3 className="text-xl font-bold text-primary mb-4">Who&apos;s Eligible?</h3>
+                  <div className="space-y-3 text-body">
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600">▸</span>
+                      <span className="text-success">▸</span>
                       <span>Spouses of active-duty members in <strong>pay grades E-1 to E-6, W-1 to W-2, O-1 to O-3</strong></span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600">▸</span>
+                      <span className="text-success">▸</span>
                       <span>Service member on <strong>Title 10 orders</strong> (includes activated Guard/Reserve)</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600">▸</span>
+                      <span className="text-success">▸</span>
                       <span>Must be pursuing <strong>portable career field</strong> (approved list)</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600">▸</span>
+                      <span className="text-success">▸</span>
                       <span>Degree, license, or certification program</span>
                     </div>
                   </div>
@@ -361,8 +361,8 @@ export default function CareerHub() {
                   <h3 className="text-xl font-bold mb-4">What&apos;s Covered?</h3>
                   <div className="space-y-3">
                     <div>
-                      <div className="text-4xl font-black text-green-100 mb-2">$4,000</div>
-                      <div className="text-sm text-green-100">Maximum funding per spouse (lifetime)</div>
+                      <div className="text-4xl font-black text-white/90 mb-2">$4,000</div>
+                      <div className="text-sm text-white/90">Maximum funding per spouse (lifetime)</div>
                     </div>
                     <div className="space-y-2 text-sm text-green-50">
                       <div className="flex items-start gap-2">
@@ -387,7 +387,7 @@ export default function CareerHub() {
                         href="https://myseco.militaryonesource.mil/portal/mycaa"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white text-green-700 px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-50 transition-colors"
+                        className="inline-flex items-center gap-2 bg-surface text-success px-4 py-2 rounded-lg font-bold text-sm hover:bg-success-subtle transition-colors"
                       >
                         Apply for MyCAA
                         <Icon name="ExternalLink" className="h-4 w-4" />
@@ -403,41 +403,41 @@ export default function CareerHub() {
         {/* FAQ Section */}
         <section id="faq" className="mb-20">
           <AnimatedCard delay={300}>
-            <h2 className="text-4xl font-serif font-black text-gray-900 mb-8">
+            <h2 className="text-4xl font-serif font-black text-primary mb-8">
               Career FAQs for Military Spouses
             </h2>
             
             <div className="space-y-4">
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-purple-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>How much does MyCAA provide?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-green-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-success">
                   <p>
                     MyCAA provides up to <strong>$4,000 for eligible spouses</strong> to pursue licenses, certifications, or associate degrees in portable career fields. This is a lifetime benefit that can cover tuition, fees, books, and exam costs.
                   </p>
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-purple-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>Who is eligible for MyCAA?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-blue-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-info">
                   <p>
                     Spouses of active-duty members in pay grades <strong>E-1 to E-6, W-1 to W-2, and O-1 to O-3</strong> (including activated Guard/Reserve in the same grades) while the service member is on Title 10 orders. Not available for spouses of retired, separated, or non-activated Guard/Reserve members.
                   </p>
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-purple-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>What are the best remote jobs for military spouses in 2025?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-purple-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-purple-500">
                   <p className="mb-3">Top portable careers with full remote work and transferable skills:</p>
                   <ul className="space-y-2 bg-purple-50 rounded-lg p-4">
                     <li><strong>Software Developer:</strong> $85K-$120K (bootcamp-friendly, MyCAA eligible)</li>
@@ -452,12 +452,12 @@ export default function CareerHub() {
                 </div>
               </details>
 
-              <details className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-colors group">
-                <summary className="font-bold text-gray-900 cursor-pointer flex items-center justify-between">
+              <details className="bg-surface border-2 border-subtle rounded-xl p-6 hover:border-purple-300 transition-colors group">
+                <summary className="font-bold text-primary cursor-pointer flex items-center justify-between">
                   <span>How do I maintain a career through multiple PCS moves?</span>
-                  <Icon name="ChevronDown" className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform" />
+                  <Icon name="ChevronDown" className="h-5 w-5 text-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="mt-4 text-gray-700 leading-relaxed pl-6 border-l-4 border-amber-500">
+                <div className="mt-4 text-body leading-relaxed pl-6 border-l-4 border-amber-500">
                   <p className="mb-4"><strong>5-Step Strategy for PCS-Proof Careers:</strong></p>
                   <ol className="space-y-3">
                     <li className="flex items-start gap-3">
@@ -511,11 +511,11 @@ export default function CareerHub() {
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <Link
                   href="/dashboard/tools/salary-calculator"
-                  className="bg-white text-gray-900 rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
+                  className="bg-surface text-primary rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
                 >
                   <Icon name="Calculator" className="h-8 w-8 text-purple-600 mb-3" />
                   <h3 className="text-xl font-bold mb-2 group-hover:text-purple-600 transition-colors">Career Opportunity Analyzer</h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-body">
                     Compare total compensation packages and cost of living for career opportunities.
                   </p>
                 </Link>

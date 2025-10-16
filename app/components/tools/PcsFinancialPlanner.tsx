@@ -135,20 +135,20 @@ export default function PcsFinancialPlanner() {
             1
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">Your Profile</h3>
-            <p className="text-sm text-gray-600">We&apos;ll auto-calculate your entitlements</p>
+            <h3 className="text-2xl font-bold text-primary">Your Profile</h3>
+            <p className="text-sm text-body">We&apos;ll auto-calculate your entitlements</p>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-body mb-2">
               Your Rank
             </label>
             <select
               value={rankGroup}
               onChange={(e) => setRankGroup(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-indigo-600 focus:outline-none text-base"
             >
               {RANKS.map((rank) => (
                 <option key={rank.value} value={rank.value}>
@@ -159,13 +159,13 @@ export default function PcsFinancialPlanner() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-body mb-2">
               Dependency Status
             </label>
             <select
               value={dependencyStatus}
               onChange={(e) => setDependencyStatus(e.target.value as 'with' | 'without')}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-indigo-600 focus:outline-none text-base"
             >
               <option value="">Select...</option>
               <option value="with">With Dependents</option>
@@ -178,29 +178,29 @@ export default function PcsFinancialPlanner() {
         {loadingEntitlements && (
           <div className="mt-6 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <p className="text-sm text-gray-600 mt-2">Fetching your entitlements...</p>
+            <p className="text-sm text-body mt-2">Fetching your entitlements...</p>
           </div>
         )}
 
         {/* Entitlements Briefing Card */}
         {entitlementData && !loadingEntitlements && (
-          <div className="mt-6 bg-white border-2 border-indigo-400 rounded-xl p-6">
+          <div className="mt-6 bg-surface border-2 border-indigo-400 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Icon name="ClipboardList" className="h-6 w-6 text-gray-700" />
-              <h4 className="text-xl font-bold text-gray-900">Your PCS Entitlements</h4>
+              <Icon name="ClipboardList" className="h-6 w-6 text-body" />
+              <h4 className="text-xl font-bold text-primary">Your PCS Entitlements</h4>
             </div>
             
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold text-blue-700 uppercase mb-1">DLA Rate</p>
-                <p className="text-2xl font-black text-blue-600">
+              <div className="bg-info-subtle border border-info rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold text-info uppercase mb-1">DLA Rate</p>
+                <p className="text-2xl font-black text-info">
                   ${entitlementData.dla_rate.toLocaleString()}
                 </p>
               </div>
               
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold text-green-700 uppercase mb-1">Weight Allowance</p>
-                <p className="text-2xl font-black text-green-600">
+              <div className="bg-success-subtle border border-success rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold text-success uppercase mb-1">Weight Allowance</p>
+                <p className="text-2xl font-black text-success">
                   {entitlementData.weight_allowance.toLocaleString()} lbs
                 </p>
               </div>
@@ -213,7 +213,7 @@ export default function PcsFinancialPlanner() {
               </div>
             </div>
 
-            <p className="text-xs text-gray-500 mt-4 text-center">
+            <p className="text-xs text-muted mt-4 text-center">
               <Icon name="Check" className="h-4 w-4 inline mr-1" /> Data auto-populated below based on current DoD rates
             </p>
           </div>
@@ -231,7 +231,7 @@ export default function PcsFinancialPlanner() {
 
       {/* Tab Navigation */}
       <div className="mb-8">
-        <div className="border-b border-gray-200">
+        <div className="border-b border-subtle">
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab('basic')}
@@ -259,17 +259,17 @@ export default function PcsFinancialPlanner() {
 
       {/* Basic Calculator Tab */}
       {activeTab === 'basic' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">PCS Budget Calculator</h3>
-          <p className="text-gray-600 mb-8">
+        <div className="bg-surface rounded-xl border border-subtle p-8 shadow-sm">
+          <h3 className="text-2xl font-bold text-primary mb-2">PCS Budget Calculator</h3>
+          <p className="text-body mb-8">
             Estimate your net financial position during a PCS move by tracking income and expenses.
           </p>
 
           <div className="space-y-8">
             {/* Income Section */}
             <div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <span className="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
+              <h4 className="text-xl font-semibold text-primary mb-4 flex items-center">
+                <span className="bg-success-subtle text-success rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
                   +
                 </span>
                 Estimated Income
@@ -277,73 +277,73 @@ export default function PcsFinancialPlanner() {
               
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Dislocation Allowance (DLA)
                     {entitlementData && (
-                      <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                      <span className="ml-2 text-xs bg-success-subtle text-success px-2 py-0.5 rounded-full font-semibold">
                         Auto-filled <Icon name="Check" className="h-3 w-3 inline" />
                       </span>
                     )}
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={dla}
                       onChange={(e) => setDla(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="Enter rank above for auto-fill"
                       disabled={!rankGroup}
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Based on your rank and dependents</p>
+                  <p className="text-xs text-muted mt-1">Based on your rank and dependents</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Per Diem / Travel Allowance
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={perDiem}
                       onChange={(e) => setPerDiem(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="800"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Varies by travel days and location</p>
+                  <p className="text-xs text-muted mt-1">Varies by travel days and location</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     PPM Incentive (if applicable)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={ppmIncentive}
                       onChange={(e) => setPpmIncentive(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="0"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Use PPM tab to estimate</p>
+                  <p className="text-xs text-muted mt-1">Use PPM tab to estimate</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Other Allowances
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={otherIncome}
                       onChange={(e) => setOtherIncome(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="0"
                     />
                   </div>
@@ -353,8 +353,8 @@ export default function PcsFinancialPlanner() {
 
             {/* Expenses Section */}
             <div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <span className="bg-red-100 text-red-700 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
+              <h4 className="text-xl font-semibold text-primary mb-4 flex items-center">
+                <span className="bg-danger-subtle text-danger rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
                   −
                 </span>
                 Estimated Expenses
@@ -362,64 +362,64 @@ export default function PcsFinancialPlanner() {
               
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Travel Costs (Gas, Food, etc.)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={travelCosts}
                       onChange={(e) => setTravelCosts(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="600"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Temporary Lodging
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={lodging}
                       onChange={(e) => setLodging(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="1200"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Housing Deposits & Fees
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={deposits}
                       onChange={(e) => setDeposits(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="2000"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Other Expenses
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={otherExpenses}
                       onChange={(e) => setOtherExpenses(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
                       placeholder="500"
                     />
                   </div>
@@ -428,12 +428,12 @@ export default function PcsFinancialPlanner() {
             </div>
 
             {/* Results - Available to ALL users */}
-            <div className="pt-6 border-t-2 border-gray-200">
+            <div className="pt-6 border-t-2 border-subtle">
               <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-gray-700 font-semibold mb-1">Net PCS Financial Estimate</p>
-                    <p className="text-xs text-gray-600">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
+                    <p className="text-body font-semibold mb-1">Net PCS Financial Estimate</p>
+                    <p className="text-xs text-body">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -441,7 +441,7 @@ export default function PcsFinancialPlanner() {
                     </p>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-4 text-center">
+                <p className="text-xs text-muted mt-4 text-center">
                   This is an estimate for planning purposes only. Actual costs may vary.
                 </p>
               </div>
@@ -459,10 +459,10 @@ export default function PcsFinancialPlanner() {
 
       {/* PPM Profit Estimator Tab */}
       {activeTab === 'ppm' && (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <h3 className="text-xl font-bold text-green-900 mb-2">PPM Profit Estimator</h3>
-            <p className="text-sm text-green-800">
+        <div className="bg-surface rounded-xl border border-subtle p-8 shadow-sm">
+          <div className="bg-success-subtle border border-success rounded-lg p-4 mb-6">
+            <h3 className="text-xl font-bold text-success mb-2">PPM Profit Estimator</h3>
+            <p className="text-sm text-success">
               Calculate your potential profit from a Personally Procured Move (PPM/DITY Move). 
               The government typically pays ~95% of what it would cost them to move you.
             </p>
@@ -471,13 +471,13 @@ export default function PcsFinancialPlanner() {
           <div className="space-y-6">
             {/* Move Details */}
             <div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-4">Move Details</h4>
+              <h4 className="text-lg font-semibold text-primary mb-4">Move Details</h4>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Estimated Weight (lbs)
                     {entitlementData && (
-                      <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                      <span className="ml-2 text-xs bg-success-subtle text-success px-2 py-0.5 rounded-full font-semibold">
                         Max: {entitlementData.weight_allowance.toLocaleString()} <Icon name="Check" className="h-3 w-3 inline" />
                       </span>
                     )}
@@ -486,92 +486,92 @@ export default function PcsFinancialPlanner() {
                     type="number"
                     value={ppmWeight}
                     onChange={(e) => setPpmWeight(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                    className="w-full px-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                     placeholder={entitlementData ? entitlementData.weight_allowance.toString() : "Enter rank above for auto-fill"}
                     disabled={!rankGroup}
                   />
-                  <p className="text-xs text-gray-500 mt-1">Get weigh tickets before and after loading</p>
+                  <p className="text-xs text-muted mt-1">Get weigh tickets before and after loading</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Distance (miles)
                   </label>
                   <input
                     type="number"
                     value={ppmDistance}
                     onChange={(e) => setPpmDistance(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                    className="w-full px-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                     placeholder="1200"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Official mileage per TMO</p>
+                  <p className="text-xs text-muted mt-1">Official mileage per TMO</p>
                 </div>
               </div>
             </div>
 
             {/* Your Costs */}
             <div>
-              <h4 className="text-lg font-semibold text-gray-800 mb-4">Your Expected Costs</h4>
+              <h4 className="text-lg font-semibold text-primary mb-4">Your Expected Costs</h4>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Truck Rental Cost
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={truckRental}
                       onChange={(e) => setTruckRental(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                       placeholder="800"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Gas & Fuel
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={gas}
                       onChange={(e) => setGas(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                       placeholder="400"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Moving Supplies
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={supplies}
                       onChange={(e) => setSupplies(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                       placeholder="200"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-body mb-1">
                     Other Expenses
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
                     <input
                       type="number"
                       value={ppmOther}
                       onChange={(e) => setPpmOther(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
                       placeholder="100"
                     />
                   </div>
@@ -580,20 +580,20 @@ export default function PcsFinancialPlanner() {
             </div>
 
             {/* Results */}
-            <div className="pt-6 border-t-2 border-gray-200">
+            <div className="pt-6 border-t-2 border-subtle">
               {isPremium ? (
                 <div>
                   <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-blue-50 p-5 rounded-xl text-center border-2 border-blue-200">
-                      <h5 className="text-sm font-semibold text-blue-800 mb-2">Government Payment</h5>
-                      <p className="text-3xl font-bold text-blue-600">
+                    <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
+                      <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
+                      <p className="text-3xl font-bold text-info">
                         ${Math.round(govtPayment).toLocaleString()}
                       </p>
                     </div>
 
-                    <div className="bg-red-50 p-5 rounded-xl text-center border-2 border-red-200">
-                      <h5 className="text-sm font-semibold text-red-800 mb-2">Your Costs</h5>
-                      <p className="text-3xl font-bold text-red-600">
+                    <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
+                      <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
+                      <p className="text-3xl font-bold text-danger">
                         ${Math.round(yourCosts).toLocaleString()}
                       </p>
                     </div>
@@ -617,18 +617,18 @@ export default function PcsFinancialPlanner() {
                   </div>
 
                   {entitlementData && ppmWeight > entitlementData.weight_allowance && (
-                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
-                      <p className="text-sm font-semibold text-red-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
-                      <p className="text-xs text-red-800">
+                    <div className="bg-danger-subtle border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
+                      <p className="text-sm font-semibold text-danger mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
+                      <p className="text-xs text-danger">
                         Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
                         You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
                       </p>
                     </div>
                   )}
 
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                    <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                    <p className="text-xs text-yellow-800">
+                  <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                    <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
+                    <p className="text-xs text-warning">
                       This is a simplified, unofficial estimate for planning purposes only. 
                       Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
                       <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
@@ -639,55 +639,55 @@ export default function PcsFinancialPlanner() {
                 <div className="relative">
                   <div className="blur-sm pointer-events-none select-none">
                     <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                      <div className="bg-blue-50 p-5 rounded-xl text-center border-2 border-blue-200">
-                        <h5 className="text-sm font-semibold text-blue-800 mb-2">Government Payment</h5>
-                        <p className="text-3xl font-bold text-blue-600">
+                      <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
+                        <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
+                        <p className="text-3xl font-bold text-info">
                           $8,247
                         </p>
                       </div>
 
-                      <div className="bg-red-50 p-5 rounded-xl text-center border-2 border-red-200">
-                        <h5 className="text-sm font-semibold text-red-800 mb-2">Your Costs</h5>
-                        <p className="text-3xl font-bold text-red-600">
+                      <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
+                        <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
+                        <p className="text-3xl font-bold text-danger">
                           $5,934
                         </p>
                       </div>
 
-                      <div className="p-5 rounded-xl text-center border-2 bg-green-50 border-green-300">
-                        <h5 className="text-sm font-semibold mb-2 text-green-800">
+                      <div className="p-5 rounded-xl text-center border-2 bg-success-subtle border-green-300">
+                        <h5 className="text-sm font-semibold mb-2 text-success">
                           Net Profit/Loss
                         </h5>
-                        <p className="text-3xl font-bold text-green-600">
+                        <p className="text-3xl font-bold text-success">
                           +$2,313
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                      <p className="text-sm font-semibold text-yellow-900 mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                      <p className="text-xs text-yellow-800">
+                    <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                      <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
+                      <p className="text-xs text-warning">
                         This is a simplified, unofficial estimate for planning purposes only. 
                         Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
                         <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
                       </p>
                     </div>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50/90 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-white rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                      <Icon name="Lock" className="h-16 w-16 text-gray-700 mb-4 mx-auto" />
-                      <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                  <div className="absolute inset-0 flex items-center justify-center bg-surface-hover/90 backdrop-blur-sm rounded-2xl">
+                    <div className="bg-surface rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
+                      <Icon name="Lock" className="h-16 w-16 text-body mb-4 mx-auto" />
+                      <h3 className="text-3xl font-bold text-primary mb-3">
                         Your Results Are Ready!
                       </h3>
-                      <p className="text-lg text-gray-700 mb-2">
+                      <p className="text-lg text-body mb-2">
                         Unlock to see your complete PPM profit analysis with detailed breakdowns
                       </p>
-                      <p className="text-3xl font-black text-gray-900 mb-6">
-                        $9.99<span className="text-lg font-normal text-gray-600">/month</span>
+                      <p className="text-3xl font-black text-primary mb-6">
+                        $9.99<span className="text-lg font-normal text-body">/month</span>
                       </p>
                       <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
                         Unlock Now →
                       </a>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted">
                         Less than a coffee per week · Upgrade anytime
                       </p>
                     </div>

@@ -185,12 +185,12 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
               <p className="text-lg text-text-body mb-6">{rateLimitMessage}</p>
               
               {!isPremium && (
-                <div className="bg-blue-50 rounded-lg p-6 mb-6">
+                <div className="bg-info-subtle rounded-lg p-6 mb-6">
                   <p className="text-blue-900 font-semibold mb-3">Want to regenerate your plan more often?</p>
-                  <p className="text-blue-800 mb-4">Premium members can take assessments up to 3 times per day to keep their plans current as situations change.</p>
+                  <p className="text-info mb-4">Premium members can take assessments up to 3 times per day to keep their plans current as situations change.</p>
                   <Link
                     href="/dashboard/upgrade"
-                    className="inline-block px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-block px-6 py-3 bg-info text-white font-bold rounded-lg hover:bg-info transition-colors"
                   >
                     Upgrade to Premium - $9.99/month
                   </Link>
@@ -199,7 +199,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
               
               <Link
                 href="/dashboard"
-                className="inline-block px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+                className="inline-block px-6 py-3 border-2 border-blue-600 text-info font-semibold rounded-lg hover:bg-info-subtle transition-colors"
               >
                 Return to Dashboard
               </Link>
@@ -245,9 +245,9 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold text-text-body">Progress</span>
-              <span className="text-sm font-bold text-blue-600">{questionsAsked.length} / ~6 questions</span>
+              <span className="text-sm font-bold text-info">{questionsAsked.length} / ~6 questions</span>
             </div>
-            <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+            <div className="w-full bg-surface-hover h-3 rounded-full overflow-hidden">
               <div 
                 className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
@@ -256,7 +256,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-800">
+            <div className="mb-6 p-4 bg-danger-subtle border-2 border-danger rounded-xl text-danger">
               {error}
             </div>
           )}
@@ -264,7 +264,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
           {currentQuestion && (
             <AnimatedCard className="p-8 md:p-10 bg-card border-2 border-border shadow-xl">
               <div className="mb-8">
-                <div className="text-sm text-blue-600 font-bold mb-3 uppercase tracking-wider">
+                <div className="text-sm text-info font-bold mb-3 uppercase tracking-wider">
                   Question {questionsAsked.length + 1}
                 </div>
                 <h2 className="text-3xl font-serif font-black text-text-headings mb-3">
@@ -319,14 +319,14 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
                     }
                   }}
                   disabled={questionsAsked.length === 0 || loading}
-                  className="px-6 py-3 bg-card hover:bg-gray-100 text-text-headings border border-border rounded-xl font-bold transition-all disabled:opacity-50"
+                  className="px-6 py-3 bg-card hover:bg-surface-hover text-text-headings border border-border rounded-xl font-bold transition-all disabled:opacity-50"
                 >
                   ← Back
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={!currentAnswer || loading}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50"
+                  className="px-8 py-3 bg-info hover:bg-info text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50"
                 >
                   {loading ? 'Loading...' : 'Next →'}
                 </button>

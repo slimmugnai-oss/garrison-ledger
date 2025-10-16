@@ -117,7 +117,7 @@ export default function UploadModal({
         <div className="p-6 border-b border-[#2A2F3E] flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white">Upload Document</h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-muted mt-1">
               Add a new file to your secure binder
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function UploadModal({
             disabled={uploading}
             className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
           >
-            <Icon name="X" className="w-5 h-5 text-gray-400" />
+            <Icon name="X" className="w-5 h-5 text-muted" />
           </button>
         </div>
 
@@ -152,10 +152,10 @@ export default function UploadModal({
                   dragActive ? 'text-[#00E5A0]' : 'text-gray-400'
                 }`} />
               </div>
-              <p className="text-gray-300 mb-2">
+              <p className="text-muted mb-2">
                 {dragActive ? 'Drop file here' : 'Drag and drop your file here'}
               </p>
-              <p className="text-sm text-gray-400 mb-4">or</p>
+              <p className="text-sm text-muted mb-4">or</p>
               <label className="cursor-pointer inline-block">
                 <input
                   ref={fileInputRef}
@@ -176,7 +176,7 @@ export default function UploadModal({
                       <Icon name="File" className="w-5 h-5 text-[#00E5A0]" />
                       <div className="text-left">
                         <p className="text-sm font-medium text-white">{uploadFile.name}</p>
-                        <p className="text-xs text-gray-400">{formatFileSize(uploadFile.size)}</p>
+                        <p className="text-xs text-muted">{formatFileSize(uploadFile.size)}</p>
                       </div>
                     </div>
                     <button
@@ -188,7 +188,7 @@ export default function UploadModal({
                       }}
                       className="p-1.5 hover:bg-[#2A2F3E] rounded-lg transition-colors"
                     >
-                      <Icon name="X" className="w-4 h-4 text-gray-400" />
+                      <Icon name="X" className="w-4 h-4 text-muted" />
                     </button>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export default function UploadModal({
 
           {/* Folder Selection */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-200">
+            <label className="block text-sm font-semibold mb-2 text-disabled">
               Folder
             </label>
             <select
@@ -217,7 +217,7 @@ export default function UploadModal({
 
           {/* Document Type */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-200">
+            <label className="block text-sm font-semibold mb-2 text-disabled">
               Document Type
             </label>
             <select
@@ -236,8 +236,8 @@ export default function UploadModal({
 
           {/* Expiry Date */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-200">
-              Expiry Date <span className="text-gray-400 font-normal">(optional)</span>
+            <label className="block text-sm font-semibold mb-2 text-disabled">
+              Expiry Date <span className="text-muted font-normal">(optional)</span>
             </label>
             <input
               type="date"

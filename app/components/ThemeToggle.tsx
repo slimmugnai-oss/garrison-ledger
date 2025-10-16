@@ -45,8 +45,8 @@ export default function ThemeToggle() {
   // Prevent hydration mismatch
   if (!mounted) {
     return (
-      <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-slate-700 flex items-center justify-center">
-        <div className="w-5 h-5 bg-gray-300 dark:bg-slate-600 rounded animate-pulse"></div>
+      <div className="w-10 h-10 rounded-lg bg-surface-hover dark:bg-slate-700 flex items-center justify-center">
+        <div className="w-5 h-5 bg-surface-hover dark:bg-slate-600 rounded animate-pulse"></div>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors flex items-center justify-center group"
+      className="relative w-10 h-10 rounded-lg bg-surface-hover hover:bg-surface-hover dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors flex items-center justify-center group"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >

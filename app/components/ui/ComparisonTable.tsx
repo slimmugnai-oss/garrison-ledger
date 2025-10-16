@@ -21,19 +21,19 @@ const features: Feature[] = [
 
 export default function ComparisonTable() {
   return (
-    <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+    <div className="bg-surface border-2 border-subtle rounded-2xl overflow-hidden shadow-lg">
       <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 text-center">
         <h2 className="text-3xl font-bold text-white mb-2">Free vs Premium</h2>
-        <p className="text-gray-300">See exactly what you get with each tier</p>
+        <p className="text-muted">See exactly what you get with each tier</p>
       </div>
       
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50 border-b-2 border-gray-200">
-              <th className="text-left p-6 text-gray-700 font-semibold">Feature</th>
-              <th className="text-center p-6 text-gray-700 font-semibold w-32">
-                <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">
+            <tr className="bg-surface-hover border-b-2 border-subtle">
+              <th className="text-left p-6 text-body font-semibold">Feature</th>
+              <th className="text-center p-6 text-body font-semibold w-32">
+                <div className="inline-flex items-center px-3 py-1 bg-success-subtle text-success rounded-full text-sm font-bold">
                   Free Forever
                 </div>
               </th>
@@ -47,16 +47,16 @@ export default function ComparisonTable() {
           <tbody>
             {features.map((feature, index) => (
               <tr key={index} className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                <td className="p-6 text-gray-800">{feature.name}</td>
+                <td className="p-6 text-primary">{feature.name}</td>
                 <td className="p-6 text-center">
                   {typeof feature.free === 'boolean' ? (
                     feature.free ? (
                       <Icon name="Check" className="h-6 w-6 text-green-500" />
                     ) : (
-                      <span className="text-2xl text-gray-300">—</span>
+                      <span className="text-2xl text-muted">—</span>
                     )
                   ) : (
-                    <span className="text-sm text-gray-600 font-medium">{feature.free}</span>
+                    <span className="text-sm text-body font-medium">{feature.free}</span>
                   )}
                 </td>
                 <td className="p-6 text-center">
@@ -64,10 +64,10 @@ export default function ComparisonTable() {
                     feature.premium ? (
                       <Icon name="Check" className="h-6 w-6 text-amber-500" />
                     ) : (
-                      <span className="text-2xl text-gray-300">—</span>
+                      <span className="text-2xl text-muted">—</span>
                     )
                   ) : (
-                    <span className="text-sm text-gray-700 font-semibold">{feature.premium}</span>
+                    <span className="text-sm text-body font-semibold">{feature.premium}</span>
                   )}
                 </td>
               </tr>

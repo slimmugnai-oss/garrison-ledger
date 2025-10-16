@@ -77,8 +77,8 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
     <div className="mb-12 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 rounded-2xl p-6 sm:p-8 text-white shadow-2xl border border-indigo-700/50 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-info rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
       </div>
 
       {/* Content */}
@@ -174,7 +174,7 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
                   ) : isCurrent ? (
                     <Link
                       href={step.link}
-                      className="inline-flex items-center justify-center w-full bg-white text-indigo-900 hover:bg-indigo-50 px-4 py-2.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                      className="inline-flex items-center justify-center w-full bg-surface text-indigo-900 hover:bg-indigo-50 px-4 py-2.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                     >
                       {step.number === 1 ? 'Start Here →' : 
                        step.number === 2 ? 'Take Assessment →' : 

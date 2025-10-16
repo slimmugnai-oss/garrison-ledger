@@ -128,24 +128,24 @@ export default function Breadcrumbs() {
   }
 
   return (
-    <nav className="bg-gray-50 border-b border-gray-200 px-4 py-3" aria-label="Breadcrumb">
+    <nav className="bg-surface-hover border-b border-subtle px-4 py-3" aria-label="Breadcrumb">
       <div className="max-w-7xl mx-auto">
         <ol className="flex items-center space-x-2 text-sm">
           {breadcrumbs.map((breadcrumb, index) => (
             <li key={index} className="flex items-center">
               {index > 0 && (
-                <Icon name="ChevronRight" className="w-4 h-4 text-gray-400 mx-2" />
+                <Icon name="ChevronRight" className="w-4 h-4 text-muted mx-2" />
               )}
               {breadcrumb.href ? (
                 <Link 
                   href={breadcrumb.href}
-                  className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+                  className="flex items-center text-body hover:text-primary transition-colors"
                 >
                   {breadcrumb.icon && <Icon name={breadcrumb.icon} className="w-4 h-4 mr-1.5" />}
                   {breadcrumb.label}
                 </Link>
               ) : (
-                <span className="flex items-center text-gray-900 font-medium">
+                <span className="flex items-center text-primary font-medium">
                   {breadcrumb.icon && <Icon name={breadcrumb.icon} className="w-4 h-4 mr-1.5" />}
                   {breadcrumb.label}
                 </span>

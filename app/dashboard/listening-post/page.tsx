@@ -98,31 +98,31 @@ function ListeningPostContent() {
           {/* Header Section */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <Icon name="Radio" className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white font-serif">Listening Post</h1>
+              <Icon name="Radio" className="h-8 w-8 text-info dark:text-info" />
+              <h1 className="text-4xl font-bold text-primary dark:text-white font-serif">Listening Post</h1>
             </div>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
+            <p className="text-xl text-body dark:text-muted mb-6">
               Real-time military financial news & updates from trusted sources
             </p>
             
             {/* What's the Difference Explainer */}
             <AnimatedCard delay={0}>
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-6">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-info dark:border-blue-700 rounded-xl p-6">
                 <div className="flex items-start gap-4">
-                  <Icon name="Info" className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                  <Icon name="Info" className="h-6 w-6 text-info dark:text-info flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">What&apos;s the Difference?</h3>
+                    <h3 className="font-bold text-primary dark:text-white mb-2">What&apos;s the Difference?</h3>
                     <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <div className="font-semibold text-blue-600 dark:text-blue-400 mb-1">📡 Listening Post (This Page)</div>
-                        <p className="text-gray-700 dark:text-gray-300">
+                        <div className="font-semibold text-info dark:text-info mb-1">📡 Listening Post (This Page)</div>
+                        <p className="text-body dark:text-muted">
                           <strong>Current events & breaking news</strong> from Military Times, Stars & Stripes, and other trusted sources. 
                           Updated daily. Great for staying informed.
                         </p>
                       </div>
                       <div>
-                        <div className="font-semibold text-green-600 dark:text-green-400 mb-1">📚 Intelligence Library</div>
-                        <p className="text-gray-700 dark:text-gray-300">
+                        <div className="font-semibold text-success dark:text-green-400 mb-1">📚 Intelligence Library</div>
+                        <p className="text-body dark:text-muted">
                           <strong>410+ expert-curated content blocks</strong> used by our AI to build your personalized plan. 
                           Evergreen financial guidance. Your AI plan pulls from here.
                         </p>
@@ -158,15 +158,15 @@ function ListeningPostContent() {
           {loading && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading latest news...</p>
+              <p className="mt-4 text-body dark:text-muted">Loading latest news...</p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-              <Icon name="AlertCircle" className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-4" />
-              <p className="text-red-900 dark:text-red-200 font-semibold">{error}</p>
+            <div className="bg-danger-subtle dark:bg-red-900/20 border-2 border-danger dark:border-red-800 rounded-xl p-6 text-center">
+              <Icon name="AlertCircle" className="h-12 w-12 text-danger dark:text-red-400 mx-auto mb-4" />
+              <p className="text-danger dark:text-red-200 font-semibold">{error}</p>
             </div>
           )}
 
@@ -174,12 +174,12 @@ function ListeningPostContent() {
           {!loading && !error && (
             <div className="space-y-6">
               {feedItems.length === 0 ? (
-                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600">
-                  <Icon name="Newspaper" className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400 text-lg">No news items found for this filter.</p>
+                <div className="text-center py-12 bg-surface dark:bg-slate-800 rounded-xl border border-subtle dark:border-slate-600">
+                  <Icon name="Newspaper" className="h-16 w-16 text-muted dark:text-muted mx-auto mb-4" />
+                  <p className="text-body dark:text-muted text-lg">No news items found for this filter.</p>
                   <button
                     onClick={() => setSelectedTag('all')}
-                    className="mt-4 text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                    className="mt-4 text-info dark:text-info hover:underline font-semibold"
                   >
                     View All News →
                   </button>
@@ -187,23 +187,23 @@ function ListeningPostContent() {
               ) : (
                 feedItems.map((item, idx) => (
                   <AnimatedCard key={item.id} delay={idx * 50}>
-                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl p-6 hover:shadow-lg transition-all">
+                    <div className="bg-surface dark:bg-slate-800 border border-subtle dark:border-slate-600 rounded-xl p-6 hover:shadow-lg transition-all">
                       {/* Header */}
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             {getSourceBadge(item.source_id)}
-                            <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.published_at)}</span>
+                            <span className="text-sm text-muted dark:text-muted">{formatDate(item.published_at)}</span>
                           </div>
-                          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                          <h3 className="text-xl font-bold text-primary dark:text-white mb-2">
                             {item.title}
                           </h3>
                         </div>
-                        <Icon name="ExternalLink" className="h-5 w-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                        <Icon name="ExternalLink" className="h-5 w-5 text-muted dark:text-muted flex-shrink-0" />
                       </div>
 
                       {/* Summary */}
-                      <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                      <p className="text-body dark:text-muted mb-4 leading-relaxed">
                         {item.summary}
                       </p>
 
@@ -221,7 +221,7 @@ function ListeningPostContent() {
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
+                        className="inline-flex items-center gap-2 text-info dark:text-info hover:text-info dark:hover:text-info font-semibold transition-colors"
                       >
                         Read Full Article
                         <Icon name="ArrowRight" className="h-4 w-4" />
@@ -237,18 +237,18 @@ function ListeningPostContent() {
           {!loading && feedItems.length > 0 && (
             <div className="mt-12 text-center">
               <AnimatedCard delay={300}>
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 rounded-xl p-8">
-                  <Icon name="Sparkles" className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-success dark:border-green-700 rounded-xl p-8">
+                  <Icon name="Sparkles" className="h-12 w-12 text-success dark:text-green-400 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-primary dark:text-white mb-3">
                     Want AI-Curated Financial Guidance?
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+                  <p className="text-body dark:text-muted mb-6 max-w-2xl mx-auto">
                     These news articles are great for staying informed. For personalized financial planning, 
                     check out our <strong>Intelligence Library</strong> where 410+ expert content blocks power your AI-generated plan.
                   </p>
                   <a
                     href="/dashboard/library"
-                    className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
+                    className="inline-flex items-center gap-2 bg-success hover:bg-success dark:bg-success dark:hover:bg-success text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
                   >
                     <Icon name="BookOpen" className="h-5 w-5" />
                     Browse Intelligence Library
@@ -270,7 +270,7 @@ export default function ListeningPostPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading Listening Post...</p>
+          <p className="mt-4 text-body">Loading Listening Post...</p>
         </div>
       </div>
     }>

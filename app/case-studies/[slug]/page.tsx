@@ -127,20 +127,20 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Challenge Section */}
           <AnimatedCard delay={0} className="mb-12">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-600">
+            <div className="bg-surface dark:bg-slate-800 rounded-2xl p-8 border border-subtle dark:border-slate-600">
               <div className="flex items-center gap-3 mb-6">
-                <Icon name="AlertCircle" className="h-8 w-8 text-red-600 dark:text-red-400" />
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{challenge.title}</h2>
+                <Icon name="AlertCircle" className="h-8 w-8 text-danger dark:text-red-400" />
+                <h2 className="text-3xl font-bold text-primary dark:text-white">{challenge.title}</h2>
               </div>
               <ul className="space-y-3 mb-6">
                 {challenge.points.map((point: string, index: number) => (
                   <li key={index} className="flex items-start gap-3">
-                    <Icon name="XCircle" className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700 dark:text-gray-300">{point}</span>
+                    <Icon name="XCircle" className="h-5 w-5 text-danger dark:text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-body dark:text-muted">{point}</span>
                   </li>
                 ))}
               </ul>
-              <blockquote className="border-l-4 border-red-500 pl-6 py-2 italic text-gray-700 dark:text-gray-300">
+              <blockquote className="border-l-4 border-danger pl-6 py-2 italic text-body dark:text-muted">
                 {challenge.quote}
               </blockquote>
             </div>
@@ -148,20 +148,20 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
 
           {/* Solution Section */}
           <AnimatedCard delay={100} className="mb-12">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-600">
+            <div className="bg-surface dark:bg-slate-800 rounded-2xl p-8 border border-subtle dark:border-slate-600">
               <div className="flex items-center gap-3 mb-8">
-                <Icon name="Lightbulb" className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{solution.title}</h2>
+                <Icon name="Lightbulb" className="h-8 w-8 text-info dark:text-info" />
+                <h2 className="text-3xl font-bold text-primary dark:text-white">{solution.title}</h2>
               </div>
               <div className="space-y-6">
                 {solution.steps.map((step, index: number) => (
                   <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <Icon name={step.icon} className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <div className="flex-shrink-0 w-12 h-12 bg-info-subtle dark:bg-info/30 rounded-full flex items-center justify-center">
+                      <Icon name={step.icon} className="h-6 w-6 text-info dark:text-info" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{step.title}</h3>
-                      <p className="text-gray-700 dark:text-gray-300">{step.description}</p>
+                      <h3 className="text-xl font-bold text-primary dark:text-white mb-2">{step.title}</h3>
+                      <p className="text-body dark:text-muted">{step.description}</p>
                     </div>
                   </div>
                 ))}
@@ -171,31 +171,31 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
 
           {/* Results Section */}
           <AnimatedCard delay={200} className="mb-12">
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-8 border-2 border-green-200 dark:border-green-700">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-8 border-2 border-success dark:border-green-700">
               <div className="flex items-center gap-3 mb-8">
-                <Icon name="TrendingUp" className="h-8 w-8 text-green-600 dark:text-green-400" />
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{results.title}</h2>
+                <Icon name="TrendingUp" className="h-8 w-8 text-success dark:text-green-400" />
+                <h2 className="text-3xl font-bold text-primary dark:text-white">{results.title}</h2>
               </div>
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 {results.metrics.map((metric, index: number) => (
-                  <div key={index} className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-green-200 dark:border-green-700">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{metric.label}</div>
-                    <div className="text-4xl font-black text-green-600 dark:text-green-400 mb-2">{metric.value}</div>
-                    <div className="text-sm text-gray-700 dark:text-gray-300">{metric.description}</div>
+                  <div key={index} className="bg-surface dark:bg-slate-800 rounded-xl p-6 border border-success dark:border-green-700">
+                    <div className="text-sm text-body dark:text-muted mb-1">{metric.label}</div>
+                    <div className="text-4xl font-black text-success dark:text-green-400 mb-2">{metric.value}</div>
+                    <div className="text-sm text-body dark:text-muted">{metric.description}</div>
                   </div>
                 ))}
               </div>
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-green-200 dark:border-green-700">
+              <div className="bg-surface dark:bg-slate-800 rounded-xl p-6 border border-success dark:border-green-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon name="Timer" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                  <span className="font-semibold text-gray-900 dark:text-white">Timeline:</span>
-                  <span className="text-gray-700 dark:text-gray-300">{results.timeline}</span>
+                  <Icon name="Timer" className="h-5 w-5 text-body dark:text-muted" />
+                  <span className="font-semibold text-primary dark:text-white">Timeline:</span>
+                  <span className="text-body dark:text-muted">{results.timeline}</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Icon name="Sparkles" className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <Icon name="Sparkles" className="h-5 w-5 text-success dark:text-green-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-semibold text-gray-900 dark:text-white">Long-term Impact:</span>
-                    <p className="text-gray-700 dark:text-gray-300 mt-1">{results.impact}</p>
+                    <span className="font-semibold text-primary dark:text-white">Long-term Impact:</span>
+                    <p className="text-body dark:text-muted mt-1">{results.impact}</p>
                   </div>
                 </div>
               </div>
@@ -204,18 +204,18 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
 
           {/* Tools Used */}
           <AnimatedCard delay={300} className="mb-12">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-600">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Tools & Resources Used</h2>
+            <div className="bg-surface dark:bg-slate-800 rounded-2xl p-8 border border-subtle dark:border-slate-600">
+              <h2 className="text-2xl font-bold text-primary dark:text-white mb-6">Tools & Resources Used</h2>
               <div className="space-y-4">
                 {tools.map((tool, index: number) => (
                   <Link key={index} href={tool.link}>
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
-                      <Icon name="Wrench" className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <div className="flex items-center gap-4 p-4 bg-surface-hover dark:bg-slate-900 rounded-xl hover:bg-info-subtle dark:hover:bg-info/20 transition-colors group">
+                      <Icon name="Wrench" className="h-6 w-6 text-info dark:text-info" />
                       <div className="flex-1">
-                        <div className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">{tool.name}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{tool.description}</div>
+                        <div className="font-bold text-primary dark:text-white group-hover:text-info dark:group-hover:text-info">{tool.name}</div>
+                        <div className="text-sm text-body dark:text-muted">{tool.description}</div>
                       </div>
-                      <Icon name="ArrowRight" className="h-5 w-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                      <Icon name="ArrowRight" className="h-5 w-5 text-muted group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
                 ))}
@@ -230,22 +230,22 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
               <blockquote className="text-2xl md:text-3xl font-semibold mb-6 leading-relaxed">
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
-              <div className="text-blue-100 font-medium">— {testimonial.author}</div>
+              <div className="text-white/90 font-medium">— {testimonial.author}</div>
             </div>
           </AnimatedCard>
 
           {/* CTA */}
           <AnimatedCard delay={500}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 border-2 border-blue-200 dark:border-blue-700 text-center">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="bg-surface dark:bg-slate-800 rounded-2xl p-8 border-2 border-info dark:border-blue-700 text-center">
+              <h2 className="text-3xl font-bold text-primary dark:text-white mb-4">
                 Ready to Write Your Success Story?
               </h2>
-              <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              <p className="text-body dark:text-muted mb-8 max-w-2xl mx-auto">
                 Get your free personalized financial plan with AI-curated expert guidance for your military situation.
               </p>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                className="inline-flex items-center gap-2 bg-info hover:bg-info dark:bg-info dark:hover:bg-info text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
               >
                 <Icon name="Zap" className="h-5 w-5" />
                 Get Your Free Plan
@@ -255,8 +255,8 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
 
           {/* More Case Studies */}
           <div className="mt-12">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">More Success Stories</h3>
-            <Link href="/case-studies" className="block text-center text-blue-600 dark:text-blue-400 hover:underline font-semibold">
+            <h3 className="text-2xl font-bold text-primary dark:text-white mb-6 text-center">More Success Stories</h3>
+            <Link href="/case-studies" className="block text-center text-info dark:text-info hover:underline font-semibold">
               View All Case Studies →
             </Link>
           </div>

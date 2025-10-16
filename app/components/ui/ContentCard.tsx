@@ -27,7 +27,7 @@ export default function ContentCard({ title, html, type, topics = [], slug = '' 
           {topics.map((topic) => (
             <span
               key={topic}
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-text-muted border border-border"
+              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-surface-hover text-text-muted border border-border"
             >
               {topic}
             </span>

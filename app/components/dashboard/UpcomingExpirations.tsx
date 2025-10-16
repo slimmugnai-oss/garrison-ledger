@@ -38,14 +38,14 @@ export default function UpcomingExpirations() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-          <Icon name="Calendar" className="w-5 h-5 mr-2 text-blue-600" />
+      <div className="bg-surface rounded-xl border border-subtle p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-primary mb-4 flex items-center">
+          <Icon name="Calendar" className="w-5 h-5 mr-2 text-info" />
           Upcoming Expirations
         </h3>
         <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-surface-hover rounded w-3/4"></div>
+          <div className="h-4 bg-surface-hover rounded w-1/2"></div>
         </div>
       </div>
     );
@@ -57,15 +57,15 @@ export default function UpcomingExpirations() {
 
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+    <div className="bg-surface rounded-xl border border-subtle p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-900 flex items-center">
-          <Icon name="Calendar" className="w-5 h-5 mr-2 text-blue-600" />
+        <h3 className="text-lg font-bold text-primary flex items-center">
+          <Icon name="Calendar" className="w-5 h-5 mr-2 text-info" />
           Upcoming Expirations
         </h3>
         <Link
           href="/dashboard/binder"
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="text-sm text-info hover:text-info font-medium"
         >
           View All
         </Link>
@@ -93,10 +93,10 @@ export default function UpcomingExpirations() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">
+                  <p className="font-medium text-primary truncate">
                     {reminder.display_name}
                   </p>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-body mt-1">
                     {reminder.folder}
                   </p>
                 </div>
@@ -116,7 +116,7 @@ export default function UpcomingExpirations() {
                       ? "Tomorrow"
                       : `${daysUntil} days`}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted mt-1">
                     {new Date(reminder.expires_on).toLocaleDateString()}
                   </p>
                 </div>
@@ -127,14 +127,14 @@ export default function UpcomingExpirations() {
       </div>
 
       {!isPremium && reminders.length > 3 && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-4 p-3 bg-info-subtle border border-info rounded-lg">
           <p className="text-sm text-blue-900">
             <strong>Upgrade to Premium</strong> to set unlimited reminders and
             never miss an expiration.
           </p>
           <Link
             href="/dashboard/upgrade"
-            className="mt-2 inline-block text-sm font-medium text-blue-700 hover:text-blue-800"
+            className="mt-2 inline-block text-sm font-medium text-info hover:text-info"
           >
             Learn More →
           </Link>

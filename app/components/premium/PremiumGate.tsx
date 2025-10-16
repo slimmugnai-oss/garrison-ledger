@@ -18,7 +18,7 @@ export default function PremiumGate({
 
   if (loading) {
     return (
-      <div className="rounded-lg border p-6 bg-white shadow-sm animate-pulse text-sm text-gray-500">
+      <div className="rounded-lg border p-6 bg-surface shadow-sm animate-pulse text-sm text-muted">
         Checking access…
       </div>
     );
@@ -28,9 +28,9 @@ export default function PremiumGate({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border p-6 bg-white shadow-sm">
+      <div className="rounded-lg border p-6 bg-surface shadow-sm">
         {placeholder ?? (
-          <div className="text-gray-600">
+          <div className="text-body">
             <div className="font-semibold mb-1">Premium feature</div>
             <p>Unlock full results with Premium to see your projections.</p>
           </div>
@@ -43,7 +43,7 @@ export default function PremiumGate({
             localStorage.setItem('gl:lastTool', window.location.pathname); 
           } catch {}
         }}
-        className="inline-block rounded-md bg-blue-700 px-4 py-2 text-white shadow hover:bg-blue-800 transition-colors"
+        className="inline-block rounded-md bg-info px-4 py-2 text-white shadow hover:bg-info transition-colors"
       >
         Upgrade to Unlock Results
       </Link>

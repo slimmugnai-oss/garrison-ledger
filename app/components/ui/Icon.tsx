@@ -15,8 +15,8 @@ interface IconProps {
  * Type-safe icon wrapper for lucide-react icons
  * 
  * Usage:
- * <Icon name="Truck" className="h-5 w-5 text-gray-700" />
- * <Icon name="Briefcase" className="h-6 w-6 text-blue-600" />
+ * <Icon name="Truck" className="h-5 w-5 text-body" />
+ * <Icon name="Briefcase" className="h-6 w-6 text-info" />
  * 
  * Features:
  * - Full TypeScript autocomplete

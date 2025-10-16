@@ -64,13 +64,13 @@ const getStatusBadge = (status: string) => {
 const getUrgencyBadge = (urgency: string) => {
   switch (urgency) {
     case 'high':
-      return <span className="px-2 py-1 bg-red-100 text-red-800 border border-red-200 rounded text-xs font-bold">HIGH</span>;
+      return <span className="px-2 py-1 bg-danger-subtle text-danger border border-danger rounded text-xs font-bold">HIGH</span>;
     case 'medium':
       return <span className="px-2 py-1 bg-amber-100 text-amber-800 border border-amber-200 rounded text-xs font-bold">MEDIUM</span>;
     case 'low':
-      return <span className="px-2 py-1 bg-blue-100 text-blue-800 border border-blue-200 rounded text-xs font-bold">LOW</span>;
+      return <span className="px-2 py-1 bg-info-subtle text-info border border-info rounded text-xs font-bold">LOW</span>;
     default:
-      return <span className="px-2 py-1 bg-gray-100 text-gray-800 border border-gray-200 rounded text-xs font-bold">{urgency}</span>;
+      return <span className="px-2 py-1 bg-surface-hover text-primary border border-subtle rounded text-xs font-bold">{urgency}</span>;
   }
 };
 
@@ -116,12 +116,12 @@ export default async function SupportTicketsPage() {
 
             <AnimatedCard className="bg-card border border-border p-6" delay={50}>
               <div className="text-text-muted text-sm font-semibold mb-2">In Progress</div>
-              <div className="text-3xl font-black text-blue-600">{inProgressTickets.length}</div>
+              <div className="text-3xl font-black text-info">{inProgressTickets.length}</div>
             </AnimatedCard>
 
             <AnimatedCard className="bg-card border border-border p-6" delay={75}>
               <div className="text-text-muted text-sm font-semibold mb-2">Avg Response</div>
-              <div className="text-3xl font-black text-green-600">&lt; 24h</div>
+              <div className="text-3xl font-black text-success">&lt; 24h</div>
             </AnimatedCard>
           </div>
 
@@ -173,12 +173,12 @@ export default async function SupportTicketsPage() {
                     <div className="flex items-center gap-2 pt-3 border-t border-border">
                       <a
                         href={`mailto:${ticket.email}?subject=Re: ${ticket.ticket_id} - ${ticket.subject}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-info hover:bg-info text-white rounded-lg text-sm font-semibold transition-colors"
                       >
                         <Icon name="Mail" className="h-4 w-4" />
                         Reply via Email
                       </a>
-                      <button className="px-4 py-2 border border-border rounded-lg text-sm font-semibold text-text-body hover:bg-gray-50 transition-colors">
+                      <button className="px-4 py-2 border border-border rounded-lg text-sm font-semibold text-text-body hover:bg-surface-hover transition-colors">
                         Mark Resolved
                       </button>
                     </div>
@@ -189,7 +189,7 @@ export default async function SupportTicketsPage() {
           </AnimatedCard>
 
           {/* Help Resources */}
-          <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 p-6 mt-8" delay={150}>
+          <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info p-6 mt-8" delay={150}>
             <h3 className="text-xl font-bold text-text-headings mb-4">Support Resources</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

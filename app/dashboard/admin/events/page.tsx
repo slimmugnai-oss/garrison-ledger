@@ -21,9 +21,9 @@ export default async function AdminEvents() {
       <>
         <Header />
         <div className="p-6 max-w-4xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <div className="text-red-600 text-xl font-bold mb-2">🔒 Access Denied</div>
-            <p className="text-red-700">You are not authorized to view this page.</p>
+          <div className="bg-danger-subtle border border-danger rounded-lg p-6 text-center">
+            <div className="text-danger text-xl font-bold mb-2">🔒 Access Denied</div>
+            <p className="text-danger">You are not authorized to view this page.</p>
           </div>
         </div>
       </>
@@ -46,15 +46,15 @@ export default async function AdminEvents() {
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Analytics Events (Latest 400)</h1>
-        <div className="overflow-auto rounded border bg-white shadow-sm">
+        <div className="overflow-auto rounded border bg-surface shadow-sm">
           <table className="min-w-full text-sm">
             <thead className="bg-slate-50 border-b">
               <tr>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700">Time</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700">User ID</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700">Event Name</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700">Path</th>
-                <th className="px-3 py-2 text-left font-semibold text-gray-700">Props</th>
+                <th className="px-3 py-2 text-left font-semibold text-body">Time</th>
+                <th className="px-3 py-2 text-left font-semibold text-body">User ID</th>
+                <th className="px-3 py-2 text-left font-semibold text-body">Event Name</th>
+                <th className="px-3 py-2 text-left font-semibold text-body">Path</th>
+                <th className="px-3 py-2 text-left font-semibold text-body">Props</th>
               </tr>
             </thead>
             <tbody>
@@ -66,16 +66,16 @@ export default async function AdminEvents() {
                 path: string | null;
                 props: Record<string, unknown> | null;
               }) => (
-                <tr key={e.id} className="border-t hover:bg-gray-50">
-                  <td className="px-3 py-2 text-gray-500 text-xs">
+                <tr key={e.id} className="border-t hover:bg-surface-hover">
+                  <td className="px-3 py-2 text-muted text-xs">
                     {new Date(e.created_at).toLocaleString()}
                   </td>
                   <td className="px-3 py-2 text-xs font-mono">
                     {e.user_id ? e.user_id.slice(0, 12) + '...' : '-'}
                   </td>
-                  <td className="px-3 py-2 font-medium text-blue-600">{e.name}</td>
-                  <td className="px-3 py-2 text-gray-600">{e.path || '-'}</td>
-                  <td className="px-3 py-2 text-gray-600 text-xs">
+                  <td className="px-3 py-2 font-medium text-info">{e.name}</td>
+                  <td className="px-3 py-2 text-body">{e.path || '-'}</td>
+                  <td className="px-3 py-2 text-body text-xs">
                     {e.props ? JSON.stringify(e.props).slice(0, 100) : ''}
                   </td>
                 </tr>

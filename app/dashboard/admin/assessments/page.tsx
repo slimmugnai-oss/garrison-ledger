@@ -23,7 +23,7 @@ export default async function AdminAssessments() {
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-bold">Assessments (latest)</h1>
-      <div className="rounded border bg-white overflow-auto">
+      <div className="rounded border bg-surface overflow-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-slate-50">
             <tr>

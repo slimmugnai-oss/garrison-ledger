@@ -131,7 +131,7 @@ export default function HouseHack() {
 
         <div className="space-y-8">
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Property Details</h2>
+            <h2 className="text-2xl font-bold text-primary mb-6">Property Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Num label="Property Price" v={price} set={setPrice} />
               <Num label="Interest Rate (%)" v={rate} set={setRate} step={0.1} />
@@ -140,7 +140,7 @@ export default function HouseHack() {
               <Num label="Monthly BAH" v={bah} set={setBah} />
               <Num label="Monthly Rent" v={rent} set={setRent} />
             </div>
-            <div className="text-sm text-gray-500 mt-4 p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-muted mt-4 p-4 bg-surface-hover rounded-lg">
               <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Assumes 30-year VA loan. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
             </div>
             
@@ -186,32 +186,32 @@ export default function HouseHack() {
               <div className="space-y-8">
                 {/* Monthly Summary */}
                 <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
+                  <h2 className="text-2xl font-bold text-primary mb-6">Monthly Summary</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-6 bg-red-50 rounded-lg border border-red-200">
-                      <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
-                      <p className="text-3xl font-bold text-red-600">$2,847</p>
-                      <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+                    <div className="p-6 bg-danger-subtle rounded-lg border border-danger">
+                      <h3 className="text-lg font-semibold text-danger mb-2">Monthly Costs (PITI)</h3>
+                      <p className="text-3xl font-bold text-danger">$2,847</p>
+                      <p className="text-sm text-danger mt-1">Principal, Interest, Taxes, Insurance</p>
                     </div>
-                    <div className="p-6 bg-green-50 rounded-lg border border-green-200">
-                      <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
-                      <p className="text-3xl font-bold text-green-600">$4,600</p>
-                      <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+                    <div className="p-6 bg-success-subtle rounded-lg border border-success">
+                      <h3 className="text-lg font-semibold text-success mb-2">Monthly Income</h3>
+                      <p className="text-3xl font-bold text-success">$4,600</p>
+                      <p className="text-sm text-success mt-1">BAH + Tenant Rent</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Cash Flow Analysis */}
                 <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
-                  <div className="p-6 rounded-lg border-2 bg-green-50 border-green-200">
-                    <div className="text-3xl font-bold mb-2 text-green-700">
+                  <h2 className="text-2xl font-bold text-primary mb-6">Cash Flow Analysis</h2>
+                  <div className="p-6 rounded-lg border-2 bg-success-subtle border-success">
+                    <div className="text-3xl font-bold mb-2 text-success">
                       <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Positive Cash Flow
                     </div>
-                    <div className="text-4xl font-bold mb-4 text-green-600">
+                    <div className="text-4xl font-bold mb-4 text-success">
                       $1,753
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-body">
                       <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
                       Consult with financial and real estate professionals for actual investment decisions.
                     </div>
@@ -222,26 +222,26 @@ export default function HouseHack() {
           >
             {/* Monthly Summary */}
             <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Monthly Summary</h2>
+              <h2 className="text-2xl font-bold text-primary mb-6">Monthly Summary</h2>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
               ) : apiData ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-red-50 rounded-lg border border-red-200">
-                    <h3 className="text-lg font-semibold text-red-800 mb-2">Monthly Costs (PITI)</h3>
-                    <p className="text-3xl font-bold text-red-600">{fmt(apiData.costs)}</p>
-                    <p className="text-sm text-red-600 mt-1">Principal, Interest, Taxes, Insurance</p>
+                  <div className="p-6 bg-danger-subtle rounded-lg border border-danger">
+                    <h3 className="text-lg font-semibold text-danger mb-2">Monthly Costs (PITI)</h3>
+                    <p className="text-3xl font-bold text-danger">{fmt(apiData.costs)}</p>
+                    <p className="text-sm text-danger mt-1">Principal, Interest, Taxes, Insurance</p>
                   </div>
-                  <div className="p-6 bg-green-50 rounded-lg border border-green-200">
-                    <h3 className="text-lg font-semibold text-green-800 mb-2">Monthly Income</h3>
-                    <p className="text-3xl font-bold text-green-600">{fmt(apiData.income)}</p>
-                    <p className="text-sm text-green-600 mt-1">BAH + Tenant Rent</p>
+                  <div className="p-6 bg-success-subtle rounded-lg border border-success">
+                    <h3 className="text-lg font-semibold text-success mb-2">Monthly Income</h3>
+                    <p className="text-3xl font-bold text-success">{fmt(apiData.income)}</p>
+                    <p className="text-sm text-success mt-1">BAH + Tenant Rent</p>
                   </div>
                 </div>
               ) : (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-muted py-8">
                   Enter property details above to see monthly summary
                 </div>
               )}
@@ -249,7 +249,7 @@ export default function HouseHack() {
 
             {/* Cash Flow Analysis */}
             <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Cash Flow Analysis</h2>
+              <h2 className="text-2xl font-bold text-primary mb-6">Cash Flow Analysis</h2>
               {apiData && apiData.verdict !== undefined ? (
                 <div className={`p-6 rounded-lg border-2 ${apiData.verdict >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                   <div className={`text-3xl font-bold mb-2 ${apiData.verdict >= 0 ? 'text-green-700' : 'text-red-700'}`}>
@@ -258,7 +258,7 @@ export default function HouseHack() {
                   <div className={`text-4xl font-bold mb-4 ${apiData.verdict >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {fmt(apiData.verdict)}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-body">
                     <strong>Note:</strong> This is before vacancy rates, maintenance costs, and property management fees. 
                     Consult with financial and real estate professionals for actual investment decisions.
                   </div>
@@ -270,7 +270,7 @@ export default function HouseHack() {
                   <FootNote />
                 </div>
               ) : (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-muted py-8">
                   Complete the form above to see cash flow analysis
                 </div>
               )}
@@ -295,7 +295,7 @@ function Num({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">
+      <label className="block text-sm font-semibold text-body">
         {label}
       </label>
       <input 
@@ -303,7 +303,7 @@ function Num({
         value={v} 
         onChange={e => set(Number(e.target.value))}
         step={step} 
-        className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-lg font-medium text-gray-900 bg-white" 
+        className="block w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
       />
     </div>
   );

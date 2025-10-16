@@ -66,19 +66,19 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
   };
 
   return (
-    <AnimatedCard className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200" delay={100}>
+    <AnimatedCard className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-info" delay={100}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <h2 className="text-xl font-bold text-primary flex items-center gap-2">
           <span>🎯</span> Recommended For You
         </h2>
         <Link
           href="/dashboard/library?tab=for-you"
-          className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+          className="text-sm text-info hover:text-info font-semibold"
         >
           View All →
         </Link>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-body mb-4">
         Based on your profile and interests
       </p>
 
@@ -95,9 +95,9 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
           <Link
             key={item.id}
             href={`/dashboard/library?highlight=${item.id}`}
-            className="block p-4 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-all"
+            className="block p-4 bg-surface rounded-lg border border-info hover:shadow-md transition-all"
           >
-            <div className="font-semibold text-gray-900 mb-2 line-clamp-2">
+            <div className="font-semibold text-primary mb-2 line-clamp-2">
               {item.title}
             </div>
             <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
@@ -106,12 +106,12 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
                   {item.domain}
                 </span>
                 {item.est_read_min > 0 && (
-                  <span className="text-gray-600">
+                  <span className="text-body">
                     ⏱️ {item.est_read_min} min
                   </span>
                 )}
               </div>
-              <span className="text-blue-600 font-bold">
+              <span className="text-info font-bold">
                 {(item.relevance_score * 10).toFixed(0)}% match
               </span>
             </div>
@@ -121,7 +121,7 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
 
       <Link
         href="/dashboard/library"
-        className="mt-4 block w-full text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+        className="mt-4 block w-full text-center px-4 py-2 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors"
       >
         Browse Intel Library
       </Link>

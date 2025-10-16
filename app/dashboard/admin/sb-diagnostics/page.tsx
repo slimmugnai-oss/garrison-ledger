@@ -81,11 +81,11 @@ export default async function SupabaseDiagnosticsPage() {
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-bold">Supabase Diagnostics</h1>
-      <div className="text-sm text-gray-600">Host: {(() => { try { return new URL(base).host; } catch { return base; } })()}</div>
-      <div className="text-sm text-gray-600">Key length: {key.length}</div>
+      <div className="text-sm text-body">Host: {(() => { try { return new URL(base).host; } catch { return base; } })()}</div>
+      <div className="text-sm text-body">Key length: {key.length}</div>
 
       {res.map((r, i) => (
-        <div key={i} className="rounded border p-3 bg-white">
+        <div key={i} className="rounded border p-3 bg-surface">
           <div className="font-medium">{r.title} — status: {String(r.status)}</div>
           <pre className="whitespace-pre-wrap text-xs mt-2">{r.body || "<empty>"}</pre>
         </div>

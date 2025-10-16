@@ -111,7 +111,7 @@ export default async function AdminDashboard() {
             <AnimatedCard className="bg-card border border-border p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-text-muted text-sm font-semibold">Total Users</span>
-                <Icon name="Users" className="h-5 w-5 text-blue-600" />
+                <Icon name="Users" className="h-5 w-5 text-info" />
               </div>
               <div className="text-3xl font-black text-text-headings">{metrics.totalUsers}</div>
               <div className="text-sm text-text-muted mt-1">
@@ -122,7 +122,7 @@ export default async function AdminDashboard() {
             <AnimatedCard className="bg-card border border-border p-6" delay={50}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-text-muted text-sm font-semibold">Plans Today</span>
-                <Icon name="Sparkles" className="h-5 w-5 text-green-600" />
+                <Icon name="Sparkles" className="h-5 w-5 text-success" />
               </div>
               <div className="text-3xl font-black text-text-headings">{metrics.plansToday}</div>
               <div className="text-sm text-text-muted mt-1">
@@ -156,10 +156,10 @@ export default async function AdminDashboard() {
           {/* Admin Tools Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* System Health */}
-            <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:shadow-xl transition-all">
+            <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info hover:shadow-xl transition-all">
               <Link href="/dashboard/admin/health" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
                     <Icon name="Activity" className="h-6 w-6 text-white" />
                   </div>
                   <Badge variant="success">100/100</Badge>
@@ -188,10 +188,10 @@ export default async function AdminDashboard() {
             </AnimatedCard>
 
             {/* User Management */}
-            <AnimatedCard className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 hover:shadow-xl transition-all" delay={100}>
+            <AnimatedCard className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-success hover:shadow-xl transition-all" delay={100}>
               <Link href="/dashboard/admin/users" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-success rounded-xl flex items-center justify-center">
                     <Icon name="Users" className="h-6 w-6 text-white" />
                   </div>
                   <Badge variant="primary">{metrics.totalUsers} users</Badge>

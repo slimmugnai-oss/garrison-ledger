@@ -25,10 +25,10 @@ export default function ProfileSection({
   const isComplete = completion.percentage === 100;
   
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+    <div className="bg-surface rounded-xl border border-subtle shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full p-5 sm:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors text-left"
+        className="w-full p-5 sm:p-6 flex items-center justify-between hover:bg-surface-hover transition-colors text-left"
         type="button"
       >
         <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -40,15 +40,15 @@ export default function ProfileSection({
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900">{title}</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-primary">{title}</h2>
               {required && <span className="text-red-500 text-sm">*</span>}
               {isComplete && <span className="text-green-500 text-lg sm:text-xl">✓</span>}
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 mt-0.5">{description}</p>
+            <p className="text-xs sm:text-sm text-body mt-0.5">{description}</p>
             
             {/* Progress bar */}
             <div className="flex items-center gap-2 mt-2">
-              <div className="w-24 sm:w-32 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div className="w-24 sm:w-32 bg-surface-hover h-1.5 rounded-full overflow-hidden">
                 <div 
                   className={`h-1.5 rounded-full transition-all duration-300 ${
                     isComplete ? 'bg-green-500' : 'bg-blue-500'
@@ -56,7 +56,7 @@ export default function ProfileSection({
                   style={{ width: `${completion.percentage}%` }}
                 />
               </div>
-              <span className="text-xs text-gray-500 font-medium whitespace-nowrap">
+              <span className="text-xs text-muted font-medium whitespace-nowrap">
                 {completion.complete}/{completion.total}
               </span>
             </div>
@@ -78,7 +78,7 @@ export default function ProfileSection({
       
       {/* Expandable content */}
       {expanded && (
-        <div className="px-4 sm:px-6 pb-5 sm:pb-6 border-t border-gray-100">
+        <div className="px-4 sm:px-6 pb-5 sm:pb-6 border-t border-subtle">
           <div className="pt-4 sm:pt-5">
             {children}
           </div>

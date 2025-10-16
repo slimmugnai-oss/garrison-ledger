@@ -19,24 +19,24 @@ export default function Assessment() {
       <div className="min-h-screen" style={{ backgroundColor: '#FDFDFB' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">🎯 Readiness Assessment</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h1 className="text-5xl font-bold text-primary mb-4">🎯 Readiness Assessment</h1>
+            <p className="text-xl text-body max-w-2xl mx-auto">
               Get personalized financial recommendations based on your military service stage and goals.
             </p>
           </div>
           
-          <div className="bg-white rounded-xl p-8 border border-gray-200" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div className="bg-surface rounded-xl p-8 border border-subtle" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <div className="space-y-8">
               <Field label="Current Stage">
                 <select 
                   value={stage} 
                   onChange={e => setStage(e.target.value)} 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-primary bg-surface"
                 >
-                  <option value="pcs_soon" className="text-gray-900">PCS soon</option>
-                  <option value="pcs_later" className="text-gray-900">PCS later</option>
-                  <option value="deploy" className="text-gray-900">Deployment</option>
-                  <option value="reintegration" className="text-gray-900">Reintegration</option>
+                  <option value="pcs_soon" className="text-primary">PCS soon</option>
+                  <option value="pcs_later" className="text-primary">PCS later</option>
+                  <option value="deploy" className="text-primary">Deployment</option>
+                  <option value="reintegration" className="text-primary">Reintegration</option>
                 </select>
               </Field>
               
@@ -44,11 +44,11 @@ export default function Assessment() {
                 <select 
                   value={housing} 
                   onChange={e => setHousing(e.target.value)} 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                  className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-primary bg-surface"
                 >
-                  <option value="onbase" className="text-gray-900">On base</option>
-                  <option value="offbase" className="text-gray-900">Off base</option>
-                  <option value="unsure" className="text-gray-900">Unsure</option>
+                  <option value="onbase" className="text-primary">On base</option>
+                  <option value="offbase" className="text-primary">Off base</option>
+                  <option value="unsure" className="text-primary">Unsure</option>
                 </select>
               </Field>
               
@@ -58,9 +58,9 @@ export default function Assessment() {
                     type="checkbox" 
                     checked={kids} 
                     onChange={e => setKids(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-5 h-5 text-info border-default rounded focus:ring-blue-500"
                   />
-                  <span className="text-gray-900 font-medium">I have children</span>
+                  <span className="text-primary font-medium">I have children</span>
                 </div>
               </Field>
               
@@ -71,27 +71,27 @@ export default function Assessment() {
                       type="checkbox" 
                       checked={goalTsp} 
                       onChange={e => setGoalTsp(e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-info border-default rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-900 font-medium">Improve TSP allocation</span>
+                    <span className="text-primary font-medium">Improve TSP allocation</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <input 
                       type="checkbox" 
                       checked={goalHouse} 
                       onChange={e => setGoalHouse(e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-info border-default rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-900 font-medium">Buy multi-unit property</span>
+                    <span className="text-primary font-medium">Buy multi-unit property</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <input 
                       type="checkbox" 
                       checked={sdp} 
                       onChange={e => setSdp(e.target.checked)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-info border-default rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-900 font-medium">Use SDP effectively</span>
+                    <span className="text-primary font-medium">Use SDP effectively</span>
                   </div>
                 </div>
               </Field>
@@ -136,7 +136,7 @@ export default function Assessment() {
 function Field({ label, children }: { label: string; children: React.ReactNode | React.ReactElement }) {
   return (
     <div className="space-y-3">
-      <div className="text-lg font-semibold text-gray-900">{label}</div>
+      <div className="text-lg font-semibold text-primary">{label}</div>
       {children}
     </div>
   );
