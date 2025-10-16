@@ -209,7 +209,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
                 {tools.map((tool, index: number) => (
                   <Link key={index} href={tool.link}>
                     <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-900 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
-                      <Icon name="Tool" className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                      <Icon name="Wrench" className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                       <div className="flex-1">
                         <div className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">{tool.name}</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">{tool.description}</div>
