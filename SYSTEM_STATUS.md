@@ -67,6 +67,16 @@ The base map has been transformed from a simple feature into a **complete base r
 
 **Location:** `/base-guides` page (Featured → Map → Educational Content)
 
+#### **📝 How to Update Base URLs (When Ready):**
+1. Open `app/data/bases.ts`
+2. Find the base by ID
+3. Update the `url` field
+4. Save, commit, deploy
+5. All map pins, cards, and analytics automatically use new URL
+
+**Current URLs:** Point to familymedia.com/article/base-guides-[slug]  
+**Note:** External redirect issue identified on familymedia.com side (to be fixed by their dev)
+
 ---
 
 ### **🚀 BUILD & DEPLOYMENT STATUS**
@@ -86,9 +96,10 @@ The base map has been transformed from a simple feature into a **complete base r
 - **Build Status:** ✅ SUCCESSFUL DEPLOYMENT READY
   - All TypeScript errors resolved
   - All missing dependencies installed
-  - Build completes successfully (116 pages generated)
-  - Bundle size optimized (187kB shared JS)
-- **Version:** v2.43.8 (Build Fix Complete)
+  - Build completes successfully (117 pages generated)
+  - Bundle size optimized (188kB shared JS)
+  - Latest build: v2.44.0 (Base Map Complete)
+  - New dependencies: d3, topojson-client, @types/d3, @types/topojson-client
 
 ### **🏆 AUDIT STATUS**
 
