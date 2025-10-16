@@ -91,7 +91,7 @@ export default async function AnalyticsAdminPage() {
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-200 dark:border-slate-600">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Avg Lifetime</span>
-                  <Icon name="Clock" className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <Icon name="Timer" className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="text-3xl font-black text-gray-900 dark:text-white">
                   {ltvMetrics ? Math.round(ltvMetrics.avg_lifetime_days) : 0}
