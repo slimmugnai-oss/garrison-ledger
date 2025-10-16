@@ -224,7 +224,7 @@ export default function CareerHub() {
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="Monitor" className="h-8 w-8" />
-                  <Badge variant="success" className="bg-green-400 text-green-900 border-green-500">High Demand</Badge>
+                  <Badge variant="success">High Demand</Badge>
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Software Developer</h3>
                 <div className="text-3xl font-black text-blue-100 mb-4">$85K-$120K</div>
