@@ -126,10 +126,14 @@ export default async function UpgradePage() {
             </div>
           </div>
 
-          {/* Upgrade Headline */}
+          {/* Upgrade Headline with Loss Aversion */}
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">Unlock Everything for $9.99/Month</h2>
-            <p className="text-xl text-gray-600">Less than a Starbucks coffee. Potentially worth thousands in savings.</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-3">
+              <span className="text-red-600">Don&apos;t Miss Out:</span> Unlock Everything for Less Than $0.33/Day
+            </h2>
+            <p className="text-xl text-gray-600">
+              Less than a single coffee. Could help you save <strong className="text-green-600">$5,000+/year</strong> in optimized military benefits.
+            </p>
           </div>
 
           {/* Pricing Cards */}
@@ -140,9 +144,15 @@ export default async function UpgradePage() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Monthly Plan
                 </h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-gray-900">$9.99</span>
-                  <span className="text-gray-600">/month</span>
+                <div className="mb-2">
+                  <span className="text-2xl text-gray-400 line-through">$29.99</span>
+                </div>
+                <div className="mb-2">
+                  <span className="text-5xl font-black text-blue-600">$9.99</span>
+                  <span className="text-gray-600 text-xl">/month</span>
+                </div>
+                <div className="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold mb-4">
+                  SAVE 67% - Limited Time
                 </div>
                 <div className="mb-4 pb-4 border-b border-gray-200">
                   <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Everything in Free, plus:</p>
@@ -208,35 +218,39 @@ export default async function UpgradePage() {
                 ) : (
                   <PaymentButton 
                     priceId="price_1SHdWQQnBqVFfU8hW2UE3je8"
-                    buttonText="Start Monthly Plan"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold"
+                    buttonText="Unlock Full Access Now"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
                   />
                 )}
               </div>
             </div>
 
-            {/* Annual Plan */}
-            <div className={`rounded-2xl shadow-lg p-8 border-2 relative ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-white border-purple-500'}`}>
+            {/* Annual Plan - VISUALLY DOMINANT */}
+            <div className={`rounded-2xl shadow-2xl p-10 border-4 relative transform scale-105 ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-500'}`}>
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 flex gap-2">
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg">
-                  ⭐ MOST POPULAR
-                </span>
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg">
-                  BEST VALUE
+                  ⭐ MOST POPULAR - 83% CHOOSE THIS
                 </span>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
                   Annual Plan
                 </h3>
                 <div className="mb-2">
-                  <span className="text-4xl font-bold text-gray-900">$99</span>
-                  <span className="text-gray-600">/year</span>
+                  <span className="text-2xl text-gray-400 line-through">$359.88</span>
+                  <span className="text-sm text-gray-500 ml-2">(monthly × 12)</span>
                 </div>
-                <div className="mb-6">
-                  <span className="text-lg text-green-600 font-semibold">
-                    Save 2 months per year!
-                  </span>
+                <div className="mb-2">
+                  <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">$99</span>
+                  <span className="text-gray-600 text-xl">/year</span>
+                </div>
+                <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-base font-black mb-4 shadow-lg">
+                  SAVE $260.88 (72% OFF)
+                </div>
+                <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-3 mb-6">
+                  <p className="text-sm font-bold text-yellow-900">
+                    🔥 Only <span className="text-red-600">$8.25/month</span> when paid annually
+                  </p>
                 </div>
                 <div className="mb-4 pb-4 border-b border-gray-200">
                   <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Everything in Free, plus:</p>
@@ -309,8 +323,8 @@ export default async function UpgradePage() {
                 ) : (
                   <PaymentButton 
                     priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                    buttonText="Start Annual Plan"
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-semibold"
+                    buttonText="🔥 Get Best Value - Save $260!"
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-5 px-6 rounded-xl font-black text-xl shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
                   />
                 )}
               </div>

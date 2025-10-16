@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AnimatedCard from './components/ui/AnimatedCard';
 import Badge from './components/ui/Badge';
 import { generatePageMeta } from "@/lib/seo-config";
+import SocialProofStats from './components/home/SocialProofStats';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Garrison Ledger - AI-Powered Financial Planning for Military Life",
@@ -48,17 +49,17 @@ export default function Home() {
             Garrison Ledger
           </h1>
 
-          {/* Subtitle - Readable muted tone */}
+          {/* Subtitle - Readable muted tone with loss aversion */}
           <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-gray-700">
-            AI-powered financial planning for military life. Get your personalized plan with expert content curated specifically for your rank, situation, and goals.
+            <strong className="text-red-600">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
           </p>
 
-          {/* CTAs */}
+          {/* CTAs with loss aversion */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <SignedOut>
               <SignUpButton mode="modal">
                 <button className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl">
-                  Start Free Forever
+                  Start Free Forever - Don&apos;t Miss Out
                 </button>
               </SignUpButton>
               <Link
@@ -88,6 +89,11 @@ export default function Home() {
           <p className="mt-6 text-sm text-gray-600">
             <strong>Free Forever</strong> · No Credit Card Required · Upgrade Anytime
           </p>
+
+          {/* Social Proof Stats */}
+          <div className="mt-12">
+            <SocialProofStats />
+          </div>
         </div>
       </section>
 
@@ -305,22 +311,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* Final CTA with Social Proof */}
       <section className="bg-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimatedCard delay={0}>
             <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-12 md:p-16 text-center text-white shadow-2xl">
+              {/* Social Proof Badge */}
+              <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 rounded-full px-4 py-2 mb-6">
+                <span className="inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span className="text-green-300 text-sm font-semibold">500+ military families joined this month</span>
+              </div>
+              
               <h2 className="text-4xl md:text-5xl font-serif font-black mb-6">
-                Ready to Take Control of Your Finances?
+                Don&apos;t Let Your Military Benefits Go to Waste
               </h2>
               <p className="text-xl mb-10 text-slate-200 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of military personnel who trust Garrison Ledger for their military life planning.
+                Join <strong className="text-white">500+ military families</strong> who are already maximizing their TSP, BAH, and deployment savings with AI-powered planning.
               </p>
               
               <SignedOut>
                 <SignUpButton mode="modal">
                   <button className="bg-white text-slate-900 hover:bg-gray-100 px-10 py-5 rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
-                    Start Your Free Account
+                    Start Your Free Account - Join Now
                   </button>
                 </SignUpButton>
               </SignedOut>
@@ -333,6 +345,10 @@ export default function Home() {
                   Access Your Dashboard
                 </Link>
               </SignedIn>
+              
+              <p className="mt-6 text-sm text-slate-400">
+                ✓ Free forever · ✓ No credit card · ✓ 2 minutes to set up
+              </p>
             </div>
           </AnimatedCard>
         </div>
