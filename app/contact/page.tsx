@@ -94,7 +94,7 @@ export default function ContactPage() {
                   <p className="text-gray-400">
                     <strong className="text-white">Documentation:</strong>
                     <br />
-                    <a href="/resources" className="text-[#00E5A0] hover:underline">
+                    <a href="/pcs-hub" className="text-[#00E5A0] hover:underline">
                       Browse our resource hubs →
                     </a>
                   </p>

@@ -60,7 +60,7 @@ export default async function DashboardSupportPage() {
                     </div>
                   </Link>
                   <Link
-                    href="/resources"
+                    href="/pcs-hub"
                     className="flex items-center gap-3 p-3 bg-[#0A0F1E] rounded-lg hover:bg-[#15192A] transition-colors group"
                   >
                     <Icon name="BookOpen" className="w-5 h-5 text-[#00E5A0] group-hover:scale-110 transition-transform" />

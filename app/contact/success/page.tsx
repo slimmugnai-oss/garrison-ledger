@@ -167,7 +167,7 @@ export default function ContactSuccessPage({
                 Browse Help Articles
               </Link>
               <span className="text-gray-600">•</span>
-              <Link href="/resources" className="text-[#00E5A0] hover:underline flex items-center gap-1">
+              <Link href="/pcs-hub" className="text-[#00E5A0] hover:underline flex items-center gap-1">
                 <Icon name="BookOpen" className="w-4 h-4" />
                 Resource Hubs
               </Link>

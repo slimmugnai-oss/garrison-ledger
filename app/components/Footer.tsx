@@ -75,10 +75,15 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Support & Legal */}
           <div>
-            <h3 className="font-bold text-text-headings mb-4">Legal</h3>
+            <h3 className="font-bold text-text-headings mb-4">Support & Legal</h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/contact" className="text-text-body hover:text-primary-accent transition-colors font-semibold">
+                  Contact Us
+                </Link>
+              </li>
               <li>
                 <Link href="/disclosures" className="text-gray-700 hover:text-primary transition-colors font-semibold">
                   Disclosures

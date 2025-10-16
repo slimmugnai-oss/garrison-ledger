@@ -81,8 +81,47 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // TODO: Send email notification (implement with Resend/SendGrid)
-    // await sendContactNotification({ ticketId, name, email, subject, message });
+    // Send email notification to admin
+    try {
+      const emailSubject = `[${ticketId}] New Contact Form Submission - ${subject}`;
+      const emailBody = `
+New contact form submission received:
+
+Ticket ID: ${ticketId}
+From: ${name} <${email}>
+Subject: ${subject}
+${urgency !== 'low' ? `Priority: ${urgency.toUpperCase()}` : ''}
+Variant: ${variant}
+
+Message:
+${message}
+
+---
+Reply directly to this email to respond to the user.
+View in Supabase: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/editor (contact_submissions table)
+      `.trim();
+
+      // Send email using Resend (requires RESEND_API_KEY env var)
+      if (process.env.RESEND_API_KEY) {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Garrison Ledger <noreply@familymedia.com>',
+            to: ['joemugnai@familymedia.com'],
+            reply_to: email,
+            subject: emailSubject,
+            text: emailBody,
+          }),
+        });
+      }
+    } catch (emailError) {
+      // Log but don't fail the request if email fails
+      console.error('Failed to send email notification:', emailError);
+    }
 
     return NextResponse.json({
       success: true,
