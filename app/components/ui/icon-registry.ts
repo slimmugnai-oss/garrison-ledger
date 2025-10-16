@@ -101,6 +101,7 @@ import {
   Activity,
   Brain,
   CheckCircle2,
+  Circle,
   CreditCard,
   Database,
   ExternalLink,
@@ -109,6 +110,7 @@ import {
   Mail,
   MessageSquare,
   Rss,
+  XCircle,
   
   type LucideIcon,
 } from 'lucide-react';
@@ -208,6 +210,7 @@ export const iconRegistry = {
   Activity,
   Brain,
   CheckCircle2,
+  Circle,
   CreditCard,
   Database,
   ExternalLink,
@@ -216,6 +219,7 @@ export const iconRegistry = {
   Mail,
   MessageSquare,
   Rss,
+  XCircle,
 } as const;
 
 // Export the type of valid icon names
