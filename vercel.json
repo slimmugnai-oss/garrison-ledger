@@ -1,55 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/ingest/feeds",
-      "schedule": "0 */4 * * *"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/pcs-hub",
-      "destination": "/pcs-hub.html"
-    },
-    {
-      "source": "/career-hub",
-      "destination": "/career-hub.html"
-    },
-    {
-      "source": "/deployment",
-      "destination": "/deployment.html"
-    },
-    {
-      "source": "/on-base-shopping",
-      "destination": "/on-base-shopping.html"
-    },
-    {
-      "source": "/base-guides",
-      "destination": "/base-guides.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "garrison-ledger.vercel.app"
-        }
-      ],
-      "destination": "https://app.familymedia.com/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "garrison-ledger-git-.*\\.vercel\\.app"
-        }
-      ],
-      "destination": "https://app.familymedia.com/:path*",
-      "permanent": true
+      "path": "/api/emails/weekly-digest",
+      "schedule": "0 19 * * 0"
     }
   ]
 }
-
