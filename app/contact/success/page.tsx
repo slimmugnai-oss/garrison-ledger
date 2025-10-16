@@ -1,13 +1,12 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: 'Message Sent | Garrison Ledger',
-  description: 'Your message has been sent successfully. We will get back to you soon.',
-};
+// Note: metadata cannot be exported from client components
+// This page needs to be a client component due to the onClick handler for copying ticket ID
 
 export default function ContactSuccessPage({
   searchParams,
