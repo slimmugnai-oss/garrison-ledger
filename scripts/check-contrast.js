@@ -20,16 +20,16 @@ console.log('🎨 Checking for contrast issues in light/dark mode...\n');
 
 // Problematic patterns to find
 const problematicPatterns = [
-  { pattern: /text-gray-\d00/g, issue: 'text-gray-X', fix: 'text-primary, text-body, or text-muted' },
-  { pattern: /text-blue-\d00/g, issue: 'text-blue-X', fix: 'link or text-info' },
-  { pattern: /bg-white(?![/-])/g, issue: 'bg-white', fix: 'bg-surface' },
-  { pattern: /bg-gray-50/g, issue: 'bg-gray-50', fix: 'bg-page or bg-surface-hover' },
-  { pattern: /bg-gray-100/g, issue: 'bg-gray-100', fix: 'bg-surface-hover' },
-  { pattern: /border-gray-\d00/g, issue: 'border-gray-X', fix: 'border-default or border-subtle' },
-  { pattern: /bg-blue-\d00(?![/-])/g, issue: 'bg-blue-X', fix: 'btn-primary or bg-info' },
-  { pattern: /bg-green-\d00/g, issue: 'bg-green-X', fix: 'bg-success or bg-success-subtle' },
-  { pattern: /bg-red-\d00/g, issue: 'bg-red-X', fix: 'bg-danger or bg-danger-subtle' },
-  { pattern: /bg-yellow-\d00/g, issue: 'bg-yellow-X', fix: 'bg-warning or bg-warning-subtle' },
+  { pattern: /text-gray-\d00/g, issue: 'text-gray-X', fix: 'text-primary, text-body, or text-muted (or add dark: variant)' },
+  { pattern: /text-blue-\d00/g, issue: 'text-blue-X', fix: 'link or text-info (or add dark: variant)' },
+  { pattern: /bg-white(?![/-])/g, issue: 'bg-white', fix: 'bg-surface (or add dark: variant)' },
+  { pattern: /bg-gray-50/g, issue: 'bg-gray-50', fix: 'bg-page or bg-surface-hover (or add dark: variant)' },
+  { pattern: /bg-gray-100/g, issue: 'bg-gray-100', fix: 'bg-surface-hover (or add dark: variant)' },
+  { pattern: /border-gray-\d00/g, issue: 'border-gray-X', fix: 'border-default or border-subtle (or add dark: variant)' },
+  { pattern: /bg-blue-\d00(?![/-])/g, issue: 'bg-blue-X', fix: 'btn-primary or bg-info (or add dark: variant)' },
+  { pattern: /bg-green-\d00/g, issue: 'bg-green-X', fix: 'bg-success or bg-success-subtle (or add dark: variant)' },
+  { pattern: /bg-red-\d00/g, issue: 'bg-red-X', fix: 'bg-danger or bg-danger-subtle (or add dark: variant)' },
+  { pattern: /bg-yellow-\d00/g, issue: 'bg-yellow-X', fix: 'bg-warning or bg-warning-subtle (or add dark: variant)' },
 ];
 
 let totalIssues = 0;
@@ -67,10 +67,23 @@ files.forEach(file => {
   const relativePath = path.relative(projectRoot, file);
   const issues = [];
   
+  // Split into lines to check for dark: variants on same line
+  const lines = content.split('\n');
+  
   problematicPatterns.forEach(({ pattern, issue, fix }) => {
-    const matches = content.match(pattern);
-    if (matches) {
-      const count = matches.length;
+    let count = 0;
+    
+    lines.forEach(line => {
+      // Skip lines that already have dark: variants
+      if (line.includes('dark:')) return;
+      
+      const matches = line.match(pattern);
+      if (matches) {
+        count += matches.length;
+      }
+    });
+    
+    if (count > 0) {
       issues.push({ issue, fix, count });
       totalIssues += count;
     }
