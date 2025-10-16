@@ -124,6 +124,10 @@ import {
   Moon,
   Sun,
   
+  // Listening Post
+  Radio,
+  Newspaper,
+  
   type LucideIcon,
 } from 'lucide-react';
 
@@ -246,13 +250,7 @@ export const iconRegistry = {
   Sun,
   // Listening Post
   Radio,
-  Globe,
   Newspaper,
-  // Additional
-  Monitor,
-  Quote,
-  Lightbulb,
-  Tool,
 } as const;
 
 // Export the type of valid icon names
