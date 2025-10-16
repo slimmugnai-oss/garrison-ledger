@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Icon from './ui/Icon';
-import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [dashboardOpen, setDashboardOpen] = useState(false);
@@ -372,14 +371,13 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-4">
             <SignedOut>
               <div className="flex items-center space-x-2">
-                <ThemeToggle />
                 <SignInButton mode="modal">
-                  <button className="text-body dark:text-muted hover:text-primary dark:hover:text-white transition-colors font-medium">
+                  <button className="text-body hover:text-primary transition-colors font-medium">
                     Sign In
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="bg-info hover:bg-info dark:bg-info dark:hover:bg-info text-white px-4 py-2 rounded-md font-medium transition-colors">
+                  <button className="bg-info hover:bg-info text-white px-4 py-2 rounded-md font-medium transition-colors">
                     Sign Up
                   </button>
                 </SignUpButton>
@@ -388,7 +386,6 @@ export default function Header() {
             
             <SignedIn>
               <div className="flex items-center space-x-2">
-                <ThemeToggle />
                   <UserButton 
                   afterSignOutUrl="/"
                   appearance={{
