@@ -24,7 +24,7 @@ const CITY_DATA = [
   { value: "101.2", label: "Denver, CO" },
   { value: "101.5", label: "Seattle, WA" },
   { value: "104.9", label: "Chicago, IL" },
-  { value: "107.5", label: "Anchorage, AK" },
+  { value: "107.5", label: "Shipage, AK" },
   { value: "115.7", label: "Washington, DC" },
   { value: "117.8", label: "Boston, MA" },
   { value: "122.1", label: "San Diego, CA" },
