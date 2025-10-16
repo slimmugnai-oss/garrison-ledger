@@ -73,12 +73,12 @@ export default function Header() {
               href="/" 
               className={`transition-colors font-medium relative ${
                 isActivePath('/') 
-                  ? 'text-blue-600 font-semibold' 
-                  : 'text-gray-700 hover:text-gray-900'
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Home
-              {isActivePath('/') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+              {isActivePath('/') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
             </Link>
             <SignedIn>
               {/* Command Center Dropdown */}
@@ -89,14 +89,14 @@ export default function Header() {
               >
                 <button className={`transition-colors flex items-center font-medium relative ${
                   isActivePath('/dashboard') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}>
                   Command Center
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                  {isActivePath('/dashboard') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+                  {isActivePath('/dashboard') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />}
                 </button>
                 {dashboardOpen && (
                   <div 
@@ -153,8 +153,8 @@ export default function Header() {
               >
                 <button className={`transition-colors flex items-center font-medium relative ${
                   isActivePath('/dashboard/tools') 
-                    ? 'text-blue-600 font-semibold' 
-                    : 'text-gray-700 hover:text-gray-900'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}>
                   Tools
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,7 +382,7 @@ export default function Header() {
 
         {/* Enhanced Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
+          <div className="lg:hidden border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
             <nav className="flex flex-col">
               {/* Search in Mobile */}
               <div className="px-4 py-3 border-b border-gray-100">
