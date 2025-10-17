@@ -166,7 +166,7 @@ export default function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackMod
             >
               {submitting ? (
                 <>
-                  <Icon name="Loader2" className="h-5 w-5 animate-spin" />
+                  <Icon name="Loader" className="h-5 w-5 animate-spin" />
                   Submitting...
                 </>
               ) : (

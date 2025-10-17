@@ -57,7 +57,7 @@ export default function ProgressSaveButton({
     >
       {saving ? (
         <>
-          <Icon name="Loader2" className="h-4 w-4 animate-spin" />
+          <Icon name="Loader" className="h-4 w-4 animate-spin" />
           Saving...
         </>
       ) : saved ? (
