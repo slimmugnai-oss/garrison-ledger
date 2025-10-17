@@ -43,37 +43,37 @@ export default function Home() {
       <Header />
       
       {/* SECTION 1: HERO - COMPANY BRANDING FIRST */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-background via-surface to-background">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(15,23,42,0.08),transparent_60%)]" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <div className="text-center mb-12">
             {/* Company Branding First */}
             <div className="mb-8">
-              <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-gray-900 mb-4">
+              <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-primary mb-4">
                 Garrison Ledger
               </h1>
-              <p className="text-2xl md:text-3xl text-gray-600 font-medium">
+              <p className="text-2xl md:text-3xl text-body font-medium">
                 AI-Powered Military Financial Planning
               </p>
             </div>
 
             {/* Kicker Badge */}
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700 uppercase tracking-wider mb-6">
-              <Icon name="Sparkles" className="h-4 w-4" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-navy-professional/20 bg-navy-professional/10 px-4 py-2 text-sm font-semibold text-navy-professional uppercase tracking-wider mb-6">
+              <Icon name="Shield" className="h-4 w-4" />
               Independent Platform • Not Affiliated with DoD
             </span>
 
             {/* Benefit-First Headline */}
-            <h2 className="font-serif text-4xl md:text-6xl font-black tracking-tight text-gray-900 mb-6">
+            <h2 className="font-serif text-4xl md:text-6xl font-black tracking-tight text-primary mb-6">
               <span className="block">How Much Are You</span>
-              <span className="block bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
+              <span className="block bg-gradient-to-r from-success to-emerald-600 bg-clip-text text-transparent leading-tight">
                 Leaving on the Table?
               </span>
             </h2>
 
-            <p className="mx-auto max-w-3xl text-xl md:text-2xl text-gray-700 leading-relaxed mb-8">
-              <strong className="text-red-600">Don't let your military benefits go to waste.</strong> 
+            <p className="mx-auto max-w-3xl text-xl md:text-2xl text-body leading-relaxed mb-8">
+              <strong className="text-danger">Don't let your military benefits go to waste.</strong> 
               {' '}Answer 3 quick questions to discover your potential savings.
             </p>
           </div>
@@ -83,42 +83,42 @@ export default function Home() {
 
           {/* Below Calculator Social Proof */}
           <div className="mt-12 text-center">
-            <p className="text-gray-600 text-sm mb-4">Trusted by service members worldwide:</p>
-            <div className="flex flex-wrap items-center justify-center gap-8 text-gray-700">
+            <p className="text-muted text-sm mb-4">Trusted by service members worldwide:</p>
+            <div className="flex flex-wrap items-center justify-center gap-8 text-body">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Icon name="Shield" className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-surface-hover rounded-full flex items-center justify-center">
+                  <Icon name="Shield" className="h-5 w-5 text-navy-professional" />
                 </div>
                 <div>
                   <div className="font-bold">Army</div>
-                  <div className="text-xs text-gray-500">180+ users</div>
+                  <div className="text-xs text-muted">180+ users</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Icon name="Shield" className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-surface-hover rounded-full flex items-center justify-center">
+                  <Icon name="Shield" className="h-5 w-5 text-navy-professional" />
                 </div>
                 <div>
                   <div className="font-bold">Navy</div>
-                  <div className="text-xs text-gray-500">150+ users</div>
+                  <div className="text-xs text-muted">150+ users</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Icon name="Shield" className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-surface-hover rounded-full flex items-center justify-center">
+                  <Icon name="Shield" className="h-5 w-5 text-navy-professional" />
                 </div>
                 <div>
                   <div className="font-bold">Air Force</div>
-                  <div className="text-xs text-gray-500">120+ users</div>
+                  <div className="text-xs text-muted">120+ users</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Icon name="Shield" className="h-5 w-5 text-gray-600" />
+                <div className="w-8 h-8 bg-surface-hover rounded-full flex items-center justify-center">
+                  <Icon name="Shield" className="h-5 w-5 text-navy-professional" />
                 </div>
                 <div>
                   <div className="font-bold">Marines</div>
-                  <div className="text-xs text-gray-500">80+ users</div>
+                  <div className="text-xs text-muted">80+ users</div>
                 </div>
               </div>
             </div>
