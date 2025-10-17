@@ -7,9 +7,12 @@ export const runtime = "nodejs";
 /**
  * CHECK ASSESSMENT ELIGIBILITY
  * 
- * Rate limits:
- * - Free tier: 1 assessment per week
- * - Premium tier: 3 assessments per day
+ * Rate limits (Three-Tier Model):
+ * - Free tier: 1 plan per month
+ * - Premium tier ($9.99/mo): 10 plans per month
+ * - Pro tier ($24.99/mo): 30 plans per month
+ * 
+ * Updated: 2025-01-17 for sustainable margins
  */
 
 export async function GET() {

@@ -256,13 +256,17 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
               
               {!isPremium && (
                 <div className="bg-info-subtle rounded-lg p-6 mb-6">
-                  <p className="text-blue-900 font-semibold mb-3">Want to regenerate your plan more often?</p>
-                  <p className="text-info mb-4">Premium members can take assessments up to 3 times per day to keep their plans current as situations change.</p>
+                  <p className="text-blue-900 font-semibold mb-3">Want to update your plan more frequently?</p>
+                  <p className="text-info mb-4">
+                    <strong>Premium:</strong> 10 plans/month ($9.99/mo)<br />
+                    <strong>Pro:</strong> 30 plans/month ($24.99/mo)<br />
+                    Stay current with PCS orders, deployments, and major financial decisions.
+                  </p>
                   <Link
                     href="/dashboard/upgrade"
                     className="inline-block px-6 py-3 bg-info text-white font-bold rounded-lg hover:bg-info transition-colors"
                   >
-                    Upgrade to Premium - $9.99/month
+                    View Pricing Options
                   </Link>
                 </div>
               )}
