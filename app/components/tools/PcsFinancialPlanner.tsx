@@ -5,6 +5,7 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -658,119 +659,69 @@ export default function PcsFinancialPlanner() {
 
             {/* Results */}
             <div className="pt-6 border-t-2 border-subtle">
-              {isPremium ? (
-                <div>
-                  <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
-                      <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
-                      <p className="text-3xl font-bold text-info">
-                        ${Math.round(govtPayment).toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
-                      <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
-                      <p className="text-3xl font-bold text-danger">
-                        ${Math.round(yourCosts).toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div className={`p-5 rounded-xl text-center border-2 ${
-                      netProfit >= 0 
-                        ? 'bg-green-50 border-green-300' 
-                        : 'bg-red-50 border-red-300'
-                    }`}>
-                      <h5 className={`text-sm font-semibold mb-2 ${
-                        netProfit >= 0 ? 'text-green-800' : 'text-red-800'
-                      }`}>
-                        Net Profit/Loss
-                      </h5>
-                      <p className={`text-3xl font-bold ${
-                        netProfit >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {netProfit >= 0 ? '+' : ''}${Math.round(netProfit).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {entitlementData && ppmWeight > entitlementData.weight_allowance && (
-                    <div className="bg-danger-subtle border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
-                      <p className="text-sm font-semibold text-danger mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
-                      <p className="text-xs text-danger">
-                        Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
-                        You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                    <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                    <p className="text-xs text-warning">
-                      This is a simplified, unofficial estimate for planning purposes only. 
-                      Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
-                      <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
-                    </p>
-                  </div>
+              <div className="grid sm:grid-cols-3 gap-4 mb-4">
+                <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
+                  <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
+                  <p className="text-3xl font-bold text-info">
+                    ${Math.round(govtPayment).toLocaleString()}
+                  </p>
                 </div>
-              ) : (
-                <div className="relative">
-                  <div className="blur-sm pointer-events-none select-none">
-                    <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                      <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
-                        <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
-                        <p className="text-3xl font-bold text-info">
-                          $8,247
-                        </p>
-                      </div>
 
-                      <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
-                        <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
-                        <p className="text-3xl font-bold text-danger">
-                          $5,934
-                        </p>
-                      </div>
+                <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
+                  <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
+                  <p className="text-3xl font-bold text-danger">
+                    ${Math.round(yourCosts).toLocaleString()}
+                  </p>
+                </div>
 
-                      <div className="p-5 rounded-xl text-center border-2 bg-success-subtle border-green-300">
-                        <h5 className="text-sm font-semibold mb-2 text-success">
-                          Net Profit/Loss
-                        </h5>
-                        <p className="text-3xl font-bold text-success">
-                          +$2,313
-                        </p>
-                      </div>
-                    </div>
+                <div className={`p-5 rounded-xl text-center border-2 ${
+                  netProfit >= 0 
+                    ? 'bg-green-50 border-green-300' 
+                    : 'bg-red-50 border-red-300'
+                }`}>
+                  <h5 className={`text-sm font-semibold mb-2 ${
+                    netProfit >= 0 ? 'text-green-800' : 'text-red-800'
+                  }`}>
+                    Net Profit/Loss
+                  </h5>
+                  <p className={`text-3xl font-bold ${
+                    netProfit >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {netProfit >= 0 ? '+' : ''}${Math.round(netProfit).toLocaleString()}
+                  </p>
+                </div>
+              </div>
 
-                    <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                      <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                      <p className="text-xs text-warning">
-                        This is a simplified, unofficial estimate for planning purposes only. 
-                        Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
-                        <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-surface-hover/90 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-surface rounded-2xl p-10 shadow-2xl border-2 border-indigo-400 text-center max-w-lg">
-                      <Icon name="Lock" className="h-16 w-16 text-body mb-4 mx-auto" />
-                      <h3 className="text-3xl font-bold text-primary mb-3">
-                        Your Results Are Ready!
-                      </h3>
-                      <p className="text-lg text-body mb-2">
-                        Unlock to see your complete PPM profit analysis with detailed breakdowns
-                      </p>
-                      <p className="text-3xl font-black text-primary mb-6">
-                        $9.99<span className="text-lg font-normal text-body">/month</span>
-                      </p>
-                      <a href="/dashboard/upgrade" className="inline-block w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 mb-4">
-                        Unlock Now →
-                      </a>
-                      <p className="text-xs text-muted">
-                        Less than a coffee per week · Upgrade anytime
-                      </p>
-                    </div>
-                  </div>
+              {entitlementData && ppmWeight > entitlementData.weight_allowance && (
+                <div className="bg-danger-subtle border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
+                  <p className="text-sm font-semibold text-danger mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
+                  <p className="text-xs text-danger">
+                    Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
+                    You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
+                  </p>
                 </div>
               )}
+
+              <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
+                <p className="text-xs text-warning">
+                  This is a simplified, unofficial estimate for planning purposes only. 
+                  Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
+                  <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
+                </p>
+              </div>
+              
+              {/* Export Options */}
+              <div className="mt-8 pt-6 border-t border-border">
+                <ExportButtons 
+                  tool="pcs-planner"
+                  resultsElementId="pcs-results"
+                  data={{
+                    inputs: { activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther },
+                    outputs: { totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

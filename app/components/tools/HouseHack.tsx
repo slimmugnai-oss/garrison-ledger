@@ -6,6 +6,7 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
@@ -267,6 +268,19 @@ export default function HouseHack() {
                     inputs: { price, rate, tax, ins, bah, rent }, 
                     outputs: { costs: apiData.costs, income: apiData.income, verdict: apiData.verdict } 
                   }} />
+                  
+                  {/* Export Options */}
+                  <div className="mt-8 pt-6 border-t border-border">
+                    <ExportButtons 
+                      tool="house-hacking"
+                      resultsElementId="house-hacking-results"
+                      data={{
+                        inputs: { price, rate, tax, ins, bah, rent },
+                        outputs: apiData
+                      }}
+                    />
+                  </div>
+                  
                   <FootNote />
                 </div>
               ) : (

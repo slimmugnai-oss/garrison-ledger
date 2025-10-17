@@ -6,6 +6,7 @@ import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
@@ -311,6 +312,19 @@ function RoiBox({
         inputs: { amount }, 
         outputs: { hy: apiData.hy, cons: apiData.cons, mod: apiData.mod } 
       }} />
+      
+      {/* Export Options */}
+      <div className="mt-8 pt-6 border-t border-border">
+        <ExportButtons 
+          tool="sdp-strategist"
+          resultsElementId="sdp-results"
+          data={{
+            inputs: { amount },
+            outputs: apiData
+          }}
+        />
+      </div>
+      
       <div className="text-sm text-body mt-4 p-4 bg-surface-hover rounded-lg">
         <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
         Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.

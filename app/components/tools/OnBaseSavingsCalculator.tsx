@@ -6,6 +6,7 @@ import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 
 export default function OnBaseSavingsCalculator() {
   const { isPremium } = usePremiumStatus();
@@ -111,7 +112,7 @@ export default function OnBaseSavingsCalculator() {
     <div className="max-w-6xl mx-auto space-y-10">
       
       {/* Section 1: Commissary Savings Plan */}
-      <div className="bg-surface rounded-2xl border-2 border-blue-300 p-8 shadow-lg">
+      <div id="savings-results" className="bg-surface rounded-2xl border-2 border-blue-300 p-8 shadow-lg calculator-results">
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-info text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
             1
@@ -646,6 +647,18 @@ export default function OnBaseSavingsCalculator() {
           grandTotal
         }
       }} />
+      
+      {/* Export Options */}
+      <div className="mt-8 pt-6 border-t border-border">
+        <ExportButtons 
+          tool="on-base-savings"
+          resultsElementId="savings-results"
+          data={{
+            inputs: { meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate },
+            outputs: { totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings }
+          }}
+        />
+      </div>
 
       {/* Educational Tips */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">

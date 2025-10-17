@@ -5,6 +5,7 @@ import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
@@ -319,7 +320,7 @@ export default function TspModeler() {
           </div>
 
           {/* Retirement Projection Results - Available to ALL users (free tier benefit) */}
-          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+          <div id="tsp-results" className="bg-card rounded-xl p-8 border border-border calculator-results" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
               <h2 className="text-2xl font-bold text-primary mb-6">Retirement Projection Results</h2>
               {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
                 <>
@@ -350,6 +351,19 @@ export default function TspModeler() {
                     inputs: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } }, 
                     outputs: { endDefault: apiData.endDefault, endCustom: apiData.endCustom, diff: apiData.diff } 
                   }} />
+                  
+                  {/* Export Options */}
+                  <div className="mt-8 pt-6 border-t border-border">
+                    <ExportButtons 
+                      tool="tsp-modeler"
+                      resultsElementId="tsp-results"
+                      data={{
+                        inputs: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
+                        outputs: { endDefault: apiData.endDefault, endCustom: apiData.endCustom, diff: apiData.diff }
+                      }}
+                    />
+                  </div>
+                  
                   <FootNote />
                 </>
               ) : (

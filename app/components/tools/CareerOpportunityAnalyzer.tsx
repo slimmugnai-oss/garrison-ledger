@@ -9,6 +9,7 @@ import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import Explainer from '@/app/components/ai/Explainer';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 
 interface City {
   city: string;
@@ -201,6 +202,8 @@ export default function CareerOpportunityAnalyzer() {
         title="Career Opportunity Analyzer"
         subtitle="Compare total compensation, state taxes, and cost of living to understand your real earning power"
       />
+      
+      <div id="career-results" className="calculator-results">
       
       <div className="bg-card rounded-xl border border-border shadow-sm">
 
@@ -579,7 +582,22 @@ export default function CareerOpportunityAnalyzer() {
               }
             }} />
           )}
+          
+          {/* Export Options */}
+          {analysis && (
+            <div className="mt-8 pt-6 border-t border-border">
+              <ExportButtons 
+                tool="salary-calculator"
+                resultsElementId="career-results"
+                data={{
+                  inputs: { currentData, newData },
+                  outputs: analysis
+                }}
+              />
+            </div>
+          )}
         </div>
+      </div>
       </div>
 
       {/* Educational Content */}
