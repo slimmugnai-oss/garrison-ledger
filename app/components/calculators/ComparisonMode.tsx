@@ -77,17 +77,20 @@ export default function ComparisonMode({
       if (response.status === 403) {
         // Free user hit limit
         alert(data.error || 'Upgrade to Premium for unlimited scenarios!');
+      } else if (response.status === 500 && data.error?.includes('function')) {
+        // Migration not deployed
+        alert('⚠️ Database migration required! Please contact support or check DEPLOYMENT_GUIDE.md');
       } else if (data.success) {
         await loadScenarios();
         setScenarioName('');
         setShowSaveDialog(false);
         alert('✅ Scenario saved! You can now compare it with other scenarios.');
       } else {
-        alert('Failed to save scenario. Please try again.');
+        alert('Failed to save scenario. Please try again or check if database migrations are deployed.');
       }
     } catch (error) {
       console.error('Error saving scenario:', error);
-      alert('Failed to save scenario. Please try again.');
+      alert('Failed to save scenario. This feature requires database migration deployment. Check DEPLOYMENT_GUIDE.md');
     } finally {
       setSaving(false);
     }
