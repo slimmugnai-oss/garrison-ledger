@@ -30,7 +30,7 @@ export default function AnimatedCard({ children, className = '', delay = 0 }: Pr
   return (
     <div
       ref={ref}
-      className={`transition-all duration-500 ${
+      className={`transition-all duration-500 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       } ${className}`}
     >

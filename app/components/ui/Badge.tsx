@@ -1,18 +1,28 @@
 type Props = {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  size?: 'sm' | 'md' | 'lg';
 };
 
-export default function Badge({ children, variant = 'primary' }: Props) {
-  const styles = {
-    primary: 'bg-primary-accent/10 text-primary-accent border-primary-accent/20',
-    secondary: 'bg-gray-100 text-text-muted border-border',
-    success: 'bg-green-100 text-green-800 border-green-200',
-    warning: 'bg-amber-50 text-amber-700 border-amber-300',
+export default function Badge({ children, variant = 'primary', size = 'md' }: Props) {
+  const sizeStyles = {
+    sm: 'px-2 py-0.5 text-xs',
+    md: 'px-3 py-1 text-sm',
+    lg: 'px-4 py-1.5 text-base',
+  }[size];
+
+  const variantStyles = {
+    primary: 'badge-primary',
+    secondary: 'badge-neutral',
+    success: 'badge-success',
+    warning: 'badge-warning',
+    danger: 'badge-danger',
+    info: 'badge-primary', // Using primary for info
+    neutral: 'badge-neutral',
   }[variant];
 
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${styles}`}>
+    <span className={`badge ${variantStyles} ${sizeStyles} font-semibold uppercase tracking-wider`}>
       {children}
     </span>
   );
