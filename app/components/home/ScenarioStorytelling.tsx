@@ -82,11 +82,11 @@ export default function ScenarioStorytelling() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-4">
-            Real Military Financial Challenges, Solved
+          <h2 className="text-4xl md:text-5xl font-serif font-black text-primary mb-4">
+            Hypothetical Military Financial Scenarios
           </h2>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            See how service members across all ranks and branches are saving thousands with our tools
+          <p className="text-xl text-body max-w-3xl mx-auto">
+            See how service members across all ranks and branches could save thousands with our tools
           </p>
         </div>
 
@@ -99,15 +99,15 @@ export default function ScenarioStorytelling() {
                     <Badge variant={scenario.badge.variant}>{scenario.badge.text}</Badge>
                   </div>
 
-                  <h3 className="text-3xl font-bold text-gray-900 mb-6">{scenario.title}</h3>
+                  <h3 className="text-3xl font-bold text-primary mb-6">{scenario.title}</h3>
 
                   {/* The Challenge */}
                   <div className="mb-8">
                     <div className="flex items-start gap-3 mb-3">
-                      <Icon name="AlertTriangle" className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                      <Icon name="AlertTriangle" className="h-6 w-6 text-danger flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-bold text-lg text-gray-900 mb-2">The Challenge</h4>
-                        <p className="text-gray-700 leading-relaxed">{scenario.challenge}</p>
+                        <h4 className="font-bold text-lg text-primary mb-2">The Challenge</h4>
+                        <p className="text-body leading-relaxed">{scenario.challenge}</p>
                       </div>
                     </div>
                   </div>
@@ -115,24 +115,24 @@ export default function ScenarioStorytelling() {
                   {/* The Solution */}
                   <div className="mb-8">
                     <div className="flex items-start gap-3">
-                      <Icon name="Lightbulb" className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+                      <Icon name="Lightbulb" className="h-6 w-6 text-info flex-shrink-0 mt-1" />
                       <div className="flex-1">
-                        <h4 className="font-bold text-lg text-gray-900 mb-4">The Solution</h4>
+                        <h4 className="font-bold text-lg text-primary mb-4">The Solution</h4>
                         <div className="grid md:grid-cols-2 gap-4">
                           {scenario.solution.map((item, idx) => (
                             <div
                               key={idx}
                               className={`p-4 rounded-lg ${
                                 item.highlight
-                                  ? 'bg-green-50 border-2 border-green-500'
-                                  : 'bg-gray-50 border border-gray-200'
+                                  ? 'bg-success-subtle border-2 border-success'
+                                  : 'bg-surface-hover border border-default'
                               }`}
                             >
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-gray-700">{item.text}</span>
-                                <Icon name={item.icon as any} className={`h-5 w-5 ${item.highlight ? 'text-green-600' : 'text-gray-600'}`} />
+                                <span className="text-sm text-body">{item.text}</span>
+                                <Icon name={item.icon as any} className={`h-5 w-5 ${item.highlight ? 'text-success' : 'text-muted'}`} />
                               </div>
-                              <div className={`text-2xl font-black mt-2 ${item.highlight ? 'text-green-600' : 'text-gray-900'}`}>
+                              <div className={`text-2xl font-black mt-2 ${item.highlight ? 'text-success' : 'text-primary'}`}>
                                 {item.value}
                               </div>
                             </div>
@@ -150,7 +150,7 @@ export default function ScenarioStorytelling() {
                         <p className="text-lg italic mb-4">{scenario.testimonial.quote}</p>
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                            <span className="text-2xl">👤</span>
+                            <Icon name="User" className="h-6 w-6 text-white" />
                           </div>
                           <div>
                             <div className="font-bold text-lg">{scenario.testimonial.author}</div>
@@ -173,7 +173,7 @@ export default function ScenarioStorytelling() {
                       {scenario.cta.text}
                       <Icon name="ArrowRight" className="h-5 w-5" />
                     </Link>
-                    <p className="text-sm text-gray-600 mt-3">
+                    <p className="text-sm text-muted mt-3">
                       No signup required to try • Get instant results
                     </p>
                   </div>
