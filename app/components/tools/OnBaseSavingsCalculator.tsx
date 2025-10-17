@@ -821,6 +821,15 @@ export default function OnBaseSavingsCalculator() {
         tool="on-base-savings"
         currentInput={{ meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate }}
         currentOutput={{ totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings }}
+        onLoadScenario={(input) => {
+          setMeatProduce(input.meatProduce || 250);
+          setPantryStaples(input.pantryStaples || 200);
+          setDiapersBaby(input.diapersBaby || 75);
+          setMajorPurchases(input.majorPurchases || 2000);
+          setClothingApparel(input.clothingApparel || 500);
+          setWeeklyGasGallons(input.weeklyGasGallons || 15);
+          setSalesTaxRate(input.salesTaxRate || 7.5);
+        }}
         renderComparison={(scenarios) => (
           <div className="overflow-x-auto">
             <table className="w-full">

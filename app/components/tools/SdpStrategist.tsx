@@ -458,6 +458,50 @@ export default function SdpStrategist() {
             {/* ROI Analysis */}
             <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
           </PaywallWrapper>
+
+          {/* Comparison Mode - Moved out of RoiBox for state access */}
+          {apiData && (
+            <ComparisonMode
+              tool="sdp-strategist"
+              currentInput={{ amount }}
+              currentOutput={{ hy: apiData.hy, cons: apiData.cons, mod: apiData.mod }}
+              onLoadScenario={(input) => {
+                setAmount(input.amount || 10000);
+              }}
+              renderComparison={(scenarios) => (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b-2 border-border">
+                        <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                        <th className="text-right p-3 text-sm font-bold text-primary">Amount</th>
+                        <th className="text-right p-3 text-sm font-bold text-primary">Conservative</th>
+                        <th className="text-right p-3 text-sm font-bold text-primary">Moderate</th>
+                        <th className="text-right p-3 text-sm font-bold text-primary">High-Yield</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {scenarios.map((scenario, idx) => (
+                        <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                          <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                          <td className="p-3 text-right text-body">{fmt(scenario.input.amount)}</td>
+                          <td className="p-3 text-right font-bold text-info">
+                            {fmt(scenario.output.cons || 0)}
+                          </td>
+                          <td className="p-3 text-right font-bold text-success">
+                            {fmt(scenario.output.mod || 0)}
+                          </td>
+                          <td className="p-3 text-right font-bold text-warning">
+                            {fmt(scenario.output.hy || 0)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            />
+          )}
         </div>
       </Section>
     </div>
@@ -522,43 +566,6 @@ function RoiBox({
         Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.
       </div>
       <FootNote />
-      
-      {/* Comparison Mode */}
-      {apiData && (
-        <ComparisonMode
-          tool="sdp-strategist"
-          currentInput={{ amount }}
-          currentOutput={{ hy: apiData.hy, cons: apiData.cons, mod: apiData.mod }}
-          renderComparison={(scenarios) => (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-border">
-                    <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">SDP Amount</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">High-Yield (4%)</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">Moderate (8%)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {scenarios.map((scenario, idx) => (
-                    <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                      <td className="p-3 text-right text-body">{fmt(scenario.input.amount)}</td>
-                      <td className="p-3 text-right font-bold text-info">
-                        {fmt(scenario.output.hy || 0)}
-                      </td>
-                      <td className="p-3 text-right font-bold text-success">
-                        {fmt(scenario.output.mod || 0)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        />
-      )}
     </div>
   );
 }

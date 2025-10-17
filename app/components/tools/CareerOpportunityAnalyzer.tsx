@@ -638,6 +638,10 @@ export default function CareerOpportunityAnalyzer() {
           tool="salary-calculator"
           currentInput={{ currentData, newData }}
           currentOutput={analysis}
+          onLoadScenario={(input) => {
+            if (input.currentData) setCurrentData(input.currentData);
+            if (input.newData) setNewData(input.newData);
+          }}
           renderComparison={(scenarios) => (
             <div className="overflow-x-auto">
               <table className="w-full">

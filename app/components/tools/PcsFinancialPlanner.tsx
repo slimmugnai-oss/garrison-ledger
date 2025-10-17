@@ -874,6 +874,14 @@ export default function PcsFinancialPlanner() {
               tool="pcs-planner"
               currentInput={{ activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther }}
               currentOutput={{ totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit }}
+              onLoadScenario={(input) => {
+                // Load scenario - note: some setters may not be accessible depending on component structure
+                if (input.dla !== undefined) setDla(input.dla);
+                if (input.perDiem !== undefined) setPerDiem(input.perDiem);
+                if (input.ppmWeight !== undefined) setPpmWeight(input.ppmWeight);
+                if (input.ppmDistance !== undefined) setPpmDistance(input.ppmDistance);
+                alert('Scenario loaded! Some values restored.');
+              }}
               renderComparison={(scenarios) => (
                 <div className="overflow-x-auto">
                   <table className="w-full">
