@@ -66,6 +66,7 @@ import {
   Lightbulb,
   AlertTriangle,
   Settings,
+  Command,
   
   // Time
   Timer,
@@ -204,6 +205,7 @@ export const iconRegistry = {
   Lightbulb,
   AlertTriangle,
   Settings,
+  Command,
   
   // Time
   Timer,
