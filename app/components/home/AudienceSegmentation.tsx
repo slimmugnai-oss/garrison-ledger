@@ -14,7 +14,7 @@ export default function AudienceSegmentation() {
   const audiences = [
     {
       id: 'enlisted' as const,
-      emoji: '👨‍✈️',
+      icon: 'Shield',
       title: 'Active Duty Enlisted',
       subtitle: 'E-1 to E-9',
       color: 'blue',
@@ -24,7 +24,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'officer' as const,
-      emoji: '⭐',
+      icon: 'Star',
       title: 'Officers',
       subtitle: 'O-1 to O-10',
       color: 'indigo',
@@ -34,7 +34,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'spouse' as const,
-      emoji: '💍',
+      icon: 'Heart',
       title: 'Military Spouses',
       subtitle: 'All Branches',
       color: 'pink',
@@ -44,7 +44,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'veteran' as const,
-      emoji: '🎖️',
+      icon: 'Award',
       title: 'Veterans',
       subtitle: 'Separated/Retired',
       color: 'purple',
@@ -110,7 +110,9 @@ export default function AudienceSegmentation() {
                     selectedAudience === audience.id ? 'ring-4 ring-offset-2 ring-' + audience.color + '-200' : ''
                   }`}
                 >
-                  <div className="text-5xl mb-3">{audience.emoji}</div>
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Icon name={audience.icon} className="h-8 w-8 text-gray-600" />
+                  </div>
                   <h3 className="font-bold text-lg mb-1 text-gray-900">{audience.title}</h3>
                   <p className="text-sm text-gray-600 mb-3">{audience.subtitle}</p>
                   <div className="bg-white rounded-lg p-3 mb-3">
@@ -132,7 +134,9 @@ export default function AudienceSegmentation() {
           <AnimatedCard delay={0}>
             <div className={`rounded-2xl p-8 border-2 ${getColorClasses(selectedData.color, true).border} ${getColorClasses(selectedData.color, true).bg}`}>
               <div className="text-center mb-8">
-                <div className="text-6xl mb-4">{selectedData.emoji}</div>
+                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Icon name={selectedData.icon} className="h-12 w-12 text-gray-600" />
+                </div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-3">
                   Recommended for {selectedData.title}
                 </h3>

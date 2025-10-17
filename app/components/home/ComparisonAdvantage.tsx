@@ -114,15 +114,37 @@ export default function ComparisonAdvantage() {
           </AnimatedCard>
         </div>
 
-        {/* Value Proposition Statement */}
-        <div className="text-center mt-12 max-w-3xl mx-auto">
-          <div className="bg-white/10 backdrop-blur rounded-xl p-8 border border-white/20">
-            <h3 className="text-2xl font-bold mb-4">We're Not Here to Sell You Something</h3>
-            <p className="text-lg text-white/90 leading-relaxed">
-              We're here to help you <strong className="text-green-300">maximize the benefits you've already earned</strong> through service. 
-              No financial products to buy. No commissions. No hidden agendas. Just intelligent planning 
-              to help you keep more of your money.
-            </p>
+        {/* What We're NOT Section */}
+        <div className="text-center mt-12 max-w-4xl mx-auto">
+          <h3 className="text-3xl font-bold mb-8 text-white">What We're NOT</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="X" className="h-6 w-6 text-red-400" />
+              </div>
+              <h4 className="text-xl font-bold mb-3 text-white">Not a Bank</h4>
+              <p className="text-white/90 leading-relaxed">
+                We don't offer financial products. We help you make smart decisions about the ones you have.
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="X" className="h-6 w-6 text-red-400" />
+              </div>
+              <h4 className="text-xl font-bold mb-3 text-white">Not Commission-Based</h4>
+              <p className="text-white/90 leading-relaxed">
+                We don't get paid to recommend specific products. Our only revenue is premium subscriptions.
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+              <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="X" className="h-6 w-6 text-red-400" />
+              </div>
+              <h4 className="text-xl font-bold mb-3 text-white">Not Affiliated with DoD</h4>
+              <p className="text-white/90 leading-relaxed">
+                Independent platform. Not endorsed by DoD. We exist to serve the community, not sell to it.
+              </p>
+            </div>
           </div>
         </div>
       </div>

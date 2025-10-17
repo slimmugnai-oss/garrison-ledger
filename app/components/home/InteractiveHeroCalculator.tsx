@@ -182,7 +182,9 @@ export default function InteractiveHeroCalculator() {
         <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-2xl p-10 text-white text-center">
           {/* Explosion Animation */}
           <div className="mb-6">
-            <div className="animate-bounce inline-block text-6xl mb-4">💰</div>
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="DollarSign" className="h-10 w-10 text-white" />
+            </div>
             <h3 className="text-3xl font-bold mb-2">You Could Save</h3>
           </div>
 
