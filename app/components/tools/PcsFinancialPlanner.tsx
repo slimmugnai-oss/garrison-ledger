@@ -72,10 +72,43 @@ export default function PcsFinancialPlanner() {
   const [supplies, setSupplies] = useState(200);
   const [ppmOther, setPpmOther] = useState(100);
 
+  // Save state functionality
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Track page view on mount
   useEffect(() => {
     track('pcs_financial_planner_view');
   }, []);
+
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=pcs')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input) {
+            setActiveTab(data.input.activeTab || 'basic');
+            setRankGroup(data.input.rankGroup || '');
+            setDependencyStatus(data.input.dependencyStatus || '');
+            setDla(data.input.dla || 0);
+            setPerDiem(data.input.perDiem || 800);
+            setPpmIncentive(data.input.ppmIncentive || 0);
+            setOtherIncome(data.input.otherIncome || 0);
+            setTravelCosts(data.input.travelCosts || 600);
+            setLodging(data.input.lodging || 1200);
+            setDeposits(data.input.deposits || 2000);
+            setOtherExpenses(data.input.otherExpenses || 500);
+            setPpmWeight(data.input.ppmWeight || 0);
+            setPpmDistance(data.input.ppmDistance || 1200);
+            setTruckRental(data.input.truckRental || 800);
+            setGas(data.input.gas || 400);
+            setSupplies(data.input.supplies || 200);
+            setPpmOther(data.input.ppmOther || 100);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
 
   // Fetch entitlement data when rank and dependency are selected
   useEffect(() => {
@@ -125,6 +158,50 @@ export default function PcsFinancialPlanner() {
   const govtPayment = (ppmWeight / 1000) * (ppmDistance / 1000) * 160 * 0.95;
   const yourCosts = truckRental + gas + supplies + ppmOther;
   const netProfit = govtPayment - yourCosts;
+
+  // Auto-save (debounced, premium only)
+  useEffect(() => {
+    if (isPremium && (rankGroup || dla > 0 || ppmWeight > 0)) {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      const timeout = setTimeout(() => {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'pcs',
+            input: {
+              activeTab,
+              rankGroup,
+              dependencyStatus,
+              dla,
+              perDiem,
+              ppmIncentive,
+              otherIncome,
+              travelCosts,
+              lodging,
+              deposits,
+              otherExpenses,
+              ppmWeight,
+              ppmDistance,
+              truckRental,
+              gas,
+              supplies,
+              ppmOther
+            },
+            output: {
+              totalIncome,
+              totalExpenses,
+              netEstimate,
+              govtPayment,
+              yourCosts,
+              netProfit
+            }
+          })
+        }).catch(console.error);
+      }, 2000);
+      saveTimeoutRef.current = timeout;
+    }
+  }, [isPremium, activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther, totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit]);
 
   return (
     <div className="max-w-6xl mx-auto">
