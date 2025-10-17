@@ -16,6 +16,7 @@ import StreakTracker from '../components/dashboard/StreakTracker';
 import DailyTip from '../components/dashboard/DailyTip';
 import FinancialReadinessScore from '../components/dashboard/FinancialReadinessScore';
 import AIRecommendations from '../components/dashboard/AIRecommendations';
+import FinancialOverview from '../components/dashboard/FinancialOverview';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -243,6 +244,11 @@ export default async function CommandDashboard() {
           {/* AI-Powered Recommendations */}
           <div className="mb-12">
             <AIRecommendations />
+          </div>
+
+          {/* Financial Overview Dashboard */}
+          <div className="mb-12">
+            <FinancialOverview />
           </div>
 
           {/* Upcoming Expirations Widget */}
