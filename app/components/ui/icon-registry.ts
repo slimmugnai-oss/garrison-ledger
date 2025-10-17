@@ -112,6 +112,7 @@ import {
   Key,
   Mail,
   MessageSquare,
+  MessageCircle,
   Rss,
   XCircle,
   Heart,
@@ -253,6 +254,7 @@ export const iconRegistry = {
   Key,
   Mail,
   MessageSquare,
+  MessageCircle,
   Rss,
   XCircle,
   
