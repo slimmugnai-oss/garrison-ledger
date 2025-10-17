@@ -23,13 +23,13 @@ export default function QuickActions() {
       icon: 'Calculator',
       label: 'New Calculation',
       action: () => router.push('/dashboard/tools'),
-      color: 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-100'
+      color: 'bg-slate-500/20 hover:bg-slate-500/30 text-slate-100'
     },
     {
       icon: 'Search',
       label: 'Search Intel',
       action: () => setShowSearch(true),
-      color: 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-100'
+      color: 'bg-slate-500/20 hover:bg-slate-500/30 text-slate-100'
     },
     {
       icon: 'Upload',
@@ -41,7 +41,7 @@ export default function QuickActions() {
       icon: 'RefreshCw',
       label: 'Update Plan',
       action: () => router.push('/dashboard/assessment'),
-      color: 'bg-orange-500/20 hover:bg-orange-500/30 text-orange-100'
+      color: 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-100'
     }
   ];
 

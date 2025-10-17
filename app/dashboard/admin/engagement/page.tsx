@@ -102,7 +102,7 @@ export default async function AdminEngagementPage() {
 
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <AnimatedCard delay={0} className="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6">
+            <AnimatedCard delay={0} className="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-6">
               <Icon name="TrendingUp" className="h-8 w-8 mb-3" />
               <div className="text-3xl font-black mb-1">{metrics.totalActiveUsers}</div>
               <div className="text-sm opacity-90">Active Streakers</div>
@@ -140,7 +140,7 @@ export default async function AdminEngagementPage() {
                 <div className="text-xs text-muted">7+ day streaks</div>
               </div>
 
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl">
+              <div className="text-center p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl">
                 <div className="text-4xl mb-2">⭐</div>
                 <div className="text-2xl font-black text-primary mb-1">{metrics.badgeCounts.month_master}</div>
                 <div className="text-sm font-semibold text-body">Month Masters</div>
@@ -175,7 +175,7 @@ export default async function AdminEngagementPage() {
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${
                         idx === 0 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-white' :
                         idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
-                        idx === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-500 text-white' :
+                        idx === 2 ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-white' :
                         'bg-gray-200 text-gray-700'
                       }`}>
                         {idx + 1}

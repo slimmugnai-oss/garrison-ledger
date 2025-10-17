@@ -64,7 +64,7 @@ export default function SpouseCollaborationStatus({ userId }: SpouseCollaboratio
           </p>
           <Link
             href="/dashboard/spouse"
-            className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+            className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg font-semibold transition-all"
           >
             <Icon name="UserPlus" className="h-4 w-4" />
             {spouseData.invitePending ? 'View Pending Invite' : 'Invite Your Spouse'}

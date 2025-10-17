@@ -121,7 +121,7 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
 
       <Link
         href="/dashboard/library"
-        className="mt-4 block w-full text-center px-4 py-2 bg-info hover:bg-info text-white rounded-lg font-semibold transition-colors"
+        className="mt-4 block w-full text-center px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg font-semibold transition-colors"
       >
         Browse Intel Library
       </Link>

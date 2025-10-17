@@ -127,7 +127,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
           </p>
           <Link
             href="/dashboard/binder"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg font-semibold transition-colors"
           >
             <Icon name="Upload" className="h-4 w-4" />
             Upload Documents
@@ -224,7 +224,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
         <div className="mt-4 pt-4 border-t border-gray-100">
           <Link
             href="/dashboard/binder"
-            className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 rounded-lg font-semibold transition-all"
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 hover:border-slate-400 hover:bg-slate-50 text-gray-600 hover:text-slate-600 rounded-lg font-semibold transition-all"
           >
             <Icon name="Upload" className="h-4 w-4" />
             Upload New Document

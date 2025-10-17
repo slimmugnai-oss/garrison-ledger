@@ -106,14 +106,14 @@ export default function ContextualNextSteps({ userState }: ContextualNextStepsPr
         };
       case 'high':
         return {
-          bg: 'from-orange-500 to-amber-500',
-          badge: 'bg-orange-600',
+          bg: 'from-amber-500 to-orange-500',
+          badge: 'bg-amber-600',
           text: 'PRIORITY'
         };
       default:
         return {
-          bg: 'from-blue-500 to-indigo-500',
-          badge: 'bg-blue-600',
+          bg: 'from-slate-700 to-slate-900',
+          badge: 'bg-slate-600',
           text: 'RECOMMENDED'
         };
     }

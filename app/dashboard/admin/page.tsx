@@ -238,7 +238,7 @@ export default async function AdminDashboard() {
             </AnimatedCard>
 
             {/* Engagement Analytics */}
-            <AnimatedCard className="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 hover:shadow-xl transition-all" delay={250}>
+            <AnimatedCard className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 hover:shadow-xl transition-all" delay={250}>
               <Link href="/dashboard/admin/engagement" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center">

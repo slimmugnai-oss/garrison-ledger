@@ -63,8 +63,8 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
 
   const getScoreColor = () => {
     if (score >= 80) return 'from-green-500 to-emerald-600';
-    if (score >= 60) return 'from-blue-500 to-indigo-600';
-    if (score >= 40) return 'from-yellow-500 to-orange-600';
+    if (score >= 60) return 'from-slate-700 to-slate-900';
+    if (score >= 40) return 'from-amber-500 to-orange-600';
     return 'from-red-500 to-rose-600';
   };
 

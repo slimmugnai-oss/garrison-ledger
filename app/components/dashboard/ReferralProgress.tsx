@@ -74,7 +74,7 @@ export default function ReferralProgress({ userId }: ReferralProgressProps) {
       <div className="flex gap-3">
         <Link 
           href="/dashboard/referrals" 
-          className="flex-1 bg-white text-pink-600 px-4 py-3 rounded-lg font-bold text-center hover:shadow-xl transition-all"
+          className="flex-1 bg-white text-slate-600 px-4 py-3 rounded-lg font-bold text-center hover:shadow-xl transition-all"
         >
           Share Your Link
         </Link>
