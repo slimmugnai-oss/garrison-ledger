@@ -25,6 +25,8 @@ type ApiResponse = {
   verdict?: number;
 };
 
+type PropertyType = 'sfr' | 'duplex' | 'triplex' | 'fourplex';
+
 export default function HouseHack() {
   const [price, setPrice] = useState(400000);
   const [rate, setRate] = useState(6.5);
@@ -32,6 +34,9 @@ export default function HouseHack() {
   const [ins, setIns] = useState(1600);
   const [bah, setBah] = useState(2400);
   const [rent, setRent] = useState(2200);
+  const [propertyType, setPropertyType] = useState<PropertyType>('duplex');
+  const [numUnits, setNumUnits] = useState(2);
+  const [appreciation, setAppreciation] = useState(3);
   const { isPremium } = usePremiumStatus();
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -142,8 +147,44 @@ export default function HouseHack() {
               <Num label="Monthly BAH" v={bah} set={setBah} />
               <Num label="Monthly Rent" v={rent} set={setRent} />
             </div>
+            {/* Property Type Selector */}
+            <div className="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <label className="block text-sm font-semibold text-purple-900 mb-3">
+                <Icon name="Home" className="h-4 w-4 inline mr-1" />
+                Property Type
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { type: 'sfr' as PropertyType, label: 'Single Family', units: 1, desc: 'Rent out rooms' },
+                  { type: 'duplex' as PropertyType, label: 'Duplex', units: 2, desc: 'Live in 1, rent 1' },
+                  { type: 'triplex' as PropertyType, label: 'Triplex', units: 3, desc: 'Live in 1, rent 2' },
+                  { type: 'fourplex' as PropertyType, label: 'Fourplex', units: 4, desc: 'Live in 1, rent 3' }
+                ].map((option) => (
+                  <button
+                    key={option.type}
+                    onClick={() => {
+                      setPropertyType(option.type);
+                      setNumUnits(option.units);
+                    }}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      propertyType === option.type
+                        ? 'border-purple-600 bg-purple-100'
+                        : 'border-purple-200 bg-white hover:border-purple-400'
+                    }`}
+                  >
+                    <p className="font-bold text-purple-900 text-sm">{option.label}</p>
+                    <p className="text-xs text-purple-700">{option.desc}</p>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-purple-700 mt-2">
+                <Icon name="Info" className="h-3 w-3 inline mr-1" />
+                VA loans work for 1-4 unit properties when you live in one unit
+              </p>
+            </div>
+
             <div className="text-sm text-muted mt-4 p-4 bg-surface-hover rounded-lg">
-              <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Assumes 30-year VA loan. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
+              <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Note:</strong> Assumes 30-year VA loan with 0% down. This is for educational purposes only. Consult with financial and real estate professionals for actual investment decisions.
             </div>
             
             {/* Generate Button */}
@@ -177,6 +218,126 @@ export default function HouseHack() {
               </button>
             </div>
           </div>
+
+          {/* Tax Benefits Calculator */}
+          {apiData && apiData.costs > 0 && (
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-green-900 mb-4">
+                <Icon name="Calculator" className="h-5 w-5 inline mr-2" />
+                Tax Benefits & Deductions
+              </h3>
+              
+              {(() => {
+                // Calculate tax benefits
+                const monthlyMortgage = price * (rate / 100 / 12) * Math.pow(1 + (rate / 100 / 12), 360) / (Math.pow(1 + (rate / 100 / 12), 360) - 1);
+                const annualMortgage = monthlyMortgage * 12;
+                const yearOneInterest = price * (rate / 100); // Simplified first-year interest
+                const depreciation = (price * 0.85) / 27.5; // Land ~15%, structure 85%, 27.5 year depreciation
+                const annualRentalIncome = rent * 12;
+                
+                return (
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-white rounded-lg p-4 border border-green-300">
+                        <p className="text-sm text-green-700 mb-1">Mortgage Interest (Year 1)</p>
+                        <p className="text-2xl font-bold text-green-900">{fmt(yearOneInterest)}</p>
+                        <p className="text-xs text-green-700">Tax deductible</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 border border-green-300">
+                        <p className="text-sm text-green-700 mb-1">Annual Depreciation</p>
+                        <p className="text-2xl font-bold text-green-900">{fmt(depreciation)}</p>
+                        <p className="text-xs text-green-700">27.5 years</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg p-4 border border-success">
+                      <p className="text-sm text-success mb-2">Total Annual Tax Deductions:</p>
+                      <p className="text-3xl font-bold text-success">
+                        {fmt(yearOneInterest + depreciation + tax + ins)}
+                      </p>
+                      <p className="text-xs text-success mt-1">
+                        Interest + Depreciation + Property Tax + Insurance
+                      </p>
+                    </div>
+
+                    <p className="text-xs text-green-700">
+                      <Icon name="Info" className="h-3 w-3 inline mr-1" />
+                      These deductions significantly reduce your taxable rental income. Consult a tax professional.
+                    </p>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Long-Term Projection */}
+          {apiData && (
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-indigo-900 mb-4">
+                <Icon name="TrendingUp" className="h-5 w-5 inline mr-2" />
+                Long-Term Wealth Projection
+              </h3>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-indigo-900 mb-2">
+                  Expected Annual Appreciation (%)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.5}
+                  value={appreciation}
+                  onChange={(e) => setAppreciation(Number(e.target.value))}
+                  className="w-full px-4 py-2 border-2 border-indigo-300 rounded-lg"
+                />
+                <p className="text-xs text-indigo-700 mt-1">Historical average: 3-4% annually</p>
+              </div>
+              
+              {(() => {
+                const years = [5, 10, 20];
+                const cashFlow = (apiData.income - apiData.costs) * 12;
+                const results = years.map(y => {
+                  const futureValue = price * Math.pow(1 + appreciation / 100, y);
+                  const totalCashFlow = cashFlow * y;
+                  const principalPaidDown = price * 0.02 * y; // Simplified 2% per year
+                  const equity = futureValue - (price - principalPaidDown);
+                  const totalWealth = equity + totalCashFlow;
+                  
+                  return { years: y, value: futureValue, equity, cashFlow: totalCashFlow, total: totalWealth };
+                });
+                
+                return (
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {results.map(r => (
+                      <div key={r.years} className="bg-white rounded-lg p-5 border border-indigo-300">
+                        <p className="text-sm font-semibold text-indigo-700 mb-3">After {r.years} Years</p>
+                        <div className="space-y-2">
+                          <div>
+                            <p className="text-xs text-indigo-600">Property Value</p>
+                            <p className="text-lg font-bold text-indigo-900">{fmt(r.value)}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-indigo-600">Total Cash Flow</p>
+                            <p className="text-md font-bold text-success">{fmt(r.cashFlow)}</p>
+                          </div>
+                          <div className="border-t border-indigo-200 pt-2">
+                            <p className="text-xs text-indigo-600">Total Wealth Built</p>
+                            <p className="text-xl font-bold text-success">{fmt(r.total)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+              
+              <p className="text-xs text-indigo-700 mt-4">
+                <Icon name="Info" className="h-3 w-3 inline mr-1" />
+                Projection assumes consistent rent, {appreciation}% appreciation, and mortgage paydown via rent payments
+              </p>
+            </div>
+          )}
 
           {/* Results Section - Single Comprehensive Paywall */}
           <PaywallWrapper
