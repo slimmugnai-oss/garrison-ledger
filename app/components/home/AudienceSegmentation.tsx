@@ -87,13 +87,13 @@ export default function AudienceSegmentation() {
   const selectedData = audiences.find(a => a.id === selectedAudience);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-serif font-black text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-serif font-black text-primary mb-4">
             Which Best Describes You?
           </h2>
-          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+          <p className="text-xl text-body max-w-2xl mx-auto">
             Choose your path to see personalized recommendations and success stories
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function AudienceSegmentation() {
               {/* CTA */}
               <div className="text-center">
                 <SignUpButton mode="modal">
-                  <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:shadow-2xl transition-all inline-flex items-center gap-2">
+                  <button className="btn-primary px-10 py-4 text-lg inline-flex items-center gap-2">
                     Get Started Free →
                     <Icon name="ArrowRight" className="h-5 w-5" />
                   </button>
