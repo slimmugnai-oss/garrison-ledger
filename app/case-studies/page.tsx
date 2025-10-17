@@ -112,7 +112,7 @@ export default function CaseStudiesPage() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mb-16 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-500 dark:to-indigo-600 rounded-2xl p-8 text-center">
+          <div className="mb-16 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 text-center">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <div className="text-4xl font-black text-white mb-1">500+</div>

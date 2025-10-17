@@ -29,7 +29,7 @@ export default function ContactPage() {
             {/* Contact Info Sidebar */}
             <div className="lg:col-span-1 space-y-6">
               {/* Quick Stats */}
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white">Why Contact Us?</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -63,7 +63,7 @@ export default function ContactPage() {
               </div>
 
               {/* Response Time */}
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
                   <Icon name="Timer" className="w-5 h-5 text-[#00E5A0]" />
                   Response Time
@@ -88,7 +88,7 @@ export default function ContactPage() {
               </div>
 
               {/* Alternative Contact */}
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white">Other Ways to Reach Us</h3>
                 <div className="space-y-3 text-sm">
                   <p className="text-muted">
@@ -111,7 +111,7 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 shadow-lg">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-2">Send Us a Message</h2>
                   <p className="text-muted">
@@ -125,7 +125,7 @@ export default function ContactPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="mt-16 bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg">
+          <div className="mt-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 shadow-lg">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Frequently Asked Questions
             </h2>

@@ -36,7 +36,7 @@ export default function ContactSuccessPage({
           </div>
 
           {/* Ticket Information */}
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg mb-8">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 shadow-lg mb-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-[#00E5A0]/10 p-3 rounded-lg">
                 <Icon name="ClipboardCheck" className="w-6 h-6 text-[#00E5A0]" />
@@ -77,7 +77,7 @@ export default function ContactSuccessPage({
           </div>
 
           {/* What's Next */}
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg mb-8">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 shadow-lg mb-8">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Icon name="Timer" className="w-6 h-6 text-[#00E5A0]" />
               What Happens Next?
