@@ -14,7 +14,7 @@ export default function AudienceSegmentation() {
   const audiences = [
     {
       id: 'enlisted' as const,
-      icon: 'Shield',
+      icon: 'Shield' as const,
       title: 'Active Duty Enlisted',
       subtitle: 'E-1 to E-9',
       color: 'blue',
@@ -24,7 +24,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'officer' as const,
-      icon: 'Star',
+      icon: 'Star' as const,
       title: 'Officers',
       subtitle: 'O-1 to O-10',
       color: 'indigo',
@@ -34,7 +34,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'spouse' as const,
-      icon: 'Heart',
+      icon: 'Heart' as const,
       title: 'Military Spouses',
       subtitle: 'All Branches',
       color: 'pink',
@@ -44,7 +44,7 @@ export default function AudienceSegmentation() {
     },
     {
       id: 'veteran' as const,
-      icon: 'Award',
+      icon: 'Star' as const,
       title: 'Veterans',
       subtitle: 'Separated/Retired',
       color: 'purple',
