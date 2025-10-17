@@ -48,30 +48,47 @@ Comprehensive enhancement plan to transform all 6 calculator tools into world-cl
 
 ---
 
-#### **1.2 PDF Export System (ALL 6 Calculators)**
+#### **1.2 Modern Export System (ALL 6 Calculators) - REVISED**
 **Status:** ❌ Not implemented  
-**Library:** `@react-pdf/renderer` (already installed)
+**Libraries:** `html-to-image`, `nodemailer`
 
-**Implementation:**
-- [ ] Create base PDF template component (`app/components/pdf/BaseTemplate.tsx`)
-- [ ] TSP Modeler PDF - Charts, allocations, projections
-- [ ] SDP Strategist PDF - Timeline, strategies, recommendations
-- [ ] House Hacking PDF - Property analysis, cash flow, ROI
-- [ ] PCS Financial Planner PDF - Budget breakdown, PPM profit, timeline
-- [ ] Savings Center PDF - Annual savings breakdown, shopping plan
-- [ ] Career Analyzer PDF - Compensation comparison, location analysis
+**Implementation - 4 Export Options:**
 
-**Technical:**
-- Create `/api/export-pdf` endpoint for server-side rendering
-- PDF components in `app/components/pdf/[Tool]PDF.tsx`
-- Download as `[Tool]-Report-[Date].pdf`
-- Include branding: Logo, colors, disclaimer footer
+**A. Screenshot Export (Premium Feature)**
+- [ ] Install `html-to-image` library
+- [ ] Create `ExportButton` component with screenshot functionality
+- [ ] Add to all 6 calculators
+- [ ] Generate branded PNG/JPG with "Calculate yours at GarrisonLedger.com"
+- [ ] Premium hook: "🔒 Upgrade to save as image"
+
+**B. Print-Optimized CSS (Free for All)**
+- [ ] Create `@media print` styles in globals.css
+- [ ] Hide navigation, ads, unnecessary elements
+- [ ] Optimize results layout for printing
+- [ ] Add "🖨️ Print Results" button to all calculators
+
+**C. Email Results (Premium Feature)**
+- [ ] Create `/api/email-results` endpoint
+- [ ] HTML email templates for all 6 calculators
+- [ ] Include results + upgrade CTA + next steps
+- [ ] Premium hook: "🔒 Upgrade to email results"
+
+**D. Shareable Links (Free for All)**
+- [ ] Create `shared_calculations` database table
+- [ ] Generate unique share IDs
+- [ ] Create share view pages: `/tools/[tool]/view/[shareId]`
+- [ ] Add "🔗 Share Results" button to all calculators
+- [ ] Track analytics on shares (viral growth metric)
 
 **Premium Hook:**
-- Free users: "🔒 Upgrade to download PDF reports"
-- Premium users: "📄 Download PDF Report" button (prominent)
+- Free users: Print + Share (viral growth)
+- Premium users: All 4 options (Screenshot + Email + Print + Share)
 
-**Effort:** 12 hours (2 hours × 6 calculators + 2 hours base template)
+**Effort:** 7.5 hours (vs 12 hours for PDF - 35% time savings!)
+- Screenshot Export: 2h
+- Print CSS: 0.5h  
+- Email Results: 3h
+- Shareable Links: 2h
 
 ---
 
@@ -100,7 +117,7 @@ Comprehensive enhancement plan to transform all 6 calculator tools into world-cl
 
 ---
 
-**PHASE 1 TOTAL: 26 hours**
+**PHASE 1 TOTAL: 21.5 hours** (reduced from 26 hours by removing PDF)
 
 ---
 
@@ -401,12 +418,12 @@ Comprehensive enhancement plan to transform all 6 calculator tools into world-cl
 
 | Phase | Description | Hours | Status |
 |-------|-------------|-------|--------|
-| Phase 1 | Core Premium Features | 26 | 🟡 In Progress |
+| Phase 1 | Core Premium Features | 21.5 | 🟡 In Progress |
 | Phase 2 | Calculator-Specific Enhancements | 21 | ⚪ Not Started |
 | Phase 3 | Advanced Calculator Features | 28 | ⚪ Not Started |
 | Phase 4 | AI & Collaboration | 28 | ⚪ Not Started |
 | Phase 5 | UX Polish & Analytics | 14 | ⚪ Not Started |
-| **TOTAL** | **All Phases** | **117 hours** | **~3-4 weeks** |
+| **TOTAL** | **All Phases** | **112.5 hours** | **~3 weeks** |
 
 ---
 

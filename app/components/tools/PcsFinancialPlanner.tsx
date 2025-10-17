@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
