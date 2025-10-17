@@ -10,6 +10,7 @@ import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 
 interface City {
   city: string;
@@ -625,7 +626,63 @@ export default function CareerOpportunityAnalyzer() {
           </p>
         </div>
       </div>
+      
+      {/* Comparison Mode */}
+      {analysis && (
+        <ComparisonMode
+          tool="salary-calculator"
+          currentInput={{ currentData, newData }}
+          currentOutput={analysis}
+          renderComparison={(scenarios) => (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b-2 border-border">
+                    <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">Current Salary</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">New Salary</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">Difference</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">Verdict</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scenarios.map((scenario, idx) => (
+                    <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                      <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                      <td className="p-3 text-right text-body">
+                        {fmt(scenario.input.currentData.salary)}
+                      </td>
+                      <td className="p-3 text-right text-body">
+                        {fmt(scenario.input.newData.salary)}
+                      </td>
+                      <td className={`p-3 text-right font-bold ${
+                        scenario.output.isPositive ? 'text-success' : 'text-danger'
+                      }`}>
+                        {scenario.output.isPositive ? '+' : ''}{fmt(scenario.output.netDifference || 0)}
+                      </td>
+                      <td className={`p-3 text-right text-sm ${
+                        scenario.output.isPositive ? 'text-success' : 'text-danger'
+                      }`}>
+                        {scenario.output.isPositive ? '✓ Better' : '⚠ Worse'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        />
+      )}
     </Section>
   );
 }
+
+const fmt = (value: number) => {
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(value);
+};
 

@@ -7,6 +7,7 @@ import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
@@ -330,6 +331,49 @@ function RoiBox({
         Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.
       </div>
       <FootNote />
+      
+      {/* Comparison Mode */}
+      {apiData && (
+        <ComparisonMode
+          tool="sdp-strategist"
+          currentInput={{ amount }}
+          currentOutput={{ hy: apiData.hy, cons: apiData.cons, mod: apiData.mod }}
+          renderComparison={(scenarios) => (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b-2 border-border">
+                    <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">SDP Amount</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">High-Yield (4%)</th>
+                    <th className="text-right p-3 text-sm font-bold text-primary">Moderate (8%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scenarios.map((scenario, idx) => (
+                    <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                      <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                      <td className="p-3 text-right text-body">{fmt(scenario.input.amount)}</td>
+                      <td className="p-3 text-right font-bold text-info">
+                        {fmt(scenario.output.hy || 0)}
+                      </td>
+                      <td className="p-3 text-right font-bold text-success">
+                        {fmt(scenario.output.mod || 0)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        />
+      )}
     </div>
   );
 }
+
+const fmt = (v: number) => v.toLocaleString(undefined, { 
+  style: 'currency', 
+  currency: 'USD', 
+  maximumFractionDigits: 0 
+});

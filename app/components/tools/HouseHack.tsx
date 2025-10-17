@@ -7,6 +7,7 @@ import Icon from '@/app/components/ui/Icon';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
@@ -282,6 +283,43 @@ export default function HouseHack() {
                   </div>
                   
                   <FootNote />
+                  
+                  {/* Comparison Mode */}
+                  <ComparisonMode
+                    tool="house-hacking"
+                    currentInput={{ price, rate, tax, ins, bah, rent }}
+                    currentOutput={apiData}
+                    renderComparison={(scenarios) => (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b-2 border-border">
+                              <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Price</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Rent</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Cash Flow</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Verdict</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {scenarios.map((scenario, idx) => (
+                              <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                                <td className="p-3 text-right text-body">{fmt(scenario.input.price)}</td>
+                                <td className="p-3 text-right text-body">{fmt(scenario.input.rent)}</td>
+                                <td className={`p-3 text-right font-bold ${
+                                  (scenario.output.income - scenario.output.costs) >= 0 ? 'text-success' : 'text-danger'
+                                }`}>
+                                  {fmt(scenario.output.income - scenario.output.costs)}
+                                </td>
+                                <td className="p-3 text-right text-sm text-body">{scenario.output.verdict}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  />
                 </div>
               ) : (
                 <div className="text-center text-muted py-8">

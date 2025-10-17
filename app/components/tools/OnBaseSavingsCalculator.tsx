@@ -7,6 +7,7 @@ import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 
 export default function OnBaseSavingsCalculator() {
   const { isPremium } = usePremiumStatus();
@@ -694,6 +695,49 @@ export default function OnBaseSavingsCalculator() {
           </ul>
         </div>
       </div>
+      
+      {/* Comparison Mode */}
+      <ComparisonMode
+        tool="on-base-savings"
+        currentInput={{ meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate }}
+        currentOutput={{ totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings }}
+        renderComparison={(scenarios) => (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-border">
+                  <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                  <th className="text-right p-3 text-sm font-bold text-primary">Commissary Savings</th>
+                  <th className="text-right p-3 text-sm font-bold text-primary">Exchange Savings</th>
+                  <th className="text-right p-3 text-sm font-bold text-primary">Total Annual Savings</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scenarios.map((scenario, idx) => (
+                  <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                    <td className="p-3 text-right font-bold text-info">
+                      {fmt(scenario.output.totalCommissarySavings || 0)}
+                    </td>
+                    <td className="p-3 text-right font-bold text-blue-600">
+                      {fmt(scenario.output.totalExchangeSavings || 0)}
+                    </td>
+                    <td className="p-3 text-right font-bold text-success">
+                      {fmt(scenario.output.grandTotal || 0)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      />
     </div>
   );
 }
+
+const fmt = (v: number) => v.toLocaleString(undefined, { 
+  style: 'currency', 
+  currency: 'USD', 
+  maximumFractionDigits: 0 
+});
