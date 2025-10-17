@@ -2,9 +2,24 @@
 -- Created: 2025-01-17
 
 -- ============================================================================
+-- CLEANUP - Drop existing tables if this is a re-run
+-- ============================================================================
+DROP TABLE IF EXISTS calculator_launches CASCADE;
+DROP TABLE IF EXISTS content_notes CASCADE;
+DROP TABLE IF EXISTS sequence_items CASCADE;
+DROP TABLE IF EXISTS user_sequence_progress CASCADE;
+DROP TABLE IF EXISTS content_sequences CASCADE;
+DROP TABLE IF EXISTS content_recommendations CASCADE;
+DROP TABLE IF EXISTS collection_items CASCADE;
+DROP TABLE IF EXISTS content_collections CASCADE;
+DROP TABLE IF EXISTS share_views CASCADE;
+DROP TABLE IF EXISTS share_recipients CASCADE;
+DROP TABLE IF EXISTS content_shares CASCADE;
+
+-- ============================================================================
 -- CONTENT SHARES TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_shares (
+CREATE TABLE content_shares (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   content_id UUID NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
   shared_by TEXT NOT NULL, -- Clerk user ID
@@ -26,7 +41,7 @@ COMMENT ON TABLE content_shares IS 'Tracks content shared by users (public links
 -- ============================================================================
 -- SHARE RECIPIENTS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS share_recipients (
+CREATE TABLE share_recipients (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   share_id UUID NOT NULL REFERENCES content_shares(id) ON DELETE CASCADE,
   recipient_id TEXT NOT NULL, -- Clerk user ID
@@ -44,7 +59,7 @@ COMMENT ON TABLE share_recipients IS 'Tracks recipients of private content share
 -- ============================================================================
 -- SHARE VIEWS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS share_views (
+CREATE TABLE share_views (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   share_id UUID NOT NULL REFERENCES content_shares(id) ON DELETE CASCADE,
   viewer_id TEXT, -- Clerk user ID (null for anonymous views)
@@ -62,7 +77,7 @@ COMMENT ON TABLE share_views IS 'Tracks views of shared content (analytics)';
 -- ============================================================================
 -- CONTENT COLLECTIONS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_collections (
+CREATE TABLE content_collections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
   name TEXT NOT NULL,
@@ -82,7 +97,7 @@ COMMENT ON TABLE content_collections IS 'User-created collections of content blo
 -- ============================================================================
 -- COLLECTION ITEMS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS collection_items (
+CREATE TABLE collection_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   collection_id UUID NOT NULL REFERENCES content_collections(id) ON DELETE CASCADE,
   content_id UUID NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
@@ -100,7 +115,7 @@ COMMENT ON TABLE collection_items IS 'Content blocks within collections';
 -- ============================================================================
 -- CONTENT RECOMMENDATIONS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_recommendations (
+CREATE TABLE content_recommendations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
   content_id UUID NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
@@ -123,7 +138,7 @@ COMMENT ON TABLE content_recommendations IS 'Tracks content recommendations show
 -- ============================================================================
 -- CONTENT SEQUENCES TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_sequences (
+CREATE TABLE content_sequences (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   description TEXT,
@@ -145,7 +160,7 @@ COMMENT ON TABLE content_sequences IS 'Curated learning paths (sequences of cont
 -- ============================================================================
 -- SEQUENCE ITEMS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS sequence_items (
+CREATE TABLE sequence_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sequence_id UUID NOT NULL REFERENCES content_sequences(id) ON DELETE CASCADE,
   content_id UUID NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
@@ -164,7 +179,7 @@ COMMENT ON TABLE sequence_items IS 'Content blocks within learning sequences';
 -- ============================================================================
 -- USER SEQUENCE PROGRESS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS user_sequence_progress (
+CREATE TABLE user_sequence_progress (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
   sequence_id UUID NOT NULL REFERENCES content_sequences(id) ON DELETE CASCADE,
@@ -186,7 +201,7 @@ COMMENT ON TABLE user_sequence_progress IS 'Tracks user progress through learnin
 -- ============================================================================
 -- CONTENT NOTES TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS content_notes (
+CREATE TABLE content_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
   content_id UUID NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
@@ -205,7 +220,7 @@ COMMENT ON TABLE content_notes IS 'User notes on content blocks';
 -- ============================================================================
 -- CALCULATOR LAUNCHES TABLE (from content)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS calculator_launches (
+CREATE TABLE calculator_launches (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
   content_id UUID REFERENCES content_blocks(id) ON DELETE SET NULL,
