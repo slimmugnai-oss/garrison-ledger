@@ -48,6 +48,68 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
     }
 
+    // Check user's tier for rate limiting
+    const { data: entitlement } = await supabase
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = (entitlement?.tier === 'premium' || entitlement?.tier === 'pro') && entitlement?.status === 'active' 
+      ? entitlement.tier 
+      : 'free';
+
+    // Check rate limit quota
+    const quotaCheck = await supabase.rpc('check_ai_quota', {
+      p_user_id: userId,
+      p_feature: 'natural_search',
+      p_tier: tier
+    });
+
+    if (quotaCheck.data && !quotaCheck.data.canUse) {
+      return NextResponse.json({
+        error: 'Daily search limit reached',
+        limit: quotaCheck.data.dailyLimit,
+        used: quotaCheck.data.usedToday,
+        resetTime: 'midnight',
+        upgradeMessage: tier === 'free' 
+          ? 'Upgrade to Premium for 10 searches per day'
+          : tier === 'premium'
+          ? 'Upgrade to Pro for 20 searches per day'
+          : null
+      }, { status: 429 });
+    }
+
+    // Check cache first (normalized query)
+    const queryNormalized = query.toLowerCase().trim();
+    const { data: cached } = await supabase
+      .from('natural_search_cache')
+      .select('*')
+      .eq('query_normalized', queryNormalized)
+      .gt('expires_at', new Date().toISOString())
+      .maybeSingle();
+
+    if (cached) {
+      // Cache hit! No AI cost
+      await supabase
+        .from('natural_search_cache')
+        .update({ hit_count: (cached.hit_count || 0) + 1 })
+        .eq('id', cached.id);
+
+      return NextResponse.json({
+        results: cached.search_results,
+        aiContext: cached.ai_context,
+        cached: true,
+        cacheHit: true
+      });
+    }
+
+    // Cache miss - proceed with AI search and increment quota
+    await supabase.rpc('increment_ai_quota', {
+      p_user_id: userId,
+      p_feature: 'natural_search'
+    });
+
     // Check if OpenAI is configured
     if (!openai) {
       return NextResponse.json(
@@ -265,12 +327,28 @@ Provide context for these results.`
     const aiContext = contextCompletion.choices[0].message.content;
 
     // Return results with metadata
+    // Save to cache for future requests
+    const resultsToCache = topResults.map(r => ({
+      ...r.block,
+      relevance_score: r.score / 100,
+      match_reasoning: r.reasoning
+    }));
+
+    await supabase
+      .from('natural_search_cache')
+      .upsert({
+        query_normalized: queryNormalized,
+        search_results: resultsToCache,
+        ai_context: aiContext,
+        cached_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+        hit_count: 0
+      }, {
+        onConflict: 'query_normalized'
+      });
+
     return NextResponse.json({
-      blocks: topResults.map(r => ({
-        ...r.block,
-        relevance_score: r.score / 100,
-        match_reasoning: r.reasoning
-      })),
+      blocks: resultsToCache,
       searchMetadata: {
         originalQuery: query,
         parsedIntent: parsedQuery,
@@ -278,7 +356,8 @@ Provide context for these results.`
         returningTop: topResults.length,
         searchType: 'natural_language',
         aiContext
-      }
+      },
+      cached: false
     });
 
   } catch (error) {
