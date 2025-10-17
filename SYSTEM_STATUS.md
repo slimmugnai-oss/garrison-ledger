@@ -284,6 +284,8 @@ Garrison Ledger's 6 calculators have been transformed from basic tools into **wo
 22. ✅ **Admin Analytics Dashboard** - Content performance, engagement metrics, growth trends
 23. ✅ **Admin Ticket Resolution** - Mark tickets as resolved, in progress, or closed with API
 24. ✅ **Navbar Redesign** - Removed duplicates, clean hierarchy, search on right, mega menus
+25. ✅ **Dashboard Saved Items Widget** - Shows all bookmarked content and saved scenarios
+26. ✅ **Dashboard Binder Preview** - Smart document preview with stats and quick access
 
 ---
 

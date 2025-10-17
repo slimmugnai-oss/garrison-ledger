@@ -17,6 +17,8 @@ import DailyTip from '../components/dashboard/DailyTip';
 import FinancialReadinessScore from '../components/dashboard/FinancialReadinessScore';
 import AIRecommendations from '../components/dashboard/AIRecommendations';
 import FinancialOverview from '../components/dashboard/FinancialOverview';
+import SavedItems from '../components/dashboard/SavedItems';
+import BinderPreview from '../components/dashboard/BinderPreview';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -239,6 +241,12 @@ export default async function CommandDashboard() {
                 hasDebt: !!profileRow?.debt_amount_range && profileRow.debt_amount_range !== 'prefer-not-to-say' && profileRow.debt_amount_range !== '$0'
               }}
             />
+          </div>
+
+          {/* Saved Items & Binder - New Priority Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <SavedItems userId={user.id} />
+            <BinderPreview userId={user.id} />
           </div>
 
           {/* AI-Powered Recommendations */}
