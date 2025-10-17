@@ -7,10 +7,11 @@ import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
 import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
+import { tspHistoricalReturns, tspAverageReturns, getContributionRecommendation, getMatchingLifecycleFund } from '@/app/data/tsp-historical-returns';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 
@@ -303,6 +304,110 @@ export default function TspModeler() {
                 {loading ? '🔄 Calculating...' : '🚀 Generate TSP Analysis'}
               </button>
             </div>
+          </div>
+
+          {/* AI-Powered Contribution Recommendation */}
+          {(() => {
+            const currentYear = new Date().getFullYear();
+            const retirementYear = currentYear + (ret - age);
+            const recommendation = getContributionRecommendation(age, bal);
+            const lifecycleFund = getMatchingLifecycleFund(retirementYear);
+            
+            return (
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-6">
+                <div className="flex items-start gap-4">
+                  <Icon name="Sparkles" className="h-8 w-8 text-indigo-600 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-indigo-900 mb-2">
+                      Personalized Recommendation
+                    </h3>
+                    <p className="text-indigo-800 mb-4">
+                      {recommendation.rationale}
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-white rounded-lg p-4 border border-indigo-300">
+                        <p className="text-sm text-indigo-700 mb-1">Recommended Allocation</p>
+                        <p className="text-lg font-bold text-indigo-900">{recommendation.allocation}</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 border border-indigo-300">
+                        <p className="text-sm text-indigo-700 mb-1">Matching Lifecycle Fund</p>
+                        <p className="text-lg font-bold text-indigo-900">
+                          {lifecycleFund.name}
+                        </p>
+                        <p className="text-xs text-indigo-600 mt-1">
+                          C{lifecycleFund.allocation.C}% / S{lifecycleFund.allocation.S}% / I{lifecycleFund.allocation.I}% / F{lifecycleFund.allocation.F}% / G{lifecycleFund.allocation.G}%
+                        </p>
+                      </div>
+                    </div>
+                    {recommendation.catchUp && (
+                      <div className="mt-4 bg-green-50 border border-green-300 rounded-lg p-3">
+                        <p className="text-sm text-green-800">
+                          <Icon name="CheckCircle" className="h-4 w-4 inline mr-1" />
+                          <strong>Catch-Up Eligible:</strong> You can contribute an extra $7,500/year (age 50+)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Historical Performance Chart */}
+          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
+            <h2 className="text-2xl font-bold text-primary mb-4">TSP Historical Performance (Last 10 Years)</h2>
+            <p className="text-sm text-body mb-6">
+              Past performance data to inform your allocation decisions. Each fund has unique risk/return characteristics.
+            </p>
+            
+            <div className="h-80 mb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={tspHistoricalReturns.cFund}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis dataKey="year" />
+                  <YAxis tickFormatter={(value) => `${value}%`} />
+                  <Tooltip 
+                    formatter={(value: number) => `${value.toFixed(2)}%`}
+                    contentStyle={{ backgroundColor: '#fff', border: '2px solid #e5e7eb', borderRadius: '8px' }}
+                  />
+                  <Legend />
+                  <Bar dataKey="return" fill="#2563eb" name="C Fund (S&P 500)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                <p className="text-sm text-blue-800 mb-1">C Fund</p>
+                <p className="text-2xl font-bold text-blue-900">{tspAverageReturns.cFund}%</p>
+                <p className="text-xs text-blue-700">10-yr avg</p>
+              </div>
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 text-center">
+                <p className="text-sm text-indigo-800 mb-1">S Fund</p>
+                <p className="text-2xl font-bold text-indigo-900">{tspAverageReturns.sFund}%</p>
+                <p className="text-xs text-indigo-700">10-yr avg</p>
+              </div>
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                <p className="text-sm text-purple-800 mb-1">I Fund</p>
+                <p className="text-2xl font-bold text-purple-900">{tspAverageReturns.iFund}%</p>
+                <p className="text-xs text-purple-700">10-yr avg</p>
+              </div>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <p className="text-sm text-green-800 mb-1">F Fund</p>
+                <p className="text-2xl font-bold text-green-900">{tspAverageReturns.fFund}%</p>
+                <p className="text-xs text-green-700">10-yr avg</p>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-800 mb-1">G Fund</p>
+                <p className="text-2xl font-bold text-gray-900">{tspAverageReturns.gFund}%</p>
+                <p className="text-xs text-gray-700">10-yr avg</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-muted mt-4">
+              <Icon name="Info" className="h-3 w-3 inline mr-1" />
+              Historical data shows actual fund performance. Past performance does not guarantee future results.
+            </p>
           </div>
 
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
