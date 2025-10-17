@@ -128,6 +128,11 @@ import {
   Radio,
   Newspaper,
   
+  // Export & Sharing
+  Printer,
+  Camera,
+  Loader,
+  
   type LucideIcon,
 } from 'lucide-react';
 
@@ -251,6 +256,11 @@ export const iconRegistry = {
   // Listening Post
   Radio,
   Newspaper,
+  
+  // Export & Sharing
+  Printer,
+  Camera,
+  Loader,
 } as const;
 
 // Export the type of valid icon names
