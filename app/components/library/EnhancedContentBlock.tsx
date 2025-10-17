@@ -61,7 +61,7 @@ export default function EnhancedContentBlock({
     );
 
     // Convert markdown tables to proper HTML
-    formatted = this.convertMarkdownTableToHTML(formatted);
+    formatted = convertMarkdownTableToHTML(formatted);
 
     return formatted;
   };
@@ -83,18 +83,18 @@ export default function EnhancedContentBlock({
         }
         tableRows.push(line);
       } else {
-        if (inTable && tableRows.length > 0) {
-          result.push(this.renderTable(tableRows));
-          tableRows = [];
-          inTable = false;
-        }
+      if (inTable && tableRows.length > 0) {
+        result.push(renderTable(tableRows));
+        tableRows = [];
+        inTable = false;
+      }
         result.push(line);
       }
     }
 
     // Handle table at end of content
     if (inTable && tableRows.length > 0) {
-      result.push(this.renderTable(tableRows));
+      result.push(renderTable(tableRows));
     }
 
     return result.join('\n');
