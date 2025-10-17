@@ -9,6 +9,7 @@ import Icon from '@/app/components/ui/Icon';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Badge from '@/app/components/ui/Badge';
 import PageHeader from '@/app/components/ui/PageHeader';
+import TicketActions from '@/app/components/admin/TicketActions';
 
 export const metadata: Metadata = {
   title: "Support Tickets - Admin Dashboard",
@@ -170,17 +171,14 @@ export default async function SupportTicketsPage() {
                         })}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 pt-3 border-t border-border">
-                      <a
-                        href={`mailto:${ticket.email}?subject=Re: ${ticket.ticket_id} - ${ticket.subject}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-info hover:bg-info text-white rounded-lg text-sm font-semibold transition-colors"
-                      >
-                        <Icon name="Mail" className="h-4 w-4" />
-                        Reply via Email
-                      </a>
-                      <button className="px-4 py-2 border border-border rounded-lg text-sm font-semibold text-text-body hover:bg-surface-hover transition-colors">
-                        Mark Resolved
-                      </button>
+                    <div className="pt-3 border-t border-border">
+                      <TicketActions
+                        ticketId={ticket.id}
+                        ticketNumber={ticket.ticket_id}
+                        email={ticket.email}
+                        subject={ticket.subject || 'General Inquiry'}
+                        currentStatus={ticket.status}
+                      />
                     </div>
                   </div>
                 ))}
