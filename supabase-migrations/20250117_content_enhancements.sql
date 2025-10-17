@@ -6,7 +6,7 @@
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS content_shares (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  content_id TEXT NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
+  content_id TEXT NOT NULL, -- References content_blocks(id) - TEXT type
   shared_by TEXT NOT NULL, -- Clerk user ID
   share_type TEXT NOT NULL CHECK (share_type IN ('public', 'private', 'unit')),
   share_token TEXT NOT NULL UNIQUE,
@@ -15,6 +15,11 @@ CREATE TABLE IF NOT EXISTS content_shares (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT)
+ALTER TABLE content_shares
+ADD CONSTRAINT content_shares_content_id_fkey 
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE CASCADE;
 
 CREATE INDEX idx_content_shares_content_id ON content_shares(content_id);
 CREATE INDEX idx_content_shares_shared_by ON content_shares(shared_by);
@@ -85,11 +90,16 @@ COMMENT ON TABLE content_collections IS 'User-created collections of content blo
 CREATE TABLE IF NOT EXISTS collection_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   collection_id UUID NOT NULL REFERENCES content_collections(id) ON DELETE CASCADE,
-  content_id TEXT NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
+  content_id TEXT NOT NULL, -- References content_blocks(id) - TEXT type
   position INTEGER NOT NULL DEFAULT 0,
   notes TEXT,
   added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT)
+ALTER TABLE collection_items
+ADD CONSTRAINT collection_items_content_id_fkey
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE CASCADE;
 
 CREATE INDEX idx_collection_items_collection_id ON collection_items(collection_id);
 CREATE INDEX idx_collection_items_content_id ON collection_items(content_id);
@@ -103,7 +113,7 @@ COMMENT ON TABLE collection_items IS 'Content blocks within collections';
 CREATE TABLE IF NOT EXISTS content_recommendations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
-  content_id TEXT NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
+  content_id TEXT NOT NULL, -- References content_blocks(id) - TEXT type
   recommendation_type TEXT NOT NULL CHECK (recommendation_type IN ('personalized', 'trending', 'related', 'similar_users')),
   relevance_score NUMERIC(5,4) NOT NULL DEFAULT 0.0, -- 0.0 to 1.0
   reasoning JSONB, -- Explanation of why recommended
@@ -111,6 +121,11 @@ CREATE TABLE IF NOT EXISTS content_recommendations (
   clicked_at TIMESTAMP WITH TIME ZONE,
   dismissed_at TIMESTAMP WITH TIME ZONE
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT)
+ALTER TABLE content_recommendations
+ADD CONSTRAINT content_recommendations_content_id_fkey
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE CASCADE;
 
 CREATE INDEX idx_content_recommendations_user_id ON content_recommendations(user_id);
 CREATE INDEX idx_content_recommendations_content_id ON content_recommendations(content_id);
@@ -148,12 +163,17 @@ COMMENT ON TABLE content_sequences IS 'Curated learning paths (sequences of cont
 CREATE TABLE IF NOT EXISTS sequence_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sequence_id UUID NOT NULL REFERENCES content_sequences(id) ON DELETE CASCADE,
-  content_id TEXT NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
+  content_id TEXT NOT NULL, -- References content_blocks(id) - TEXT type
   position INTEGER NOT NULL,
   is_required BOOLEAN DEFAULT TRUE,
   estimated_minutes INTEGER,
   completion_criteria TEXT -- e.g., 'view', 'bookmark', 'rate', 'use_calculator'
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT)
+ALTER TABLE sequence_items
+ADD CONSTRAINT sequence_items_content_id_fkey
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE CASCADE;
 
 CREATE INDEX idx_sequence_items_sequence_id ON sequence_items(sequence_id);
 CREATE INDEX idx_sequence_items_position ON sequence_items(sequence_id, position);
@@ -189,12 +209,17 @@ COMMENT ON TABLE user_sequence_progress IS 'Tracks user progress through learnin
 CREATE TABLE IF NOT EXISTS content_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
-  content_id TEXT NOT NULL REFERENCES content_blocks(id) ON DELETE CASCADE,
+  content_id TEXT NOT NULL, -- References content_blocks(id) - TEXT type
   note TEXT NOT NULL,
   is_private BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT)
+ALTER TABLE content_notes
+ADD CONSTRAINT content_notes_content_id_fkey
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE CASCADE;
 
 CREATE INDEX idx_content_notes_user_id ON content_notes(user_id);
 CREATE INDEX idx_content_notes_content_id ON content_notes(content_id);
@@ -208,11 +233,16 @@ COMMENT ON TABLE content_notes IS 'User notes on content blocks';
 CREATE TABLE IF NOT EXISTS calculator_launches (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL, -- Clerk user ID
-  content_id TEXT REFERENCES content_blocks(id) ON DELETE SET NULL,
+  content_id TEXT, -- References content_blocks(id) - TEXT type, nullable
   calculator_id TEXT NOT NULL,
   prefill_data JSONB,
   launched_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add foreign key constraint separately (TEXT to TEXT, nullable)
+ALTER TABLE calculator_launches
+ADD CONSTRAINT calculator_launches_content_id_fkey
+FOREIGN KEY (content_id) REFERENCES content_blocks(id) ON DELETE SET NULL;
 
 CREATE INDEX idx_calculator_launches_user_id ON calculator_launches(user_id);
 CREATE INDEX idx_calculator_launches_content_id ON calculator_launches(content_id);
