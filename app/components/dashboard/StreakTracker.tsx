@@ -27,7 +27,7 @@ export default function StreakTracker({ userId }: StreakTrackerProps) {
   if (isLoading || streak === 0) return null;
 
   return (
-    <AnimatedCard delay={100} className="bg-gradient-to-br from-orange-500 to-red-500 text-white p-6 shadow-lg">
+    <AnimatedCard delay={100} className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 shadow-lg">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">

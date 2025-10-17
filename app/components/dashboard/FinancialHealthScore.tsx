@@ -131,16 +131,16 @@ export default function FinancialHealthScore({ profileData }: FinancialHealthSco
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return { bg: 'from-green-600 to-emerald-600', text: 'text-green-600', label: 'Excellent' };
-    if (score >= 60) return { bg: 'from-blue-600 to-indigo-600', text: 'text-blue-600', label: 'Good' };
-    if (score >= 40) return { bg: 'from-yellow-500 to-amber-500', text: 'text-yellow-600', label: 'Fair' };
+    if (score >= 60) return { bg: 'from-slate-700 to-slate-900', text: 'text-slate-600', label: 'Good' };
+    if (score >= 40) return { bg: 'from-amber-500 to-orange-500', text: 'text-amber-600', label: 'Fair' };
     return { bg: 'from-red-500 to-orange-500', text: 'text-red-600', label: 'Needs Work' };
   };
 
   const getMetricColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
     if (percentage >= 80) return 'bg-green-500';
-    if (percentage >= 60) return 'bg-blue-500';
-    if (percentage >= 40) return 'bg-yellow-500';
+    if (percentage >= 60) return 'bg-slate-500';
+    if (percentage >= 40) return 'bg-amber-500';
     return 'bg-red-500';
   };
 

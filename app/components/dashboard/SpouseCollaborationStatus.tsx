@@ -53,7 +53,7 @@ export default function SpouseCollaborationStatus({ userId }: SpouseCollaboratio
   // Show invite CTA if not connected
   if (!spouseData.isConnected) {
     return (
-      <AnimatedCard className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-6" delay={300}>
+      <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6" delay={300}>
         <div className="text-center">
           <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="Users" className="h-8 w-8 text-pink-600" />

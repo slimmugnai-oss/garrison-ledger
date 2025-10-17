@@ -9,7 +9,7 @@ const TIPS = [
     icon: '💰',
     title: 'TSP Tip',
     text: 'Max out your TSP match! If you\'re not contributing at least 5%, you\'re leaving free money on the table.',
-    color: 'from-blue-500 to-indigo-600'
+    color: 'from-slate-700 to-slate-900'
   },
   {
     icon: '📦',
@@ -21,7 +21,7 @@ const TIPS = [
     icon: '🏠',
     title: 'BAH Hack',
     text: 'House hacking with your BAH? A duplex can cover your mortgage and generate rental income. Start building wealth now.',
-    color: 'from-purple-500 to-pink-600'
+    color: 'from-slate-700 to-slate-900'
   },
   {
     icon: '🚀',
@@ -33,7 +33,7 @@ const TIPS = [
     icon: '🛒',
     title: 'Commissary Savings',
     text: 'Shopping on base saves the average military family $4,500/year. Are you maximizing your benefit?',
-    color: 'from-cyan-500 to-blue-600'
+    color: 'from-slate-700 to-slate-900'
   },
   {
     icon: '📚',
@@ -45,25 +45,25 @@ const TIPS = [
     icon: '💼',
     title: 'Transition Tip',
     text: 'Separating soon? Start your job search 6-12 months out. Military experience translates to 6-figure civilian roles.',
-    color: 'from-teal-500 to-green-600'
+    color: 'from-green-500 to-emerald-600'
   },
   {
     icon: '🎯',
     title: 'Emergency Fund',
     text: 'Military life is unpredictable. Aim for 3-6 months expenses saved. Start with $1,000, then build from there.',
-    color: 'from-rose-500 to-pink-600'
+    color: 'from-slate-700 to-slate-900'
   },
   {
     icon: '📱',
     title: 'SCRA Protection',
     text: 'Know your rights! SCRA can cap your interest rates at 6% on pre-service debts. Call your creditors.',
-    color: 'from-violet-500 to-purple-600'
+    color: 'from-slate-700 to-slate-900'
   },
   {
     icon: '🏆',
     title: 'Tax Advantage',
     text: 'Combat zone pay is tax-free! Max out your Roth TSP during deployment for tax-free growth forever.',
-    color: 'from-indigo-500 to-blue-600'
+    color: 'from-slate-700 to-slate-900'
   }
 ];
 

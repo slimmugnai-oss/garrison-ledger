@@ -44,7 +44,7 @@ export default function ReferralProgress({ userId }: ReferralProgressProps) {
   const progress = (referralCount / nextMilestone.count) * 100;
 
   return (
-    <AnimatedCard className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl p-6 text-white shadow-lg" delay={300}>
+    <AnimatedCard className="bg-gradient-to-r from-slate-700 to-slate-900 rounded-xl p-6 text-white shadow-lg" delay={300}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-bold text-xl flex items-center gap-2">
           <Icon name="Gift" className="h-6 w-6" />

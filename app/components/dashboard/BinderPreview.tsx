@@ -116,7 +116,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
 
   if (!stats || stats.totalDocuments === 0) {
     return (
-      <AnimatedCard className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 p-8" delay={250}>
+      <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-8" delay={250}>
         <div className="text-center">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="FolderOpen" className="h-8 w-8 text-indigo-600" />
@@ -143,7 +143,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
       <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
               <Icon name="FolderOpen" className="h-6 w-6 text-white" />
             </div>
             <div>

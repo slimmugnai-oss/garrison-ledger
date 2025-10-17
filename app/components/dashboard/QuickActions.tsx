@@ -47,7 +47,7 @@ export default function QuickActions() {
 
   return (
     <>
-      <div className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-4 shadow-lg">
+      <div className="mb-8 bg-gradient-to-r from-slate-700 to-slate-900 rounded-xl p-4 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Icon name="Zap" className="h-5 w-5 text-white" />
