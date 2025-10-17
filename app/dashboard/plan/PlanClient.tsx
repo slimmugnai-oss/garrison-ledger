@@ -10,6 +10,7 @@ import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
 import { IconName } from '@/app/components/ui/icon-registry';
 import FeedbackModal from '@/app/components/plan/FeedbackModal';
+import SharePlanButton from '@/app/components/plan/SharePlanButton';
 
 interface ContentBlock {
   id: string;
@@ -99,6 +100,18 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
       return newSet;
     });
   };
+  
+  const trackCalculatorClick = (toolName: string) => {
+    // Track analytics (fire-and-forget)
+    void fetch('/api/plan/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'tool_clicked',
+        tool_name: toolName
+      })
+    });
+  };
 
   const urgencyColor = {
     low: 'bg-green-100 text-green-800',
@@ -150,8 +163,9 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8 flex items-center justify-between">
             <Badge variant="primary">AI-Curated Plan</Badge>
+            <SharePlanButton className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-all" />
           </div>
           <PageHeader 
             title="Your Personalized Financial Plan"
@@ -539,6 +553,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                           <Link
                             key={index}
                             href={toolPaths[tool.toolName] || '/dashboard/tools'}
+                            onClick={() => trackCalculatorClick(tool.toolName)}
                             className="block bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 hover:shadow-lg hover:-translate-y-1 transition-all border border-slate-200"
                           >
                             <div className="flex items-start gap-4">

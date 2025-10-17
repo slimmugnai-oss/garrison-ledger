@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import OpenAI from "openai";
+import { getDynamicQuestions } from "@/app/lib/assessment/dynamic-questions";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -153,9 +154,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // All core questions asked - use AI for adaptive questions
+  // All core questions asked - check for dynamic questions first (SAVES AI COST!)
+  const dynamicQuestions = getDynamicQuestions(answers);
+  const unaskedDynamic = dynamicQuestions.filter(q => !questionsAsked.includes(q.id));
+  
+  // If we have dynamic questions to ask, ask them before using AI
+  if (unaskedDynamic.length > 0 && questionsAsked.length < 6) {
+    return NextResponse.json({
+      needsMore: true,
+      nextQuestion: unaskedDynamic[0]
+    });
+  }
+  
+  // Max questions reached (4 core + up to 2 dynamic)
   if (questionsAsked.length >= 6) {
-    // Max questions reached (4 core + 2 adaptive)
     return NextResponse.json({
       needsMore: false,
       reason: 'Assessment complete - enough data to generate personalized plan'
