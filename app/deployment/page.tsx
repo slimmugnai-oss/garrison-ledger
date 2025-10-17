@@ -139,7 +139,7 @@ export default function DeploymentHub() {
                 </h2>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-6 mt-8">
+              <div id="legal" className="grid md:grid-cols-2 gap-6 mt-8">
                 <div className="bg-surface rounded-xl p-6 border border-info">
                   <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
                     <Icon name="File" className="h-5 w-5 text-info" />
