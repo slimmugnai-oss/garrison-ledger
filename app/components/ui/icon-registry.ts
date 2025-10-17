@@ -81,6 +81,7 @@ import {
   // User & Interface
   User,
   Users,
+  UserPlus,
   HelpCircle,
   Crown,
   Sparkles,
@@ -219,6 +220,7 @@ export const iconRegistry = {
   // User & Interface
   User,
   Users,
+  UserPlus,
   HelpCircle,
   Crown,
   Sparkles,
