@@ -661,6 +661,126 @@ export default function OnBaseSavingsCalculator() {
         />
       </div>
 
+      {/* Weekly Shopping Planner */}
+      {grandTotal > 0 && (
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-green-900 mb-4">
+            <Icon name="Calendar" className="h-5 w-5 inline mr-2" />
+            Optimized Shopping Strategy
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg p-5 border border-green-300">
+              <h4 className="font-bold text-green-900 mb-3">Weekly Shopping Plan:</h4>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                    1
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-green-900">Commissary (Tuesday-Thursday)</p>
+                    <p className="text-sm text-green-800">
+                      Meat, produce, pantry staples: {fmt((meatProduce + pantryStaples + diapersBaby) / 4)}/week
+                    </p>
+                    <p className="text-xs text-green-700">Best selection, shortest lines, freshest produce</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                    2
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-blue-900">Exchange (As Needed)</p>
+                    <p className="text-sm text-blue-800">
+                      Clothing, electronics, major purchases
+                    </p>
+                    <p className="text-xs text-blue-700">Tax-free shopping saves {salesTaxRate}% on every purchase</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                    3
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-purple-900">Gas Station (Weekly)</p>
+                    <p className="text-sm text-purple-800">
+                      Fill up with MILITARY STAR®: Save {fmt(starCardSavings)}/year
+                    </p>
+                    <p className="text-xs text-purple-700">5¢/gallon discount = ${(weeklyGasGallons * 0.05).toFixed(2)}/week</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-lg p-4 border border-green-300">
+                <p className="text-sm font-semibold text-green-900 mb-2">Monthly Savings Goal:</p>
+                <p className="text-3xl font-bold text-success">{fmt(grandTotal / 12)}</p>
+                <p className="text-xs text-green-700 mt-1">Track this in your budget to ensure you're maximizing benefits</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 border border-green-300">
+                <p className="text-sm font-semibold text-green-900 mb-2">Weekly Budget Impact:</p>
+                <p className="text-3xl font-bold text-success">{fmt(grandTotal / 52)}</p>
+                <p className="text-xs text-green-700 mt-1">Extra cash for family activities or emergency fund</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Category Performance Breakdown */}
+      {grandTotal > 0 && (
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-indigo-900 mb-4">
+            <Icon name="BarChart" className="h-5 w-5 inline mr-2" />
+            Savings Breakdown by Category
+          </h3>
+          
+          <div className="space-y-3">
+            {[
+              { name: 'Meat & Produce', amount: meatProduceSavings, percent: (meatProduceSavings / grandTotal) * 100, color: 'bg-red-500' },
+              { name: 'Pantry Staples', amount: pantryStaplesSavings, percent: (pantryStaplesSavings / grandTotal) * 100, color: 'bg-amber-500' },
+              { name: 'Baby/Diapers', amount: diapersBabySavings, percent: (diapersBabySavings / grandTotal) * 100, color: 'bg-pink-500' },
+              { name: 'Exchange Tax Savings', amount: taxSavings, percent: (taxSavings / grandTotal) * 100, color: 'bg-blue-500' },
+              { name: 'Gas Station Rewards', amount: starCardSavings, percent: (starCardSavings / grandTotal) * 100, color: 'bg-purple-500' }
+            ].sort((a, b) => b.amount - a.amount).map((category) => (
+              <div key={category.name} className="bg-white rounded-lg p-4 border border-indigo-200">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-indigo-900">{category.name}</span>
+                  <span className="text-2xl font-bold text-indigo-900">{fmt(category.amount)}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div 
+                    className={`${category.color} h-full rounded-full transition-all`}
+                    style={{ width: `${category.percent}%` }}
+                  />
+                </div>
+                <p className="text-xs text-indigo-700 mt-1">{category.percent.toFixed(1)}% of total savings</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 bg-white rounded-lg p-4 border border-success">
+            <p className="text-sm font-semibold text-success mb-2">Top Opportunity:</p>
+            <p className="text-lg font-bold text-success">
+              {(() => {
+                const top = [
+                  { name: 'Meat & Produce', amount: meatProduceSavings },
+                  { name: 'Pantry Staples', amount: pantryStaplesSavings },
+                  { name: 'Baby/Diapers', amount: diapersBabySavings },
+                  { name: 'Exchange Purchases', amount: taxSavings },
+                  { name: 'Gas Rewards', amount: starCardSavings }
+                ].sort((a, b) => b.amount - a.amount)[0];
+                
+                return `${top.name} - Focus here for maximum impact`;
+              })()}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Educational Tips */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
         <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2"><Icon name="Lightbulb" className="h-5 w-5" /> Maximize Your Savings</h3>
