@@ -6,6 +6,7 @@ import { track } from '@/lib/track';
 import FootNote from '@/app/components/layout/FootNote';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
@@ -365,6 +366,49 @@ export default function TspModeler() {
                   </div>
                   
                   <FootNote />
+                  
+                  {/* Comparison Mode */}
+                  <ComparisonMode
+                    tool="tsp-modeler"
+                    currentInput={{ age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } }}
+                    currentOutput={{ endDefault: apiData.endDefault, endCustom: apiData.endCustom, diff: apiData.diff }}
+                    renderComparison={(scenarios) => (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b-2 border-border">
+                              <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Age</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Monthly Contribution</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Allocation</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">Final Balance</th>
+                              <th className="text-right p-3 text-sm font-bold text-primary">vs Default</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {scenarios.map((scenario, idx) => (
+                              <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                <td className="p-3 font-semibold text-primary">{scenario.name}</td>
+                                <td className="p-3 text-right text-body">{scenario.input.age}</td>
+                                <td className="p-3 text-right text-body">{fmt(scenario.input.monthly)}</td>
+                                <td className="p-3 text-right text-xs text-body">
+                                  C{scenario.input.mix?.C || 0}% / S{scenario.input.mix?.S || 0}%
+                                </td>
+                                <td className="p-3 text-right font-bold text-success">
+                                  {fmt(scenario.output.endCustom || 0)}
+                                </td>
+                                <td className={`p-3 text-right font-bold ${
+                                  (scenario.output.diff || 0) >= 0 ? 'text-success' : 'text-danger'
+                                }`}>
+                                  {(scenario.output.diff || 0) >= 0 ? '+' : ''}{fmt(scenario.output.diff || 0)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  />
                 </>
               ) : (
                 <div className="text-center text-muted py-8">
