@@ -64,7 +64,7 @@ export default function AIRecommendations() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl p-6">
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
         <div className="flex items-center gap-3">
           <Icon name="Sparkles" className="h-6 w-6 text-purple-600 animate-pulse" />
           <p className="text-purple-900 font-semibold">Loading AI Recommendations...</p>
@@ -78,7 +78,7 @@ export default function AIRecommendations() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl p-6">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
       <div className="flex items-center gap-3 mb-4">
         <Icon name="Sparkles" className="h-6 w-6 text-purple-600" />
         <h3 className="text-xl font-bold text-purple-900">AI-Powered Recommendations</h3>

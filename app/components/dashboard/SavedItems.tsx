@@ -120,7 +120,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
 
   if (totalSaved === 0) {
     return (
-      <AnimatedCard className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 p-8" delay={200}>
+      <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-8" delay={200}>
         <div className="text-center">
           <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="BookOpen" className="h-8 w-8 text-purple-600" />
@@ -159,7 +159,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
       <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
               <Icon name="BookOpen" className="h-6 w-6 text-white" />
             </div>
             <div>

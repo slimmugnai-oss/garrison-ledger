@@ -35,7 +35,7 @@ export default function FinancialOverview() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-blue-200 rounded w-1/3 mb-4"></div>
           <div className="h-32 bg-blue-100 rounded"></div>
@@ -77,7 +77,7 @@ export default function FinancialOverview() {
 
   if (totalAssets === 0 && annualSavings === 0) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <Icon name="BarChart" className="h-6 w-6 text-blue-600" />
           <h3 className="text-xl font-bold text-blue-900">Financial Overview</h3>
@@ -90,7 +90,7 @@ export default function FinancialOverview() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
       <div className="flex items-center gap-3 mb-6">
         <Icon name="BarChart" className="h-6 w-6 text-blue-600" />
         <h3 className="text-xl font-bold text-blue-900">Financial Overview</h3>

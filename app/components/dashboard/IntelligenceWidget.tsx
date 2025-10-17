@@ -66,7 +66,7 @@ export default async function IntelligenceWidget({ userId }: IntelligenceWidgetP
   };
 
   return (
-    <AnimatedCard className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-info" delay={100}>
+    <AnimatedCard className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200" delay={100}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-primary flex items-center gap-2">
           <span>🎯</span> Recommended For You

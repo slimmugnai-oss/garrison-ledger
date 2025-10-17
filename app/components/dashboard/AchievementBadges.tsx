@@ -119,7 +119,7 @@ export default function AchievementBadges({ userId, hasProfile, hasAssessment, h
   const nextAchievement = achievements.find(a => !a.earned);
 
   return (
-    <AnimatedCard className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-xl p-6" delay={350}>
+    <AnimatedCard className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-6" delay={350}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-bold text-lg flex items-center gap-2">
           <Icon name="Star" className="h-5 w-5 text-yellow-600" />

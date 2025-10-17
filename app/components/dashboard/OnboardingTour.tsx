@@ -74,7 +74,7 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
   ];
 
   return (
-    <div className="mb-12 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 rounded-2xl p-6 sm:p-8 text-white shadow-2xl border border-indigo-700/50 relative overflow-hidden">
+    <div className="mb-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-2xl border border-slate-700/50 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
