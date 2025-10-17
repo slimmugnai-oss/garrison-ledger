@@ -111,11 +111,11 @@ export default function TestimonialsSection() {
 
         {/* Featured Testimonial (Large) */}
         <AnimatedCard delay={0} className="mb-8">
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 md:p-12 border-2 border-info dark:border-blue-700">
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 rounded-2xl p-8 md:p-12 border-2 border-slate-200 dark:border-slate-700">
             <div className="grid md:grid-cols-3 gap-8 items-center">
               {/* Profile */}
               <div className="text-center md:text-left">
-                <div className="w-24 h-24 mx-auto md:mx-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-black mb-4">
+                <div className="w-24 h-24 mx-auto md:mx-0 bg-gradient-to-br from-slate-700 to-slate-900 rounded-full flex items-center justify-center text-white text-3xl font-black mb-4">
                   {testimonials[activeIndex].name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <h3 className="text-2xl font-bold text-primary dark:text-white mb-1">

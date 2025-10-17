@@ -28,7 +28,7 @@ export default function SavingsCounter() {
   }, []);
 
   return (
-    <div className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-500 dark:to-indigo-600 rounded-2xl p-8 shadow-2xl">
+    <div className="mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 shadow-2xl">
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Icon name="TrendingUp" className="h-8 w-8 text-white/80" />

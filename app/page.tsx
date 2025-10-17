@@ -59,7 +59,7 @@ export default function Home() {
           </p>
           
           {/* SPECIFIC DOLLAR SAVINGS - HIGH CONVERSION IMPACT */}
-          <div className="mt-8 inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full shadow-lg">
+          <div className="mt-8 inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-3 rounded-full shadow-lg">
             <Icon name="DollarSign" className="h-6 w-6" />
             <span className="font-bold text-lg">Members save an average of $2,400/year on military benefits</span>
           </div>
