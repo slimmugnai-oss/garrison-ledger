@@ -42,7 +42,7 @@ export default function Home() {
         {/* Subtle radial gradient - works in both modes */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)] dark:bg-[radial-gradient(120%_70%_at_50%_0%,rgba(96,165,250,0.15),transparent_60%)]" />
 
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 text-center">
           {/* Kicker Badge */}
           <span className="inline-flex items-center gap-2 rounded-full border border-subtle dark:border-slate-600 bg-surface dark:bg-slate-800 px-3 py-1 text-xs font-medium text-body dark:text-muted uppercase tracking-wider">
             Intelligent Military Life Planning
@@ -54,21 +54,21 @@ export default function Home() {
           </h1>
 
           {/* Subtitle - Readable muted tone with loss aversion + DOLLAR SAVINGS */}
-          <p className="mx-auto mt-6 max-w-3xl text-xl md:text-2xl leading-relaxed text-body dark:text-muted">
+          <p className="mx-auto mt-4 max-w-3xl text-xl md:text-2xl leading-relaxed text-body dark:text-muted">
             <strong className="text-danger dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
           </p>
           
           {/* SPECIFIC DOLLAR SAVINGS - HIGH CONVERSION IMPACT */}
-          <div className="mt-8 inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-3 rounded-full shadow-lg">
-            <Icon name="DollarSign" className="h-6 w-6" />
-            <span className="font-bold text-lg">Members save an average of $2,400/year on military benefits</span>
+          <div className="mt-8 inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all">
+            <Icon name="DollarSign" className="h-7 w-7" />
+            <span className="font-bold text-xl">Members save an average of $2,400/year on military benefits</span>
           </div>
 
           {/* CTAs with loss aversion */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <SignedOut>
               <SignUpButton mode="modal">
-                <button className="inline-flex items-center rounded-xl bg-indigo-600 px-8 py-4 text-white font-bold shadow-lg transition-all hover:bg-indigo-700 hover:-translate-y-[2px] hover:shadow-xl">
+                <button className="inline-flex items-center rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-4 text-white font-bold shadow-lg transition-all hover:from-slate-800 hover:to-slate-900 hover:-translate-y-[2px] hover:shadow-xl">
                   Start Free Forever - Don&apos;t Miss Out
                 </button>
               </SignUpButton>
@@ -128,7 +128,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
               <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-info rounded-lg text-white font-black text-xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl text-white font-black text-2xl mb-4 shadow-lg">
                   1
                 </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Complete Your Profile</h3>
@@ -138,7 +138,7 @@ export default function Home() {
 
             <AnimatedCard delay={100}>
               <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-info rounded-lg text-white font-black text-xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl text-white font-black text-2xl mb-4 shadow-lg">
                   2
                 </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Take Quick Assessment</h3>
@@ -148,7 +148,7 @@ export default function Home() {
 
             <AnimatedCard delay={200}>
               <div className="bg-background dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-accent dark:bg-info rounded-lg text-white font-black text-xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl text-white font-black text-2xl mb-4 shadow-lg">
                   3
                 </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Get AI-Curated Plan</h3>
@@ -177,7 +177,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
-              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group relative">
+                <div className="absolute -top-3 right-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  MOST POPULAR
+                </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-4">TSP Modeler</h3>
                 <ul className="space-y-2 text-text-body dark:text-muted mb-6 text-sm">
                   <li>• Model C, S, I, F, and L fund allocations</li>
@@ -194,7 +197,10 @@ export default function Home() {
             </AnimatedCard>
 
             <AnimatedCard delay={100}>
-              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group relative">
+                <div className="absolute -top-3 right-4 bg-gradient-to-r from-green-700 to-green-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  GUARANTEED RETURN
+                </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-2">SDP Strategist</h3>
                 <div className="text-sm font-bold text-success dark:text-green-400 mb-4">Typical 12-month deployment: $1,000+ guaranteed return</div>
                 <ul className="space-y-2 text-text-body dark:text-muted mb-6 text-sm">
@@ -230,7 +236,10 @@ export default function Home() {
             </AnimatedCard>
 
             <AnimatedCard delay={300}>
-              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+              <div className="bg-card dark:bg-slate-800 rounded-xl p-8 border border-border dark:border-slate-600 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group relative">
+                <div className="absolute -top-3 right-4 bg-gradient-to-r from-amber-700 to-amber-800 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  HIGHEST SAVINGS
+                </div>
                 <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-2">PCS Financial Planner</h3>
                 <div className="text-sm font-bold text-success dark:text-green-400 mb-4">Avg DITY move profit: $1,200-$4,500</div>
                 <ul className="space-y-2 text-text-body dark:text-muted mb-6 text-sm">
