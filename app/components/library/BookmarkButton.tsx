@@ -18,11 +18,15 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
 
   const checkBookmarkStatus = async () => {
     try {
-      // We'll check this through the bookmarks list
-      // For now, assume not bookmarked initially
-      setIsBookmarked(false);
+      const response = await fetch('/api/bookmarks');
+      if (response.ok) {
+        const data = await response.json();
+        const isCurrentlyBookmarked = data.bookmarks?.some((b: any) => b.content_id === contentId);
+        setIsBookmarked(isCurrentlyBookmarked || false);
+      }
     } catch (error) {
       console.error('Error checking bookmark status:', error);
+      setIsBookmarked(false);
     }
   };
 
