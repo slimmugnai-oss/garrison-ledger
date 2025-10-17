@@ -23,29 +23,10 @@ CREATE INDEX IF NOT EXISTS idx_calculator_scenarios_created_at ON calculator_sce
 -- RLS Policies
 ALTER TABLE calculator_scenarios ENABLE ROW LEVEL SECURITY;
 
--- Users can view their own scenarios
-CREATE POLICY "Users can view their own scenarios"
-  ON calculator_scenarios FOR SELECT
-  TO authenticated
-  USING (user_id = auth.uid()::text);
-
--- Users can create their own scenarios
-CREATE POLICY "Users can create their own scenarios"
-  ON calculator_scenarios FOR INSERT
-  TO authenticated
-  WITH CHECK (user_id = auth.uid()::text);
-
--- Users can update their own scenarios
-CREATE POLICY "Users can update their own scenarios"
-  ON calculator_scenarios FOR UPDATE
-  TO authenticated
-  USING (user_id = auth.uid()::text);
-
--- Users can delete their own scenarios
-CREATE POLICY "Users can delete their own scenarios"
-  ON calculator_scenarios FOR DELETE
-  TO authenticated
-  USING (user_id = auth.uid()::text);
+-- Service role has full access (needed for Clerk auth which doesn't use auth.uid())
+CREATE POLICY "Service role full access calculator_scenarios"
+  ON calculator_scenarios FOR ALL
+  USING (current_user = 'service_role');
 
 -- Function to get user's scenarios for a specific tool
 CREATE OR REPLACE FUNCTION get_user_scenarios(p_user_id TEXT, p_tool TEXT)

@@ -59,16 +59,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user has premium status (for scenario limits)
-    const premiumCheck = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/user/premium-status`, {
-      headers: {
-        'Cookie': req.headers.get('cookie') || ''
-      }
-    });
+    const { data: entitlement } = await supabase
+      .from("entitlements")
+      .select("tier, status")
+      .eq("user_id", userId)
+      .maybeSingle();
     
-    const premiumData = await premiumCheck.json();
-    const isPremium = premiumData.isPremium;
+    const isPremium = entitlement?.tier === "premium" && entitlement?.status === "active";
 
-    // Check scenario count (free users limited to 3 scenarios per tool)
+    // Check scenario count (free users limited to 1 scenario per tool to start)
     if (!isPremium) {
       const { data: countData } = await supabase.rpc('count_user_scenarios', {
         p_user_id: userId,
@@ -77,11 +76,12 @@ export async function POST(req: NextRequest) {
 
       const scenarioCount = countData || 0;
       
-      if (scenarioCount >= 3) {
+      if (scenarioCount >= 1) {
         return NextResponse.json({
-          error: "Free users can save up to 3 scenarios per tool. Upgrade to Premium for unlimited scenarios.",
+          error: "Free users can save 1 scenario per tool. Upgrade to Premium for unlimited scenarios!",
           isPremium: false,
-          limit: 3
+          limit: 1,
+          current: scenarioCount
         }, { status: 403 });
       }
     }
@@ -101,7 +101,12 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error('Error creating scenario:', error);
-      return NextResponse.json({ error: "Failed to create scenario" }, { status: 500 });
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      return NextResponse.json({ 
+        error: "Failed to create scenario", 
+        details: error.message,
+        hint: error.hint 
+      }, { status: 500 });
     }
 
     return NextResponse.json({ 
