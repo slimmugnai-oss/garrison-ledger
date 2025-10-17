@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { toPng } from 'html-to-image';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
+import { generateCalculatorReport } from '@/app/lib/pdf-reports';
 
 interface ExportButtonsProps {
   tool: string; // 'tsp', 'sdp', 'house-hacking', 'pcs', 'savings', 'career'
@@ -20,48 +20,39 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
   const [isExporting, setIsExporting] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
 
-  // Screenshot export (Premium only)
-  async function exportAsImage() {
+  // PDF export (Premium only)
+  async function exportAsPDF() {
     if (!isPremium) {
-      alert('Screenshot export is a premium feature. Upgrade to save your results as an image!');
+      alert('PDF export is a premium feature. Upgrade to download professional reports!');
+      return;
+    }
+
+    if (!data) {
+      alert('No data available to export. Please complete the calculator first.');
       return;
     }
 
     setIsExporting(true);
-    track(`${tool}_screenshot_export`);
+    track(`${tool}_pdf_export`);
 
     try {
-      const element = document.getElementById(resultsElementId);
-      if (!element) {
-        throw new Error('Results element not found');
-      }
-
-      const dataUrl = await toPng(element, {
-        quality: 0.95,
-        pixelRatio: 2,
-        backgroundColor: '#ffffff'
-      });
-
-      // Download the image
+      // Generate PDF using our library
+      const pdfDataUrl = generateCalculatorReport(tool, data.inputs, data.outputs);
+      
+      // Convert data URL to blob and download
       const link = document.createElement('a');
-      link.download = `garrison-ledger-${tool}-${new Date().toISOString().split('T')[0]}.png`;
-      link.href = dataUrl;
+      link.download = `garrison-ledger-${tool}-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      link.href = pdfDataUrl;
       link.click();
 
       // Show success message
-      alert('✅ Results saved as image! Check your downloads folder.');
+      alert('✅ Professional PDF report downloaded! Check your downloads folder.');
     } catch (error) {
-      console.error('Error exporting image:', error);
-      alert('Failed to export image. Please try again.');
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
     } finally {
       setIsExporting(false);
     }
-  }
-
-  // Print function (Free for all)
-  function printResults() {
-    track(`${tool}_print`);
-    window.print();
   }
 
   // Email results (Premium only)
@@ -127,19 +118,10 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
 
   return (
     <div className="flex flex-wrap gap-3 items-center justify-center sm:justify-start">
-      {/* Print Button (Free) */}
+      {/* PDF Download Button (Premium) */}
       <button
-        onClick={printResults}
-        className="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border-2 border-border hover:border-primary text-body hover:text-primary rounded-lg font-medium transition-colors"
-      >
-        <Icon name="Printer" className="h-4 w-4" />
-        Print Results
-      </button>
-
-      {/* Screenshot Button (Premium) */}
-      <button
-        onClick={exportAsImage}
-        disabled={isExporting}
+        onClick={exportAsPDF}
+        disabled={isExporting || !data}
         className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
           isPremium
             ? 'bg-primary text-white hover:bg-primary-hover'
@@ -149,12 +131,12 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
         {isExporting ? (
           <>
             <Icon name="Loader" className="h-4 w-4 animate-spin" />
-            Saving...
+            Generating...
           </>
         ) : (
           <>
-            <Icon name="Camera" className="h-4 w-4" />
-            {isPremium ? 'Save as Image' : '🔒 Save as Image'}
+            <Icon name="Download" className="h-4 w-4" />
+            {isPremium ? 'Download PDF Report' : '🔒 Download PDF Report'}
           </>
         )}
       </button>
