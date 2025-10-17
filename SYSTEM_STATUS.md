@@ -255,7 +255,16 @@ Garrison Ledger's 6 calculators have been transformed from basic tools into **wo
 - ✅ Database migrations deployed
 - ✅ RLS fix applied
 - ✅ Scenario saving tested and working
+- ✅ Intel Library click handlers fixed
+- ✅ Saved articles persistence fixed
 - 🟢 **PLATFORM FULLY OPERATIONAL**
+
+### **🔧 LATEST FIXES (2025-01-17 Evening):**
+1. ✅ **Deployment Guide** - Legal Prep (POA) anchor link (id="legal" added)
+2. ✅ **Intel Library** - Content blocks now expand when clicked
+3. ✅ **Bookmarks** - Saved status persists across page refreshes
+4. ✅ **Saved Tab** - Bookmarked articles display correctly
+5. ✅ **Scenario Loading** - Click saved scenarios to restore inputs (all 6 calculators)
 
 ---
 
