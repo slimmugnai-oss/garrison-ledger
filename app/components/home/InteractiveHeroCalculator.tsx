@@ -19,8 +19,8 @@ export default function InteractiveHeroCalculator() {
     let pcsSavings = 0;
     let shoppingSavings = 447; // Base commissary savings
 
-    // TSP Savings based on rank and optimization status
-    if (!hasOptimizedTSP) {
+    // TSP Savings based on rank and optimization status (only for service members)
+    if (!hasOptimizedTSP && !rank.includes('Military Spouse')) {
       if (rank.includes('E-1') || rank.includes('E-4')) {
         tspSavings = 800; // Lower ranks, smaller optimization potential
       } else if (rank.includes('E-5') || rank.includes('E-9')) {
@@ -53,8 +53,22 @@ export default function InteractiveHeroCalculator() {
   };
 
   const handleNext = () => {
-    if (step === 1 && rank) setStep(2);
-    else if (step === 2 && hasPCS !== null) setStep(3);
+    if (step === 1 && rank) {
+      // Skip TSP question for military spouses
+      if (rank.includes('Military Spouse')) {
+        setStep(2);
+      } else {
+        setStep(2);
+      }
+    }
+    else if (step === 2 && hasPCS !== null) {
+      // Skip TSP question for military spouses
+      if (rank.includes('Military Spouse')) {
+        calculateSavings();
+      } else {
+        setStep(3);
+      }
+    }
     else if (step === 3 && hasOptimizedTSP !== null) calculateSavings();
   };
 
@@ -76,7 +90,7 @@ export default function InteractiveHeroCalculator() {
 
           <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">
             {step === 1 && "What's your rank?"}
-            {step === 2 && "Do you have a PCS planned?"}
+            {step === 2 && rank.includes('Military Spouse') ? "Do you have a PCS planned?" : "Do you have a PCS planned?"}
             {step === 3 && "Are you optimizing your TSP?"}
           </h3>
 
@@ -170,11 +184,11 @@ export default function InteractiveHeroCalculator() {
               disabled={
                 (step === 1 && !rank) ||
                 (step === 2 && hasPCS === null) ||
-                (step === 3 && hasOptimizedTSP === null)
+                (step === 3 && hasOptimizedTSP === null && !rank.includes('Military Spouse'))
               }
               className="ml-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              {step === 3 ? 'See My Savings →' : 'Next →'}
+              {step === 3 ? 'See My Savings →' : (step === 2 && rank.includes('Military Spouse')) ? 'See My Savings →' : 'Next →'}
             </button>
           </div>
         </div>
