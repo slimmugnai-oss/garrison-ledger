@@ -280,6 +280,8 @@ Garrison Ledger's 6 calculators have been transformed from basic tools into **wo
 18. ✅ **Offline Support (PWA)** - Service worker, background sync, push notifications
 19. ✅ **Learning Sequences** - Curated paths, progress tracking, completion criteria
 20. ✅ **Advanced Database Schema** - 12 new tables for social, analytics, sequences
+21. ✅ **User Onboarding Tour** - 9-step interactive guide, progress tracking, skip/restart
+22. ✅ **Admin Analytics Dashboard** - Content performance, engagement metrics, growth trends
 
 ---
 
