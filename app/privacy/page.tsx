@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         </p>
         <ul>
           <li>Legal entity: Family Media, LLC</li>
-          <li>Contact: <a href="mailto:support@familymedia.com">support@familymedia.com</a></li>
+          <li>Contact: <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a></li>
           <li>Postal address: 33 Walt Whitman Rd, Suite 201e, Huntington Station, NY 11746</li>
         </ul>
       </section>
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
         <p>
           Depending on where you live (EEA/UK, California, Virginia, Colorado), you may have rights to access,
           correct, delete, port, or restrict processing of your data; to opt-out of selling/sharing; and to appeal denials.
-          To exercise rights, contact <a href="mailto:support@familymedia.com">support@familymedia.com</a>.
+          To exercise rights, contact <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>.
         </p>
       </section>
 
@@ -112,7 +112,7 @@ export default function PrivacyPage() {
       <section id="contact">
         <h2>11) Contact</h2>
         <p>
-          Questions or requests: <a href="mailto:support@familymedia.com">support@familymedia.com</a>
+          Questions or requests: <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>
         </p>
       </section>
     </LegalLayout>

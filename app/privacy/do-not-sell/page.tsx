@@ -24,7 +24,7 @@ export default function DoNotSellPage() {
         <h2>Submit a Request</h2>
         <p>
           If you have concerns or want to exercise your California privacy rights, please contact us at{' '}
-          <a href="mailto:support@familymedia.com">support@familymedia.com</a> with:
+          <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a> with:
         </p>
         <ul>
           <li>Your name and email address</li>
