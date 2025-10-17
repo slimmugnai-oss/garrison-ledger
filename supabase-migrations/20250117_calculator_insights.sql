@@ -19,12 +19,7 @@ CREATE TABLE IF NOT EXISTS calculator_usage_log (
   inputs JSONB NOT NULL,
   outputs JSONB NOT NULL,
   session_duration_seconds INTEGER,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  -- Indexes for fast queries
-  INDEX idx_calculator_usage_user (user_id),
-  INDEX idx_calculator_usage_calc (calculator_name),
-  INDEX idx_calculator_usage_created (created_at DESC)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Table: user_calculator_profile
@@ -54,13 +49,17 @@ CREATE TABLE IF NOT EXISTS ai_recommendations (
   action_url TEXT,
   is_dismissed BOOLEAN DEFAULT FALSE,
   expires_at TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  -- Indexes
-  INDEX idx_ai_recommendations_user (user_id),
-  INDEX idx_ai_recommendations_priority (priority DESC),
-  INDEX idx_ai_recommendations_active (user_id, is_dismissed, expires_at)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create indexes after table creation
+CREATE INDEX IF NOT EXISTS idx_calculator_usage_user ON calculator_usage_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_calculator_usage_calc ON calculator_usage_log(calculator_name);
+CREATE INDEX IF NOT EXISTS idx_calculator_usage_created ON calculator_usage_log(created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_user ON ai_recommendations(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_priority ON ai_recommendations(priority DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_active ON ai_recommendations(user_id, is_dismissed, expires_at);
 
 -- RLS Policies
 ALTER TABLE calculator_usage_log ENABLE ROW LEVEL SECURITY;
