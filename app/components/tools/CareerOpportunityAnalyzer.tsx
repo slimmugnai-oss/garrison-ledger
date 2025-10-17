@@ -11,6 +11,7 @@ import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
 import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import { getSkillsGap, remoteWorkPremiums } from '@/app/data/mos-translator';
 
 interface City {
   city: string;
@@ -44,6 +45,10 @@ export default function CareerOpportunityAnalyzer() {
     stateTaxPercent: 0,
     city: { city: 'San Antonio', state: 'TX', cost_of_living_index: 86.9 }
   });
+
+  // Enhanced features
+  const [isRemote, setIsRemote] = useState(false);
+  const [showSkillsGap, setShowSkillsGap] = useState(false);
 
   // Save state functionality
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -672,6 +677,177 @@ export default function CareerOpportunityAnalyzer() {
             </div>
           )}
         />
+      )}
+
+      {/* Remote Work Premium Calculator */}
+      {analysis && (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mt-8">
+          <h3 className="text-xl font-bold text-purple-900 mb-4">
+            <Icon name="Monitor" className="h-5 w-5 inline mr-2" />
+            Remote Work Calculator
+          </h3>
+          
+          <div className="mb-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isRemote}
+                onChange={(e) => setIsRemote(e.target.checked)}
+                className="w-5 h-5 accent-purple-600"
+              />
+              <span className="text-lg font-semibold text-purple-900">
+                This is a remote position
+              </span>
+            </label>
+          </div>
+
+          {isRemote && newData.city && (() => {
+            const remotePremium = remoteWorkPremiums.average; // 8% average
+            const adjustedNewSalary = Math.round(newData.salary * remotePremium);
+            const premiumAmount = adjustedNewSalary - newData.salary;
+            const colaAdjusted = adjustedNewSalary * (100 / newData.city.cost_of_living_index);
+            
+            return (
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-lg p-4 border border-purple-300">
+                    <p className="text-sm text-purple-700 mb-1">Standard Salary</p>
+                    <p className="text-2xl font-bold text-purple-900">{fmt(newData.salary)}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-success">
+                    <p className="text-sm text-success mb-1">Remote Premium (+{Math.round((remotePremium - 1) * 100)}%)</p>
+                    <p className="text-2xl font-bold text-success">{fmt(adjustedNewSalary)}</p>
+                  </div>
+                </div>
+
+                <div className="bg-success-subtle rounded-lg p-4 border border-success">
+                  <p className="text-sm font-semibold text-success mb-2">Remote Work Benefits:</p>
+                  <ul className="space-y-1 text-sm text-success">
+                    <li>• Extra {fmt(premiumAmount)}/year in compensation</li>
+                    <li>• Save ~$5,000/year on commuting costs</li>
+                    <li>• Save ~$2,000/year on work clothing & meals</li>
+                    <li>• Geographic flexibility (live anywhere!)</li>
+                    <li>• Better work-life balance</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-purple-300">
+                  <p className="text-sm font-semibold text-purple-900 mb-2">Cost-of-Living Adjusted Remote Salary:</p>
+                  <p className="text-3xl font-bold text-success">{fmt(colaAdjusted)}</p>
+                  <p className="text-xs text-purple-700 mt-1">
+                    Equivalent purchasing power in {newData.city.city}, {newData.city.state} (COLA: {newData.city.cost_of_living_index})
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
+          {!isRemote && (
+            <p className="text-sm text-purple-700">
+              <Icon name="Info" className="h-3 w-3 inline mr-1" />
+              Remote positions typically pay 5-15% more due to nationwide competition for talent
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Skills Gap Analysis */}
+      {analysis && (
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-blue-900">
+              <Icon name="Target" className="h-5 w-5 inline mr-2" />
+              Skills Gap & Career Roadmap
+            </h3>
+            <button
+              onClick={() => setShowSkillsGap(!showSkillsGap)}
+              className="text-sm font-semibold text-blue-600 hover:text-blue-800"
+            >
+              {showSkillsGap ? 'Hide' : 'Show'} Analysis
+            </button>
+          </div>
+
+          {showSkillsGap && (() => {
+            const currentMilitarySalary = currentData.salary; // Current military compensation
+            const targetCivilianSalary = newData.salary;
+            const gap = getSkillsGap(currentMilitarySalary, targetCivilianSalary);
+            const salaryIncrease = targetCivilianSalary - currentMilitarySalary;
+            const percentIncrease = (salaryIncrease / currentMilitarySalary) * 100;
+            
+            return (
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="bg-white rounded-lg p-4 border border-blue-300">
+                    <p className="text-sm text-blue-700 mb-1">Current Military Pay</p>
+                    <p className="text-2xl font-bold text-blue-900">{fmt(currentMilitarySalary)}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-blue-300">
+                    <p className="text-sm text-blue-700 mb-1">Target Civilian Salary</p>
+                    <p className="text-2xl font-bold text-blue-900">{fmt(targetCivilianSalary)}</p>
+                  </div>
+                  <div className={`bg-white rounded-lg p-4 border ${
+                    salaryIncrease > 0 ? 'border-success' : 'border-warning'
+                  }`}>
+                    <p className="text-sm text-blue-700 mb-1">Salary Change</p>
+                    <p className={`text-2xl font-bold ${salaryIncrease > 0 ? 'text-success' : 'text-warning'}`}>
+                      {salaryIncrease > 0 ? '+' : ''}{fmt(salaryIncrease)}
+                    </p>
+                    <p className="text-xs text-blue-700">({percentIncrease > 0 ? '+' : ''}{percentIncrease.toFixed(1)}%)</p>
+                  </div>
+                </div>
+
+                <div className={`rounded-lg p-4 border-2 ${
+                  gap.level === 'Small Gap' ? 'bg-green-50 border-green-300' :
+                  gap.level === 'Moderate Gap' ? 'bg-amber-50 border-amber-300' :
+                  'bg-red-50 border-red-300'
+                }`}>
+                  <h4 className="font-bold text-lg mb-2">
+                    Gap Assessment: <span className={
+                      gap.level === 'Small Gap' ? 'text-success' :
+                      gap.level === 'Moderate Gap' ? 'text-warning' :
+                      'text-danger'
+                    }>{gap.level}</span>
+                  </h4>
+                  <p className="text-sm mb-3">
+                    <strong>Timeline to Achieve:</strong> {gap.timeline}
+                  </p>
+                  <p className="text-sm font-semibold mb-2">Recommended Action Steps:</p>
+                  <ul className="space-y-1 text-sm">
+                    {gap.recommendations.map((rec, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="font-bold">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs mt-3 font-semibold">
+                    Certifications: {gap.certifications}
+                  </p>
+                </div>
+
+                <div className="bg-info-subtle rounded-lg p-4 border border-info">
+                  <p className="text-sm font-semibold text-info mb-2">
+                    <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" />
+                    Military Transition Resources:
+                  </p>
+                  <ul className="text-xs text-info space-y-1">
+                    <li>• Use GI Bill for certifications or degree programs</li>
+                    <li>• SkillBridge: 180-day internship before separation</li>
+                    <li>• VA VR&E: Vocational rehab & employment services</li>
+                    <li>• Hiring Our Heroes: Career fairs & mentorship</li>
+                    <li>• LinkedIn for Veterans: Free Premium access</li>
+                  </ul>
+                </div>
+              </div>
+            );
+          })()}
+
+          {!showSkillsGap && (
+            <p className="text-sm text-blue-700">
+              Click "Show Analysis" to see your personalized career transition roadmap
+            </p>
+          )}
+        </div>
       )}
     </Section>
   );
