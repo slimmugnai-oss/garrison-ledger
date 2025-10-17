@@ -15,6 +15,7 @@ import OnboardingTour from '../components/dashboard/OnboardingTour';
 import StreakTracker from '../components/dashboard/StreakTracker';
 import DailyTip from '../components/dashboard/DailyTip';
 import FinancialReadinessScore from '../components/dashboard/FinancialReadinessScore';
+import AIRecommendations from '../components/dashboard/AIRecommendations';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -237,6 +238,11 @@ export default async function CommandDashboard() {
                 hasDebt: !!profileRow?.debt_amount_range && profileRow.debt_amount_range !== 'prefer-not-to-say' && profileRow.debt_amount_range !== '$0'
               }}
             />
+          </div>
+
+          {/* AI-Powered Recommendations */}
+          <div className="mb-12">
+            <AIRecommendations />
           </div>
 
           {/* Upcoming Expirations Widget */}
