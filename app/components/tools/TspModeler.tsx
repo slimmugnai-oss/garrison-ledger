@@ -48,6 +48,19 @@ export default function TspModeler() {
   const [loading, setLoading] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Load scenario callback
+  const loadScenario = (input: Record<string, any>) => {
+    setAge(input.age || 30);
+    setRet(input.retire || 50);
+    setBal(input.balance || 50000);
+    setCont(input.monthly || 500);
+    setWC(input.mix?.C || 70);
+    setWS(input.mix?.S || 30);
+    setWI(input.mix?.I || 0);
+    setWF(input.mix?.F || 0);
+    setWG(input.mix?.G || 0);
+  };
+
   // Track page view on mount
   useEffect(() => {
     track('tsp_view');
@@ -477,6 +490,7 @@ export default function TspModeler() {
                     tool="tsp-modeler"
                     currentInput={{ age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } }}
                     currentOutput={{ endDefault: apiData.endDefault, endCustom: apiData.endCustom, diff: apiData.diff }}
+                    onLoadScenario={loadScenario}
                     renderComparison={(scenarios) => (
                       <div className="overflow-x-auto">
                         <table className="w-full">

@@ -450,6 +450,14 @@ export default function HouseHack() {
                     tool="house-hacking"
                     currentInput={{ price, rate, tax, ins, bah, rent }}
                     currentOutput={apiData}
+                    onLoadScenario={(input) => {
+                      setPrice(input.price || 400000);
+                      setRate(input.rate || 6.5);
+                      setTax(input.tax || 4800);
+                      setIns(input.ins || 1600);
+                      setBah(input.bah || 2400);
+                      setRent(input.rent || 2200);
+                    }}
                     renderComparison={(scenarios) => (
                       <div className="overflow-x-auto">
                         <table className="w-full">

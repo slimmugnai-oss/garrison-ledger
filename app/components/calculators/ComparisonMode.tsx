@@ -18,13 +18,15 @@ interface ComparisonModeProps {
   currentInput: Record<string, any>;
   currentOutput: Record<string, any>;
   renderComparison: (scenarios: Scenario[]) => React.ReactNode;
+  onLoadScenario?: (input: Record<string, any>) => void; // Callback to load scenario into calculator
 }
 
 export default function ComparisonMode({ 
   tool, 
   currentInput, 
   currentOutput,
-  renderComparison 
+  renderComparison,
+  onLoadScenario
 }: ComparisonModeProps) {
   const { isPremium } = usePremiumStatus();
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -188,9 +190,9 @@ export default function ComparisonMode({
             </button>
           </div>
           
-          {!isPremium && scenarios.length >= 2 && (
+          {!isPremium && scenarios.length >= 1 && (
             <p className="text-sm text-warning mt-3">
-              ⚠️ Free users can save up to 3 scenarios. <a href="/dashboard/upgrade" className="link">Upgrade to Premium</a> for unlimited scenarios.
+              ⚠️ Free users can save 1 scenario per tool. <a href="/dashboard/upgrade" className="link">Upgrade to Premium</a> for unlimited scenarios.
             </p>
           )}
         </div>
@@ -200,26 +202,38 @@ export default function ComparisonMode({
       {scenarios.length > 0 && (
         <div className="mb-6">
           <h4 className="text-sm font-semibold text-purple-900 mb-3">
-            Saved Scenarios ({scenarios.length}{!isPremium && '/3'})
+            Saved Scenarios ({scenarios.length}{!isPremium && ' / 1 free'})
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {scenarios.map((scenario) => (
               <div
                 key={scenario.id}
-                className="bg-white border border-purple-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="bg-white border border-purple-200 rounded-lg p-4 hover:shadow-md hover:border-purple-400 transition-all cursor-pointer"
+                onClick={() => {
+                  if (onLoadScenario) {
+                    onLoadScenario(scenario.input);
+                    alert(`✅ Loaded scenario: ${scenario.name}`);
+                  }
+                }}
               >
                 <div className="flex items-start justify-between mb-2">
                   <h5 className="font-bold text-primary">{scenario.name}</h5>
                   <button
-                    onClick={() => deleteScenario(scenario.id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering card click
+                      deleteScenario(scenario.id);
+                    }}
                     className="text-muted hover:text-danger"
                     title="Delete scenario"
                   >
                     <Icon name="Trash2" className="h-4 w-4" />
                   </button>
                 </div>
-                <p className="text-xs text-muted">
+                <p className="text-xs text-muted mb-1">
                   Saved {new Date(scenario.created_at).toLocaleDateString()}
+                </p>
+                <p className="text-xs text-info font-medium">
+                  Click to load →
                 </p>
               </div>
             ))}
