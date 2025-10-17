@@ -151,7 +151,7 @@ export default function CollaboratePage() {
         {!connection && (
           <div className="grid md:grid-cols-2 gap-6">
             {/* Create Invitation */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Icon name="UserPlus" className="h-6 w-6 text-blue-600" />
                 <h3 className="text-xl font-bold text-blue-900">Invite Your Spouse</h3>

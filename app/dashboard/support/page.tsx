@@ -29,7 +29,7 @@ export default async function DashboardSupportPage() {
             {/* Quick Actions Sidebar */}
             <div className="lg:col-span-1 space-y-6">
               {/* Priority Support Badge */}
-              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-2xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-500/10 to-slate-600/10 border border-slate-500/30 rounded-2xl p-6 shadow-lg">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="bg-indigo-500/20 p-2 rounded-lg">
                     <Icon name="Crown" className="w-6 h-6 text-indigo-400" />
@@ -46,7 +46,7 @@ export default async function DashboardSupportPage() {
               </div>
 
               {/* Quick Links */}
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white">Quick Links</h3>
                 <div className="space-y-3">
                   <Link
@@ -83,7 +83,7 @@ export default async function DashboardSupportPage() {
               </div>
 
               {/* Common Topics */}
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg">
                 <h3 className="text-lg font-bold mb-4 text-white">Common Topics</h3>
                 <div className="space-y-2 text-sm">
                   <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[#0A0F1E] transition-colors text-muted hover:text-white">
@@ -107,7 +107,7 @@ export default async function DashboardSupportPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] p-8 shadow-lg">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-8 shadow-lg">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-white mb-2">Submit a Support Request</h2>
                   <p className="text-muted">
@@ -124,7 +124,7 @@ export default async function DashboardSupportPage() {
               </div>
 
               {/* Support Tips */}
-              <div className="mt-6 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-info/30 rounded-2xl p-6 shadow-lg">
+              <div className="mt-6 bg-gradient-to-br from-slate-500/10 to-slate-600/10 border border-slate-500/30 rounded-2xl p-6 shadow-lg">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <Icon name="Lightbulb" className="w-5 h-5 text-info" />
                   Tips for Better Support

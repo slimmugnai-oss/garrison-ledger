@@ -456,7 +456,7 @@ export default function ProfileSetupPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl shadow-lg">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white text-2xl shadow-lg">
               👤
             </div>
             <div>
@@ -1008,7 +1008,7 @@ export default function ProfileSetupPage() {
 
             {/* Children Ages - Dynamic fields */}
             {data.num_children !== null && data.num_children !== undefined && data.num_children > 0 && (
-              <div className="mt-4 p-6 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
+              <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl">
                 <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center gap-2">
                   <span>👨‍👩‍👧‍👦</span> Children&apos;s Ages
                 </h3>
@@ -1406,7 +1406,7 @@ export default function ProfileSetupPage() {
           <button
             onClick={submit}
             disabled={saving || saved}
-            className="w-full inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
@@ -1429,7 +1429,7 @@ export default function ProfileSetupPage() {
           <button
             onClick={submit}
             disabled={saving || saved}
-            className="inline-flex items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+            className="inline-flex items-center bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
           >
             {saving ? (
               <>

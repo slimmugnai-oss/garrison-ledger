@@ -82,7 +82,7 @@ export default async function SettingsPage() {
                 <>
                   <a 
                     href="/dashboard/upgrade"
-                    className="inline-flex items-center bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px]"
+                    className="inline-flex items-center bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-[2px]"
                   >
                     Upgrade to Premium →
                   </a>

@@ -405,7 +405,7 @@ function BinderContent() {
           )}
 
           {/* Search & Controls */}
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] p-4 mb-6 shadow-lg">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700 p-4 mb-6 shadow-lg">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search */}
               <div className="flex-1 relative">
@@ -631,7 +631,7 @@ function BinderContent() {
       {/* Rename Modal */}
       {showRenameModal && selectedFile && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700 max-w-md w-full p-6 shadow-2xl">
             <h2 className="text-xl font-bold mb-4 text-white">Rename File</h2>
             <input
               type="text"
@@ -661,7 +661,7 @@ function BinderContent() {
       {/* Move Modal */}
       {showMoveModal && selectedFile && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700 max-w-md w-full p-6 shadow-2xl">
             <h2 className="text-xl font-bold mb-4 text-white">Move File</h2>
             <select
               value={newFolder}
@@ -695,7 +695,7 @@ function BinderContent() {
       {/* Expiry Modal */}
       {showExpiryModal && selectedFile && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700 max-w-md w-full p-6 shadow-2xl">
             <h2 className="text-xl font-bold mb-4 text-white">Set Expiry Date</h2>
             <input
               type="date"
@@ -724,7 +724,7 @@ function BinderContent() {
       {/* Share Modal */}
       {showShareModal && selectedFile && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-slate-700 max-w-md w-full p-6 shadow-2xl">
             <h2 className="text-xl font-bold mb-4 text-white">Share File</h2>
             {shareUrl ? (
               <>

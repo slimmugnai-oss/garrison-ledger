@@ -158,7 +158,7 @@ export default async function CommandDashboard() {
 
               {/* Your Personalized Plan - Show if they have one */}
               {hasPlan && (
-                <AnimatedCard className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 rounded-2xl p-8 text-white shadow-lg border border-blue-700/50" delay={0}>
+                <AnimatedCard className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-8 text-white shadow-lg border border-slate-700/50" delay={0}>
                   <div className="flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
@@ -216,7 +216,7 @@ export default async function CommandDashboard() {
 
               {/* Assessment CTA */}
               {!hasAssessment && (
-                <AnimatedCard className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-2xl p-8 text-white shadow-lg border border-indigo-700/50" delay={hasPlan || !profileComplete ? 100 : 50}>
+                <AnimatedCard className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-8 text-white shadow-lg border border-slate-700/50" delay={hasPlan || !profileComplete ? 100 : 50}>
                   <div className="flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
@@ -370,7 +370,7 @@ export default async function CommandDashboard() {
             <AnimatedCard delay={300} className="bg-card border border-border shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
                     <Icon name="Settings" className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -380,7 +380,7 @@ export default async function CommandDashboard() {
                 </div>
                 <Link
                   href="/dashboard/settings"
-                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
+                  className="px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
                 >
                   <Icon name="Settings" className="w-4 h-4" />
                   Go to Settings
@@ -519,7 +519,7 @@ export default async function CommandDashboard() {
           {hasAssessment && (
             <>
               {/* Executive Summary */}
-              <AnimatedCard className="mb-12 bg-gradient-to-br from-indigo-600 via-blue-600 to-indigo-700 p-10 md:p-12 text-white shadow-2xl border-0" delay={profileComplete ? 50 : 0}>
+              <AnimatedCard className="mb-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 md:p-12 text-white shadow-2xl border-0" delay={profileComplete ? 50 : 0}>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex-shrink-0 w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
                     <Icon name="Zap" className="h-10 w-10 text-white" />
@@ -802,7 +802,7 @@ export default async function CommandDashboard() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Financial Tools */}
-              <AnimatedCard delay={0} className="border-2 border-info bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+              <AnimatedCard delay={0} className="border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/tsp-modeler" className="block p-8">
                   <Icon name="TrendingUp" className="h-12 w-12 text-body mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-info-subtle text-info text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
@@ -813,7 +813,7 @@ export default async function CommandDashboard() {
                 </Link>
               </AnimatedCard>
 
-              <AnimatedCard delay={50} className="border-2 border-info bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+              <AnimatedCard delay={50} className="border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/sdp-strategist" className="block p-8">
                   <Icon name="Banknote" className="h-12 w-12 text-body mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-info-subtle text-info text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
@@ -824,7 +824,7 @@ export default async function CommandDashboard() {
                 </Link>
               </AnimatedCard>
 
-              <AnimatedCard delay={100} className="border-2 border-info bg-gradient-to-br from-blue-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
+              <AnimatedCard delay={100} className="border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white hover:shadow-xl transition-all hover:-translate-y-1">
                 <Link href="/dashboard/tools/house-hacking" className="block p-8">
                   <Icon name="House" className="h-12 w-12 text-body mb-4" />
                   <div className="inline-flex items-center px-2 py-1 bg-info-subtle text-info text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
@@ -916,7 +916,7 @@ export default async function CommandDashboard() {
 
           {/* Premium Upgrade CTA */}
           {!isPremium && (
-            <AnimatedCard className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-12 text-white text-center shadow-2xl" delay={300}>
+            <AnimatedCard className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-12 text-white text-center shadow-2xl" delay={300}>
               <div className="flex items-center justify-center mb-6">
                 <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center border-2 border-white/30">
                   <Icon name="Star" className="h-10 w-10 text-white" />

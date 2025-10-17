@@ -107,7 +107,7 @@ function ListeningPostContent() {
             
             {/* What's the Difference Explainer */}
             <AnimatedCard delay={0}>
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-info dark:border-blue-700 rounded-xl p-6">
+              <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6">
                 <div className="flex items-start gap-4">
                   <Icon name="Info" className="h-6 w-6 text-info dark:text-info flex-shrink-0 mt-1" />
                   <div>
