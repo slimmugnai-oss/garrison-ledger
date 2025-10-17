@@ -30,7 +30,7 @@ export default function DeploymentHub() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-teal-600 via-cyan-700 to-blue-800 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6">
@@ -129,7 +129,7 @@ export default function DeploymentHub() {
         {/* Before Deployment */}
         <section id="before" className="mb-20">
           <AnimatedCard delay={0}>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-8 md:p-12">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center text-white font-black text-xl">
                   1
@@ -273,7 +273,7 @@ export default function DeploymentHub() {
         {/* During Deployment */}
         <section id="during" className="mb-20">
           <AnimatedCard delay={200}>
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-8 md:p-12">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
                   2
@@ -458,7 +458,7 @@ export default function DeploymentHub() {
         {/* Reintegration */}
         <section id="after" className="mb-20">
           <AnimatedCard delay={400}>
-            <div className="bg-gradient-to-br from-rose-50 to-pink-50 border-2 border-rose-200 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-8 md:p-12">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-rose-600 rounded-xl flex items-center justify-center text-white font-black text-xl">
                   3
@@ -648,11 +648,11 @@ export default function DeploymentHub() {
                 
                 <Link
                   href="/dashboard/assessment"
-                  className="bg-gradient-to-br from-teal-600 to-cyan-700 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-teal-400"
+                  className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-slate-700"
                 >
                   <Icon name="Sparkles" className="h-8 w-8 mb-3" />
                   <h3 className="text-xl font-bold mb-2">Get Deployment Financial Plan</h3>
-                  <p className="text-sm text-teal-100">
+                  <p className="text-sm text-white/90">
                     AI-curated guidance for your deployment financial strategy.
                   </p>
                 </Link>

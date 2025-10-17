@@ -249,14 +249,14 @@ export default async function UpgradePage() {
             </div>
 
             {/* Annual Plan - VISUALLY DOMINANT */}
-            <div className={`rounded-2xl shadow-2xl p-10 border-4 relative transform scale-105 ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-500'}`}>
+            <div className={`rounded-2xl shadow-2xl p-10 border-4 relative transform scale-105 ${isPremium ? 'bg-gray-100 border-gray-300 opacity-60' : 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-700'}`}>
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg">
+                <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg">
                   ⭐ MOST POPULAR - 83% CHOOSE THIS
                 </span>
               </div>
               <div className="text-center">
-                <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+                <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-900 mb-2">
                   Annual Plan
                 </h3>
                 <div className="mb-2">
@@ -264,7 +264,7 @@ export default async function UpgradePage() {
                   <span className="text-sm text-muted ml-2">(monthly × 12)</span>
                 </div>
                 <div className="mb-2">
-                  <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">$99</span>
+                  <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-900">$99</span>
                   <span className="text-body text-xl">/year</span>
                 </div>
                 <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-base font-black mb-4 shadow-lg">
@@ -347,7 +347,7 @@ export default async function UpgradePage() {
                   <PaymentButton 
                     priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
                     buttonText="🔥 Get Best Value - Save $260!"
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-5 px-6 rounded-xl font-black text-xl shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
+                    className="w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white py-5 px-6 rounded-xl font-black text-xl shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
                   />
                 )}
               </div>
@@ -562,11 +562,11 @@ export default async function UpgradePage() {
 
           {/* Final CTA */}
           {!isPremium && (
-            <div className="mt-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-12 text-white text-center shadow-2xl">
+            <div className="mt-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-12 text-white text-center shadow-2xl">
               <h2 className="text-4xl font-bold mb-4">
                 Ready to Plan Smarter?
               </h2>
-              <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
                 Get instant access to all premium tools and calculators
               </p>
               <div className="flex flex-col items-center gap-6">

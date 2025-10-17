@@ -333,7 +333,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
 
                 {/* CTA for free users */}
                 {!isPremium && lockedBlocksCount > 0 && (
-                  <AnimatedCard className="bg-gradient-to-br from-blue-900 to-indigo-900 text-white">
+                  <AnimatedCard className="bg-gradient-to-br from-slate-900 to-slate-800 text-white">
                     <div className="p-8 text-center">
                       <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
                         <Icon name="Lock" className="w-8 h-8" />
@@ -536,7 +536,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
                           <Link
                             key={index}
                             href={toolPaths[tool.toolName] || '/dashboard/tools'}
-                            className="block bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 hover:shadow-lg hover:-translate-y-1 transition-all border border-blue-100"
+                            className="block bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 hover:shadow-lg hover:-translate-y-1 transition-all border border-slate-200"
                           >
                             <div className="flex items-start gap-4">
                               <div className="flex-shrink-0 w-12 h-12 bg-info rounded-lg flex items-center justify-center">
@@ -618,7 +618,7 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
 
                     <div className="space-y-4">
                       {initialPlan.finalRecommendations.map((rec, index) => (
-                        <div key={index} className="flex items-start gap-4 p-4 bg-gradient-to-r from-blue-50 to-transparent rounded-lg border border-blue-100">
+                        <div key={index} className="flex items-start gap-4 p-4 bg-gradient-to-r from-slate-50 to-transparent rounded-lg border border-slate-200">
                           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-info text-white flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>

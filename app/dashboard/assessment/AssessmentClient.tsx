@@ -249,7 +249,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
             </div>
             <div className="w-full bg-surface-hover h-3 rounded-full overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-slate-900 to-slate-800 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
