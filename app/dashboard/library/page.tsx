@@ -9,6 +9,7 @@ import BookmarkButton from '@/app/components/library/BookmarkButton';
 import RatingButton from '@/app/components/library/RatingButton';
 import ShareButton from '@/app/components/library/ShareButton';
 import Icon from '@/app/components/ui/Icon';
+import OnboardingTour from '@/app/components/library/OnboardingTour';
 
 interface ContentBlock {
   id: string;
@@ -375,6 +376,7 @@ function IntelligenceLibraryContent() {
 
   return (
     <>
+      <OnboardingTour />
       <Header />
       <div className="min-h-screen bg-surface">
         {/* Background gradient */}
@@ -636,7 +638,7 @@ function IntelligenceLibraryContent() {
                 {/* Filter Toggle */}
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 filter-toggle"
                 >
                   <Icon name="Settings" className="h-4 w-4" />
                   Filters
@@ -651,7 +653,7 @@ function IntelligenceLibraryContent() {
           </div>
 
           {/* Enhanced Search Bar */}
-          <div className="relative mb-4">
+          <div className="relative mb-4 search-bar">
             <input
               type="text"
               placeholder="Search 410+ content blocks (AI semantic search)..."
