@@ -471,7 +471,7 @@ function IntelligenceLibraryContent() {
 
           {/* Personalized Recommendations Section */}
           {(loadingPersonalized || personalizedBlocks.length > 0) && (
-            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-info" delay={0}>
+            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200" delay={0}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
                   <span>🎯</span> For You

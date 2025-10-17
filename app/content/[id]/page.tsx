@@ -202,7 +202,7 @@ export default async function SharedContentPage({ params }: PageProps) {
           )}
 
           {/* CTA */}
-          <div className="mt-12 text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-info">
+          <div className="mt-12 text-center p-8 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200">
             <h3 className="text-2xl font-bold text-primary mb-2">
               Want personalized recommendations?
             </h3>

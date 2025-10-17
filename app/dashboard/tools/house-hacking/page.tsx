@@ -106,7 +106,7 @@ export default function Page() {
             </div>
 
             {/* Pro Tips */}
-            <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-8">
+            <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-xl p-8">
               <h3 className="text-2xl font-bold text-purple-900 mb-4">🎯 House Hacking Pro Tips</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <ul className="space-y-2 text-purple-800">

@@ -113,7 +113,7 @@ export default function Page() {
             </div>
 
             {/* Pro Tips */}
-            <div className="mt-8 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-8">
+            <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-xl p-8">
               <h3 className="text-2xl font-bold text-indigo-900 mb-4">💡 Pro Tips for PCS Financial Success</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <ul className="space-y-2 text-indigo-800">
