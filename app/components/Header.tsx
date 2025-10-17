@@ -7,7 +7,11 @@ import { usePathname } from 'next/navigation';
 import Icon from './ui/Icon';
 
 export default function Header() {
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const pathname = usePathname();
@@ -46,413 +50,598 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       window.location.href = `/dashboard/library?search=${encodeURIComponent(searchQuery.trim())}`;
-      setShowSearch(false);
-      setSearchQuery('');
     }
   };
   
   return (
-    <header className="sticky top-0 z-50 bg-surface border-b border-default shadow-sm">
+    <header className="sticky top-0 z-50 bg-surface dark:bg-slate-900 shadow-sm border-b border-subtle dark:border-slate-700 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
           {/* Logo/Brand */}
-          <div className="flex items-center flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-primary hover:text-navy-professional transition-colors flex items-center gap-2">
-              <Icon name="BarChart" className="h-6 w-6" /> 
+          <div className="flex items-center">
+            <Link href="/" className="text-xl font-bold text-primary dark:text-white hover:text-info dark:hover:text-info transition-colors flex items-center">
+              <Icon name="BarChart" className="h-5 w-5 mr-2" /> 
               <span className="hidden sm:inline">Garrison Ledger</span>
               <span className="sm:hidden">GL</span>
             </Link>
           </div>
 
-          {/* Main Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* Navigation - Desktop - Enhanced with active states */}
+          <nav className="hidden lg:flex items-center space-x-6">
+            <Link 
+              href="/" 
+              className={`transition-colors font-medium relative ${
+                isActivePath('/') 
+                  ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              Home
+              {isActivePath('/') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
+            </Link>
             <SignedIn>
-              {/* Dashboard Link */}
-              <Link 
-                href="/dashboard" 
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  isActivePath('/dashboard') && !isActivePath('/dashboard/tools') && !isActivePath('/dashboard/library') && !isActivePath('/dashboard/listening-post')
-                    ? 'bg-navy-professional/10 text-navy-professional' 
-                    : 'text-body hover:bg-surface-hover'
-                }`}
+              {/* Command Center Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 200); setCloseTimeout(t); }}
               >
-                Dashboard
-              </Link>
-
-              {/* Tools Mega Menu */}
-              <div className="relative group">
-                <button className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-1 ${
-                  isActivePath('/dashboard/tools')
-                    ? 'bg-navy-professional/10 text-navy-professional' 
-                    : 'text-body hover:bg-surface-hover'
+                <button className={`transition-colors flex items-center font-medium relative ${
+                  isActivePath('/dashboard') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}>
-                  Calculators
-                  <Icon name="ChevronDown" className="h-4 w-4" />
+                  Command Center
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  {isActivePath('/dashboard') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
                 </button>
-                
-                {/* Dropdown */}
-                <div className="absolute top-full left-0 mt-1 w-80 bg-surface rounded-lg shadow-xl border border-default py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="grid grid-cols-2 gap-1 p-2">
-                    <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="BarChart" className="h-5 w-5 text-navy-professional" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">TSP Modeler</div>
-                        <div className="text-xs text-muted">Optimize returns</div>
-                      </div>
+                {dashboardOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-64 bg-surface rounded-xl shadow-xl border border-subtle py-3 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <div className="px-4 py-2 text-xs font-semibold text-muted uppercase tracking-wider flex items-center">
+                      <Icon name="LayoutDashboard" className="w-3 h-3 mr-1" />
+                      Your Command Center
+                    </div>
+                    <Link href="/dashboard" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      pathname === '/dashboard' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-info" />
+                      Dashboard Overview
                     </Link>
-                    <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="PiggyBank" className="h-5 w-5 text-success" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">SDP Strategist</div>
-                        <div className="text-xs text-muted">10% guaranteed</div>
-                      </div>
+                    <Link href="/dashboard/plan" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/plan') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500" />
+                      Your AI Plan
                     </Link>
-                    <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Truck" className="h-5 w-5 text-navy-professional" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">PCS Planner</div>
-                        <div className="text-xs text-muted">Move budget</div>
-                      </div>
+                    <Link href="/dashboard/assessment" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500" />
+                      Military Assessment
                     </Link>
-                    <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Home" className="h-5 w-5 text-navy-light" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">House Hacking</div>
-                        <div className="text-xs text-muted">Build wealth</div>
-                      </div>
-                    </Link>
-                    <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="ShoppingCart" className="h-5 w-5 text-warning" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Base Savings</div>
-                        <div className="text-xs text-muted">Save $1000s</div>
-                      </div>
-                    </Link>
-                    <Link href="/dashboard/tools/salary-calculator" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Briefcase" className="h-5 w-5 text-success" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Career Analyzer</div>
-                        <div className="text-xs text-muted">Compare offers</div>
-                      </div>
+                    <Link href="/dashboard/binder" className={`flex items-center px-4 py-2.5 transition-colors font-medium ${
+                      isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}>
+                      <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500" />
+                      My Binder
                     </Link>
                   </div>
-                </div>
+                )}
+              </div>
+              
+              {/* Search Button */}
+              <button 
+                onClick={() => setShowSearch(!showSearch)}
+                className="text-body hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-hover"
+                title="Search (Press /)"
+              >
+                <Icon name="Search" className="w-5 h-5" />
+              </button>
+
+              {/* Tools Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setToolsOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setToolsOpen(false), 200); setCloseTimeout(t); }}
+              >
+                <button className={`transition-colors flex items-center font-medium relative ${
+                  isActivePath('/dashboard/tools') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}>
+                  Tools
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  {isActivePath('/dashboard/tools') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info rounded-full" />}
+                </button>
+                {toolsOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-72 bg-surface rounded-xl shadow-xl border border-subtle py-3 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setToolsOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setToolsOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <div className="px-4 py-2 text-xs font-semibold text-muted uppercase tracking-wider flex items-center">
+                      <Icon name="TrendingUp" className="w-3 h-3 mr-1" />
+                      Financial Tools
+                    </div>
+                    <Link href="/dashboard/tools/tsp-modeler" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="BarChart" className="w-4 h-4 mr-3 text-info" />
+                      TSP Modeler
+                    </Link>
+                    <Link href="/dashboard/tools/sdp-strategist" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="PiggyBank" className="w-4 h-4 mr-3 text-green-500" />
+                      SDP Strategist
+                    </Link>
+                    <Link href="/dashboard/tools/house-hacking" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Home" className="w-4 h-4 mr-3 text-purple-500" />
+                      House Hacking
+                    </Link>
+                    <div className="border-t border-subtle my-2"></div>
+                    <div className="px-4 py-2 text-xs font-semibold text-muted uppercase tracking-wider flex items-center">
+                      <Icon name="MapPin" className="w-3 h-3 mr-1" />
+                      Planning Tools
+                    </div>
+                    <Link href="/dashboard/tools/pcs-planner" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Truck" className="w-4 h-4 mr-3 text-indigo-500" />
+                      PCS Financial Planner
+                    </Link>
+                    <Link href="/dashboard/tools/on-base-savings" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="ShoppingCart" className="w-4 h-4 mr-3 text-orange-500" />
+                      Annual Savings Center
+                    </Link>
+                    <Link href="/dashboard/tools/salary-calculator" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Briefcase" className="w-4 h-4 mr-3 text-emerald-500" />
+                      Career Opportunity Analyzer
+                    </Link>
+                  </div>
+                )}
               </div>
 
-              {/* Intel Library */}
+              {/* Resources Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
+                onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 200); setCloseTimeout(t); }}
+              >
+                <button className={`transition-colors flex items-center font-medium relative ${
+                  isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping') || isActivePath('/base-guides')
+                    ? 'text-blue-600 font-semibold' 
+                    : 'text-gray-700 hover:text-gray-900'
+                }`}>
+                  Resources
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  {(isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping') || isActivePath('/base-guides')) && 
+                    <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info rounded-full" />}
+                </button>
+                {resourcesOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-2 w-64 bg-surface rounded-xl shadow-xl border border-subtle py-3 z-50"
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 200); setCloseTimeout(t); }}
+                  >
+                    <div className="px-4 py-2 text-xs font-semibold text-muted uppercase tracking-wider flex items-center">
+                      <Icon name="BookOpen" className="w-3 h-3 mr-1" />
+                      Resource Hubs
+                    </div>
+                    <a href="/pcs-hub" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Truck" className="w-4 h-4 mr-3 text-info" />
+                      PCS Hub
+                    </a>
+                    <a href="/career-hub" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Briefcase" className="w-4 h-4 mr-3 text-green-500" />
+                      Career Hub
+                    </a>
+                    <a href="/deployment" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="Shield" className="w-4 h-4 mr-3 text-red-500" />
+                      Deployment Guide
+                    </a>
+                    <a href="/on-base-shopping" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="ShoppingCart" className="w-4 h-4 mr-3 text-orange-500" />
+                      On-Base Shopping
+                    </a>
+                    <a href="/base-guides" className="flex items-center px-4 py-2.5 text-body hover:bg-surface-hover transition-colors font-medium">
+                      <Icon name="MapPin" className="w-4 h-4 mr-3 text-purple-500" />
+                      Base Guides
+                    </a>
+                  </div>
+                )}
+              </div>
+
               <Link 
                 href="/dashboard/library" 
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  isActivePath('/dashboard/library')
-                    ? 'bg-navy-professional/10 text-navy-professional' 
-                    : 'text-body hover:bg-surface-hover'
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/library') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 Intel Library
+                {isActivePath('/dashboard/library') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
               </Link>
-
-              {/* Resources Mega Menu */}
-              <div className="relative group">
-                <button className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-1 ${
-                  isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/base-guides')
-                    ? 'bg-navy-professional/10 text-navy-professional' 
-                    : 'text-body hover:bg-surface-hover'
-                }`}>
-                  Resources
-                  <Icon name="ChevronDown" className="h-4 w-4" />
-                </button>
-                
-                {/* Dropdown */}
-                <div className="absolute top-full left-0 mt-1 w-72 bg-surface rounded-lg shadow-xl border border-default py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="p-2 space-y-1">
-                    <a href="/pcs-hub" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Truck" className="h-5 w-5 text-navy-professional" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">PCS Hub</div>
-                        <div className="text-xs text-muted">Moving & relocation</div>
-                      </div>
-                    </a>
-                    <a href="/career-hub" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Briefcase" className="h-5 w-5 text-success" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Career Hub</div>
-                        <div className="text-xs text-muted">Advancement & transition</div>
-                      </div>
-                    </a>
-                    <a href="/deployment" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Shield" className="h-5 w-5 text-danger" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Deployment Guide</div>
-                        <div className="text-xs text-muted">Pre & post prep</div>
-                      </div>
-                    </a>
-                    <a href="/base-guides" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="MapPin" className="h-5 w-5 text-navy-light" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Base Guides</div>
-                        <div className="text-xs text-muted">Installation info</div>
-                      </div>
-                    </a>
-                    <a href="/dashboard/listening-post" className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-surface-hover transition-colors">
-                      <Icon name="Radio" className="h-5 w-5 text-info" />
-                      <div>
-                        <div className="font-semibold text-sm text-primary">Listening Post</div>
-                        <div className="text-xs text-muted">Latest news</div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <Link 
+                href="/dashboard/listening-post" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/listening-post') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Listening Post
+                {isActivePath('/dashboard/listening-post') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
+              </Link>
+              <Link 
+                href="/dashboard/referrals" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/referrals') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Referrals
+                {isActivePath('/dashboard/referrals') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
+              </Link>
+              <Link 
+                href="/dashboard/directory" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/directory') 
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold' 
+                    : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Directory
+                {isActivePath('/dashboard/directory') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info dark:bg-info rounded-full" />}
+              </Link>
+              <Link 
+                href="/dashboard/referrals" 
+                className={`transition-colors font-medium relative ${
+                  isActivePath('/dashboard/referrals') 
+                    ? 'text-blue-600 font-semibold' 
+                    : 'text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                Refer & Earn
+                {isActivePath('/dashboard/referrals') && <div className="absolute -bottom-6 left-0 right-0 h-0.5 bg-info rounded-full" />}
+              </Link>
+              <Link 
+                href="/dashboard/upgrade" 
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-semibold transition-all hover:shadow-lg hover:scale-105"
+              >
+                Upgrade
+              </Link>
             </SignedIn>
           </nav>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-3">
-            <SignedIn>
-              {/* Search Button - Now on the right */}
-              <button 
-                onClick={() => setShowSearch(!showSearch)}
-                className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-muted hover:text-primary hover:bg-surface-hover rounded-lg transition-all"
-                title="Search Library (Press /)"
-              >
-                <Icon name="Search" className="w-4 h-4" />
-                <span className="text-sm font-medium">Search</span>
-                <kbd className="hidden xl:inline-block px-2 py-0.5 text-xs bg-surface border border-default rounded">/</kbd>
-              </button>
+          {/* Search Overlay */}
+          {showSearch && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
+              <div className="bg-surface rounded-xl shadow-2xl w-full max-w-2xl mx-4">
+                <form onSubmit={handleSearch} className="p-6">
+                  <div className="flex items-center gap-4">
+                    <Icon name="Search" className="w-6 h-6 text-muted" />
+                    <input
+                      id="nav-search"
+                      type="text"
+                      placeholder="Search Intel Library... (Press / to focus)"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="flex-1 text-lg border-none outline-none bg-transparent"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSearch(false)}
+                      className="text-muted hover:text-body p-2"
+                    >
+                      <Icon name="X" className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="mt-4 text-sm text-muted">
+                    Press <kbd className="px-2 py-1 bg-surface-hover rounded text-xs">Enter</kbd> to search or <kbd className="px-2 py-1 bg-surface-hover rounded text-xs">Esc</kbd> to close
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
-              {/* Upgrade CTA */}
-              <Link 
-                href="/dashboard/upgrade" 
-                className="hidden lg:flex items-center gap-2 gradient-primary text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all"
-              >
-                <Icon name="Star" className="w-4 h-4" />
-                Upgrade
-              </Link>
+          {/* Mobile menu button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden text-body hover:text-primary p-2"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
 
-              {/* User Menu */}
-              <UserButton 
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "w-9 h-9 ring-2 ring-blue-100"
-                  }
-                }}
-              />
-            </SignedIn>
-
+          {/* Authentication Buttons - Desktop Only */}
+          <div className="hidden lg:flex items-center space-x-4">
             <SignedOut>
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="flex items-center space-x-2">
                 <SignInButton mode="modal">
-                  <button className="text-body hover:text-primary font-medium transition-colors">
+                  <button className="text-body hover:text-primary transition-colors font-medium">
                     Sign In
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="btn-primary">
-                    Get Started
+                  <button className="bg-info hover:bg-info text-white px-4 py-2 rounded-md font-medium transition-colors">
+                    Sign Up
                   </button>
                 </SignUpButton>
               </div>
             </SignedOut>
-
-            {/* Mobile menu button */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden text-body hover:text-primary p-2"
-              aria-label="Toggle menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+            
+            <SignedIn>
+              <div className="flex items-center space-x-2">
+                  <UserButton 
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8"
+                    }
+                  }}
+                />
+              </div>
+            </SignedIn>
           </div>
         </div>
 
         {/* Enhanced Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-default bg-surface pb-4">
-            {/* Mobile Search */}
-            <div className="px-4 py-3 border-b border-subtle">
-              <form onSubmit={handleSearch} className="flex items-center gap-2 px-3 py-2 bg-surface-hover rounded-lg">
-                <Icon name="Search" className="w-5 h-5 text-muted" />
-                <input
-                  type="text"
-                  placeholder="Search Intel Library..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 text-base border-none outline-none bg-transparent placeholder-muted"
-                />
-              </form>
-            </div>
+          <div className="lg:hidden border-t border-subtle dark:border-slate-700 bg-surface dark:bg-slate-900">
+            <nav className="flex flex-col">
+              {/* Search in Mobile */}
+              <div className="px-4 py-3 border-b border-subtle">
+                <form onSubmit={handleSearch} className="flex items-center gap-2">
+                  <Icon name="Search" className="w-5 h-5 text-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 text-base border-none outline-none bg-transparent"
+                  />
+                </form>
+              </div>
 
-            <nav className="px-4 py-3 space-y-1">
-              <SignedIn>
-                {/* Dashboard */}
+              {/* Main Navigation */}
+              <div className="px-4 py-3 space-y-1">
                 <Link 
-                  href="/dashboard" 
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                    pathname === '/dashboard' ? 'bg-navy-professional/10 text-navy-professional' : 'text-body hover:bg-surface-hover'
+                  href="/" 
+                  className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                    isActivePath('/') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Icon name="LayoutDashboard" className="w-5 h-5" />
-                  Dashboard
+                  <Icon name="Home" className="w-5 h-5 mr-3" />
+                  Home
                 </Link>
-
-                {/* Calculators */}
-                <div className="pt-2">
-                  <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                    Calculators
+                <SignedIn>
+                  {/* Command Center Section */}
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center">
+                      <Icon name="LayoutDashboard" className="w-3 h-3 mr-1" />
+                      Command Center
+                    </p>
+                    <div className="space-y-1">
+                      <Link 
+                        href="/dashboard" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          pathname === '/dashboard' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-info" />
+                        Dashboard Overview
+                      </Link>
+                      <Link 
+                        href="/dashboard/plan" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/plan') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500" />
+                        Your AI Plan
+                      </Link>
+                      <Link 
+                        href="/dashboard/assessment" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500" />
+                        Military Assessment
+                      </Link>
+                      <Link 
+                        href="/dashboard/binder" 
+                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                          isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500" />
+                        My Binder
+                      </Link>
+                    </div>
                   </div>
-                  <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="BarChart" className="w-5 h-5 text-navy-professional" />
-                    <span className="font-medium">TSP Modeler</span>
-                  </Link>
-                  <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="PiggyBank" className="w-5 h-5 text-success" />
-                    <span className="font-medium">SDP Strategist</span>
-                  </Link>
-                  <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="Truck" className="w-5 h-5 text-navy-professional" />
-                    <span className="font-medium">PCS Planner</span>
-                  </Link>
-                  <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="Home" className="w-5 h-5 text-navy-light" />
-                    <span className="font-medium">House Hacking</span>
-                  </Link>
-                </div>
-
-                {/* Content */}
-                <div className="pt-2">
-                  <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                    Content
+                  {/* Tools Section */}
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center">
+                      <Icon name="TrendingUp" className="w-3 h-3 mr-1" />
+                      Financial Tools
+                    </p>
+                    <div className="space-y-1">
+                      <Link href="/dashboard/tools/tsp-modeler" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="BarChart" className="w-4 h-4 mr-3 text-info" />
+                        TSP Modeler
+                      </Link>
+                      <Link href="/dashboard/tools/sdp-strategist" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="PiggyBank" className="w-4 h-4 mr-3 text-green-500" />
+                        SDP Strategist
+                      </Link>
+                      <Link href="/dashboard/tools/house-hacking" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="Home" className="w-4 h-4 mr-3 text-purple-500" />
+                        House Hacking
+                      </Link>
+                    </div>
                   </div>
+
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center">
+                      <Icon name="MapPin" className="w-3 h-3 mr-1" />
+                      Planning Tools
+                    </p>
+                    <div className="space-y-1">
+                      <Link href="/dashboard/tools/pcs-planner" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="Truck" className="w-4 h-4 mr-3 text-indigo-500" />
+                        PCS Financial Planner
+                      </Link>
+                      <Link href="/dashboard/tools/on-base-savings" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="ShoppingCart" className="w-4 h-4 mr-3 text-orange-500" />
+                        Annual Savings Center
+                      </Link>
+                      <Link href="/dashboard/tools/salary-calculator" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        <Icon name="Briefcase" className="w-4 h-4 mr-3 text-emerald-500" />
+                        Career Opportunity Analyzer
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Resources Section */}
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 flex items-center">
+                      <Icon name="BookOpen" className="w-3 h-3 mr-1" />
+                      Resource Hubs
+                    </p>
+                    <div className="space-y-1">
+                      <a href="/pcs-hub" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
+                        <Icon name="Truck" className="w-4 h-4 mr-3 text-info" />
+                        PCS Hub
+                      </a>
+                      <a href="/career-hub" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
+                        <Icon name="Briefcase" className="w-4 h-4 mr-3 text-green-500" />
+                        Career Hub
+                      </a>
+                      <a href="/deployment" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
+                        <Icon name="Shield" className="w-4 h-4 mr-3 text-red-500" />
+                        Deployment Guide
+                      </a>
+                      <a href="/on-base-shopping" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
+                        <Icon name="ShoppingCart" className="w-4 h-4 mr-3 text-orange-500" />
+                        On-Base Shopping
+                      </a>
+                      <a href="/base-guides" className="flex items-center px-3 py-2 rounded-lg text-body hover:bg-surface-hover transition-colors">
+                        <Icon name="MapPin" className="w-4 h-4 mr-3 text-purple-500" />
+                        Base Guides
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Additional Links */}
                   <Link 
                     href="/dashboard/library" 
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                      isActivePath('/dashboard/library') ? 'bg-navy-professional/10 text-navy-professional' : 'text-body hover:bg-surface-hover'
+                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActivePath('/dashboard/library') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Icon name="BookOpen" className="w-5 h-5" />
+                    <Icon name="Library" className="w-5 h-5 mr-3" />
                     Intel Library
                   </Link>
                   <Link 
                     href="/dashboard/listening-post" 
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                      isActivePath('/dashboard/listening-post') ? 'bg-navy-professional/10 text-navy-professional' : 'text-body hover:bg-surface-hover'
+                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActivePath('/dashboard/listening-post') ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Icon name="Radio" className="w-5 h-5" />
+                    <Icon name="Radio" className="w-5 h-5 mr-3" />
                     Listening Post
                   </Link>
-                </div>
-
-                {/* Resources */}
-                <div className="pt-2">
-                  <div className="px-3 py-1 text-xs font-semibold text-muted uppercase tracking-wider">
-                    Resources
-                  </div>
-                  <a href="/pcs-hub" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="Truck" className="w-5 h-5 text-navy-professional" />
-                    <span className="font-medium">PCS Hub</span>
-                  </a>
-                  <a href="/deployment" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="Shield" className="w-5 h-5 text-danger" />
-                    <span className="font-medium">Deployment Guide</span>
-                  </a>
-                  <a href="/base-guides" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="MapPin" className="w-5 h-5 text-navy-light" />
-                    <span className="font-medium">Base Guides</span>
-                  </a>
-                </div>
-
-                {/* Upgrade CTA */}
-                <div className="pt-4">
                   <Link 
-                    href="/dashboard/upgrade" 
-                    className="flex items-center justify-center gap-2 w-full gradient-primary text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+                    href="/dashboard/directory" 
+                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActivePath('/dashboard/directory') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Icon name="Star" className="w-5 h-5" />
-                    Upgrade to Premium
+                    <Icon name="Users" className="w-5 h-5 mr-3" />
+                    Directory
                   </Link>
-                </div>
-              </SignedIn>
-
-              <SignedOut>
-                <div className="flex flex-col gap-2">
-                  <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-body hover:bg-surface-hover transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    <Icon name="Home" className="w-5 h-5" />
-                    Home
+                  <Link 
+                    href="/dashboard/referrals" 
+                    className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                      isActivePath('/dashboard/referrals') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon name="Gift" className="w-5 h-5 mr-3" />
+                    Refer & Earn
                   </Link>
-                  <div className="border-t border-subtle my-2" />
-                  <SignInButton mode="modal">
-                    <button className="w-full text-center text-body hover:text-primary font-medium py-2.5 border border-default rounded-lg hover:bg-surface-hover transition-colors">
-                      Sign In
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button className="w-full btn-primary py-2.5">
-                      Get Started Free
-                    </button>
-                  </SignUpButton>
-                </div>
-              </SignedOut>
+                  
+                  {/* Upgrade Button */}
+                  <div className="px-3 py-2">
+                    <Link 
+                      href="/dashboard/upgrade" 
+                      className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-lg font-semibold transition-all hover:shadow-lg text-center"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Upgrade to Premium
+                    </Link>
+                  </div>
+                </SignedIn>
+              </div>
+              
+              {/* Mobile Auth Buttons */}
+              <div className="px-2 py-2 border-t border-subtle mt-2 pt-4">
+                <SignedOut>
+                  <div className="flex flex-col space-y-2">
+                    <SignInButton mode="modal">
+                      <button className="w-full text-center text-body hover:text-primary transition-colors font-medium py-2 border border-default rounded-lg">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="w-full bg-info hover:bg-info text-white py-2 rounded-lg font-medium transition-colors">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </div>
+                </SignedOut>
+                
+                <SignedIn>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-body">Your Account</span>
+                    <UserButton 
+                      afterSignOutUrl="/"
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-8 h-8"
+                        }
+                      }}
+                    />
+                  </div>
+                </SignedIn>
+              </div>
             </nav>
           </div>
         )}
       </div>
-
-      {/* Search Modal Overlay */}
-      {showSearch && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20"
-          onClick={() => setShowSearch(false)}
-        >
-          <div 
-            className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <form onSubmit={handleSearch} className="p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <Icon name="Search" className="w-6 h-6 text-gray-400" />
-                <input
-                  id="nav-search"
-                  type="text"
-                  placeholder="Search 410+ expert content blocks..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 text-lg border-none outline-none bg-transparent placeholder-gray-400"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowSearch(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2"
-                >
-                  <Icon name="X" className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div>
-                  Press <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Enter</kbd> to search
-                </div>
-                <div>
-                  <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Esc</kbd> to close
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
-
