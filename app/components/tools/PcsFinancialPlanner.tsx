@@ -7,6 +7,7 @@ import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import Explainer from '@/app/components/ai/Explainer';
 import ExportButtons from '@/app/components/calculators/ExportButtons';
 import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import { pcsTimingAdvice } from '@/app/data/bah-rates';
 
 type TabMode = 'basic' | 'ppm';
 
@@ -73,6 +74,11 @@ export default function PcsFinancialPlanner() {
   const [gas, setGas] = useState(400);
   const [supplies, setSupplies] = useState(200);
   const [ppmOther, setPpmOther] = useState(100);
+  
+  // Enhanced features
+  const [pcsMonth, setPcsMonth] = useState('June');
+  const [storageMonths, setStorageMonths] = useState(0);
+  const [storageCubicFeet, setStorageCubicFeet] = useState(0);
 
   // Save state functionality
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -297,6 +303,144 @@ export default function PcsFinancialPlanner() {
             </p>
           </div>
         )}
+      </div>
+
+      {/* PCS Timing Optimizer */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mb-8">
+        <h3 className="text-xl font-bold text-blue-900 mb-4">
+          <Icon name="Calendar" className="h-5 w-5 inline mr-2" />
+          PCS Timing Strategy
+        </h3>
+        
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-blue-900 mb-2">
+            Planned PCS Month
+          </label>
+          <select
+            value={pcsMonth}
+            onChange={(e) => setPcsMonth(e.target.value)}
+            className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(month => (
+              <option key={month} value={month}>{month}</option>
+            ))}
+          </select>
+        </div>
+
+        {(() => {
+          const advice = [...pcsTimingAdvice.best, ...pcsTimingAdvice.avoid, ...pcsTimingAdvice.decent]
+            .find(a => a.month === pcsMonth);
+          
+          if (!advice) return null;
+          
+          const isBest = pcsTimingAdvice.best.some(b => b.month === pcsMonth);
+          const isAvoid = pcsTimingAdvice.avoid.some(b => b.month === pcsMonth);
+          
+          return (
+            <div className={`rounded-lg p-4 border-2 ${
+              isBest ? 'bg-green-50 border-green-300' :
+              isAvoid ? 'bg-red-50 border-red-300' :
+              'bg-amber-50 border-amber-300'
+            }`}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`text-3xl font-bold ${
+                  isBest ? 'text-success' :
+                  isAvoid ? 'text-danger' :
+                  'text-warning'
+                }`}>
+                  {advice.score}/100
+                </div>
+                <div>
+                  <p className={`font-bold ${
+                    isBest ? 'text-success' :
+                    isAvoid ? 'text-danger' :
+                    'text-warning'
+                  }`}>
+                    {isBest ? '✓ Excellent Choice' : isAvoid ? '⚠ Challenging Month' : '○ Decent Option'}
+                  </p>
+                  <p className="text-sm text-body">{advice.reason}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+        
+        <p className="text-xs text-blue-700 mt-4">
+          <Icon name="Info" className="h-3 w-3 inline mr-1" />
+          Off-season PCS can save thousands on housing costs and moving expenses
+        </p>
+      </div>
+
+      {/* Storage Calculator */}
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-8">
+        <h3 className="text-xl font-bold text-purple-900 mb-4">
+          <Icon name="Archive" className="h-5 w-5 inline mr-2" />
+          Storage Cost Calculator
+        </h3>
+        
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-semibold text-purple-900 mb-2">
+              Storage Duration (months)
+            </label>
+            <input
+              type="number"
+              min={0}
+              max={24}
+              value={storageMonths}
+              onChange={(e) => setStorageMonths(Number(e.target.value))}
+              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-purple-900 mb-2">
+              Estimated Cubic Feet
+            </label>
+            <input
+              type="number"
+              min={0}
+              step={100}
+              value={storageCubicFeet}
+              onChange={(e) => setStorageCubicFeet(Number(e.target.value))}
+              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg"
+            />
+            <p className="text-xs text-purple-700 mt-1">1BR apt ≈ 400 ft³, 3BR house ≈ 1,200 ft³</p>
+          </div>
+        </div>
+
+        {storageMonths > 0 && storageCubicFeet > 0 && (() => {
+          const onBaseMonthly = 50; // On-base storage very cheap/free
+          const privateMonthly = storageCubicFeet * 0.75; // ~$0.75/ft³ typical rate
+          const onBaseTotal = onBaseMonthly * storageMonths;
+          const privateTotal = privateMonthly * storageMonths;
+          const savings = privateTotal - onBaseTotal;
+          
+          return (
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-lg p-4 border border-purple-300">
+                <p className="text-sm text-purple-700 mb-1">On-Base Storage</p>
+                <p className="text-2xl font-bold text-success">{fmt(onBaseTotal)}</p>
+                <p className="text-xs text-purple-700">{storageMonths} months × ${onBaseMonthly}/mo</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 border border-purple-300">
+                <p className="text-sm text-purple-700 mb-1">Private Storage</p>
+                <p className="text-2xl font-bold text-danger">{fmt(privateTotal)}</p>
+                <p className="text-xs text-purple-700">{storageCubicFeet} ft³ × ${privateMonthly.toFixed(0)}/mo</p>
+              </div>
+              {savings > 0 && (
+                <div className="md:col-span-2 bg-success-subtle rounded-lg p-4 border border-success text-center">
+                  <p className="text-sm text-success mb-1">Potential Savings (On-Base)</p>
+                  <p className="text-3xl font-bold text-success">{fmt(savings)}</p>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+        
+        <p className="text-xs text-purple-700 mt-4">
+          <Icon name="Info" className="h-3 w-3 inline mr-1" />
+          On-base storage is often free or low-cost. Check availability with your TMO.
+        </p>
       </div>
 
       {/* Show message if no entitlements selected */}

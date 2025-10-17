@@ -132,6 +132,7 @@ import {
   Printer,
   Camera,
   Loader,
+  Archive,
   
   type LucideIcon,
 } from 'lucide-react';
@@ -261,6 +262,7 @@ export const iconRegistry = {
   Printer,
   Camera,
   Loader,
+  Archive,
 } as const;
 
 // Export the type of valid icon names
