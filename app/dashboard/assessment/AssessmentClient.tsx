@@ -9,6 +9,7 @@ import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
+import ProgressSaveButton from '@/app/components/assessment/ProgressSaveButton';
 
 type Question = {
   id: string;
@@ -33,6 +34,29 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [canTakeAssessment, setCanTakeAssessment] = useState(true);
   const [rateLimitMessage, setRateLimitMessage] = useState<string>('');
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [hasResumedProgress, setHasResumedProgress] = useState(false);
+
+  // Track analytics
+  const trackAnalytics = async (eventType: string, questionId?: string, timeSpent?: number) => {
+    try {
+      await fetch('/api/assessment/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_type: eventType,
+          question_id: questionId,
+          time_spent_seconds: timeSpent,
+          metadata: {
+            device: /Mobile/.test(navigator.userAgent) ? 'mobile' : 'desktop',
+            resumed: hasResumedProgress
+          }
+        })
+      });
+    } catch (error) {
+      console.error('Analytics tracking failed:', error);
+    }
+  };
 
   // Check eligibility on mount
   useEffect(() => {
@@ -53,11 +77,46 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
     checkEligibility();
   }, []);
 
-  // Load first question on mount
+  // Load first question on mount (or resume progress)
   useEffect(() => {
     if (!canTakeAssessment) return; // Don't load questions if rate limited
     
     async function init() {
+      // Check for saved progress first
+      const progressRes = await fetch('/api/assessment/progress');
+      if (progressRes.ok) {
+        const { progress } = await progressRes.json();
+        
+        if (progress && Object.keys(progress.partial_responses).length > 0) {
+          // Resume from saved progress
+          setAnswers(progress.partial_responses);
+          setQuestionsAsked(progress.questions_asked);
+          setHasResumedProgress(true);
+          await trackAnalytics('resumed');
+          
+          // Load next question based on saved progress
+          const res = await fetch('/api/assessment/adaptive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              answers: progress.partial_responses, 
+              questionsAsked: progress.questions_asked 
+            })
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            if (data.nextQuestion) {
+              setCurrentQuestion(data.nextQuestion);
+            }
+          }
+          return;
+        }
+      }
+      
+      // No saved progress, start fresh
+      await trackAnalytics('started');
+      
       const res = await fetch('/api/assessment/adaptive', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -120,12 +179,23 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
     setAnswers(newAnswers);
     setQuestionsAsked(newQuestionsAsked);
 
+    // Track question answered
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    await trackAnalytics('question_answered', currentQuestion.id, timeSpent);
+    setStartTime(Date.now()); // Reset timer for next question
+
     await loadNextQuestion(newAnswers, newQuestionsAsked);
   }
 
   async function saveAssessment(finalAnswers: Record<string, string | string[]>) {
     setSaving(true);
     try {
+      // Track completion
+      await trackAnalytics('completed');
+      
+      // Clear saved progress since we're completing
+      await fetch('/api/assessment/progress', { method: 'DELETE' }).catch(() => {});
+      
       // Save assessment responses
       console.log('[Assessment] Saving responses:', finalAnswers);
       const saveRes = await fetch('/api/assessment/complete', {
@@ -306,7 +376,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <button
                   onClick={() => {
                     if (questionsAsked.length > 0) {
@@ -319,14 +389,25 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
                     }
                   }}
                   disabled={questionsAsked.length === 0 || loading}
-                  className="px-6 py-3 bg-card hover:bg-surface-hover text-text-headings border border-border rounded-xl font-bold transition-all disabled:opacity-50"
+                  className="px-6 py-3 bg-card hover:bg-surface-hover text-text-headings border border-border rounded-xl font-bold transition-all disabled:opacity-50 touch-manipulation min-h-[48px]"
                 >
                   ← Back
                 </button>
+                
+                {/* Progress Save Button - Only show if we have at least 1 answer */}
+                {Object.keys(answers).length > 0 && (
+                  <ProgressSaveButton
+                    answers={answers}
+                    questionsAsked={questionsAsked}
+                    lastQuestionId={currentQuestion?.id}
+                    progressPercentage={progress}
+                  />
+                )}
+                
                 <button
                   onClick={handleNext}
                   disabled={!currentAnswer || loading}
-                  className="px-8 py-3 bg-info hover:bg-info text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50"
+                  className="px-8 py-3 bg-info hover:bg-info text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 touch-manipulation min-h-[48px]"
                 >
                   {loading ? 'Loading...' : 'Next →'}
                 </button>

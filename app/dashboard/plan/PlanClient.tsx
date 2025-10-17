@@ -9,6 +9,7 @@ import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
 import { IconName } from '@/app/components/ui/icon-registry';
+import FeedbackModal from '@/app/components/plan/FeedbackModal';
 
 interface ContentBlock {
   id: string;
@@ -60,6 +61,8 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
   const [readBlocks, setReadBlocks] = useState<Set<string>>(new Set());
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   
   // Free users see 2 blocks, premium users see all
   const visibleBlocks = isPremium ? initialPlan.contentBlocks : initialPlan.contentBlocks.slice(0, 2);
@@ -708,6 +711,28 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
         </div>
       </div>
       <Footer />
+      
+      {/* Floating Feedback Button */}
+      {!feedbackSubmitted && (
+        <button
+          onClick={() => setShowFeedbackModal(true)}
+          className="fixed bottom-8 right-8 px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-full font-semibold shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all flex items-center gap-2 z-40"
+        >
+          <Icon name="MessageCircle" className="h-5 w-5" />
+          <span className="hidden sm:inline">Rate This Plan</span>
+          <span className="sm:hidden">Rate Plan</span>
+        </button>
+      )}
+      
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        onSubmit={() => {
+          setFeedbackSubmitted(true);
+          setShowFeedbackModal(false);
+        }}
+      />
     </>
   );
 }
