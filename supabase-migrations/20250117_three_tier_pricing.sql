@@ -27,6 +27,9 @@ COMMENT ON COLUMN public.entitlements.tier IS 'Subscription tier: free (1 plan/m
 -- 2. UPDATE can_take_assessment FUNCTION
 -- =====================================================
 
+-- Drop existing function first to allow parameter changes
+DROP FUNCTION IF EXISTS can_take_assessment(TEXT, BOOLEAN);
+
 CREATE OR REPLACE FUNCTION can_take_assessment(
   p_user_id TEXT,
   p_is_premium BOOLEAN
