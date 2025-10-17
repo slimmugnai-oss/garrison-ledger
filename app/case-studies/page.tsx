@@ -77,7 +77,7 @@ const caseStudies: CaseStudy[] = [
     rank: 'MSgt (E-8)',
     branch: 'Marine Corps',
     preview: 'David bought a triplex near Camp Pendleton, lived in one unit, rented two others. His BAH covered the mortgage and he pocketed $1,000/month. After 5 years: $60K in passive income + $180K in equity. Now he owns 3 properties.',
-    image_placeholder: 'from-red-500 to-red-600'
+    image_placeholder: 'from-slate-600 to-slate-800'
   },
   {
     slug: 'lcdr-chen-deployment-sdp',

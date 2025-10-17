@@ -521,7 +521,7 @@ export default function CareerOpportunityAnalyzer() {
                 <div className={`rounded-xl border-4 p-8 ${
                   analysis.isPositive 
                     ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400' 
-                    : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-400'
+                    : 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-400'
                 }`}>
                   <div className="text-center mb-6">
                     <h3 className="text-2xl font-bold text-text-headings mb-4">

@@ -100,8 +100,8 @@ export default function ContextualNextSteps({ userState }: ContextualNextStepsPr
     switch (urgency) {
       case 'urgent':
         return {
-          bg: 'from-red-500 to-orange-500',
-          badge: 'bg-red-600',
+          bg: 'from-slate-600 to-slate-800',
+          badge: 'bg-slate-600',
           text: 'URGENT'
         };
       case 'high':

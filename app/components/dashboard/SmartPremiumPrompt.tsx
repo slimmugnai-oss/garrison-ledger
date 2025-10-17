@@ -67,7 +67,7 @@ export default function SmartPremiumPrompt({ isPremium, userId }: SmartPremiumPr
       social: 'Join 300+ content enthusiasts'
     },
     'limit-reached': {
-      gradient: 'from-red-500 to-pink-500',
+      gradient: 'from-slate-700 to-slate-900',
       icon: 'AlertTriangle',
       title: '⚠️ Calculator Limit Reached',
       description: `You've used ${calculatorUsageCount} of 5 free calculations this month. Upgrade for unlimited access.`,

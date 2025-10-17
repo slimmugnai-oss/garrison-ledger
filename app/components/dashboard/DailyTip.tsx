@@ -27,7 +27,7 @@ const TIPS = [
     icon: '🚀',
     title: 'SDP Secret',
     text: 'Deployed? The Savings Deposit Program gives you guaranteed 10% returns (up to $10K). That\'s $1,000 risk-free!',
-    color: 'from-orange-500 to-red-600'
+    color: 'from-amber-500 to-orange-600'
   },
   {
     icon: '🛒',

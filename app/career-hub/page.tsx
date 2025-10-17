@@ -284,7 +284,7 @@ export default function CareerHub() {
               </div>
 
               {/* Marketing Specialist */}
-              <div className="bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
                   <Icon name="TrendingUp" className="h-8 w-8" />
                   <Badge variant="primary">Growing Field</Badge>

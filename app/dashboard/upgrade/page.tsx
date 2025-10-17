@@ -45,7 +45,7 @@ export default async function UpgradePage() {
                 <span className="font-bold">30-Day Money-Back Guarantee - Zero Risk</span>
               </div>
             </div>
-            <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 text-white py-4 px-4 text-center sticky top-[60px] z-40 shadow-lg">
+            <div className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700 text-white py-4 px-4 text-center sticky top-[60px] z-40 shadow-lg">
               <div className="max-w-4xl mx-auto">
                 <p className="text-sm font-bold mb-1">⚡ SPECIAL OFFER ENDING SOON</p>
                 <p className="text-xs">Only <span className="text-yellow-300 font-black text-lg">47 premium spots</span> left at this price this month!</p>

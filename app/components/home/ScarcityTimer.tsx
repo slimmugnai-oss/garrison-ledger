@@ -34,7 +34,7 @@ export default function ScarcityTimer() {
   }, []);
 
   return (
-    <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 text-white py-3 px-4 text-center">
+    <div className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700 text-white py-3 px-4 text-center">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 text-sm font-semibold">
         <span className="flex items-center gap-2">
           <span className="inline-block w-2 h-2 bg-surface rounded-full animate-pulse"></span>

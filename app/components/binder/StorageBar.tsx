@@ -46,7 +46,7 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
         <div
           className={`h-3 rounded-full transition-all duration-500 relative overflow-hidden ${
             storagePercent > 90
-              ? 'bg-gradient-to-r from-red-500 to-red-400'
+              ? 'bg-gradient-to-r from-slate-600 to-slate-500'
               : storagePercent > 70
               ? 'bg-gradient-to-r from-yellow-500 to-yellow-400'
               : 'bg-gradient-to-r from-[#00E5A0] to-[#00CC8E]'

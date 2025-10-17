@@ -87,7 +87,7 @@ export default function SpouseCollaborationStatus({ userId }: SpouseCollaboratio
   };
 
   return (
-    <AnimatedCard className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-xl p-6" delay={300}>
+    <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6" delay={300}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Icon name="Users" className="h-6 w-6 text-pink-600" />

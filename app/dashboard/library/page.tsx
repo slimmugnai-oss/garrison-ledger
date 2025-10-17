@@ -529,7 +529,7 @@ function IntelligenceLibraryContent() {
 
           {/* Trending Content Section */}
           {(loadingTrending || trendingBlocks.length > 0) && (
-            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200" delay={50}>
+            <AnimatedCard className="mb-8 p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200" delay={50}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
                   <span>🔥</span> Trending Now

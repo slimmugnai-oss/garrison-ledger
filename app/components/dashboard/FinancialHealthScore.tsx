@@ -133,7 +133,7 @@ export default function FinancialHealthScore({ profileData }: FinancialHealthSco
     if (score >= 80) return { bg: 'from-green-600 to-emerald-600', text: 'text-green-600', label: 'Excellent' };
     if (score >= 60) return { bg: 'from-slate-700 to-slate-900', text: 'text-slate-600', label: 'Good' };
     if (score >= 40) return { bg: 'from-amber-500 to-orange-500', text: 'text-amber-600', label: 'Fair' };
-    return { bg: 'from-red-500 to-orange-500', text: 'text-red-600', label: 'Needs Work' };
+    return { bg: 'from-slate-600 to-slate-800', text: 'text-slate-600', label: 'Needs Work' };
   };
 
   const getMetricColor = (score: number, maxScore: number) => {

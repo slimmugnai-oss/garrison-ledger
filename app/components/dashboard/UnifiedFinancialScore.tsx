@@ -192,7 +192,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
     if (percentage >= 80) return 'from-green-500 to-emerald-600';
     if (percentage >= 60) return 'from-slate-700 to-slate-900';
     if (percentage >= 40) return 'from-amber-500 to-orange-600';
-    return 'from-red-500 to-rose-600';
+    return 'from-slate-600 to-slate-800';
   };
 
   const getScoreLabel = () => {
