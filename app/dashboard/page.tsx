@@ -19,6 +19,21 @@ import AIRecommendations from '../components/dashboard/AIRecommendations';
 import FinancialOverview from '../components/dashboard/FinancialOverview';
 import SavedItems from '../components/dashboard/SavedItems';
 import BinderPreview from '../components/dashboard/BinderPreview';
+import QuickActions from '../components/dashboard/QuickActions';
+import MissionStatusTracker from '../components/dashboard/MissionStatusTracker';
+import ContextualNextSteps from '../components/dashboard/ContextualNextSteps';
+import ActivityFeed from '../components/dashboard/ActivityFeed';
+import SmartPremiumPrompt from '../components/dashboard/SmartPremiumPrompt';
+import FinancialHealthScore from '../components/dashboard/FinancialHealthScore';
+import EventsCalendar from '../components/dashboard/EventsCalendar';
+import CalculatorInsights from '../components/dashboard/CalculatorInsights';
+import NotificationsCenter from '../components/dashboard/NotificationsCenter';
+import ReferralProgress from '../components/dashboard/ReferralProgress';
+import IntelLibrarySync from '../components/dashboard/IntelLibrarySync';
+import SpouseCollaborationStatus from '../components/dashboard/SpouseCollaborationStatus';
+import AchievementBadges from '../components/dashboard/AchievementBadges';
+import CommunityActivity from '../components/dashboard/CommunityActivity';
+import { DashboardAnalyticsProvider } from '../components/dashboard/DashboardAnalyticsTracker';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Dashboard - Your Military Life Command Center",
@@ -71,11 +86,12 @@ export default async function CommandDashboard() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background">
-        {/* Subtle background gradient like home page */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+      <DashboardAnalyticsProvider>
+        <div className="min-h-screen bg-background">
+          {/* Subtle background gradient like home page */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
           {/* Hero Header */}
           <div className="mb-16 text-center">
             <div className="mb-4">
@@ -104,6 +120,9 @@ export default async function CommandDashboard() {
               hasPlan={hasPlan}
             />
           )}
+
+          {/* Quick Actions Command Bar - NEW */}
+          <QuickActions />
 
           {/* Onboarding CTAs & Plan Widget */}
           {(!profileComplete || !hasAssessment || hasPlan || planGenerating) && (
@@ -226,6 +245,33 @@ export default async function CommandDashboard() {
             </div>
           )}
 
+          {/* Notifications Center - High Priority Alerts */}
+          <NotificationsCenter 
+            profileData={{
+              pcsDate: profileRow?.pcs_date,
+              deploymentStatus: profileRow?.deployment_status
+            }}
+          />
+
+          {/* Mission Status Tracker - NEW */}
+          <MissionStatusTracker 
+            userId={user.id}
+            hasProfile={profileComplete}
+            hasAssessment={hasAssessment}
+            hasPlan={hasPlan}
+          />
+
+          {/* Contextual Next Steps - NEW */}
+          <ContextualNextSteps 
+            userState={{
+              hasTSP: !!profileRow?.tsp_balance_range && profileRow.tsp_balance_range !== 'prefer-not-to-say' && profileRow.tsp_balance_range !== '$0',
+              pcsDaysAway: profileRow?.pcs_date ? Math.ceil((new Date(profileRow.pcs_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : undefined,
+              deploymentStatus: profileRow?.deployment_status,
+              hasEmergencyFund: !!profileRow?.emergency_fund_range && profileRow.emergency_fund_range !== 'prefer-not-to-say' && profileRow.emergency_fund_range !== '$0',
+              calculatorUsageCount: 0
+            }}
+          />
+
           {/* Gamification Widgets - Streak, Daily Tip, Financial Score */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <StreakTracker userId={user.id} />
@@ -243,11 +289,59 @@ export default async function CommandDashboard() {
             />
           </div>
 
-          {/* Saved Items & Binder - New Priority Section */}
+          {/* Calculator Insights - Show ROI from calculations */}
+          <CalculatorInsights userId={user.id} />
+
+          {/* Financial Health Score - Comprehensive metric */}
+          <FinancialHealthScore 
+            profileData={{
+              tspBalanceRange: profileRow?.tsp_balance_range,
+              emergencyFundRange: profileRow?.emergency_fund_range,
+              debtAmountRange: profileRow?.debt_amount_range,
+              hasTSP: !!profileRow?.tsp_balance_range && profileRow.tsp_balance_range !== 'prefer-not-to-say' && profileRow.tsp_balance_range !== '$0',
+              hasEmergencyFund: !!profileRow?.emergency_fund_range && profileRow.emergency_fund_range !== 'prefer-not-to-say' && profileRow.emergency_fund_range !== '$0',
+              hasDebt: !!profileRow?.debt_amount_range && profileRow.debt_amount_range !== 'prefer-not-to-say' && profileRow.debt_amount_range !== '$0'
+            }}
+          />
+
+          {/* Saved Items, Binder, Activity Feed, Events */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
             <SavedItems userId={user.id} />
             <BinderPreview userId={user.id} />
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <ActivityFeed userId={user.id} />
+            <EventsCalendar 
+              profileData={{
+                pcsDate: profileRow?.pcs_date,
+                deploymentStatus: profileRow?.deployment_status
+              }}
+            />
+          </div>
+
+          {/* Spouse Collaboration & Achievements */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <SpouseCollaborationStatus userId={user.id} />
+            <AchievementBadges 
+              userId={user.id}
+              hasProfile={profileComplete}
+              hasAssessment={hasAssessment}
+              hasPlan={hasPlan}
+            />
+          </div>
+
+          {/* Intel Library Sync & Community Activity */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <IntelLibrarySync userId={user.id} />
+            <CommunityActivity />
+          </div>
+
+          {/* Smart Premium Prompt - Contextual upgrade CTA */}
+          <SmartPremiumPrompt isPremium={isPremium} userId={user.id} />
+
+          {/* Referral Progress */}
+          <ReferralProgress userId={user.id} />
 
           {/* AI-Powered Recommendations */}
           <div className="mb-12">
@@ -842,6 +936,7 @@ export default async function CommandDashboard() {
           )}
         </div>
       </div>
+      </DashboardAnalyticsProvider>
       <Footer />
     </>
   );
