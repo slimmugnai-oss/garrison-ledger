@@ -43,36 +43,36 @@ export default function Home() {
       <Header />
       
       {/* SECTION 1: HERO - COMPANY BRANDING FIRST */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-br from-background via-surface to-background">
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-navy-authority via-navy-professional to-navy-authority">
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(15,23,42,0.08),transparent_60%)]" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
           <div className="text-center mb-12">
             {/* Company Branding First */}
             <div className="mb-8">
-              <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-primary mb-4">
-                Garrison Ledger
-              </h1>
-              <p className="text-2xl md:text-3xl text-body font-medium">
-                AI-Powered Military Financial Planning
-              </p>
+            <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-white mb-4">
+              Garrison Ledger
+            </h1>
+            <p className="text-2xl md:text-3xl text-white/90 font-medium">
+              AI-Powered Military Financial Planning
+            </p>
             </div>
 
             {/* Kicker Badge */}
-            <span className="inline-flex items-center gap-2 rounded-full border border-navy-professional/20 bg-navy-professional/10 px-4 py-2 text-sm font-semibold text-navy-professional uppercase tracking-wider mb-6">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white uppercase tracking-wider mb-6">
               <Icon name="Shield" className="h-4 w-4" />
               Independent Platform • Not Affiliated with DoD
             </span>
 
             {/* Benefit-First Headline */}
-            <h2 className="font-serif text-4xl md:text-6xl font-black tracking-tight text-primary mb-6">
+            <h2 className="font-serif text-4xl md:text-6xl font-black tracking-tight text-white mb-6">
               <span className="block">How Much Are You</span>
-              <span className="block bg-gradient-to-r from-success to-emerald-600 bg-clip-text text-transparent leading-tight">
+              <span className="block bg-gradient-to-r from-success to-navy-light bg-clip-text text-transparent leading-tight">
                 Leaving on the Table?
               </span>
             </h2>
 
-            <p className="mx-auto max-w-3xl text-xl md:text-2xl text-body leading-relaxed mb-8">
+            <p className="mx-auto max-w-3xl text-xl md:text-2xl text-white/90 leading-relaxed mb-8">
               <strong className="text-danger">Don't let your military benefits go to waste.</strong> 
               {' '}Answer 3 quick questions to discover your potential savings.
             </p>
@@ -153,7 +153,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedCard delay={0}>
               <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-blue-400 transition-all">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl text-white font-black text-2xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-navy-professional to-navy-authority rounded-xl text-white font-black text-2xl mb-4">
                   1
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Complete Your Profile</h3>
@@ -169,7 +169,7 @@ export default function Home() {
 
             <AnimatedCard delay={100}>
               <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-blue-400 transition-all">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl text-white font-black text-2xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-navy-professional to-navy-authority rounded-xl text-white font-black text-2xl mb-4">
                   2
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Take Quick Assessment</h3>
@@ -185,7 +185,7 @@ export default function Home() {
 
             <AnimatedCard delay={200}>
               <div className="bg-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-blue-400 transition-all">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl text-white font-black text-2xl mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-navy-professional to-navy-authority rounded-xl text-white font-black text-2xl mb-4">
                   3
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Get AI-Curated Plan</h3>
@@ -221,14 +221,14 @@ export default function Home() {
       <LeadMagnet />
 
       {/* SECTION 13: FINAL CTA WITH URGENCY */}
-      <section className="bg-gradient-to-br from-slate-900 to-indigo-900 py-20">
+      <section className="bg-gradient-to-br from-navy-authority to-navy-professional py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimatedCard delay={0}>
             <div className="text-center text-white">
               {/* Urgency Badge */}
-              <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-400/30 rounded-full px-4 py-2 mb-6">
-                <span className="inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <span className="text-green-300 text-sm font-semibold">500+ military families joined this month</span>
+              <div className="inline-flex items-center gap-2 bg-success/20 border border-success/30 rounded-full px-4 py-2 mb-6">
+                <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse"></span>
+                <span className="text-success-light text-sm font-semibold">500+ military families joined this month</span>
               </div>
               
               <h2 className="text-4xl md:text-6xl font-serif font-black mb-6">

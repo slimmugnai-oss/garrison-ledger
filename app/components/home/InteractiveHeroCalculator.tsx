@@ -193,7 +193,7 @@ export default function InteractiveHeroCalculator() {
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-2xl p-10 text-white text-center">
+        <div className="bg-gradient-to-br from-success to-navy-professional rounded-2xl shadow-2xl p-10 text-white text-center">
           {/* Explosion Animation */}
           <div className="mb-6">
             <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
