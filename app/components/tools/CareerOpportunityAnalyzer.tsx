@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { track } from '@/lib/track';
 import CitySearchInput from '@/app/components/ui/CitySearchInput';
 import Icon from '@/app/components/ui/Icon';
@@ -43,10 +43,32 @@ export default function CareerOpportunityAnalyzer() {
     city: { city: 'San Antonio', state: 'TX', cost_of_living_index: 86.9 }
   });
 
+  // Save state functionality
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Track page view on mount
   useEffect(() => {
     track('career_opportunity_analyzer_view');
   }, []);
+
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=career')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input) {
+            if (data.input.currentData) {
+              setCurrentData(data.input.currentData);
+            }
+            if (data.input.newData) {
+              setNewData(data.input.newData);
+            }
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
 
   // Format currency
   const fmt = (value: number) => {
@@ -145,6 +167,28 @@ export default function CareerOpportunityAnalyzer() {
       isPositive: netDifference > 0
     };
   }, [currentData, newData]);
+
+  // Auto-save (debounced, premium only)
+  useEffect(() => {
+    if (isPremium && (currentData.salary > 0 || newData.salary > 0)) {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      const timeout = setTimeout(() => {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'career',
+            input: {
+              currentData,
+              newData
+            },
+            output: analysis
+          })
+        }).catch(console.error);
+      }, 2000);
+      saveTimeoutRef.current = timeout;
+    }
+  }, [isPremium, currentData, newData, analysis]);
 
   // Format percentage (currently unused but available for future use)
   // const fmtPercent = (value: number) => {

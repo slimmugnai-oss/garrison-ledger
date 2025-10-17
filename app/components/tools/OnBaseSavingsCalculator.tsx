@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { track } from '@/lib/track';
 import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
@@ -21,10 +21,33 @@ export default function OnBaseSavingsCalculator() {
   const [weeklyGasGallons, setWeeklyGasGallons] = useState(15);
   const [salesTaxRate, setSalesTaxRate] = useState(7);
 
+  // Save state functionality
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Track page view on mount
   useEffect(() => {
     track('annual_savings_command_center_view');
   }, []);
+
+  // Load saved model on mount (premium only)
+  useEffect(() => {
+    if (isPremium) {
+      fetch('/api/saved-models?tool=savings')
+        .then(res => res.json())
+        .then(data => {
+          if (data.input) {
+            setMeatProduce(data.input.meatProduce || 250);
+            setPantryStaples(data.input.pantryStaples || 200);
+            setDiapersBaby(data.input.diapersBaby || 100);
+            setMajorPurchases(data.input.majorPurchases || 2000);
+            setClothingApparel(data.input.clothingApparel || 1200);
+            setWeeklyGasGallons(data.input.weeklyGasGallons || 15);
+            setSalesTaxRate(data.input.salesTaxRate || 7);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isPremium]);
 
   // COMMISSARY CALCULATIONS
   // Higher savings on meat/produce (~30%), standard on others (~25%)
@@ -47,6 +70,42 @@ export default function OnBaseSavingsCalculator() {
 
   // TOTAL COMBINED SAVINGS
   const grandTotal = totalCommissarySavings + totalExchangeSavings;
+
+  // Auto-save (debounced, premium only)
+  useEffect(() => {
+    if (isPremium && (meatProduce > 0 || majorPurchases > 0)) {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      const timeout = setTimeout(() => {
+        fetch('/api/saved-models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'savings',
+            input: {
+              meatProduce,
+              pantryStaples,
+              diapersBaby,
+              majorPurchases,
+              clothingApparel,
+              weeklyGasGallons,
+              salesTaxRate
+            },
+            output: {
+              totalCommissarySavings,
+              totalExchangeSavings,
+              grandTotal,
+              meatProduceSavings,
+              pantryStaplesSavings,
+              diapersBabySavings,
+              taxSavings,
+              starCardSavings
+            }
+          })
+        }).catch(console.error);
+      }, 2000);
+      saveTimeoutRef.current = timeout;
+    }
+  }, [isPremium, meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate, totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings]);
 
   return (
     <div className="max-w-6xl mx-auto space-y-10">
