@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
       }, { status: 500 });
     }
 
-    // Track analytics event (non-blocking)
-    supabaseAdmin
+    // Track analytics event (non-blocking, fire-and-forget)
+    void supabaseAdmin
       .from('plan_analytics')
       .insert({
         user_id: userId,
@@ -79,13 +79,6 @@ export async function POST(req: NextRequest) {
           relevance,
           has_comments: !!comments
         }
-      })
-      .then(() => {
-        console.log('[Plan Feedback] Analytics tracked');
-      })
-      .catch((err: unknown) => {
-        console.error('[Plan Feedback] Analytics error:', err);
-        // Don't fail the request if analytics fails
       });
 
     return NextResponse.json({ 

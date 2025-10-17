@@ -130,6 +130,9 @@ COMMENT ON FUNCTION can_take_assessment IS 'Check assessment eligibility: Free=1
 -- 3. UPDATE record_assessment_taken FUNCTION
 -- =====================================================
 
+-- Drop existing function first
+DROP FUNCTION IF EXISTS record_assessment_taken(TEXT, BOOLEAN);
+
 -- This function is simpler now - just update last_assessment_at
 CREATE OR REPLACE FUNCTION record_assessment_taken(
   p_user_id TEXT,
