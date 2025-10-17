@@ -43,7 +43,11 @@ interface PlanData {
 }
 
 interface PlanClientProps {
-  initialPlan: PlanData;
+  initialPlan: PlanData & {
+    version?: number;
+    regeneration_count?: number;
+    last_regenerated_at?: string;
+  };
   isPremium: boolean;
 }
 
@@ -163,13 +167,22 @@ export default function PlanClient({ initialPlan, isPremium }: PlanClientProps) 
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
-            <Badge variant="primary">AI-Curated Plan</Badge>
+          <div className="mb-8 flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <Badge variant="primary">AI-Curated Plan</Badge>
+              {initialPlan.version && initialPlan.version > 1 && (
+                <Badge variant="secondary">Version {initialPlan.version}</Badge>
+              )}
+            </div>
             <SharePlanButton className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-all" />
           </div>
           <PageHeader 
             title="Your Personalized Financial Plan"
-            subtitle="AI-selected expert content tailored to your military situation"
+            subtitle={
+              initialPlan.last_regenerated_at 
+                ? `Last updated ${new Date(initialPlan.last_regenerated_at).toLocaleDateString()} • ${initialPlan.regeneration_count || 0} regenerations`
+                : "AI-selected expert content tailored to your military situation"
+            }
           />
 
           {/* Tab Navigation */}

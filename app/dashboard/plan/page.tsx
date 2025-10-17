@@ -24,10 +24,10 @@ export default async function PlanPage() {
 
   const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
 
-  // Load user's personalized plan
+  // Load user's personalized plan with versioning
   const { data: plan, error } = await supabaseAdmin
     .from('user_plans')
-    .select('*')
+    .select('*, version, regeneration_count, last_regenerated_at')
     .eq('user_id', userId)
     .maybeSingle();
 

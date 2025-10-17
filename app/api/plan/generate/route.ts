@@ -381,13 +381,43 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
       recommendedTools: narrativeResult.recommendedTools
     };
 
-    // Store the generated plan
+    // Get existing plan for versioning
+    const { data: existingPlan } = await supabaseAdmin
+      .from('user_plans')
+      .select('id, plan_data, version, previous_versions')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    let newVersion = 1;
+    let previousVersions = [];
+
+    if (existingPlan) {
+      // Archive old version
+      newVersion = (existingPlan.version || 1) + 1;
+      previousVersions = existingPlan.previous_versions || [];
+      previousVersions.push({
+        version: existingPlan.version || 1,
+        plan_data: existingPlan.plan_data,
+        archived_at: new Date().toISOString()
+      });
+      
+      // Keep only last 5 versions to prevent data bloat
+      if (previousVersions.length > 5) {
+        previousVersions = previousVersions.slice(-5);
+      }
+    }
+
+    // Store the generated plan with versioning
     const { error: saveError } = await supabaseAdmin
       .from('user_plans')
       .upsert({
         user_id: userId,
         plan_data: personalizedPlan,
+        version: newVersion,
+        previous_versions: previousVersions,
         generated_at: new Date().toISOString(),
+        last_regenerated_at: existingPlan ? new Date().toISOString() : null,
+        regeneration_count: existingPlan ? ((existingPlan as any).regeneration_count || 0) + 1 : 0,
         updated_at: new Date().toISOString()
       });
 
