@@ -156,7 +156,7 @@ export default async function AdminDashboard() {
           {/* Admin Tools Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* System Health */}
-            <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info hover:shadow-xl transition-all">
+            <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 hover:shadow-xl transition-all">
               <Link href="/dashboard/admin/health" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
@@ -172,7 +172,7 @@ export default async function AdminDashboard() {
             </AnimatedCard>
 
             {/* Content Management */}
-            <AnimatedCard className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:shadow-xl transition-all" delay={50}>
+            <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 hover:shadow-xl transition-all" delay={50}>
               <Link href="/dashboard/admin/briefing" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
@@ -270,7 +270,7 @@ export default async function AdminDashboard() {
             </AnimatedCard>
 
             {/* Email Campaigns */}
-            <AnimatedCard className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 hover:shadow-xl transition-all" delay={350}>
+            <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 hover:shadow-xl transition-all" delay={350}>
               <Link href="/dashboard/admin/campaigns" className="block p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-pink-600 rounded-xl flex items-center justify-center">

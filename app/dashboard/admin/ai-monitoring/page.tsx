@@ -91,7 +91,7 @@ export default async function AIMonitoringPage() {
 
           {/* AI Cost Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <AnimatedCard className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white">
+            <AnimatedCard className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-white">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Icon name="DollarSign" className="h-6 w-6 text-white" />

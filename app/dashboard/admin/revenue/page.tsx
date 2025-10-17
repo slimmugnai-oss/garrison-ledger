@@ -119,7 +119,7 @@ export default async function AdminRevenuePage() {
               </div>
             </AnimatedCard>
 
-            <AnimatedCard delay={100} className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-8">
+            <AnimatedCard delay={100} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-8">
               <div className="flex items-center justify-between mb-4">
                 <Icon name="TrendingUp" className="h-12 w-12" />
                 <div className="text-right">
@@ -132,7 +132,7 @@ export default async function AdminRevenuePage() {
               </div>
             </AnimatedCard>
 
-            <AnimatedCard delay={200} className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-8">
+            <AnimatedCard delay={200} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-8">
               <div className="flex items-center justify-between mb-4">
                 <Icon name="Target" className="h-12 w-12" />
                 <div className="text-right">
@@ -233,7 +233,7 @@ export default async function AdminRevenuePage() {
             <AnimatedCard delay={500}>
               <h3 className="text-xl font-bold text-text-headings mb-4">12-Month Projection</h3>
               <div className="space-y-4">
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-info rounded-lg">
+                <div className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200 rounded-lg">
                   <div className="text-sm text-body mb-1">If growth continues...</div>
                   <div className="text-3xl font-black text-info">
                     ${(metrics.projectedMRR * 12).toFixed(0)}

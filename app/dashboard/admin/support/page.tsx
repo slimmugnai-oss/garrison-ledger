@@ -187,7 +187,7 @@ export default async function SupportTicketsPage() {
           </AnimatedCard>
 
           {/* Help Resources */}
-          <AnimatedCard className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info p-6 mt-8" delay={150}>
+          <AnimatedCard className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 p-6 mt-8" delay={150}>
             <h3 className="text-xl font-bold text-text-headings mb-4">Support Resources</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

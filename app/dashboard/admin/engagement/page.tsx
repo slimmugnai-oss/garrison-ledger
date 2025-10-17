@@ -108,13 +108,13 @@ export default async function AdminEngagementPage() {
               <div className="text-sm opacity-90">Active Streakers</div>
             </AnimatedCard>
 
-            <AnimatedCard delay={100} className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6">
+            <AnimatedCard delay={100} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-6">
               <Icon name="Target" className="h-8 w-8 mb-3" />
               <div className="text-3xl font-black mb-1">{metrics.avgStreak}</div>
               <div className="text-sm opacity-90">Avg Streak (Days)</div>
             </AnimatedCard>
 
-            <AnimatedCard delay={200} className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6">
+            <AnimatedCard delay={200} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-6">
               <Icon name="Star" className="h-8 w-8 mb-3" />
               <div className="text-3xl font-black mb-1">{metrics.maxStreak}</div>
               <div className="text-sm opacity-90">Longest Streak</div>

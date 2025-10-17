@@ -91,7 +91,7 @@ export default async function AdminLeadsPage() {
 
           {/* Metrics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <AnimatedCard delay={0} className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6">
+            <AnimatedCard delay={0} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-6">
               <div className="flex items-center justify-between mb-2">
                 <Icon name="Mail" className="h-8 w-8" />
                 <div className="text-right">
@@ -111,7 +111,7 @@ export default async function AdminLeadsPage() {
               </div>
             </AnimatedCard>
 
-            <AnimatedCard delay={200} className="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6">
+            <AnimatedCard delay={200} className="bg-gradient-to-br from-slate-700 to-slate-900 text-white p-6">
               <div className="flex items-center justify-between mb-2">
                 <Icon name="Target" className="h-8 w-8" />
                 <div className="text-right">

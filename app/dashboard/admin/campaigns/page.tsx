@@ -44,7 +44,7 @@ export default async function AdminCampaignsPage() {
             <h2 className="text-2xl font-bold text-text-headings mb-6">Automated Email Sequences</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {/* 7-Day Onboarding */}
-              <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl">
+              <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <Icon name="Mail" className="h-8 w-8 text-info" />
@@ -87,7 +87,7 @@ export default async function AdminCampaignsPage() {
               </div>
 
               {/* Weekly Digest */}
-              <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
+              <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <Icon name="Calendar" className="h-8 w-8 text-purple-600" />
