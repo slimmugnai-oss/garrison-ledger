@@ -34,7 +34,7 @@ export default function BaseGuidesHub() {
       <ComparisonBar />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-800 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6">
@@ -92,7 +92,7 @@ export default function BaseGuidesHub() {
             
             <div className="grid md:grid-cols-2 gap-8">
               {/* On-Base */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-2xl p-8">
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-8">
                 <h3 className="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-2">
                   <Icon name="Shield" className="h-6 w-6" />
                   On-Base Housing
@@ -211,7 +211,7 @@ export default function BaseGuidesHub() {
         {/* BAH & Budget Planning */}
         <section className="mb-20">
           <AnimatedCard delay={200}>
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-8 md:p-12">
               <h2 className="text-3xl font-serif font-black text-primary mb-6">
                 BAH Rates & Housing Budget
               </h2>

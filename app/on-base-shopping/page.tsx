@@ -30,7 +30,7 @@ export default function ShoppingHub() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6">
@@ -164,7 +164,7 @@ export default function ShoppingHub() {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl p-8">
+              <div className="bg-gradient-to-br from-slate-700 to-slate-900 text-white rounded-2xl p-8">
                 <h3 className="text-2xl font-bold mb-6">Tax-Free Savings</h3>
                 <p className="text-white/95 mb-6 leading-relaxed">
                   Every purchase at the Exchange (AAFES, NEX, MCX) is <strong>tax-free</strong>. This saves you 6-10% depending on your state&apos;s sales tax rate.
@@ -322,7 +322,7 @@ export default function ShoppingHub() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-info rounded-xl p-6">
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl p-6">
                 <h3 className="text-xl font-bold text-blue-900 mb-4">
                   <Icon name="ShoppingCart" className="h-6 w-6 text-info inline mr-2" />
                   Buy at Exchange
@@ -501,11 +501,11 @@ export default function ShoppingHub() {
                 
                 <Link
                   href="/dashboard/assessment"
-                  className="bg-gradient-to-br from-amber-600 to-orange-700 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-amber-400"
+                  className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-slate-700"
                 >
                   <Icon name="Sparkles" className="h-8 w-8 mb-3" />
                   <h3 className="text-xl font-bold mb-2">Get Personalized Savings Plan</h3>
-                  <p className="text-sm text-amber-100">
+                  <p className="text-sm text-white/90">
                     AI-curated strategy to maximize your military shopping benefits.
                   </p>
                 </Link>
