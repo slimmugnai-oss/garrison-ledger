@@ -192,6 +192,19 @@ export default function Header() {
                               </div>
                             </div>
                           </Link>
+                          <Link href="/dashboard/pcs-copilot" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                            isActivePath('/dashboard/pcs-copilot') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                          }`}>
+                            <Icon name="Truck" className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <div className={`font-semibold text-sm ${isActivePath('/dashboard/pcs-copilot') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-orange-600'}`}>
+                                PCS Copilot
+                              </div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                                AI claims assistant
+                              </div>
+                            </div>
+                          </Link>
                         </div>
                       </div>
 
@@ -568,6 +581,12 @@ export default function Header() {
                     }`} onClick={() => setMobileMenuOpen(false)}>
                       <Icon name="FolderOpen" className="w-5 h-5 mr-3 text-purple-500 flex-shrink-0" />
                       Binder
+                    </Link>
+                    <Link href="/dashboard/pcs-copilot" className={`flex items-center px-4 py-3 rounded-xl transition-all min-h-[44px] ${
+                      isActivePath('/dashboard/pcs-copilot') ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-semibold' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'
+                    }`} onClick={() => setMobileMenuOpen(false)}>
+                      <Icon name="Truck" className="w-5 h-5 mr-3 text-orange-600 flex-shrink-0" />
+                      PCS Copilot
                     </Link>
                   </div>
                 </div>

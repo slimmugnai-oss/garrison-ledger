@@ -202,6 +202,7 @@ export default async function UpgradePage() {
                       <li className="text-sm text-text-body">• All 8-10 expert content blocks</li>
                       <li className="text-sm text-text-body">• Complete executive summaries</li>
                       <li className="text-sm text-text-body">• 15 AI explainers/day (vs 5 for free)</li>
+                      <li className="text-sm text-text-body font-semibold text-blue-700">• PCS Money Copilot (Premium only!)</li>
                     </ul>
                   </div>
 
@@ -283,6 +284,7 @@ export default async function UpgradePage() {
                     <ul className="space-y-2 ml-8">
                       <li className="text-sm text-text-body font-semibold text-orange-800">• 30 AI plans/month (3x Premium!)</li>
                       <li className="text-sm text-text-body font-semibold text-orange-800">• 30 AI explainers/day (2x Premium!)</li>
+                      <li className="text-sm text-text-body font-semibold text-orange-800">• PCS Money Copilot (included!)</li>
                       <li className="text-sm text-text-body">• Priority AI processing</li>
                       <li className="text-sm text-text-body">• Everything from Premium</li>
                     </ul>
@@ -422,6 +424,12 @@ export default async function UpgradePage() {
                       <td className="px-4 sm:px-6 py-3 text-center text-text-body">5</td>
                       <td className="px-4 sm:px-6 py-3 text-center text-success font-semibold">15</td>
                       <td className="px-4 sm:px-6 py-3 text-center text-orange-600 font-black">30</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 sm:px-6 py-3 text-sm text-text-body">PCS Money Copilot</td>
+                      <td className="px-4 sm:px-6 py-3 text-center text-danger">✗</td>
+                      <td className="px-4 sm:px-6 py-3 text-center text-success font-semibold">✓ Unlimited</td>
+                      <td className="px-4 sm:px-6 py-3 text-center text-orange-600 font-black">✓ Unlimited</td>
                     </tr>
                     
                     <tr className="bg-purple-50">
