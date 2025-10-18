@@ -202,7 +202,7 @@ export async function GET() {
         ? `Our estimates are ${averageAccuracy}% accurate on average`
         : averageAccuracy >= 75
         ? `We're tracking ${averageAccuracy}% accuracy and improving`
-        : 'We're continuously improving our estimates'
+        : 'We are continuously improving our estimates'
     });
 
   } catch (error) {
