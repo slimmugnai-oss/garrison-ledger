@@ -166,15 +166,10 @@ export default async function UpgradePage() {
             </div>
           )}
 
-          {/* Monthly Plans - HERO (Avoid Sticker Shock) */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-text-headings mb-2">Monthly Plans</h3>
-              <p className="text-text-body">Flexible billing, cancel anytime</p>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {/* Premium Monthly */}
-              <div className="mobile-card rounded-2xl shadow-lg p-6 sm:p-8 border-2 border-slate-300 bg-white relative">
+          {/* Premium & Pro Pricing Cards */}
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto mb-12 sm:mb-16">
+            {/* Premium Annual - HERO */}
+            <div className="mobile-card rounded-2xl shadow-2xl p-6 sm:p-10 border-4 border-slate-700 bg-gradient-to-br from-slate-50 to-slate-100 relative transform lg:scale-105 order-1 lg:order-1">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg whitespace-nowrap">
                   ⭐ MOST POPULAR - 83% CHOOSE THIS
