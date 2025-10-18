@@ -311,7 +311,7 @@ export default async function UpgradePage() {
                     </div>
                     <ul className="space-y-2 ml-8">
                       <li className="text-sm text-text-body">• White-Glove support (4hr response)</li>
-                      <li className="text-sm text-text-body">• Phone support available</li>
+                      <li className="text-sm text-text-body">• Direct priority email access</li>
                       <li className="text-sm text-text-body">• Early access to beta features</li>
                     </ul>
                   </div>
@@ -491,7 +491,7 @@ export default async function UpgradePage() {
                       <td className="px-4 sm:px-6 py-3 text-sm text-text-body">Support Response</td>
                       <td className="px-4 sm:px-6 py-3 text-center text-text-body text-xs sm:text-sm">48hr email</td>
                       <td className="px-4 sm:px-6 py-3 text-center text-success font-semibold text-xs sm:text-sm">24hr priority</td>
-                      <td className="px-4 sm:px-6 py-3 text-center text-orange-600 font-black text-xs sm:text-sm">4hr + phone</td>
+                      <td className="px-4 sm:px-6 py-3 text-center text-orange-600 font-black text-xs sm:text-sm">4hr direct</td>
                     </tr>
                     <tr>
                       <td className="px-4 sm:px-6 py-3 text-sm text-text-body">Beta Feature Access</td>
