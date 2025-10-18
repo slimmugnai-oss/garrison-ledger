@@ -134,7 +134,9 @@ export async function POST(req: NextRequest) {
 
     // Check 4: Missing weigh tickets for PPM
     if (claim.travel_method === 'ppm' || claim.travel_method === 'mixed') {
-      const hasWeighTickets = documents?.some(d => d.document_type === 'weigh_ticket');
+      const weighTickets = documents?.filter(d => d.document_type === 'weigh_ticket') || [];
+      const hasWeighTickets = weighTickets.length > 0;
+      
       if (!hasWeighTickets) {
         checks.push({
           check_type: 'error',
@@ -145,7 +147,7 @@ export async function POST(req: NextRequest) {
           suggested_fix: 'Upload your certified weigh tickets (empty and full weight).',
           jtr_citation: 'JTR 054703'
         });
-      } else if (weighTickets && weighTickets.length < 2) {
+      } else if (weighTickets.length < 2) {
         checks.push({
           check_type: 'warning',
           severity: 'high',
