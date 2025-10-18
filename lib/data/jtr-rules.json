@@ -1,0 +1,269 @@
+{
+  "rules": [
+    {
+      "id": "dla-eligibility",
+      "category": "DLA",
+      "title": "Dislocation Allowance Eligibility",
+      "citation": "JTR 050301",
+      "description": "Member must have a PCS with a change of permanent station, be authorized to move dependents, and have a distance of 50+ miles.",
+      "conditions": {
+        "min_distance_miles": 50,
+        "requires_orders": true,
+        "requires_pcs": true
+      },
+      "calculation": "Based on rank and dependent status"
+    },
+    {
+      "id": "dla-rates-2025",
+      "category": "DLA",
+      "title": "DLA Payment Rates FY2025",
+      "citation": "JTR 050301-B",
+      "description": "Fixed payment amounts based on rank and dependent status",
+      "rates": {
+        "E1-E4_without": 1234,
+        "E1-E4_with": 2468,
+        "E5-E6_without": 1543,
+        "E5-E6_with": 3086,
+        "E7-E9_without": 1852,
+        "E7-E9_with": 3704,
+        "O1-O3_without": 2160,
+        "O1-O3_with": 4320,
+        "O4-O6_without": 2469,
+        "O4-O6_with": 4938
+      }
+    },
+    {
+      "id": "tle-eligibility",
+      "category": "TLE",
+      "title": "Temporary Lodging Expense Eligibility",
+      "citation": "JTR 054205",
+      "description": "TLE covers lodging and M&IE at origin and destination when member is unable to occupy permanent housing",
+      "conditions": {
+        "requires_orders": true,
+        "max_days_origin": 10,
+        "max_days_destination": 10,
+        "requires_receipts": true
+      },
+      "notes": "Commander may authorize extension beyond 10 days"
+    },
+    {
+      "id": "tle-rates",
+      "category": "TLE",
+      "title": "TLE Reimbursement Calculation",
+      "citation": "JTR 054205-C",
+      "description": "Actual lodging cost + per diem M&IE rate for locality",
+      "calculation": "Actual lodging receipts + locality per diem rate"
+    },
+    {
+      "id": "malt-eligibility",
+      "category": "MALT",
+      "title": "Mileage Allowance in Lieu of Transportation",
+      "citation": "JTR 050502",
+      "description": "Member may drive POV instead of using government transportation and receive mileage reimbursement",
+      "conditions": {
+        "requires_orders": true,
+        "requires_pov_authorization": true
+      },
+      "rate_per_mile": 0.18
+    },
+    {
+      "id": "malt-calculation",
+      "category": "MALT",
+      "title": "MALT Payment Calculation",
+      "citation": "JTR 050502-B",
+      "description": "Official distance × $0.18 per mile. One rate for one or more POVs.",
+      "calculation": "Distance (miles) × $0.18",
+      "notes": "Rate applies whether traveling alone or with dependents, one or more vehicles"
+    },
+    {
+      "id": "ppm-eligibility",
+      "category": "PPM",
+      "title": "Personally Procured Move Eligibility",
+      "citation": "JTR 054703",
+      "description": "Member may move own HHG and receive 95% of government cost estimate",
+      "conditions": {
+        "requires_orders": true,
+        "requires_counseling": true,
+        "requires_weight_tickets": true,
+        "requires_empty_full_weight": true
+      }
+    },
+    {
+      "id": "ppm-payment",
+      "category": "PPM",
+      "title": "PPM Payment Calculation",
+      "citation": "JTR 054703-D",
+      "description": "Payment is 95% of what government would have paid",
+      "calculation": "Government Cost Estimate (GCC) × 0.95",
+      "notes": "GCC based on weight, distance, and current transportation rates"
+    },
+    {
+      "id": "ppm-weight-tickets",
+      "category": "PPM",
+      "title": "Weight Ticket Requirements",
+      "citation": "JTR 054703-C",
+      "description": "Required: Empty weight ticket (before loading) and full weight ticket (after loading) from certified scale",
+      "conditions": {
+        "requires_certified_scale": true,
+        "requires_empty_ticket": true,
+        "requires_full_ticket": true,
+        "requires_vehicle_description": true
+      },
+      "notes": "Same vehicle must be weighed empty and full. Government vehicle (rental truck) weight tickets also accepted."
+    },
+    {
+      "id": "ppm-weight-allowance",
+      "category": "PPM",
+      "title": "HHG Weight Allowances by Rank",
+      "citation": "JTR 054705",
+      "description": "Maximum weight authorized for shipment or PPM based on rank",
+      "allowances": {
+        "E1": 5000,
+        "E2": 5000,
+        "E3": 5000,
+        "E4": 7000,
+        "E5": 7000,
+        "E6": 8000,
+        "E7": 11000,
+        "E8": 12000,
+        "E9": 13000,
+        "W1": 10000,
+        "W2": 11000,
+        "W3": 12000,
+        "W4": 13000,
+        "W5": 13500,
+        "O1": 10000,
+        "O2": 10000,
+        "O3": 11000,
+        "O4": 12500,
+        "O5": 13000,
+        "O6": 18000
+      },
+      "unit": "pounds",
+      "notes": "With dependents, add 500 lbs per dependent (max 2,000 lbs additional)"
+    },
+    {
+      "id": "per-diem-travel",
+      "category": "Per Diem",
+      "title": "Per Diem During PCS Travel",
+      "citation": "JTR 054201",
+      "description": "Member receives 75% of locality M&IE rate during authorized travel days",
+      "calculation": "Locality M&IE rate × 0.75 × travel days",
+      "notes": "Dependents receive 75% of member's rate"
+    },
+    {
+      "id": "per-diem-dependents",
+      "category": "Per Diem",
+      "title": "Dependent Per Diem Rates",
+      "citation": "JTR 054201-C",
+      "description": "Each dependent age 12+ receives 75% of member's per diem",
+      "calculation": "Member per diem × 0.75 × number of dependents",
+      "notes": "Children under 12 receive reduced rates"
+    },
+    {
+      "id": "advance-payment",
+      "category": "Advance",
+      "title": "Advance Operating Allowance",
+      "citation": "JTR 050704",
+      "description": "Member may request advance payment up to 80% of estimated entitlements",
+      "conditions": {
+        "max_percentage": 80,
+        "requires_counseling": true,
+        "subject_to_recoupment": true
+      },
+      "notes": "Must be paid back if actual entitlements are less than advanced amount"
+    },
+    {
+      "id": "sdp-deployment",
+      "category": "SDP",
+      "title": "Savings Deposit Program Eligibility",
+      "citation": "37 USC 1035",
+      "description": "Service members in qualifying combat zones can deposit up to $10,000 and earn 10% annual interest",
+      "conditions": {
+        "requires_combat_zone": true,
+        "max_deposit": 10000,
+        "interest_rate": 0.10,
+        "must_start_in_zone": true
+      },
+      "notes": "Accrues for up to 3 months after leaving combat zone"
+    },
+    {
+      "id": "house-hunting",
+      "category": "House Hunting",
+      "title": "House Hunting Trip Allowance",
+      "citation": "JTR 054207",
+      "description": "One house hunting trip to new duty station for member and/or spouse",
+      "conditions": {
+        "max_trips": 1,
+        "max_days": 10,
+        "requires_prior_authorization": true
+      },
+      "reimbursement": "Transportation costs + per diem"
+    },
+    {
+      "id": "storage-hhg",
+      "category": "Storage",
+      "title": "Household Goods Storage",
+      "citation": "JTR 054903",
+      "description": "Government pays for HHG storage when authorized",
+      "conditions": {
+        "requires_orders": true,
+        "max_duration_conus": "90 days",
+        "max_duration_oconus": "180 days"
+      },
+      "notes": "Extensions require commander approval"
+    },
+    {
+      "id": "spouse-relocation",
+      "category": "Spouse",
+      "title": "Spouse Relocation Assistance",
+      "citation": "JTR 054212",
+      "description": "Up to $1,000 reimbursement for spouse job hunting expenses",
+      "conditions": {
+        "max_amount": 1000,
+        "requires_receipts": true,
+        "eligible_expenses": ["resume services", "job training", "license renewal"]
+      },
+      "notes": "New benefit as of 2024"
+    },
+    {
+      "id": "pet-transportation",
+      "category": "Pets",
+      "title": "Pet Transportation During PCS",
+      "citation": "JTR 054213",
+      "description": "Up to $550 reimbursement for pet transportation costs",
+      "conditions": {
+        "max_amount": 550,
+        "requires_receipts": true,
+        "max_pets": 2
+      },
+      "notes": "Introduced in 2024, covers shipping or travel costs"
+    },
+    {
+      "id": "mobile-home",
+      "category": "Mobile Home",
+      "title": "Mobile Home Transportation",
+      "citation": "JTR 054804",
+      "description": "Government pays for mobile home transportation in lieu of HHG shipment",
+      "conditions": {
+        "requires_prior_authorization": true,
+        "replaces_hhg_shipment": true
+      },
+      "notes": "Member must own mobile home and use as primary residence"
+    },
+    {
+      "id": "pov-shipment",
+      "category": "POV",
+      "title": "Privately Owned Vehicle Shipment",
+      "citation": "JTR 054901",
+      "description": "Government pays for one POV shipment to/from OCONUS duty stations",
+      "conditions": {
+        "oconus_only": true,
+        "max_vehicles": 1,
+        "requires_orders": true
+      },
+      "notes": "CONUS to CONUS moves must drive or ship at own expense"
+    }
+  ]
+}
+

@@ -3,6 +3,14 @@ import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { calculateDistance } from '@/lib/pcs/distance';
 import { getPerDiemRate } from '@/lib/pcs/per-diem';
+import { 
+  getDLARate, 
+  checkDLAEligibility, 
+  getMALTRate,
+  getWeightAllowance,
+  validatePPMWeight,
+  calculateConfidenceScore
+} from '@/lib/pcs/jtr-rules';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -21,21 +29,6 @@ interface EstimateRequest {
   claimId: string;
 }
 
-// Current JTR rates (2025)
-const DLA_RATES = {
-  'E1-E4_without': 1234,
-  'E1-E4_with': 2468,
-  'E5-E6_without': 1543,
-  'E5-E6_with': 3086,
-  'E7-E9_without': 1852,
-  'E7-E9_with': 3704,
-  'O1-O3_without': 2160,
-  'O1-O3_with': 4320,
-  'O4-O6_without': 2469,
-  'O4-O6_with': 4938,
-} as const;
-
-const MALT_RATE_PER_MILE = 0.18;
 const PER_DIEM_TRAVEL_RATE = 0.75;
 const PPM_PAYMENT_PERCENTAGE = 0.95;
 
@@ -91,9 +84,17 @@ export async function POST(req: NextRequest) {
     const dependentsCount = claim.dependents_count || 0;
     const hasDependents = dependentsCount > 0;
 
-    // Calculate DLA
-    const dlaKey = getRankCategory(rank, hasDependents);
-    const dlaAmount = DLA_RATES[dlaKey] || DLA_RATES['E5-E6_with'];
+    // Get documents for confidence scoring
+    const { data: documents } = await supabaseAdmin
+      .from('pcs_claim_documents')
+      .select('document_type')
+      .eq('claim_id', claimId);
+
+    const hasOrders = documents?.some(d => d.document_type === 'orders') || false;
+
+    // Calculate DLA using JTR rules
+    const dlaResult = getDLARate(rank, hasDependents);
+    const dlaAmount = dlaResult.amount;
 
     // Calculate TLE (requires lodging receipts)
     const { data: lodgingDocs } = await supabaseAdmin
@@ -124,7 +125,8 @@ export async function POST(req: NextRequest) {
       true // Use Google Maps for accuracy
     );
     const maltMiles = distanceResult.miles;
-    const maltAmount = maltMiles * MALT_RATE_PER_MILE;
+    const maltRateInfo = getMALTRate();
+    const maltAmount = maltMiles * maltRateInfo.rate;
 
     // Calculate Per Diem with real locality rates
     const travelDays = calculateTravelDays(claim.departure_date, claim.arrival_date);
@@ -191,6 +193,17 @@ export async function POST(req: NextRequest) {
 
     const potentialLeftOnTable = Math.max(0, totalEstimated - totalClaimed);
 
+    // Calculate confidence score
+    const confidenceResult = calculateConfidenceScore({
+      hasOrders,
+      hasWeighTickets: (weighTickets && weighTickets.length > 0) || false,
+      hasReceipts: (allReceipts && allReceipts.length > 0) || false,
+      originCity: claim.origin_city,
+      destinationCity: claim.destination_city,
+      distance: maltMiles,
+      rank
+    });
+
     // Create snapshot
     const { data: snapshot, error: snapshotError } = await supabaseAdmin
       .from('pcs_entitlement_snapshots')
@@ -217,11 +230,16 @@ export async function POST(req: NextRequest) {
           travel_days: travelDays
         },
         rates_used: {
-          dla_key: dlaKey,
-          malt_rate: MALT_RATE_PER_MILE,
+          dla_rate: dlaResult.amount,
+          dla_citation: dlaResult.citation,
+          malt_rate: maltRateInfo.rate,
+          malt_citation: maltRateInfo.citation,
           per_diem_rate: perDiemRate,
           ppm_percentage: PPM_PAYMENT_PERCENTAGE
-        }
+        },
+        confidence_score: confidenceResult.score,
+        confidence_level: confidenceResult.level,
+        confidence_factors: confidenceResult.factors
       })
       .select()
       .single();
@@ -280,21 +298,6 @@ export async function POST(req: NextRequest) {
       details: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 });
   }
-}
-
-/**
- * Get DLA rate key based on rank and dependents
- */
-function getRankCategory(rank: string, hasDependents: boolean): keyof typeof DLA_RATES {
-  const suffix = hasDependents ? '_with' : '_without';
-  
-  if (['E1', 'E2', 'E3', 'E4'].includes(rank)) return `E1-E4${suffix}` as keyof typeof DLA_RATES;
-  if (['E5', 'E6'].includes(rank)) return `E5-E6${suffix}` as keyof typeof DLA_RATES;
-  if (['E7', 'E8', 'E9'].includes(rank)) return `E7-E9${suffix}` as keyof typeof DLA_RATES;
-  if (['O1', 'O2', 'O3', 'W1', 'W2'].includes(rank)) return `O1-O3${suffix}` as keyof typeof DLA_RATES;
-  if (['O4', 'O5', 'O6', 'W3', 'W4', 'W5'].includes(rank)) return `O4-O6${suffix}` as keyof typeof DLA_RATES;
-  
-  return `E5-E6${suffix}` as keyof typeof DLA_RATES; // Default
 }
 
 /**
