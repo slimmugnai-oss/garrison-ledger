@@ -47,7 +47,7 @@ export default function Header() {
     if (path === '/dashboard') return pathname === '/dashboard';
     return pathname.startsWith(path);
   };
-
+  
   return (
     <>
       {/* Premium Search Modal - Enhanced */}
@@ -135,8 +135,8 @@ export default function Header() {
       )}
 
       {/* Header - Premium Design */}
-      <header className="sticky top-0 z-40 bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-b-2 border-slate-200/50 dark:border-slate-700/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-[100] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-b-2 border-slate-200/50 dark:border-slate-700/50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo - Premium Brand */}
             <Link href="/" className="flex items-center gap-3 group">
@@ -158,29 +158,29 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              <Link
-                href="/"
+            <Link 
+              href="/" 
                 className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   pathname === '/' 
                     ? 'text-slate-900 dark:text-white' 
                     : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Home
+              }`}
+            >
+              Home
                 {pathname === '/' && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
                 )}
-              </Link>
+            </Link>
 
-              <SignedIn>
+            <SignedIn>
                 {/* Dashboard Dropdown */}
-                <div 
-                  className="relative"
-                  onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 150); setCloseTimeout(t); }}
-                >
+              <div 
+                className="relative"
+                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                  onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 100); setCloseTimeout(t); }}
+              >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                    isActivePath('/dashboard') 
+                  isActivePath('/dashboard') 
                       ? 'text-slate-900 dark:text-white' 
                       : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
                   }`}>
@@ -189,12 +189,12 @@ export default function Header() {
                     {isActivePath('/dashboard') && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
                     )}
-                  </button>
-                  {dashboardOpen && (
-                    <div 
+                </button>
+                {dashboardOpen && (
+                  <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 150); setCloseTimeout(t); }}
+                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
+                      onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -208,7 +208,7 @@ export default function Header() {
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                               Your mission overview
                             </div>
-                          </div>
+                    </div>
                         </Link>
                         <Link href="/dashboard/plan" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/plan') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
@@ -222,7 +222,7 @@ export default function Header() {
                               Personalized strategy
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/assessment" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/assessment') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -235,7 +235,7 @@ export default function Header() {
                               Financial intelligence
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/binder" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/binder') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -248,7 +248,7 @@ export default function Header() {
                               Secure documents
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/pcs-copilot" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/pcs-copilot') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -261,20 +261,20 @@ export default function Header() {
                               AI reimbursement assistant
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                       </div>
-                    </div>
-                  )}
-                </div>
-
+                  </div>
+                )}
+              </div>
+              
                 {/* Core Tools Dropdown */}
-                <div 
-                  className="relative"
+              <div 
+                className="relative"
                   onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setCoreToolsOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 150); setCloseTimeout(t); }}
-                >
+                  onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 100); setCloseTimeout(t); }}
+              >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                    isActivePath('/dashboard/tools') 
+                  isActivePath('/dashboard/tools') 
                       ? 'text-slate-900 dark:text-white' 
                       : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
                   }`}>
@@ -283,12 +283,12 @@ export default function Header() {
                     {isActivePath('/dashboard/tools') && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
                     )}
-                  </button>
+                </button>
                   {coreToolsOpen && (
                     <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setCoreToolsOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 150); setCloseTimeout(t); }}
+                      onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard/tools/tsp-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -302,8 +302,8 @@ export default function Header() {
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                               Optimize your retirement
                             </div>
-                          </div>
-                        </Link>
+                    </div>
+                    </Link>
                         <Link href="/dashboard/tools/sdp-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/tools/sdp-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -316,14 +316,14 @@ export default function Header() {
                               Deployment savings
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/tools/house-hacking" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/tools/house-hacking') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
                           <Icon name="Home" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                           <div>
                             <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/house-hacking') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              House Hacking
+                      House Hacking
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                               Multi-unit investments
@@ -368,7 +368,7 @@ export default function Header() {
                               Military retirement planning
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                       </div>
                     </div>
                   )}
@@ -378,7 +378,7 @@ export default function Header() {
                 <div 
                   className="relative"
                   onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setIntelligenceOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 150); setCloseTimeout(t); }}
+                  onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 100); setCloseTimeout(t); }}
                 >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                     isActivePath('/dashboard/intel-library') || isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')
@@ -395,7 +395,7 @@ export default function Header() {
                     <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setIntelligenceOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 150); setCloseTimeout(t); }}
+                      onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard/intel-library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -423,7 +423,7 @@ export default function Header() {
                               Real-time military news
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/directory" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/directory') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -436,7 +436,7 @@ export default function Header() {
                               Military community
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                         <Link href="/dashboard/refer-earn" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/refer-earn') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -449,18 +449,18 @@ export default function Header() {
                               Share with your unit
                             </div>
                           </div>
-                        </Link>
+                    </Link>
                       </div>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
               </SignedIn>
 
               {/* Resources Dropdown */}
               <div 
                 className="relative"
                 onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
-                onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 150); setCloseTimeout(t); }}
+                onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 100); setCloseTimeout(t); }}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping') || isActivePath('/base-guides')
@@ -477,7 +477,7 @@ export default function Header() {
                   <div 
                     className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                     onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
-                    onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 150); setCloseTimeout(t); }}
+                    onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 100); setCloseTimeout(t); }}
                   >
                     <div className="p-3">
                       <Link href="/pcs-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -549,11 +549,11 @@ export default function Header() {
                   </div>
                 )}
               </div>
-            </nav>
+          </nav>
 
             {/* Right Side - Enhanced */}
             <div className="flex items-center gap-3">
-              <SignedOut>
+            <SignedOut>
                 <SignInButton mode="modal">
                   <button className="px-4 py-2 text-gray-600 hover:text-slate-900 font-semibold transition-colors">
                     Sign In
@@ -564,9 +564,9 @@ export default function Header() {
                     Get Started Free
                   </button>
                 </SignUpButton>
-              </SignedOut>
-
-              <SignedIn>
+            </SignedOut>
+            
+            <SignedIn>
                 {/* Premium Search Button - Enhanced */}
                 <button 
                   onClick={() => setShowSearch(!showSearch)}
@@ -590,7 +590,7 @@ export default function Header() {
                 </Link>
 
                 {/* User Menu */}
-                <UserButton 
+                  <UserButton 
                   appearance={{
                     elements: {
                       avatarBox: "w-9 h-9 ring-2 ring-slate-200 dark:ring-slate-700 hover:ring-blue-500 transition-all"
@@ -606,7 +606,7 @@ export default function Header() {
               >
                 <Icon name={mobileMenuOpen ? "X" : "Menu"} className="w-6 h-6" />
               </button>
-            </div>
+              </div>
           </div>
         </div>
 
@@ -619,29 +619,29 @@ export default function Header() {
                 <div>
                   <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                     Dashboard
-                  </div>
+              </div>
                   <div className="space-y-2">
                     <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="LayoutDashboard" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">Dashboard</span>
-                    </Link>
+                </Link>
                     <Link href="/dashboard/plan" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Sparkles" className="w-5 h-5 text-indigo-600" />
                       <span className="font-medium">AI Plan</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/assessment" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="ClipboardCheck" className="w-5 h-5 text-green-600" />
                       <span className="font-medium">Assessment</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/binder" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="FolderOpen" className="w-5 h-5 text-purple-600" />
                       <span className="font-medium">Binder</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/pcs-copilot" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Truck" className="w-5 h-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
-                    </Link>
-                  </div>
+                      </Link>
+                    </div>
                 </div>
 
                 {/* Mobile Core Tools Section */}
@@ -665,17 +665,17 @@ export default function Header() {
                     <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Truck" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">PCS Planner</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="ShoppingCart" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">On-Base Savings</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/tools/retirement-calculator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Calculator" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">Retirement Calculator</span>
-                    </Link>
+                      </Link>
+                    </div>
                   </div>
-                </div>
 
                 {/* Mobile Intelligence Section */}
                 <div>
@@ -690,17 +690,17 @@ export default function Header() {
                     <Link href="/dashboard/listening-post" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Radio" className="w-5 h-5 text-purple-600" />
                       <span className="font-medium">Listening Post</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/directory" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Users" className="w-5 h-5 text-purple-600" />
                       <span className="font-medium">Directory</span>
-                    </Link>
+                      </Link>
                     <Link href="/dashboard/refer-earn" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Gift" className="w-5 h-5 text-purple-600" />
                       <span className="font-medium">Refer & Earn</span>
-                    </Link>
+                      </Link>
+                    </div>
                   </div>
-                </div>
 
                 {/* Mobile Resources Section */}
                 <div>
@@ -711,26 +711,26 @@ export default function Header() {
                     <Link href="/pcs-hub" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Truck" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">PCS Hub</span>
-                    </Link>
+                  </Link>
                     <Link href="/career-hub" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Briefcase" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">Career Hub</span>
-                    </Link>
+                  </Link>
                     <Link href="/deployment" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Shield" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">Deployment</span>
-                    </Link>
+                  </Link>
                     <Link href="/base-guides" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="MapPin" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">Base Guides</span>
-                    </Link>
+                  </Link>
                     <Link href="/on-base-shopping" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="ShoppingCart" className="w-5 h-5 text-blue-600" />
                       <span className="font-medium">On-Base Shopping</span>
                     </Link>
                   </div>
-                </div>
-
+              </div>
+              
                 {/* Mobile Upgrade CTA */}
                 <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
                   <Link href="/dashboard/upgrade" className="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center py-3 px-4 rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all">
@@ -738,24 +738,24 @@ export default function Header() {
                   </Link>
                 </div>
               </SignedIn>
-              <SignedOut>
+                <SignedOut>
                 <div className="space-y-3">
-                  <SignInButton mode="modal">
+                    <SignInButton mode="modal">
                     <button className="w-full px-4 py-3 text-gray-600 hover:text-slate-900 font-semibold transition-colors text-left">
-                      Sign In
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
                     <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors">
                       Get Started
-                    </button>
-                  </SignUpButton>
-                </div>
-              </SignedOut>
-            </div>
+                      </button>
+                    </SignUpButton>
+                  </div>
+                </SignedOut>
+              </div>
           </div>
         )}
-      </header>
+    </header>
     </>
   );
 }

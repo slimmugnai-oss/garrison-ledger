@@ -47,7 +47,7 @@ export default async function UpgradePage() {
         {/* Trust Banners - Only for non-paid users */}
         {!isPaid && (
           <>
-            <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 px-4 text-center sticky top-16 z-40 shadow-lg">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 px-4 text-center sticky top-16 z-30 shadow-lg">
               <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
                 <Icon name="Shield" className="w-5 h-5" />
                 <span className="font-bold text-sm sm:text-base">7-Day Money-Back Guarantee</span>
