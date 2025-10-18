@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { calculateDistance } from '@/lib/pcs/distance';
+import { getPerDiemRate } from '@/lib/pcs/per-diem';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -116,14 +118,32 @@ export async function POST(req: NextRequest) {
     }
 
     // Calculate MALT (requires distance calculation)
-    const distance = calculateDistance(claim.origin_base, claim.destination_base);
-    const maltMiles = distance;
+    const distanceResult = await calculateDistance(
+      claim.origin_base || 'Unknown',
+      claim.destination_base || 'Unknown',
+      true // Use Google Maps for accuracy
+    );
+    const maltMiles = distanceResult.miles;
     const maltAmount = maltMiles * MALT_RATE_PER_MILE;
 
-    // Calculate Per Diem
+    // Calculate Per Diem with real locality rates
     const travelDays = calculateTravelDays(claim.departure_date, claim.arrival_date);
-    const perDiemRate = 60; // Average CONUS rate - should be locality-specific
-    const perDiemAmount = travelDays * perDiemRate * PER_DIEM_TRAVEL_RATE * (1 + dependentsCount);
+    
+    // Get per diem rates for origin and destination
+    // Use higher of the two rates (common practice)
+    const originPerDiem = claim.origin_city && claim.origin_state
+      ? getPerDiemRate(claim.origin_city, claim.origin_state)
+      : 166; // Standard CONUS
+    const destPerDiem = claim.destination_city && claim.destination_state
+      ? getPerDiemRate(claim.destination_city, claim.destination_state)
+      : 166; // Standard CONUS
+    
+    const perDiemRate = Math.max(originPerDiem, destPerDiem);
+    
+    // Calculate per diem: member gets 75% rate, each dependent gets 75% of member's rate
+    const memberPerDiem = travelDays * perDiemRate * PER_DIEM_TRAVEL_RATE;
+    const dependentPerDiem = memberPerDiem * 0.75 * dependentsCount;
+    const perDiemAmount = memberPerDiem + dependentPerDiem;
 
     // Calculate PPM (requires weigh tickets)
     const { data: weighTickets } = await supabaseAdmin
@@ -192,7 +212,8 @@ export async function POST(req: NextRequest) {
           rank,
           branch,
           dependents: dependentsCount,
-          distance,
+          distance: maltMiles,
+          distance_method: distanceResult.method,
           travel_days: travelDays
         },
         rates_used: {
@@ -274,15 +295,6 @@ function getRankCategory(rank: string, hasDependents: boolean): keyof typeof DLA
   if (['O4', 'O5', 'O6', 'W3', 'W4', 'W5'].includes(rank)) return `O4-O6${suffix}` as keyof typeof DLA_RATES;
   
   return `E5-E6${suffix}` as keyof typeof DLA_RATES; // Default
-}
-
-/**
- * Calculate distance between bases (simplified - should use actual distance API)
- */
-function calculateDistance(origin: string | null, destination: string | null): number {
-  // Simplified - in production, use actual distance API or base distance table
-  // For MVP, return a reasonable default
-  return 1000; // miles
 }
 
 /**

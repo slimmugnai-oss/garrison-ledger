@@ -1,0 +1,212 @@
+{
+  "fiscal_year": 2025,
+  "standard_conus_rate": 166,
+  "localities": [
+    {
+      "state": "CA",
+      "city": "San Diego",
+      "rate": 210
+    },
+    {
+      "state": "CA",
+      "city": "San Francisco",
+      "rate": 318
+    },
+    {
+      "state": "CA",
+      "city": "Los Angeles",
+      "rate": 256
+    },
+    {
+      "state": "CA",
+      "city": "Oceanside",
+      "rate": 194
+    },
+    {
+      "state": "CA",
+      "city": "Barstow",
+      "rate": 166
+    },
+    {
+      "state": "CA",
+      "city": "Fairfield",
+      "rate": 182
+    },
+    {
+      "state": "NY",
+      "city": "New York",
+      "rate": 355
+    },
+    {
+      "state": "NY",
+      "city": "West Point",
+      "rate": 200
+    },
+    {
+      "state": "NY",
+      "city": "Watertown",
+      "rate": 166
+    },
+    {
+      "state": "VA",
+      "city": "Arlington",
+      "rate": 240
+    },
+    {
+      "state": "VA",
+      "city": "Norfolk",
+      "rate": 180
+    },
+    {
+      "state": "VA",
+      "city": "Quantico",
+      "rate": 210
+    },
+    {
+      "state": "VA",
+      "city": "Hampton",
+      "rate": 176
+    },
+    {
+      "state": "VA",
+      "city": "Petersburg",
+      "rate": 166
+    },
+    {
+      "state": "TX",
+      "city": "San Antonio",
+      "rate": 186
+    },
+    {
+      "state": "TX",
+      "city": "Killeen",
+      "rate": 166
+    },
+    {
+      "state": "TX",
+      "city": "El Paso",
+      "rate": 172
+    },
+    {
+      "state": "FL",
+      "city": "Tampa",
+      "rate": 192
+    },
+    {
+      "state": "FL",
+      "city": "Jacksonville",
+      "rate": 178
+    },
+    {
+      "state": "FL",
+      "city": "Valparaiso",
+      "rate": 166
+    },
+    {
+      "state": "WA",
+      "city": "Tacoma",
+      "rate": 194
+    },
+    {
+      "state": "WA",
+      "city": "Everett",
+      "rate": 200
+    },
+    {
+      "state": "NC",
+      "city": "Fayetteville",
+      "rate": 166
+    },
+    {
+      "state": "NC",
+      "city": "Jacksonville",
+      "rate": 166
+    },
+    {
+      "state": "GA",
+      "city": "Columbus",
+      "rate": 166
+    },
+    {
+      "state": "GA",
+      "city": "Hinesville",
+      "rate": 166
+    },
+    {
+      "state": "GA",
+      "city": "Augusta",
+      "rate": 166
+    },
+    {
+      "state": "KY",
+      "city": "Clarksville",
+      "rate": 166
+    },
+    {
+      "state": "CO",
+      "city": "Colorado Springs",
+      "rate": 192
+    },
+    {
+      "state": "AZ",
+      "city": "Glendale",
+      "rate": 184
+    },
+    {
+      "state": "NV",
+      "city": "Las Vegas",
+      "rate": 206
+    },
+    {
+      "state": "UT",
+      "city": "Ogden",
+      "rate": 166
+    },
+    {
+      "state": "OK",
+      "city": "Oklahoma City",
+      "rate": 166
+    },
+    {
+      "state": "OK",
+      "city": "Lawton",
+      "rate": 166
+    },
+    {
+      "state": "KS",
+      "city": "Junction City",
+      "rate": 166
+    },
+    {
+      "state": "MO",
+      "city": "Waynesville",
+      "rate": 166
+    },
+    {
+      "state": "LA",
+      "city": "Leesville",
+      "rate": 166
+    },
+    {
+      "state": "AL",
+      "city": "Ozark",
+      "rate": 166
+    },
+    {
+      "state": "SC",
+      "city": "Beaufort",
+      "rate": 174
+    },
+    {
+      "state": "IL",
+      "city": "North Chicago",
+      "rate": 188
+    },
+    {
+      "state": "HI",
+      "city": "Honolulu",
+      "rate": 315
+    }
+  ]
+}
+

@@ -1,1101 +1,414 @@
-[
-  {
-    "name": "Joint Base Andrews",
-    "code": "ADW",
-    "state": "MD",
-    "service": "Joint",
-    "city": "Camp Springs"
-  },
-  {
-    "name": "Joint Base Anacostia-Bolling",
-    "code": "BOL",
-    "state": "DC",
-    "service": "Joint",
-    "city": "Washington"
-  },
-  {
-    "name": "Joint Base Charleston",
-    "code": "CHS",
-    "state": "SC",
-    "service": "Joint",
-    "city": "Charleston"
-  },
-  {
-    "name": "Joint Base Elmendorf-Richardson",
-    "code": "EDF",
-    "state": "AK",
-    "service": "Joint",
-    "city": "Anchorage"
-  },
-  {
-    "name": "Joint Base Langley-Eustis",
-    "code": "LFI",
-    "state": "VA",
-    "service": "Joint",
-    "city": "Hampton"
-  },
-  {
-    "name": "Joint Base Lewis-McChord",
-    "code": "GRF",
-    "state": "WA",
-    "service": "Joint",
-    "city": "Tacoma"
-  },
-  {
-    "name": "Joint Base McGuire-Dix-Lakehurst",
-    "code": "WRI",
-    "state": "NJ",
-    "service": "Joint",
-    "city": "Wrightstown"
-  },
-  {
-    "name": "Joint Base Pearl Harbor-Hickam",
-    "code": "HIK",
-    "state": "HI",
-    "service": "Joint",
-    "city": "Honolulu"
-  },
-  {
-    "name": "Joint Base San Antonio",
-    "code": "JBSA",
-    "state": "TX",
-    "service": "Joint",
-    "city": "San Antonio"
-  },
-  {
-    "name": "Joint Base San Antonio-Lackland",
-    "code": "SKF",
-    "state": "TX",
-    "service": "Joint",
-    "city": "San Antonio"
-  },
-  {
-    "name": "Joint Base San Antonio-Randolph",
-    "code": "RND",
-    "state": "TX",
-    "service": "Joint",
-    "city": "Universal City"
-  },
-  {
-    "name": "Joint Base San Antonio-Fort Sam Houston",
-    "code": "FST",
-    "state": "TX",
-    "service": "Joint",
-    "city": "San Antonio"
-  },
-  {
-    "name": "Aberdeen Proving Ground",
-    "code": "APG",
-    "state": "MD",
-    "service": "Army",
-    "city": "Aberdeen"
-  },
-  {
-    "name": "Fort Belvoir",
-    "code": "BV",
-    "state": "VA",
-    "service": "Army",
-    "city": "Belvoir"
-  },
-  {
-    "name": "Fort Benning",
-    "code": "BNG",
-    "state": "GA",
-    "service": "Army",
-    "city": "Columbus"
-  },
-  {
-    "name": "Fort Bliss",
-    "code": "BLI",
-    "state": "TX",
-    "service": "Army",
-    "city": "El Paso"
-  },
-  {
-    "name": "Fort Bragg",
-    "code": "FBG",
-    "state": "NC",
-    "service": "Army",
-    "city": "Fayetteville"
-  },
-  {
-    "name": "Fort Campbell",
-    "code": "CBL",
-    "state": "KY",
-    "service": "Army",
-    "city": "Clarksville"
-  },
-  {
-    "name": "Fort Carson",
-    "code": "CAR",
-    "state": "CO",
-    "service": "Army",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Fort Detrick",
-    "code": "DET",
-    "state": "MD",
-    "service": "Army",
-    "city": "Frederick"
-  },
-  {
-    "name": "Fort Drum",
-    "code": "DRM",
-    "state": "NY",
-    "service": "Army",
-    "city": "Watertown"
-  },
-  {
-    "name": "Fort Gordon",
-    "code": "GOR",
-    "state": "GA",
-    "service": "Army",
-    "city": "Augusta"
-  },
-  {
-    "name": "Fort Hood",
-    "code": "HOD",
-    "state": "TX",
-    "service": "Army",
-    "city": "Killeen"
-  },
-  {
-    "name": "Fort Huachuca",
-    "code": "HUA",
-    "state": "AZ",
-    "service": "Army",
-    "city": "Sierra Vista"
-  },
-  {
-    "name": "Fort Irwin",
-    "code": "IRW",
-    "state": "CA",
-    "service": "Army",
-    "city": "Barstow"
-  },
-  {
-    "name": "Fort Jackson",
-    "code": "JAC",
-    "state": "SC",
-    "service": "Army",
-    "city": "Columbia"
-  },
-  {
-    "name": "Fort Knox",
-    "code": "KNX",
-    "state": "KY",
-    "service": "Army",
-    "city": "Radcliff"
-  },
-  {
-    "name": "Fort Leavenworth",
-    "code": "LEA",
-    "state": "KS",
-    "service": "Army",
-    "city": "Leavenworth"
-  },
-  {
-    "name": "Fort Lee",
-    "code": "LEE",
-    "state": "VA",
-    "service": "Army",
-    "city": "Petersburg"
-  },
-  {
-    "name": "Fort Leonard Wood",
-    "code": "LWD",
-    "state": "MO",
-    "service": "Army",
-    "city": "Waynesville"
-  },
-  {
-    "name": "Fort Meade",
-    "code": "MEA",
-    "state": "MD",
-    "service": "Army",
-    "city": "Odenton"
-  },
-  {
-    "name": "Fort Polk",
-    "code": "POL",
-    "state": "LA",
-    "service": "Army",
-    "city": "Leesville"
-  },
-  {
-    "name": "Fort Riley",
-    "code": "RIL",
-    "state": "KS",
-    "service": "Army",
-    "city": "Manhattan"
-  },
-  {
-    "name": "Fort Rucker",
-    "code": "RUC",
-    "state": "AL",
-    "service": "Army",
-    "city": "Dothan"
-  },
-  {
-    "name": "Fort Sam Houston",
-    "code": "FST",
-    "state": "TX",
-    "service": "Army",
-    "city": "San Antonio"
-  },
-  {
-    "name": "Fort Sill",
-    "code": "SIL",
-    "state": "OK",
-    "service": "Army",
-    "city": "Lawton"
-  },
-  {
-    "name": "Fort Stewart",
-    "code": "STW",
-    "state": "GA",
-    "service": "Army",
-    "city": "Hinesville"
-  },
-  {
-    "name": "Fort Wainwright",
-    "code": "AIN",
-    "state": "AK",
-    "service": "Army",
-    "city": "Fairbanks"
-  },
-  {
-    "name": "Redstone Arsenal",
-    "code": "RSA",
-    "state": "AL",
-    "service": "Army",
-    "city": "Huntsville"
-  },
-  {
-    "name": "Rock Island Arsenal",
-    "code": "RIA",
-    "state": "IL",
-    "service": "Army",
-    "city": "Rock Island"
-  },
-  {
-    "name": "Walter Reed National Military Medical Center",
-    "code": "WRN",
-    "state": "MD",
-    "service": "Army",
-    "city": "Bethesda"
-  },
-  {
-    "name": "West Point",
-    "code": "WPT",
-    "state": "NY",
-    "service": "Army",
-    "city": "West Point"
-  },
-  {
-    "name": "Naval Air Station Pensacola",
-    "code": "NPA",
-    "state": "FL",
-    "service": "Navy",
-    "city": "Pensacola"
-  },
-  {
-    "name": "Naval Air Station Jacksonville",
-    "code": "NIP",
-    "state": "FL",
-    "service": "Navy",
-    "city": "Jacksonville"
-  },
-  {
-    "name": "Naval Air Station Oceana",
-    "code": "NTU",
-    "state": "VA",
-    "service": "Navy",
-    "city": "Virginia Beach"
-  },
-  {
-    "name": "Naval Air Station Whidbey Island",
-    "code": "NUW",
-    "state": "WA",
-    "service": "Navy",
-    "city": "Oak Harbor"
-  },
-  {
-    "name": "Naval Air Station Lemoore",
-    "code": "NLC",
-    "state": "CA",
-    "service": "Navy",
-    "city": "Lemoore"
-  },
-  {
-    "name": "Naval Air Station Fallon",
-    "code": "NFL",
-    "state": "NV",
-    "service": "Navy",
-    "city": "Fallon"
-  },
-  {
-    "name": "Naval Air Station Kingsville",
-    "code": "NQI",
-    "state": "TX",
-    "service": "Navy",
-    "city": "Kingsville"
-  },
-  {
-    "name": "Naval Air Station Meridian",
-    "code": "KNMM",
-    "state": "MS",
-    "service": "Navy",
-    "city": "Meridian"
-  },
-  {
-    "name": "Naval Air Station Patuxent River",
-    "code": "NHK",
-    "state": "MD",
-    "service": "Navy",
-    "city": "Lexington Park"
-  },
-  {
-    "name": "Naval Air Station Corpus Christi",
-    "code": "NGP",
-    "state": "TX",
-    "service": "Navy",
-    "city": "Corpus Christi"
-  },
-  {
-    "name": "Naval Base San Diego",
-    "code": "NZY",
-    "state": "CA",
-    "service": "Navy",
-    "city": "San Diego"
-  },
-  {
-    "name": "Naval Base Norfolk",
-    "code": "NGU",
-    "state": "VA",
-    "service": "Navy",
-    "city": "Norfolk"
-  },
-  {
-    "name": "Naval Base Pearl Harbor",
-    "code": "NPH",
-    "state": "HI",
-    "service": "Navy",
-    "city": "Honolulu"
-  },
-  {
-    "name": "Naval Base Kitsap",
-    "code": "NKB",
-    "state": "WA",
-    "service": "Navy",
-    "city": "Bremerton"
-  },
-  {
-    "name": "Naval Base Point Loma",
-    "code": "NPL",
-    "state": "CA",
-    "service": "Navy",
-    "city": "San Diego"
-  },
-  {
-    "name": "Naval Base Coronado",
-    "code": "NZR",
-    "state": "CA",
-    "service": "Navy",
-    "city": "Coronado"
-  },
-  {
-    "name": "Naval Station Great Lakes",
-    "code": "NGL",
-    "state": "IL",
-    "service": "Navy",
-    "city": "Great Lakes"
-  },
-  {
-    "name": "Naval Station Newport",
-    "code": "NPT",
-    "state": "RI",
-    "service": "Navy",
-    "city": "Newport"
-  },
-  {
-    "name": "Naval Station Norfolk",
-    "code": "NGU",
-    "state": "VA",
-    "service": "Navy",
-    "city": "Norfolk"
-  },
-  {
-    "name": "Naval Station Mayport",
-    "code": "NRB",
-    "state": "FL",
-    "service": "Navy",
-    "city": "Jacksonville"
-  },
-  {
-    "name": "Naval Station Everett",
-    "code": "NWE",
-    "state": "WA",
-    "service": "Navy",
-    "city": "Everett"
-  },
-  {
-    "name": "Naval Station Ingleside",
-    "code": "NGI",
-    "state": "TX",
-    "service": "Navy",
-    "city": "Corpus Christi"
-  },
-  {
-    "name": "Naval Submarine Base New London",
-    "code": "NLC",
-    "state": "CT",
-    "service": "Navy",
-    "city": "Groton"
-  },
-  {
-    "name": "Naval Submarine Base Kings Bay",
-    "code": "NRB",
-    "state": "GA",
-    "service": "Navy",
-    "city": "St. Marys"
-  },
-  {
-    "name": "Naval Weapons Station Charleston",
-    "code": "NWS",
-    "state": "SC",
-    "service": "Navy",
-    "city": "Charleston"
-  },
-  {
-    "name": "Naval Weapons Station Seal Beach",
-    "code": "NWS",
-    "state": "CA",
-    "service": "Navy",
-    "city": "Seal Beach"
-  },
-  {
-    "name": "Naval Weapons Station Yorktown",
-    "code": "NWY",
-    "state": "VA",
-    "service": "Navy",
-    "city": "Yorktown"
-  },
-  {
-    "name": "Marine Corps Base Camp Pendleton",
-    "code": "PEN",
-    "state": "CA",
-    "service": "Marines",
-    "city": "Oceanside"
-  },
-  {
-    "name": "Marine Corps Base Camp Lejeune",
-    "code": "LEJ",
-    "state": "NC",
-    "service": "Marines",
-    "city": "Jacksonville"
-  },
-  {
-    "name": "Marine Corps Base Quantico",
-    "code": "QNT",
-    "state": "VA",
-    "service": "Marines",
-    "city": "Quantico"
-  },
-  {
-    "name": "Marine Corps Base Twentynine Palms",
-    "code": "TNP",
-    "state": "CA",
-    "service": "Marines",
-    "city": "Twentynine Palms"
-  },
-  {
-    "name": "Marine Corps Air Station Miramar",
-    "code": "NKX",
-    "state": "CA",
-    "service": "Marines",
-    "city": "San Diego"
-  },
-  {
-    "name": "Marine Corps Air Station Cherry Point",
-    "code": "NKT",
-    "state": "NC",
-    "service": "Marines",
-    "city": "Havelock"
-  },
-  {
-    "name": "Marine Corps Air Station Beaufort",
-    "code": "NBC",
-    "state": "SC",
-    "service": "Marines",
-    "city": "Beaufort"
-  },
-  {
-    "name": "Marine Corps Air Station Yuma",
-    "code": "NYL",
-    "state": "AZ",
-    "service": "Marines",
-    "city": "Yuma"
-  },
-  {
-    "name": "Marine Corps Air Station Iwakuni",
-    "code": "IWK",
-    "state": "Japan",
-    "service": "Marines",
-    "city": "Iwakuni"
-  },
-  {
-    "name": "Marine Corps Air Station Kaneohe Bay",
-    "code": "NGF",
-    "state": "HI",
-    "service": "Marines",
-    "city": "Kaneohe"
-  },
-  {
-    "name": "Marine Corps Air Station New River",
-    "code": "NCA",
-    "state": "NC",
-    "service": "Marines",
-    "city": "Jacksonville"
-  },
-  {
-    "name": "Marine Corps Recruit Depot Parris Island",
-    "code": "PIS",
-    "state": "SC",
-    "service": "Marines",
-    "city": "Parris Island"
-  },
-  {
-    "name": "Marine Corps Recruit Depot San Diego",
-    "code": "SDI",
-    "state": "CA",
-    "service": "Marines",
-    "city": "San Diego"
-  },
-  {
-    "name": "Marine Corps Logistics Base Albany",
-    "code": "ALB",
-    "state": "GA",
-    "service": "Marines",
-    "city": "Albany"
-  },
-  {
-    "name": "Marine Corps Logistics Base Barstow",
-    "code": "BAR",
-    "state": "CA",
-    "service": "Marines",
-    "city": "Barstow"
-  },
-  {
-    "name": "Air Force Academy",
-    "code": "USAFA",
-    "state": "CO",
-    "service": "Air Force",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Altus Air Force Base",
-    "code": "LTS",
-    "state": "OK",
-    "service": "Air Force",
-    "city": "Altus"
-  },
-  {
-    "name": "Andrews Air Force Base",
-    "code": "ADW",
-    "state": "MD",
-    "service": "Air Force",
-    "city": "Camp Springs"
-  },
-  {
-    "name": "Arnold Air Force Base",
-    "code": "AFC",
-    "state": "TN",
-    "service": "Air Force",
-    "city": "Tullahoma"
-  },
-  {
-    "name": "Barksdale Air Force Base",
-    "code": "BAD",
-    "state": "LA",
-    "service": "Air Force",
-    "city": "Bossier City"
-  },
-  {
-    "name": "Beale Air Force Base",
-    "code": "BAB",
-    "state": "CA",
-    "service": "Air Force",
-    "city": "Marysville"
-  },
-  {
-    "name": "Buckley Air Force Base",
-    "code": "BKF",
-    "state": "CO",
-    "service": "Air Force",
-    "city": "Aurora"
-  },
-  {
-    "name": "Cannon Air Force Base",
-    "code": "CVS",
-    "state": "NM",
-    "service": "Air Force",
-    "city": "Clovis"
-  },
-  {
-    "name": "Creech Air Force Base",
-    "code": "INS",
-    "state": "NV",
-    "service": "Air Force",
-    "city": "Indian Springs"
-  },
-  {
-    "name": "Davis-Monthan Air Force Base",
-    "code": "DMA",
-    "state": "AZ",
-    "service": "Air Force",
-    "city": "Tucson"
-  },
-  {
-    "name": "Dover Air Force Base",
-    "code": "DOV",
-    "state": "DE",
-    "service": "Air Force",
-    "city": "Dover"
-  },
-  {
-    "name": "Dyess Air Force Base",
-    "code": "DYS",
-    "state": "TX",
-    "service": "Air Force",
-    "city": "Abilene"
-  },
-  {
-    "name": "Edwards Air Force Base",
-    "code": "EDW",
-    "state": "CA",
-    "service": "Air Force",
-    "city": "Edwards"
-  },
-  {
-    "name": "Eglin Air Force Base",
-    "code": "VPS",
-    "state": "FL",
-    "service": "Air Force",
-    "city": "Valparaiso"
-  },
-  {
-    "name": "Ellsworth Air Force Base",
-    "code": "RCA",
-    "state": "SD",
-    "service": "Air Force",
-    "city": "Rapid City"
-  },
-  {
-    "name": "Fairchild Air Force Base",
-    "code": "SKA",
-    "state": "WA",
-    "service": "Air Force",
-    "city": "Spokane"
-  },
-  {
-    "name": "F.E. Warren Air Force Base",
-    "code": "FEW",
-    "state": "WY",
-    "service": "Air Force",
-    "city": "Cheyenne"
-  },
-  {
-    "name": "Grand Forks Air Force Base",
-    "code": "RDR",
-    "state": "ND",
-    "service": "Air Force",
-    "city": "Grand Forks"
-  },
-  {
-    "name": "Hanscom Air Force Base",
-    "code": "BED",
-    "state": "MA",
-    "service": "Air Force",
-    "city": "Bedford"
-  },
-  {
-    "name": "Hill Air Force Base",
-    "code": "HIF",
-    "state": "UT",
-    "service": "Air Force",
-    "city": "Ogden"
-  },
-  {
-    "name": "Holloman Air Force Base",
-    "code": "HMN",
-    "state": "NM",
-    "service": "Air Force",
-    "city": "Alamogordo"
-  },
-  {
-    "name": "Hurlburt Field",
-    "code": "HRT",
-    "state": "FL",
-    "service": "Air Force",
-    "city": "Mary Esther"
-  },
-  {
-    "name": "Kadena Air Base",
-    "code": "DNA",
-    "state": "Japan",
-    "service": "Air Force",
-    "city": "Okinawa"
-  },
-  {
-    "name": "Keesler Air Force Base",
-    "code": "BIX",
-    "state": "MS",
-    "service": "Air Force",
-    "city": "Biloxi"
-  },
-  {
-    "name": "Kirtland Air Force Base",
-    "code": "IKR",
-    "state": "NM",
-    "service": "Air Force",
-    "city": "Albuquerque"
-  },
-  {
-    "name": "Lackland Air Force Base",
-    "code": "SKF",
-    "state": "TX",
-    "service": "Air Force",
-    "city": "San Antonio"
-  },
-  {
-    "name": "Laughlin Air Force Base",
-    "code": "DLF",
-    "state": "TX",
-    "service": "Air Force",
-    "city": "Del Rio"
-  },
-  {
-    "name": "Little Rock Air Force Base",
-    "code": "LRF",
-    "state": "AR",
-    "service": "Air Force",
-    "city": "Jacksonville"
-  },
-  {
-    "name": "Los Angeles Air Force Base",
-    "code": "LAX",
-    "state": "CA",
-    "service": "Air Force",
-    "city": "El Segundo"
-  },
-  {
-    "name": "Luke Air Force Base",
-    "code": "LUF",
-    "state": "AZ",
-    "service": "Air Force",
-    "city": "Glendale"
-  },
-  {
-    "name": "MacDill Air Force Base",
-    "code": "MCF",
-    "state": "FL",
-    "service": "Air Force",
-    "city": "Tampa"
-  },
-  {
-    "name": "Malcolm Grow Medical Center",
-    "code": "MGC",
-    "state": "MD",
-    "service": "Air Force",
-    "city": "Andrews"
-  },
-  {
-    "name": "Maxwell Air Force Base",
-    "code": "MXF",
-    "state": "AL",
-    "service": "Air Force",
-    "city": "Montgomery"
-  },
-  {
-    "name": "McConnell Air Force Base",
-    "code": "IAB",
-    "state": "KS",
-    "service": "Air Force",
-    "city": "Wichita"
-  },
-  {
-    "name": "McGuire Air Force Base",
-    "code": "WRI",
-    "state": "NJ",
-    "service": "Air Force",
-    "city": "Wrightstown"
-  },
-  {
-    "name": "Minot Air Force Base",
-    "code": "MIB",
-    "state": "ND",
-    "service": "Air Force",
-    "city": "Minot"
-  },
-  {
-    "name": "Moody Air Force Base",
-    "code": "VAD",
-    "state": "GA",
-    "service": "Air Force",
-    "city": "Valdosta"
-  },
-  {
-    "name": "Mountain Home Air Force Base",
-    "code": "MUO",
-    "state": "ID",
-    "service": "Air Force",
-    "city": "Mountain Home"
-  },
-  {
-    "name": "Nellis Air Force Base",
-    "code": "LSV",
-    "state": "NV",
-    "service": "Air Force",
-    "city": "Las Vegas"
-  },
-  {
-    "name": "Offutt Air Force Base",
-    "code": "OFF",
-    "state": "NE",
-    "service": "Air Force",
-    "city": "Bellevue"
-  },
-  {
-    "name": "Patrick Air Force Base",
-    "code": "COF",
-    "state": "FL",
-    "service": "Air Force",
-    "city": "Cocoa Beach"
-  },
-  {
-    "name": "Peterson Air Force Base",
-    "code": "COS",
-    "state": "CO",
-    "service": "Air Force",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Randolph Air Force Base",
-    "code": "RND",
-    "state": "TX",
-    "service": "Air Force",
-    "city": "Universal City"
-  },
-  {
-    "name": "Robins Air Force Base",
-    "code": "WRB",
-    "state": "GA",
-    "service": "Air Force",
-    "city": "Warner Robins"
-  },
-  {
-    "name": "Schriever Air Force Base",
-    "code": "SHR",
-    "state": "CO",
-    "service": "Air Force",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Scott Air Force Base",
-    "code": "BLV",
-    "state": "IL",
-    "service": "Air Force",
-    "city": "Belleville"
-  },
-  {
-    "name": "Seymour Johnson Air Force Base",
-    "code": "GSB",
-    "state": "NC",
-    "service": "Air Force",
-    "city": "Goldsboro"
-  },
-  {
-    "name": "Shaw Air Force Base",
-    "code": "SSC",
-    "state": "SC",
-    "service": "Air Force",
-    "city": "Sumter"
-  },
-  {
-    "name": "Sheppard Air Force Base",
-    "code": "SPS",
-    "state": "TX",
-    "service": "Air Force",
-    "city": "Wichita Falls"
-  },
-  {
-    "name": "Tinker Air Force Base",
-    "code": "TIK",
-    "state": "OK",
-    "service": "Air Force",
-    "city": "Oklahoma City"
-  },
-  {
-    "name": "Travis Air Force Base",
-    "code": "SUU",
-    "state": "CA",
-    "service": "Air Force",
-    "city": "Fairfield"
-  },
-  {
-    "name": "Tyndall Air Force Base",
-    "code": "PAM",
-    "state": "FL",
-    "service": "Air Force",
-    "city": "Panama City"
-  },
-  {
-    "name": "Vance Air Force Base",
-    "code": "END",
-    "state": "OK",
-    "service": "Air Force",
-    "city": "Enid"
-  },
-  {
-    "name": "Vandenberg Air Force Base",
-    "code": "VBG",
-    "state": "CA",
-    "service": "Air Force",
-    "city": "Lompoc"
-  },
-  {
-    "name": "Whiteman Air Force Base",
-    "code": "SZL",
-    "state": "MO",
-    "service": "Air Force",
-    "city": "Knob Noster"
-  },
-  {
-    "name": "Wright-Patterson Air Force Base",
-    "code": "FFO",
-    "state": "OH",
-    "service": "Air Force",
-    "city": "Dayton"
-  },
-  {
-    "name": "Coast Guard Academy",
-    "code": "CGA",
-    "state": "CT",
-    "service": "Coast Guard",
-    "city": "New London"
-  },
-  {
-    "name": "Coast Guard Air Station Clearwater",
-    "code": "CGC",
-    "state": "FL",
-    "service": "Coast Guard",
-    "city": "Clearwater"
-  },
-  {
-    "name": "Coast Guard Air Station Elizabeth City",
-    "code": "CGE",
-    "state": "NC",
-    "service": "Coast Guard",
-    "city": "Elizabeth City"
-  },
-  {
-    "name": "Coast Guard Base Alameda",
-    "code": "CGB",
-    "state": "CA",
-    "service": "Coast Guard",
-    "city": "Alameda"
-  },
-  {
-    "name": "Coast Guard Base Boston",
-    "code": "CGB",
-    "state": "MA",
-    "service": "Coast Guard",
-    "city": "Boston"
-  },
-  {
-    "name": "Coast Guard Base Kodiak",
-    "code": "CGK",
-    "state": "AK",
-    "service": "Coast Guard",
-    "city": "Kodiak"
-  },
-  {
-    "name": "Coast Guard Base Miami",
-    "code": "CGM",
-    "state": "FL",
-    "service": "Coast Guard",
-    "city": "Miami"
-  },
-  {
-    "name": "Coast Guard Base New Orleans",
-    "code": "CGN",
-    "state": "LA",
-    "service": "Coast Guard",
-    "city": "New Orleans"
-  },
-  {
-    "name": "Coast Guard Base Portsmouth",
-    "code": "CGP",
-    "state": "VA",
-    "service": "Coast Guard",
-    "city": "Portsmouth"
-  },
-  {
-    "name": "Coast Guard Base Seattle",
-    "code": "CGS",
-    "state": "WA",
-    "service": "Coast Guard",
-    "city": "Seattle"
-  },
-  {
-    "name": "Space Force Base Buckley",
-    "code": "BKF",
-    "state": "CO",
-    "service": "Space Force",
-    "city": "Aurora"
-  },
-  {
-    "name": "Space Force Base Cape Canaveral",
-    "code": "XMR",
-    "state": "FL",
-    "service": "Space Force",
-    "city": "Cape Canaveral"
-  },
-  {
-    "name": "Space Force Base Los Angeles",
-    "code": "LAX",
-    "state": "CA",
-    "service": "Space Force",
-    "city": "El Segundo"
-  },
-  {
-    "name": "Space Force Base Patrick",
-    "code": "COF",
-    "state": "FL",
-    "service": "Space Force",
-    "city": "Cocoa Beach"
-  },
-  {
-    "name": "Space Force Base Peterson",
-    "code": "COS",
-    "state": "CO",
-    "service": "Space Force",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Space Force Base Schriever",
-    "code": "SHR",
-    "state": "CO",
-    "service": "Space Force",
-    "city": "Colorado Springs"
-  },
-  {
-    "name": "Space Force Base Vandenberg",
-    "code": "VBG",
-    "state": "CA",
-    "service": "Space Force",
-    "city": "Lompoc"
-  }
-]
+{
+  "bases": [
+    {
+      "id": "fort-liberty",
+      "name": "Fort Liberty (Bragg)",
+      "branch": "Army",
+      "state": "NC",
+      "city": "Fayetteville",
+      "lat": 35.1390,
+      "lng": -79.0060,
+      "zip": "28310"
+    },
+    {
+      "id": "jblm",
+      "name": "Joint Base Lewis-McChord",
+      "branch": "Joint",
+      "state": "WA",
+      "city": "Tacoma",
+      "lat": 47.0979,
+      "lng": -122.5830,
+      "zip": "98433"
+    },
+    {
+      "id": "fort-campbell",
+      "name": "Fort Campbell",
+      "branch": "Army",
+      "state": "KY",
+      "city": "Clarksville",
+      "lat": 36.6514,
+      "lng": -87.4613,
+      "zip": "42223"
+    },
+    {
+      "id": "fort-hood",
+      "name": "Fort Cavazos (Hood)",
+      "branch": "Army",
+      "state": "TX",
+      "city": "Killeen",
+      "lat": 31.1348,
+      "lng": -97.7837,
+      "zip": "76544"
+    },
+    {
+      "id": "camp-pendleton",
+      "name": "Camp Pendleton",
+      "branch": "Marines",
+      "state": "CA",
+      "city": "Oceanside",
+      "lat": 33.3026,
+      "lng": -117.3156,
+      "zip": "92055"
+    },
+    {
+      "id": "camp-lejeune",
+      "name": "Camp Lejeune",
+      "branch": "Marines",
+      "state": "NC",
+      "city": "Jacksonville",
+      "lat": 34.6706,
+      "lng": -77.3477,
+      "zip": "28547"
+    },
+    {
+      "id": "twentynine-palms",
+      "name": "Twentynine Palms",
+      "branch": "Marines",
+      "state": "CA",
+      "city": "Twentynine Palms",
+      "lat": 34.2963,
+      "lng": -116.1628,
+      "zip": "92278"
+    },
+    {
+      "id": "quantico",
+      "name": "Marine Corps Base Quantico",
+      "branch": "Marines",
+      "state": "VA",
+      "city": "Quantico",
+      "lat": 38.5182,
+      "lng": -77.3093,
+      "zip": "22134"
+    },
+    {
+      "id": "parris-island",
+      "name": "Marine Corps Recruit Depot Parris Island",
+      "branch": "Marines",
+      "state": "SC",
+      "city": "Beaufort",
+      "lat": 32.3516,
+      "lng": -80.6799,
+      "zip": "29905"
+    },
+    {
+      "id": "san-diego",
+      "name": "Marine Corps Recruit Depot San Diego",
+      "branch": "Marines",
+      "state": "CA",
+      "city": "San Diego",
+      "lat": 32.7542,
+      "lng": -117.1939,
+      "zip": "92140"
+    },
+    {
+      "id": "eglin-afb",
+      "name": "Eglin Air Force Base",
+      "branch": "Air Force",
+      "state": "FL",
+      "city": "Valparaiso",
+      "lat": 30.4833,
+      "lng": -86.5253,
+      "zip": "32542"
+    },
+    {
+      "id": "nellis-afb",
+      "name": "Nellis Air Force Base",
+      "branch": "Air Force",
+      "state": "NV",
+      "city": "Las Vegas",
+      "lat": 36.2365,
+      "lng": -115.0346,
+      "zip": "89191"
+    },
+    {
+      "id": "travis-afb",
+      "name": "Travis Air Force Base",
+      "branch": "Air Force",
+      "state": "CA",
+      "city": "Fairfield",
+      "lat": 38.2627,
+      "lng": -121.9275,
+      "zip": "94535"
+    },
+    {
+      "id": "luke-afb",
+      "name": "Luke Air Force Base",
+      "branch": "Air Force",
+      "state": "AZ",
+      "city": "Glendale",
+      "lat": 33.5350,
+      "lng": -112.3833,
+      "zip": "85309"
+    },
+    {
+      "id": "hill-afb",
+      "name": "Hill Air Force Base",
+      "branch": "Air Force",
+      "state": "UT",
+      "city": "Ogden",
+      "lat": 41.1239,
+      "lng": -111.9728,
+      "zip": "84056"
+    },
+    {
+      "id": "langley-afb",
+      "name": "Joint Base Langley-Eustis",
+      "branch": "Air Force",
+      "state": "VA",
+      "city": "Hampton",
+      "lat": 37.0829,
+      "lng": -76.3607,
+      "zip": "23665"
+    },
+    {
+      "id": "lackland-afb",
+      "name": "Joint Base San Antonio",
+      "branch": "Air Force",
+      "state": "TX",
+      "city": "San Antonio",
+      "lat": 29.3843,
+      "lng": -98.5815,
+      "zip": "78236"
+    },
+    {
+      "id": "tinker-afb",
+      "name": "Tinker Air Force Base",
+      "branch": "Air Force",
+      "state": "OK",
+      "city": "Oklahoma City",
+      "lat": 35.4149,
+      "lng": -97.3866,
+      "zip": "73145"
+    },
+    {
+      "id": "macdill-afb",
+      "name": "MacDill Air Force Base",
+      "branch": "Air Force",
+      "state": "FL",
+      "city": "Tampa",
+      "lat": 27.8493,
+      "lng": -82.5032,
+      "zip": "33621"
+    },
+    {
+      "id": "norfolk-nb",
+      "name": "Naval Station Norfolk",
+      "branch": "Navy",
+      "state": "VA",
+      "city": "Norfolk",
+      "lat": 36.9467,
+      "lng": -76.2881,
+      "zip": "23511"
+    },
+    {
+      "id": "san-diego-nb",
+      "name": "Naval Base San Diego",
+      "branch": "Navy",
+      "state": "CA",
+      "city": "San Diego",
+      "lat": 32.6935,
+      "lng": -117.1228,
+      "zip": "92136"
+    },
+    {
+      "id": "pearl-harbor",
+      "name": "Joint Base Pearl Harbor-Hickam",
+      "branch": "Navy",
+      "state": "HI",
+      "city": "Honolulu",
+      "lat": 21.3550,
+      "lng": -157.9561,
+      "zip": "96860"
+    },
+    {
+      "id": "mayport-nb",
+      "name": "Naval Station Mayport",
+      "branch": "Navy",
+      "state": "FL",
+      "city": "Jacksonville",
+      "lat": 30.3927,
+      "lng": -81.4251,
+      "zip": "32228"
+    },
+    {
+      "id": "everett-nb",
+      "name": "Naval Station Everett",
+      "branch": "Navy",
+      "state": "WA",
+      "city": "Everett",
+      "lat": 47.9892,
+      "lng": -122.2283,
+      "zip": "98207"
+    },
+    {
+      "id": "great-lakes",
+      "name": "Naval Station Great Lakes",
+      "branch": "Navy",
+      "state": "IL",
+      "city": "North Chicago",
+      "lat": 42.3109,
+      "lng": -87.8479,
+      "zip": "60088"
+    },
+    {
+      "id": "fort-bragg-ca",
+      "name": "Fort Irwin",
+      "branch": "Army",
+      "state": "CA",
+      "city": "Barstow",
+      "lat": 35.2606,
+      "lng": -116.6808,
+      "zip": "92310"
+    },
+    {
+      "id": "fort-benning",
+      "name": "Fort Moore (Benning)",
+      "branch": "Army",
+      "state": "GA",
+      "city": "Columbus",
+      "lat": 32.3557,
+      "lng": -84.9452,
+      "zip": "31905"
+    },
+    {
+      "id": "fort-stewart",
+      "name": "Fort Stewart",
+      "branch": "Army",
+      "state": "GA",
+      "city": "Hinesville",
+      "lat": 31.8694,
+      "lng": -81.6099,
+      "zip": "31314"
+    },
+    {
+      "id": "fort-drum",
+      "name": "Fort Drum",
+      "branch": "Army",
+      "state": "NY",
+      "city": "Watertown",
+      "lat": 44.0459,
+      "lng": -75.7761,
+      "zip": "13602"
+    },
+    {
+      "id": "fort-bliss",
+      "name": "Fort Bliss",
+      "branch": "Army",
+      "state": "TX",
+      "city": "El Paso",
+      "lat": 31.8137,
+      "lng": -106.4206,
+      "zip": "79916"
+    },
+    {
+      "id": "fort-carson",
+      "name": "Fort Carson",
+      "branch": "Army",
+      "state": "CO",
+      "city": "Colorado Springs",
+      "lat": 38.7350,
+      "lng": -104.7930,
+      "zip": "80913"
+    },
+    {
+      "id": "fort-riley",
+      "name": "Fort Riley",
+      "branch": "Army",
+      "state": "KS",
+      "city": "Junction City",
+      "lat": 39.0413,
+      "lng": -96.7958,
+      "zip": "66442"
+    },
+    {
+      "id": "fort-polk",
+      "name": "Fort Johnson (Polk)",
+      "branch": "Army",
+      "state": "LA",
+      "city": "Leesville",
+      "lat": 31.0449,
+      "lng": -93.2120,
+      "zip": "71459"
+    },
+    {
+      "id": "fort-sam-houston",
+      "name": "Fort Sam Houston",
+      "branch": "Army",
+      "state": "TX",
+      "city": "San Antonio",
+      "lat": 29.4538,
+      "lng": -98.4394,
+      "zip": "78234"
+    },
+    {
+      "id": "fort-sill",
+      "name": "Fort Sill",
+      "branch": "Army",
+      "state": "OK",
+      "city": "Lawton",
+      "lat": 34.6501,
+      "lng": -98.4020,
+      "zip": "73503"
+    },
+    {
+      "id": "fort-leonard-wood",
+      "name": "Fort Leonard Wood",
+      "branch": "Army",
+      "state": "MO",
+      "city": "Waynesville",
+      "lat": 37.7420,
+      "lng": -92.1531,
+      "zip": "65473"
+    },
+    {
+      "id": "fort-gordon",
+      "name": "Fort Eisenhower (Gordon)",
+      "branch": "Army",
+      "state": "GA",
+      "city": "Augusta",
+      "lat": 33.4327,
+      "lng": -82.1345,
+      "zip": "30905"
+    },
+    {
+      "id": "fort-rucker",
+      "name": "Fort Novosel (Rucker)",
+      "branch": "Army",
+      "state": "AL",
+      "city": "Ozark",
+      "lat": 31.3449,
+      "lng": -85.7147,
+      "zip": "36362"
+    },
+    {
+      "id": "fort-lee",
+      "name": "Fort Gregg-Adams (Lee)",
+      "branch": "Army",
+      "state": "VA",
+      "city": "Petersburg",
+      "lat": 37.2440,
+      "lng": -77.3360,
+      "zip": "23801"
+    },
+    {
+      "id": "west-point",
+      "name": "United States Military Academy",
+      "branch": "Army",
+      "state": "NY",
+      "city": "West Point",
+      "lat": 41.3914,
+      "lng": -73.9567,
+      "zip": "10996"
+    },
+    {
+      "id": "pentagon",
+      "name": "The Pentagon",
+      "branch": "Joint",
+      "state": "VA",
+      "city": "Arlington",
+      "lat": 38.8719,
+      "lng": -77.0563,
+      "zip": "22202"
+    }
+  ]
+}
