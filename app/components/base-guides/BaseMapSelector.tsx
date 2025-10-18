@@ -370,7 +370,7 @@ export default function BaseMapSelector() {
             <button
               onClick={() => {
                 const comparisonList = getComparisonList();
-                const baseIds = comparisonList.map(b => b.baseId).join(',');
+                const baseIds = comparisonList.map((b: any) => b.baseId).join(',');
                 window.open(`/base-guides/compare?bases=${baseIds}`, '_blank');
               }}
               className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg hover:shadow-xl"
