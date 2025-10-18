@@ -352,10 +352,10 @@ export default function Header() {
             </div>
           )}
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button - Improved touch target */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-body hover:text-primary p-2"
+            className="lg:hidden text-body hover:text-primary p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Toggle menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -399,34 +399,34 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Enhanced Mobile Menu */}
+        {/* Enhanced Mobile Menu - Improved mobile UX */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-subtle dark:border-slate-700 bg-surface dark:bg-slate-900">
+          <div className="lg:hidden border-t border-subtle dark:border-slate-700 bg-surface dark:bg-slate-900 max-h-[80vh] overflow-y-auto">
             <nav className="flex flex-col">
-              {/* Search in Mobile */}
-              <div className="px-4 py-3 border-b border-subtle">
-                <form onSubmit={handleSearch} className="flex items-center gap-2">
-                  <Icon name="Search" className="w-5 h-5 text-muted" />
+              {/* Search in Mobile - Improved touch target */}
+              <div className="px-4 py-4 border-b border-subtle">
+                <form onSubmit={handleSearch} className="flex items-center gap-3">
+                  <Icon name="Search" className="w-5 h-5 text-muted flex-shrink-0" />
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Search Intel Library..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-1 text-base border-none outline-none bg-transparent"
+                    className="flex-1 text-base border-none outline-none bg-transparent min-h-[44px]"
                   />
                 </form>
               </div>
 
-              {/* Main Navigation */}
-              <div className="px-4 py-3 space-y-1">
+              {/* Main Navigation - Improved touch targets */}
+              <div className="px-4 py-3 space-y-2">
                 <Link 
                   href="/" 
-                  className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px] ${
                     isActivePath('/') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Icon name="Home" className="w-5 h-5 mr-3" />
+                  <Icon name="Home" className="w-5 h-5 mr-3 flex-shrink-0" />
                   Home
                 </Link>
                 <SignedIn>
@@ -439,42 +439,42 @@ export default function Header() {
                     <div className="space-y-1">
                       <Link 
                         href="/dashboard" 
-                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                        className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px] ${
                           pathname === '/dashboard' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-info" />
+                        <Icon name="LayoutDashboard" className="w-4 h-4 mr-3 text-info flex-shrink-0" />
                         Dashboard Overview
                       </Link>
                       <Link 
                         href="/dashboard/plan" 
-                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                        className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px] ${
                           isActivePath('/dashboard/plan') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500" />
+                        <Icon name="Sparkles" className="w-4 h-4 mr-3 text-indigo-500 flex-shrink-0" />
                         Your AI Plan
                       </Link>
                       <Link 
                         href="/dashboard/assessment" 
-                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                        className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px] ${
                           isActivePath('/dashboard/assessment') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500" />
+                        <Icon name="ClipboardCheck" className="w-4 h-4 mr-3 text-green-500 flex-shrink-0" />
                         Military Assessment
                       </Link>
                       <Link 
                         href="/dashboard/binder" 
-                        className={`flex items-center px-3 py-2 rounded-lg font-medium transition-colors ${
+                        className={`flex items-center px-4 py-3 rounded-lg font-medium transition-colors min-h-[44px] ${
                           isActivePath('/dashboard/binder') ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500" />
+                        <Icon name="FolderOpen" className="w-4 h-4 mr-3 text-purple-500 flex-shrink-0" />
                         My Binder
                       </Link>
                     </div>

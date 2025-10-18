@@ -121,36 +121,36 @@ export default function ContextualNextSteps({ userState }: ContextualNextStepsPr
 
   return (
     <div className="mb-12">
-      <h2 className="text-2xl font-serif font-black text-gray-900 mb-6 flex items-center gap-2">
-        <Icon name="Target" className="h-6 w-6 text-blue-600" />
-        Recommended Next Steps
+      <h2 className="text-xl sm:text-2xl font-serif font-black text-gray-900 mb-6 flex items-center gap-2">
+        <Icon name="Target" className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
+        <span className="break-words">Recommended Next Steps</span>
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {topSteps.map((step, index) => {
           const colors = getUrgencyColor(step.urgency);
           return (
             <AnimatedCard 
               key={step.title}
-              className={`bg-gradient-to-r ${colors.bg} rounded-xl p-6 text-white shadow-lg`}
+              className={`bg-gradient-to-r ${colors.bg} rounded-xl p-4 sm:p-6 text-white shadow-lg overflow-hidden`}
               delay={index * 50}
             >
-              <div className="flex items-start justify-between mb-4">
-                <Icon name={step.icon as any} className="h-8 w-8 text-white" />
-                <span className={`${colors.badge} text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider`}>
+              <div className="flex items-start justify-between mb-4 gap-3">
+                <Icon name={step.icon as any} className="h-6 w-6 sm:h-8 sm:w-8 text-white flex-shrink-0" />
+                <span className={`${colors.badge} text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full uppercase tracking-wider flex-shrink-0`}>
                   {colors.text}
                 </span>
               </div>
-              <h3 className="font-bold text-xl mb-2">{step.title}</h3>
-              <p className="text-white/90 text-sm mb-4 leading-relaxed">{step.description}</p>
-              <div className="flex items-center justify-between">
+              <h3 className="font-bold text-lg sm:text-xl mb-2 break-words">{step.title}</h3>
+              <p className="text-white/90 text-sm mb-4 leading-relaxed break-words">{step.description}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <Link
                   href={step.link}
-                  className="bg-white text-gray-900 px-6 py-3 rounded-lg font-bold hover:shadow-xl transition-all inline-flex items-center gap-2"
+                  className="bg-white text-gray-900 px-4 sm:px-6 py-3 rounded-lg font-bold hover:shadow-xl transition-all inline-flex items-center justify-center gap-2 min-h-[44px]"
                 >
-                  {step.cta}
-                  <Icon name="ArrowRight" className="h-4 w-4" />
+                  <span className="break-words">{step.cta}</span>
+                  <Icon name="ArrowRight" className="h-4 w-4 flex-shrink-0" />
                 </Link>
-                <span className="text-white/80 text-xs">{step.reason}</span>
+                <span className="text-white/80 text-xs break-words sm:text-right">{step.reason}</span>
               </div>
             </AnimatedCard>
           );

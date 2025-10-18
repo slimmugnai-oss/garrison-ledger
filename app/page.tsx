@@ -42,26 +42,26 @@ export default function Home() {
         {/* Subtle radial gradient - works in both modes */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)] dark:bg-[radial-gradient(120%_70%_at_50%_0%,rgba(96,165,250,0.15),transparent_60%)]" />
 
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <div className="mx-auto max-w-4xl mobile-container py-12 sm:py-16 lg:py-20 text-center">
           {/* Kicker Badge */}
           <span className="inline-flex items-center gap-2 rounded-full border border-subtle dark:border-slate-600 bg-surface dark:bg-slate-800 px-3 py-1 text-xs font-medium text-body dark:text-muted uppercase tracking-wider">
             Intelligent Military Life Planning
           </span>
 
-          {/* Main Heading - Lora serif, full contrast */}
-          <h1 className="mt-6 font-serif text-6xl md:text-7xl font-black tracking-tight text-primary dark:text-white">
+          {/* Main Heading - Mobile optimized */}
+          <h1 className="mt-6 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-primary dark:text-white break-words">
             Garrison Ledger
           </h1>
 
-          {/* Subtitle - Readable muted tone with loss aversion + DOLLAR SAVINGS */}
-          <p className="mx-auto mt-4 max-w-3xl text-xl md:text-2xl leading-relaxed text-body dark:text-muted">
+          {/* Subtitle - Mobile optimized */}
+          <p className="mx-auto mt-4 max-w-3xl text-lg sm:text-xl md:text-2xl leading-relaxed text-body dark:text-muted break-words">
             <strong className="text-danger dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
           </p>
           
-          {/* SPECIFIC DOLLAR SAVINGS - HIGH CONVERSION IMPACT */}
-          <div className="mt-8 inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all">
-            <Icon name="DollarSign" className="h-7 w-7" />
-            <span className="font-bold text-xl">Members save an average of $2,400/year on military benefits</span>
+          {/* SPECIFIC DOLLAR SAVINGS - Mobile optimized */}
+          <div className="mt-6 sm:mt-8 inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:shadow-2xl transition-all max-w-full">
+            <Icon name="DollarSign" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 flex-shrink-0" />
+            <span className="font-bold text-sm sm:text-lg lg:text-xl break-words">Members save an average of $2,400/year on military benefits</span>
           </div>
 
           {/* CTAs with loss aversion */}

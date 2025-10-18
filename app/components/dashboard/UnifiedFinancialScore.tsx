@@ -215,29 +215,29 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
   const topRecommendation = metrics.find(m => m.recommendation)?.recommendation;
 
   return (
-    <AnimatedCard delay={150} className={`bg-gradient-to-br ${getScoreColor()} text-white p-8 shadow-lg`}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
+    <AnimatedCard delay={150} className={`bg-gradient-to-br ${getScoreColor()} text-white p-4 sm:p-6 lg:p-8 shadow-lg overflow-hidden`}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold uppercase tracking-wider opacity-90 mb-1">
             Your Financial Health
           </div>
-          <h3 className="text-3xl font-black">{getScoreLabel()} Status</h3>
+          <h3 className="text-2xl sm:text-3xl font-black break-words">{getScoreLabel()} Status</h3>
         </div>
-        <div className="relative">
-          <div className="w-24 h-24 rounded-full border-4 border-white/30 flex items-center justify-center">
-            <div className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center">
-              <span className="text-2xl font-black">{displayScore}</span>
+        <div className="relative flex-shrink-0">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white/30 flex items-center justify-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white flex items-center justify-center">
+              <span className="text-xl sm:text-2xl font-black">{displayScore}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
         {metrics.map((metric) => (
-          <div key={metric.name} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">{metric.name}</span>
-              <span className="text-sm font-bold">{metric.score}/{metric.maxScore}</span>
+          <div key={metric.name} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 min-w-0">
+            <div className="flex items-center justify-between mb-2 gap-2">
+              <span className="text-sm font-semibold truncate">{metric.name}</span>
+              <span className="text-sm font-bold flex-shrink-0">{metric.score}/{metric.maxScore}</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-2 mb-2">
               <div 
@@ -245,7 +245,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
                 style={{ width: `${(metric.score / metric.maxScore) * 100}%` }}
               />
             </div>
-            <div className="text-xs opacity-80">{metric.target}</div>
+            <div className="text-xs opacity-80 break-words">{metric.target}</div>
           </div>
         ))}
       </div>
@@ -262,16 +262,16 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Link 
           href="/dashboard/assessment" 
-          className="flex-1 bg-white text-slate-600 px-4 py-3 rounded-lg font-bold text-center hover:shadow-xl transition-all"
+          className="flex-1 bg-white text-slate-600 px-4 py-3 rounded-lg font-bold text-center hover:shadow-xl transition-all min-h-[44px] flex items-center justify-center"
         >
           Take Action →
         </Link>
         <Link 
           href="/dashboard/tools" 
-          className="px-4 py-3 border-2 border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-all flex items-center gap-2"
+          className="px-4 py-3 border-2 border-white/30 text-white rounded-lg font-semibold hover:bg-white/10 transition-all flex items-center justify-center gap-2 min-h-[44px]"
         >
           <Icon name="Calculator" className="h-4 w-4" />
           Tools
