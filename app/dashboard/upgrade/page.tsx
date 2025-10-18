@@ -354,6 +354,156 @@ export default async function UpgradePage() {
             </div>
           </div>
 
+          {/* Pro Tier - For Power Users */}
+          <div className="mt-16 mb-8">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl font-bold text-primary mb-3">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Pro Tier</span> - For Power Users
+              </h2>
+              <p className="text-xl text-body">
+                Maximum plans, maximum insights, unlimited AI explainers
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Pro Monthly */}
+              <div className="rounded-2xl shadow-xl p-8 border-4 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600 mb-2">
+                    Pro Monthly
+                  </h3>
+                  <div className="mb-2">
+                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600">$24.99</span>
+                    <span className="text-body text-xl">/month</span>
+                  </div>
+                  <div className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-bold mb-4">
+                    For Serious Planners
+                  </div>
+                  <div className="mb-4 pb-4 border-b border-amber-200">
+                    <p className="text-sm font-semibold text-muted uppercase tracking-wide">Everything in Premium, plus:</p>
+                  </div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">30 AI Plans Per Month</div>
+                        <p className="text-sm text-body">vs 10 for Premium, 1 for Free</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">30 AI Explainers Per Day</div>
+                        <p className="text-sm text-body">vs 15 for Premium, 5 for Free</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">Priority AI Processing</div>
+                        <p className="text-sm text-body">Faster plan generation during peak times</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">Early Access to Beta Features</div>
+                        <p className="text-sm text-body">Test new tools before general release</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">White-Glove Support</div>
+                        <p className="text-sm text-body">4-hour response time + phone support</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <PaymentButton 
+                    priceId="price_1SJOFTQnBqVFfU8hcALojXhY"
+                    buttonText="Upgrade to Pro Monthly"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Pro Annual */}
+              <div className="rounded-2xl shadow-2xl p-10 border-4 border-orange-500 bg-gradient-to-br from-orange-50 to-red-50 relative transform scale-105">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg">
+                    💎 BEST VALUE - SAVE $50
+                  </span>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 mb-2">
+                    Pro Annual
+                  </h3>
+                  <div className="mb-2">
+                    <span className="text-2xl text-muted line-through">$299.88</span>
+                    <span className="text-sm text-muted ml-2">(monthly × 12)</span>
+                  </div>
+                  <div className="mb-2">
+                    <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">$250</span>
+                    <span className="text-body text-xl">/year</span>
+                  </div>
+                  <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-base font-black mb-4 shadow-lg">
+                    SAVE $49.88 (17% OFF)
+                  </div>
+                  <div className="bg-orange-100 border-2 border-orange-400 rounded-lg p-3 mb-6">
+                    <p className="text-sm font-bold text-orange-800">
+                      🔥 Only <span className="text-orange-600">$20.83/month</span> when paid annually
+                    </p>
+                  </div>
+                  <div className="mb-4 pb-4 border-b border-orange-200">
+                    <p className="text-sm font-semibold text-muted uppercase tracking-wide">Everything in Premium, plus:</p>
+                  </div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-start gap-3">
+                      <span className="text-orange-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">30 AI Plans Per Month</div>
+                        <p className="text-sm text-body">Perfect for complex financial situations</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-orange-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">30 AI Explainers Per Day</div>
+                        <p className="text-sm text-body">900 per month - analyze every scenario</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-orange-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">Priority AI Processing</div>
+                        <p className="text-sm text-body">Jump to the front of the queue</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-orange-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">Beta Access</div>
+                        <p className="text-sm text-body">Try new features weeks early</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-orange-500 text-xl mt-0.5">★</span>
+                      <div>
+                        <div className="text-primary font-semibold">White-Glove Support</div>
+                        <p className="text-sm text-body">4-hour response + phone support</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <PaymentButton 
+                    priceId="price_1SJOFTQnBqVFfU8hAxbEoVff"
+                    buttonText="🔥 Get Pro Annual - Best Value"
+                    className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white py-5 px-6 rounded-xl font-black text-xl shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Billing Management & Support */}
           <div className="mt-12 text-center space-y-4">
             <BillingPortalButton />
@@ -424,12 +574,12 @@ export default async function UpgradePage() {
             </div>
           </div>
 
-          {/* Free vs Premium Comparison */}
+          {/* Free vs Premium vs Pro Comparison */}
           <div className="mt-16 mb-16">
             <h2 className="text-3xl font-bold text-center text-primary mb-10">
-              Free vs Premium Comparison
+              Compare All Tiers
             </h2>
-            <div className="max-w-4xl mx-auto bg-surface rounded-2xl shadow-lg overflow-hidden">
+            <div className="max-w-5xl mx-auto bg-surface rounded-2xl shadow-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -437,6 +587,7 @@ export default async function UpgradePage() {
                       <th className="px-6 py-4 text-left text-sm font-semibold text-primary">Feature</th>
                       <th className="px-6 py-4 text-center text-sm font-semibold text-primary">Free Forever</th>
                       <th className="px-6 py-4 text-center text-sm font-semibold text-purple-900 bg-purple-50">Premium</th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-orange-900 bg-orange-50">Pro</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -444,26 +595,37 @@ export default async function UpgradePage() {
                       <td className="px-6 py-4 text-sm text-primary">Resource Toolkit Pages</td>
                       <td className="px-6 py-4 text-center text-success font-semibold">✓ All 5 Hubs</td>
                       <td className="px-6 py-4 text-center text-success font-semibold">✓ All 5 Hubs</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">✓ All 5 Hubs</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-sm text-primary">AI Plan Generation</td>
-                      <td className="px-6 py-4 text-center text-muted">Not Available</td>
-                      <td className="px-6 py-4 text-center text-success font-semibold">✓ 1x per day</td>
+                      <td className="px-6 py-4 text-sm text-primary">AI Plans Per Month</td>
+                      <td className="px-6 py-4 text-center text-body">1 plan/month</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">10 plans/month</td>
+                      <td className="px-6 py-4 text-center text-orange-600 font-black">30 plans/month</td>
                     </tr>
                     <tr className="bg-surface-hover">
-                      <td className="px-6 py-4 text-sm text-primary">Intel Directory</td>
-                      <td className="px-6 py-4 text-center text-muted">Not Available</td>
-                      <td className="px-6 py-4 text-center text-success font-semibold">✓ Full Access</td>
+                      <td className="px-6 py-4 text-sm text-primary">Intelligence Library</td>
+                      <td className="px-6 py-4 text-center text-body">5 articles/day</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">✓ Unlimited</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">✓ Unlimited</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-sm text-primary">Premium Calculators</td>
-                      <td className="px-6 py-4 text-center text-muted">Previews Only</td>
+                      <td className="px-6 py-4 text-sm text-primary">AI Explainers Per Day</td>
+                      <td className="px-6 py-4 text-center text-body">5 per day</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">15 per day</td>
+                      <td className="px-6 py-4 text-center text-orange-600 font-black">30 per day</td>
+                    </tr>
+                    <tr className="bg-surface-hover">
+                      <td className="px-6 py-4 text-sm text-primary">Calculator Tools</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">✓ All 6 Tools</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">✓ All 6 Tools</td>
                       <td className="px-6 py-4 text-center text-success font-semibold">✓ All 6 Tools</td>
                     </tr>
-                    <tr className="bg-surface-hover">
+                    <tr>
                       <td className="px-6 py-4 text-sm text-primary">Support</td>
-                      <td className="px-6 py-4 text-center text-sm text-body">Email</td>
-                      <td className="px-6 py-4 text-center text-success font-semibold">✓ Priority Email</td>
+                      <td className="px-6 py-4 text-center text-sm text-body">Email (48hr)</td>
+                      <td className="px-6 py-4 text-center text-success font-semibold">Priority (24hr)</td>
+                      <td className="px-6 py-4 text-center text-orange-600 font-black">White-Glove (4hr)</td>
                     </tr>
                   </tbody>
                 </table>

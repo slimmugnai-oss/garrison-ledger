@@ -30,11 +30,31 @@ export async function POST(req: NextRequest) {
       if (session.metadata?.userId) {
         const userId = session.metadata.userId;
         
+        // Get the subscription to determine tier based on price ID
+        let tier: 'premium' | 'pro' = 'premium'; // default to premium
+        
+        if (session.subscription) {
+          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+          const priceId = subscription.items.data[0]?.price.id;
+          
+          // Map price ID to tier
+          // Pro tier price IDs
+          if (priceId === 'price_1SJOFTQnBqVFfU8hcALojXhY' || // Pro Monthly
+              priceId === 'price_1SJOFTQnBqVFfU8hAxbEoVff') { // Pro Annual
+            tier = 'pro';
+          }
+          // Premium tier price IDs (fallback default)
+          else if (priceId === 'price_1SHdWQQnBqVFfU8hW2UE3je8' || // Premium Monthly
+                   priceId === 'price_1SHdWpQnBqVFfU8hPGQ3hLqK') { // Premium Annual
+            tier = 'premium';
+          }
+        }
+        
         await supabaseAdmin
           .from('entitlements')
           .upsert({
             user_id: userId,
-            tier: 'premium',
+            tier: tier,
             status: 'active',
             current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
             stripe_customer_id: session.customer as string,
@@ -42,7 +62,7 @@ export async function POST(req: NextRequest) {
             updated_at: new Date().toISOString()
           });
         
-        console.log('Updated entitlements for user:', userId);
+        console.log(`Updated entitlements for user ${userId} to ${tier} tier`);
         
         // 🎯 PROCESS REFERRAL CONVERSION (Give $10 rewards to both users)
         try {

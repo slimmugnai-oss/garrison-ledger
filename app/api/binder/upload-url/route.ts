@@ -13,8 +13,9 @@ const FOLDER_NAMES = [
   "Legal"
 ] as const;
 
-const FREE_STORAGE_LIMIT = 100 * 1024 * 1024; // 100 MB
-const PREMIUM_STORAGE_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB
+const FREE_STORAGE_LIMIT = 25 * 1024 * 1024; // 25 MB (forces upgrade incentive)
+const PREMIUM_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB (plenty for most users)
+const PRO_STORAGE_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB (power users)
 
 function getAdminClient() {
   return createClient(
@@ -100,8 +101,24 @@ export async function POST(req: NextRequest) {
   }
 
   const currentUsage = existingFiles?.reduce((sum, f) => sum + (f.size_bytes || 0), 0) || 0;
-  const isPremium = await isPremiumServer(userId);
-  const storageLimit = isPremium ? PREMIUM_STORAGE_LIMIT : FREE_STORAGE_LIMIT;
+  
+  // Get user's tier to determine storage limit
+  const { data: entitlement } = await supabase
+    .from('entitlements')
+    .select('tier, status')
+    .eq('user_id', userId)
+    .maybeSingle();
+  
+  const tier = (entitlement?.tier === 'premium' || entitlement?.tier === 'pro') && entitlement?.status === 'active' 
+    ? entitlement.tier 
+    : 'free';
+  
+  let storageLimit = FREE_STORAGE_LIMIT;
+  if (tier === 'pro') {
+    storageLimit = PRO_STORAGE_LIMIT;
+  } else if (tier === 'premium') {
+    storageLimit = PREMIUM_STORAGE_LIMIT;
+  }
 
   if (currentUsage + sizeBytes > storageLimit) {
     return NextResponse.json(

@@ -15,6 +15,22 @@ function formatFileSize(bytes: number): string {
 
 export default function StorageBar({ used, limit, isPremium }: StorageBarProps) {
   const storagePercent = Math.round((used / limit) * 100);
+  
+  // Determine tier based on limit
+  const FREE_LIMIT = 25 * 1024 * 1024; // 25 MB
+  const PREMIUM_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
+  const PRO_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB
+  
+  let tierLabel = '25 MB Free Storage';
+  let upgradeText = 'Upgrade to Premium for 1 GB →';
+  
+  if (limit >= PRO_LIMIT) {
+    tierLabel = '10 GB Pro Storage';
+    upgradeText = '';
+  } else if (limit >= PREMIUM_LIMIT) {
+    tierLabel = '1 GB Premium Storage';
+    upgradeText = 'Upgrade to Pro for 10 GB →';
+  }
 
   return (
     <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-xl border border-[#2A2F3E] p-6 mb-6 shadow-lg">
@@ -22,7 +38,7 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
         <div>
           <span className="text-sm font-medium text-muted">Storage Used</span>
           <p className="text-xs text-muted mt-0.5">
-            {isPremium ? '10 GB Premium Storage' : '100 MB Free Storage'}
+            {tierLabel}
           </p>
         </div>
         <div className="text-right">
@@ -30,12 +46,12 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
             {formatFileSize(used)}
           </span>
           <span className="text-sm text-muted"> / {formatFileSize(limit)}</span>
-          {!isPremium && (
+          {upgradeText && (
             <a
               href="/dashboard/upgrade"
               className="block mt-1 text-xs text-[#00E5A0] hover:text-[#00CC8E] font-medium transition-colors"
             >
-              Upgrade for 10 GB →
+              {upgradeText}
             </a>
           )}
         </div>
