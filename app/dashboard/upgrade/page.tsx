@@ -327,7 +327,7 @@ export default async function UpgradePage() {
 
                   <div className="bg-white rounded-lg p-4 border border-orange-200">
                     <div className="flex items-start gap-3 mb-3">
-                      <Icon name="Headphones" className="w-5 h-5 text-orange-600 flex-shrink-0 mt-1" />
+                      <Icon name="MessageCircle" className="w-5 h-5 text-orange-600 flex-shrink-0 mt-1" />
                       <div className="min-w-0">
                         <div className="font-bold text-text-headings">VIP Treatment</div>
                       </div>
@@ -506,7 +506,7 @@ export default async function UpgradePage() {
 
                     <tr className="bg-slate-50">
                       <td colSpan={4} className="px-4 sm:px-6 py-2 text-sm font-bold text-slate-900">
-                        <Icon name="Headphones" className="w-4 h-4 inline mr-2" />
+                        <Icon name="MessageCircle" className="w-4 h-4 inline mr-2" />
                         Support & Access
                       </td>
                     </tr>
