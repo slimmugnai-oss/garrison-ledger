@@ -320,7 +320,7 @@ export default function BaseComparisonClient({ baseIds }: { baseIds: string[] })
       <AnimatedCard delay={400}>
         <div className="bg-white border-2 border-slate-200 rounded-2xl p-6">
           <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
-            <Icon name="GraduationCap" className="h-6 w-6 text-purple-600" />
+            <Icon name="BookOpen" className="h-6 w-6 text-purple-600" />
             School Ratings Comparison
           </h3>
           
