@@ -195,22 +195,32 @@ async function processOCR(
 
     // Parse OCR response
     let ocrData: Record<string, unknown>;
+    let parseSuccess = false;
     try {
       ocrData = JSON.parse(extractedText);
+      parseSuccess = true;
     } catch {
       ocrData = { raw_text: extractedText };
     }
 
+    // Calculate OCR confidence score
+    const ocrConfidence = calculateOCRConfidence(ocrData, documentType);
+
     // Normalize data based on document type
     const normalizedData = normalizeDocument(documentType, ocrData);
 
-    // Update document record
+    // Update document record with OCR confidence
     await supabaseAdmin
       .from('pcs_claim_documents')
       .update({
-        ocr_status: 'completed',
+        ocr_status: ocrConfidence.score >= 70 ? 'completed' : 'needs_review',
         ocr_data: ocrData,
-        normalized_data: normalizedData,
+        normalized_data: {
+          ...normalizedData,
+          ocr_confidence: ocrConfidence.score,
+          ocr_confidence_level: ocrConfidence.level,
+          requires_manual_review: ocrConfidence.score < 70
+        },
         updated_at: new Date().toISOString()
       })
       .eq('id', documentId);
@@ -328,5 +338,49 @@ function normalizeDocument(documentType: string, ocrData: Record<string, unknown
     extracted_at: new Date().toISOString(),
     ...ocrData
   };
+}
+
+/**
+ * Calculate OCR confidence score based on extracted data quality
+ */
+function calculateOCRConfidence(
+  ocrData: Record<string, unknown>,
+  documentType: string
+): {
+  score: number;
+  level: 'high' | 'medium' | 'low';
+  message: string;
+} {
+  let score = 0;
+  const requiredFields: Record<string, string[]> = {
+    orders: ['member_name', 'rank', 'orders_date', 'origin_base', 'destination_base'],
+    weigh_ticket: ['weigh_date', 'weight', 'vehicle_info', 'location'],
+    lodging_receipt: ['vendor', 'location', 'check_in_date', 'check_out_date', 'total_amount'],
+    fuel_receipt: ['vendor', 'location', 'date', 'total_amount'],
+    meal_receipt: ['vendor', 'location', 'date', 'total_amount']
+  };
+
+  const required = requiredFields[documentType] || [];
+  const fieldsPresent = required.filter(field => {
+    const value = ocrData[field];
+    return value !== null && value !== undefined && value !== '';
+  });
+
+  // Calculate score based on field completeness
+  if (required.length > 0) {
+    score = Math.round((fieldsPresent.length / required.length) * 100);
+  } else {
+    // For 'other' documents, check if we have any meaningful data
+    score = Object.keys(ocrData).length > 2 ? 80 : 50;
+  }
+
+  const level = score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low';
+  const message = level === 'high'
+    ? 'OCR extraction successful - all key fields identified'
+    : level === 'medium'
+    ? 'OCR extraction partial - please review and confirm accuracy'
+    : 'OCR extraction incomplete - manual entry recommended';
+
+  return { score, level, message };
 }
 
