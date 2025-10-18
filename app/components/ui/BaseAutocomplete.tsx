@@ -1,15 +1,20 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import militaryBases from '@/lib/data/military-bases.json';
+import militaryBasesData from '@/lib/data/military-bases.json';
 
 interface MilitaryBase {
+  id: string;
   name: string;
-  code: string;
+  branch: string;
   state: string;
-  service: string;
   city: string;
+  lat: number;
+  lng: number;
+  zip: string;
 }
+
+const militaryBases = militaryBasesData.bases as MilitaryBase[];
 
 interface BaseAutocompleteProps {
   value: string;
@@ -39,9 +44,9 @@ export default function BaseAutocomplete({
 
     const filtered = militaryBases.filter(base => 
       base.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-      base.code.toLowerCase().includes(inputValue.toLowerCase()) ||
       base.city.toLowerCase().includes(inputValue.toLowerCase()) ||
-      base.state.toLowerCase().includes(inputValue.toLowerCase())
+      base.state.toLowerCase().includes(inputValue.toLowerCase()) ||
+      base.branch.toLowerCase().includes(inputValue.toLowerCase())
     );
 
     // Sort by relevance (exact matches first, then by name)
@@ -156,7 +161,7 @@ export default function BaseAutocomplete({
         >
           {filteredBases.map((base, index) => (
             <div
-              key={`${base.code}-${index}`}
+              key={`${base.id}-${index}`}
               className={`px-3 py-2 cursor-pointer border-b border-gray-100 last:border-b-0 ${
                 index === highlightedIndex 
                   ? 'bg-blue-50 text-blue-900' 
@@ -167,8 +172,7 @@ export default function BaseAutocomplete({
             >
               <div className="font-medium text-sm">{base.name}</div>
               <div className="text-xs text-muted">
-                {base.city}, {base.state} • {base.service}
-                {base.code && <span> • {base.code}</span>}
+                {base.city}, {base.state} • {base.branch}
               </div>
             </div>
           ))}
