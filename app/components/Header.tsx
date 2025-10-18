@@ -454,6 +454,7 @@ export default function Header() {
                     </div>
                   )}
                 </div>
+              </SignedIn>
 
               {/* Resources Dropdown */}
               <div 
