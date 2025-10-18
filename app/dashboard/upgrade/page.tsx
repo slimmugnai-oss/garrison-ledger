@@ -166,37 +166,26 @@ export default async function UpgradePage() {
             </div>
           )}
 
-          {/* Premium & Pro Pricing Cards */}
+          {/* Monthly Plans - HERO (Avoid Sticker Shock) */}
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto mb-12 sm:mb-16">
-            {/* Premium Annual - HERO */}
-            <div className="mobile-card rounded-2xl shadow-2xl p-6 sm:p-10 border-4 border-slate-700 bg-gradient-to-br from-slate-50 to-slate-100 relative transform lg:scale-105 order-1 lg:order-1">
+            {/* Premium Monthly - HERO */}
+            <div className="mobile-card rounded-2xl shadow-xl p-6 sm:p-10 border-2 border-slate-300 bg-white relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg whitespace-nowrap">
                   ⭐ MOST POPULAR - 83% CHOOSE THIS
                 </span>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Icon name="Star" className="w-6 h-6 text-slate-700" />
-                  <h3 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-900">
-                    Premium Annual
+                <div className="mb-4">
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
+                    Premium
                   </h3>
+                  <p className="text-text-muted text-sm">Most popular choice</p>
                 </div>
-                <div className="mb-2">
-                  <span className="text-xl sm:text-2xl text-muted line-through">$359.88</span>
-                  <span className="text-sm text-muted ml-2">(monthly × 12)</span>
-                </div>
-                <div className="mb-3">
-                  <span className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-900">$99</span>
-                  <span className="text-text-body text-xl">/year</span>
-                </div>
-                <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm sm:text-base font-black mb-4 shadow-lg">
-                  SAVE $260.88 (72% OFF)
-                </div>
-                <div className="bg-warning-subtle border-2 border-yellow-400 rounded-lg p-3 mb-6">
-                  <p className="text-sm font-bold text-warning">
-                    Only <span className="text-danger">$8.25/month</span> when paid annually
-                  </p>
+                <div className="mb-6">
+                  <div className="text-5xl sm:text-6xl font-black text-slate-900">$9.99</div>
+                  <div className="text-text-body text-lg">per month</div>
+                  <p className="text-sm text-text-muted mt-2">Cancel anytime, no commitment</p>
                 </div>
 
                 {/* Features Grid */}
@@ -254,43 +243,32 @@ export default async function UpgradePage() {
                   </button>
                 ) : (
                   <PaymentButton 
-                    priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                    buttonText="Get Best Value - Save $260"
-                    className="mobile-button w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
+                    priceId="price_1SHdWQQnBqVFfU8hW2UE3je8"
+                    buttonText="Start Premium Monthly"
+                    className="mobile-button w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white shadow-lg hover:shadow-xl transition-all"
                   />
                 )}
               </div>
             </div>
 
-            {/* Pro Annual - PREMIUM */}
-            <div className="mobile-card rounded-2xl shadow-2xl p-6 sm:p-10 border-4 border-orange-500 bg-gradient-to-br from-orange-50 to-red-50 relative transform lg:scale-105 order-2">
+            {/* Pro Monthly */}
+            <div className="mobile-card rounded-2xl shadow-xl p-6 sm:p-10 border-2 border-orange-300 bg-white relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg whitespace-nowrap">
-                  POWER USERS - ULTIMATE VALUE
+                  FOR POWER USERS
                 </span>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Icon name="Zap" className="w-6 h-6 text-orange-600" />
-                  <h3 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
-                    Pro Annual
+                <div className="mb-4">
+                  <h3 className="text-2xl sm:text-3xl font-black text-orange-900 mb-2">
+                    Pro
                   </h3>
+                  <p className="text-text-muted text-sm">Maximum AI capacity</p>
                 </div>
-                <div className="mb-2">
-                  <span className="text-xl sm:text-2xl text-muted line-through">$299.88</span>
-                  <span className="text-sm text-muted ml-2">(monthly × 12)</span>
-                </div>
-                <div className="mb-3">
-                  <span className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">$250</span>
-                  <span className="text-text-body text-xl">/year</span>
-                </div>
-                <div className="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm sm:text-base font-black mb-4 shadow-lg">
-                  SAVE $49.88 (17% OFF)
-                </div>
-                <div className="bg-orange-100 border-2 border-orange-400 rounded-lg p-3 mb-6">
-                  <p className="text-sm font-bold text-orange-800">
-                    Only <span className="text-orange-600">$20.83/month</span> when paid annually
-                  </p>
+                <div className="mb-6">
+                  <div className="text-5xl sm:text-6xl font-black text-orange-600">$24.99</div>
+                  <div className="text-text-body text-lg">per month</div>
+                  <p className="text-sm text-text-muted mt-2">Cancel anytime, no commitment</p>
                 </div>
 
                 {/* Features Grid */}
@@ -348,55 +326,55 @@ export default async function UpgradePage() {
                   </button>
                 ) : (
                   <PaymentButton 
-                    priceId="price_1SJOFTQnBqVFfU8hAxbEoVff"
-                    buttonText="Get Pro Annual - Best Value"
-                    className="mobile-button w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
+                    priceId="price_1SJOFTQnBqVFfU8hcALojXhY"
+                    buttonText="Start Pro Monthly"
+                    className="mobile-button w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all"
                   />
                 )}
               </div>
             </div>
           </div>
 
-          {/* Monthly Options - Compact */}
+          {/* Annual Plans - Save Even More */}
           {!isPaid && (
             <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
               <div className="text-center mb-6">
                 <h3 className="text-xl sm:text-2xl font-bold text-text-headings mb-2">
-                  Prefer Monthly Billing?
+                  Save More with Annual Billing
                 </h3>
-                <p className="text-text-body">Less savings, but more flexibility</p>
+                <p className="text-text-body">Pay upfront and save up to 2 months</p>
               </div>
               <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-                {/* Premium Monthly */}
-                <div className="mobile-card bg-white border-2 border-slate-200">
+                {/* Premium Annual */}
+                <div className="mobile-card bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-300">
                   <div className="text-center mb-4">
-                    <h4 className="text-lg font-bold text-text-headings mb-2">Premium Monthly</h4>
+                    <h4 className="text-lg font-bold text-text-headings mb-2">Premium Annual</h4>
                     <div>
-                      <span className="text-3xl font-black text-slate-700">$9.99</span>
-                      <span className="text-text-body">/month</span>
+                      <span className="text-3xl font-black text-slate-700">$99</span>
+                      <span className="text-text-body">/year</span>
                     </div>
-                    <p className="text-sm text-text-muted mt-2">Save 67% vs regular price</p>
+                    <p className="text-sm text-success mt-2 font-semibold">Save $20.88 (only $8.25/mo)</p>
                   </div>
                   <PaymentButton 
-                    priceId="price_1SHdWQQnBqVFfU8hW2UE3je8"
-                    buttonText="Start Premium Monthly"
+                    priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
+                    buttonText="Get Premium Annual"
                     className="mobile-button w-full bg-slate-700 hover:bg-slate-800 text-white"
                   />
                 </div>
 
-                {/* Pro Monthly */}
-                <div className="mobile-card bg-white border-2 border-orange-200">
+                {/* Pro Annual */}
+                <div className="mobile-card bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300">
                   <div className="text-center mb-4">
-                    <h4 className="text-lg font-bold text-text-headings mb-2">Pro Monthly</h4>
+                    <h4 className="text-lg font-bold text-text-headings mb-2">Pro Annual</h4>
                     <div>
-                      <span className="text-3xl font-black text-orange-600">$24.99</span>
-                      <span className="text-text-body">/month</span>
+                      <span className="text-3xl font-black text-orange-600">$250</span>
+                      <span className="text-text-body">/year</span>
                     </div>
-                    <p className="text-sm text-text-muted mt-2">For power planners</p>
+                    <p className="text-sm text-success mt-2 font-semibold">Save $49.88 (only $20.83/mo)</p>
                   </div>
                   <PaymentButton 
-                    priceId="price_1SJOFTQnBqVFfU8hcALojXhY"
-                    buttonText="Start Pro Monthly"
+                    priceId="price_1SJOFTQnBqVFfU8hAxbEoVff"
+                    buttonText="Get Pro Annual"
                     className="mobile-button w-full bg-orange-600 hover:bg-orange-700 text-white"
                   />
                 </div>
