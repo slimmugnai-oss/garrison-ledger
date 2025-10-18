@@ -123,6 +123,133 @@ export default async function CommandDashboard() {
           {/* Quick Actions Command Bar - NEW */}
           <QuickActions isPremium={isPremium} />
 
+          {/* Profile Snapshot - Moved to top for better UX */}
+          {profileComplete && (
+            <AnimatedCard className="mb-12 p-10 md:p-12 bg-card border border-border shadow-sm" delay={0}>
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-3xl md:text-4xl font-serif font-black text-text-headings">Your Profile</h2>
+                <Link href="/dashboard/profile/setup" className="inline-flex items-center gap-2 rounded-lg border-2 border-default px-5 py-2.5 text-indigo-600 font-semibold transition-all hover:border-indigo-600 hover:-translate-y-[2px]">
+                  <Icon name="Pencil" className="h-4 w-4 inline" /> Edit
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Military Identity - Clean home style */}
+                {(profileRow?.rank || profileRow?.branch) && (
+                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
+                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Military</div>
+                    <div className="text-2xl font-black text-text-headings mb-1">
+                      {profileRow?.rank || 'Service Member'}
+                    </div>
+                    {profileRow?.branch && (
+                      <div className="text-sm font-medium text-body">{profileRow.branch}</div>
+                    )}
+                    {profileRow?.component && (
+                      <div className="text-xs text-muted mt-1">{profileRow.component}</div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Location & PCS - Clean style */}
+                {(profileRow?.current_base || profileRow?.pcs_date) && (
+                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
+                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Station</div>
+                    <div className="text-2xl font-black text-text-headings mb-1">
+                      {profileRow?.current_base || 'Unknown'}
+                    </div>
+                    {profileRow?.pcs_date && (
+                      <div className="text-sm font-medium text-body">
+                        PCS: {new Date(profileRow.pcs_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Family - Clean style */}
+                {(profileRow?.marital_status || profileRow?.num_children !== null) && (
+                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
+                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Family</div>
+                    <div className="text-2xl font-black text-primary capitalize mb-1">
+                      {profileRow?.marital_status || 'Not specified'}
+                    </div>
+                    {profileRow?.num_children !== null && profileRow?.num_children > 0 && (
+                      <div className="text-sm font-medium text-body">
+                        {profileRow.num_children} {profileRow.num_children === 1 ? 'child' : 'children'}
+                        {profileRow?.has_efmp && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">EFMP</span>}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Financial Snapshot - Clean style */}
+                {(profileRow?.tsp_balance_range || profileRow?.debt_amount_range) && (
+                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
+                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Finances</div>
+                    {profileRow?.tsp_balance_range && (
+                      <div className="text-sm font-semibold text-success mb-1">
+                        TSP: {profileRow.tsp_balance_range}
+                      </div>
+                    )}
+                    {profileRow?.debt_amount_range && (
+                      <div className="text-sm font-medium text-body">
+                        Debt: {profileRow.debt_amount_range}
+                      </div>
+                    )}
+                    {profileRow?.emergency_fund_range && (
+                      <div className="text-xs text-muted mt-1">
+                        Emergency: {profileRow.emergency_fund_range}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Fallback if no profile data */}
+                {!profileRow?.rank && !profileRow?.branch && !profileRow?.current_base && !profileRow?.marital_status && !profileRow?.tsp_balance_range && !profileRow?.debt_amount_range && (
+                  <div className="col-span-full text-center py-6">
+                    <p className="text-muted mb-4">Complete your profile to see personalized insights here</p>
+                    <Link 
+                      href="/dashboard/profile/setup"
+                      className="inline-flex items-center bg-info hover:bg-info text-white px-6 py-3 rounded-lg font-bold transition-all shadow"
+                    >
+                      Set up profile →
+                    </Link>
+                  </div>
+                )}
+              </div>
+              
+              {/* Career Interests & Goals - Subtle style */}
+              {(profileRow?.career_interests?.length > 0 || profileRow?.financial_priorities?.length > 0) && (
+                <div className="mt-8 pt-8 border-t border-subtle">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {profileRow?.career_interests?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Career Interests</div>
+                        <div className="flex flex-wrap gap-2">
+                          {profileRow.career_interests.map((interest: string) => (
+                            <span key={interest} className="px-3 py-1.5 bg-info-subtle text-info border border-info rounded-lg text-sm font-medium capitalize">
+                              {interest}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {profileRow?.financial_priorities?.length > 0 && (
+                      <div>
+                        <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Financial Priorities</div>
+                        <div className="flex flex-wrap gap-2">
+                          {profileRow.financial_priorities.map((priority: string) => (
+                            <span key={priority} className="px-3 py-1.5 bg-success-subtle text-success border border-success rounded-lg text-sm font-medium capitalize">
+                              {priority}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </AnimatedCard>
+          )}
+
           {/* Onboarding CTAs & Plan Widget */}
           {(!profileComplete || !hasAssessment || hasPlan || planGenerating) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -356,156 +483,6 @@ export default async function CommandDashboard() {
             </div>
           )}
 
-          {/* Settings Widget - Always show */}
-          <div className="mb-12">
-            <AnimatedCard delay={300} className="bg-card border border-border shadow-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
-                    <Icon name="Settings" className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-text-headings">Account Settings</h3>
-                    <p className="text-sm text-text-body">Manage your profile, billing, and preferences</p>
-                  </div>
-                </div>
-                <Link
-                  href="/dashboard/settings"
-                  className="px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
-                >
-                  <Icon name="Settings" className="w-4 h-4" />
-                  Go to Settings
-                </Link>
-              </div>
-            </AnimatedCard>
-          </div>
-
-          {/* Profile Snapshot - Always show if profile is completed */}
-          {profileComplete && (
-            <AnimatedCard className="mb-12 p-10 md:p-12 bg-card border border-border shadow-sm" delay={0}>
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-3xl md:text-4xl font-serif font-black text-text-headings">Your Profile</h2>
-                <Link href="/dashboard/profile/setup" className="inline-flex items-center gap-2 rounded-lg border-2 border-default px-5 py-2.5 text-indigo-600 font-semibold transition-all hover:border-indigo-600 hover:-translate-y-[2px]">
-                  <Icon name="Pencil" className="h-4 w-4 inline" /> Edit
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Military Identity - Clean home style */}
-                {(profileRow?.rank || profileRow?.branch) && (
-                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
-                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Military</div>
-                    <div className="text-2xl font-black text-text-headings mb-1">
-                      {profileRow?.rank || 'Service Member'}
-                    </div>
-                    {profileRow?.branch && (
-                      <div className="text-sm font-medium text-body">{profileRow.branch}</div>
-                    )}
-                    {profileRow?.component && (
-                      <div className="text-xs text-muted mt-1">{profileRow.component}</div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Location & PCS - Clean style */}
-                {(profileRow?.current_base || profileRow?.pcs_date) && (
-                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
-                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Station</div>
-                    <div className="text-2xl font-black text-text-headings mb-1">
-                      {profileRow?.current_base || 'Unknown'}
-                    </div>
-                    {profileRow?.pcs_date && (
-                      <div className="text-sm font-medium text-body">
-                        PCS: {new Date(profileRow.pcs_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Family - Clean style */}
-                {(profileRow?.marital_status || profileRow?.num_children !== null) && (
-                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
-                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Family</div>
-                    <div className="text-2xl font-black text-primary capitalize mb-1">
-                      {profileRow?.marital_status || 'Not specified'}
-                    </div>
-                    {profileRow?.num_children !== null && profileRow?.num_children > 0 && (
-                      <div className="text-sm font-medium text-body">
-                        {profileRow.num_children} {profileRow.num_children === 1 ? 'child' : 'children'}
-                        {profileRow?.has_efmp && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">EFMP</span>}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Financial Snapshot - Clean style */}
-                {(profileRow?.tsp_balance_range || profileRow?.debt_amount_range) && (
-                  <div className="border border-subtle rounded-xl p-6 bg-surface-hover hover:shadow-md transition-shadow">
-                    <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Finances</div>
-                    {profileRow?.tsp_balance_range && (
-                      <div className="text-sm font-semibold text-success mb-1">
-                        TSP: {profileRow.tsp_balance_range}
-                      </div>
-                    )}
-                    {profileRow?.debt_amount_range && (
-                      <div className="text-sm font-medium text-body">
-                        Debt: {profileRow.debt_amount_range}
-                      </div>
-                    )}
-                    {profileRow?.emergency_fund_range && (
-                      <div className="text-xs text-muted mt-1">
-                        Emergency: {profileRow.emergency_fund_range}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Fallback if no profile data */}
-                {!profileRow?.rank && !profileRow?.branch && !profileRow?.current_base && !profileRow?.marital_status && !profileRow?.tsp_balance_range && !profileRow?.debt_amount_range && (
-                  <div className="col-span-full text-center py-6">
-                    <p className="text-muted mb-4">Complete your profile to see personalized insights here</p>
-                    <Link 
-                      href="/dashboard/profile/setup"
-                      className="inline-flex items-center bg-info hover:bg-info text-white px-6 py-3 rounded-lg font-bold transition-all shadow"
-                    >
-                      Set up profile →
-                    </Link>
-                  </div>
-                )}
-              </div>
-              
-              {/* Career Interests & Goals - Subtle style */}
-              {(profileRow?.career_interests?.length > 0 || profileRow?.financial_priorities?.length > 0) && (
-                <div className="mt-8 pt-8 border-t border-subtle">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {profileRow?.career_interests?.length > 0 && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Career Interests</div>
-                        <div className="flex flex-wrap gap-2">
-                          {profileRow.career_interests.map((interest: string) => (
-                            <span key={interest} className="px-3 py-1.5 bg-info-subtle text-info border border-info rounded-lg text-sm font-medium capitalize">
-                              {interest}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {profileRow?.financial_priorities?.length > 0 && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Financial Priorities</div>
-                        <div className="flex flex-wrap gap-2">
-                          {profileRow.financial_priorities.map((priority: string) => (
-                            <span key={priority} className="px-3 py-1.5 bg-success-subtle text-success border border-success rounded-lg text-sm font-medium capitalize">
-                              {priority}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </AnimatedCard>
-          )}
 
           {hasAssessment && (
             <>
@@ -925,6 +902,30 @@ export default async function CommandDashboard() {
               </Link>
             </AnimatedCard>
           )}
+
+          {/* Account Settings - Moved to bottom for better UX */}
+          <div className="mb-12">
+            <AnimatedCard delay={300} className="bg-card border border-border shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
+                    <Icon name="Settings" className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-headings">Account Settings</h3>
+                    <p className="text-sm text-text-body">Manage your profile, billing, and preferences</p>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard/settings"
+                  className="px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                  <Icon name="Settings" className="w-4 h-4" />
+                  Go to Settings
+                </Link>
+              </div>
+            </AnimatedCard>
+          </div>
         </div>
       </div>
       </DashboardAnalyticsProvider>
