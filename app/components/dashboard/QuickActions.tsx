@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '../ui/Icon';
 
-export default function QuickActions() {
+interface QuickActionsProps {
+  isPremium?: boolean;
+}
+
+export default function QuickActions({ isPremium = false }: QuickActionsProps) {
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,6 +35,12 @@ export default function QuickActions() {
       action: () => setShowSearch(true),
       color: 'bg-slate-500/20 hover:bg-slate-500/30 text-slate-100'
     },
+    ...(isPremium ? [{
+      icon: 'Truck' as const,
+      label: 'PCS Copilot',
+      action: () => router.push('/dashboard/pcs-copilot'),
+      color: 'bg-orange-500/20 hover:bg-orange-500/30 text-orange-100'
+    }] : []),
     {
       icon: 'Upload',
       label: 'Upload Doc',

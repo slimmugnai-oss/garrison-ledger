@@ -121,7 +121,7 @@ export default async function CommandDashboard() {
           )}
 
           {/* Quick Actions Command Bar - NEW */}
-          <QuickActions />
+          <QuickActions isPremium={isPremium} />
 
           {/* Onboarding CTAs & Plan Widget */}
           {(!profileComplete || !hasAssessment || hasPlan || planGenerating) && (
