@@ -354,9 +354,9 @@ export default function BaseMapSelector() {
         </div>
       </div>
 
-      {/* Comparison Counter */}
+      {/* Comparison Counter & Action */}
       {comparisonCount > 0 && (
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4">
           <div className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-300 text-emerald-800 px-4 py-2 rounded-full shadow-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -365,6 +365,22 @@ export default function BaseMapSelector() {
               {comparisonCount} base{comparisonCount > 1 ? 's' : ''} added to comparison
             </span>
           </div>
+          
+          {comparisonCount >= 2 && (
+            <button
+              onClick={() => {
+                const comparisonList = getComparisonList();
+                const baseIds = comparisonList.map(b => b.baseId).join(',');
+                window.open(`/base-guides/compare?bases=${baseIds}`, '_blank');
+              }}
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg hover:shadow-xl"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              Compare Now
+            </button>
+          )}
         </div>
       )}
 
