@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
         error: "Storage limit exceeded",
         currentUsage,
         limit: storageLimit,
-        isPremium
+        tier
       },
       { status: 403 }
     );
