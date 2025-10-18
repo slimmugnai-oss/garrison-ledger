@@ -161,6 +161,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Check 5: TLE exceeds 10 days per location
+    const tleDays = items?.filter(item => 
+      item.category === 'lodging' || 
+      item.description?.toLowerCase().includes('hotel') ||
+      item.description?.toLowerCase().includes('lodging')
+    ).length || 0;
+    
     if (tleDays > 20) {
       checks.push({
         check_type: 'warning',
