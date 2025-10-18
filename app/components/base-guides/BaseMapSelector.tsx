@@ -408,13 +408,13 @@ export default function BaseMapSelector() {
               {/* Add to Comparison Button */}
               <button
                 onClick={(e) => handleAddToComparison(base, e)}
-                className="absolute top-4 left-4 z-10 flex items-center gap-1 bg-surface border border-default text-body text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
+                className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-1 bg-surface border border-default text-body text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
                 title="Add to comparison"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Compare
+                <span className="hidden sm:inline">Compare</span>
               </button>
 
               <a
@@ -425,7 +425,7 @@ export default function BaseMapSelector() {
                 onMouseDown={() => handleCardClick(base)}
               >
                 <div className="flex items-start justify-between mb-2 mt-4">
-                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-info transition-colors pr-16">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 group-hover:text-info transition-colors pr-20 sm:pr-16">
                     {base.title}
                   </h3>
                   <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
