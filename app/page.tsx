@@ -56,26 +56,20 @@ export default function Home() {
 
           {/* Subtitle - Mobile optimized */}
           <p className="mx-auto mt-4 max-w-3xl text-lg sm:text-xl md:text-2xl leading-relaxed text-body dark:text-muted break-words">
-            <strong className="text-danger dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert intelligence curated specifically for your rank, situation, and goals.
+            Your personalized military financial plan with expert intelligence curated specifically for your rank, situation, and goals.
           </p>
           
           {/* FamilyMedia Attribution */}
           <p className="mt-3 text-sm text-body/70 dark:text-muted/70">
-            A FamilyMedia Company
+            A FamilyMedia Company · Serving Military Families Since 1958
           </p>
-          
-          {/* SPECIFIC DOLLAR SAVINGS - Mobile optimized */}
-          <div className="mt-6 sm:mt-8 inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:shadow-2xl transition-all max-w-full">
-            <Icon name="DollarSign" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 flex-shrink-0" />
-            <span className="font-bold text-sm sm:text-lg lg:text-xl break-words">Members save an average of $2,400/year on military benefits</span>
-          </div>
 
-          {/* CTAs with loss aversion */}
+          {/* CTAs - Clean, Direct */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <SignedOut>
               <SignUpButton mode="modal">
                 <button className="inline-flex items-center rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-4 text-white font-bold shadow-lg transition-all hover:from-slate-800 hover:to-slate-900 hover:-translate-y-[2px] hover:shadow-xl">
-                  Start Free Forever - Don&apos;t Miss Out
+                  Get Started Free
                 </button>
               </SignUpButton>
               <Link
@@ -103,17 +97,12 @@ export default function Home() {
           </div>
 
           <p className="mt-6 text-sm text-body dark:text-muted">
-            <strong>Free Forever</strong> · No Credit Card Required · Upgrade Anytime
+            <strong>Free Forever</strong> · No Credit Card · 500+ Military Families Trust Us
           </p>
 
-          {/* Social Proof Stats */}
+          {/* Social Proof Stats - SINGLE consolidated element */}
           <div className="mt-12">
             <SocialProofStats />
-          </div>
-          
-          {/* Collective Savings Counter - SPECIFIC DOLLAR SAVINGS */}
-          <div className="mt-8">
-            <SavingsCounter />
           </div>
         </div>
       </section>
@@ -402,16 +391,16 @@ export default function Home() {
               </div>
               
               <h2 className="text-4xl md:text-5xl font-serif font-black mb-6">
-                Don&apos;t Let Your Military Benefits Go to Waste
+                Ready to Take Control of Your Military Finances?
               </h2>
               <p className="text-xl mb-10 text-slate-200 max-w-2xl mx-auto leading-relaxed">
-                Join <strong className="text-white">500+ military families</strong> who are already maximizing their TSP, BAH, and deployment savings with personalized financial intelligence.
+                Join <strong className="text-white">500+ military families</strong> who are maximizing their TSP, BAH, and deployment savings with personalized financial intelligence.
               </p>
               
               <SignedOut>
                 <SignUpButton mode="modal">
                   <button className="bg-surface text-slate-900 hover:bg-surface-hover px-10 py-5 rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
-                    Start Your Free Account - Join Now
+                    Get Started Free
                   </button>
                 </SignUpButton>
               </SignedOut>
