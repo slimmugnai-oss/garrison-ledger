@@ -53,25 +53,13 @@ export async function POST(req: NextRequest) {
     const tier = entitlement?.tier || 'free';
     const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
 
-    // Check upload count for free users
+    // PREMIUM-ONLY FEATURE: Block free users completely
     if (!isPremium) {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
-      const { count } = await supabaseAdmin
-        .from('pcs_claim_documents')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .gte('created_at', startOfMonth.toISOString());
-
-      if (count && count >= 3) {
-        return NextResponse.json({
-          error: 'Upload limit reached',
-          details: 'Free users can upload 3 documents per month. Upgrade to Premium for unlimited uploads.',
-          upgradeRequired: true
-        }, { status: 403 });
-      }
+      return NextResponse.json({
+        error: 'Premium feature',
+        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        upgradeRequired: true
+      }, { status: 403 });
     }
 
     // Verify claim belongs to user

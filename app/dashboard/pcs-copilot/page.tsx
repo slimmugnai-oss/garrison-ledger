@@ -23,6 +23,11 @@ export default async function PCSCopilotPage() {
   const tier = entitlement?.tier || 'free';
   const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
 
+  // PREMIUM-ONLY FEATURE: Block free users completely
+  if (!isPremium) {
+    redirect('/dashboard/upgrade?feature=pcs-copilot');
+  }
+
   // Get user's claims
   const { data: claims } = await supabaseAdmin
     .from('pcs_claims')

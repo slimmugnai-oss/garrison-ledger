@@ -19,6 +19,24 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // PREMIUM-ONLY FEATURE: Check tier
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = entitlement?.tier || 'free';
+    const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+
+    if (!isPremium) {
+      return NextResponse.json({
+        error: 'Premium feature',
+        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        upgradeRequired: true
+      }, { status: 403 });
+    }
+
     // Get all claims for user
     const { data: claims, error } = await supabaseAdmin
       .from('pcs_claims')
@@ -45,6 +63,24 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // PREMIUM-ONLY FEATURE: Check tier
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = entitlement?.tier || 'free';
+    const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+
+    if (!isPremium) {
+      return NextResponse.json({
+        error: 'Premium feature',
+        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        upgradeRequired: true
+      }, { status: 403 });
     }
 
     const body = await req.json();
@@ -113,6 +149,24 @@ export async function PATCH(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // PREMIUM-ONLY FEATURE: Check tier
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = entitlement?.tier || 'free';
+    const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+
+    if (!isPremium) {
+      return NextResponse.json({
+        error: 'Premium feature',
+        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        upgradeRequired: true
+      }, { status: 403 });
     }
 
     const body = await req.json();

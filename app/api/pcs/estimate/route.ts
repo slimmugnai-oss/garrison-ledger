@@ -44,6 +44,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // PREMIUM-ONLY FEATURE: Check tier
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = entitlement?.tier || 'free';
+    const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+
+    if (!isPremium) {
+      return NextResponse.json({
+        error: 'Premium feature',
+        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        upgradeRequired: true
+      }, { status: 403 });
+    }
+
     const body: EstimateRequest = await req.json();
     const { claimId } = body;
 
