@@ -63,22 +63,56 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // Insert the new user into the profiles table
-      const { error } = await supabaseAdmin
-        .from('profiles')
+      // Insert the new user into the user_profiles table
+      const { error: profileError } = await supabaseAdmin
+        .from('user_profiles')
         .insert([
           {
-            id: id,
+            clerk_user_id: id,
             email: email,
           },
         ]);
 
-      if (error) {
-        console.error('Error inserting profile:', error);
+      if (profileError) {
+        console.error('Error inserting user_profile:', profileError);
         return new Response('Database error', { status: 500 });
       }
 
-      return new Response('Profile created successfully', { status: 200 });
+      // Create free tier entitlement for new user
+      const { error: entitlementError } = await supabaseAdmin
+        .from('entitlements')
+        .insert([
+          {
+            user_id: id,
+            tier: 'free',
+            status: 'active',
+          },
+        ]);
+
+      if (entitlementError) {
+        console.error('Error creating entitlement:', entitlementError);
+        // Don't fail the webhook - user profile is created, entitlement can be fixed later
+      }
+
+      // Initialize gamification for new user
+      const { error: gamificationError } = await supabaseAdmin
+        .from('user_gamification')
+        .insert([
+          {
+            user_id: id,
+            current_streak: 0,
+            longest_streak: 0,
+            total_logins: 1,
+            points: 0,
+          },
+        ]);
+
+      if (gamificationError) {
+        console.error('Error creating gamification:', gamificationError);
+        // Don't fail the webhook - core profile is created
+      }
+
+      return new Response('User created successfully', { status: 200 });
     } catch (error) {
       console.error('Unexpected error:', error);
       return new Response('Internal server error', { status: 500 });

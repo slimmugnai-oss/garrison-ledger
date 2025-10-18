@@ -153,6 +153,9 @@ export default function Header() {
                 <div className="text-xs font-medium text-gray-500 dark:text-gray-400 -mt-1 tracking-wide">
                   Military Financial Intelligence
                 </div>
+                <div className="text-xs text-gray-400 dark:text-gray-500 -mt-0.5">
+                  A FamilyMedia Company
+                </div>
               </div>
             </Link>
 

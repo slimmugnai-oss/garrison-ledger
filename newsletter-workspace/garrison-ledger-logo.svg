@@ -1,0 +1,22 @@
+<svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background (optional - can be transparent) -->
+  <rect width="400" height="100" fill="transparent"/>
+  
+  <!-- Shield Icon (Military Symbol) -->
+  <g transform="translate(20, 20)">
+    <path d="M30 5 L50 5 L55 10 L55 35 C55 45, 50 55, 40 60 C30 55, 25 45, 25 35 L25 10 Z" 
+          fill="#0F172A" stroke="#10B981" stroke-width="2"/>
+    <text x="40" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" 
+          fill="#10B981" text-anchor="middle">GL</text>
+  </g>
+  
+  <!-- GARRISON LEDGER Text -->
+  <text x="95" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#0F172A">
+    GARRISON LEDGER
+  </text>
+  
+  <!-- Tagline -->
+  <text x="95" y="70" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#6B7280">
+    Military Financial Intelligence
+  </text>
+</svg>

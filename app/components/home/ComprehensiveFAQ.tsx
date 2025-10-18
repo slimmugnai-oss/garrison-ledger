@@ -98,7 +98,7 @@ export default function ComprehensiveFAQ() {
         },
         {
           question: 'What about military spouses?',
-          answer: 'Absolutely! Many of our users are military spouses. We have specific content and tools for spouse career planning, managing finances during deployment, understanding benefits, and navigating PCS challenges. In fact, Garrison Ledger was founded by a military spouse.'
+          answer: 'Absolutely! Many of our users are military spouses. We have specific content and tools for spouse career planning, managing finances during deployment, understanding benefits, and navigating PCS challenges. In fact, Garrison Ledger was founded by a military spouse and is developed by FamilyMedia, LLC, a company dedicated to serving military families with trusted resources and tools.'
         },
         {
           question: 'I\'m Guard/Reserve. Does this apply to me?',

@@ -221,26 +221,26 @@ Line 398: `)}` - Orphaned closing parenthesis
 
 ## 💰 **COST ANALYSIS**
 
-### **Current AI Costs**
-- Assessment: ~$0.02 per completion (gpt-4o-mini)
-- Plan Generation: ~$0.02 per plan (gpt-4o-mini, optimized)
-- Explainer: ~$0.01 per explanation (gpt-4o-mini)
+### **Current AI Costs (Updated 2025-01-19)**
+- Assessment: ~$0.00021 per completion (Gemini 2.0 Flash)
+- Plan Generation: ~$0.00222 per plan (Gemini 2.0 Flash)
+- Explainer: ~$0.00018 per explanation (Gemini 2.0 Flash)
 
-### **Projected Monthly Costs (1000 users)**
+### **Projected Monthly Costs (1000 users) - Updated 2025-01-19**
 **Free Tier:**
-- 1000 assessments × $0.02 = $20
-- 1000 explainer uses × $0.01 = $10
-- **Total:** $30/month
+- 1000 assessments × $0.00021 = $0.21
+- 1000 explainer uses × $0.00018 = $0.18
+- **Total:** $0.39/month
 
 **Premium Tier (10% conversion = 100 users):**
-- 300 assessments × $0.02 = $6
-- 100 plans × $0.02 = $2
-- 500 explainer uses × $0.01 = $5
-- **Total:** $13/month
+- 300 assessments × $0.00021 = $0.063
+- 100 plans × $0.00222 = $0.222
+- 500 explainer uses × $0.00018 = $0.09
+- **Total:** $0.375/month
 
-**Grand Total:** $43/month AI costs  
+**Grand Total:** $0.765/month AI costs  
 **Revenue (100 premium users):** $999/month  
-**Margin:** 95.7% 🎉
+**Margin:** 99.9% 🎉
 
 **Conclusion:** AI costs are negligible. Keep explainer free!
 

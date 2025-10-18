@@ -13,16 +13,17 @@ import TestimonialsSection from './components/home/TestimonialsSection';
 import Icon from './components/ui/Icon';
 
 export const metadata: Metadata = generatePageMeta({
-  title: "Garrison Ledger - AI-Powered Financial Planning for Military Life",
-  description: "Get your personalized military financial plan in minutes. AI analyzes your profile and curates 8-10 expert content blocks tailored to your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS planner, and house hacking tools.",
+  title: "Garrison Ledger - Military Financial Intelligence Platform",
+  description: "Get your personalized military financial plan in minutes. Expert content curated specifically for your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS Money Copilot, and house hacking tools. Built by military families, for military families.",
   path: "/",
   keywords: [
-    "AI military financial planning",
+    "military financial planning",
     "personalized military planning",
     "military life planning",
     "military PCS planning",
     "TSP optimizer",
     "SDP calculator",
+    "PCS Money Copilot",
     "house hacking military",
     "military financial advisor",
     "deployment preparation",
@@ -55,7 +56,12 @@ export default function Home() {
 
           {/* Subtitle - Mobile optimized */}
           <p className="mx-auto mt-4 max-w-3xl text-lg sm:text-xl md:text-2xl leading-relaxed text-body dark:text-muted break-words">
-            <strong className="text-danger dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert content curated specifically for your rank, situation, and goals.
+            <strong className="text-danger dark:text-red-400">Don&apos;t leave money on the table.</strong> Get your personalized military financial plan with expert intelligence curated specifically for your rank, situation, and goals.
+          </p>
+          
+          {/* FamilyMedia Attribution */}
+          <p className="mt-3 text-sm text-body/70 dark:text-muted/70">
+            A FamilyMedia Company
           </p>
           
           {/* SPECIFIC DOLLAR SAVINGS - Mobile optimized */}
@@ -121,7 +127,7 @@ export default function Home() {
               How It Works
             </h2>
             <p className="text-xl text-text-body dark:text-muted max-w-2xl mx-auto">
-              AI analyzes your military profile and curates a personalized financial plan in minutes
+              Get your personalized military financial plan in minutes—curated specifically for your rank, situation, and goals
             </p>
           </div>
 
@@ -151,8 +157,8 @@ export default function Home() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl text-white font-black text-2xl mb-4 shadow-lg">
                   3
                 </div>
-                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Get AI-Curated Plan</h3>
-                <p className="text-text-body dark:text-muted">AI selects 8-10 expert content blocks and weaves them into your personalized action plan.</p>
+                <h3 className="text-2xl font-bold text-text-headings dark:text-white mb-3">Get Your Personalized Plan</h3>
+                <p className="text-text-body dark:text-muted">Receive 8-10 expert content blocks curated for your situation and woven into your personalized action plan.</p>
               </div>
             </AnimatedCard>
           </div>
@@ -292,6 +298,47 @@ export default function Home() {
               </div>
             </AnimatedCard>
           </div>
+
+          {/* Premium Feature Highlight - PCS Money Copilot */}
+          <div className="mt-12">
+            <AnimatedCard delay={600}>
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 rounded-xl p-8 border-2 border-emerald-300 dark:border-emerald-600 shadow-lg">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl text-white shadow-lg">
+                      <Icon name="Truck" className="w-8 h-8" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-2xl font-bold text-text-headings dark:text-white">PCS Money Copilot</h3>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold">
+                        PREMIUM
+                      </span>
+                    </div>
+                    <div className="text-sm font-bold text-emerald-700 dark:text-emerald-400 mb-4">Save $2,000-$5,000 per PCS with JTR-backed reimbursement tracking</div>
+                    <p className="text-text-body dark:text-muted mb-6">
+                      Stop leaving money on the table. Track every dollar of your PCS entitlements—DLA, TLE, MALT, PPM—with real distance calculations, DTMO per diem rates, and official JTR rules. Catch errors before finance does.
+                    </p>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-text-body dark:text-muted mb-6 text-sm">
+                      <li>• Real GPS distance calculations</li>
+                      <li>• Official DTMO per diem rates</li>
+                      <li>• JTR-backed entitlement rules</li>
+                      <li>• Document upload & tracking</li>
+                      <li>• Error detection & warnings</li>
+                      <li>• Confidence scoring</li>
+                    </ul>
+                    <Link 
+                      href="/dashboard/upgrade?feature=pcs-copilot"
+                      className="inline-flex items-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-md hover:shadow-lg"
+                    >
+                      Upgrade to Access PCS Copilot →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </AnimatedCard>
+          </div>
         </div>
       </section>
 
@@ -301,12 +348,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <AnimatedCard delay={0}>
               <div>
-                <Badge variant="success">AI-Powered Planning</Badge>
+                <Badge variant="success">Personalized Planning</Badge>
                 <h2 className="text-4xl font-serif font-black text-text-headings dark:text-white mt-4 mb-6">
-                  Your AI-Curated Personalized Plan
+                  Your Personalized Action Plan
                 </h2>
                 <p className="text-lg text-text-body dark:text-muted mb-8 leading-relaxed">
-                  Take our quick adaptive assessment (~6 questions, 5 minutes) and AI will analyze your profile to curate 8-10 expert content blocks with personalized narrative tailored to your military situation.
+                  Take our quick adaptive assessment (~6 questions, 5 minutes) and get 8-10 expert content blocks curated for your military situation with a personalized narrative tailored to your rank, goals, and priorities.
                 </p>
                 <Link 
                   href="/dashboard/assessment"
@@ -358,7 +405,7 @@ export default function Home() {
                 Don&apos;t Let Your Military Benefits Go to Waste
               </h2>
               <p className="text-xl mb-10 text-slate-200 max-w-2xl mx-auto leading-relaxed">
-                Join <strong className="text-white">500+ military families</strong> who are already maximizing their TSP, BAH, and deployment savings with AI-powered planning.
+                Join <strong className="text-white">500+ military families</strong> who are already maximizing their TSP, BAH, and deployment savings with personalized financial intelligence.
               </p>
               
               <SignedOut>

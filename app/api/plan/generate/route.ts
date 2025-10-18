@@ -181,6 +181,35 @@ export async function POST() {
   }
 
   try {
+    // Check plan generation rate limits
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const tier = (entitlement?.tier === 'premium' || entitlement?.tier === 'pro') && entitlement?.status === 'active' 
+      ? entitlement.tier 
+      : 'free';
+
+    // Check monthly plan generation quota
+    const { data: quotaCheck } = await supabaseAdmin.rpc('check_ai_quota', {
+      p_user_id: userId,
+      p_feature: 'ai_plan',
+      p_tier: tier
+    });
+
+    if (!quotaCheck?.canUse) {
+      return NextResponse.json({ 
+        error: "Monthly plan limit reached",
+        details: {
+          tier,
+          usedThisMonth: quotaCheck?.usedThisMonth || 0,
+          monthlyLimit: quotaCheck?.monthlyLimit || 1,
+          nextReset: quotaCheck?.nextReset
+        }
+      }, { status: 429 });
+    }
     // Load user profile
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
@@ -249,7 +278,7 @@ export async function POST() {
       model: "gemini-2.0-flash-exp",
       generationConfig: {
         temperature: 0.6,
-        maxOutputTokens: 2500,
+        maxOutputTokens: 3000,
         responseMimeType: "application/json"
       }
     });
@@ -433,6 +462,13 @@ Career Interests: ${profile.career_interests?.join(', ') || 'Not specified'}
         plan_generated_count: (profile.plan_generated_count || 0) + 1 
       })
       .eq('user_id', userId);
+
+    // Increment AI plan generation quota
+    await supabaseAdmin.rpc('increment_ai_quota', {
+      p_user_id: userId,
+      p_feature: 'ai_plan',
+      p_tier: tier
+    });
 
     console.log('[Plan Generation] ✅ Complete - Plan generated and saved');
 

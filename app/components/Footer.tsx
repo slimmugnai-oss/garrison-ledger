@@ -26,7 +26,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-xs text-body dark:text-muted">
                 <Icon name="CheckCircle" className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                <span className="font-semibold">20+ Years Experience</span>
+                <span className="font-semibold">67+ Years Serving Military Families</span>
               </div>
             </div>
           </div>
@@ -125,8 +125,16 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-border dark:border-slate-700 text-center">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="text-xs text-text-muted dark:text-muted font-medium">
+              A FamilyMedia Company
+            </div>
+          </div>
           <p className="text-text-muted dark:text-muted text-sm">
             © {new Date().getFullYear()} Garrison Ledger by FamilyMedia, LLC. All rights reserved.
+          </p>
+          <p className="text-text-muted dark:text-muted text-xs mt-1">
+            Serving Military Families Since 1958
           </p>
           <p className="text-text-muted dark:text-muted text-xs mt-2">
             Not affiliated with the U.S. Department of Defense or any branch of the Armed Forces.

@@ -1,0 +1,20 @@
+# Newsletter Workspace - Keep separate from main site
+# This ensures newsletter work doesn't interfere with Garrison Ledger
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Draft files (unless specifically needed)
+drafts/*.md
+!drafts/README.md
+
+# Large assets (if needed, we can discuss)
+# *.psd
+# *.ai
+# *.indd
+
+# Personal notes
+personal-notes.md
+private-notes.md

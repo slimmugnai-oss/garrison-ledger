@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-343395535"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-343395535');
+    </script>
+    
+    <title>FamilyMedia Community Hub | Share Your Story & See Poll Results</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/1LCJWCn.png">
+    <style>
+        /* ============================================
+           FAMILYMEDIA COMMUNITY HUB - CSS STYLES
+           ============================================ */
+        
+        /* === GLOBAL RESET & BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #2F3A45;
+            background-color: #FDFBF5;
+        }
+        
+        /* === CONTAINER & LAYOUT === */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            max-width: 220px;
+            margin-bottom: 20px;
+        }
+        
+        .main-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2F3A45;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2F3A45;
+        }
+        
+        /* === POLL RESULTS SECTION === */
+        .poll-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2F3A45;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .poll-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2F3A45;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .poll-option {
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+        }
+        
+        .poll-option:hover {
+            background-color: #f8f9fa;
+            border-color: #005A9C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+        }
+        
+        .poll-option.voted {
+            background-color: #e8f4fd;
+            border-color: #005A9C;
+        }
+        
+        .poll-instruction {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #005A9C;
+        }
+        
+        .poll-instruction p {
+            margin: 0;
+            color: #2F3A45;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .poll-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .poll-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2F3A45;
+        }
+        
+        .poll-percentage {
+            font-size: 18px;
+            font-weight: 700;
+            color: #005A9C;
+        }
+        
+        .poll-bar-container {
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .poll-bar {
+            height: 100%;
+            background-color: #005A9C;
+            border-radius: 10px;
+            transition: width 0.8s ease-in-out;
+            position: relative;
+        }
+        
+        .poll-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes slideIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(-20px); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        /* === STORY FORM SECTION === */
+        .story-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2F3A45;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .story-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2F3A45;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2F3A45;
+            margin-bottom: 8px;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            color: #2F3A45;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #005A9C;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-note {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .checkbox-input {
+            margin-top: 4px;
+            transform: scale(1.2);
+        }
+        
+        .checkbox-label {
+            font-size: 16px;
+            color: #2F3A45;
+            line-height: 1.5;
+        }
+        
+        .submit-button {
+            background: #005A9C;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 18px 36px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .submit-button:hover {
+            background: #004080;
+        }
+        
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* === SUCCESS MESSAGE === */
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .success-message h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+        
+        .success-message p {
+            color: #155724;
+        }
+        
+        /* === RESPONSIVE DESIGN === */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+            
+            .main-title {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .poll-section h2, .story-section h2 {
+                font-size: 24px;
+            }
+            
+            .poll-section h3, .story-section h3 {
+                font-size: 16px;
+            }
+            
+            .submit-button {
+                width: 100%;
+                padding: 16px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .main-title {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component Styles -->
+    <style>
+        /* Reset */
+        .header-component * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .header-component {
+            font-family: 'Georgia', serif;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* Top Bar */
+        .header-top {
+            background: white;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Logo */
+        .logo {
+            text-decoration: none;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .top-nav-item {
+            position: relative;
+        }
+
+        .top-nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+
+        .top-nav-link:hover {
+            color: #2c3e50;
+        }
+
+        .top-nav-item > .top-nav-link::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid #d32f2f;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Dropdown */
+        .top-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            min-width: 240px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 2000;
+        }
+
+        .top-nav-item:hover .top-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .top-dropdown a {
+            display: block;
+            padding: 12px 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        .top-dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .top-dropdown a:hover {
+            background: #f8f8f8;
+        }
+
+        /* Main Navigation */
+        .header-main {
+            background: white;
+        }
+
+        .main-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+
+        .main-nav-list {
+            list-style: none;
+            display: flex;
+            gap: 35px;
+        }
+
+        .main-nav-item {
+            position: relative;
+        }
+
+        .main-nav-link {
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            padding: 5px 0;
+            display: inline-block;
+        }
+
+        .main-nav-link:hover {
+            color: #5a6c7d;
+        }
+
+        .has-dropdown > .main-nav-link::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid #d32f2f;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .has-dropdown:hover > .main-nav-link {
+            border: 2px solid #5a9fd4;
+            padding: 6px 12px;
+            border-radius: 3px;
+        }
+
+        /* Main Dropdown */
+        .main-dropdown {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            background: white;
+            min-width: 210px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 2000;
+        }
+
+        .has-dropdown:hover .main-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .main-dropdown a {
+            display: block;
+            padding: 15px 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            white-space: nowrap;
+        }
+
+        .main-dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .main-dropdown a:hover {
+            background: #f8f8f8;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .mobile-toggle-icon {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #2c3e50;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-toggle-icon::before,
+        .mobile-toggle-icon::after {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #2c3e50;
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle-icon::before {
+            top: -8px;
+        }
+
+        .mobile-toggle-icon::after {
+            top: 8px;
+        }
+
+        .mobile-toggle.active .mobile-toggle-icon {
+            background: transparent;
+        }
+
+        .mobile-toggle.active .mobile-toggle-icon::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+
+        .mobile-toggle.active .mobile-toggle-icon::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-nav {
+            padding: 20px;
+        }
+
+        .mobile-nav-section {
+            margin-bottom: 25px;
+        }
+
+        .mobile-nav-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-nav-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #666;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .mobile-nav-list {
+            list-style: none;
+        }
+
+        .mobile-nav-item {
+            margin-bottom: 5px;
+        }
+
+        .mobile-nav-link {
+            display: block;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mobile-nav-link:hover {
+            color: #5a6c7d;
+        }
+
+        .mobile-nav-item:last-child .mobile-nav-link {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .top-nav,
+            .main-nav-list {
+                display: none;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+
+            .logo p {
+                font-size: 11px;
+            }
+
+            .header-container {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+
+    <!-- Header Component -->
+    <header class="header-component">
+        <div class="header-top">
+            <div class="header-container">
+                <a href="https://familymedia.com/" class="logo">
+                    <h1>FamilyMedia</h1>
+                    <p>The Resource for Military Families</p>
+                </a>
+                <button class="mobile-toggle" data-toggle="menu" aria-label="Toggle menu">
+                    <span class="mobile-toggle-icon"></span>
+                </button>
+                <nav class="top-nav">
+                    <div class="top-nav-item">
+                        <a href="https://familymedia.com/advertise" class="top-nav-link">ADVERTISE</a>
+                        <div class="top-dropdown">
+                            <a href="https://familymedia.com/advertise">ADVERTISER OVERVIEW</a>
+                            <a href="https://familymedia.com/advertise-newsletter">NEWSLETTER ADVERTISING</a>
+                            <a href="https://familymedia.com/advertise-toolkits">TOOLKIT ADVERTISING</a>
+                            <a href="https://familymedia.com/advertise-website">WEBSITE ADVERTISING</a>
+                            <a href="https://familymedia.com/advertise-commissary">IN STORE ADVERTISING</a>
+                            <a href="https://familymedia.com/advertise-case-studies-newsletter-hero-vitamin-brand">CASE STUDY (NEWSLETTER)</a>
+                            <a href="https://familymedia.com/advertise-case-studies-commissary-coffee-brand">CASE STUDY (IN STORE)</a>
+                            <a href="https://familymedia.com/advertise-pcs-calendar-for-marketers">MARKETERS PCS CALENDAR</a>
+                        </div>
+                    </div>
+                    <a href="https://familymedia.com/newsletter" class="top-nav-link">NEWSLETTER</a>
+                    <div class="top-nav-item">
+                        <a href="https://familymedia.com/madeinusa" class="top-nav-link">GIVEAWAYS</a>
+                        <div class="top-dropdown">
+                            <a href="https://familymedia.com/madeinusa">CHURCH & DWIGHT SWEEPSTAKES</a>
+                            <a href="https://familymedia.com/naturemade">NATURE MADE 2025</a>
+                            <a href="https://familymedia.com/500-monthly-giveaway">$500 MONTHLY GIVEAWAY</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="header-main">
+            <nav class="main-nav">
+                <ul class="main-nav-list">
+                    <li class="main-nav-item"><a href="https://familymedia.com/articles/home-and-family" class="main-nav-link">HOME & FAMILY</a></li>
+                    <li class="main-nav-item"><a href="https://familymedia.com/articles/military-life" class="main-nav-link">MILITARY LIFE</a></li>
+                    <li class="main-nav-item"><a href="https://familymedia.com/articles/education" class="main-nav-link">HEALTH & WELLNESS</a></li>
+                    <li class="main-nav-item has-dropdown">
+                        <a href="https://familymedia.com/career-hub" class="main-nav-link">TOOLKITS</a>
+                        <div class="main-dropdown">
+                            <a href="https://familymedia.com/career-hub">CAREER HUB</a>
+                            <a href="https://familymedia.com/pcs-hub">PCS HUB</a>
+                            <a href="https://familymedia.com/base-guides">BASE GUIDES</a>
+                            <a href="https://familymedia.com/on-base-shopping">ON-BASE SHOPPING</a>
+                            <a href="https://familymedia.com/deployment">DEPLOYMENT</a>
+                        </div>
+                    </li>
+                    <li class="main-nav-item has-dropdown">
+                        <a href="https://familymedia.com/about-us" class="main-nav-link">COMPANY</a>
+                        <div class="main-dropdown">
+                            <a href="https://familymedia.com/our-magazines">OUR MAGAZINES</a>
+                            <a href="https://familymedia.com/become-a-distributor">BECOME A DISTRIBUTOR</a>
+                            <a href="https://familymedia.com/partners-and-resources">PARTNERS & RESOURCES</a>
+                            <a href="https://familymedia.com/contact-us">CONTACT US</a>
+                            <a href="https://familymedia.com/about-us">ABOUT US</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-nav">
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-title">Navigation</div>
+                    <ul class="mobile-nav-list">
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/articles/home-and-family" class="mobile-nav-link">HOME & FAMILY</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/articles/military-life" class="mobile-nav-link">MILITARY LIFE</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/articles/education" class="mobile-nav-link">HEALTH & WELLNESS</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-title">Toolkits</div>
+                    <ul class="mobile-nav-list">
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/career-hub" class="mobile-nav-link">CAREER HUB</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/pcs-hub" class="mobile-nav-link">PCS HUB</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/base-guides" class="mobile-nav-link">BASE GUIDES</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/on-base-shopping" class="mobile-nav-link">ON-BASE SHOPPING</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/deployment" class="mobile-nav-link">DEPLOYMENT</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-title">Company</div>
+                    <ul class="mobile-nav-list">
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/our-magazines" class="mobile-nav-link">OUR MAGAZINES</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/become-a-distributor" class="mobile-nav-link">BECOME A DISTRIBUTOR</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/partners-and-resources" class="mobile-nav-link">PARTNERS & RESOURCES</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/contact-us" class="mobile-nav-link">CONTACT US</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/about-us" class="mobile-nav-link">ABOUT US</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-title">More</div>
+                    <ul class="mobile-nav-list">
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/advertise" class="mobile-nav-link">ADVERTISE</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/newsletter" class="mobile-nav-link">NEWSLETTER</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/madeinusa" class="mobile-nav-link">CHURCH & DWIGHT SWEEPSTAKES</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/naturemade" class="mobile-nav-link">NATURE MADE 2025</a>
+                        </li>
+                        <li class="mobile-nav-item">
+                            <a href="https://familymedia.com/500-monthly-giveaway" class="mobile-nav-link">$500 MONTHLY GIVEAWAY</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- COMMUNITY HUB HEADER -->
+        <div class="header">
+            <h1 class="main-title">FamilyMedia Community Hub</h1>
+            <p class="subtitle">Your Voice Matters</p>
+        </div>
+
+        <!-- POLL RESULTS SECTION -->
+        <div class="section poll-section">
+            <h2 id="poll-title">Moving this fall or winter? What's your biggest challenge?</h2>
+            <h3 id="poll-subtitle">Click on an option below to vote and see live results!</h3>
+            
+            <div class="poll-instruction" id="poll-instruction">
+                <p>👆 Click any option below to cast your vote</p>
+            </div>
+            
+            <div class="poll-option" data-option="housing" onclick="voteForOption('housing')">
+                <div class="poll-label">
+                    <span class="poll-text">Finding housing during the holidays</span>
+                    <span class="poll-percentage" id="housing-percentage">0%</span>
+                </div>
+                <div class="poll-bar-container">
+                    <div class="poll-bar" id="housing-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="poll-option" data-option="weather" onclick="voteForOption('weather')">
+                <div class="poll-label">
+                    <span class="poll-text">Weather delays & travel issues</span>
+                    <span class="poll-percentage" id="weather-percentage">0%</span>
+                </div>
+                <div class="poll-bar-container">
+                    <div class="poll-bar" id="weather-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="poll-option" data-option="schools" onclick="voteForOption('schools')">
+                <div class="poll-label">
+                    <span class="poll-text">Helping kids switch schools mid-year</span>
+                    <span class="poll-percentage" id="schools-percentage">0%</span>
+                </div>
+                <div class="poll-bar-container">
+                    <div class="poll-bar" id="schools-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STORY SUBMISSION SECTION -->
+        <div class="section story-section">
+            <h2>You Are the Expert. Share Your Story.</h2>
+            <h3>Your experiences are what make this community strong. We regularly feature stories and tips from our readers in the newsletter. Share your best advice, a hard-won lesson, or a moment of triumph from your military life journey.</h3>
+            
+            <div class="success-message" id="success-message">
+                <h3>Thank You!</h3>
+                <p>Your story has been submitted successfully. We'll review it and may feature it in an upcoming newsletter!</p>
+            </div>
+            
+            <form id="story-form">
+                <div class="form-group">
+                    <label for="firstName" class="form-label">First Name *</label>
+                    <input type="text" id="firstName" name="firstName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                    <p class="form-note">For contact purposes only, will not be published.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="story" class="form-label">Your Story *</label>
+                    <textarea id="story" name="story" class="form-textarea" rows="8" placeholder="Share your story, tip, or advice here..." required></textarea>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="permission" name="permission" class="checkbox-input" required>
+                    <label for="permission" class="checkbox-label">
+                        I give FamilyMedia permission to edit and publish my story in the newsletter and on social media. *
+                    </label>
+                </div>
+                
+                <button type="submit" class="submit-button">Submit My Story</button>
+            </form>
+        </div>
+
+        <!-- BONUS RESOURCE SECTION -->
+        <div class="section story-section">
+            <h2>Your Free PCS Shopping List</h2>
+            <h3>That first trip to the commissary after a move can be overwhelming. Take the guesswork out of it with our comprehensive, aisle-by-aisle shopping list designed specifically for stocking a new kitchen from scratch.</h3>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://family-media.files.svdcdn.com/production/article-poster-images/printable-grocery-checklist.pdf?dm=1759247214" target="_blank" rel="noopener" aria-label="Download the PDF shopping list" style="background:#005A9C; color:#ffffff !important; font-family: Arial, Helvetica, sans-serif; font-size:18px; padding:20px 30px; border-radius:8px; display:inline-block; font-weight:bold; text-decoration:none;">Download the PDF Shopping List</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // INTERACTIVE POLL FUNCTIONALITY
+        // ============================================
+        
+        // Sample poll data (in a real implementation, this would come from your database)
+        let pollData = {
+            housing: 45,
+            weather: 32,
+            schools: 23
+        };
+        
+        let hasVoted = false;
+        let userVote = null;
+        
+        // Check for URL parameter and update poll data
+        function checkUrlParameter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const answer = urlParams.get('answer');
+            
+            if (answer && pollData.hasOwnProperty(answer)) {
+                // User came from newsletter with a vote
+                hasVoted = true;
+                userVote = answer;
+                pollData[answer]++;
+                updatePollDisplay();
+                showVoteThankYou(answer);
+                updatePollUI();
+            } else {
+                // User came directly to page - show interactive poll
+                updatePollDisplay();
+                updatePollUI();
+            }
+        }
+        
+        // Handle direct voting on the page
+        function voteForOption(option) {
+            if (hasVoted && userVote === option) {
+                // User clicked the same option they already voted for - deselect/unvote
+                removeVote(option);
+                return;
+            }
+            
+            if (hasVoted && userVote !== option) {
+                // User is changing their vote
+                // Remove vote from previous option
+                pollData[userVote]--;
+                showVoteChangedMessage(userVote, option);
+            } else {
+                // First time voting
+                showVoteThankYou(option);
+            }
+            
+            // Record the new vote
+            hasVoted = true;
+            userVote = option;
+            pollData[option]++;
+            
+            // Update display
+            updatePollDisplay();
+            updatePollUI();
+            
+            // In a real implementation, you would send this data to your server here
+            console.log('Vote recorded for:', option, hasVoted ? '(changed from previous vote)' : '(first vote)');
+            
+            // Simulate sending to server
+            fetch('https://familymedia.com/api/poll-vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    option: option,
+                    previousOption: hasVoted ? userVote : null,
+                    timestamp: new Date().toISOString(),
+                    source: 'Community Hub Direct',
+                    action: hasVoted ? 'vote_changed' : 'first_vote'
+                })
+            }).catch(error => {
+                console.log('Vote recorded locally (server unavailable)');
+            });
+        }
+        
+        // Handle vote removal/deselection
+        function removeVote(option) {
+            // Remove the vote
+            pollData[option]--;
+            hasVoted = false;
+            userVote = null;
+            
+            // Update display
+            updatePollDisplay();
+            updatePollUI();
+            showVoteRemovedMessage(option);
+            
+            // In a real implementation, you would send this data to your server here
+            console.log('Vote removed for:', option);
+            
+            // Simulate sending to server
+            fetch('https://familymedia.com/api/poll-vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    option: option,
+                    action: 'vote_removed',
+                    timestamp: new Date().toISOString(),
+                    source: 'Community Hub Direct'
+                })
+            }).catch(error => {
+                console.log('Vote removal recorded locally (server unavailable)');
+            });
+        }
+        
+        // Show thank you message for voting
+        function showVoteThankYou(answer) {
+            const pollSection = document.querySelector('.poll-section');
+            const existingThankYou = pollSection.querySelector('.vote-thank-you');
+            if (existingThankYou) {
+                existingThankYou.remove();
+            }
+            
+            const thankYouDiv = document.createElement('div');
+            thankYouDiv.className = 'vote-thank-you';
+            thankYouDiv.style.cssText = `
+                background: #d4edda;
+                border: 2px solid #c3e6cb;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+                animation: slideIn 0.5s ease;
+            `;
+            thankYouDiv.innerHTML = `
+                <h3 style="color: #155724; margin-bottom: 10px;">🎉 Thank You for Voting!</h3>
+                <p style="color: #155724; margin: 0;">Your vote for "${getAnswerText(answer)}" has been recorded. See the updated results below!</p>
+            `;
+            
+            // Insert after the instruction
+            const instruction = document.getElementById('poll-instruction');
+            instruction.parentNode.insertBefore(thankYouDiv, instruction.nextSibling);
+            
+            // Remove the thank you message after 8 seconds
+            setTimeout(() => {
+                if (thankYouDiv.parentNode) {
+                    thankYouDiv.remove();
+                }
+            }, 8000);
+        }
+        
+        // Show message when user removes their vote
+        function showVoteRemovedMessage(option) {
+            const pollSection = document.querySelector('.poll-section');
+            const existingMessage = pollSection.querySelector('.vote-removed');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'vote-removed';
+            messageDiv.style.cssText = `
+                background: #ffe6e6;
+                border: 2px solid #ffb3b3;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+                animation: slideIn 0.5s ease;
+            `;
+            messageDiv.innerHTML = `
+                <h3 style="color: #cc0000; margin-bottom: 10px;">🗑️ Vote Removed!</h3>
+                <p style="color: #cc0000; margin: 0;">You've removed your vote for "${getAnswerText(option)}". Click any option below to vote again!</p>
+            `;
+            
+            const instruction = document.getElementById('poll-instruction');
+            instruction.parentNode.insertBefore(messageDiv, instruction.nextSibling);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 6000);
+        }
+        
+        // Show message when user changes their vote
+        function showVoteChangedMessage(previousOption, newOption) {
+            const pollSection = document.querySelector('.poll-section');
+            const existingMessage = pollSection.querySelector('.vote-changed');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'vote-changed';
+            messageDiv.style.cssText = `
+                background: #cce5ff;
+                border: 2px solid #99d6ff;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+                animation: slideIn 0.5s ease;
+            `;
+            messageDiv.innerHTML = `
+                <h3 style="color: #004080; margin-bottom: 10px;">🔄 Vote Changed!</h3>
+                <p style="color: #004080; margin: 0;">You changed your vote from "${getAnswerText(previousOption)}" to "${getAnswerText(newOption)}". Results updated below!</p>
+            `;
+            
+            const instruction = document.getElementById('poll-instruction');
+            instruction.parentNode.insertBefore(messageDiv, instruction.nextSibling);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 6000);
+        }
+        
+        // Get human-readable text for answer
+        function getAnswerText(answer) {
+            const answerTexts = {
+                'housing': 'Finding housing during the holidays',
+                'weather': 'Weather delays & travel issues',
+                'schools': 'Helping kids switch schools mid-year'
+            };
+            return answerTexts[answer] || answer;
+        }
+        
+        // Update poll display with percentages
+        function updatePollDisplay() {
+            const total = pollData.housing + pollData.weather + pollData.schools;
+            
+            // Calculate percentages
+            const housingPercent = Math.round((pollData.housing / total) * 100);
+            const weatherPercent = Math.round((pollData.weather / total) * 100);
+            const schoolsPercent = Math.round((pollData.schools / total) * 100);
+            
+            // Update percentages
+            document.getElementById('housing-percentage').textContent = housingPercent + '%';
+            document.getElementById('weather-percentage').textContent = weatherPercent + '%';
+            document.getElementById('schools-percentage').textContent = schoolsPercent + '%';
+            
+            // Update bars with animation
+            setTimeout(() => {
+                document.getElementById('housing-bar').style.width = housingPercent + '%';
+            }, 100);
+            
+            setTimeout(() => {
+                document.getElementById('weather-bar').style.width = weatherPercent + '%';
+            }, 200);
+            
+            setTimeout(() => {
+                document.getElementById('schools-bar').style.width = schoolsPercent + '%';
+            }, 300);
+        }
+        
+        // Update poll UI based on voting state
+        function updatePollUI() {
+            const title = document.getElementById('poll-title');
+            const subtitle = document.getElementById('poll-subtitle');
+            const instruction = document.getElementById('poll-instruction');
+            
+            // Remove all vote highlighting first
+            document.querySelectorAll('.poll-option').forEach(option => {
+                option.classList.remove('voted');
+            });
+            
+            if (hasVoted) {
+                title.textContent = "Thanks for voting! Here are the community's results so far.";
+                subtitle.textContent = "Your vote has been recorded. Click any option to change your vote, or click your current choice to remove it!";
+                instruction.innerHTML = '<p>🔄 Click any option to change your vote • Click your current choice to remove it</p>';
+                instruction.style.display = 'block';
+                
+                // Highlight user's vote
+                if (userVote) {
+                    const votedOption = document.querySelector(`[data-option="${userVote}"]`);
+                    if (votedOption) {
+                        votedOption.classList.add('voted');
+                    }
+                }
+            } else {
+                title.textContent = "Moving this fall or winter? What's your biggest challenge?";
+                subtitle.textContent = "Click on an option below to vote and see live results!";
+                instruction.innerHTML = '<p>👆 Click any option below to cast your vote</p>';
+                instruction.style.display = 'block';
+            }
+        }
+        
+        // ============================================
+        // STORY FORM FUNCTIONALITY
+        // ============================================
+        
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('story-form');
+            const submitButton = document.querySelector('.submit-button');
+            const successMessage = document.getElementById('success-message');
+            
+            // Get form data
+            const formData = new FormData(form);
+            const storyData = {
+                firstName: formData.get('firstName'),
+                email: formData.get('email'),
+                story: formData.get('story'),
+                permission: formData.get('permission') === 'on',
+                timestamp: new Date().toISOString(),
+                source: 'Community Hub'
+            };
+            
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+            
+            // Submit to your backend (replace with your actual endpoint)
+            fetch('https://familymedia.com/api/submit-story', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(storyData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success message
+                    successMessage.classList.add('show');
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.remove('show');
+                    }, 5000);
+                } else {
+                    throw new Error('Submission failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting story:', error);
+                // Fallback: show success message anyway (for demo purposes)
+                successMessage.classList.add('show');
+                form.reset();
+                successMessage.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 5000);
+            })
+            .finally(() => {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit My Story';
+            });
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize poll
+            checkUrlParameter();
+            updatePollDisplay();
+            animateBars();
+            
+            // Initialize form
+            document.getElementById('story-form').addEventListener('submit', handleFormSubmit);
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <h2>FamilyMedia</h2>
+                        <p>The Resource for Military Families</p>
+                    </div>
+                <button class="newsletter-btn" onclick="window.location.href='https://familymedia.com/newsletter'">NEWSLETTER SIGNUP</button>
+                <div class="social-section">
+                    <p>Follow us</p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/familymedia" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/family_at_the_commissary/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="https://familymedia.com/articles/home-and-family">HOME & FAMILY</a></li>
+                        <li><a href="https://familymedia.com/articles/military-life">MILITARY LIFE</a></li>
+                        <li><a href="https://familymedia.com/articles/education">HEALTH & WELLNESS</a></li>
+                        <li><a href="https://familymedia.com/become-a-distributor">BECOME A DISTRIBUTOR</a></li>
+                        <li><a href="https://familymedia.com/partners-and-resources">PARTNERS & RESOURCES</a></li>
+                        <li><a href="https://familymedia.com/about-us">ABOUT US</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="https://familymedia.com/madeinusa">Church & Dwight Sweepstakes</a></li>
+                        <li><a href="https://familymedia.com/naturemade">Nature Made 2025</a></li>
+                        <li><a href="https://familymedia.com/500-monthly-giveaway">$500 Monthly Giveaway</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="https://familymedia.com/career-hub">Career Hub</a></li>
+                        <li><a href="https://familymedia.com/pcs-hub">PCS Hub</a></li>
+                        <li><a href="https://familymedia.com/base-guides">Base Guides</a></li>
+                        <li><a href="https://familymedia.com/on-base-shopping">On-Base Shopping</a></li>
+                        <li><a href="https://familymedia.com/deployment">Deployment</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>
+                33 Walt Whitman Rd, Suite 201e, Huntington Station, NY 11746 &nbsp;&nbsp; Tel: <a href="tel:516-746-2000">516-746-2000</a><br>
+                © 2025 FamilyMedia | <a href="https://familymedia.com/privacy-policy">Privacy Policy</a>
+            </div>
+            <div>
+                <a href="https://familymedia.com/distributor-time-card">Distributor Time Card</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Footer Styles -->
+    <style>
+        /* Footer Styles */
+        footer {
+            background: #e8e8e8;
+            padding: 50px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .footer-logo h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+
+        .footer-logo p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .newsletter-btn {
+            background: #4a5f7a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        .newsletter-btn:hover {
+            background: #3a4f6a;
+        }
+
+        .social-section {
+            margin-top: 20px;
+        }
+
+        .social-section p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-icons a {
+            color: #666;
+            font-size: 20px;
+        }
+
+        .social-icons a:hover {
+            color: #2c3e50;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #4a5f7a;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .footer-column a:hover {
+            color: #2c3e50;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer-bottom a {
+            color: #4a5f7a;
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        /* Enhanced Responsive Design */
+        @media (max-width: 1024px) {
+            .footer-container {
+                padding: 0 15px;
+            }
+
+            .footer-top {
+                gap: 40px;
+            }
+
+            .footer-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 40px 0 20px;
+                margin-top: 40px;
+            }
+
+            .footer-container {
+                padding: 0 15px;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin-bottom: 30px;
+            }
+
+            .footer-links {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding-top: 15px;
+            }
+
+            .footer-logo h2 {
+                font-size: 24px;
+            }
+
+            .newsletter-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            footer {
+                padding: 30px 0 15px;
+                margin-top: 30px;
+            }
+
+            .footer-container {
+                padding: 0 10px;
+            }
+
+            .footer-top {
+                gap: 25px;
+                margin-bottom: 25px;
+            }
+
+            .footer-links {
+                gap: 20px;
+            }
+
+            .footer-logo h2 {
+                font-size: 20px;
+            }
+
+            .footer-logo p {
+                font-size: 11px;
+            }
+
+            .footer-column a {
+                font-size: 12px;
+            }
+
+            .footer-bottom {
+                font-size: 11px;
+                gap: 10px;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileToggle = document.querySelector('[data-toggle="menu"]');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+    });
+    </script>
+</body>
+</html>
