@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
       });
       
       // Estimate government cost (simplified - actual uses DoD rate tables)
-      const estimatedGCC = (ppmWeight / 1000) * distance * 0.85; // Rough estimate
+      const estimatedGCC = (ppmWeight / 1000) * maltMiles * 0.85; // Rough estimate
       ppmEstimate = estimatedGCC * PPM_PAYMENT_PERCENTAGE;
     }
 
