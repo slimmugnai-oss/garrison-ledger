@@ -50,50 +50,109 @@ export default function Header() {
 
   return (
     <>
-      {/* Search Modal */}
+      {/* Premium Search Modal - Enhanced */}
       {showSearch && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-20">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Icon name="Search" className="w-5 h-5 text-gray-500" />
-              <input
-                id="nav-search"
-                type="text"
-                placeholder="Search Garrison Ledger..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent text-lg font-medium placeholder-gray-500 focus:outline-none"
-                autoFocus
-              />
-              <button
-                onClick={() => setShowSearch(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              >
-                <Icon name="X" className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 bg-gradient-to-br from-black/60 via-slate-900/40 to-black/60 backdrop-blur-md z-50 flex items-start justify-center pt-24 px-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200">
+            {/* Search Header */}
+            <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-slate-700 px-6 py-4 border-b border-slate-200 dark:border-slate-600">
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <Icon name="Search" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <input
+                  id="nav-search"
+                  type="text"
+                  placeholder="Search calculators, intel, resources..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 bg-transparent text-lg font-semibold placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-slate-900 dark:text-white"
+                  autoFocus
+                />
+                <button
+                  onClick={() => setShowSearch(false)}
+                  className="p-2 hover:bg-white/50 dark:hover:bg-slate-600/50 rounded-lg transition-colors"
+                >
+                  <Icon name="X" className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
             </div>
-            <div className="text-sm text-gray-500">
-              Press <kbd className="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs font-mono">ESC</kbd> to close
+
+            {/* Search Shortcuts */}
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quick Access:</span>
+                <Link 
+                  href="/dashboard/intel-library" 
+                  onClick={() => setShowSearch(false)}
+                  className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-semibold hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                >
+                  Intel Library
+                </Link>
+                <Link 
+                  href="/dashboard/tools/tsp-calculator" 
+                  onClick={() => setShowSearch(false)}
+                  className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+                >
+                  TSP Calculator
+                </Link>
+                <Link 
+                  href="/dashboard/pcs-copilot" 
+                  onClick={() => setShowSearch(false)}
+                  className="px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
+                >
+                  PCS Copilot
+                </Link>
+                <Link 
+                  href="/base-guides" 
+                  onClick={() => setShowSearch(false)}
+                  className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                >
+                  Base Guides
+                </Link>
+              </div>
+            </div>
+
+            {/* Search Footer */}
+            <div className="px-6 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded text-xs font-mono">↵</kbd>
+                  <span>to select</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded text-xs font-mono">ESC</kbd>
+                  <span>to close</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-gray-400">
+                <Icon name="Sparkles" className="w-3 h-3" />
+                <span>Powered by AI</span>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-200 dark:border-slate-700">
+      {/* Header - Premium Design */}
+      <header className="sticky top-0 z-40 bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-b-2 border-slate-200/50 dark:border-slate-700/50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
+            {/* Logo - Premium Brand */}
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Icon name="Shield" className="w-6 h-6 text-white" />
+                <div className="w-11 h-11 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl">
+                  <Icon name="Shield" className="w-6 h-6 text-white drop-shadow-md" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl blur-sm opacity-0 group-hover:opacity-20 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur-md opacity-0 group-hover:opacity-30 transition-all duration-300" />
               </div>
               <div className="hidden sm:block">
-                <div className="font-bold text-xl text-slate-900 dark:text-white">Garrison Ledger</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Military Financial Intelligence</div>
+                <div className="font-bold text-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
+                  Garrison Ledger
+                </div>
+                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 -mt-1 tracking-wide">
+                  Military Financial Intelligence
+                </div>
               </div>
             </Link>
 
@@ -133,11 +192,11 @@ export default function Header() {
                   </button>
                   {dashboardOpen && (
                     <div 
-                      className="absolute top-full left-0 mt-3 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
                       onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 150); setCloseTimeout(t); }}
                     >
-                      <div className="p-2">
+                      <div className="p-3">
                         <Link href="/dashboard" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           pathname === '/dashboard' ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -227,11 +286,11 @@ export default function Header() {
                   </button>
                   {coreToolsOpen && (
                     <div 
-                      className="absolute top-full left-0 mt-3 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setCoreToolsOpen(true); }}
                       onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 150); setCloseTimeout(t); }}
                     >
-                      <div className="p-2">
+                      <div className="p-3">
                         <Link href="/dashboard/tools/tsp-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/tools/tsp-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -334,11 +393,11 @@ export default function Header() {
                   </button>
                   {intelligenceOpen && (
                     <div 
-                      className="absolute top-full left-0 mt-3 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                      className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                       onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setIntelligenceOpen(true); }}
                       onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 150); setCloseTimeout(t); }}
                     >
-                      <div className="p-2">
+                      <div className="p-3">
                         <Link href="/dashboard/intel-library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/intel-library') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
@@ -396,17 +455,6 @@ export default function Header() {
                   )}
                 </div>
 
-                {/* Quick Search Button */}
-                <button 
-                  onClick={() => setShowSearch(!showSearch)}
-                  className="px-4 py-2 rounded-lg text-gray-600 hover:text-slate-900 hover:bg-gray-50 transition-all flex items-center gap-2 font-semibold"
-                  title="Search Library (Press /)"
-                >
-                  <Icon name="Search" className="w-4 h-4" />
-                  <span className="text-sm hidden xl:inline">Search</span>
-                </button>
-              </SignedIn>
-
               {/* Resources Dropdown */}
               <div 
                 className="relative"
@@ -426,11 +474,11 @@ export default function Header() {
                 </button>
                 {resourcesOpen && (
                   <div 
-                    className="absolute top-full left-0 mt-3 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                    className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                     onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
                     onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 150); setCloseTimeout(t); }}
                   >
-                    <div className="p-2">
+                    <div className="p-3">
                       <Link href="/pcs-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                         isActivePath('/pcs-hub') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                       }`}>
@@ -502,8 +550,8 @@ export default function Header() {
               </div>
             </nav>
 
-            {/* Right Side */}
-            <div className="flex items-center gap-4">
+            {/* Right Side - Enhanced */}
+            <div className="flex items-center gap-3">
               <SignedOut>
                 <SignInButton mode="modal">
                   <button className="px-4 py-2 text-gray-600 hover:text-slate-900 font-semibold transition-colors">
@@ -511,25 +559,49 @@ export default function Header() {
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-6 py-2 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors">
-                    Get Started
+                  <button className="px-6 py-2.5 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl font-bold hover:from-slate-700 hover:to-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                    Get Started Free
                   </button>
                 </SignUpButton>
               </SignedOut>
+
               <SignedIn>
+                {/* Premium Search Button - Enhanced */}
+                <button 
+                  onClick={() => setShowSearch(!showSearch)}
+                  className="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl hover:border-blue-300 dark:hover:border-blue-600 transition-all group"
+                  title="Search Library (Press /)"
+                >
+                  <Icon name="Search" className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+                  <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Search</span>
+                  <kbd className="hidden xl:inline-flex px-2 py-0.5 text-xs font-mono bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded">
+                    /
+                  </kbd>
+                </button>
+
+                {/* Upgrade Button - Premium CTA */}
+                <Link
+                  href="/dashboard/upgrade"
+                  className="hidden lg:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <Icon name="Zap" className="w-4 h-4" />
+                  <span>Upgrade</span>
+                </Link>
+
+                {/* User Menu */}
                 <UserButton 
                   appearance={{
                     elements: {
-                      avatarBox: "w-8 h-8"
+                      avatarBox: "w-9 h-9 ring-2 ring-slate-200 dark:ring-slate-700 hover:ring-blue-500 transition-all"
                     }
                   }}
                 />
               </SignedIn>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Button - Enhanced */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-slate-900 hover:bg-gray-50 transition-colors"
+                className="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
               >
                 <Icon name={mobileMenuOpen ? "X" : "Menu"} className="w-6 h-6" />
               </button>
