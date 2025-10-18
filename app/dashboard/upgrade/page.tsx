@@ -50,7 +50,7 @@ export default async function UpgradePage() {
             <div className="bg-gradient-to-r from-green-600 to-emerald-700 text-white py-3 px-4 text-center sticky top-16 z-40 shadow-lg">
               <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
                 <Icon name="Shield" className="w-5 h-5" />
-                <span className="font-bold text-sm sm:text-base">30-Day Money-Back Guarantee - Zero Risk</span>
+                <span className="font-bold text-sm sm:text-base">7-Day Money-Back Guarantee</span>
               </div>
             </div>
           </>
@@ -89,7 +89,6 @@ export default async function UpgradePage() {
                 </p>
                 {/* Value Prop */}
                 <div className="inline-flex items-center gap-3 bg-success-subtle border-2 border-success text-success px-5 py-3 rounded-full font-bold shadow-lg mobile-safe">
-                  <Icon name="DollarSign" className="w-6 h-6 flex-shrink-0" />
                   <span className="text-sm sm:text-base break-words">Save $2,400+/year vs $120/year = 20x ROI</span>
                 </div>
               </>
@@ -159,18 +158,23 @@ export default async function UpgradePage() {
           {!isPaid && (
             <div className="text-center mb-10 sm:mb-12">
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-text-headings mb-3">
-                <span className="text-danger">Don't Miss Out:</span> Unlock Everything
+                Choose Your Plan
               </h2>
               <p className="text-lg sm:text-xl text-text-body max-w-2xl mx-auto">
-                Less than a coffee per day. Could help you save <strong className="text-success">$5,000+/year</strong> in military benefits.
+                Professional military financial planning tools starting at less than a coffee per day
               </p>
             </div>
           )}
 
-          {/* Premium & Pro Pricing Cards */}
-          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto mb-12 sm:mb-16">
-            {/* Premium Annual - HERO */}
-            <div className="mobile-card rounded-2xl shadow-2xl p-6 sm:p-10 border-4 border-slate-700 bg-gradient-to-br from-slate-50 to-slate-100 relative transform lg:scale-105 order-1 lg:order-1">
+          {/* Monthly Plans - HERO (Avoid Sticker Shock) */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-text-headings mb-2">Monthly Plans</h3>
+              <p className="text-text-body">Flexible billing, cancel anytime</p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-6">
+              {/* Premium Monthly */}
+              <div className="mobile-card rounded-2xl shadow-lg p-6 sm:p-8 border-2 border-slate-300 bg-white relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-slate-700 to-slate-900 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg whitespace-nowrap">
                   ⭐ MOST POPULAR - 83% CHOOSE THIS
@@ -196,7 +200,7 @@ export default async function UpgradePage() {
                 </div>
                 <div className="bg-warning-subtle border-2 border-yellow-400 rounded-lg p-3 mb-6">
                   <p className="text-sm font-bold text-warning">
-                    🔥 Only <span className="text-danger">$8.25/month</span> when paid annually
+                    Only <span className="text-danger">$8.25/month</span> when paid annually
                   </p>
                 </div>
 
@@ -256,7 +260,7 @@ export default async function UpgradePage() {
                 ) : (
                   <PaymentButton 
                     priceId="price_1SHdWpQnBqVFfU8hPGQ3hLqK"
-                    buttonText="🔥 Get Best Value - Save $260!"
+                    buttonText="Get Best Value - Save $260"
                     className="mobile-button w-full bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
                   />
                 )}
@@ -267,7 +271,7 @@ export default async function UpgradePage() {
             <div className="mobile-card rounded-2xl shadow-2xl p-6 sm:p-10 border-4 border-orange-500 bg-gradient-to-br from-orange-50 to-red-50 relative transform lg:scale-105 order-2">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-lg whitespace-nowrap">
-                  💎 POWER USERS - ULTIMATE VALUE
+                  POWER USERS - ULTIMATE VALUE
                 </span>
               </div>
               <div className="text-center">
@@ -290,7 +294,7 @@ export default async function UpgradePage() {
                 </div>
                 <div className="bg-orange-100 border-2 border-orange-400 rounded-lg p-3 mb-6">
                   <p className="text-sm font-bold text-orange-800">
-                    🔥 Only <span className="text-orange-600">$20.83/month</span> when paid annually
+                    Only <span className="text-orange-600">$20.83/month</span> when paid annually
                   </p>
                 </div>
 
@@ -350,7 +354,7 @@ export default async function UpgradePage() {
                 ) : (
                   <PaymentButton 
                     priceId="price_1SJOFTQnBqVFfU8hAxbEoVff"
-                    buttonText="💎 Get Pro - Ultimate Power"
+                    buttonText="Get Pro Annual - Best Value"
                     className="mobile-button w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105"
                   />
                 )}
@@ -604,7 +608,7 @@ export default async function UpgradePage() {
                   Do you really offer refunds?
                 </h3>
                 <p className="text-sm sm:text-base text-text-body">
-                  Absolutely. 30-day money-back guarantee. If you're not satisfied, we'll refund 100% - no questions asked.
+                  Yes. 7-day money-back guarantee. If you're not satisfied within the first week, we'll refund 100% - no questions asked.
                 </p>
               </div>
               
@@ -643,7 +647,7 @@ export default async function UpgradePage() {
                   <div className="text-4xl sm:text-5xl font-black mb-2">$99/year</div>
                   <div className="text-base sm:text-lg text-blue-200 mb-4">Save 2 months vs monthly • Only $8.25/month</div>
                   <div className="text-sm text-blue-300 mb-6">
-                    30-day money-back guarantee • Cancel anytime
+                    7-day money-back guarantee • Cancel anytime
                   </div>
                 </div>
                 <PaymentButton 
