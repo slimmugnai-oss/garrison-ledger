@@ -83,14 +83,14 @@ export default function Header() {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quick Access:</span>
                 <Link 
-                  href="/dashboard/intel-library" 
+                  href="/dashboard/library" 
                   onClick={() => setShowSearch(false)}
                   className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-semibold hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
                 >
                   Intel Library
                 </Link>
                 <Link 
-                  href="/dashboard/tools/tsp-calculator" 
+                  href="/dashboard/tools/tsp-modeler" 
                   onClick={() => setShowSearch(false)}
                   className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
                 >
@@ -291,12 +291,12 @@ export default function Header() {
                       onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
-                        <Link href="/dashboard/tools/tsp-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/tsp-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/tools/tsp-modeler" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/tools/tsp-modeler') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
                           <Icon name="TrendingUp" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/tsp-calculator') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/tsp-modeler') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
                               TSP Calculator
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -304,12 +304,12 @@ export default function Header() {
                             </div>
                     </div>
                     </Link>
-                        <Link href="/dashboard/tools/sdp-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/sdp-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/tools/sdp-strategist" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/tools/sdp-strategist') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
                           <Icon name="PiggyBank" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/sdp-calculator') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/sdp-strategist') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
                               SDP Calculator
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -398,12 +398,12 @@ export default function Header() {
                       onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
-                        <Link href="/dashboard/intel-library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/intel-library') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/library') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
                           <Icon name="BookOpen" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/intel-library') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/library') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
                               Intel Library
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -650,11 +650,11 @@ export default function Header() {
                     Core Tools
                   </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard/tools/tsp-calculator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="TrendingUp" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">TSP Calculator</span>
                     </Link>
-                    <Link href="/dashboard/tools/sdp-calculator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="PiggyBank" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">SDP Calculator</span>
                     </Link>
@@ -683,7 +683,7 @@ export default function Header() {
                     Intelligence
                   </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard/intel-library" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/dashboard/library" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="BookOpen" className="w-5 h-5 text-purple-600" />
                       <span className="font-medium">Intel Library</span>
                     </Link>
