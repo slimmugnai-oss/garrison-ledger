@@ -733,13 +733,18 @@ export default function BaseMapSelector() {
                                   href={base.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  onClick={() => handleCardClick(base)}
+                                  onClick={(e) => {
+                                    if (base.comingSoon) {
+                                      e.preventDefault();
+                                    } else {
+                                      handleCardClick(base);
+                                    }
+                                  }}
                                   className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                                     base.comingSoon
                                       ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
                                       : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md'
                                   }`}
-                                  {...(base.comingSoon ? { onClick: (e) => e.preventDefault() } : {})}
                                 >
                                   {base.comingSoon ? 'Coming Soon' : 'View Guide'}
                                   {!base.comingSoon && (
