@@ -115,11 +115,11 @@ export async function GET(req: NextRequest) {
             if (weather.currentConditions) {
               const current = weather.currentConditions;
               const weatherData = {
-                avgTemp: Math.round((current.temperature || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
-                feelsLike: Math.round((current.temperatureApparent || current.temperature || 0) * 9/5 + 32),
-                condition: current.condition || 'N/A',
-                humidity: Math.round((current.humidity || 0) * 100),
-                windSpeed: Math.round(current.windSpeed || 0),
+                avgTemp: Math.round((current.temperature.degrees || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
+                feelsLike: Math.round((current.feelsLikeTemperature.degrees || current.temperature.degrees || 0) * 9/5 + 32),
+                condition: current.weatherCondition?.description?.text || 'N/A',
+                humidity: Math.round((current.relativeHumidity || 0)),
+                windSpeed: Math.round((current.wind?.speed?.value || 0) * 0.621371), // Convert km/h to mph
                 source: 'Google Weather API'
               };
               
@@ -211,11 +211,11 @@ export async function GET(req: NextRequest) {
             const current = weather.currentConditions;
             
             externalData.weather = {
-              avgTemp: Math.round((current.temperature || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
-              feelsLike: Math.round((current.temperatureApparent || current.temperature || 0) * 9/5 + 32),
-              condition: current.condition || 'N/A',
-              humidity: Math.round((current.humidity || 0) * 100),
-              windSpeed: Math.round(current.windSpeed || 0),
+              avgTemp: Math.round((current.temperature.degrees || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
+              feelsLike: Math.round((current.feelsLikeTemperature.degrees || current.temperature.degrees || 0) * 9/5 + 32),
+              condition: current.weatherCondition?.description?.text || 'N/A',
+              humidity: Math.round((current.relativeHumidity || 0)),
+              windSpeed: Math.round((current.wind?.speed?.value || 0) * 0.621371), // Convert km/h to mph
               source: 'Google Weather API'
             };
           }
