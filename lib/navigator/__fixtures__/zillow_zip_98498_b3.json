@@ -1,0 +1,30 @@
+{
+  "props": [
+    {
+      "address": "1234 Military Way, Spanaway, WA 98498",
+      "price": 2200,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "zpid": "12345678",
+      "detailUrl": "https://www.zillow.com/homedetails/12345678_zpid/",
+      "imgSrc": "https://photos.zillowstatic.com/sample.jpg"
+    },
+    {
+      "address": "5678 Base Road, Spanaway, WA 98498",
+      "price": 2400,
+      "bedrooms": 3,
+      "bathrooms": 2.5,
+      "zpid": "87654321",
+      "detailUrl": "https://www.zillow.com/homedetails/87654321_zpid/"
+    },
+    {
+      "address": "9101 Fort Lane, Spanaway, WA 98498",
+      "price": 2100,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "zpid": "11223344",
+      "detailUrl": "https://www.zillow.com/homedetails/11223344_zpid/"
+    }
+  ]
+}
+

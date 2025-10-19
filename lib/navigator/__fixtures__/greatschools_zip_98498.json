@@ -1,0 +1,26 @@
+{
+  "schools": [
+    {
+      "name": "Spanaway Elementary School",
+      "rating": 7,
+      "grades": "K-5",
+      "type": "public",
+      "address": "Spanaway, WA 98498"
+    },
+    {
+      "name": "Spanaway Middle School",
+      "rating": 6,
+      "grades": "6-8",
+      "type": "public",
+      "address": "Spanaway, WA 98498"
+    },
+    {
+      "name": "Bethel High School",
+      "rating": 5,
+      "grades": "9-12",
+      "type": "public",
+      "address": "Spanaway, WA 98498"
+    }
+  ]
+}
+
