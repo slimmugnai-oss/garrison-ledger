@@ -18,7 +18,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/server/supabase-admin';
+import { supabaseAdmin } from '@/lib/supabase';
 import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { compareLesToExpected } from '@/lib/les/compare';
 

@@ -19,7 +19,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/server/supabase-admin';
+import { supabaseAdmin } from '@/lib/supabase';
 import { parseLesPdf } from '@/lib/les/parse';
 import { ssot } from '@/lib/ssot';
 
