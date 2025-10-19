@@ -757,8 +757,8 @@ export default function BaseMapSelector() {
                           </a>
                         </td>
                       </tr>
-                      ))}
-                    </tbody>
+                    ))}
+                  </tbody>
                   </table>
                 </div>
               </div>
