@@ -86,13 +86,13 @@ export default function BaseMapSelector() {
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
             .style('cursor', 'pointer');
 
-          // Pin circle with mobile-optimized size
+          // Pin circle with optimized size to prevent overlap
           pinGroup.append('circle')
-            .attr('r', 10) // Increased from 8px to 10px for better mobile tap
+            .attr('r', 5) // Reduced from 10px to 5px to prevent overlap
             .attr('fill', branchColors[base.branch as keyof typeof branchColors])
             .attr('stroke', '#ffffff')
-            .attr('stroke-width', 2)
-            .attr('class', 'transition-all hover:scale-150');
+            .attr('stroke-width', 1.5)
+            .attr('class', 'transition-all hover:scale-200'); // Increased hover scale for visibility
 
           // Tooltip group
           const tooltip = pinGroup.append('g')
@@ -250,21 +250,77 @@ export default function BaseMapSelector() {
         </div>
 
         {selectedRegion === 'OCONUS' && !showMobileList && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-8 text-center mb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 mx-auto">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+          <div className="mb-6">
+            {/* World Map Representation */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-8 mb-6">
+              <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-300 mb-6 text-center">
+                🌍 Worldwide Military Installations ({oconusBases.length} bases)
+              </h3>
+              
+              {/* Regional Breakdown */}
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Europe */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                      <span className="text-2xl">🇪🇺</span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-blue-900 dark:text-blue-300">Europe</h4>
+                      <p className="text-sm text-blue-700 dark:text-blue-400">
+                        {oconusBases.filter(b => ['Germany', 'Italy', 'Spain', 'United Kingdom'].includes(b.country || '')).length} bases
+                      </p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                    <li>🇩🇪 Germany ({oconusBases.filter(b => b.country === 'Germany').length})</li>
+                    <li>🇮🇹 Italy ({oconusBases.filter(b => b.country === 'Italy').length})</li>
+                    <li>🇬🇧 UK ({oconusBases.filter(b => b.country === 'United Kingdom').length})</li>
+                    <li>🇪🇸 Spain ({oconusBases.filter(b => b.country === 'Spain').length})</li>
+                  </ul>
+                </div>
+
+                {/* Asia-Pacific */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center">
+                      <span className="text-2xl">🌏</span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-emerald-900 dark:text-emerald-300">Asia-Pacific</h4>
+                      <p className="text-sm text-emerald-700 dark:text-emerald-400">
+                        {oconusBases.filter(b => ['Japan', 'South Korea', 'Guam'].includes(b.country || '')).length} bases
+                      </p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-emerald-800 dark:text-emerald-200">
+                    <li>🇯🇵 Japan ({oconusBases.filter(b => b.country === 'Japan').length})</li>
+                    <li>🇰🇷 South Korea ({oconusBases.filter(b => b.country === 'South Korea').length})</li>
+                    <li>🇬🇺 Guam ({oconusBases.filter(b => b.country === 'Guam').length})</li>
+                  </ul>
+                </div>
+
+                {/* Other Regions */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-purple-200 dark:border-purple-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
+                      <span className="text-2xl">🌐</span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-purple-900 dark:text-purple-300">Other Regions</h4>
+                      <p className="text-sm text-purple-700 dark:text-purple-400">
+                        {oconusBases.filter(b => !['Germany', 'Italy', 'Spain', 'United Kingdom', 'Japan', 'South Korea', 'Guam'].includes(b.country || '')).length} bases
+                      </p>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-200">
+                    <li>🇹🇷 Turkey ({oconusBases.filter(b => b.country === 'Turkey').length})</li>
+                    <li>🇬🇱 Greenland ({oconusBases.filter(b => b.country === 'Greenland').length})</li>
+                    <li>🏝️ Diego Garcia ({oconusBases.filter(b => b.country === 'British Indian Ocean Territory').length})</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-300 mb-3">
-              Worldwide Military Installations
-            </h3>
-            <p className="text-blue-800 dark:text-blue-200 max-w-2xl mx-auto mb-4">
-              Viewing {oconusBases.length} overseas bases across Europe, Asia-Pacific, and other regions. Browse the list below to explore installations worldwide.
-            </p>
-            <p className="text-sm text-blue-700 dark:text-blue-300">
-              Includes bases in Germany, Japan, South Korea, Italy, United Kingdom, Guam, and more
-            </p>
           </div>
         )}
 
@@ -421,10 +477,44 @@ export default function BaseMapSelector() {
         </div>
       )}
 
-      {/* Base Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Smart Grouped Base List */}
+      <div className="space-y-8">
         {filteredBases.length > 0 ? (
-          filteredBases.map(base => (
+          (() => {
+            // Group bases by state (CONUS) or country (OCONUS)
+            const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
+            const grouped = filteredBases.reduce((acc, base) => {
+              const key = base[groupKey] || 'Other';
+              if (!acc[key]) acc[key] = [];
+              acc[key].push(base);
+              return acc;
+            }, {} as Record<string, typeof filteredBases>);
+
+            // Sort groups alphabetically
+            const sortedGroups = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
+
+            return sortedGroups.map(([groupName, bases]) => (
+              <div key={groupName} className="space-y-4">
+                {/* Group Header */}
+                <div className="flex items-center gap-3 pb-3 border-b-2 border-slate-200 dark:border-slate-700">
+                  <div className="flex-shrink-0 w-10 h-10 bg-slate-800 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">
+                      {selectedRegion === 'CONUS' ? groupName : '🌍'}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                      {groupName}
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {bases.length} installation{bases.length > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bases in this group */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {bases.map(base => (
             <div
               key={base.id}
               id={`base-card-${base.id}`}
@@ -476,7 +566,11 @@ export default function BaseMapSelector() {
                 </span>
               </a>
             </div>
-          ))
+                  ))}
+                </div>
+              </div>
+            ));
+          })()
         ) : (
           <div className="col-span-full">
             <div className="text-center py-16 bg-surface-hover rounded-xl border-2 border-dashed border-default">
