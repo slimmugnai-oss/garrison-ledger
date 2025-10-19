@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { allBases, getBasesByRegion, getBasesByBranch, searchBases, validateBaseData } from '@/app/data/bases-clean';
-import type { BaseData } from '@/app/data/bases-clean';
+import { getAllBases, getBasesByRegion, getBasesByBranch, searchBases } from '@/app/data/bases';
+import type { BaseData } from '@/app/data/bases';
 import Icon from '../ui/Icon';
 import Link from 'next/link';
 import BaseCardClean from './BaseCardClean';
@@ -26,16 +26,9 @@ export default function BaseIntelligenceBrowserClean() {
   const [recommendations, setRecommendations] = useState<BaseRecommendation[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(true);
-  const [dataErrors, setDataErrors] = useState<string[]>([]);
-
-  // Validate data on mount
-  useEffect(() => {
-    const validation = validateBaseData();
-    if (!validation.valid) {
-      console.error('Base data validation errors:', validation.errors);
-      setDataErrors(validation.errors);
-    }
-  }, []);
+  
+  // Get all bases on mount
+  const allBases = useMemo(() => getAllBases(), []);
 
   // Load recommendations on mount
   useEffect(() => {
@@ -67,7 +60,13 @@ export default function BaseIntelligenceBrowserClean() {
 
     // Filter by region
     if (selectedRegion !== 'All') {
-      bases = bases.filter(base => base.region === selectedRegion);
+      if (selectedRegion === 'CONUS') {
+        // CONUS bases: those with region: "CONUS" OR no region property (defaults to CONUS)
+        bases = bases.filter(base => !base.region || base.region === 'CONUS');
+      } else if (selectedRegion === 'OCONUS') {
+        // OCONUS bases: those with region: "OCONUS"
+        bases = bases.filter(base => base.region === 'OCONUS');
+      }
     }
 
     // Filter by branch
@@ -77,11 +76,18 @@ export default function BaseIntelligenceBrowserClean() {
 
     // Filter by search query
     if (searchQuery.trim()) {
-      bases = searchBases(searchQuery.trim());
+      const lowerQuery = searchQuery.toLowerCase().trim();
+      bases = bases.filter(base =>
+        base.title.toLowerCase().includes(lowerQuery) ||
+        base.state.toLowerCase().includes(lowerQuery) ||
+        base.city.toLowerCase().includes(lowerQuery) ||
+        base.branch.toLowerCase().includes(lowerQuery) ||
+        (base.country && base.country.toLowerCase().includes(lowerQuery))
+      );
     }
 
     return bases;
-  }, [searchQuery, selectedBranch, selectedRegion]);
+  }, [allBases, searchQuery, selectedBranch, selectedRegion]);
 
   // Group bases by state/country for quick filters
   const groupedBases = useMemo(() => {
@@ -112,22 +118,6 @@ export default function BaseIntelligenceBrowserClean() {
     setSelectedRegion('All');
   }, []);
 
-  // Show data errors if any
-  if (dataErrors.length > 0) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-red-900 mb-4">Data Validation Errors</h3>
-        <ul className="space-y-2">
-          {dataErrors.map((error, index) => (
-            <li key={index} className="text-sm text-red-700">• {error}</li>
-          ))}
-        </ul>
-        <p className="text-sm text-red-600 mt-4">
-          Please contact support to resolve these data issues.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Icon from '../ui/Icon';
-import type { BaseData } from '@/app/data/bases-clean';
+import type { BaseData } from '@/app/data/bases';
 
 interface ExternalData {
   schools?: {
