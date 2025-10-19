@@ -655,7 +655,9 @@ export default function BaseMapSelector() {
               </button>
               {(() => {
                 const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
-                const grouped = filteredBases.reduce((acc, base) => {
+                // Only group bases from the currently selected region
+                const regionBases = selectedRegion === 'CONUS' ? basesData : oconusBases;
+                const grouped = regionBases.reduce((acc, base) => {
                   const key = base[groupKey] || 'Other';
                   if (!acc[key]) acc[key] = 0;
                   acc[key]++;
@@ -668,7 +670,17 @@ export default function BaseMapSelector() {
                   .map(([name, count]) => (
                     <button
                       key={name}
-                      onClick={() => setSelectedGroup(name)}
+                      onClick={() => {
+                        // If clicking on a country (OCONUS), switch to OCONUS region
+                        if (selectedRegion === 'CONUS' && oconusBases.some(base => base.country === name)) {
+                          setSelectedRegion('OCONUS');
+                        }
+                        // If clicking on a state (CONUS), switch to CONUS region  
+                        else if (selectedRegion === 'OCONUS' && basesData.some(base => base.state === name)) {
+                          setSelectedRegion('CONUS');
+                        }
+                        setSelectedGroup(name);
+                      }}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
                         selectedGroup === name
                           ? 'bg-emerald-600 text-white shadow-md'
