@@ -5,6 +5,7 @@
  * GET /api/feeds/refresh?source=BAH,COLA
  */
 
+import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { refreshSourceData, invalidateCachePattern } from '@/lib/dynamic/fetch';
 
@@ -13,13 +14,17 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret (prevent unauthorized refreshes)
+    // Verify cron secret OR authenticated user (allow manual admin refresh)
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
-
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    
+    // Allow if: has valid cron secret OR is authenticated user
+    const hasCronAuth = cronSecret && authHeader === `Bearer ${cronSecret}`;
+    const { userId } = await auth();
+    
+    if (!hasCronAuth && !userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - requires authentication' },
         { status: 401 }
       );
     }

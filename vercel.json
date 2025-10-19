@@ -20,8 +20,13 @@
   "redirects": [
     {
       "source": "/library",
-      "destination": "/dashboard/library",
-      "permanent": true
+      "destination": "/dashboard/intel",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard/library",
+      "destination": "/dashboard/intel",
+      "permanent": false
     }
   ]
 }

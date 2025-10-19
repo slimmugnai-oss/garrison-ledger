@@ -224,11 +224,11 @@ export default function PaycheckAuditClient({
                   <span>Extracting pay data from PDF</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Icon name={uploading ? 'Clock' : parsing ? 'RefreshCw' : 'Clock'} className={`w-4 h-4 ${parsing && !uploading ? 'text-blue-600 animate-spin' : 'text-gray-400'}`} />
+                  <Icon name={parsing && !uploading ? 'RefreshCw' : 'CheckCircle'} className={`w-4 h-4 ${parsing && !uploading ? 'text-blue-600 animate-spin' : 'text-gray-400'}`} />
                   <span>Comparing to expected allowances</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Icon name="Clock" className="w-4 h-4 text-gray-400" />
+                  <Icon name="CheckCircle" className="w-4 h-4 text-gray-400" />
                   <span>Generating actionable flags</span>
                 </div>
               </div>
