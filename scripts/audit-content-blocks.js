@@ -13,11 +13,42 @@
 
 import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
+import * as path from 'path';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Load environment variables from .env.local
+function loadEnvFile() {
+  try {
+    const envPath = path.join(process.cwd(), '.env.local');
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const envVars = {};
+    
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        const value = valueParts.join('=').replace(/^["']|["']$/g, '');
+        envVars[key.trim()] = value.trim();
+      }
+    });
+    
+    return envVars;
+  } catch (error) {
+    console.error('❌ Error loading .env.local:', error.message);
+    return {};
+  }
+}
+
+const env = loadEnvFile();
+const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Error: Missing Supabase credentials in .env.local');
+  console.error('Please ensure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Patterns that indicate potentially outdated or inaccurate info
 const RED_FLAGS = {
