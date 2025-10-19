@@ -349,6 +349,90 @@ export const basesData: BaseData[] = [
     featured: true,
     region: "CONUS"
   },
+
+  // ===== ARMY INSTALLATIONS (ADDITIONAL) =====
+  { id: 'fort-bliss', title: "Fort Bliss", branch: "Army", state: "TX", city: "El Paso", url: "#", lat: 31.851, lng: -106.426, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'fort-sill', title: "Fort Sill", branch: "Army", state: "OK", city: "Lawton", url: "#", lat: 34.651, lng: -98.403, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-riley', title: "Fort Riley", branch: "Army", state: "KS", city: "Junction City", url: "#", lat: 39.055, lng: -96.795, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'fort-drum', title: "Fort Drum", branch: "Army", state: "NY", city: "Watertown", url: "#", lat: 44.056, lng: -75.772, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'fort-eisenhower', title: "Fort Eisenhower", branch: "Army", state: "GA", city: "Augusta", url: "#", lat: 33.366, lng: -81.992, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-irwin', title: "Fort Irwin", branch: "Army", state: "CA", city: "Barstow", url: "#", lat: 35.264, lng: -116.681, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-polk', title: "Fort Polk", branch: "Army", state: "LA", city: "Leesville", url: "#", lat: 31.051, lng: -93.193, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-leonard-wood', title: "Fort Leonard Wood", branch: "Army", state: "MO", city: "St. Robert", url: "#", lat: 37.715, lng: -92.145, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-knox', title: "Fort Knox", branch: "Army", state: "KY", city: "Radcliff", url: "#", lat: 37.894, lng: -85.965, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-jackson', title: "Fort Jackson", branch: "Army", state: "SC", city: "Columbia", url: "#", lat: 34.050, lng: -80.894, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-novosel', title: "Fort Novosel", branch: "Army", state: "AL", city: "Daleville", url: "#", lat: 31.343, lng: -85.712, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-lee', title: "Fort Lee", branch: "Army", state: "VA", city: "Petersburg", url: "#", lat: 37.244, lng: -77.333, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-sam-houston', title: "Fort Sam Houston", branch: "Army", state: "TX", city: "San Antonio", url: "#", lat: 29.451, lng: -98.432, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-gordon', title: "Fort Gordon", branch: "Army", state: "GA", city: "Augusta", url: "#", lat: 33.435, lng: -82.140, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fort-huachuca', title: "Fort Huachuca", branch: "Army", state: "AZ", city: "Sierra Vista", url: "#", lat: 31.555, lng: -110.353, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'fort-gregg-adams', title: "Fort Gregg-Adams", branch: "Army", state: "VA", city: "Petersburg", url: "#", lat: 37.237, lng: -77.337, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'redstone-arsenal', title: "Redstone Arsenal", branch: "Army", state: "AL", city: "Huntsville", url: "#", lat: 34.684, lng: -86.651, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'white-sands', title: "White Sands Missile Range", branch: "Army", state: "NM", city: "Las Cruces", url: "#", lat: 32.386, lng: -106.491, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'jber', title: "Joint Base Elmendorf-Richardson", branch: "Joint", state: "AK", city: "Anchorage", url: "#", lat: 61.253, lng: -149.807, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'schofield-barracks', title: "Schofield Barracks", branch: "Army", state: "HI", city: "Wahiawa", url: "#", lat: 21.498, lng: -158.065, size: "Large", region: "CONUS", comingSoon: true },
+
+  // ===== AIR FORCE BASES (ADDITIONAL) =====
+  { id: 'travis-afb', title: "Travis AFB", branch: "Air Force", state: "CA", city: "Fairfield", url: "#", lat: 38.263, lng: -121.927, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'beale-afb', title: "Beale AFB", branch: "Air Force", state: "CA", city: "Marysville", url: "#", lat: 39.136, lng: -121.437, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'edwards-afb', title: "Edwards AFB", branch: "Air Force", state: "CA", city: "Lancaster", url: "#", lat: 34.905, lng: -117.884, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'vandenberg-sfb', title: "Vandenberg Space Force Base", branch: "Air Force", state: "CA", city: "Lompoc", url: "#", lat: 34.742, lng: -120.572, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'hill-afb', title: "Hill AFB", branch: "Air Force", state: "UT", city: "Ogden", url: "#", lat: 41.124, lng: -111.973, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mountain-home-afb', title: "Mountain Home AFB", branch: "Air Force", state: "ID", city: "Mountain Home", url: "#", lat: 43.044, lng: -115.872, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'fairchild-afb', title: "Fairchild AFB", branch: "Air Force", state: "WA", city: "Spokane", url: "#", lat: 47.615, lng: -117.655, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'tinker-afb', title: "Tinker AFB", branch: "Air Force", state: "OK", city: "Oklahoma City", url: "#", lat: 35.415, lng: -97.387, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'lackland-afb', title: "Lackland AFB", branch: "Air Force", state: "TX", city: "San Antonio", url: "#", lat: 29.384, lng: -98.618, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'randolph-afb', title: "Randolph AFB", branch: "Air Force", state: "TX", city: "Universal City", url: "#", lat: 29.530, lng: -98.279, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'goodfellow-afb', title: "Goodfellow AFB", branch: "Air Force", state: "TX", city: "San Angelo", url: "#", lat: 31.437, lng: -100.403, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'sheppard-afb', title: "Sheppard AFB", branch: "Air Force", state: "TX", city: "Wichita Falls", url: "#", lat: 33.989, lng: -98.492, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'dyess-afb', title: "Dyess AFB", branch: "Air Force", state: "TX", city: "Abilene", url: "#", lat: 32.421, lng: -99.855, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'laughlin-afb', title: "Laughlin AFB", branch: "Air Force", state: "TX", city: "Del Rio", url: "#", lat: 29.360, lng: -100.778, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'columbus-afb', title: "Columbus AFB", branch: "Air Force", state: "MS", city: "Columbus", url: "#", lat: 33.643, lng: -88.444, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'keesler-afb', title: "Keesler AFB", branch: "Air Force", state: "MS", city: "Biloxi", url: "#", lat: 30.413, lng: -88.924, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'barksdale-afb', title: "Barksdale AFB", branch: "Air Force", state: "LA", city: "Bossier City", url: "#", lat: 32.502, lng: -93.663, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'moody-afb', title: "Moody AFB", branch: "Air Force", state: "GA", city: "Valdosta", url: "#", lat: 30.968, lng: -83.193, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'robins-afb', title: "Robins AFB", branch: "Air Force", state: "GA", city: "Warner Robins", url: "#", lat: 32.640, lng: -83.592, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'charleston-afb', title: "Charleston AFB", branch: "Air Force", state: "SC", city: "North Charleston", url: "#", lat: 32.899, lng: -80.041, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'shaw-afb', title: "Shaw AFB", branch: "Air Force", state: "SC", city: "Sumter", url: "#", lat: 33.973, lng: -80.471, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'seymour-johnson-afb', title: "Seymour Johnson AFB", branch: "Air Force", state: "NC", city: "Goldsboro", url: "#", lat: 35.340, lng: -77.961, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'langley-afb', title: "Langley AFB", branch: "Air Force", state: "VA", city: "Hampton", url: "#", lat: 37.082, lng: -76.361, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'dover-afb', title: "Dover AFB", branch: "Air Force", state: "DE", city: "Dover", url: "#", lat: 39.130, lng: -75.466, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'jb-andrews', title: "Joint Base Andrews", branch: "Joint", state: "MD", city: "Camp Springs", url: "#", lat: 38.811, lng: -76.867, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'scott-afb', title: "Scott AFB", branch: "Air Force", state: "IL", city: "Belleville", url: "#", lat: 38.545, lng: -89.852, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'offutt-afb', title: "Offutt AFB", branch: "Air Force", state: "NE", city: "Omaha", url: "#", lat: 41.118, lng: -95.915, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'minot-afb', title: "Minot AFB", branch: "Air Force", state: "ND", city: "Minot", url: "#", lat: 48.416, lng: -101.358, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'grand-forks-afb', title: "Grand Forks AFB", branch: "Air Force", state: "ND", city: "Grand Forks", url: "#", lat: 47.961, lng: -97.401, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'ellsworth-afb', title: "Ellsworth AFB", branch: "Air Force", state: "SD", city: "Rapid City", url: "#", lat: 44.145, lng: -103.104, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'warren-afb', title: "F.E. Warren AFB", branch: "Air Force", state: "WY", city: "Cheyenne", url: "#", lat: 41.157, lng: -104.867, size: "Medium", region: "CONUS", comingSoon: true },
+
+  // ===== NAVY INSTALLATIONS (ADDITIONAL) =====
+  { id: 'nas-pensacola', title: "NAS Pensacola", branch: "Navy", state: "FL", city: "Pensacola", url: "#", lat: 30.353, lng: -87.316, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'nas-jacksonville', title: "NAS Jacksonville", branch: "Navy", state: "FL", city: "Jacksonville", url: "#", lat: 30.236, lng: -81.681, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'nas-key-west', title: "NAS Key West", branch: "Navy", state: "FL", city: "Key West", url: "#", lat: 24.576, lng: -81.689, size: "Small", region: "CONUS", comingSoon: true },
+  { id: 'nas-oceana', title: "NAS Oceana", branch: "Navy", state: "VA", city: "Virginia Beach", url: "#", lat: 36.821, lng: -76.033, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'nas-patuxent-river', title: "NAS Patuxent River", branch: "Navy", state: "MD", city: "Lexington Park", url: "#", lat: 38.286, lng: -76.412, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'nas-whidbey-island', title: "NAS Whidbey Island", branch: "Navy", state: "WA", city: "Oak Harbor", url: "#", lat: 48.351, lng: -122.656, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'nas-lemoore', title: "NAS Lemoore", branch: "Navy", state: "CA", city: "Lemoore", url: "#", lat: 36.333, lng: -119.952, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'naval-station-everett', title: "Naval Station Everett", branch: "Navy", state: "WA", city: "Everett", url: "#", lat: 47.980, lng: -122.224, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'naval-station-mayport', title: "Naval Station Mayport", branch: "Navy", state: "FL", city: "Jacksonville", url: "#", lat: 30.393, lng: -81.425, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'nsb-kings-bay', title: "Naval Submarine Base Kings Bay", branch: "Navy", state: "GA", city: "St. Marys", url: "#", lat: 30.799, lng: -81.555, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'ns-great-lakes', title: "Naval Station Great Lakes", branch: "Navy", state: "IL", city: "North Chicago", url: "#", lat: 42.313, lng: -87.847, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'nas-corpus-christi', title: "NAS Corpus Christi", branch: "Navy", state: "TX", city: "Corpus Christi", url: "#", lat: 27.693, lng: -97.289, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'ns-newport', title: "Naval Station Newport", branch: "Navy", state: "RI", city: "Newport", url: "#", lat: 41.525, lng: -71.327, size: "Medium", region: "CONUS", comingSoon: true },
+
+  // ===== MARINE CORPS BASES (ADDITIONAL) =====
+  { id: 'camp-pendleton', title: "Camp Pendleton", branch: "Marine Corps", state: "CA", city: "Oceanside", url: "#", lat: 33.301, lng: -117.307, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mcas-miramar', title: "MCAS Miramar", branch: "Marine Corps", state: "CA", city: "San Diego", url: "#", lat: 32.868, lng: -117.143, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mcas-yuma', title: "MCAS Yuma", branch: "Marine Corps", state: "AZ", city: "Yuma", url: "#", lat: 32.633, lng: -114.603, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mcas-cherry-point', title: "MCAS Cherry Point", branch: "Marine Corps", state: "NC", city: "Havelock", url: "#", lat: 34.901, lng: -76.881, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mcas-new-river', title: "MCAS New River", branch: "Marine Corps", state: "NC", city: "Jacksonville", url: "#", lat: 34.708, lng: -77.440, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mcas-beaufort', title: "MCAS Beaufort", branch: "Marine Corps", state: "SC", city: "Beaufort", url: "#", lat: 32.477, lng: -80.723, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mcb-quantico', title: "MCB Quantico", branch: "Marine Corps", state: "VA", city: "Quantico", url: "#", lat: 38.522, lng: -77.304, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mcb-hawaii', title: "MCB Hawaii (Kaneohe Bay)", branch: "Marine Corps", state: "HI", city: "Kaneohe", url: "#", lat: 21.443, lng: -157.750, size: "Large", region: "CONUS", comingSoon: true },
+  { id: 'mclb-albany', title: "MCLB Albany", branch: "Marine Corps", state: "GA", city: "Albany", url: "#", lat: 31.510, lng: -84.213, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mcrd-san-diego', title: "MCRD San Diego", branch: "Marine Corps", state: "CA", city: "San Diego", url: "#", lat: 32.752, lng: -117.195, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mcrd-parris-island', title: "MCRD Parris Island", branch: "Marine Corps", state: "SC", city: "Beaufort", url: "#", lat: 32.344, lng: -80.677, size: "Medium", region: "CONUS", comingSoon: true },
+  { id: 'mctb-twentynine-palms', title: "MCTB Twentynine Palms", branch: "Marine Corps", state: "CA", city: "Twentynine Palms", url: "#", lat: 34.295, lng: -116.164, size: "Large", region: "CONUS", comingSoon: true },
 ];
 
 // OCONUS BASES (Coming Soon - Not displayed on CONUS map)
@@ -409,24 +493,75 @@ export const oconusBases: BaseData[] = [
     country: "Spain",
     comingSoon: true
   },
+
+  // ===== GERMANY =====
+  { id: 'grafenwoehr', title: "Grafenwoehr Training Area", branch: "Army", state: "Germany", city: "Grafenwoehr", url: "#", lat: 49.702, lng: 11.936, size: "Large", region: "OCONUS", country: "Germany", comingSoon: true },
+  { id: 'vilseck', title: "Rose Barracks (Vilseck)", branch: "Army", state: "Germany", city: "Vilseck", url: "#", lat: 49.626, lng: 11.766, size: "Medium", region: "OCONUS", country: "Germany", comingSoon: true },
+  { id: 'wiesbaden', title: "Wiesbaden Army Airfield", branch: "Army", state: "Germany", city: "Wiesbaden", url: "#", lat: 50.050, lng: 8.325, size: "Medium", region: "OCONUS", country: "Germany", comingSoon: true },
+  { id: 'spangdahlem-ab', title: "Spangdahlem AB", branch: "Air Force", state: "Germany", city: "Spangdahlem", url: "#", lat: 49.973, lng: 6.692, size: "Medium", region: "OCONUS", country: "Germany", comingSoon: true },
+  { id: 'kaiserslautern', title: "Kaiserslautern Military Community", branch: "Army", state: "Germany", city: "Kaiserslautern", url: "#", lat: 49.444, lng: 7.770, size: "Large", region: "OCONUS", country: "Germany", comingSoon: true },
+
+  // ===== JAPAN =====
+  { id: 'yokota-ab', title: "Yokota AB", branch: "Air Force", state: "Japan", city: "Fussa", url: "#", lat: 35.748, lng: 139.348, size: "Large", region: "OCONUS", country: "Japan", comingSoon: true },
+  { id: 'kadena-ab', title: "Kadena AB", branch: "Air Force", state: "Japan", city: "Okinawa", url: "#", lat: 26.351, lng: 127.768, size: "Large", region: "OCONUS", country: "Japan", comingSoon: true },
+  { id: 'misawa-ab', title: "Misawa AB", branch: "Air Force", state: "Japan", city: "Misawa", url: "#", lat: 40.703, lng: 141.368, size: "Medium", region: "OCONUS", country: "Japan", comingSoon: true },
+  { id: 'camp-zama', title: "Camp Zama", branch: "Army", state: "Japan", city: "Zama", url: "#", lat: 35.517, lng: 139.398, size: "Medium", region: "OCONUS", country: "Japan", comingSoon: true },
+  { id: 'camp-foster', title: "Camp Foster", branch: "Marine Corps", state: "Japan", city: "Okinawa", url: "#", lat: 26.299, lng: 127.756, size: "Large", region: "OCONUS", country: "Japan", comingSoon: true },
+  { id: 'camp-hansen', title: "Camp Hansen", branch: "Marine Corps", state: "Japan", city: "Okinawa", url: "#", lat: 26.433, lng: 127.921, size: "Medium", region: "OCONUS", country: "Japan", comingSoon: true },
+
+  // ===== SOUTH KOREA =====
+  { id: 'osan-ab', title: "Osan AB", branch: "Air Force", state: "South Korea", city: "Pyeongtaek", url: "#", lat: 37.090, lng: 127.030, size: "Large", region: "OCONUS", country: "South Korea", comingSoon: true },
+  { id: 'camp-casey', title: "Camp Casey", branch: "Army", state: "South Korea", city: "Dongducheon", url: "#", lat: 37.899, lng: 127.052, size: "Medium", region: "OCONUS", country: "South Korea", comingSoon: true },
+  { id: 'camp-red-cloud', title: "Camp Red Cloud", branch: "Army", state: "South Korea", city: "Uijeongbu", url: "#", lat: 37.742, lng: 127.042, size: "Small", region: "OCONUS", country: "South Korea", comingSoon: true },
+  { id: 'yongsan', title: "Camp Humphreys (Yongsan Relocation)", branch: "Army", state: "South Korea", city: "Pyeongtaek", url: "#", lat: 36.968, lng: 127.036, size: "Large", region: "OCONUS", country: "South Korea", comingSoon: true },
+
+  // ===== ITALY =====
+  { id: 'aviano-ab', title: "Aviano AB", branch: "Air Force", state: "Italy", city: "Aviano", url: "#", lat: 46.032, lng: 12.596, size: "Medium", region: "OCONUS", country: "Italy", comingSoon: true },
+  { id: 'nas-sigonella', title: "NAS Sigonella", branch: "Navy", state: "Italy", city: "Sicily", url: "#", lat: 37.402, lng: 14.922, size: "Medium", region: "OCONUS", country: "Italy", comingSoon: true },
+  { id: 'caserma-ederle', title: "Caserma Ederle (Vicenza)", branch: "Army", state: "Italy", city: "Vicenza", url: "#", lat: 45.548, lng: 11.552, size: "Medium", region: "OCONUS", country: "Italy", comingSoon: true },
+
+  // ===== UNITED KINGDOM =====
+  { id: 'raf-lakenheath', title: "RAF Lakenheath", branch: "Air Force", state: "United Kingdom", city: "Suffolk", url: "#", lat: 52.409, lng: 0.561, size: "Large", region: "OCONUS", country: "United Kingdom", comingSoon: true },
+  { id: 'raf-mildenhall', title: "RAF Mildenhall", branch: "Air Force", state: "United Kingdom", city: "Suffolk", url: "#", lat: 52.361, lng: 0.486, size: "Medium", region: "OCONUS", country: "United Kingdom", comingSoon: true },
+  { id: 'raf-croughton', title: "RAF Croughton", branch: "Air Force", state: "United Kingdom", city: "Northamptonshire", url: "#", lat: 51.995, lng: -1.187, size: "Small", region: "OCONUS", country: "United Kingdom", comingSoon: true },
+
+  // ===== OTHER OCONUS =====
+  { id: 'andersen-afb', title: "Andersen AFB", branch: "Air Force", state: "Guam", city: "Yigo", url: "#", lat: 13.584, lng: 144.930, size: "Large", region: "OCONUS", country: "Guam", comingSoon: true },
+  { id: 'naval-base-guam', title: "Naval Base Guam", branch: "Navy", state: "Guam", city: "Apra Harbor", url: "#", lat: 13.447, lng: 144.656, size: "Large", region: "OCONUS", country: "Guam", comingSoon: true },
+  { id: 'incirlik-ab', title: "Incirlik AB", branch: "Air Force", state: "Turkey", city: "Adana", url: "#", lat: 37.000, lng: 35.426, size: "Medium", region: "OCONUS", country: "Turkey", comingSoon: true },
+  { id: 'thule-ab', title: "Thule AB", branch: "Air Force", state: "Greenland", city: "Pituffik", url: "#", lat: 76.531, lng: -68.703, size: "Small", region: "OCONUS", country: "Greenland", comingSoon: true },
+  { id: 'diego-garcia', title: "Naval Support Facility Diego Garcia", branch: "Navy", state: "British Indian Ocean Territory", city: "Diego Garcia", url: "#", lat: -7.312, lng: 72.411, size: "Small", region: "OCONUS", country: "British Indian Ocean Territory", comingSoon: true },
 ];
 
+//===== TOTAL BASES: 73 CONUS + 27 OCONUS = 100 bases =====/
+
 // Helper functions
+export const getAllBases = () => [...basesData, ...oconusBases];
+
 export const getFeaturedBases = () => basesData.filter(base => base.featured);
 
 export const getBasesByBranch = (branch: string) => 
   branch === 'All' ? basesData : basesData.filter(base => base.branch === branch);
 
-export const getBaseById = (id: string) => 
-  basesData.find(base => base.id === id);
+export const getBasesByRegion = (region: 'CONUS' | 'OCONUS' | 'All' = 'All') => {
+  const allBases = getAllBases();
+  return region === 'All' ? allBases : allBases.filter(base => base.region === region);
+};
+
+export const getBaseById = (id: string) => {
+  const allBases = getAllBases();
+  return allBases.find(base => base.id === id);
+};
 
 export const searchBases = (query: string) => {
   const lowerQuery = query.toLowerCase();
-  return basesData.filter(base =>
+  const allBases = getAllBases();
+  return allBases.filter(base =>
     base.title.toLowerCase().includes(lowerQuery) ||
     base.state.toLowerCase().includes(lowerQuery) ||
     base.city.toLowerCase().includes(lowerQuery) ||
-    base.branch.toLowerCase().includes(lowerQuery)
+    base.branch.toLowerCase().includes(lowerQuery) ||
+    (base.country && base.country.toLowerCase().includes(lowerQuery))
   );
 };
 

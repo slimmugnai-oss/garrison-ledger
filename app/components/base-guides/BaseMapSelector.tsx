@@ -11,13 +11,15 @@ export default function BaseMapSelector() {
   const svgRef = useRef<SVGSVGElement>(null);
   const { userId } = useAuth();
   const [selectedBranch, setSelectedBranch] = useState<string>('All');
+  const [selectedRegion, setSelectedRegion] = useState<'CONUS' | 'OCONUS'>('CONUS');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showMobileList, setShowMobileList] = useState<boolean>(false);
   const [comparisonCount, setComparisonCount] = useState<number>(0);
 
   // Memoized filtered bases for performance
   const filteredBases = useMemo(() => {
-    let filtered = basesData;
+    // Start with region-filtered data
+    let filtered = selectedRegion === 'CONUS' ? basesData : oconusBases;
     
     if (selectedBranch !== 'All') {
       filtered = filtered.filter(base => base.branch === selectedBranch);
@@ -28,16 +30,17 @@ export default function BaseMapSelector() {
       filtered = filtered.filter(base =>
         base.title.toLowerCase().includes(query) ||
         base.state.toLowerCase().includes(query) ||
-        base.city.toLowerCase().includes(query)
+        base.city.toLowerCase().includes(query) ||
+        (base.country && base.country.toLowerCase().includes(query))
       );
     }
     
     return filtered;
-  }, [selectedBranch, searchQuery]);
+  }, [selectedBranch, selectedRegion, searchQuery]);
 
-  // Initialize D3 map
+  // Initialize D3 map (CONUS only)
   useEffect(() => {
-    if (!svgRef.current || showMobileList) return;
+    if (!svgRef.current || showMobileList || selectedRegion === 'OCONUS') return;
 
     const W = 960;
     const H = 560;
@@ -246,7 +249,26 @@ export default function BaseMapSelector() {
           </button>
         </div>
 
-        {!showMobileList && (
+        {selectedRegion === 'OCONUS' && !showMobileList && (
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-8 text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 mx-auto">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-300 mb-3">
+              Worldwide Military Installations
+            </h3>
+            <p className="text-blue-800 dark:text-blue-200 max-w-2xl mx-auto mb-4">
+              Viewing {oconusBases.length} overseas bases across Europe, Asia-Pacific, and other regions. Browse the list below to explore installations worldwide.
+            </p>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Includes bases in Germany, Japan, South Korea, Italy, United Kingdom, Guam, and more
+            </p>
+          </div>
+        )}
+
+        {!showMobileList && selectedRegion === 'CONUS' && (
           <>
             <div className="relative mx-auto max-w-6xl mb-6">
               <svg
@@ -287,6 +309,35 @@ export default function BaseMapSelector() {
 
       {/* Filters & Search */}
       <div className="flex flex-col items-center gap-6">
+        {/* Region Toggle - CONUS vs Worldwide */}
+        <div className="w-full">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="text-sm font-medium text-slate-600 hidden sm:inline">View:</span>
+            <div className="inline-flex rounded-xl border-2 border-slate-200 bg-white p-1 shadow-md">
+              <button
+                onClick={() => setSelectedRegion('CONUS')}
+                className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${
+                  selectedRegion === 'CONUS'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                🇺🇸 US Bases ({basesData.length})
+              </button>
+              <button
+                onClick={() => setSelectedRegion('OCONUS')}
+                className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${
+                  selectedRegion === 'OCONUS'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                🌍 Worldwide ({oconusBases.length})
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Branch Filters - Responsive */}
         <div className="w-full">
           <div className="flex flex-wrap items-center justify-center gap-3">

@@ -219,81 +219,76 @@ export default function BaseGuidesHub() {
               <div className="bg-surface rounded-xl p-6 border border-purple-200 mb-6">
                 <h3 className="text-xl font-bold text-primary mb-4">Understanding BAH (Basic Allowance for Housing)</h3>
                 <p className="text-body mb-4 leading-relaxed">
-                  BAH is determined by three factors: <strong>rank, dependency status, and zip code</strong>. Rates are updated annually and vary significantly by location.
+                  BAH is determined by three factors: <strong>rank, dependency status, and ZIP code</strong>. Rates are updated annually and vary significantly by location.
                 </p>
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-info-subtle rounded-lg p-4">
-                    <h4 className="font-bold text-blue-900 mb-3">With Dependents (Higher Rate)</h4>
-                    <table className="w-full text-sm">
-                      <tbody className="text-body">
-                        <tr className="border-b border-info">
-                          <td className="py-2">E-5 (Fort Liberty, NC)</td>
-                          <td className="text-right font-bold">~$1,800/mo</td>
-                        </tr>
-                        <tr className="border-b border-info">
-                          <td className="py-2">O-3 (San Diego, CA)</td>
-                          <td className="text-right font-bold">~$3,500/mo</td>
-                        </tr>
-                        <tr>
-                          <td className="py-2">E-7 (Norfolk, VA)</td>
-                          <td className="text-right font-bold">~$2,100/mo</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div className="bg-surface-hover rounded-lg p-4">
-                    <h4 className="font-bold text-primary mb-3">Without Dependents (Lower Rate)</h4>
-                    <table className="w-full text-sm">
-                      <tbody className="text-body">
-                        <tr className="border-b border-subtle">
-                          <td className="py-2">E-5 (Fort Liberty, NC)</td>
-                          <td className="text-right font-bold">~$1,350/mo</td>
-                        </tr>
-                        <tr className="border-b border-subtle">
-                          <td className="py-2">O-3 (San Diego, CA)</td>
-                          <td className="text-right font-bold">~$2,700/mo</td>
-                        </tr>
-                        <tr>
-                          <td className="py-2">E-7 (Norfolk, VA)</td>
-                          <td className="text-right font-bold">~$1,600/mo</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                {/* Link to Official Calculator */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-700 mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <Icon name="Calculator" className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-blue-900 dark:text-blue-300 mb-2">Calculate Your Exact BAH Rate</h4>
+                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-4">
+                        Use the official DFAS BAH calculator to find your exact housing allowance based on your rank, dependency status, and duty station ZIP code.
+                      </p>
+                      <a
+                        href="https://www.defensetravel.dod.mil/site/bahCalc.cfm"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+                      >
+                        Open DFAS BAH Calculator
+                        <Icon name="ExternalLink" className="w-4 h-4" />
+                      </a>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-sm text-amber-900">
-                    <strong>Important:</strong> If you rent off-base for less than your BAH, you keep the difference. If your rent is higher, you pay out of pocket. Utilities are NOT included in BAH for off-base housing.
-                  </p>
+
+                {/* How BAH Works */}
+                <div className="space-y-4">
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                    <h4 className="font-bold text-slate-900 dark:text-slate-100 mb-2">💡 How It Works</h4>
+                    <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                      <li><strong>With Dependents:</strong> Higher rate (spouse, children)</li>
+                      <li><strong>Without Dependents:</strong> Lower rate (single service members)</li>
+                      <li><strong>Location Matters:</strong> San Diego BAH is 2-3x higher than rural bases</li>
+                      <li><strong>Annual Update:</strong> Rates change January 1st each year</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
+                    <p className="text-sm text-amber-900 dark:text-amber-200">
+                      <strong>Important:</strong> If you rent off-base for less than your BAH, you keep the difference. If your rent is higher, you pay out of pocket. Utilities are NOT included in BAH for off-base housing.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-surface rounded-xl p-6 border border-purple-200">
-                <h3 className="text-xl font-bold text-primary mb-4">Housing Budget Checklist</h3>
-                <div className="space-y-2">
-                  <label className="flex items-start gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 h-5 w-5 text-purple-600 rounded focus:ring-purple-500" />
-                    <span className="text-body text-sm">Look up BAH rate using DoD calculator (rank + dependency + installation zip)</span>
-                  </label>
-                  <label className="flex items-start gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 h-5 w-5 text-purple-600 rounded focus:ring-purple-500" />
-                    <span className="text-body text-sm">Factor utilities if off-base (~$150-300/month for electric, water, gas)</span>
-                  </label>
-                  <label className="flex items-start gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 h-5 w-5 text-purple-600 rounded focus:ring-purple-500" />
-                    <span className="text-body text-sm">Calculate deposits needed (security deposit + utility deposits = $1,000-2,500)</span>
-                  </label>
-                  <label className="flex items-start gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 h-5 w-5 text-purple-600 rounded focus:ring-purple-500" />
-                    <span className="text-body text-sm">Research internet/cable costs (~$60-120/month)</span>
-                  </label>
-                  <label className="flex items-start gap-3 p-3 bg-surface-hover rounded-lg hover:bg-surface-hover transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 h-5 w-5 text-purple-600 rounded focus:ring-purple-500" />
-                    <span className="text-body text-sm">Consider commute costs (gas, tolls, vehicle wear if off-base)</span>
-                  </label>
+              {/* Housing Budget Planning Tool */}
+              <div className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl p-6 border-2 border-emerald-200 dark:border-emerald-700">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center">
+                      <Icon name="Home" className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-300 mb-2">House Hacking Calculator</h3>
+                    <p className="text-sm text-emerald-800 dark:text-emerald-200 mb-4">
+                      Analyze whether buying a multi-unit property makes sense at your next duty station. Model how rental income can cover your mortgage while BAH builds equity.
+                    </p>
+                    <Link
+                      href="/dashboard/tools/house-hacking"
+                      className="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg"
+                    >
+                      Try House Hacking Calculator
+                      <Icon name="ChevronRight" className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
