@@ -5,7 +5,7 @@ import Link from 'next/link';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
-import BaseIntelligencePro from '../components/base-guides/BaseIntelligencePro';
+import BaseIntelligenceMaster from '../components/base-guides/BaseIntelligenceMaster';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Military Base Guides - Housing, Schools & BAH Rates | Garrison Ledger",
@@ -74,7 +74,7 @@ export default function BaseGuidesHub() {
         
         {/* AI-Powered Base Intelligence Browser */}
         <section className="mb-20">
-          <BaseIntelligencePro />
+          <BaseIntelligenceMaster />
         </section>
         
         {/* On-Base vs Off-Base Decision */}
