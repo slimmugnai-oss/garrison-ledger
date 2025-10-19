@@ -712,54 +712,54 @@ export default function BaseMapSelector() {
                         className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors"
                       >
                         <td className="px-4 py-3">
-                                <div className="font-bold text-slate-900 dark:text-slate-100">{base.title}</div>
-                                {base.featured && (
-                                  <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    Featured
-                                  </span>
-                                )}
-                              </td>
+                          <div className="font-bold text-slate-900 dark:text-slate-100">{base.title}</div>
+                          {base.featured && (
+                            <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                              Featured
+                            </span>
+                          )}
+                        </td>
                         <td className="px-4 py-3">
-                                <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
-                                  {base.branch}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
-                                {base.city}, {base.state}
-                              </td>
-                              <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
-                                {base.size || 'N/A'}
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                <a
-                                  href={base.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => {
-                                    if (base.comingSoon) {
-                                      e.preventDefault();
-                                    } else {
-                                      handleCardClick(base);
-                                    }
-                                  }}
-                                  className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                                    base.comingSoon
-                                      ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                                      : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md'
-                                  }`}
-                                >
-                                  {base.comingSoon ? 'Coming Soon' : 'View Guide'}
-                                  {!base.comingSoon && (
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                  )}
-                                </a>
-                              </td>
-                            </tr>
+                          <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
+                            {base.branch}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
+                          {base.city}, {base.state}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
+                          {base.size || 'N/A'}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <a
+                            href={base.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              if (base.comingSoon) {
+                                e.preventDefault();
+                              } else {
+                                handleCardClick(base);
+                              }
+                            }}
+                            className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                              base.comingSoon
+                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                                : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md'
+                            }`}
+                          >
+                            {base.comingSoon ? 'Coming Soon' : 'View Guide'}
+                            {!base.comingSoon && (
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            )}
+                          </a>
+                        </td>
+                      </tr>
                       ))}
                     </tbody>
                   </table>
