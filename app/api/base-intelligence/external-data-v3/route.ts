@@ -85,6 +85,19 @@ export async function GET(req: NextRequest) {
       
       if (!['premium', 'pro'].includes(userTier)) {
         delete response.schools;
+        // Show housing teaser for free users
+        if (response.housing) {
+          response.housing = {
+            ...response.housing,
+            teaser: true,
+            medianRent: Math.round(response.housing.medianRent * 0.8), // Show 80% of actual rent
+            medianHomePrice: Math.round(response.housing.medianHomePrice * 0.9), // Show 90% of actual price
+            pricePerSqFt: Math.round(response.housing.pricePerSqFt * 0.85), // Show 85% of actual price
+            marketTrend: response.housing.marketTrend,
+            zestimate: Math.round(response.housing.zestimate * 0.95), // Show 95% of actual zestimate
+            source: response.housing.source
+          };
+        }
         response.requiresPremium = true;
       }
       
@@ -319,6 +332,25 @@ export async function GET(req: NextRequest) {
       } catch (error) {
         console.error('Zillow API error:', error);
       }
+    }
+
+    // Apply teaser logic for free users
+    if (!['premium', 'pro'].includes(userTier)) {
+      delete externalData.schools;
+      // Show housing teaser for free users
+      if (externalData.housing) {
+        externalData.housing = {
+          ...externalData.housing,
+          teaser: true,
+          medianRent: Math.round(externalData.housing.medianRent * 0.8), // Show 80% of actual rent
+          medianHomePrice: Math.round(externalData.housing.medianHomePrice * 0.9), // Show 90% of actual price
+          pricePerSqFt: Math.round(externalData.housing.pricePerSqFt * 0.85), // Show 85% of actual price
+          marketTrend: externalData.housing.marketTrend,
+          zestimate: Math.round(externalData.housing.zestimate * 0.95), // Show 95% of actual zestimate
+          source: externalData.housing.source
+        };
+      }
+      externalData.requiresPremium = true;
     }
 
     // Cache the results (cache all tiers, but filter on read)
