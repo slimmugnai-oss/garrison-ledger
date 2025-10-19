@@ -88,30 +88,31 @@ export async function GET(req: NextRequest) {
         response.requiresPremium = true;
       }
       
-      // Check if weather data is stale (older than 1 day)
-      const weatherStale = cachedData.created_at < oneDayAgo.toISOString();
-      
-      if (weatherStale && lat && lng && process.env.GOOGLE_WEATHER_API_KEY) {
-        // Refresh weather data in background (don't wait for it)
-        fetch(
-          `https://weather.googleapis.com/v1/currentConditions:lookup?key=${process.env.GOOGLE_WEATHER_API_KEY}&location.latitude=${lat}&location.longitude=${lng}`
-        ).then(async (weatherResponse) => {
+      // Always fetch weather data for free users (weather is free)
+      if (lat && lng && process.env.GOOGLE_WEATHER_API_KEY && !response.weather) {
+        try {
+          const weatherResponse = await fetch(
+            `https://weather.googleapis.com/v1/currentConditions:lookup?key=${process.env.GOOGLE_WEATHER_API_KEY}&location.latitude=${lat}&location.longitude=${lng}`
+          );
+          
           if (weatherResponse.ok) {
             const weather = await weatherResponse.json();
             
             if (weather.currentConditions) {
               const current = weather.currentConditions;
-              const newWeatherData = {
-                avgTemp: Math.round(current.temperature || 0),
-                feelsLike: Math.round(current.temperatureApparent || current.temperature || 0),
+              const weatherData = {
+                avgTemp: Math.round((current.temperature || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
+                feelsLike: Math.round((current.temperatureApparent || current.temperature || 0) * 9/5 + 32),
                 condition: current.condition || 'N/A',
                 humidity: Math.round((current.humidity || 0) * 100),
                 windSpeed: Math.round(current.windSpeed || 0),
                 source: 'Google Weather API'
               };
               
+              response.weather = weatherData;
+              
               // Update cache with new weather data
-              const updatedData = { ...cachedData.data, weather: newWeatherData };
+              const updatedData = { ...cachedData.data, weather: weatherData };
               await supabaseAdmin
                 .from('base_external_data_cache')
                 .update({
@@ -121,9 +122,9 @@ export async function GET(req: NextRequest) {
                 .eq('base_id', baseId);
             }
           }
-        }).catch(error => {
-          console.error('Background weather update failed:', error);
-        });
+        } catch (error) {
+          console.error('Weather API error:', error);
+        }
       }
       
       return NextResponse.json(response);
@@ -196,8 +197,8 @@ export async function GET(req: NextRequest) {
             const current = weather.currentConditions;
             
             externalData.weather = {
-              avgTemp: Math.round(current.temperature || 0),
-              feelsLike: Math.round(current.temperatureApparent || current.temperature || 0),
+              avgTemp: Math.round((current.temperature || 0) * 9/5 + 32), // Convert Celsius to Fahrenheit
+              feelsLike: Math.round((current.temperatureApparent || current.temperature || 0) * 9/5 + 32),
               condition: current.condition || 'N/A',
               humidity: Math.round((current.humidity || 0) * 100),
               windSpeed: Math.round(current.windSpeed || 0),
