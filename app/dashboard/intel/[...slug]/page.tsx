@@ -145,15 +145,29 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
               </div>
             </div>
 
-            {/* MDX Content (for now, showing as pre-formatted until full MDX compilation) */}
-            <article className="prose prose-lg max-w-none">
-              <div className="mdx-content bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <div className="text-sm text-gray-600 mb-4 bg-yellow-50 border border-yellow-200 rounded p-3">
-                  <strong>Note:</strong> Full MDX rendering coming soon. For now, displaying raw content.
-                </div>
-                <pre className="whitespace-pre-wrap text-sm text-gray-800 font-sans">
-                  {card.content}
-                </pre>
+            {/* Content (simplified HTML view for v1) */}
+            <article className="prose prose-lg max-w-none bg-white rounded-lg p-8">
+              <div 
+                className="mdx-content"
+                dangerouslySetInnerHTML={{ 
+                  __html: card.content
+                    .replace(/---[\s\S]*?---/, '') // Remove frontmatter
+                    .replace(/```[\s\S]*?```/g, '<pre class="bg-gray-900 text-white p-4 rounded">$&</pre>') // Style code blocks
+                    .replace(/^# (.+)$/gm, '<h1 class="text-4xl font-bold mb-6">$1</h1>') // H1
+                    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-semibold mt-8 mb-4">$1</h2>') // H2
+                    .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold mt-6 mb-3">$1</h3>') // H3
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // Bold
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>') // Italic
+                    .replace(/<DataRef[^>]*>/g, '<span class="font-semibold text-blue-600">[Live Data]</span>') // Placeholder for DataRef
+                    .replace(/<RateBadge[^>]*>/g, '<div class="inline-block bg-blue-100 text-blue-900 px-4 py-2 rounded">[Rate Badge]</div>') // Placeholder
+                    .replace(/<Disclaimer[^>]*\/>/g, '<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4"><strong>Disclaimer:</strong> Educational information only.</div>') // Disclaimer
+                    .replace(/<AsOf[^>]*\/>/g, '<span class="text-sm text-gray-600">(As of latest data)</span>') // AsOf
+                }}
+              />
+              <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> This is a simplified view. Dynamic data components (<code>&lt;DataRef&gt;</code>, <code>&lt;RateBadge&gt;</code>) will be fully functional in v1.1.
+                </p>
               </div>
             </article>
           </div>
