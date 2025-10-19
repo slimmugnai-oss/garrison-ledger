@@ -60,8 +60,8 @@ function BaseCardUltimate({ base, index }: BaseCardUltimateProps) {
   const getBranchIcon = (branch: string) => {
     switch (branch) {
       case 'Army': return 'Shield';
-      case 'Navy': return 'Anchor';
-      case 'Air Force': return 'Plane';
+      case 'Navy': return 'Shield';
+      case 'Air Force': return 'Shield';
       case 'Marine Corps': return 'Shield';
       case 'Joint': return 'Users';
       default: return 'Shield';

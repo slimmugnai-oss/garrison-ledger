@@ -232,8 +232,6 @@ export const iconRegistry = {
   List,
   RotateCcw,
   CloudOff,
-  Anchor,
-  Plane,
   
   // User & Interface
   User,
