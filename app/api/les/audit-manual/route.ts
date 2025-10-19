@@ -1,0 +1,367 @@
+/**
+ * LES MANUAL ENTRY AUDIT ENDPOINT
+ * 
+ * POST /api/les/audit-manual
+ * - Accepts manually-entered allowance values (no PDF)
+ * - Creates manual entry record
+ * - Runs same audit comparison logic
+ * - Enforces same tier gating as PDF uploads
+ * 
+ * Security:
+ * - Clerk authentication required
+ * - Tier gating (Free: 1/month, Premium: unlimited)
+ * - User ownership validation
+ * 
+ * Runtime: Node.js
+ */
+
+import { auth } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { buildExpectedSnapshot } from '@/lib/les/expected';
+import { compareLesToExpected } from '@/lib/les/compare';
+import type { LesLine } from '@/app/types/les';
+import { ssot } from '@/lib/ssot';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+interface ManualEntryRequest {
+  month: number;
+  year: number;
+  allowances: {
+    BAH?: number;      // in cents
+    BAS?: number;      // in cents
+    COLA?: number;     // in cents
+    SDAP?: number;     // in cents (future)
+    HFP?: number;      // in cents (future)
+  };
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    // ==========================================================================
+    // 1. AUTHENTICATION
+    // ==========================================================================
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // ==========================================================================
+    // 2. TIER GATING & QUOTA CHECK
+    // ==========================================================================
+    const tier = await getUserTier(userId);
+    const monthlyQuota = tier === 'free' 
+      ? ssot.features.lesAuditor.freeUploadsPerMonth
+      : ssot.features.lesAuditor.premiumUploadsPerMonth;
+
+    if (monthlyQuota !== null) {
+      const { count, error: countError } = await supabaseAdmin
+        .from('les_uploads')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('entry_type', 'manual'); // Only count manual entries against quota
+
+      if (countError) {
+        console.error('[Manual Entry] Quota check error:', countError);
+        return NextResponse.json(
+          { error: 'Failed to check entry quota' },
+          { status: 500 }
+        );
+      }
+
+      if (count !== null && count >= monthlyQuota) {
+        return NextResponse.json(
+          {
+            error: 'Monthly entry limit reached',
+            quota: monthlyQuota,
+            used: count,
+            upgradeRequired: tier === 'free'
+          },
+          { status: 429 }
+        );
+      }
+    }
+
+    // ==========================================================================
+    // 3. PARSE REQUEST
+    // ==========================================================================
+    const body: ManualEntryRequest = await req.json();
+    const { month, year, allowances } = body;
+
+    if (!month || !year || !allowances) {
+      return NextResponse.json(
+        { error: 'month, year, and allowances are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate month/year
+    if (month < 1 || month > 12) {
+      return NextResponse.json(
+        { error: 'Invalid month (must be 1-12)' },
+        { status: 400 }
+      );
+    }
+
+    // ==========================================================================
+    // 4. CREATE MANUAL ENTRY RECORD
+    // ==========================================================================
+    const { data: uploadRecord, error: insertError } = await supabaseAdmin
+      .from('les_uploads')
+      .insert({
+        user_id: userId,
+        entry_type: 'manual',
+        original_filename: 'manual-entry',
+        mime_type: 'application/json',
+        size_bytes: 0,
+        storage_path: '',
+        month,
+        year,
+        parsed_ok: true, // Manual entries are always "parsed"
+        parsed_at: new Date().toISOString(),
+        parsed_summary: {
+          totalsBySection: {
+            ALLOWANCE: Object.values(allowances).reduce((sum, val) => sum + (val || 0), 0),
+            DEDUCTION: 0,
+            ALLOTMENT: 0,
+            TAX: 0,
+            OTHER: 0
+          },
+          allowancesByCode: allowances,
+          deductionsByCode: {}
+        }
+      })
+      .select('*')
+      .single();
+
+    if (insertError || !uploadRecord) {
+      console.error('[Manual Entry] DB insert error:', insertError);
+      return NextResponse.json(
+        { error: 'Failed to save manual entry' },
+        { status: 500 }
+      );
+    }
+
+    // ==========================================================================
+    // 5. CREATE LINE ITEMS FROM MANUAL ENTRY
+    // ==========================================================================
+    const lines: LesLine[] = [];
+
+    if (allowances.BAH) {
+      lines.push({
+        line_code: 'BAH',
+        description: 'Basic Allowance for Housing (Manual Entry)',
+        amount_cents: allowances.BAH,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    if (allowances.BAS) {
+      lines.push({
+        line_code: 'BAS',
+        description: 'Basic Allowance for Subsistence (Manual Entry)',
+        amount_cents: allowances.BAS,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    if (allowances.COLA) {
+      lines.push({
+        line_code: 'COLA',
+        description: 'Cost of Living Allowance (Manual Entry)',
+        amount_cents: allowances.COLA,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    // Insert lines
+    if (lines.length > 0) {
+      const lineRows = lines.map(line => ({
+        upload_id: uploadRecord.id,
+        ...line
+      }));
+
+      const { error: linesError } = await supabaseAdmin
+        .from('les_lines')
+        .insert(lineRows);
+
+      if (linesError) {
+        console.error('[Manual Entry] Lines insert error:', linesError);
+        // Continue anyway - not critical
+      }
+    }
+
+    // ==========================================================================
+    // 6. LOAD USER PROFILE
+    // ==========================================================================
+    const profile = await getUserProfile(userId);
+    
+    if (!profile) {
+      return NextResponse.json(
+        {
+          error: 'Profile not found',
+          suggestion: 'Please complete your profile (paygrade, location, dependents) before running audit'
+        },
+        { status: 400 }
+      );
+    }
+
+    // ==========================================================================
+    // 7. BUILD EXPECTED SNAPSHOT
+    // ==========================================================================
+    const snapshot = await buildExpectedSnapshot({
+      userId,
+      month,
+      year,
+      paygrade: profile.paygrade,
+      mha_or_zip: profile.mha_or_zip,
+      with_dependents: profile.with_dependents,
+      yos: profile.yos
+    });
+
+    // Store snapshot
+    await supabaseAdmin
+      .from('expected_pay_snapshot')
+      .insert({
+        user_id: userId,
+        upload_id: uploadRecord.id,
+        month,
+        year,
+        paygrade: profile.paygrade,
+        mha_or_zip: profile.mha_or_zip,
+        with_dependents: profile.with_dependents,
+        yos: profile.yos,
+        expected_bah_cents: snapshot.expected.bah_cents,
+        expected_bas_cents: snapshot.expected.bas_cents,
+        expected_cola_cents: snapshot.expected.cola_cents,
+        expected_specials: snapshot.expected.specials
+      });
+
+    // ==========================================================================
+    // 8. COMPARE ACTUAL VS EXPECTED
+    // ==========================================================================
+    const comparison = compareLesToExpected(lines, snapshot);
+
+    // Store flags
+    if (comparison.flags.length > 0) {
+      const flagRows = comparison.flags.map(flag => ({
+        upload_id: uploadRecord.id,
+        severity: flag.severity,
+        flag_code: flag.flag_code,
+        message: flag.message,
+        suggestion: flag.suggestion,
+        ref_url: flag.ref_url,
+        delta_cents: flag.delta_cents
+      }));
+
+      await supabaseAdmin
+        .from('pay_flags')
+        .insert(flagRows);
+    }
+
+    // ==========================================================================
+    // 9. ANALYTICS
+    // ==========================================================================
+    await recordAnalyticsEvent(userId, 'les_audit_run', {
+      upload_id: uploadRecord.id,
+      month,
+      year,
+      entry_type: 'manual',
+      num_flags: comparison.flags.length,
+      red_count: comparison.flags.filter(f => f.severity === 'red').length
+    });
+
+    // ==========================================================================
+    // 10. RETURN RESPONSE
+    // ==========================================================================
+    return NextResponse.json({
+      snapshot,
+      flags: comparison.flags,
+      summary: comparison.totals
+    });
+
+  } catch (error) {
+    console.error('[Manual Entry] Unexpected error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Get user's subscription tier
+ */
+async function getUserTier(userId: string): Promise<'free' | 'premium' | 'pro'> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('user_entitlements')
+      .select('tier')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return 'free';
+    }
+
+    return (data.tier as 'free' | 'premium' | 'pro') || 'free';
+  } catch {
+    return 'free';
+  }
+}
+
+/**
+ * Get user profile
+ */
+async function getUserProfile(userId: string): Promise<{
+  paygrade: string;
+  mha_or_zip?: string;
+  with_dependents: boolean;
+  yos?: number;
+} | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('user_profiles')
+      .select('paygrade, duty_station, dependents, years_of_service')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return {
+      paygrade: data.paygrade,
+      mha_or_zip: data.duty_station,
+      with_dependents: Boolean(data.dependents),
+      yos: data.years_of_service
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Record analytics event
+ */
+async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, any>) {
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event,
+        properties: { ...properties, user_id: userId },
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (error) {
+    console.error('[Analytics] Failed to record event:', error);
+  }
+}
+

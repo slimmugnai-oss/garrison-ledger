@@ -5,6 +5,7 @@ import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import LesUpload from '@/app/components/les/LesUpload';
+import LesManualEntry from '@/app/components/les/LesManualEntry';
 import LesHistory from '@/app/components/les/LesHistory';
 import Icon from '@/app/components/ui/Icon';
 
@@ -36,7 +37,7 @@ export default function PaycheckAuditClient({
   recentUploads,
   monthlyUploadsCount
 }: Props) {
-  const [activeTab, setActiveTab] = useState<'upload' | 'history'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'manual' | 'history'>('upload');
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -112,7 +113,23 @@ export default function PaycheckAuditClient({
             >
               <div className="flex items-center gap-2">
                 <Icon name="Upload" className="h-4 w-4" />
-                Upload LES
+                Upload PDF
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('manual')}
+              className={`
+                pb-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${activeTab === 'manual'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+              `}
+            >
+              <div className="flex items-center gap-2">
+                <Icon name="Edit" className="h-4 w-4" />
+                Manual Entry
+                <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">Fast</span>
               </div>
             </button>
             <button
@@ -126,7 +143,7 @@ export default function PaycheckAuditClient({
               `}
             >
               <div className="flex items-center gap-2">
-                <Icon name="History" className="h-4 w-4" />
+                <Icon name="Calendar" className="h-4 w-4" />
                 History ({recentUploads.length})
               </div>
             </button>
@@ -141,6 +158,13 @@ export default function PaycheckAuditClient({
             hasProfile={hasProfile}
             monthlyUploadsCount={monthlyUploadsCount}
           />
+        ) : activeTab === 'manual' ? (
+          <LesManualEntry
+            tier={tier}
+            isPremium={isPremium}
+            hasProfile={hasProfile}
+            monthlyEntriesCount={monthlyUploadsCount}
+          />
         ) : (
           <LesHistory
             tier={tier}
@@ -152,25 +176,52 @@ export default function PaycheckAuditClient({
         {/* Help Section */}
         <div className="mt-8 rounded-lg border bg-blue-50 border-blue-200 p-6">
           <h3 className="font-semibold text-blue-900 mb-2">How It Works</h3>
-          <ol className="space-y-2 text-sm text-blue-800">
-            <li className="flex items-start gap-2">
-              <span className="font-bold">1.</span>
-              <span>Upload your LES PDF (downloaded from MyPay)</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="font-bold">2.</span>
-              <span>We parse and verify BAH, BAS, COLA, and special pays</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="font-bold">3.</span>
-              <span>Get instant flags for discrepancies with actionable next steps</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="font-bold">4.</span>
-              <span>Copy pre-written email templates to send to finance</span>
-            </li>
-          </ol>
-          <p className="mt-4 text-xs text-blue-700">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* PDF Upload */}
+            <div>
+              <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                <Icon name="Upload" className="h-4 w-4" />
+                Upload PDF
+              </h4>
+              <ol className="space-y-2 text-sm text-blue-800">
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">1.</span>
+                  <span>Download LES from MyPay</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">2.</span>
+                  <span>Upload and auto-parse all allowances</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">3.</span>
+                  <span>Get comprehensive audit with history</span>
+                </li>
+              </ol>
+            </div>
+
+            {/* Manual Entry */}
+            <div>
+              <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                <Icon name="Edit" className="h-4 w-4" />
+                Manual Entry <span className="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">Fast</span>
+              </h4>
+              <ol className="space-y-2 text-sm text-blue-800">
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">1.</span>
+                  <span>Enter BAH, BAS, COLA manually (30 seconds)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">2.</span>
+                  <span>Instant audit without file upload</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold">3.</span>
+                  <span>Perfect for deployments or quick checks</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-blue-700 border-t border-blue-200 pt-4">
             <Icon name="AlertCircle" className="inline h-3 w-3 mr-1" />
             Estimates &amp; guidance only. Verify all findings with your finance office before taking action.
           </p>
