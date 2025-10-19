@@ -1,3 +1,143 @@
+# GARRISON LEDGER — CURSOR MASTER INSTRUCTION (ALL‑IN‑ONE)
+
+**Mission:**
+Build and maintain **Garrison Ledger**, a production‑grade, military‑focused financial intelligence platform. Deliver features that are **factual**, **reliable**, **secure**, and **profitable** while upholding a **no‑BS military audience standard**.
+
+---
+
+## 0) OPERATING MODE (ALWAYS DO THIS FIRST)
+
+On every task, Cursor must:
+
+1. **Load context**:
+   * Read `SYSTEM_STATUS.md` (current truth only).
+   * Read `lib/ssot.ts` (Single Source of Truth). If missing, create it per section **3**.
+   * Read `docs/active/*` relevant to the task.
+
+2. **Follow this rule order** (no exceptions):
+   **Security → Data Integrity → SSOT Truth → UX/Accessibility → Performance → Cost/Profitability → Documentation.**
+
+3. **BLUF writing standard**: For user‑facing copy, open with Bottom Line Up Front.
+
+4. **Never** place or echo secrets in code, docs, or comments. Mask examples.
+
+If any step is impossible, **stop** and open a TODO with: what's blocked, why, proposed fix.
+
+---
+
+## 1) MILITARY AUDIENCE FILTER (NON‑NEGOTIABLE)
+
+Before shipping any copy/feature/design, Cursor must verify:
+
+* **Respect:** Direct, professional, mature tone.
+* **Trust:** Realistic guarantees; no hype; cite sources.
+* **Service:** Clear value, no tricks or dark patterns.
+* **Presentation:** **No emojis** in public UI; use professional iconography instead.
+
+If any fail → do **not** ship; propose a compliant alternative.
+
+---
+
+## 2) SECURITY BASELINE
+
+* **Secrets:** Never commit or paste API keys, tokens, or credentials in code, docs, issues, or examples. Use environment variables only. Show masked placeholders (e.g., `****_last4`).
+* **Enforcement:** Add/maintain a pre‑commit and CI secret scan (common provider regex; fail on detection).
+* **Storage:** All keys live in platform env (Vercel/Secrets Manager).
+* **Rotation:** If a key appears in any doc, **assume compromise** → rotate and purge from history.
+* **PII:** RLS on all user tables; log redaction; no sensitive data in error messages.
+
+---
+
+## 3) SINGLE SOURCE OF TRUTH (SSOT)
+
+Create/maintain **`lib/ssot.ts`**. All user‑facing facts, counts, and model/cost truths must reference this module.
+
+**Template:**
+
+```ts
+// lib/ssot.ts
+export const ssot = {
+  lastUpdatedISO: "YYYY-MM-DD",
+  version: "4.0.0",
+  brand: {
+    primary: "slate-900→slate-800",
+    semantics: { success: "green", warn: "amber", danger: "red" }
+  },
+  models: {
+    planGeneration: { provider: "Google", model: "Gemini-2.0-Flash", approxCostPerPlanUSD: 0.02 },
+    explainers:     { provider: "Google", model: "Gemini-2.0-Flash" },
+    assessment:     { provider: "Google", model: "Gemini-2.0-Flash" }
+  },
+  features: {
+    baseComparison: { status: "removed", reason: "factual-only policy" },
+    naturalSearch:  { status: "removed" }
+  },
+  counts: {
+    // These are computed at build/CI — do not hand-edit:
+    pages: null,
+    apiRoutes: null,
+    bases: { conus: null, oconus: null, total: null }
+  },
+  vendors: {
+    weather: { name: "Google Weather", cacheDays: 1, attribution: "Google" },
+    housing: { name: "RapidAPI Zillow aggregator", cacheDays: 30, licenseDoc: "docs/vendors/housing.md" },
+    schools: { name: "GreatSchools", gated: true, licenseDoc: "docs/vendors/greatschools.md" }
+  },
+  dataPolicy: {
+    factualOnly: true,
+    provenanceRequired: true,
+    fallback: "Show 'Unavailable' + source link if data cannot be fetched."
+  }
+} as const;
+```
+
+**Rules:**
+
+* `SYSTEM_STATUS.md`, UI badges, and admin panels must **import from SSOT** or **build‑generated JSON**—never hardcode.
+* If a doc claim conflicts with SSOT, **update SSOT** first, then regenerate docs.
+
+---
+
+## 4) GENERATED METRICS ONLY (NO HAND EDITS)
+
+* **Counts:** pages, API routes, base totals (CONUS/OCONUS/total), Lighthouse scores, ESLint/TS zero‑error badges.
+* **CI job** populates `ssot.counts.*` and writes a small `generated/metrics.json` consumed by `SYSTEM_STATUS.md`.
+* Docs showing these numbers must be templated or programmatically updated; manual edits are disallowed.
+
+---
+
+## 5) DATA INTEGRITY & PROVENANCE
+
+* **Factual‑only policy:** No randomized, synthetic, or formula‑estimated values for BAH, school ratings, wait times, rents, etc.
+* **If data missing/unavailable:** Show **"Unavailable"**, and provide a link to the official source (e.g., DFAS, DoDEA, GreatSchools).
+* **Provenance UI:** Every external data card (Weather/Housing/Schools) shows a **Provenance** popover: Source, last fetched (absolute timestamp), cache TTL, and attribution link.
+* **Caching:** Weather ≤ 1 day; Housing/Schools ≤ 30 days (per SSOT).
+* **Licensing:** Ship data integrations only with a vendor one‑pager in `docs/vendors/<vendor>.md` summarizing ToS, pricing tier, rate limits, and permitted uses.
+
+---
+
+## 6) DECISION RULES & TIE‑BREAKERS
+
+* If **Security** conflicts with **UX**, security wins.
+* If **Data Integrity** conflicts with **Growth**, integrity wins.
+* If a doc contradicts SSOT, **SSOT wins**; update docs and commit.
+* If cost exceeds SSOT budgets, pick the cheaper compliant model/config and document change.
+
+---
+
+## 7) ACCEPTANCE CRITERIA (DEFINITION OF DONE)
+
+A task is "done" only when:
+
+* **Secure** (no secrets; RLS/auth correct).
+* **Factual** (provenance visible; no synthetic data).
+* **Aligned** (brand, accessibility, mobile verified).
+* **Performant** (meets budgets; skeletons and backoffs in place).
+* **Documented** (SSOT updated; SYSTEM_STATUS and CHANGELOG consistent).
+* **Automated** (CI passes; metrics and docs generated; guards enforced).
+
+---
+
 # CURSOR AI AGENT RULES FOR GARRISON LEDGER
 
 ## 🎯 PROJECT CONTEXT

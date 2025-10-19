@@ -11,13 +11,13 @@
 ### **1. GreatSchools API - $97/month**
 **Plan:** School Quality Plan  
 **Cost:** $97.50/month  
-**API Key:** `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`  
+**API Key:** `uMuZ****Cld` (get from Vercel env vars)  
 **Status:** ✅ Premium/Pro only feature
 
 ### **2. Google Weather API - FREE! 🎉**
 **Plan:** Restricted API key  
 **Cost:** $0/month  
-**API Key:** `AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU`  
+**API Key:** `AIza****puU` (get from Vercel env vars)  
 **Status:** ✅ Restricted to Weather API only
 
 **Why Google Weather API:**
@@ -47,13 +47,14 @@
 
 ```bash
 # GreatSchools API (Premium/Pro Only - $97/month)
-GREATSCHOOLS_API_KEY=uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld
+# DO NOT paste real keys - get from Vercel environment variables
+GREATSCHOOLS_API_KEY=uMuZ****Cld
 
 # Google Weather API (FREE - restricted key)
-GOOGLE_WEATHER_API_KEY=AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU
+GOOGLE_WEATHER_API_KEY=AIza****puU
 
 # RapidAPI (Pay per use - Zillow)
-RAPIDAPI_KEY=your_rapidapi_key_here
+RAPIDAPI_KEY=****_your_key_here
 # Get at: https://rapidapi.com/signup
 # Subscribe to: Zillow API
 
@@ -314,8 +315,8 @@ GET /api/base-intelligence/external-data-v3?baseId=fort-carson&city=Colorado Spr
 ## 📋 **DEPLOYMENT CHECKLIST**
 
 ### **Environment Variables:**
-- [x] `GREATSCHOOLS_API_KEY=uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
-- [x] `GOOGLE_WEATHER_API_KEY=AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU`
+- [x] `GREATSCHOOLS_API_KEY=uMuZ****Cld` (masked for security)
+- [x] `GOOGLE_WEATHER_API_KEY=AIza****puU` (masked for security)
 - [ ] `RAPIDAPI_KEY=your_key_here` (Get from RapidAPI)
 
 ### **Database:**

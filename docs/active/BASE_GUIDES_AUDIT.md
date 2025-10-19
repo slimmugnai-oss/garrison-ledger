@@ -34,7 +34,7 @@ This document tracks the comprehensive audit and improvement of the Base Guides 
   - `relativeHumidity` (already 0-100, not decimal)
   - `wind.speed.value` with km/h to mph conversion
 
-**API Key:** `AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU`  
+**API Key:** `AIza****puU` (masked - get from Vercel env vars)  
 **Cost:** $0/month (free with restrictions)  
 **Test Result:** ✅ Returns real data (60°F, 89% humidity, "Partly cloudy")
 

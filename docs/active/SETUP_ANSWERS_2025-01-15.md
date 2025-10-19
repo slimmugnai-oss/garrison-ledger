@@ -161,7 +161,7 @@ View in Supabase: [link to your dashboard]
 You need to add one environment variable to Vercel:
 
 ```
-RESEND_API_KEY=your_resend_api_key_here
+RESEND_API_KEY=re_****_your_key_here  # Masked - get actual key from Resend dashboard
 ```
 
 **Steps to get Resend API key:**

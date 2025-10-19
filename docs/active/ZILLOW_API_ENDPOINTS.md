@@ -249,10 +249,11 @@ GET https://zillow-com1.p.rapidapi.com/propertyComps?zpid=12345678
 
 ### **Environment Variables:**
 ```bash
-# Add to Vercel
-RAPIDAPI_KEY=your_rapidapi_key_here
-GOOGLE_WEATHER_API_KEY=AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU
-GREATSCHOOLS_API_KEY=uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld
+# Add to Vercel (DO NOT paste real keys in docs - use masked examples)
+RAPIDAPI_KEY=****_your_key_here
+GOOGLE_WEATHER_API_KEY=AIza****puU
+GREATSCHOOLS_API_KEY=uMuZ****Cld
+# Get actual keys from Vercel environment variables dashboard
 ```
 
 ### **Test All APIs:**

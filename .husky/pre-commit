@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Garrison Ledger Pre-Commit Hook
+# Runs security and quality checks before allowing commit
+
+echo "🔍 Running pre-commit checks..."
+
+# 1. Secret Scan (CRITICAL - blocks commits with secrets)
+echo "  🔒 Scanning for exposed secrets..."
+npm run secret-scan
+if [ $? -ne 0 ]; then
+  echo "❌ SECRET SCAN FAILED: Exposed secrets detected!"
+  echo "   Run 'npm run secret-scan -- --fix' to auto-mask secrets"
+  echo "   Or manually remove/mask secrets before committing"
+  exit 1
+fi
+
+# 2. TypeScript Check
+echo "  📘 Checking TypeScript..."
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "⚠️  TypeScript errors detected (not blocking)"
+fi
+
+# 3. Icon Registry Check
+echo "  🎨 Validating icon usage..."
+npm run check-icons
+if [ $? -ne 0 ]; then
+  echo "⚠️  Icon usage violations detected (not blocking)"
+fi
+
+echo "✅ Pre-commit checks passed!"
+exit 0
+

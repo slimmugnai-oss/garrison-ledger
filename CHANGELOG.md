@@ -7,6 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.2.0] - 2025-01-19 - LES & Paycheck Auditor (Beta)
+
+### 🚀 Added
+- **LES & Paycheck Auditor** (Beta)
+  - Upload and parse Leave & Earnings Statement (LES) PDFs
+  - Automated pay discrepancy detection (BAH, BAS, COLA)
+  - Actionable BLUF messaging with concrete next steps
+  - DFAS reference links for each flag
+  - Tier gating: Free (1 upload/month), Premium (unlimited)
+  - Maximum 5MB PDF file size
+  - Server-side only parsing (security & privacy)
+  
+- **Database Schema** (`20251019_les_auditor.sql`)
+  - `les_uploads` - Upload metadata
+  - `les_lines` - Parsed line items
+  - `expected_pay_snapshot` - Computed expected pay
+  - `pay_flags` - Audit discrepancies
+  - `les_raw` storage bucket (private)
+  - `les_uploads_summary` admin view
+  
+- **Business Logic** (`lib/les/`)
+  - `codes.ts` - LES code mappings (BAH, BAS, COLA, SDAP, HFP, etc.)
+  - `parse.ts` - PDF parser with pattern matching
+  - `expected.ts` - Expected pay calculator (factual-only)
+  - `compare.ts` - Comparison engine with flag generation
+  
+- **API Routes**
+  - `POST /api/les/upload` - Upload & parse PDF
+  - `POST /api/les/audit` - Run audit comparison
+  - `GET /api/les/history` - List past uploads
+  
+- **Type System** (`app/types/les.ts`)
+  - Complete TypeScript definitions (400+ lines)
+  - Helper functions for formatting and validation
+  - Flag code constants
+  
+- **SSOT Integration**
+  - Added `features.lesAuditor` configuration
+  - Added `militaryPay.basMonthlyCents` (Officer/Enlisted)
+  - Added `militaryPay.comparisonThresholds` ($5 BAH, $1 BAS, $5 COLA)
+
+### 🔒 Security
+- **RLS:** All tables have row-level security
+- **Server-only:** PDF parsing never client-side
+- **Private storage:** `les_raw` bucket requires signed URLs
+- **User ownership:** APIs verify `user_id === clerkUserId`
+- **No secrets:** No API keys exposed
+
+### 📊 Data Integrity
+- **Factual-only policy:** No synthetic or estimated data
+- **Omit vs guess:** If BAH/COLA unavailable, omit rather than fabricate
+- **Provenance ready:** Snapshots store `computed_at` timestamp
+- **Official sources:** All flags link to DFAS/DefenseTravel
+
+### 🎯 Flag Types Implemented
+- **Red (Critical):** `BAH_MISMATCH`, `BAS_MISSING`, `COLA_STOPPED`, `SPECIAL_PAY_MISSING`
+- **Yellow (Warning):** `COLA_UNEXPECTED`, `MINOR_VARIANCE`, `VERIFICATION_NEEDED`
+- **Green (OK):** `BAH_CORRECT`, `BAS_CORRECT`, `ALL_VERIFIED`
+
+### 📝 Documentation
+- `docs/active/LES_AUDITOR_IMPLEMENTATION_SUMMARY.md` - Complete implementation guide
+- Deployment checklist and testing procedures
+- Future roadmap (v1.1: special pays, v2: OCR/images, v2.1: tax calculations)
+
+### 🚧 Pending (UI Development Required)
+- Dashboard page (`/dashboard/paycheck-audit`)
+- UI components (LesUpload, LesFlags, LesSummary, LesHistory)
+- Navigation entry with "Beta" badge
+- Analytics event integration
+- Premium gating UI (Free tier: max 2 flags visible)
+- Copy-to-clipboard email templates
+
+### 📦 Dependencies Required
+```bash
+npm install pdf-parse @types/pdf-parse
+```
+Real parser is commented out pending dependency installation.
+
+### ⚠️ Breaking Changes
+None - New feature addition only.
+
+---
+
 ## [2.1.0] - 2025-01-15 - Freemium Model Launch
 
 ### 🚀 Added

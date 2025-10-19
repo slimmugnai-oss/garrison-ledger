@@ -265,6 +265,20 @@ export default function Header() {
                             </div>
                           </div>
                     </Link>
+                        <Link href="/dashboard/paycheck-audit" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/paycheck-audit') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        }`}>
+                          <Icon name="Shield" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/paycheck-audit') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                              Paycheck Audit
+                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Beta</span>
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                              Verify LES for discrepancies
+                            </div>
+                          </div>
+                    </Link>
                       </div>
                   </div>
                 )}
@@ -668,6 +682,10 @@ export default function Header() {
                     <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Truck" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">PCS Planner</span>
+                      </Link>
+                    <Link href="/dashboard/paycheck-audit" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                      <Icon name="Shield" className="w-5 h-5 text-blue-600" />
+                      <span className="font-medium">Paycheck Audit <span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-700">Beta</span></span>
                       </Link>
                     <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="ShoppingCart" className="w-5 h-5 text-emerald-600" />

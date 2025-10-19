@@ -199,7 +199,7 @@ Source: GreatSchools.org
 
 ```bash
 # GreatSchools API (Premium/Pro Only - $97/month)
-GREATSCHOOLS_API_KEY=uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld
+GREATSCHOOLS_API_KEY=uMuZ****Cld  # Masked - get from Vercel env vars
 
 # WeatherAPI.com (FREE - 1M calls/month)
 WEATHERAPI_KEY=your_key_here

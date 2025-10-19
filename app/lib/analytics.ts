@@ -19,7 +19,13 @@ export type AnalyticsEvent =
   | 'collaboration_connected'
   | 'recommendation_viewed'
   | 'recommendation_clicked'
-  | 'keyboard_shortcut_used';
+  | 'keyboard_shortcut_used'
+  | 'les_upload'
+  | 'les_parse_ok'
+  | 'les_parse_fail'
+  | 'les_audit_run'
+  | 'les_flag_clicked'
+  | 'les_copy_template';
 
 interface EventProperties {
   [key: string]: string | number | boolean | undefined;

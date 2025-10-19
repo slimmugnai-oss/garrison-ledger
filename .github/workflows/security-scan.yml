@@ -1,0 +1,88 @@
+name: Security & Quality Scan
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run secret scanner
+        run: npm run secret-scan
+        continue-on-error: false  # Block PR if secrets found
+
+      - name: Generate metrics
+        run: npm run generate-metrics
+
+      - name: Check TypeScript
+        run: npx tsc --noEmit
+        continue-on-error: true  # Don't block, just report
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: true  # Don't block, just report
+
+      - name: Validate icon usage
+        run: npm run check-icons
+        continue-on-error: true  # Don't block, just report
+
+      - name: Upload metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-metrics
+          path: generated/metrics.json
+
+      - name: Comment PR with metrics
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const metrics = JSON.parse(fs.readFileSync('generated/metrics.json', 'utf8'));
+            
+            const comment = `## 📊 Build Metrics
+            
+            - **Pages:** ${metrics.counts.pages}
+            - **API Routes:** ${metrics.counts.apiRoutes}
+            - **Bases:** ${metrics.counts.bases.total} (${metrics.counts.bases.conus} CONUS, ${metrics.counts.bases.oconus} OCONUS)
+            - **Components:** ${metrics.counts.components}
+            - **Calculators:** ${metrics.counts.calculators}
+            - **TypeScript Files:** ${metrics.build.typescript.files}
+            
+            *Generated at: ${metrics.generatedAt}*
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  dependency-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true  # Report but don't block
+

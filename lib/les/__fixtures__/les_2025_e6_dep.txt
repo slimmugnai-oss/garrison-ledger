@@ -1,0 +1,90 @@
+# LES TEST FIXTURE - SANITIZED
+# This is a sanitized, synthetic LES for testing purposes
+# DO NOT use real LES data - this is fictional
+
+================================================================================
+LEAVE AND EARNINGS STATEMENT
+PERIOD: JANUARY 2025
+================================================================================
+
+SERVICE MEMBER: DOE, JOHN A
+RANK/GRADE: E-6
+SSN: XXX-XX-1234
+BRANCH: ARMY
+
+================================================================================
+ENTITLEMENTS (ALLOWANCES)
+================================================================================
+
+BAH W/DEP                                              1,500.00
+BASIC ALLOW HOUS W/DEP
+
+BAS                                                      460.66
+BASIC ALLOW SUBSISTENCE
+
+BASE PAY                                              3,464.70
+MONTHLY BASE PAY E-6
+
+COLA                                                     125.00
+COST OF LIVING ALLOWANCE
+
+SDAP                                                     375.00
+SPECIAL DUTY ASSIGNMENT PAY
+
+--------------------------------------------------------------------------------
+TOTAL ENTITLEMENTS                                    5,925.36
+
+================================================================================
+DEDUCTIONS
+================================================================================
+
+FITW                                                     520.00
+FEDERAL INCOME TAX WITHHELD
+
+FICA                                                     367.00
+FICA TAX (SOCIAL SECURITY)
+
+MEDICARE                                                  85.89
+MEDICARE TAX
+
+SGLI                                                      29.00
+SERVICEMEMBERS GROUP LIFE INSURANCE
+
+TSP                                                      347.00
+THRIFT SAVINGS PLAN
+
+DENTAL                                                    15.55
+TRICARE DENTAL PREMIUM
+
+--------------------------------------------------------------------------------
+TOTAL DEDUCTIONS                                      1,364.44
+
+================================================================================
+ALLOTMENTS
+================================================================================
+
+ALLOT 01                                                 500.00
+DISCRETIONARY ALLOTMENT - SAVINGS
+
+--------------------------------------------------------------------------------
+TOTAL ALLOTMENTS                                        500.00
+
+================================================================================
+SUMMARY
+================================================================================
+
+TOTAL ENTITLEMENTS:                                   5,925.36
+TOTAL DEDUCTIONS:                                    (1,364.44)
+TOTAL ALLOTMENTS:                                      (500.00)
+                                                      ---------
+NET PAY:                                              4,060.92
+
+================================================================================
+REMARKS
+================================================================================
+
+THIS IS A SYNTHETIC LES FOR TESTING PURPOSES ONLY.
+NOT A REAL LEAVE AND EARNINGS STATEMENT.
+
+================================================================================
+
