@@ -16,6 +16,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // Fix pdf-parse build error - ignore test files
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        canvas: false,
+      };
+      
+      // Ignore pdf-parse test files during build
+      config.externals = config.externals || [];
+      config.externals.push({
+        'canvas': 'commonjs canvas',
+      });
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
