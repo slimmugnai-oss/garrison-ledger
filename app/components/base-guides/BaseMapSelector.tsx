@@ -366,21 +366,7 @@ export default function BaseMapSelector() {
             </span>
           </div>
           
-          {comparisonCount >= 2 && (
-            <button
-              onClick={() => {
-                const comparisonList = getComparisonList();
-                const baseIds = comparisonList.map((b: any) => b.baseId).join(',');
-                window.open(`/base-guides/compare?bases=${baseIds}`, '_blank');
-              }}
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg hover:shadow-xl"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-              </svg>
-              Compare Now
-            </button>
-          )}
+          {/* Comparison feature removed - pending real data integration */}
         </div>
       )}
 
@@ -405,17 +391,7 @@ export default function BaseMapSelector() {
                 </div>
               )}
 
-              {/* Add to Comparison Button */}
-              <button
-                onClick={(e) => handleAddToComparison(base, e)}
-                className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-1 bg-surface border border-default text-body text-xs font-semibold px-2 py-1 rounded-full hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-sm"
-                title="Add to comparison"
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span className="hidden sm:inline">Compare</span>
-              </button>
+              {/* Comparison feature removed - keeping base guides only */}
 
               <a
                 href={base.url}

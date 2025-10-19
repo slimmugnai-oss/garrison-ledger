@@ -146,6 +146,31 @@ export default function BaseComparisonClient({ baseIds }: { baseIds: string[] })
 
   return (
     <div className="space-y-8">
+      {/* DATA DISCLAIMER - CRITICAL */}
+      <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-600 rounded-xl p-6">
+        <div className="flex items-start gap-3">
+          <Icon name="AlertTriangle" className="w-6 h-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-bold text-amber-900 dark:text-amber-300 text-lg mb-2">⚠️ Estimated Data Notice</h3>
+            <p className="text-sm text-amber-800 dark:text-amber-200 mb-3 leading-relaxed">
+              This comparison tool currently uses <strong>estimated data</strong> based on regional averages and base characteristics. 
+              We are actively collecting official data from government sources to provide 100% accurate information.
+            </p>
+            <div className="space-y-1.5 text-xs text-amber-700 dark:text-amber-300">
+              <p><strong>For Official Information:</strong></p>
+              <ul className="space-y-1 ml-4">
+                <li>• <strong>BAH Rates:</strong> <a href="https://www.defensetravel.dod.mil/site/bahCalc.cfm" target="_blank" rel="noopener" className="underline hover:text-amber-900 dark:hover:text-amber-100">DFAS BAH Calculator</a></li>
+                <li>• <strong>School Ratings:</strong> <a href="https://www.greatschools.org" target="_blank" rel="noopener" className="underline hover:text-amber-900 dark:hover:text-amber-100">GreatSchools.org</a> & <a href="https://www.dodea.edu" target="_blank" rel="noopener" className="underline hover:text-amber-900 dark:hover:text-amber-100">DoDEA</a></li>
+                <li>• <strong>Housing:</strong> Contact base housing office directly</li>
+              </ul>
+            </div>
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 font-semibold">
+              Always verify information with official base resources before making PCS decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Base Selection Header */}
       <AnimatedCard delay={0}>
         <div className="bg-gradient-to-r from-emerald-50 to-blue-50 border-2 border-emerald-200 rounded-2xl p-6">

@@ -1,0 +1,106 @@
+{
+  "_README": "REAL BASE DATA COLLECTION TEMPLATE",
+  "_INSTRUCTIONS": [
+    "This template shows how to structure real base data.",
+    "For each base, research official sources and fill in the data.",
+    "Delete this top section (_README, _INSTRUCTIONS, _EXAMPLE) when adding real bases.",
+    "Leave fields as null if data is not available.",
+    "Always include dataSource and lastVerified for accountability."
+  ],
+  
+  "_EXAMPLE": {
+    "fort-liberty": {
+      "baseName": "Fort Liberty (formerly Fort Bragg)",
+      "branch": "Army",
+      "city": "Fayetteville",
+      "state": "NC",
+      "zipCode": "28307",
+      "mha": "Fayetteville, NC",
+      
+      "bahRates": {
+        "E5_with_dependents": 1791,
+        "E5_without_dependents": 1395,
+        "O3_with_dependents": 2238,
+        "O3_without_dependents": 1926,
+        "effectiveDate": "2025-01-01",
+        "dataSource": "DFAS BAH Calculator",
+        "sourceUrl": "https://www.defensetravel.dod.mil/site/bahCalc.cfm",
+        "lastVerified": "2025-01-19"
+      },
+      
+      "schools": {
+        "dodea": {
+          "available": true,
+          "schools": ["Fort Liberty Elementary School", "Fort Liberty Middle School"],
+          "overallRating": null,
+          "sourceUrl": "https://www.dodea.edu"
+        },
+        "public": {
+          "district": "Cumberland County Schools",
+          "overallRating": 5,
+          "topSchools": [
+            {"name": "Village Green Elementary", "rating": 8},
+            {"name": "Mac Williams Middle School", "rating": 7}
+          ],
+          "dataSource": "GreatSchools.org",
+          "sourceUrl": "https://www.greatschools.org/north-carolina/fayetteville/",
+          "lastVerified": "2025-01-19"
+        }
+      },
+      
+      "costOfLiving": {
+        "overallIndex": 87,
+        "housingIndex": 72,
+        "groceriesIndex": 95,
+        "transportationIndex": 92,
+        "note": "13% below national average",
+        "dataSource": "BestPlaces.net",
+        "sourceUrl": "https://www.bestplaces.net/cost-of-living/fayetteville-nc/100",
+        "lastVerified": "2025-01-19"
+      },
+      
+      "rentalMarket": {
+        "apartment2BR": 1150,
+        "apartment3BR": 1450,
+        "house3BR": 1650,
+        "range": "$900-$1,800",
+        "dataSource": "Zillow Rental Manager",
+        "sourceUrl": "https://www.zillow.com/rental-manager/market-trends/",
+        "lastVerified": "2025-01"
+      },
+      
+      "housing": {
+        "onBaseAvailable": true,
+        "provider": "Corvias (privatized)",
+        "waitlistMonths": 6,
+        "note": "Wait time varies by rank and bedroom count",
+        "dataSource": "Fort Liberty Housing website + Reddit r/army",
+        "lastVerified": "2025-01-19"
+      },
+      
+      "lifestyle": {
+        "commuteTime": "15-25 min to base gates",
+        "weather": "Hot summers, mild winters, moderate humidity",
+        "militaryCommunity": "Very Strong (largest Army base)",
+        "spouseEmployment": "Moderate - Healthcare, education, retail sectors",
+        "deploymentSupport": "Excellent - Strong FRG network"
+      }
+    }
+  },
+  
+  "dataFreshness": {
+    "bahRates": "Annual update required (January 1st)",
+    "schoolRatings": "Annual review recommended",
+    "costOfLiving": "Quarterly update recommended",
+    "rentalRates": "Quarterly update recommended",
+    "housing": "Semi-annual verification recommended"
+  },
+  
+  "updateSchedule": {
+    "january": ["BAH rates (official DFAS update)", "School ratings annual review"],
+    "april": ["Rental rates", "Cost of living"],
+    "july": ["Rental rates", "Cost of living", "Housing wait times"],
+    "october": ["Rental rates", "Cost of living"]
+  }
+}
+

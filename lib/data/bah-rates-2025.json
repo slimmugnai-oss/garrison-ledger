@@ -1,0 +1,69 @@
+{
+  "dataSource": "Defense Travel Management Office (DFAS)",
+  "effectiveDate": "2025-01-01",
+  "lastUpdated": "2025-01-19",
+  "updateFrequency": "Annual (January 1st)",
+  "officialSource": "https://www.defensetravel.dod.mil/site/bahCalc.cfm",
+  "note": "BAH rates vary by ZIP code, rank, and dependent status. This data must be updated annually from DFAS.",
+  "bases": {
+    "fort-liberty": {
+      "baseName": "Fort Liberty (formerly Fort Bragg)",
+      "zipCode": "28307",
+      "mha": "Fayetteville, NC",
+      "rates": {
+        "E5_with_dependents": 1791,
+        "E5_without_dependents": 1395,
+        "O3_with_dependents": 2238,
+        "O3_without_dependents": 1926,
+        "note": "2025 rates - VERIFY WITH DFAS BEFORE USING"
+      }
+    },
+    "fort-campbell": {
+      "baseName": "Fort Campbell",
+      "zipCode": "42223",
+      "mha": "Clarksville, TN",
+      "rates": {
+        "E5_with_dependents": 1428,
+        "E5_without_dependents": 1143,
+        "O3_with_dependents": 1842,
+        "O3_without_dependents": 1599,
+        "note": "2025 rates - VERIFY WITH DFAS BEFORE USING"
+      }
+    },
+    "camp-lejeune": {
+      "baseName": "Camp Lejeune",
+      "zipCode": "28547",
+      "mha": "Jacksonville, NC",
+      "rates": {
+        "E5_with_dependents": 1545,
+        "E5_without_dependents": 1236,
+        "O3_with_dependents": 1926,
+        "O3_without_dependents": 1671,
+        "note": "2025 rates - VERIFY WITH DFAS BEFORE USING"
+      }
+    },
+    "jblm": {
+      "baseName": "Joint Base Lewis-McChord",
+      "zipCode": "98433",
+      "mha": "Tacoma, WA",
+      "rates": {
+        "E5_with_dependents": 2160,
+        "E5_without_dependents": 1719,
+        "O3_with_dependents": 2871,
+        "O3_without_dependents": 2400,
+        "note": "2025 rates - VERIFY WITH DFAS BEFORE USING"
+      }
+    },
+    "NOTE": "THIS FILE CONTAINS PLACEHOLDER DATA - MUST BE REPLACED WITH REAL DFAS 2025 RATES",
+    "TODO": [
+      "Visit https://www.defensetravel.dod.mil/site/bahCalc.cfm",
+      "Download official 2025 BAH rates CSV",
+      "Map each base to its ZIP code and MHA",
+      "Extract E-5 and O-3 rates (with and without dependents)",
+      "Update this file with official data",
+      "Add verification date and data freshness indicator",
+      "Set up annual update reminder (January 1st each year)"
+    ]
+  }
+}
+
