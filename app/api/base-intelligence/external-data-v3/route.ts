@@ -174,9 +174,9 @@ export async function GET(req: NextRequest) {
     // 3. Zillow API via RapidAPI (Property data)
     if (city && state && process.env.RAPIDAPI_KEY) {
       try {
-        // Use Zillow's property search by location
-        const housingResponse = await fetch(
-          `https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?location=${encodeURIComponent(city)}, ${state}&home_type=Houses&status_type=ForSale&sort=Newest`,
+        // Step 1: Get properties using /propertyExtendedSearch
+        const searchResponse = await fetch(
+          `https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?location=${encodeURIComponent(city)}, ${state}&home_type=Houses&status_type=ForSale&sort=Newest&limit=20`,
           {
             headers: {
               'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
@@ -185,12 +185,12 @@ export async function GET(req: NextRequest) {
           }
         );
         
-        if (housingResponse.ok) {
-          const housing = await housingResponse.json();
+        if (searchResponse.ok) {
+          const searchData = await searchResponse.json();
           
-          if (housing.props && housing.props.length > 0) {
-            // Calculate median values from first 20 properties
-            const properties = housing.props.slice(0, 20);
+          if (searchData.props && searchData.props.length > 0) {
+            // Calculate median values from properties
+            const properties = searchData.props;
             const prices = properties
               .map((p: any) => p.price)
               .filter((p: number) => p && p > 0);
@@ -207,15 +207,70 @@ export async function GET(req: NextRequest) {
               ? pricePerSqFt.sort((a: number, b: number) => a - b)[Math.floor(pricePerSqFt.length / 2)]
               : 0;
 
-            // Get Zestimate for first property as market indicator
+            // Step 2: Get Zestimate for first property using /zestimate
+            let zestimate = 0;
             const firstProperty = properties[0];
-            const zestimate = firstProperty.zestimate || medianPrice;
+            if (firstProperty.zpid) {
+              try {
+                const zestimateResponse = await fetch(
+                  `https://zillow-com1.p.rapidapi.com/zestimate?zpid=${firstProperty.zpid}`,
+                  {
+                    headers: {
+                      'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+                      'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com'
+                    }
+                  }
+                );
+                
+                if (zestimateResponse.ok) {
+                  const zestimateData = await zestimateResponse.json();
+                  zestimate = zestimateData.zestimate || firstProperty.zestimate || medianPrice;
+                }
+              } catch (zestimateError) {
+                console.error('Zestimate API error:', zestimateError);
+                zestimate = firstProperty.zestimate || medianPrice;
+              }
+            } else {
+              zestimate = firstProperty.zestimate || medianPrice;
+            }
+
+            // Step 3: Get market trend using /valueHistory/localHomeValues
+            let marketTrend = 'Active Market';
+            try {
+              const trendResponse = await fetch(
+                `https://zillow-com1.p.rapidapi.com/valueHistory/localHomeValues?location=${encodeURIComponent(city)}, ${state}`,
+                {
+                  headers: {
+                    'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+                    'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com'
+                  }
+                }
+              );
+              
+              if (trendResponse.ok) {
+                const trendData = await trendResponse.json();
+                // Analyze trend data to determine market condition
+                if (trendData.history && trendData.history.length > 1) {
+                  const recent = trendData.history[0];
+                  const previous = trendData.history[1];
+                  const change = ((recent.value - previous.value) / previous.value) * 100;
+                  
+                  if (change > 5) marketTrend = 'Seller\'s Market';
+                  else if (change < -5) marketTrend = 'Buyer\'s Market';
+                  else marketTrend = 'Balanced Market';
+                }
+              }
+            } catch (trendError) {
+              console.error('Market trend API error:', trendError);
+              // Fallback to simple comparison
+              marketTrend = medianPrice > zestimate ? 'Seller\'s Market' : 'Buyer\'s Market';
+            }
 
             externalData.housing = {
-              medianRent: 0, // Would need rental API for this
+              medianRent: 0, // Would need /rentEstimate endpoint for this
               medianHomePrice: medianPrice,
               pricePerSqFt: Math.round(medianPricePerSqFt),
-              marketTrend: medianPrice > zestimate ? 'Seller\'s Market' : 'Buyer\'s Market',
+              marketTrend: marketTrend,
               zestimate: zestimate,
               source: 'Zillow (RapidAPI)'
             };
