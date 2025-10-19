@@ -16,6 +16,8 @@ export default function BaseMapSelector() {
   const [showMobileList, setShowMobileList] = useState<boolean>(false);
   const [comparisonCount, setComparisonCount] = useState<number>(0);
   const [allExpanded, setAllExpanded] = useState<boolean>(true);
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   // Memoized filtered bases for performance
   const filteredBases = useMemo(() => {
@@ -54,20 +56,23 @@ export default function BaseMapSelector() {
     fetch('https://unpkg.com/us-atlas@3/states-10m.json')
       .then(response => response.json())
       .then((us: any) => {
-        // Filter out Alaska (02), Hawaii (15), Puerto Rico (72)
+        // Separate Alaska (02), Hawaii (15), Puerto Rico (72) for insets
         const featureCollection = topojson.feature(us, us.objects.states) as any;
-        const states = featureCollection.features
+        const contiguousStates = featureCollection.features
           .filter((f: any) => !['02', '15', '72'].includes(f.id));
+        const alaska = featureCollection.features.find((f: any) => f.id === '02');
+        const hawaii = featureCollection.features.find((f: any) => f.id === '15');
         
+        // Projection includes Alaska and Hawaii insets automatically
         const projection = d3.geoAlbersUsa().fitSize([W, H], {
           type: 'FeatureCollection',
-          features: states
+          features: featureCollection.features // Use ALL features for proper AlbersUSA projection
         });
         const path = d3.geoPath(projection);
 
-        // Draw states
+        // Draw all states (AlbersUSA projection handles AK and HI insets)
         svg.selectAll('.state')
-          .data(states)
+          .data(featureCollection.features)
           .join('path')
           .attr('class', 'state')
           .attr('d', path as any)
@@ -100,12 +105,20 @@ export default function BaseMapSelector() {
             });
 
           // Pin circle with optimized size to prevent overlap
-          pinGroup.append('circle')
-            .attr('r', 5) // Reduced from 10px to 5px to prevent overlap
+          const circle = pinGroup.append('circle')
+            .attr('r', 5) // Base size
             .attr('fill', branchColors[base.branch as keyof typeof branchColors])
             .attr('stroke', '#ffffff')
-            .attr('stroke-width', 1.5)
-            .attr('class', 'transition-all hover:scale-200'); // Increased hover scale for visibility
+            .attr('stroke-width', 1.5);
+
+          // Hover effects with D3 transitions (not CSS to prevent sticky state)
+          pinGroup
+            .on('mouseenter', function() {
+              circle.transition().duration(200).attr('r', 10);
+            })
+            .on('mouseleave', function() {
+              circle.transition().duration(200).attr('r', 5);
+            });
 
           // Tooltip group
           const tooltip = pinGroup.append('g')
@@ -270,15 +283,30 @@ export default function BaseMapSelector() {
                 🌍 Worldwide Military Installations ({oconusBases.length} bases)
               </h3>
               
-              {/* Interactive World Map */}
+              {/* Interactive World Map with Country Outlines */}
               <div className="relative w-full bg-white dark:bg-slate-800 rounded-xl p-6 mb-6 border-2 border-slate-200 dark:border-slate-700">
                 <svg viewBox="0 0 1000 500" className="w-full h-auto">
-                  {/* Simplified world map background */}
-                  <rect x="0" y="0" width="1000" height="500" fill="#e2e8f0" className="dark:fill-slate-700"/>
+                  {/* Ocean background */}
+                  <rect x="0" y="0" width="1000" height="500" fill="#dbeafe" className="dark:fill-slate-900"/>
                   
-                  {/* Plot OCONUS bases as pins on simplified world coordinates */}
+                  {/* Simplified country outlines using equirectangular projection */}
+                  {/* Major regions highlighted */}
+                  
+                  {/* Europe */}
+                  <path d="M 470 120 L 520 120 L 540 140 L 540 160 L 520 180 L 470 180 L 450 160 L 450 140 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  
+                  {/* East Asia */}
+                  <path d="M 800 150 L 850 150 L 870 180 L 850 210 L 800 210 L 780 180 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  
+                  {/* Middle East */}
+                  <path d="M 550 200 L 600 200 L 610 220 L 600 240 L 550 240 L 540 220 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  
+                  {/* North America */}
+                  <path d="M 100 100 L 250 100 L 280 150 L 280 200 L 250 250 L 100 250 L 70 200 L 70 150 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  
+                  {/* Plot OCONUS bases as pins with proper projection */}
                   {filteredBases.map(base => {
-                    // Simple lat/lng to x/y conversion for visualization
+                    // Equirectangular projection for world map
                     const x = ((base.lng + 180) / 360) * 1000;
                     const y = ((90 - base.lat) / 180) * 500;
                     
@@ -287,11 +315,18 @@ export default function BaseMapSelector() {
                         <circle
                           cx={x}
                           cy={y}
-                          r="8"
+                          r="7"
                           fill={branchColors[base.branch as keyof typeof branchColors]}
                           stroke="#ffffff"
                           strokeWidth="2"
-                          className="cursor-pointer hover:scale-150 transition-transform"
+                          className="cursor-pointer transition-all"
+                          style={{ transformOrigin: `${x}px ${y}px` }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.setAttribute('r', '14');
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.setAttribute('r', '7');
+                          }}
                           onClick={() => {
                             const cardElement = document.getElementById(`base-card-${base.id}`);
                             if (cardElement) {
@@ -536,252 +571,206 @@ export default function BaseMapSelector() {
         </div>
       )}
 
-      {/* Quick Jump Navigation */}
+      {/* Sophisticated Base Browser */}
       {filteredBases.length > 0 && (
-        <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Quick Jump to {selectedRegion === 'CONUS' ? 'State' : 'Country'}
-            </h3>
-            <button
-              onClick={() => {
-                setAllExpanded(!allExpanded);
-                // Toggle all details elements
-                setTimeout(() => {
-                  const details = document.querySelectorAll('details');
-                  details.forEach(detail => {
-                    if (allExpanded) {
-                      detail.removeAttribute('open');
-                    } else {
-                      detail.setAttribute('open', '');
-                    }
-                  });
-                }, 100);
-              }}
-              className="text-sm font-semibold px-4 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-            >
-              {allExpanded ? 'Collapse All' : 'Expand All'}
-            </button>
+        <div className="bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
+          {/* Header with View Toggle */}
+          <div className="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 border-b-2 border-slate-200 dark:border-slate-600 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                Browse {filteredBases.length} {selectedRegion === 'CONUS' ? 'US' : 'Worldwide'} Bases
+              </h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                    viewMode === 'map'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  Map View
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                    viewMode === 'list'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  List View
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Select by Location */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedGroup(null)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                  selectedGroup === null
+                    ? 'bg-slate-800 text-white'
+                    : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                All ({filteredBases.length})
+              </button>
+              {(() => {
+                const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
+                const grouped = filteredBases.reduce((acc, base) => {
+                  const key = base[groupKey] || 'Other';
+                  if (!acc[key]) acc[key] = 0;
+                  acc[key]++;
+                  return acc;
+                }, {} as Record<string, number>);
+                
+                return Object.entries(grouped)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .slice(0, 12) // Show top 12 most common
+                  .map(([name, count]) => (
+                    <button
+                      key={name}
+                      onClick={() => setSelectedGroup(name)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                        selectedGroup === name
+                          ? 'bg-emerald-600 text-white shadow-md'
+                          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-emerald-50 hover:border-emerald-500'
+                      }`}
+                    >
+                      <span>{name}</span>
+                      <span className={`text-xs px-1.5 py-0.5 rounded ${
+                        selectedGroup === name
+                          ? 'bg-emerald-700'
+                          : 'bg-slate-200 dark:bg-slate-600'
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  ));
+              })()}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {(() => {
-              const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
-              const grouped = filteredBases.reduce((acc, base) => {
-                const key = base[groupKey] || 'Other';
-                if (!acc[key]) acc[key] = 0;
-                acc[key]++;
-                return acc;
-              }, {} as Record<string, number>);
-              
-              return Object.entries(grouped)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([name, count]) => (
-                  <button
-                    key={name}
-                    onClick={() => {
-                      const element = document.getElementById(`group-${name.replace(/\s+/g, '-').toLowerCase()}`);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 dark:hover:bg-emerald-900/20 transition-all"
-                  >
-                    <span>{name}</span>
-                    <span className="text-xs bg-slate-200 dark:bg-slate-600 px-1.5 py-0.5 rounded">
-                      {count}
-                    </span>
-                  </button>
-                ));
-            })()}
+
+          {/* Content Area */}
+          <div className="p-6">
+            {viewMode === 'map' ? (
+              // Map view - just shows the maps above (hide base cards)
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl mb-4">
+                  <svg className="w-12 h-12 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                  Click any pin on the map above
+                </h4>
+                <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                  Explore bases visually by clicking pins on the interactive map. Each pin will scroll to its detailed card below.
+                </p>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg"
+                >
+                  View All Bases as List
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              // List view - compact table
+              <div className="space-y-4">
+                {(() => {
+                  const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
+                  const displayBases = selectedGroup 
+                    ? filteredBases.filter(b => b[groupKey] === selectedGroup)
+                    : filteredBases;
+
+                  return (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-slate-100 dark:bg-slate-700 border-b-2 border-slate-200 dark:border-slate-600">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Base Name</th>
+                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Branch</th>
+                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Location</th>
+                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Size</th>
+                            <th className="px-4 py-3 text-center text-sm font-bold text-slate-900 dark:text-slate-100">Guide</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-600">
+                          {displayBases.map(base => (
+                            <tr 
+                              key={base.id}
+                              id={`base-card-${base.id}`}
+                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors"
+                            >
+                              <td className="px-4 py-3">
+                                <div className="font-bold text-slate-900 dark:text-slate-100">{base.title}</div>
+                                {base.featured && (
+                                  <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">
+                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    Featured
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-4 py-3">
+                                <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
+                                  {base.branch}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300">
+                                {base.city}, {base.state}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">
+                                {base.size || 'N/A'}
+                              </td>
+                              <td className="px-4 py-3 text-center">
+                                <a
+                                  href={base.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => handleCardClick(base)}
+                                  className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                                    base.comingSoon
+                                      ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                                      : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md'
+                                  }`}
+                                  {...(base.comingSoon ? { onClick: (e) => e.preventDefault() } : {})}
+                                >
+                                  {base.comingSoon ? 'Coming Soon' : 'View Guide'}
+                                  {!base.comingSoon && (
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                  )}
+                                </a>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Smart Grouped Base List with Collapsible Sections */}
-      <div className="space-y-6">
-        {filteredBases.length > 0 ? (
-          (() => {
-            // Group bases by state (CONUS) or country (OCONUS)
-            const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
-            const grouped = filteredBases.reduce((acc, base) => {
-              const key = base[groupKey] || 'Other';
-              if (!acc[key]) acc[key] = [];
-              acc[key].push(base);
-              return acc;
-            }, {} as Record<string, typeof filteredBases>);
-
-            // Sort groups alphabetically
-            const sortedGroups = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
-
-            return sortedGroups.map(([groupName, bases]) => (
-              <details key={groupName} className="group" open>
-                <summary 
-                  id={`group-${groupName.replace(/\s+/g, '-').toLowerCase()}`}
-                  className="flex items-center justify-between gap-3 p-4 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 transition-all"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-12 h-12 bg-slate-800 dark:bg-slate-700 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-                      <span className="text-white font-bold">
-                        {selectedRegion === 'CONUS' ? groupName : '🌍'}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                        {groupName}
-                      </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {bases.length} installation{bases.length > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
-                  <svg className="w-6 h-6 text-slate-600 dark:text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-
-                {/* Bases in this group */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 px-2">
-                  {bases.map(base => (
-            <div
-              key={base.id}
-              id={`base-card-${base.id}`}
-              className="relative bg-slate-50 rounded-xl shadow-md hover:shadow-xl transition-all group"
-            >
-              {/* Featured Badge */}
-              {base.featured && (
-                <div className="absolute top-4 right-4 z-10">
-                  <span className="inline-flex items-center gap-1 bg-warning-subtle text-warning text-xs font-bold px-2 py-1 rounded-full">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    Featured
-                  </span>
-                </div>
-              )}
-
-              {/* Comparison feature removed - keeping base guides only */}
-
-              <a
-                href={base.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block p-6 hover:-translate-y-1 transition-all"
-                onMouseDown={() => handleCardClick(base)}
-              >
-                <div className="flex items-start justify-between mb-2 mt-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 group-hover:text-info transition-colors pr-20 sm:pr-16">
-                    {base.title}
-                  </h3>
-                  <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
-                    {base.branch}
-                  </span>
-                </div>
-                <p className="text-sm font-medium text-slate-500 mb-4">
-                  {base.city}, {base.state}
-                </p>
-                {/* Size indicator */}
-                {base.size && (
-                  <p className="text-xs text-muted mb-3">
-                    Installation Size: <span className="font-semibold">{base.size}</span>
-                  </p>
-                )}
-                <span className="inline-flex items-center text-info group-hover:text-info font-semibold transition-colors text-sm">
-                  View Full Guide
-                  <svg className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </span>
-              </a>
-            </div>
-                  ))}
-                </div>
-              </details>
-            ));
-          })()
-        ) : (
-          <div className="col-span-full">
-            <div className="text-center py-16 bg-surface-hover rounded-xl border-2 border-dashed border-default">
-              <svg className="mx-auto h-12 w-12 text-muted mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h3 className="text-lg font-semibold text-body mb-2">No bases match your search</h3>
-              <p className="text-muted mb-4">Try adjusting your filters or search terms</p>
-              <button
-                onClick={() => {
-                  setSelectedBranch('All');
-                  setSearchQuery('');
-                }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 text-white rounded-lg font-semibold hover:bg-slate-700 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset Filters
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* OCONUS Bases Section */}
-      <div className="mt-16">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full mb-4">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clipRule="evenodd" />
-            </svg>
-            <span className="font-bold text-sm">OCONUS & INTERNATIONAL</span>
-          </div>
-          <h3 className="text-3xl font-serif font-black text-primary mb-4">
-            Overseas Duty Stations
-          </h3>
-          <p className="text-lg text-body max-w-2xl mx-auto">
-            Researching an overseas move? We&apos;re expanding to major OCONUS installations. Check back soon for comprehensive guides!
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {oconusBases.map(base => (
-            <div
-              key={base.id}
-              className="block bg-slate-50 rounded-xl shadow-md p-6 opacity-70 cursor-not-allowed relative overflow-hidden"
-            >
-              {/* Coming Soon Badge */}
-              <div className="absolute top-0 right-0">
-                <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                  Coming Soon
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between mb-2 mt-4">
-                <h4 className="text-xl font-bold text-slate-800">
-                  {base.title}
-                </h4>
-                <span className={`flex-shrink-0 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
-                  {base.branch}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-slate-500 mb-2">
-                {base.city}, {base.country}
-              </p>
-              {base.size && (
-                <p className="text-xs text-muted mb-4">
-                  Installation Size: <span className="font-semibold">{base.size}</span>
-                </p>
-              )}
-              <div className="inline-flex items-center text-slate-500 font-semibold text-sm">
-                Guide In Progress
-                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
+      {/* Hidden base cards for scroll targeting (only in map view) */}
+      {viewMode === 'map' && (
+        <div className="hidden">
+          {filteredBases.map(base => (
+            <div key={base.id} id={`base-card-${base.id}`} />
           ))}
         </div>
-      </div>
+      )}
+
     </div>
   );
 }
