@@ -134,20 +134,14 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
             View Guide
             <Icon name="ExternalLink" className="h-4 w-4" />
           </a>
-          
-          <Link
-            href={`https://www.defensetravel.dod.mil/site/bahCalc.cfm`}
-            target="_blank"
-            className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
-          >
-            <Icon name="Calculator" className="h-4 w-4" />
-          </Link>
 
           <button
             onClick={() => setExpanded(!expanded)}
             className="inline-flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-sm"
+            title={expanded ? "Hide Details" : "Show Weather, Housing & School Data"}
           >
             <Icon name={expanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4" />
+            <span className="hidden sm:inline">{expanded ? "Hide" : "Details"}</span>
           </button>
         </div>
 

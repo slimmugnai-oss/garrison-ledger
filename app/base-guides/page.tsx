@@ -5,7 +5,6 @@ import Link from 'next/link';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
-import FeaturedGuides from '../components/base-guides/FeaturedGuides';
 import ComparisonBar from '../components/base-guides/ComparisonBar';
 import BaseIntelligenceBrowser from '../components/base-guides/BaseIntelligenceBrowser';
 
@@ -74,9 +73,6 @@ export default function BaseGuidesHub() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        
-        {/* Featured Guides Section */}
-        <FeaturedGuides />
         
         {/* AI-Powered Base Intelligence Browser */}
         <section className="mb-20">
