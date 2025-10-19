@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { basesData, oconusBases, getAllBases } from '@/app/data/bases';
-import type { BaseData } from '@/app/data/bases';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { allBases, getBasesByRegion, getBasesByBranch, searchBases, validateBaseData } from '@/app/data/bases-clean';
+import type { BaseData } from '@/app/data/bases-clean';
 import Icon from '../ui/Icon';
 import Link from 'next/link';
-import EnhancedBaseCard from './EnhancedBaseCard';
+import BaseCardClean from './BaseCardClean';
 
 interface BaseRecommendation {
   baseId: string;
@@ -19,20 +19,30 @@ interface BaseRecommendation {
   url: string;
 }
 
-export default function BaseIntelligenceBrowser() {
+export default function BaseIntelligenceBrowserClean() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBranch, setSelectedBranch] = useState<string>('All');
   const [selectedRegion, setSelectedRegion] = useState<'CONUS' | 'OCONUS' | 'All'>('All');
   const [recommendations, setRecommendations] = useState<BaseRecommendation[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(true);
+  const [dataErrors, setDataErrors] = useState<string[]>([]);
+
+  // Validate data on mount
+  useEffect(() => {
+    const validation = validateBaseData();
+    if (!validation.valid) {
+      console.error('Base data validation errors:', validation.errors);
+      setDataErrors(validation.errors);
+    }
+  }, []);
 
   // Load recommendations on mount
   useEffect(() => {
     loadRecommendations();
   }, []);
 
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     try {
       setLoadingRecs(true);
       const response = await fetch('/api/base-intelligence/recommend');
@@ -49,21 +59,15 @@ export default function BaseIntelligenceBrowser() {
     } finally {
       setLoadingRecs(false);
     }
-  };
+  }, []);
 
-  // Filter bases
+  // Optimized filtering with useMemo
   const filteredBases = useMemo(() => {
-    let bases = getAllBases(); // Include both CONUS and OCONUS bases
+    let bases = [...allBases];
 
     // Filter by region
     if (selectedRegion !== 'All') {
-      if (selectedRegion === 'CONUS') {
-        // CONUS bases: those with region: "CONUS" OR no region property (defaults to CONUS)
-        bases = bases.filter(base => !base.region || base.region === 'CONUS');
-      } else if (selectedRegion === 'OCONUS') {
-        // OCONUS bases: those with region: "OCONUS"
-        bases = bases.filter(base => base.region === 'OCONUS');
-      }
+      bases = bases.filter(base => base.region === selectedRegion);
     }
 
     // Filter by branch
@@ -72,20 +76,14 @@ export default function BaseIntelligenceBrowser() {
     }
 
     // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      bases = bases.filter(base =>
-        base.title.toLowerCase().includes(query) ||
-        base.city.toLowerCase().includes(query) ||
-        base.state.toLowerCase().includes(query) ||
-        (base.country && base.country.toLowerCase().includes(query))
-      );
+    if (searchQuery.trim()) {
+      bases = searchBases(searchQuery.trim());
     }
 
     return bases;
   }, [searchQuery, selectedBranch, selectedRegion]);
 
-  // Group bases by state/country
+  // Group bases by state/country for quick filters
   const groupedBases = useMemo(() => {
     const grouped: Record<string, number> = {};
     
@@ -108,6 +106,29 @@ export default function BaseIntelligenceBrowser() {
     }
   };
 
+  const clearFilters = useCallback(() => {
+    setSearchQuery('');
+    setSelectedBranch('All');
+    setSelectedRegion('All');
+  }, []);
+
+  // Show data errors if any
+  if (dataErrors.length > 0) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h3 className="text-lg font-bold text-red-900 mb-4">Data Validation Errors</h3>
+        <ul className="space-y-2">
+          {dataErrors.map((error, index) => (
+            <li key={index} className="text-sm text-red-700">• {error}</li>
+          ))}
+        </ul>
+        <p className="text-sm text-red-600 mt-4">
+          Please contact support to resolve these data issues.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* AI Recommendations Section */}
@@ -127,7 +148,7 @@ export default function BaseIntelligenceBrowser() {
             </div>
             <button
               onClick={() => setShowRecommendations(false)}
-              className="text-emerald-600 hover:text-emerald-800"
+              className="text-emerald-600 hover:text-emerald-800 transition-colors"
             >
               <Icon name="X" className="h-5 w-5" />
             </button>
@@ -210,7 +231,7 @@ export default function BaseIntelligenceBrowser() {
             <button
               onClick={loadRecommendations}
               disabled={loadingRecs}
-              className="text-sm text-emerald-600 hover:text-emerald-800 font-semibold"
+              className="text-sm text-emerald-600 hover:text-emerald-800 font-semibold disabled:opacity-50"
             >
               {loadingRecs ? 'Refreshing...' : 'Refresh Recommendations'}
             </button>
@@ -273,33 +294,35 @@ export default function BaseIntelligenceBrowser() {
         </div>
 
         {/* Location Quick Filters */}
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(groupedBases)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 10)
-            .map(([location, count]) => (
-              <button
-                key={location}
-                onClick={() => setSearchQuery(location)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-emerald-50 hover:border-emerald-500 dark:hover:bg-emerald-900/20"
-              >
-                <span>{location}</span>
-                <span className="text-xs px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-600">
-                  {count}
-                </span>
-              </button>
-            ))}
-        </div>
+        {Object.keys(groupedBases).length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(groupedBases)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 10)
+              .map(([location, count]) => (
+                <button
+                  key={location}
+                  onClick={() => setSearchQuery(location)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-emerald-50 hover:border-emerald-500 dark:hover:bg-emerald-900/20"
+                >
+                  <span>{location}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-600">
+                    {count}
+                  </span>
+                </button>
+              ))}
+          </div>
+        )}
       </div>
 
       {/* Base Cards Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBases.map((base) => (
-          <EnhancedBaseCard key={base.id} base={base} />
-        ))}
-      </div>
-
-      {filteredBases.length === 0 && (
+      {filteredBases.length > 0 ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredBases.map((base) => (
+            <BaseCardClean key={base.id} base={base} />
+          ))}
+        </div>
+      ) : (
         <div className="text-center py-12">
           <Icon name="Search" className="h-12 w-12 text-slate-400 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
@@ -309,11 +332,7 @@ export default function BaseIntelligenceBrowser() {
             Try adjusting your filters or search query
           </p>
           <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedBranch('All');
-              setSelectedRegion('All');
-            }}
+            onClick={clearFilters}
             className="text-emerald-600 hover:text-emerald-800 font-semibold"
           >
             Clear all filters
@@ -323,71 +342,3 @@ export default function BaseIntelligenceBrowser() {
     </div>
   );
 }
-
-function BaseCard({ base }: { base: BaseData }) {
-  const getBranchColor = (branch: string) => {
-    switch (branch) {
-      case 'Army': return 'bg-green-600';
-      case 'Navy': return 'bg-blue-600';
-      case 'Air Force': return 'bg-sky-600';
-      case 'Marine Corps': return 'bg-red-600';
-      case 'Joint': return 'bg-purple-600';
-      default: return 'bg-gray-600';
-    }
-  };
-
-  const location = base.region === 'OCONUS' 
-    ? `${base.city}, ${base.country}` 
-    : `${base.city}, ${base.state}`;
-
-  return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md hover:shadow-xl transition-all border border-slate-200 dark:border-slate-700">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
-            {base.title}
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-            {location}
-          </p>
-          <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 rounded text-white text-xs font-semibold ${getBranchColor(base.branch)}`}>
-              {base.branch}
-            </span>
-            {base.region && (
-              <span className="px-2 py-1 rounded text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                {base.region}
-              </span>
-            )}
-            {base.size && (
-              <span className="px-2 py-1 rounded text-xs font-semibold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                {base.size}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex gap-2">
-        <a
-          href={base.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors text-sm"
-        >
-          View Guide
-          <Icon name="ExternalLink" className="h-4 w-4" />
-        </a>
-        
-        <Link
-          href={`https://www.defensetravel.dod.mil/site/bahCalc.cfm`}
-          target="_blank"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
-        >
-          <Icon name="Calculator" className="h-4 w-4" />
-        </Link>
-      </div>
-    </div>
-  );
-}
-

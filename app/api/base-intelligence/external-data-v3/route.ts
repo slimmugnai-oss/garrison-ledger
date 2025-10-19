@@ -69,8 +69,9 @@ export async function GET(req: NextRequest) {
       userTier = profile?.subscription_tier || 'free';
     }
 
-    // Check cache first (30-day cache for external data)
+    // Check cache first (30-day cache for schools/housing, 1-day cache for weather)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const { data: cachedData } = await supabaseAdmin
       .from('base_external_data_cache')
       .select('*')
@@ -85,6 +86,44 @@ export async function GET(req: NextRequest) {
       if (!['premium', 'pro'].includes(userTier)) {
         delete response.schools;
         response.requiresPremium = true;
+      }
+      
+      // Check if weather data is stale (older than 1 day)
+      const weatherStale = cachedData.created_at < oneDayAgo.toISOString();
+      
+      if (weatherStale && lat && lng && process.env.GOOGLE_WEATHER_API_KEY) {
+        // Refresh weather data in background (don't wait for it)
+        fetch(
+          `https://weather.googleapis.com/v1/currentConditions:lookup?key=${process.env.GOOGLE_WEATHER_API_KEY}&location.latitude=${lat}&location.longitude=${lng}`
+        ).then(async (weatherResponse) => {
+          if (weatherResponse.ok) {
+            const weather = await weatherResponse.json();
+            
+            if (weather.currentConditions) {
+              const current = weather.currentConditions;
+              const newWeatherData = {
+                avgTemp: Math.round(current.temperature || 0),
+                feelsLike: Math.round(current.temperatureApparent || current.temperature || 0),
+                condition: current.condition || 'N/A',
+                humidity: Math.round((current.humidity || 0) * 100),
+                windSpeed: Math.round(current.windSpeed || 0),
+                source: 'Google Weather API'
+              };
+              
+              // Update cache with new weather data
+              const updatedData = { ...cachedData.data, weather: newWeatherData };
+              await supabaseAdmin
+                .from('base_external_data_cache')
+                .update({
+                  data: updatedData,
+                  created_at: new Date().toISOString()
+                })
+                .eq('base_id', baseId);
+            }
+          }
+        }).catch(error => {
+          console.error('Background weather update failed:', error);
+        });
       }
       
       return NextResponse.json(response);
