@@ -84,7 +84,19 @@ export default function BaseMapSelector() {
           const pinGroup = pinsGroup.append('g')
             .attr('class', 'pin-group')
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
-            .style('cursor', 'pointer');
+            .style('cursor', 'pointer')
+            .on('click', () => {
+              // Scroll to base card
+              const cardElement = document.getElementById(`base-card-${base.id}`);
+              if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Flash highlight effect
+                cardElement.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-2');
+                setTimeout(() => {
+                  cardElement.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-2');
+                }, 2000);
+              }
+            });
 
           // Pin circle with optimized size to prevent overlap
           pinGroup.append('circle')
