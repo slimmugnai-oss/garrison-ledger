@@ -16,7 +16,6 @@ export default function BaseMapSelector() {
   const [showMobileList, setShowMobileList] = useState<boolean>(false);
   const [comparisonCount, setComparisonCount] = useState<number>(0);
   const [allExpanded, setAllExpanded] = useState<boolean>(true);
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   // Memoized filtered bases for performance
@@ -46,7 +45,13 @@ export default function BaseMapSelector() {
     if (!selectedGroup) return filteredBases;
     
     const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
-    return filteredBases.filter(base => base[groupKey] === selectedGroup);
+    const filtered = filteredBases.filter(base => {
+      const baseValue = base[groupKey];
+      return baseValue === selectedGroup;
+    });
+    
+    
+    return filtered;
   }, [filteredBases, selectedGroup, selectedRegion]);
 
   // Initialize D3 map (CONUS only)
@@ -100,8 +105,7 @@ export default function BaseMapSelector() {
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
             .style('cursor', 'pointer')
             .on('click', () => {
-              // Switch to list view and highlight base
-              setViewMode('list');
+              // Filter to base's state/country and highlight
               setSelectedGroup(base[selectedRegion === 'CONUS' ? 'state' : 'country'] || null);
               
               setTimeout(() => {
@@ -358,8 +362,7 @@ export default function BaseMapSelector() {
                             }
                           }}
                           onClick={() => {
-                            // Switch to list view and highlight base
-                            setViewMode('list');
+                            // Filter to base's country and highlight
                             setSelectedGroup(base.country || null);
                             
                             setTimeout(() => {
@@ -636,28 +639,6 @@ export default function BaseMapSelector() {
               <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Browse {filteredBases.length} {selectedRegion === 'CONUS' ? 'US' : 'Worldwide'} Bases
               </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setViewMode('map')}
-                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                    viewMode === 'map'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  Map View
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                    viewMode === 'list'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  List View
-                </button>
-              </div>
             </div>
 
             {/* Quick Select by Location */}
@@ -710,52 +691,27 @@ export default function BaseMapSelector() {
 
           {/* Content Area */}
           <div className="p-6">
-            {viewMode === 'map' ? (
-              // Map view - just shows the maps above (hide base cards)
-              <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl mb-4">
-                  <svg className="w-12 h-12 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                </div>
-                <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                  Click any pin on the map above
-                </h4>
-                <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                  Explore bases visually by clicking pins on the interactive map. Each pin will scroll to its detailed card below.
-                </p>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-md hover:shadow-lg"
-                >
-                  View All Bases as List
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            ) : (
-              // List view - compact table
-              <div className="space-y-4">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-slate-100 dark:bg-slate-700 border-b-2 border-slate-200 dark:border-slate-600">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Base Name</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Branch</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Location</th>
-                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Size</th>
-                        <th className="px-4 py-3 text-center text-sm font-bold text-slate-900 dark:text-slate-100">Guide</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-slate-600">
-                      {displayBases.map(base => (
-                            <tr 
-                              key={base.id}
-                              id={`base-card-${base.id}`}
-                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors"
-                            >
-                              <td className="px-4 py-3">
+            {/* List view only */}
+            <div className="space-y-4">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-100 dark:bg-slate-700 border-b-2 border-slate-200 dark:border-slate-600">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Base Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Branch</th>
+                      <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Location</th>
+                      <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Size</th>
+                      <th className="px-4 py-3 text-center text-sm font-bold text-slate-900 dark:text-slate-100">Guide</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-600">
+                    {displayBases.map(base => (
+                      <tr 
+                        key={base.id}
+                        id={`base-card-${base.id}`}
+                        className="hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-colors"
+                      >
+                        <td className="px-4 py-3">
                                 <div className="font-bold text-slate-900 dark:text-slate-100">{base.title}</div>
                                 {base.featured && (
                                   <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-semibold mt-1">
@@ -766,7 +722,7 @@ export default function BaseMapSelector() {
                                   </span>
                                 )}
                               </td>
-                              <td className="px-4 py-3">
+                        <td className="px-4 py-3">
                                 <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold text-white ${badgeColors[base.branch as keyof typeof badgeColors]}`}>
                                   {base.branch}
                                 </span>
@@ -809,17 +765,8 @@ export default function BaseMapSelector() {
                   </table>
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Hidden base cards for scroll targeting (only in map view) */}
-      {viewMode === 'map' && (
-        <div className="hidden">
-          {filteredBases.map(base => (
-            <div key={base.id} id={`base-card-${base.id}`} />
-          ))}
         </div>
       )}
 
