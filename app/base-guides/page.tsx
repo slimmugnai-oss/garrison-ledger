@@ -7,7 +7,7 @@ import Icon from '../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 import FeaturedGuides from '../components/base-guides/FeaturedGuides';
 import ComparisonBar from '../components/base-guides/ComparisonBar';
-import BaseMapSelectorWrapper from '../components/base-guides/BaseMapSelectorWrapper';
+import BaseIntelligenceBrowser from '../components/base-guides/BaseIntelligenceBrowser';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Military Base Guides - Housing, Schools & BAH Rates | Garrison Ledger",
@@ -43,11 +43,11 @@ export default function BaseGuidesHub() {
             </div>
             
             <h1 className="text-5xl md:text-6xl font-serif font-black mb-6 leading-tight">
-              Military Base Guides: Housing, Schools & PCS Prep
+              Military Base Intelligence Platform
             </h1>
             
             <p className="text-xl md:text-2xl text-emerald-100 mb-8 leading-relaxed">
-              Research your next duty station with confidence. Housing options, school ratings, BAH rates, and neighborhood guides for major U.S. installations.
+              Get personalized base recommendations based on your profile. Browse 183 installations worldwide with intelligent filtering, comparison tools, and direct links to comprehensive guides.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -78,9 +78,9 @@ export default function BaseGuidesHub() {
         {/* Featured Guides Section */}
         <FeaturedGuides />
         
-        {/* Interactive Base Map Selector */}
+        {/* AI-Powered Base Intelligence Browser */}
         <section className="mb-20">
-          <BaseMapSelectorWrapper />
+          <BaseIntelligenceBrowser />
         </section>
         
         {/* On-Base vs Off-Base Decision */}
