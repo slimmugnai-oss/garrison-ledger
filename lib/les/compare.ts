@@ -34,8 +34,14 @@ export function compareLesToExpected(
 ): ComparisonResult {
   const flags: PayFlag[] = [];
   
-  // Get thresholds from options or SSOT
-  const thresholds = options?.thresholds || ssot.militaryPay.comparisonThresholds;
+  // Get thresholds from options or SSOT (with defaults)
+  const defaultThresholds = ssot.militaryPay.comparisonThresholds;
+  const thresholds = {
+    bahDeltaCents: options?.thresholds?.bahDeltaCents ?? defaultThresholds.bahDeltaCents,
+    basDeltaCents: options?.thresholds?.basDeltaCents ?? defaultThresholds.basDeltaCents,
+    colaDeltaCents: options?.thresholds?.colaDeltaCents ?? defaultThresholds.colaDeltaCents,
+    specialPayDeltaCents: options?.thresholds?.specialPayDeltaCents ?? defaultThresholds.specialPayDeltaCents
+  };
   
   // Build lookup map of actual allowances
   const actualAllowances = new Map<string, number>();
