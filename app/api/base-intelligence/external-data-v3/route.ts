@@ -27,6 +27,7 @@ interface ExternalDataResponse {
     marketTrend: string;
     zestimate: number;
     source: string;
+    teaser?: boolean;
   };
   cached: boolean;
   cachedAt?: string;
