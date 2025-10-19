@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
-    // Fix pdf-parse build error - ignore test files
+    // Fix pdf-parse build error - externalize for server
     if (isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -25,11 +25,11 @@ const nextConfig: NextConfig = {
         canvas: false,
       };
       
-      // Ignore pdf-parse test files during build
-      config.externals = config.externals || [];
-      config.externals.push({
-        'canvas': 'commonjs canvas',
-      });
+      // Externalize pdf-parse to avoid bundling test files
+      if (!Array.isArray(config.externals)) {
+        config.externals = [];
+      }
+      config.externals.push('pdf-parse');
     }
     return config;
   },
