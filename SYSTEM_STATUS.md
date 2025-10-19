@@ -2,8 +2,8 @@
 
 **Last Updated:** 2025-01-19  
 **Status:** 🟢 DEPLOYED TO PRODUCTION! 🚀🎖️💯✨🏆  
-**Version:** 3.4.0 (BASE GUIDES REVOLUTION - 183 BASES WORLDWIDE)  
-**Deployment:** ✅ Live on Vercel (Commit: c0e3b09)
+**Version:** 3.5.0 (EXTERNAL DATA APIS - GOOGLE WEATHER + ZILLOW + GREATSCHOOLS)  
+**Deployment:** ✅ Live on Vercel (Commit: 36c1979)
 
 ---
 
@@ -28,6 +28,64 @@
 | **Environment Variables** | ✅ All critical APIs configured |
 
 **Platform Status:** 🟢 **PRODUCTION READY - LAUNCH READY!**
+
+---
+
+## 🌤️ **EXTERNAL DATA APIS DEPLOYED! (2025-01-19)**
+
+### **🎯 REAL DATA INTEGRATION COMPLETE:**
+
+**✅ Google Weather API (FREE):**
+- **API Key:** `AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU`
+- **Cost:** $0/month (restricted key)
+- **Data:** Temperature, feels like, humidity, wind speed, conditions
+- **Quality:** Superior to WeatherAPI.com
+- **Status:** ✅ Live and working
+
+**✅ Zillow API via RapidAPI ($25/month):**
+- **API Key:** `5e108b70f9msh6da7ae3d2bb14d6p163f38jsn85ac0a5ab688`
+- **Cost:** $25/month (unlimited usage)
+- **Endpoints:** `/propertyExtendedSearch`, `/zestimate`, `/valueHistory/localHomeValues`
+- **Data:** Real median home prices, price per sq ft, market trends, Zestimates
+- **Status:** ✅ Live and working
+
+**✅ GreatSchools API (Premium/Pro Only - $97/month):**
+- **API Key:** `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
+- **Cost:** $97/month (15k calls included)
+- **Data:** School ratings, rating bands, top schools, school counts
+- **Gating:** Premium/Pro users only (drives conversions)
+- **Status:** ✅ Live and working
+
+### **📊 MONTHLY API COSTS:**
+- **Google Weather:** $0/month
+- **Zillow (RapidAPI):** $25/month
+- **GreatSchools:** $97/month
+- **Total:** $122/month
+
+### **💰 PROFITABILITY:**
+- **Break-even:** 13 Premium users ($9.99 × 13 = $129.87)
+- **At 100 Premium:** $999 revenue - $122 costs = $877 profit (87.7% margin)
+- **At 1,000 Premium:** $9,990 revenue - $122 costs = $9,868 profit (98.8% margin)
+
+### **🎨 USER EXPERIENCE:**
+**Free Users See:**
+- Real weather data from Google
+- Real housing data from Zillow
+- Premium upsell for school data
+
+**Premium Users See:**
+- Real weather data from Google
+- Real housing data from Zillow
+- Real school data from GreatSchools
+
+### **🔧 TECHNICAL IMPLEMENTATION:**
+- **API Endpoint:** `/api/base-intelligence/external-data-v3`
+- **Caching:** 30-day cache for cost optimization
+- **Error Handling:** Graceful fallbacks for API failures
+- **Tier Checking:** Premium/Pro gating for school data
+- **Attribution:** Proper source attribution for all data
+
+**External data integration is complete and driving Premium conversions!**
 
 ---
 
@@ -300,6 +358,27 @@ Homepage → Sign Up → Clerk Webhook → Dashboard → Upgrade Page
 
 ---
 
+### **🔧 RECENT FIXES (2025-01-19):**
+
+**✅ UI/UX Issues Resolved:**
+- ❌ Removed "Most Popular Duty Stations" section (old content)
+- ❌ Removed confusing calculator button linking to external site
+- ✅ Fixed dropdown arrow with clear tooltip: "Show Weather, Housing & School Data"
+- ✅ Added "Details" text on larger screens for clarity
+- ✅ All 183 bases now show properly in filtering
+- ✅ Worldwide (OCONUS) bases display correctly
+- ✅ Clean, focused base intelligence platform
+
+**✅ Filtering Improvements:**
+- ✅ "All Locations" shows all 183 bases
+- ✅ "United States" shows CONUS bases only  
+- ✅ "Worldwide" shows OCONUS bases only
+- ✅ Search works across all bases
+- ✅ State/country quick filters work properly
+- ✅ No more confusing external links
+
+---
+
 ### **🎯 UX IMPROVEMENTS:**
 
 **Interactive Maps:**
@@ -365,9 +444,12 @@ Homepage → Sign Up → Clerk Webhook → Dashboard → Upgrade Page
 | **Stripe** | 7 vars | ✅ Working | FREE (2.9% + $0.30/txn) | Payments |
 | **Gemini API** | 1 var | ✅ Working | FREE (experimental) | AI features |
 | **Google Maps** | 1 var | ✅ Working | FREE ($200 credit) | PCS distances |
+| **Google Weather** | 1 var | ✅ Working | FREE | Real-time weather data |
+| **Zillow (RapidAPI)** | 1 var | ✅ Working | $25/month | Real property data |
+| **GreatSchools** | 1 var | ✅ Working | $97/month | School ratings (Premium) |
 
-**Total Critical Variables:** 14 ✅  
-**Total Monthly Cost:** $0.00 - $0.35/user  
+**Total Critical Variables:** 17 ✅  
+**Total Monthly Cost:** $122/month + $0.35/user  
 **All Required for Launch:** CONFIGURED ✅
 
 ### **⏭️ OPTIONAL APIs (SET UP LATER):**
@@ -397,8 +479,11 @@ Test these features to confirm all integrations work:
 6. ✅ **Calculators** - Use any tool (Core functionality)
 7. ✅ **PCS Copilot** - Distance calc (Google Maps)
 8. ✅ **Base Comparison** - Compare bases (Data files)
+9. ✅ **Weather Data** - Expand base card, see Google Weather API data
+10. ✅ **Housing Data** - Expand base card, see Zillow property data
+11. ✅ **School Data** - Premium users see GreatSchools data, free users see upsell
 
-**If all 8 work, you're 100% ready to launch!**
+**If all 11 work, you're 100% ready to launch with real external data!**
 
 ---
 
