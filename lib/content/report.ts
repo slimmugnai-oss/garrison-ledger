@@ -1,0 +1,188 @@
+/**
+ * CONTENT REMEDIATION REPORTER
+ * 
+ * Generates HTML/CSV reports for content remediation
+ */
+
+import fs from 'fs';
+import path from 'path';
+import { lintAllContentBlocks, type LintResult } from './lint';
+
+/**
+ * Generate HTML remediation report
+ */
+export async function generateHTMLReport(): Promise<string> {
+  const results = await lintAllContentBlocks();
+
+  const totalBlocks = results.length;
+  const totalFlags = results.reduce((sum, r) => sum + r.totalFlags, 0);
+  const criticalFlags = results.reduce((sum, r) => sum + r.criticalFlags, 0);
+  const blocksWithIssues = results.filter(r => r.totalFlags > 0);
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Remediation Report</title>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f9fafb; }
+    h1 { color: #111827; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; }
+    h2 { color: #374151; margin-top: 30px; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+    .stat { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; }
+    .stat-label { font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; }
+    .stat-value { font-size: 36px; font-weight: bold; color: #111827; margin-top: 8px; }
+    .stat.critical { border-left: 4px solid #dc2626; }
+    .stat.total { border-left: 4px solid #f59e0b; }
+    .stat.blocks { border-left: 4px solid #3b82f6; }
+    table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    th { background: #f3f4f6; padding: 12px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; }
+    td { padding: 12px; border-bottom: 1px solid #f3f4f6; }
+    tr:hover { background: #f9fafb; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    .badge.critical { background: #fee2e2; color: #991b1b; }
+    .badge.high { background: #fef3c7; color: #92400e; }
+    .badge.medium { background: #dbeafe; color: #1e40af; }
+    .flag-list { margin: 0; padding-left: 20px; font-size: 14px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>📋 Content Remediation Report</h1>
+  <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+
+  <div class="summary">
+    <div class="stat blocks">
+      <div class="stat-label">Blocks Scanned</div>
+      <div class="stat-value">${totalBlocks}</div>
+    </div>
+    <div class="stat total">
+      <div class="stat-label">Total Flags</div>
+      <div class="stat-value">${totalFlags}</div>
+    </div>
+    <div class="stat critical">
+      <div class="stat-label">Critical Flags</div>
+      <div class="stat-value">${criticalFlags}</div>
+    </div>
+  </div>
+
+  ${blocksWithIssues.length === 0 ? `
+  <p style="background: #d1fae5; color: #065f46; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981;">
+    ✅ <strong>All clear!</strong> No content issues found.
+  </p>
+  ` : `
+  <h2>⚠️ Blocks with Issues (${blocksWithIssues.length})</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Flags</th>
+        <th>Critical</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${blocksWithIssues.map(block => {
+        const flagGroups = block.flags.reduce((acc, flag) => {
+          acc[flag.flagType] = (acc[flag.flagType] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        return `
+        <tr>
+          <td><strong>${block.title}</strong></td>
+          <td>${block.totalFlags}</td>
+          <td>
+            ${block.criticalFlags > 0 
+              ? `<span class="badge critical">${block.criticalFlags}</span>` 
+              : '<span style="color: #9ca3af;">—</span>'}
+          </td>
+          <td>
+            <ul class="flag-list">
+              ${Object.entries(flagGroups).map(([type, count]) => 
+                `<li>${type}: ${count}</li>`
+              ).join('')}
+            </ul>
+          </td>
+        </tr>
+        `;
+      }).join('')}
+    </tbody>
+  </table>
+  `}
+
+  <h2>🔧 Recommended Actions</h2>
+  <ol>
+    <li><strong>Run auto-fix:</strong> <code>npm run content:autofix</code></li>
+    <li><strong>Review critical flags manually</strong> in <code>/app/admin/intel-triage</code></li>
+    <li><strong>Depublish problematic content:</strong> <code>npm run content:depublish</code></li>
+    <li><strong>Re-lint:</strong> <code>npm run content:lint</code> to verify fixes</li>
+  </ol>
+
+  <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 14px;">
+    Generated by Garrison Ledger Content Governance System
+  </footer>
+</body>
+</html>
+  `.trim();
+
+  return html;
+}
+
+/**
+ * Generate CSV report
+ */
+export async function generateCSVReport(): Promise<string> {
+  const results = await lintAllContentBlocks();
+  const blocksWithIssues = results.filter(r => r.totalFlags > 0);
+
+  const rows = [
+    ['Block ID', 'Title', 'Total Flags', 'Critical Flags', 'Flag Types']
+  ];
+
+  for (const block of blocksWithIssues) {
+    const flagTypes = [...new Set(block.flags.map(f => f.flagType))].join(', ');
+    
+    rows.push([
+      block.blockId,
+      block.title,
+      block.totalFlags.toString(),
+      block.criticalFlags.toString(),
+      flagTypes
+    ]);
+  }
+
+  return rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+}
+
+/**
+ * CLI runner
+ */
+if (require.main === module) {
+  (async () => {
+    console.log('📊 Generating content remediation report...\n');
+
+    const outputDir = 'ops/reports';
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const timestamp = new Date().toISOString().split('T')[0];
+
+    // Generate HTML
+    const html = await generateHTMLReport();
+    const htmlPath = path.join(outputDir, `remediation-${timestamp}.html`);
+    fs.writeFileSync(htmlPath, html);
+    console.log(`✅ HTML report: ${htmlPath}`);
+
+    // Generate CSV
+    const csv = await generateCSVReport();
+    const csvPath = path.join(outputDir, `remediation-${timestamp}.csv`);
+    fs.writeFileSync(csvPath, csv);
+    console.log(`✅ CSV report: ${csvPath}`);
+
+    console.log('\n📋 Reports generated successfully!');
+  })();
+}
+

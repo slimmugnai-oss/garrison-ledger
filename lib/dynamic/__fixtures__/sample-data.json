@@ -1,0 +1,34 @@
+{
+  "bah_rates": [
+    {
+      "paygrade": "E05",
+      "mha": "WA408",
+      "with_dependents": true,
+      "effective_date": "2025-01-01",
+      "rate_cents": 240600,
+      "location_name": "Joint Base Lewis-McChord, WA"
+    },
+    {
+      "paygrade": "E06",
+      "mha": "CA917",
+      "with_dependents": true,
+      "effective_date": "2025-01-01",
+      "rate_cents": 336600,
+      "location_name": "San Diego, CA"
+    }
+  ],
+  "bas_rates": {
+    "officer": 31164,
+    "enlisted": 46066
+  },
+  "irs_tsp_limits": {
+    "TSP_ELECTIVE_DEFERRAL_LIMIT_2025": 23500,
+    "TSP_CATCH_UP_LIMIT_2025": 7500,
+    "TSP_ANNUAL_ADDITIONS_LIMIT_2025": 69000
+  },
+  "tricare_costs": {
+    "TRICARE_SELECT_INDIVIDUAL_DEDUCTIBLE_E1_E4_2025": 16800,
+    "TRICARE_SELECT_FAMILY_DEDUCTIBLE_E5_AND_ABOVE_2025": 36200
+  }
+}
+

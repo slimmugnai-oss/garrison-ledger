@@ -3,6 +3,18 @@
     {
       "path": "/api/enrich/batch",
       "schedule": "0 2 * * 0"
+    },
+    {
+      "path": "/api/feeds/refresh?source=BAH,COLA",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/feeds/refresh?source=IRS_TSP_LIMITS",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/feeds/refresh?source=TRICARE_COSTS,BAS,MILEAGE_RATE",
+      "schedule": "0 5 * * 0"
     }
   ],
   "redirects": [

@@ -1,0 +1,77 @@
+---
+id: example-complete-card
+title: Example Intel Card - TSP Basics
+domain: finance
+tags: [tsp, retirement, savings, example]
+gating: free
+asOf: "2025-01-15"
+dynamicRefs:
+  - { source: "IRS_TSP_LIMITS" }
+  - { source: "BAS" }
+---
+
+# TSP Contribution Basics
+
+**BLUF:** The Thrift Savings Plan (TSP) is your federal 401(k) with rock-bottom fees. Max out the BRS match (5%), then increase contributions toward the annual limit.
+
+<Disclaimer kind="finance" />
+
+<AsOf source="IRS_TSP_LIMITS" />
+
+## Contribution Limits (2025)
+
+The IRS sets annual contribution limits that change yearly:
+
+- **Elective Deferral Limit:** <DataRef source="IRS_TSP_LIMITS" field="TSP_ELECTIVE_DEFERRAL_LIMIT_2025" format="money" />
+- **Catch-Up Limit (age 50+):** <DataRef source="IRS_TSP_LIMITS" field="TSP_CATCH_UP_LIMIT_2025" format="money" />
+- **Total Annual Additions:** <DataRef source="IRS_TSP_LIMITS" field="TSP_ANNUAL_ADDITIONS_LIMIT_2025" format="money" />
+
+These limits apply to **combined** traditional and Roth TSP contributions.
+
+## BRS Matching (5%)
+
+Under the Blended Retirement System (BRS):
+- DoD automatically contributes **1%** of base pay
+- DoD matches your contributions up to **4%** more
+- **Total possible match: 5%** of base pay
+
+### Example (E-5 with <DataRef source="BAS" paygrade="E05" />)
+
+If base pay is $3,000/month:
+- Automatic 1% = $30
+- If you contribute 5% = $150
+- DoD matches 4% = $120
+- **Total monthly TSP: $300** ($150 yours + $150 DoD)
+
+<RateBadge source="BAS" paygrade="E05" />
+
+## Action Steps
+
+1. **Log in to [TSP.gov](https://www.tsp.gov)** and verify current contribution %
+2. **Minimum:** Contribute 5% to get full match
+3. **Optimal:** Increase % each pay raise until hitting annual limit
+4. **Roth vs Traditional:** Consider tax bracket (consult tax professional)
+
+## Common Questions
+
+**Q: Can I change my contribution % anytime?**  
+A: Yes, via myPay. Changes take 1-2 pay periods to process.
+
+**Q: What happens to TSP when I PCS?**  
+A: TSP stays with you - it's federal, not installation-based.
+
+**Q: Do special pays (BAH/BAS) count toward TSP limit?**  
+A: No - only base pay and special pays *included* in your taxable wages count toward the annual limit.
+
+<Disclaimer kind="tax" compact />
+
+## Official Resources
+
+- [TSP.gov](https://www.tsp.gov) - Official TSP website
+- [TSP Contribution Limits](https://www.tsp.gov/making-contributions/contribution-limits/)
+- [BRS Calculator](https://militarypay.defense.gov/calculators/brs/)
+
+---
+
+*Last verified: <AsOf source="IRS_TSP_LIMITS" />*
+
