@@ -4,20 +4,18 @@ import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 // Note: metadata cannot be exported from client components
 // This page needs to be a client component due to the onClick handler for copying ticket ID
 
-export default function ContactSuccessPage({
-  searchParams,
-}: {
-  searchParams: { ref?: string };
-}) {
-  const ticketId = searchParams.ref || 'N/A';
+function ContactSuccessContent() {
+  const searchParams = useSearchParams();
+  const ticketId = searchParams.get('ref') || 'N/A';
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-[#0A0F1E] text-white pt-24 pb-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Success Animation */}
@@ -179,6 +177,21 @@ export default function ContactSuccessPage({
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+export default function ContactSuccessPage() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#0A0F1E] text-white pt-24 pb-16 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00E5A0]"></div>
+        </div>
+      }>
+        <ContactSuccessContent />
+      </Suspense>
       <Footer />
     </>
   );

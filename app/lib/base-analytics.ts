@@ -28,17 +28,19 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
       timestamp: new Date().toISOString(),
     });
 
-    // Also track in localStorage for quick access
-    const recentViews = JSON.parse(localStorage.getItem('recent_base_views') || '[]');
-    const newView = {
-      baseId,
-      baseName,
-      timestamp: Date.now(),
-    };
-    
-    // Keep only last 5 views
-    const updated = [newView, ...recentViews.filter((v: any) => v.baseId !== baseId)].slice(0, 5);
-    localStorage.setItem('recent_base_views', JSON.stringify(updated));
+    // Also track in localStorage for quick access (client-side only)
+    if (typeof window !== 'undefined') {
+      const recentViews = JSON.parse(localStorage.getItem('recent_base_views') || '[]');
+      const newView = {
+        baseId,
+        baseName,
+        timestamp: Date.now(),
+      };
+      
+      // Keep only last 5 views
+      const updated = [newView, ...recentViews.filter((v: any) => v.baseId !== baseId)].slice(0, 5);
+      localStorage.setItem('recent_base_views', JSON.stringify(updated));
+    }
   } catch (error) {
     console.error('Failed to track base view:', error);
   }
@@ -120,6 +122,10 @@ export function getComparisonList() {
 
 // Add base to comparison (max 3)
 export function addToComparison(baseId: string, baseName: string, branch: string) {
+  if (typeof window === 'undefined') {
+    return { success: false, message: 'Client-side only' };
+  }
+  
   try {
     const current = getComparisonList();
     
@@ -145,6 +151,10 @@ export function addToComparison(baseId: string, baseName: string, branch: string
 
 // Remove base from comparison
 export function removeFromComparison(baseId: string) {
+  if (typeof window === 'undefined') {
+    return { success: false };
+  }
+  
   try {
     const current = getComparisonList();
     const updated = current.filter((b: any) => b.baseId !== baseId);
@@ -159,6 +169,10 @@ export function removeFromComparison(baseId: string) {
 
 // Clear all comparisons
 export function clearComparison() {
+  if (typeof window === 'undefined') {
+    return { success: false };
+  }
+  
   try {
     localStorage.setItem('base_comparison', JSON.stringify([]));
     return { success: true };

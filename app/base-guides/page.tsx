@@ -5,9 +5,9 @@ import Link from 'next/link';
 import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
-import BaseMapSelector from '../components/base-guides/BaseMapSelector';
 import FeaturedGuides from '../components/base-guides/FeaturedGuides';
 import ComparisonBar from '../components/base-guides/ComparisonBar';
+import BaseMapSelectorWrapper from '../components/base-guides/BaseMapSelectorWrapper';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Military Base Guides - Housing, Schools & BAH Rates | Garrison Ledger",
@@ -80,7 +80,7 @@ export default function BaseGuidesHub() {
         
         {/* Interactive Base Map Selector */}
         <section className="mb-20">
-          <BaseMapSelector />
+          <BaseMapSelectorWrapper />
         </section>
         
         {/* On-Base vs Off-Base Decision */}

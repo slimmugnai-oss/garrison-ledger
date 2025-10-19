@@ -81,8 +81,9 @@ const caseStudiesData: Record<string, CaseStudyData> = {
   // For now, we'll return 404 for those and you can expand later
 };
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const caseStudy = caseStudiesData[params.slug];
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const caseStudy = caseStudiesData[slug];
   if (!caseStudy) {
     return { title: 'Case Study Not Found' };
   }
@@ -92,8 +93,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function CaseStudyPage({ params }: { params: { slug: string } }) {
-  const caseStudy = caseStudiesData[params.slug];
+export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const caseStudy = caseStudiesData[slug];
 
   if (!caseStudy) {
     notFound();

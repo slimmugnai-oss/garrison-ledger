@@ -22,13 +22,14 @@ export const metadata: Metadata = generatePageMeta({
 });
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     bases?: string;
-  };
+  }>;
 }
 
-export default function BaseComparisonPage({ searchParams }: PageProps) {
-  const baseIds = searchParams.bases?.split(',') || [];
+export default async function BaseComparisonPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const baseIds = params.bases?.split(',') || [];
 
   return (
     <>
