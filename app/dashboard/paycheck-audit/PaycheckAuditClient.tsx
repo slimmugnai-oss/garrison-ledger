@@ -43,8 +43,8 @@ export default function PaycheckAuditClient({
       {/* Header */}
       <PageHeader
         title="Paycheck Audit"
-        description="Upload your LES and instantly detect pay discrepancies. Verify BAH, BAS, COLA, and special pays."
-        badge={<Badge variant="warning">Beta</Badge>}
+        subtitle="Upload your LES and instantly detect pay discrepancies. Verify BAH, BAS, COLA, and special pays."
+        right={<Badge variant="warning">Beta</Badge>}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
