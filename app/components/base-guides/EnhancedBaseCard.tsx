@@ -18,6 +18,7 @@ interface ExternalData {
     feelsLike?: number;
     condition?: string;
     humidity?: number;
+    windSpeed?: number;
     precipitation?: number;
     climate?: string;
     source: string;
@@ -27,6 +28,7 @@ interface ExternalData {
     medianHomePrice: number;
     pricePerSqFt?: number;
     marketTrend: string;
+    zestimate?: number;
     source: string;
   };
   cached?: boolean;
@@ -78,7 +80,7 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
         ...(base.lng && { lng: base.lng.toString() })
       });
 
-      const response = await fetch(`/api/base-intelligence/external-data-v2?${params}`);
+      const response = await fetch(`/api/base-intelligence/external-data-v3?${params}`);
       const data = await response.json();
       
       if (!data.error) {
@@ -252,35 +254,50 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
                     <div className="flex items-center gap-2 mb-3">
                       <Icon name="Cloud" className="h-5 w-5 text-orange-600" />
                       <h4 className="font-semibold text-orange-900 dark:text-orange-300">
-                        Climate
+                        Current Weather
                       </h4>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <p className="text-orange-700 dark:text-orange-400 font-medium">
-                          Current Temp
+                          Temperature
                         </p>
                         <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
                           {externalData.weather.avgTemp}°F
                         </p>
+                        {externalData.weather.feelsLike && (
+                          <p className="text-xs text-orange-600 dark:text-orange-400">
+                            Feels like {externalData.weather.feelsLike}°F
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-orange-700 dark:text-orange-400 font-medium">
                           Conditions
                         </p>
                         <p className="text-sm font-bold text-orange-900 dark:text-orange-100 capitalize">
-                          {externalData.weather.climate}
+                          {externalData.weather.condition || externalData.weather.climate}
                         </p>
+                        {externalData.weather.humidity && (
+                          <p className="text-xs text-orange-600 dark:text-orange-400">
+                            {externalData.weather.humidity}% humidity
+                          </p>
+                        )}
                       </div>
                     </div>
+                    {externalData.weather.windSpeed && (
+                      <div className="mt-2 text-xs text-orange-600 dark:text-orange-400">
+                        Wind: {externalData.weather.windSpeed} mph
+                      </div>
+                    )}
                     <p className="text-xs text-orange-500 dark:text-orange-500 mt-2">
                       Source: {externalData.weather.source}
                     </p>
                   </div>
                 )}
 
-                {/* Housing Data (Placeholder) */}
-                {externalData.housing && externalData.housing.marketTrend !== 'Data not available' && (
+                {/* Housing Data (Zillow) */}
+                {externalData.housing && externalData.housing.medianHomePrice > 0 && (
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Icon name="Home" className="h-5 w-5 text-green-600" />
@@ -291,25 +308,30 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <p className="text-green-700 dark:text-green-400 font-medium">
-                          Median Rent
-                        </p>
-                        <p className="text-2xl font-bold text-green-900 dark:text-green-100">
-                          ${externalData.housing.medianRent.toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-green-700 dark:text-green-400 font-medium">
-                          Home Price
+                          Median Home Price
                         </p>
                         <p className="text-2xl font-bold text-green-900 dark:text-green-100">
                           ${externalData.housing.medianHomePrice.toLocaleString()}
                         </p>
+                        {externalData.housing.zestimate && (
+                          <p className="text-xs text-green-600 dark:text-green-400">
+                            Zestimate: ${externalData.housing.zestimate.toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-green-700 dark:text-green-400 font-medium">
+                          Price per Sq Ft
+                        </p>
+                        <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                          ${externalData.housing.pricePerSqFt?.toLocaleString() || 'N/A'}
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          Market: {externalData.housing.marketTrend}
+                        </p>
                       </div>
                     </div>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                      Trend: {externalData.housing.marketTrend}
-                    </p>
-                    <p className="text-xs text-green-500 dark:text-green-500 mt-1">
+                    <p className="text-xs text-green-500 dark:text-green-500 mt-2">
                       Source: {externalData.housing.source}
                     </p>
                   </div>
@@ -339,4 +361,5 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
     </div>
   );
 }
+
 
