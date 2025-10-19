@@ -139,15 +139,15 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo - Premium Brand */}
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <div className="relative">
-                <div className="w-11 h-11 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl">
-                  <Icon name="Shield" className="w-6 h-6 text-white drop-shadow-md" />
+                <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-md sm:shadow-lg group-hover:shadow-xl">
+                  <Icon name="Shield" className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-md" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl blur-md opacity-0 group-hover:opacity-30 transition-all duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl blur-md opacity-0 group-hover:opacity-30 transition-all duration-300" />
               </div>
               <div className="hidden sm:block">
-                <div className="font-bold text-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
+                <div className="font-bold text-lg sm:text-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
                   Garrison Ledger
                 </div>
                 <div className="text-xs font-medium text-gray-500 dark:text-gray-400 -mt-1 tracking-wide">
@@ -563,7 +563,7 @@ export default function Header() {
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-6 py-2.5 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl font-bold hover:from-slate-700 hover:to-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                  <button className="px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-lg font-semibold hover:from-slate-700 hover:to-slate-800 transition-all shadow-md hover:shadow-lg text-sm">
                     Get Started Free
                   </button>
                 </SignUpButton>
@@ -605,9 +605,9 @@ export default function Header() {
               {/* Mobile Menu Button - Enhanced */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
+                className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
               >
-                <Icon name={mobileMenuOpen ? "X" : "Menu"} className="w-6 h-6" />
+                <Icon name={mobileMenuOpen ? "X" : "Menu"} className="w-5 h-5" />
               </button>
               </div>
           </div>
@@ -736,21 +736,21 @@ export default function Header() {
               
                 {/* Mobile Upgrade CTA */}
                 <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
-                  <Link href="/dashboard/upgrade" className="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center py-3 px-4 rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all">
+                  <Link href="/dashboard/upgrade" className="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center py-2.5 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all text-sm">
                     Upgrade to Premium
                   </Link>
                 </div>
               </SignedIn>
                 <SignedOut>
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                     <SignInButton mode="modal">
-                    <button className="w-full px-4 py-3 text-gray-600 hover:text-slate-900 font-semibold transition-colors text-left">
+                    <button className="w-full px-4 py-2.5 text-gray-600 hover:text-slate-900 font-semibold transition-colors text-left text-sm">
                         Sign In
                       </button>
                     </SignInButton>
                     <SignUpButton mode="modal">
-                    <button className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors">
-                      Get Started
+                    <button className="w-full px-4 py-2.5 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm">
+                      Get Started Free
                       </button>
                     </SignUpButton>
                   </div>
