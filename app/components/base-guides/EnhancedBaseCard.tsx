@@ -8,23 +8,29 @@ import type { BaseData } from '@/app/data/bases';
 interface ExternalData {
   schools?: {
     averageRating: number;
+    ratingBand?: 'below_average' | 'average' | 'above_average';
     topSchool: string;
     schoolCount: number;
     source: string;
   };
   weather?: {
     avgTemp: number;
-    precipitation: number;
-    climate: string;
+    feelsLike?: number;
+    condition?: string;
+    humidity?: number;
+    precipitation?: number;
+    climate?: string;
     source: string;
   };
   housing?: {
     medianRent: number;
     medianHomePrice: number;
+    pricePerSqFt?: number;
     marketTrend: string;
     source: string;
   };
   cached?: boolean;
+  requiresPremium?: boolean;
 }
 
 interface EnhancedBaseCardProps {
@@ -66,11 +72,13 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
       // Build query params
       const params = new URLSearchParams({
         baseId: base.id,
+        ...(base.state && { state: base.state }),
+        ...(base.city && { city: base.city }),
         ...(base.lat && { lat: base.lat.toString() }),
         ...(base.lng && { lng: base.lng.toString() })
       });
 
-      const response = await fetch(`/api/base-intelligence/external-data?${params}`);
+      const response = await fetch(`/api/base-intelligence/external-data-v2?${params}`);
       const data = await response.json();
       
       if (!data.error) {
@@ -155,7 +163,54 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
 
             {externalData && !loadingData && (
               <div className="space-y-4">
-                {/* Schools Data */}
+                {/* Premium Upsell for Schools */}
+                {externalData.requiresPremium && (
+                  <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-lg p-6 border-2 border-amber-300 dark:border-amber-600">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Icon name="GraduationCap" className="h-6 w-6 text-amber-600" />
+                      <h4 className="font-bold text-amber-900 dark:text-amber-100">
+                        Unlock School Ratings ⭐
+                      </h4>
+                    </div>
+                    
+                    <p className="text-sm text-amber-800 dark:text-amber-200 mb-4">
+                      Upgrade to Premium to see real school data from GreatSchools.org:
+                    </p>
+                    
+                    <ul className="space-y-2 mb-4 text-sm text-amber-700 dark:text-amber-300">
+                      <li className="flex items-start gap-2">
+                        <span className="text-amber-600">✓</span>
+                        <span>Average school rating (1-10 scale)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-amber-600">✓</span>
+                        <span>Rating band (above/below average)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-amber-600">✓</span>
+                        <span>Top schools in the area</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-amber-600">✓</span>
+                        <span>Number of schools nearby</span>
+                      </li>
+                    </ul>
+                    
+                    <Link
+                      href="/pricing"
+                      className="inline-flex items-center gap-2 bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-700 transition-colors w-full justify-center"
+                    >
+                      Upgrade to Premium
+                      <Icon name="Crown" className="h-4 w-4" />
+                    </Link>
+                    
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 text-center">
+                      Only $9.99/month • School data from GreatSchools.org
+                    </p>
+                  </div>
+                )}
+
+                {/* Schools Data (Premium/Pro Only) */}
                 {externalData.schools && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-3">
