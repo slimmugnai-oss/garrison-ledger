@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Upsert profile with minimal data
+    // Note: Adjust column names to match your actual user_profiles schema
     const { error: upsertError } = await supabaseAdmin
       .from('user_profiles')
       .upsert({
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
         rank,
         branch,
         current_base,
-        has_dependents: has_dependents || false,
+        marital_status: has_dependents ? 'married' : 'single', // Proxy for has_dependents
         service_status: service_status || 'active_duty',
         profile_completed: true,
         updated_at: new Date().toISOString()

@@ -11,7 +11,18 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Icon from '@/app/components/ui/Icon';
 
-const RANKS = ['E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7', 'E-8', 'E-9', 'W-1', 'W-2', 'W-3', 'W-4', 'W-5', 'O-1', 'O-2', 'O-3', 'O-4', 'O-5', 'O-6'];
+const RANKS = ['E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7', 'E-8', 'E-9', 'W-1', 'W-2', 'W-3', 'W-4', 'W-5', 'O-1', 'O-2', 'O-3', 'O-4', 'O-5', 'O-6', 'CIV', 'CTR'];
+
+const SERVICE_STATUSES = [
+  { value: 'active_duty', label: 'Active Duty' },
+  { value: 'reserve', label: 'Reserve' },
+  { value: 'national_guard', label: 'National Guard' },
+  { value: 'military_spouse', label: 'Military Spouse' },
+  { value: 'veteran', label: 'Veteran' },
+  { value: 'dod_civilian', label: 'DoD Civilian' },
+  { value: 'contractor', label: 'Government Contractor' },
+  { value: 'other', label: 'Other' }
+];
 
 export default function QuickStartProfilePage() {
   const router = useRouter();
@@ -85,11 +96,11 @@ export default function QuickStartProfilePage() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
               required
             >
-              <option value="active_duty">Active Duty</option>
-              <option value="reserve">Reserve</option>
-              <option value="national_guard">National Guard</option>
-              <option value="military_spouse">Military Spouse</option>
-              <option value="veteran">Veteran</option>
+              {SERVICE_STATUSES.map(status => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -127,7 +138,9 @@ export default function QuickStartProfilePage() {
             >
               <option value="">Select...</option>
               {RANKS.map(r => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>
+                  {r === 'CIV' ? 'GS/Civilian' : r === 'CTR' ? 'Contractor' : r}
+                </option>
               ))}
             </select>
           </div>
