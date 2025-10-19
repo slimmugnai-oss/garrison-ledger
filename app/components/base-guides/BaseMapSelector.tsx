@@ -41,6 +41,14 @@ export default function BaseMapSelector() {
     return filtered;
   }, [selectedBranch, selectedRegion, searchQuery]);
 
+  // Memoized display bases for List View (filtered by selectedGroup)
+  const displayBases = useMemo(() => {
+    if (!selectedGroup) return filteredBases;
+    
+    const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
+    return filteredBases.filter(base => base[groupKey] === selectedGroup);
+  }, [filteredBases, selectedGroup, selectedRegion]);
+
   // Initialize D3 map (CONUS only)
   useEffect(() => {
     if (!svgRef.current || showMobileList || selectedRegion === 'OCONUS') return;
@@ -92,16 +100,21 @@ export default function BaseMapSelector() {
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
             .style('cursor', 'pointer')
             .on('click', () => {
-              // Scroll to base card
-              const cardElement = document.getElementById(`base-card-${base.id}`);
-              if (cardElement) {
-                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Flash highlight effect
-                cardElement.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-2');
-                setTimeout(() => {
-                  cardElement.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-2');
-                }, 2000);
-              }
+              // Switch to list view and highlight base
+              setViewMode('list');
+              setSelectedGroup(base[selectedRegion === 'CONUS' ? 'state' : 'country'] || null);
+              
+              setTimeout(() => {
+                const cardElement = document.getElementById(`base-card-${base.id}`);
+                if (cardElement) {
+                  cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  // Flash highlight effect
+                  cardElement.classList.add('bg-emerald-100', 'dark:bg-emerald-900/30');
+                  setTimeout(() => {
+                    cardElement.classList.remove('bg-emerald-100', 'dark:bg-emerald-900/30');
+                  }, 2000);
+                }
+              }, 300);
             });
 
           // Pin circle with optimized size to prevent overlap
@@ -285,33 +298,37 @@ export default function BaseMapSelector() {
               
               {/* Interactive World Map with Country Outlines */}
               <div className="relative w-full bg-white dark:bg-slate-800 rounded-xl p-6 mb-6 border-2 border-slate-200 dark:border-slate-700">
-                <svg viewBox="0 0 1000 500" className="w-full h-auto">
+                <svg viewBox="0 0 960 500" className="w-full h-auto">
                   {/* Ocean background */}
-                  <rect x="0" y="0" width="1000" height="500" fill="#dbeafe" className="dark:fill-slate-900"/>
+                  <rect x="0" y="0" width="960" height="500" fill="#bfdbfe" className="dark:fill-slate-900"/>
                   
-                  {/* Simplified country outlines using equirectangular projection */}
-                  {/* Major regions highlighted */}
+                  {/* Simplified continental landmasses */}
+                  {/* North America */}
+                  <path d="M 80,100 L 240,80 L 260,200 L 220,240 L 100,250 L 80,200 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
+                  
+                  {/* South America */}
+                  <path d="M 200,280 L 220,280 L 240,350 L 230,420 L 210,440 L 190,430 L 180,360 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
                   
                   {/* Europe */}
-                  <path d="M 470 120 L 520 120 L 540 140 L 540 160 L 520 180 L 470 180 L 450 160 L 450 140 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  <path d="M 460,100 L 540,95 L 550,140 L 540,165 L 490,170 L 460,145 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
                   
-                  {/* East Asia */}
-                  <path d="M 800 150 L 850 150 L 870 180 L 850 210 L 800 210 L 780 180 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  {/* Africa */}
+                  <path d="M 480,180 L 560,180 L 580,250 L 570,340 L 530,360 L 490,340 L 480,250 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
                   
-                  {/* Middle East */}
-                  <path d="M 550 200 L 600 200 L 610 220 L 600 240 L 550 240 L 540 220 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  {/* Asia */}
+                  <path d="M 560,80 L 700,70 L 780,100 L 840,140 L 850,200 L 820,240 L 760,250 L 680,230 L 600,180 L 560,140 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
                   
-                  {/* North America */}
-                  <path d="M 100 100 L 250 100 L 280 150 L 280 200 L 250 250 L 100 250 L 70 200 L 70 150 Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" className="dark:fill-slate-700"/>
+                  {/* Australia */}
+                  <path d="M 760,320 L 830,320 L 860,360 L 850,400 L 800,410 L 760,390 L 750,350 Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" className="dark:fill-slate-700 dark:stroke-slate-600"/>
                   
                   {/* Plot OCONUS bases as pins with proper projection */}
                   {filteredBases.map(base => {
                     // Equirectangular projection for world map
-                    const x = ((base.lng + 180) / 360) * 1000;
+                    const x = ((base.lng + 180) / 360) * 960;
                     const y = ((90 - base.lat) / 180) * 500;
                     
                     return (
-                      <g key={base.id}>
+                      <g key={base.id} className="pin-group">
                         <circle
                           cx={x}
                           cy={y}
@@ -319,27 +336,66 @@ export default function BaseMapSelector() {
                           fill={branchColors[base.branch as keyof typeof branchColors]}
                           stroke="#ffffff"
                           strokeWidth="2"
-                          className="cursor-pointer transition-all"
-                          style={{ transformOrigin: `${x}px ${y}px` }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.setAttribute('r', '14');
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.setAttribute('r', '7');
-                          }}
-                          onClick={() => {
-                            const cardElement = document.getElementById(`base-card-${base.id}`);
-                            if (cardElement) {
-                              cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                              cardElement.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-2');
-                              setTimeout(() => {
-                                cardElement.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-2');
-                              }, 2000);
+                          className="cursor-pointer"
+                          onMouseOver={(e) => {
+                            const circle = e.currentTarget;
+                            circle.setAttribute('r', '14');
+                            
+                            // Show tooltip
+                            const tooltip = circle.nextElementSibling;
+                            if (tooltip) {
+                              tooltip.setAttribute('opacity', '1');
                             }
                           }}
-                        >
-                          <title>{base.title} - {base.city}, {base.country}</title>
-                        </circle>
+                          onMouseOut={(e) => {
+                            const circle = e.currentTarget;
+                            circle.setAttribute('r', '7');
+                            
+                            // Hide tooltip
+                            const tooltip = circle.nextElementSibling;
+                            if (tooltip) {
+                              tooltip.setAttribute('opacity', '0');
+                            }
+                          }}
+                          onClick={() => {
+                            // Switch to list view and highlight base
+                            setViewMode('list');
+                            setSelectedGroup(base.country || null);
+                            
+                            setTimeout(() => {
+                              const cardElement = document.getElementById(`base-card-${base.id}`);
+                              if (cardElement) {
+                                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                cardElement.classList.add('bg-emerald-100', 'dark:bg-emerald-900/30');
+                                setTimeout(() => {
+                                  cardElement.classList.remove('bg-emerald-100', 'dark:bg-emerald-900/30');
+                                }, 2000);
+                              }
+                            }, 300);
+                          }}
+                        />
+                        
+                        {/* Tooltip */}
+                        <g opacity="0" style={{ pointerEvents: 'none' }}>
+                          <rect
+                            x={x - 60}
+                            y={y - 35}
+                            width="120"
+                            height="25"
+                            fill="rgba(0, 0, 0, 0.85)"
+                            rx="4"
+                          />
+                          <text
+                            x={x}
+                            y={y - 17}
+                            textAnchor="middle"
+                            fill="white"
+                            fontSize="11"
+                            fontWeight="bold"
+                          >
+                            {base.title}
+                          </text>
+                        </g>
                       </g>
                     );
                   })}
@@ -681,26 +737,19 @@ export default function BaseMapSelector() {
             ) : (
               // List view - compact table
               <div className="space-y-4">
-                {(() => {
-                  const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
-                  const displayBases = selectedGroup 
-                    ? filteredBases.filter(b => b[groupKey] === selectedGroup)
-                    : filteredBases;
-
-                  return (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-slate-100 dark:bg-slate-700 border-b-2 border-slate-200 dark:border-slate-600">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Base Name</th>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Branch</th>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Location</th>
-                            <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Size</th>
-                            <th className="px-4 py-3 text-center text-sm font-bold text-slate-900 dark:text-slate-100">Guide</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-600">
-                          {displayBases.map(base => (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-slate-100 dark:bg-slate-700 border-b-2 border-slate-200 dark:border-slate-600">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Base Name</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Branch</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Location</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold text-slate-900 dark:text-slate-100">Size</th>
+                        <th className="px-4 py-3 text-center text-sm font-bold text-slate-900 dark:text-slate-100">Guide</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-600">
+                      {displayBases.map(base => (
                             <tr 
                               key={base.id}
                               id={`base-card-${base.id}`}
@@ -755,12 +804,10 @@ export default function BaseMapSelector() {
                                 </a>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  );
-                })()}
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
