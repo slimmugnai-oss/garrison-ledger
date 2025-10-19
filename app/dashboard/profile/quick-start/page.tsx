@@ -69,7 +69,7 @@ export default function QuickStartProfilePage() {
     }
   };
 
-  const isValid = rank && branch && currentBase;
+  const isValid = rank && currentBase && (branch || ['contractor', 'dod_civilian', 'other'].includes(serviceStatus));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center py-12 px-4">
@@ -105,25 +105,27 @@ export default function QuickStartProfilePage() {
           </div>
 
           {/* 2. Branch */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              2. Branch <span className="text-red-600">*</span>
-            </label>
-            <select
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
-              required
-            >
-              <option value="">Select...</option>
-              <option value="Army">Army</option>
-              <option value="Navy">Navy</option>
-              <option value="Air Force">Air Force</option>
-              <option value="Marine Corps">Marine Corps</option>
-              <option value="Space Force">Space Force</option>
-              <option value="Coast Guard">Coast Guard</option>
-            </select>
-          </div>
+          {serviceStatus !== 'contractor' && serviceStatus !== 'dod_civilian' && serviceStatus !== 'other' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                2. Branch <span className="text-red-600">*</span>
+              </label>
+              <select
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base"
+                required
+              >
+                <option value="">Select...</option>
+                <option value="Army">Army</option>
+                <option value="Navy">Navy</option>
+                <option value="Air Force">Air Force</option>
+                <option value="Marine Corps">Marine Corps</option>
+                <option value="Space Force">Space Force</option>
+                <option value="Coast Guard">Coast Guard</option>
+              </select>
+            </div>
+          )}
 
           {/* 3. Rank */}
           <div>

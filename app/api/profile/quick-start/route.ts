@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
       service_status
     } = body;
 
-    // Validate required fields
-    if (!rank || !branch || !current_base) {
+    // Validate required fields (branch optional for contractors/civilians)
+    if (!rank || !current_base) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       .upsert({
         user_id: userId,
         rank,
-        branch,
+        branch: branch || 'N/A', // N/A for contractors/civilians
         current_base,
         marital_status: has_dependents ? 'married' : 'single', // Proxy for has_dependents
         service_status: service_status || 'active_duty',
