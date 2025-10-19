@@ -80,6 +80,10 @@ import {
   ChevronDown,
   Search,
   Menu,
+  Grid3x3,
+  List,
+  RotateCcw,
+  CloudOff,
   
   // User & Interface
   User,
@@ -224,6 +228,10 @@ export const iconRegistry = {
   ChevronDown,
   Search,
   Menu,
+  Grid: Grid3x3,
+  List,
+  RotateCcw,
+  CloudOff,
   
   // User & Interface
   User,
