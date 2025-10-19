@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
+import TdyWizard from './TdyWizard';
 import type { TdyTrip } from '@/app/types/tdy';
 
 interface Props {
@@ -257,39 +258,13 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
           </div>
         )}
 
-        {/* Trip Editor (when trip selected) */}
+        {/* Trip Editor - FULL WIZARD */}
         {selectedTrip && (
-          <div className="bg-white border border-gray-200 rounded-lg p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">Trip Details</h2>
-              <button
-                onClick={() => setSelectedTrip(null)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium"
-              >
-                ← Back to Trips
-              </button>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <h3 className="font-semibold text-blue-900 mb-2">Coming Soon: Full Wizard</h3>
-              <p className="text-sm text-blue-800">
-                Upload receipts → Auto-categorize → Validate per-diem → Generate voucher
-              </p>
-              <p className="text-sm text-blue-700 mt-2">
-                Trip ID: <code className="bg-blue-100 px-2 py-1 rounded">{selectedTrip}</code>
-              </p>
-            </div>
-
-            <div className="text-center py-12">
-              <Icon name="File" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Wizard UI In Progress
-              </h3>
-              <p className="text-gray-600">
-                Backend complete. UI components coming in next update.
-              </p>
-            </div>
-          </div>
+          <TdyWizard
+            tripId={selectedTrip}
+            isPremium={isPremium}
+            onBack={() => setSelectedTrip(null)}
+          />
         )}
 
         {/* Info Banner */}
