@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { PageHeader } from '@/app/components/ui/PageHeader';
-import { Badge } from '@/app/components/ui/Badge';
+import PageHeader from '@/app/components/ui/PageHeader';
+import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import LesUpload from '@/app/components/les/LesUpload';
 import LesHistory from '@/app/components/les/LesHistory';
-import { Icon } from '@/app/components/ui/Icon';
+import Icon from '@/app/components/ui/Icon';
 
 interface Props {
   tier: string;

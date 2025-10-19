@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Icon } from '@/app/components/ui/Icon';
+import Icon from '@/app/components/ui/Icon';
 import type { ParsedSummary } from '@/app/types/les';
 import { centsToDoollars } from '@/app/types/les';
 
