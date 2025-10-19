@@ -35,6 +35,8 @@ import {
   Download,
   Send,
   Quote,
+  GraduationCap,
+  Cloud,
   
   // Business & Career
   Briefcase,
@@ -176,6 +178,8 @@ export const iconRegistry = {
   ArrowLeft,
   Copy,
   AlertCircle,
+  GraduationCap,
+  Cloud,
   
   // Business & Career
   Briefcase,

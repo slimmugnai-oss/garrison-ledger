@@ -5,6 +5,7 @@ import { basesData } from '@/app/data/bases';
 import type { BaseData } from '@/app/data/bases';
 import Icon from '../ui/Icon';
 import Link from 'next/link';
+import EnhancedBaseCard from './EnhancedBaseCard';
 
 interface BaseRecommendation {
   baseId: string;
@@ -288,7 +289,7 @@ export default function BaseIntelligenceBrowser() {
       {/* Base Cards Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredBases.map((base) => (
-          <BaseCard key={base.id} base={base} />
+          <EnhancedBaseCard key={base.id} base={base} />
         ))}
       </div>
 
