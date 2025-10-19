@@ -197,6 +197,15 @@ export const ssot = {
   },
 
   /**
+   * SYSTEM CONSTANTS
+   * Operational constants for tools and calculations
+   */
+  constants: {
+    mileageCentsPerMileFallback: 67, // $0.67/mile (2025 DFAS rate)
+    travelDayMieFactor: 0.75,         // 75% M&IE on travel days (GSA rule)
+  },
+
+  /**
    * MILITARY PAY CONSTANTS
    * Official DoD pay and allowances (updated periodically)
    */
