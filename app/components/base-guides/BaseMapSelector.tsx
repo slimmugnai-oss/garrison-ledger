@@ -15,6 +15,7 @@ export default function BaseMapSelector() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showMobileList, setShowMobileList] = useState<boolean>(false);
   const [comparisonCount, setComparisonCount] = useState<number>(0);
+  const [allExpanded, setAllExpanded] = useState<boolean>(true);
 
   // Memoized filtered bases for performance
   const filteredBases = useMemo(() => {
@@ -263,13 +264,59 @@ export default function BaseMapSelector() {
 
         {selectedRegion === 'OCONUS' && !showMobileList && (
           <div className="mb-6">
-            {/* World Map Representation */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-8 mb-6">
-              <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-300 mb-6 text-center">
+            {/* World Map Visualization */}
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-8 mb-6">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6 text-center">
                 🌍 Worldwide Military Installations ({oconusBases.length} bases)
               </h3>
               
-              {/* Regional Breakdown */}
+              {/* Interactive World Map */}
+              <div className="relative w-full bg-white dark:bg-slate-800 rounded-xl p-6 mb-6 border-2 border-slate-200 dark:border-slate-700">
+                <svg viewBox="0 0 1000 500" className="w-full h-auto">
+                  {/* Simplified world map background */}
+                  <rect x="0" y="0" width="1000" height="500" fill="#e2e8f0" className="dark:fill-slate-700"/>
+                  
+                  {/* Plot OCONUS bases as pins on simplified world coordinates */}
+                  {filteredBases.map(base => {
+                    // Simple lat/lng to x/y conversion for visualization
+                    const x = ((base.lng + 180) / 360) * 1000;
+                    const y = ((90 - base.lat) / 180) * 500;
+                    
+                    return (
+                      <g key={base.id}>
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="8"
+                          fill={branchColors[base.branch as keyof typeof branchColors]}
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          className="cursor-pointer hover:scale-150 transition-transform"
+                          onClick={() => {
+                            const cardElement = document.getElementById(`base-card-${base.id}`);
+                            if (cardElement) {
+                              cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              cardElement.classList.add('ring-4', 'ring-emerald-500', 'ring-offset-2');
+                              setTimeout(() => {
+                                cardElement.classList.remove('ring-4', 'ring-emerald-500', 'ring-offset-2');
+                              }, 2000);
+                            }
+                          }}
+                        >
+                          <title>{base.title} - {base.city}, {base.country}</title>
+                        </circle>
+                      </g>
+                    );
+                  })}
+                </svg>
+                
+                {/* Legend */}
+                <div className="flex flex-wrap items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-200 dark:border-slate-600">
+                  <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Click any pin to view base details</span>
+                </div>
+              </div>
+              
+              {/* Regional Breakdown Cards */}
               <div className="grid md:grid-cols-3 gap-6">
                 {/* Europe */}
                 <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-700">
@@ -489,8 +536,72 @@ export default function BaseMapSelector() {
         </div>
       )}
 
-      {/* Smart Grouped Base List */}
-      <div className="space-y-8">
+      {/* Quick Jump Navigation */}
+      {filteredBases.length > 0 && (
+        <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Quick Jump to {selectedRegion === 'CONUS' ? 'State' : 'Country'}
+            </h3>
+            <button
+              onClick={() => {
+                setAllExpanded(!allExpanded);
+                // Toggle all details elements
+                setTimeout(() => {
+                  const details = document.querySelectorAll('details');
+                  details.forEach(detail => {
+                    if (allExpanded) {
+                      detail.removeAttribute('open');
+                    } else {
+                      detail.setAttribute('open', '');
+                    }
+                  });
+                }, 100);
+              }}
+              className="text-sm font-semibold px-4 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+            >
+              {allExpanded ? 'Collapse All' : 'Expand All'}
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(() => {
+              const groupKey = selectedRegion === 'CONUS' ? 'state' : 'country';
+              const grouped = filteredBases.reduce((acc, base) => {
+                const key = base[groupKey] || 'Other';
+                if (!acc[key]) acc[key] = 0;
+                acc[key]++;
+                return acc;
+              }, {} as Record<string, number>);
+              
+              return Object.entries(grouped)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([name, count]) => (
+                  <button
+                    key={name}
+                    onClick={() => {
+                      const element = document.getElementById(`group-${name.replace(/\s+/g, '-').toLowerCase()}`);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-700 dark:hover:bg-emerald-900/20 transition-all"
+                  >
+                    <span>{name}</span>
+                    <span className="text-xs bg-slate-200 dark:bg-slate-600 px-1.5 py-0.5 rounded">
+                      {count}
+                    </span>
+                  </button>
+                ));
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Smart Grouped Base List with Collapsible Sections */}
+      <div className="space-y-6">
         {filteredBases.length > 0 ? (
           (() => {
             // Group bases by state (CONUS) or country (OCONUS)
@@ -506,26 +617,33 @@ export default function BaseMapSelector() {
             const sortedGroups = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
 
             return sortedGroups.map(([groupName, bases]) => (
-              <div key={groupName} className="space-y-4">
-                {/* Group Header */}
-                <div className="flex items-center gap-3 pb-3 border-b-2 border-slate-200 dark:border-slate-700">
-                  <div className="flex-shrink-0 w-10 h-10 bg-slate-800 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">
-                      {selectedRegion === 'CONUS' ? groupName : '🌍'}
-                    </span>
+              <details key={groupName} className="group" open>
+                <summary 
+                  id={`group-${groupName.replace(/\s+/g, '-').toLowerCase()}`}
+                  className="flex items-center justify-between gap-3 p-4 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-12 h-12 bg-slate-800 dark:bg-slate-700 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
+                      <span className="text-white font-bold">
+                        {selectedRegion === 'CONUS' ? groupName : '🌍'}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                        {groupName}
+                      </h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {bases.length} installation{bases.length > 1 ? 's' : ''}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                      {groupName}
-                    </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {bases.length} installation{bases.length > 1 ? 's' : ''}
-                    </p>
-                  </div>
-                </div>
+                  <svg className="w-6 h-6 text-slate-600 dark:text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
 
                 {/* Bases in this group */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 px-2">
                   {bases.map(base => (
             <div
               key={base.id}
@@ -580,7 +698,7 @@ export default function BaseMapSelector() {
             </div>
                   ))}
                 </div>
-              </div>
+              </details>
             ));
           })()
         ) : (
