@@ -178,6 +178,8 @@ export interface LesUploadResponse {
   uploadId: string;
   parsedOk: boolean;
   summary?: ParsedSummary;
+  month: number;
+  year: number;
   error?: string;
 }
 
