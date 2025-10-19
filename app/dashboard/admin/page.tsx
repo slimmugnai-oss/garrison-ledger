@@ -39,19 +39,21 @@ async function getSystemMetrics() {
     .from('user_profiles')
     .select('*', { count: 'exact', head: true });
 
-  // Premium users (active)
+  // Premium users (active WITH Stripe subscription - real paid users only)
   const { count: premiumUsers } = await supabase
     .from('entitlements')
     .select('*', { count: 'exact', head: true })
     .eq('tier', 'premium')
-    .eq('status', 'active');
+    .eq('status', 'active')
+    .not('stripe_subscription_id', 'is', null);
 
-  // Pro users (active)
+  // Pro users (active WITH Stripe subscription - real paid users only)
   const { count: proUsers } = await supabase
     .from('entitlements')
     .select('*', { count: 'exact', head: true })
     .eq('tier', 'pro')
-    .eq('status', 'active');
+    .eq('status', 'active')
+    .not('stripe_subscription_id', 'is', null);
 
   // New signups (last 7 days)
   const { count: newSignups7d } = await supabase
