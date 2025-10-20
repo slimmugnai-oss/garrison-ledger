@@ -69,15 +69,20 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     const data = await response.json();
     
+    // Debug: Log first school's full structure to diagnose rating-band issue
+    if (data.schools && data.schools.length > 0) {
+      console.log(`[Schools] DEBUG: First school data:`, JSON.stringify(data.schools[0], null, 2));
+    }
+    
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
-    const schools: School[] = (data.schools || []).map((s: any) => {
+    const schools: School[] = (data.schools || []).map((s: any, index: number) => {
       const ratingBand = s['rating-band'];
       const rating = parseRatingBand(ratingBand);
       
-      // Log if rating-band is missing (subscription plan issue)
-      if (!ratingBand && schools.length < 5) {
-        console.warn(`[Schools] No rating-band for ${s.name} - may require higher subscription tier`);
+      // Debug: Log rating-band for first few schools
+      if (index < 3) {
+        console.log(`[Schools] ${s.name}: rating-band="${ratingBand}" → score=${rating}`);
       }
       
       return {

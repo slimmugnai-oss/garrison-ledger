@@ -19,19 +19,6 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) return cached;
 
-  // Weather API temporarily disabled - requires OpenWeatherMap subscription via RapidAPI
-  // TODO: Either subscribe to OpenWeatherMap or use alternative weather service
-  console.log('[Weather] Using neutral fallback (API subscription needed)');
-  
-  const fallbackResult = {
-    index10: 7, // Neutral score (doesn't penalize or boost)
-    note: 'Weather data pending API configuration'
-  };
-  
-  await setCache(cacheKey, fallbackResult, 24 * 3600);
-  return fallbackResult;
-
-  /* Disabled until OpenWeatherMap subscription is active
   const apiKey = process.env.RAPIDAPI_KEY;
 
   if (!apiKey) {
@@ -40,46 +27,64 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   }
 
   try {
-    // OpenWeatherMap API via RapidAPI (requires subscription)
+    // Google Weather API via RapidAPI
+    // Trying multiple possible endpoints since user is subscribed
+    console.log(`[Weather] Fetching weather for ZIP ${zip}...`);
+    
     const response = await fetch(
-      `https://community-open-weather-map.p.rapidapi.com/weather?zip=${zip},us&units=imperial`,
-      { headers: { 
-          'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
+      `https://weatherapi-com.p.rapidapi.com/current.json?q=${zip}`,
+      { 
+        headers: { 
+          'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com',
           'X-RapidAPI-Key': apiKey,
           'Accept': 'application/json'
         },
-        next: { revalidate: 86400 }
+        next: { revalidate: 86400 } // 24h cache
       }
     );
 
     if (!response.ok) {
-      console.error('[Weather] API error:', response.status);
-      return { index10: 7, note: 'Weather data temporarily unavailable' };
+      const errorText = await response.text();
+      console.error(`[Weather] API error for ZIP ${zip}:`, response.status, errorText);
+      
+      // Return neutral score on error (doesn't penalize)
+      return {
+        index10: 7,
+        note: 'Weather data temporarily unavailable'
+      };
     }
 
     const data = await response.json();
+    console.log(`[Weather] DEBUG: Response structure:`, JSON.stringify(data, null, 2).substring(0, 500));
+    
     const result = analyzeWeatherData(data);
     await setCache(cacheKey, result, 24 * 3600);
+    
+    console.log(`[Weather] ✅ Weather fetched for ZIP ${zip}: ${result.note}`);
     return result;
+
   } catch (error) {
     console.error('[Weather] Fetch error:', error);
-    return { index10: 7, note: 'Weather data unavailable' };
+    return {
+      index10: 7,
+      note: 'Weather data unavailable'
+    };
   }
-  */
 }
 
 /**
- * Analyze weather data from OpenWeatherMap and compute comfort index
+ * Analyze weather data from WeatherAPI.com and compute comfort index
  */
 function analyzeWeatherData(data: any): { index10: number; note: string } {
   
   try {
-    // OpenWeatherMap API structure:
-    // { main: { temp, humidity }, weather: [...] }
+    // WeatherAPI.com structure:
+    // { current: { temp_f, humidity, condition: { text } }, location: {...} }
     
-    const tempF = data.main?.temp || 70;
-    const humidity = data.main?.humidity || 50;
-    const description = data.weather?.[0]?.description || 'unknown';
+    const current = data.current;
+    const tempF = current?.temp_f || 70;
+    const humidity = current?.humidity || 50;
+    const description = current?.condition?.text || 'unknown';
     
     // Compute comfort index based on current conditions
     let index = 10;
@@ -95,9 +100,10 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     if (humidity < 20) index -= 0.5;
     
     // Weather condition penalties
-    if (description.includes('rain') || description.includes('drizzle')) index -= 0.5;
-    if (description.includes('storm') || description.includes('thunder')) index -= 1;
-    if (description.includes('snow')) index -= 1;
+    const desc = description.toLowerCase();
+    if (desc.includes('rain') || desc.includes('drizzle')) index -= 0.5;
+    if (desc.includes('storm') || desc.includes('thunder')) index -= 1;
+    if (desc.includes('snow')) index -= 1;
 
     // Clamp to 0-10
     index = Math.max(0, Math.min(10, index));
