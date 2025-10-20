@@ -249,249 +249,320 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
           </div>
         )}
 
-        {/* Results */}
+        {/* Results - Top 3 ZIP Codes Only */}
         {!loading && results.length > 0 && (
           <>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {visibleResults.map((result, index) => {
+            {/* Header */}
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 font-lora mb-2">
+                Top 3 Neighborhoods
+              </h2>
+              <p className="text-gray-600">
+                The best ZIP codes for your family, ranked by our comprehensive scoring algorithm.
+              </p>
+            </div>
+
+            {/* Top 3 ZIP Codes - Enhanced Layout */}
+            <div className="space-y-8">
+              {results.slice(0, 3).map((result, index) => {
                 const isWatched = watchedZips.includes(result.zip);
                 const scoreBreakdown = getScoreBreakdown(result.family_fit_score);
+                const rankColors = ['bg-gradient-to-r from-yellow-400 to-yellow-600', 'bg-gradient-to-r from-gray-300 to-gray-500', 'bg-gradient-to-r from-amber-600 to-amber-800'];
+                const rankLabels = ['🥇 #1 Choice', '🥈 #2 Choice', '🥉 #3 Choice'];
 
                 return (
-                  <AnimatedCard key={result.zip} delay={index * 0.05}>
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
-                      {/* Rank + ZIP */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-2xl font-bold text-gray-400">
-                              #{index + 1}
+                  <AnimatedCard key={result.zip} delay={index * 0.1}>
+                    <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
+                      
+                      {/* Header Section */}
+                      <div className={`${rankColors[index]} text-white p-6`}>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-2xl font-bold">
+                                {rankLabels[index]}
+                              </span>
+                              <h3 className="text-3xl font-bold">
+                                ZIP {result.zip}
+                              </h3>
+                            </div>
+                            <p className="text-lg opacity-90">
+                              {scoreBreakdown.message}
+                            </p>
+                          </div>
+
+                          {isPremium && (
+                            <button
+                              onClick={() => saveWatchlist(result.zip)}
+                              className={`p-3 rounded-xl ${
+                                isWatched
+                                  ? 'bg-white bg-opacity-20 text-white'
+                                  : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'
+                              }`}
+                              title={isWatched ? 'Remove from watchlist' : 'Add to watchlist'}
+                            >
+                              <Icon name="Star" className="w-6 h-6" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Family Fit Score - Prominent */}
+                        <div className="mt-4 bg-white bg-opacity-20 rounded-xl p-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-semibold">Family Fit Score</span>
+                            <span className="text-5xl font-bold">
+                              {Math.round(result.family_fit_score)}
                             </span>
-                            <h3 className="text-xl font-bold text-gray-900">
-                              ZIP {result.zip}
-                            </h3>
-                          </div>
-                        </div>
-
-                        {isPremium && (
-                          <button
-                            onClick={() => saveWatchlist(result.zip)}
-                            className={`p-2 rounded-lg ${
-                              isWatched
-                                ? 'bg-yellow-100 text-yellow-600'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                            title={isWatched ? 'Remove from watchlist' : 'Add to watchlist'}
-                          >
-                            <Icon name="Star" className="w-5 h-5" />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Family Fit Score */}
-                      <div className={`mb-4 p-4 rounded-lg border-2 ${
-                        scoreBreakdown.color === 'green' ? 'bg-green-50 border-green-300' :
-                        scoreBreakdown.color === 'blue' ? 'bg-blue-50 border-blue-300' :
-                        scoreBreakdown.color === 'yellow' ? 'bg-yellow-50 border-yellow-300' :
-                        'bg-red-50 border-red-300'
-                      }`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Family Fit Score</span>
-                          <span className={`text-3xl font-bold ${
-                            scoreBreakdown.color === 'green' ? 'text-green-600' :
-                            scoreBreakdown.color === 'blue' ? 'text-blue-600' :
-                            scoreBreakdown.color === 'yellow' ? 'text-yellow-600' :
-                            'text-red-600'
-                          }`}>
-                            {Math.round(result.family_fit_score)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600">{scoreBreakdown.message}</p>
-                      </div>
-
-                      {/* Subscores */}
-                      <div className="space-y-2 mb-4">
-                        {/* Schools */}
-                        <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-700">Schools (40%)</span>
-                            <span className="font-semibold">{Math.round(result.subscores.schools)}</span>
-                          </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-green-500"
-                              style={{ width: `${result.subscores.schools}%` }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Rent vs BAH */}
-                        <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-700">Rent vs BAH (30%)</span>
-                            <span className="font-semibold">{Math.round(result.subscores.rentVsBah)}</span>
-                          </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-blue-500"
-                              style={{ width: `${result.subscores.rentVsBah}%` }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Commute */}
-                        <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-700">Commute (20%)</span>
-                            <span className="font-semibold">{Math.round(result.subscores.commute)}</span>
-                          </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-purple-500"
-                              style={{ width: `${result.subscores.commute}%` }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Weather */}
-                        <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
-                            <span className="text-gray-700">Weather (10%)</span>
-                            <span className="font-semibold">{Math.round(result.subscores.weather)}</span>
-                          </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-yellow-500"
-                              style={{ width: `${result.subscores.weather}%` }}
-                            />
                           </div>
                         </div>
                       </div>
 
-                      {/* Details */}
-                      <div className="space-y-3">
-                        {/* Schools */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                            <Icon name="GraduationCap" className="w-4 h-4" />
-                            Top Schools
-                            {isPremium && (
-                              <Badge variant="info" className="ml-1">Premium</Badge>
-                            )}
-                          </h4>
-                          {result.payload.top_schools.length > 0 ? (
-                            <div className="space-y-1">
-                              {result.payload.top_schools.map((school, i) => (
-                                <div key={i} className="text-sm flex items-center justify-between">
-                                  <span className="text-gray-700 truncate">{school.name}</span>
-                                  <span className="font-semibold text-green-600 ml-2">
-                                    {school.rating}/10
+                      {/* Content Section */}
+                      <div className="p-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          
+                          {/* Left Column - Scoring Breakdown */}
+                          <div>
+                            <h4 className="text-xl font-bold text-gray-900 mb-4">Score Breakdown</h4>
+                            
+                            {/* Enhanced Subscores */}
+                            <div className="space-y-4">
+                              {/* Schools */}
+                              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="GraduationCap" className="w-5 h-5 text-green-600" />
+                                    <span className="font-semibold text-gray-900">Schools (40%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-green-600">
+                                    {Math.round(result.subscores.schools)}
                                   </span>
                                 </div>
-                              ))}
-                            </div>
-                          ) : isPremium ? (
-                            <div className="bg-yellow-50 border border-yellow-200 rounded p-2">
-                              <p className="text-xs text-yellow-800">
-                                <strong>API Configuration Needed:</strong> School ratings require GreatSchools API key.
-                                Check server logs for details.
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="bg-blue-50 border border-blue-200 rounded p-2">
-                              <p className="text-xs text-blue-800">
-                                <a href="/dashboard/upgrade" className="underline hover:text-blue-900">
-                                  Upgrade to Premium
-                                </a> to see school ratings from GreatSchools
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                                <div className="h-3 bg-green-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-green-500 rounded-full"
+                                    style={{ width: `${result.subscores.schools}%` }}
+                                  />
+                                </div>
+                              </div>
 
-                        {/* Housing */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                            <Icon name="Home" className="w-4 h-4" />
-                            Housing
-                          </h4>
-                          {result.median_rent_cents ? (
-                            <div className="text-sm">
-                              <p className="text-gray-700">
-                                Median rent: <span className="font-semibold">${(result.median_rent_cents / 100).toLocaleString()}/mo</span>
-                              </p>
-                              <p className="text-gray-600 text-xs">
-                                Your BAH: ${(bahMonthlyCents / 100).toLocaleString()}/mo
-                                {result.median_rent_cents <= bahMonthlyCents ? (
-                                  <span className="text-green-600 ml-1">✓ Under BAH</span>
-                                ) : (
-                                  <span className="text-yellow-600 ml-1">
-                                    ({Math.round((result.median_rent_cents / bahMonthlyCents - 1) * 100)}% over)
+                              {/* Rent vs BAH */}
+                              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="Home" className="w-5 h-5 text-blue-600" />
+                                    <span className="font-semibold text-gray-900">Rent vs BAH (30%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-blue-600">
+                                    {Math.round(result.subscores.rentVsBah)}
                                   </span>
-                                )}
-                              </p>
+                                </div>
+                                <div className="h-3 bg-blue-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-blue-500 rounded-full"
+                                    style={{ width: `${result.subscores.rentVsBah}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Commute */}
+                              <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="MapPin" className="w-5 h-5 text-purple-600" />
+                                    <span className="font-semibold text-gray-900">Commute (20%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-purple-600">
+                                    {Math.round(result.subscores.commute)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-purple-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-purple-500 rounded-full"
+                                    style={{ width: `${result.subscores.commute}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Weather */}
+                              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="Cloud" className="w-5 h-5 text-yellow-600" />
+                                    <span className="font-semibold text-gray-900">Weather (10%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-yellow-600">
+                                    {Math.round(result.subscores.weather)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-yellow-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-yellow-500 rounded-full"
+                                    style={{ width: `${result.subscores.weather}%` }}
+                                  />
+                                </div>
+                              </div>
                             </div>
-                          ) : (
-                            <p className="text-sm text-gray-500">No rent data</p>
-                          )}
-                        </div>
+                          </div>
 
-                        {/* Commute */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                            <Icon name="MapPin" className="w-4 h-4" />
-                            Commute
-                          </h4>
-                          <p className="text-sm text-gray-700">{result.payload.commute_text}</p>
-                        </div>
+                          {/* Right Column - Detailed Information */}
+                          <div>
+                            <h4 className="text-xl font-bold text-gray-900 mb-4">Neighborhood Details</h4>
+                            
+                            {/* Schools */}
+                            <div className="mb-6">
+                              <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <Icon name="GraduationCap" className="w-5 h-5" />
+                                Top Schools
+                                {isPremium && (
+                                  <Badge variant="info" className="ml-2">Premium</Badge>
+                                )}
+                              </h5>
+                              {result.payload.top_schools.length > 0 ? (
+                                <div className="space-y-2">
+                                  {result.payload.top_schools.slice(0, 4).map((school, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                                      <div>
+                                        <span className="font-medium text-gray-900">{school.name}</span>
+                                        <p className="text-sm text-gray-600">{school.grades} • {school.distance_mi?.toFixed(1)} mi</p>
+                                      </div>
+                                      <span className="text-lg font-bold text-green-600">
+                                        {school.rating}/10
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : isPremium ? (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                  <p className="text-sm text-yellow-800">
+                                    <strong>API Configuration Needed:</strong> School ratings require GreatSchools API key.
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                  <p className="text-sm text-blue-800">
+                                    <a href="/dashboard/upgrade" className="underline hover:text-blue-900">
+                                      Upgrade to Premium
+                                    </a> to see school ratings from GreatSchools
+                                  </p>
+                                </div>
+                              )}
+                            </div>
 
-                        {/* Weather */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                            <Icon name="Cloud" className="w-4 h-4" />
-                            Weather
-                          </h4>
-                          <p className="text-sm text-gray-700">{result.payload.weather_note}</p>
-                        </div>
-                      </div>
+                            {/* Housing */}
+                            <div className="mb-6">
+                              <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <Icon name="Home" className="w-5 h-5" />
+                                Housing Market
+                              </h5>
+                              {result.median_rent_cents ? (
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-gray-700">Median Rent</span>
+                                    <span className="text-2xl font-bold text-gray-900">
+                                      ${(result.median_rent_cents / 100).toLocaleString()}/mo
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-gray-700">Your BAH</span>
+                                    <span className="text-lg font-semibold text-gray-900">
+                                      ${(bahMonthlyCents / 100).toLocaleString()}/mo
+                                    </span>
+                                  </div>
+                                  <div className="mt-2 pt-2 border-t border-gray-200">
+                                    {result.median_rent_cents <= bahMonthlyCents ? (
+                                      <span className="text-green-600 font-semibold flex items-center gap-1">
+                                        <Icon name="CheckCircle" className="w-4 h-4" />
+                                        Under BAH - Great fit!
+                                      </span>
+                                    ) : (
+                                      <span className="text-yellow-600 font-semibold">
+                                        {Math.round((result.median_rent_cents / bahMonthlyCents - 1) * 100)}% over BAH
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-gray-500">No rent data available</p>
+                              )}
+                            </div>
 
-                      {/* Sample Listings */}
-                      {result.payload.sample_listings.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-gray-200">
-                          <h4 className="text-sm font-semibold text-gray-900 mb-2">Sample Listings</h4>
-                          <div className="space-y-2">
-                            {result.payload.sample_listings.slice(0, 2).map((listing, i) => (
-                              <a
-                                key={i}
-                                href={listing.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block text-sm text-blue-600 hover:text-blue-700 truncate"
-                              >
-                                {listing.title} - ${(listing.price_cents / 100).toLocaleString()}/mo →
-                              </a>
-                            ))}
+                            {/* Commute & Weather */}
+                            <div className="grid grid-cols-1 gap-4">
+                              <div className="bg-gray-50 rounded-lg p-4">
+                                <h6 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                  <Icon name="MapPin" className="w-4 h-4" />
+                                  Commute
+                                </h6>
+                                <p className="text-gray-700">{result.payload.commute_text}</p>
+                              </div>
+                              
+                              <div className="bg-gray-50 rounded-lg p-4">
+                                <h6 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                  <Icon name="Cloud" className="w-4 h-4" />
+                                  Weather
+                                </h6>
+                                <p className="text-gray-700">{result.payload.weather_note}</p>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      )}
+
+                        {/* Sample Listings */}
+                        {result.payload.sample_listings.length > 0 && (
+                          <div className="mt-8 pt-6 border-t border-gray-200">
+                            <h5 className="text-lg font-semibold text-gray-900 mb-4">Available Listings</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {result.payload.sample_listings.slice(0, 4).map((listing, i) => (
+                                <a
+                                  key={i}
+                                  href={listing.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block bg-gray-50 hover:bg-gray-100 rounded-lg p-4 transition-colors"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-gray-900 truncate">
+                                        {listing.title}
+                                      </p>
+                                      <p className="text-xs text-gray-600">
+                                        {listing.bedrooms}BR • {listing.bathrooms}BA
+                                      </p>
+                                    </div>
+                                    <div className="ml-3 text-right">
+                                      <p className="text-lg font-bold text-blue-600">
+                                        ${(listing.price_cents / 100).toLocaleString()}/mo
+                                      </p>
+                                      <Icon name="ExternalLink" className="w-4 h-4 text-gray-400 ml-auto" />
+                                    </div>
+                                  </div>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </AnimatedCard>
                 );
               })}
             </div>
 
-            {/* Premium Gate */}
-            {hasMore && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-                <Icon name="Lock" className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-blue-900 mb-2">
-                  {results.length - 3} More Neighborhoods
+            {/* Premium Gate for Additional Results */}
+            {results.length > 3 && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 text-center">
+                <Icon name="Lock" className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-blue-900 mb-2">
+                  {results.length - 3} More Neighborhoods Available
                 </h3>
-                <p className="text-blue-700 mb-4">
-                  Upgrade to see full rankings, detailed school lists, commute times, and listing comparisons.
+                <p className="text-blue-700 mb-6 text-lg">
+                  Upgrade to Premium to see the complete ranking of all {results.length} neighborhoods, 
+                  plus detailed school lists, commute analysis, and advanced filtering options.
                 </p>
                 <a
                   href="/dashboard/upgrade?feature=base-navigator"
-                  className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                  className="inline-block px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-semibold text-lg transition-colors"
                 >
                   Upgrade to Premium →
                 </a>

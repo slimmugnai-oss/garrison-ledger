@@ -15,17 +15,11 @@ import { getCache, setCache } from '@/lib/cache';
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   const cacheKey = `gs:zip:${zip}`;
   
-  // TEMPORARY: Force fresh data for debugging (remove this after fixing rating issue)
-  const forceRefresh = true; // Always force refresh for debugging
-  
-  if (!forceRefresh) {
-    const cached = await getCache<School[]>(cacheKey);
-    if (cached) {
-      console.log(`[Schools] Cache hit for ZIP ${zip}`);
-      return cached;
-    }
-  } else {
-    console.log(`[Schools] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  // Check cache first (rating issue is now fixed)
+  const cached = await getCache<School[]>(cacheKey);
+  if (cached) {
+    console.log(`[Schools] Cache hit for ZIP ${zip}`);
+    return cached;
   }
 
   const apiKey = process.env.GREAT_SCHOOLS_API_KEY;
@@ -77,21 +71,11 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     const data = await response.json();
     
-    // Debug: Log first school's full structure to diagnose rating-band issue
-    if (data.schools && data.schools.length > 0) {
-      console.log(`[Schools] DEBUG: First school data:`, JSON.stringify(data.schools[0], null, 2));
-    }
-    
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
     const schools: School[] = (data.schools || []).map((s: any, index: number) => {
       const ratingBand = s['rating_band']; // Fixed: underscore, not hyphen
       const rating = parseRatingBand(ratingBand);
-      
-      // Debug: Log rating-band for first few schools
-      if (index < 3) {
-        console.log(`[Schools] ${s.name}: rating-band="${ratingBand}" → score=${rating}`);
-      }
       
       return {
         name: s.name || 'Unknown School',
