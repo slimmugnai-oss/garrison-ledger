@@ -85,7 +85,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
     const schools: School[] = (data.schools || []).map((s: any, index: number) => {
-      const ratingBand = s['rating-band'];
+      const ratingBand = s['rating_band']; // Fixed: underscore, not hyphen
       const rating = parseRatingBand(ratingBand);
       
       // Debug: Log rating-band for first few schools
