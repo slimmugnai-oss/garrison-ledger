@@ -71,18 +71,35 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
-    const schools: School[] = (data.schools || []).map((s: any) => ({
-      name: s.name || 'Unknown School',
-      rating: parseRatingBand(s['rating-band']), // v2 uses rating-band string
-      grades: s.level || 'K-12',
-      address: `${s.street || ''}, ${s.city || ''}, ${s.state || ''}`.trim(),
-      type: s.type || 'public',
-      distance_mi: s.distance || 0
-    }));
+    const schools: School[] = (data.schools || []).map((s: any) => {
+      const ratingBand = s['rating-band'];
+      const rating = parseRatingBand(ratingBand);
+      
+      // Log if rating-band is missing (subscription plan issue)
+      if (!ratingBand && schools.length < 5) {
+        console.warn(`[Schools] No rating-band for ${s.name} - may require higher subscription tier`);
+      }
+      
+      return {
+        name: s.name || 'Unknown School',
+        rating, // v2 uses rating-band string (may be null)
+        grades: s.level || 'K-12',
+        address: `${s.street || ''}, ${s.city || ''}, ${s.state || ''}`.trim(),
+        type: s.type || 'public',
+        distance_mi: s.distance || 0
+      };
+    });
 
     console.log(`[Schools] ✅ Fetched ${schools.length} schools for ZIP ${zip}`);
     if (schools.length > 0) {
-      console.log(`[Schools] Top school: ${schools[0].name} (${schools[0].rating}/10)`);
+      const topSchool = schools[0];
+      const ratingText = topSchool.rating > 0 ? `${topSchool.rating}/10` : 'No rating';
+      console.log(`[Schools] Top school: ${topSchool.name} (${ratingText})`);
+      
+      const withRatings = schools.filter(s => s.rating > 0).length;
+      if (withRatings === 0) {
+        console.warn(`[Schools] ⚠️ No schools have ratings - GreatSchools API subscription may not include rating-band field`);
+      }
     }
 
     await setCache(cacheKey, schools, 24 * 3600); // 24h cache
@@ -145,21 +162,42 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
 /**
  * Parse GreatSchools rating-band to 0-10 numeric score
  * V2 API returns rating-band as string, not numeric rating
+ * Note: rating-band is only available on certain subscription tiers
  */
-function parseRatingBand(ratingBand: string | undefined): number {
-  if (!ratingBand) return 0;
+function parseRatingBand(ratingBand: string | undefined | null): number {
+  if (!ratingBand) {
+    // If no rating-band, use neutral score
+    // This allows schools to still appear and contribute to search
+    return 7; // Neutral-positive (doesn't penalize in scoring)
+  }
   
   // GreatSchools rating bands (approximate conversions)
+  // Docs don't specify exact values, so these are estimated
   const bandMap: Record<string, number> = {
     'above-average': 8,
+    'above average': 8,
     'average': 6,
     'below-average': 4,
+    'below average': 4,
     'well-above-average': 9,
-    'well-below-average': 3
+    'well above average': 9,
+    'well-below-average': 3,
+    'well below average': 3,
+    'excellent': 10,
+    'good': 7,
+    'fair': 5,
+    'poor': 3
   };
 
   const normalized = ratingBand.toLowerCase().trim();
-  return bandMap[normalized] || 5; // Default to 5 if unknown
+  const score = bandMap[normalized];
+  
+  if (score === undefined) {
+    console.warn(`[Schools] Unknown rating-band: "${ratingBand}" - using default`);
+    return 7;
+  }
+  
+  return score;
 }
 
 /**

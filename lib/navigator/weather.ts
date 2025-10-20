@@ -19,52 +19,53 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) return cached;
 
+  // Weather API temporarily disabled - requires OpenWeatherMap subscription via RapidAPI
+  // TODO: Either subscribe to OpenWeatherMap or use alternative weather service
+  console.log('[Weather] Using neutral fallback (API subscription needed)');
+  
+  const fallbackResult = {
+    index10: 7, // Neutral score (doesn't penalize or boost)
+    note: 'Weather data pending API configuration'
+  };
+  
+  await setCache(cacheKey, fallbackResult, 24 * 3600);
+  return fallbackResult;
+
+  /* Disabled until OpenWeatherMap subscription is active
   const apiKey = process.env.RAPIDAPI_KEY;
 
   if (!apiKey) {
-    console.warn('[Weather] ⚠️ RAPIDAPI_KEY not configured - weather data unavailable');
-    return {
-      index10: 7, // Neutral-positive score
-      note: 'Weather data unavailable'
-    };
+    console.warn('[Weather] ⚠️ RAPIDAPI_KEY not configured');
+    return { index10: 7, note: 'Weather data unavailable' };
   }
 
   try {
-    // OpenWeatherMap API via RapidAPI
+    // OpenWeatherMap API via RapidAPI (requires subscription)
     const response = await fetch(
       `https://community-open-weather-map.p.rapidapi.com/weather?zip=${zip},us&units=imperial`,
-      { 
-        headers: { 
+      { headers: { 
           'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
           'X-RapidAPI-Key': apiKey,
           'Accept': 'application/json'
         },
-        next: { revalidate: 86400 } // 24h cache
+        next: { revalidate: 86400 }
       }
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('[Weather] Google Weather API error:', response.status, errorText);
-      return {
-        index10: 7,
-        note: 'Weather data temporarily unavailable'
-      };
+      console.error('[Weather] API error:', response.status);
+      return { index10: 7, note: 'Weather data temporarily unavailable' };
     }
 
     const data = await response.json();
     const result = analyzeWeatherData(data);
-    
-    await setCache(cacheKey, result, 24 * 3600); // 24h cache
+    await setCache(cacheKey, result, 24 * 3600);
     return result;
-
   } catch (error) {
     console.error('[Weather] Fetch error:', error);
-    return {
-      index10: 7,
-      note: 'Weather data unavailable'
-    };
+    return { index10: 7, note: 'Weather data unavailable' };
   }
+  */
 }
 
 /**
