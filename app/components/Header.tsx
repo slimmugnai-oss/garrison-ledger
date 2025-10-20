@@ -444,10 +444,76 @@ export default function Header() {
                   )}
                 </div>
 
-                </div>
+              {/* Resources Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIntelligenceOpen(true)}
+                onMouseLeave={() => setIntelligenceOpen(false)}
+              >
+                <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
+                  isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')
+                    ? 'text-slate-900 dark:text-white' 
+                    : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
+                }`}>
+                  Resources
+                  <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${intelligenceOpen ? 'rotate-180' : ''}`} />
+                  {(isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')) && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
+                  )}
+                </button>
+                {intelligenceOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                    onMouseEnter={() => setIntelligenceOpen(true)}
+                    onMouseLeave={() => setIntelligenceOpen(false)}
+                  >
+                    <div className="p-3">
+                      <Link href="/dashboard/listening-post" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                        isActivePath('/dashboard/listening-post') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                      }`}>
+                        <Icon name="Radio" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/listening-post') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                            Listening Post
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            Real-time military news
+                          </div>
+                        </div>
+                      </Link>
+                      <Link href="/dashboard/directory" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                        isActivePath('/dashboard/directory') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                      }`}>
+                        <Icon name="Users" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/directory') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                            Directory
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            Military community
+                          </div>
+                        </div>
+                      </Link>
+                      <Link href="/dashboard/refer-earn" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                        isActivePath('/dashboard/refer-earn') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                      }`}>
+                        <Icon name="Gift" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/refer-earn') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                            Refer & Earn
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            Share with your unit
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
               </SignedIn>
 
-              {/* Resources Dropdown */}
+              {/* Toolkits Dropdown */}
               <div 
                 className="relative"
                 onMouseEnter={() => setResourcesOpen(true)}
@@ -458,7 +524,7 @@ export default function Header() {
                     ? 'text-slate-900 dark:text-white' 
                     : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
                 }`}>
-                  Resources
+                  Toolkits
                   <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
                   {(isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping')) && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
