@@ -79,11 +79,13 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
    * Toggle kids grade filter
    */
   const toggleGrade = (grade: KidsGrade) => {
-    setKidsGrades(prev =>
-      prev.includes(grade)
+    setKidsGrades(prev => {
+      const newGrades = prev.includes(grade)
         ? prev.filter(g => g !== grade)
-        : [...prev, grade]
-    );
+        : [...prev, grade];
+      console.log('Kids grades updated:', newGrades);
+      return newGrades;
+    });
   };
 
   /**
@@ -196,21 +198,28 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Kids Grade Levels (affects school scoring)
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {(['elem', 'middle', 'high'] as KidsGrade[]).map(grade => (
                   <button
                     key={grade}
+                    type="button"
                     onClick={() => toggleGrade(grade)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                       kidsGrades.includes(grade)
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
                     }`}
                   >
+                    {kidsGrades.includes(grade) && '✓ '}
                     {grade === 'elem' ? 'Elementary' : grade === 'middle' ? 'Middle' : 'High School'}
                   </button>
                 ))}
               </div>
+              {kidsGrades.length > 0 && (
+                <p className="text-xs text-blue-600 mt-2">
+                  {kidsGrades.length} grade level{kidsGrades.length > 1 ? 's' : ''} selected. Click "Find Best Neighborhoods" to update results.
+                </p>
+              )}
             </div>
           </div>
 
