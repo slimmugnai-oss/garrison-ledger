@@ -13,7 +13,6 @@ export default function Header() {
   const [intelligenceOpen, setIntelligenceOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const pathname = usePathname();
@@ -167,8 +166,8 @@ export default function Header() {
                 {/* Dashboard Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 100); setCloseTimeout(t); }}
+                onMouseEnter={() => setDashboardOpen(true)}
+                onMouseLeave={() => setDashboardOpen(false)}
               >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard') 
@@ -184,8 +183,6 @@ export default function Header() {
                 {dashboardOpen && (
                   <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setDashboardOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setDashboardOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -286,12 +283,12 @@ export default function Header() {
                   </div>
                 )}
               </div>
-
+              
               {/* Premium Tools Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setPremiumToolsOpen(true); }}
-                onMouseLeave={() => { const t = setTimeout(() => setPremiumToolsOpen(false), 100); setCloseTimeout(t); }}
+                onMouseEnter={() => setPremiumToolsOpen(true)}
+                onMouseLeave={() => setPremiumToolsOpen(false)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel-library')
@@ -307,8 +304,6 @@ export default function Header() {
                 {premiumToolsOpen && (
                   <div 
                     className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setPremiumToolsOpen(true); }}
-                    onMouseLeave={() => { const t = setTimeout(() => setPremiumToolsOpen(false), 100); setCloseTimeout(t); }}
                   >
                     <div className="p-3">
                       {/* LES Auditor */}
@@ -396,8 +391,8 @@ export default function Header() {
                 {/* Calculators Dropdown */}
               <div 
                 className="relative"
-                  onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setCoreToolsOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 100); setCloseTimeout(t); }}
+                  onMouseEnter={() => setCoreToolsOpen(true)}
+                  onMouseLeave={() => setCoreToolsOpen(false)}
               >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard/tools') 
@@ -413,8 +408,6 @@ export default function Header() {
                   {coreToolsOpen && (
                     <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setCoreToolsOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setCoreToolsOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard/tools/tsp-modeler" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -503,8 +496,8 @@ export default function Header() {
                 {/* Intelligence Dropdown */}
                 <div 
                   className="relative"
-                  onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setIntelligenceOpen(true); }}
-                  onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 100); setCloseTimeout(t); }}
+                  onMouseEnter={() => setIntelligenceOpen(true)}
+                  onMouseLeave={() => setIntelligenceOpen(false)}
                 >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                     isActivePath('/dashboard/intel-library') || isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')
@@ -520,8 +513,6 @@ export default function Header() {
                   {intelligenceOpen && (
                     <div 
                       className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setIntelligenceOpen(true); }}
-                      onMouseLeave={() => { const t = setTimeout(() => setIntelligenceOpen(false), 100); setCloseTimeout(t); }}
                     >
                       <div className="p-3">
                         <Link href="/dashboard/library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -585,8 +576,8 @@ export default function Header() {
               {/* Resources Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
-                onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 100); setCloseTimeout(t); }}
+                onMouseEnter={() => setResourcesOpen(true)}
+                onMouseLeave={() => setResourcesOpen(false)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping') || isActivePath('/base-guides')
@@ -602,8 +593,6 @@ export default function Header() {
                 {resourcesOpen && (
                   <div 
                     className="absolute top-full left-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => { if (closeTimeout) clearTimeout(closeTimeout); setResourcesOpen(true); }}
-                    onMouseLeave={() => { const t = setTimeout(() => setResourcesOpen(false), 100); setCloseTimeout(t); }}
                   >
                     <div className="p-3">
                       <Link href="/pcs-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -693,17 +682,13 @@ export default function Header() {
             </SignedOut>
             
             <SignedIn>
-                {/* Premium Search Button - Enhanced */}
+                {/* Search Button - Simple Icon */}
                 <button 
                   onClick={() => setShowSearch(!showSearch)}
-                  className="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl hover:border-blue-300 dark:hover:border-blue-600 transition-all group"
-                  title="Search Library (Press /)"
+                  className="hidden lg:flex p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                  title="Search (Press /)"
                 >
-                  <Icon name="Search" className="w-4 h-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">Search</span>
-                  <kbd className="hidden xl:inline-flex px-2 py-0.5 text-xs font-mono bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded">
-                    /
-                  </kbd>
+                  <Icon name="Search" className="w-5 h-5" />
                 </button>
 
                 {/* Upgrade Button - Premium CTA */}
@@ -798,8 +783,8 @@ export default function Header() {
                     <Link href="/dashboard/intel-library" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="BookOpen" className="w-5 h-5 text-indigo-600" />
                       <span className="font-medium">Intel Library</span>
-                    </Link>
-                  </div>
+                      </Link>
+                    </div>
                 </div>
 
                 {/* Mobile Core Tools Section */}
