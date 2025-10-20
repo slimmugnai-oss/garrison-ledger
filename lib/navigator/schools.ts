@@ -16,7 +16,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   const cacheKey = `gs:zip:${zip}`;
   
   // TEMPORARY: Force fresh data for debugging (remove this after fixing rating issue)
-  const forceRefresh = process.env.NODE_ENV === 'development' || process.env.FORCE_SCHOOLS_REFRESH === 'true';
+  const forceRefresh = true; // Always force refresh for debugging
   
   if (!forceRefresh) {
     const cached = await getCache<School[]>(cacheKey);
