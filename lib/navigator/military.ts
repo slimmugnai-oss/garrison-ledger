@@ -23,10 +23,16 @@ export interface MilitaryAmenitiesData {
  */
 export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryAmenitiesData> {
   const cacheKey = `military:${zip}`;
-  const cached = await getCache<MilitaryAmenitiesData>(cacheKey);
-  if (cached) {
-    console.log(`[Military] Cache hit for ZIP ${zip}`);
-    return cached;
+  const forceRefresh = process.env.FORCE_MILITARY_REFRESH === 'true'; // TEMPORARY: Force fresh data
+  
+  if (!forceRefresh) {
+    const cached = await getCache<MilitaryAmenitiesData>(cacheKey);
+    if (cached) {
+      console.log(`[Military] Cache hit for ZIP ${zip}`);
+      return cached;
+    }
+  } else {
+    console.log(`[Military] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
