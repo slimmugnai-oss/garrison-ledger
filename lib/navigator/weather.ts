@@ -133,19 +133,19 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
 function analyzeWeatherData(data: any): { index10: number; note: string } {
   
   try {
-    // Google Weather API structure:
-    // { temperature: { value: 70, unit: "FAHRENHEIT" }, humidity: { value: 65 }, ... }
+    // Google Weather API structure (from actual logs):
+    // { temperature: { degrees: 16.7, unit: "CELSIUS" }, weatherCondition: { description: { text: "Sunny" } }, ... }
     
     // Temperature (convert to Fahrenheit if needed)
-    const tempValue = data.temperature?.value || 70;
+    const tempValue = data.temperature?.degrees || 70;
     const tempUnit = data.temperature?.unit || 'FAHRENHEIT';
     const tempF = tempUnit === 'CELSIUS' ? (tempValue * 9/5) + 32 : tempValue;
     
-    // Humidity
-    const humidity = data.humidity?.value || data.relativeHumidity?.value || 50;
+    // Humidity (not in the response structure we see, so use default)
+    const humidity = 50; // Default since not in response
     
     // Condition/description
-    const description = data.weatherCondition || data.condition || 'unknown';
+    const description = data.weatherCondition?.description?.text || 'unknown';
     
     // Compute comfort index based on current conditions
     let index = 10;
@@ -156,7 +156,7 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     else if (tempF < 32) index -= 2;
     else if (tempF < 40) index -= 1;
     
-    // Humidity penalty (if extreme)
+    // Humidity penalty (if extreme) - using default 50% so no penalty
     if (humidity > 80) index -= 1;
     if (humidity < 20) index -= 0.5;
     
@@ -171,7 +171,7 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     // Clamp to 0-10
     index = Math.max(0, Math.min(10, index));
 
-    const note = `Current: ${Math.round(tempF)}°F, ${Math.round(humidity)}% humidity${description && description !== 'unknown' ? `, ${description}` : ''}`;
+    const note = `Current: ${Math.round(tempF)}°F, ${Math.round(humidity)}% humidity, ${description}`;
 
     return {
       index10: Math.round(index * 10) / 10,
