@@ -29,7 +29,7 @@ export default function Home() {
               Military Financial Intelligence Command Center
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              4 premium tools built for military families. Audit your pay. Navigate your PCS. Build compliant vouchers. Always-current intel.
+              5 premium tools built for military families. Audit your pay. Navigate bases. Build vouchers. Track moves. Always-current intel.
             </p>
             
             <SignedOut>
@@ -60,14 +60,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 font-lora mb-4">
-              4 Premium Tools
+              5 Premium Tools
             </h2>
             <p className="text-xl text-gray-600">
               Everything you need to master military finances
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
             {/* LES Auditor */}
             <AnimatedCard>
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-8 h-full">

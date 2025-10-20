@@ -27,6 +27,16 @@
       "source": "/dashboard/library",
       "destination": "/dashboard/intel",
       "permanent": false
+    },
+    {
+      "source": "/base-guides",
+      "destination": "/dashboard/navigator/jblm",
+      "permanent": false
+    },
+    {
+      "source": "/base-guides/compare",
+      "destination": "/dashboard/navigator/jblm",
+      "permanent": false
     }
   ]
 }

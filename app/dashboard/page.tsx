@@ -134,7 +134,7 @@ export default async function Dashboard() {
 
               {/* Base Navigator */}
               <AnimatedCard delay={0.1}>
-                <Link href="/base-guides" className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow h-full">
+                <Link href="/dashboard/navigator/jblm" className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow h-full">
                   <div className="flex flex-col h-full">
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
