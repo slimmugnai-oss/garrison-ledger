@@ -15,7 +15,6 @@ import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
 import { weatherComfortIndex } from '@/lib/navigator/weather';
 import { fetchCrimeData } from '@/lib/navigator/crime';
 import { fetchAmenitiesData } from '@/lib/navigator/amenities';
-import { fetchDemographicsData } from '@/lib/navigator/demographics';
 import { fetchMilitaryAmenitiesData } from '@/lib/navigator/military';
 import { familyFitScore100 } from '@/lib/navigator/score';
 import type { NavigatorRequest, NavigatorResponse, NeighborhoodCard, KidsGrade } from '@/app/types/navigator';
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
       console.log(`[Navigator] Processing ZIP ${zip}...`);
 
       // Fetch data in parallel
-      const [schoolsData, medianRent, sampleListings, commute, weather, crimeData, amenitiesData, demographicsData, militaryData] = await Promise.all([
+      const [schoolsData, medianRent, sampleListings, commute, weather, crimeData, amenitiesData, militaryData] = await Promise.all([
         fetchSchoolsByZip(zip),
         fetchMedianRent(zip, bedrooms),
         fetchSampleListings(zip, bedrooms),
@@ -92,9 +91,19 @@ export async function POST(request: NextRequest) {
         weatherComfortIndex(zip),
         fetchCrimeData(zip),
         fetchAmenitiesData(zip),
-        fetchDemographicsData(zip),
         fetchMilitaryAmenitiesData(zip)
       ]);
+
+      // Use default demographics data (no API)
+      const demographicsData = {
+        demographics_score: 6,
+        population: 25000,
+        median_age: 35,
+        median_income: 75000,
+        diversity_index: 0.6,
+        family_households: 65,
+        note: 'Demographics data not available'
+      };
 
       // Compute school score
       const { score10: schoolScore10, top: topSchools } = computeChildWeightedSchoolScore(
