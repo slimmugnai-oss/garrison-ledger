@@ -224,9 +224,13 @@ export function computeChildWeightedSchoolScore(
     ? kidsGrades 
     : ['elem', 'middle', 'high'];
   
+  console.log(`[Schools] Active grades for scoring:`, activeGrades, 'from input:', kidsGrades);
+  
   activeGrades.forEach(grade => {
     buckets[grade] = 1 / activeGrades.length;
   });
+  
+  console.log(`[Schools] Bucket weights:`, buckets);
 
   // Map school grades to buckets
   const gradesToBuckets = (gradeString: string): KidsGrade[] => {

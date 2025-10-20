@@ -106,10 +106,12 @@ export async function POST(request: NextRequest) {
       };
 
       // Compute school score
+      console.log(`[Navigator] Computing school score for ZIP ${zip} with grades:`, kidsGrades);
       const { score10: schoolScore10, top: topSchools } = computeChildWeightedSchoolScore(
         schoolsData,
         kidsGrades as KidsGrade[]
       );
+      console.log(`[Navigator] ZIP ${zip} school score: ${schoolScore10}/10 (${topSchools.length} schools)`);
 
       // Compute family fit score
       const scoreResult = familyFitScore100({
