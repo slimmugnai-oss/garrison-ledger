@@ -19,6 +19,7 @@
     "content:audit:import": "ts-node lib/content/audit.ts import",
     "content:update-feeds": "curl -X GET http://localhost:3000/api/feeds/refresh?source=BAH,COLA,IRS_TSP_LIMITS",
     "content:report": "ts-node lib/content/report.ts",
+    "import-bah": "ts-node scripts/import-bah-csv.ts",
     "pre-deploy": "npm run health-check && npm run check-icons && npm run secret-scan && npm run build",
     "prepare": "husky"
   },
@@ -56,6 +57,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "d3": "^7.9.0",
+    "dotenv": "^17.2.3",
     "esbuild": "^0.25.11",
     "gray-matter": "^4.0.3",
     "html-to-image": "^1.11.13",
