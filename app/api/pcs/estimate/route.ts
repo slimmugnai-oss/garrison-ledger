@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     const tier = entitlement?.tier || 'free';
-    const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+    const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
       return NextResponse.json({

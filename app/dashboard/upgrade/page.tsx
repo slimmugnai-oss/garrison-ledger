@@ -173,6 +173,11 @@ export default async function UpgradePage() {
                     <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">Unlimited</td>
                   </tr>
                   <tr>
+                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">Binder Storage</td>
+                    <td className="px-6 py-4 text-center text-sm text-gray-600">1 GB</td>
+                    <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">5 GB</td>
+                  </tr>
+                  <tr>
                     <td className="px-6 py-4 text-sm text-gray-900 font-medium">Intel Library</td>
                     <td className="px-6 py-4 text-center text-sm text-gray-600">Basic cards</td>
                     <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">All premium cards</td>

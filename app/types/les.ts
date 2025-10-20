@@ -240,7 +240,7 @@ export interface LesDeleteRequest {
  */
 export interface LesFlagsProps {
   flags: PayFlag[];
-  tier: 'free' | 'premium' | 'pro';
+  tier: 'free' | 'premium';
 }
 
 /**

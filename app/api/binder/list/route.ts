@@ -5,9 +5,8 @@ import { isPremiumServer } from "@/lib/premium";
 
 export const runtime = "nodejs";
 
-const FREE_STORAGE_LIMIT = 25 * 1024 * 1024; // 25 MB (forces upgrade incentive)
-const PREMIUM_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB (plenty for most users)
-const PRO_STORAGE_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB (power users)
+const FREE_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
+const PREMIUM_STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
 
 function getAdminClient() {
   return createClient(
@@ -65,18 +64,16 @@ export async function GET(req: NextRequest) {
     .eq('user_id', userId)
     .maybeSingle();
   
-  const tier = (entitlement?.tier === 'premium' || entitlement?.tier === 'pro') && entitlement?.status === 'active' 
-    ? entitlement.tier 
+  const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
+    ? 'premium'
     : 'free';
   
   let storageLimit = FREE_STORAGE_LIMIT;
-  if (tier === 'pro') {
-    storageLimit = PRO_STORAGE_LIMIT;
-  } else if (tier === 'premium') {
+  if (tier === 'premium') {
     storageLimit = PREMIUM_STORAGE_LIMIT;
   }
   
-  const isPremium = tier === 'premium' || tier === 'pro';
+  const isPremium = tier === 'premium';
 
   // For now, return files without signed URLs to isolate the issue
   const filesWithoutUrls = (files || []).map(file => ({

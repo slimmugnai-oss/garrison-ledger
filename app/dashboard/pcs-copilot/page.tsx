@@ -21,7 +21,7 @@ export default async function PCSCopilotPage() {
     .maybeSingle();
 
   const tier = entitlement?.tier || 'free';
-  const isPremium = (tier === 'premium' || tier === 'pro') && entitlement?.status === 'active';
+  const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
   // PREMIUM-ONLY FEATURE: Block free users completely
   if (!isPremium) {

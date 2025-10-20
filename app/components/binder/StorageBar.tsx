@@ -17,19 +17,15 @@ export default function StorageBar({ used, limit, isPremium }: StorageBarProps) 
   const storagePercent = Math.round((used / limit) * 100);
   
   // Determine tier based on limit
-  const FREE_LIMIT = 25 * 1024 * 1024; // 25 MB
-  const PREMIUM_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
-  const PRO_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB
+  const FREE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
+  const PREMIUM_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   
-  let tierLabel = '25 MB Free Storage';
-  let upgradeText = 'Upgrade to Premium for 1 GB →';
+  let tierLabel = '1 GB Free Storage';
+  let upgradeText = 'Upgrade to Premium for 5 GB →';
   
-  if (limit >= PRO_LIMIT) {
-    tierLabel = '10 GB Pro Storage';
+  if (limit >= PREMIUM_LIMIT) {
+    tierLabel = '5 GB Premium Storage';
     upgradeText = '';
-  } else if (limit >= PREMIUM_LIMIT) {
-    tierLabel = '1 GB Premium Storage';
-    upgradeText = 'Upgrade to Pro for 10 GB →';
   }
 
   return (

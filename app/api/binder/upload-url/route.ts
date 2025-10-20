@@ -13,9 +13,8 @@ const FOLDER_NAMES = [
   "Legal"
 ] as const;
 
-const FREE_STORAGE_LIMIT = 25 * 1024 * 1024; // 25 MB (forces upgrade incentive)
-const PREMIUM_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB (plenty for most users)
-const PRO_STORAGE_LIMIT = 10 * 1024 * 1024 * 1024; // 10 GB (power users)
+const FREE_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
+const PREMIUM_STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
 
 function getAdminClient() {
   return createClient(

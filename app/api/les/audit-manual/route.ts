@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
 /**
  * Get user's subscription tier
  */
-async function getUserTier(userId: string): Promise<'free' | 'premium' | 'pro'> {
+async function getUserTier(userId: string): Promise<'free' | 'premium'> {
   try {
     const { data, error } = await supabaseAdmin
       .from('user_entitlements')
@@ -309,7 +309,7 @@ async function getUserTier(userId: string): Promise<'free' | 'premium' | 'pro'> 
       return 'free';
     }
 
-    return (data.tier as 'free' | 'premium' | 'pro') || 'free';
+    return (data.tier as 'free' | 'premium') || 'free';
   } catch {
     return 'free';
   }

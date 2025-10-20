@@ -10,7 +10,7 @@
  * 
  * Security:
  * - Clerk authentication required
- * - Tier gating (Free: 1/month, Premium/Pro: unlimited)
+ * - Tier gating (Free: 1/month, Premium: unlimited)
  * - Rate limiting via api_quota
  * - RLS enforced via user_id checks
  * 
@@ -290,7 +290,7 @@ export async function POST(req: NextRequest) {
  * Get user's subscription tier
  * TODO: Integrate with your premium status system
  */
-async function getUserTier(userId: string): Promise<'free' | 'premium' | 'pro'> {
+async function getUserTier(userId: string): Promise<'free' | 'premium'> {
   try {
     const { data, error } = await supabaseAdmin
       .from('user_entitlements')
@@ -302,7 +302,7 @@ async function getUserTier(userId: string): Promise<'free' | 'premium' | 'pro'> 
       return 'free';
     }
 
-    return (data.tier as 'free' | 'premium' | 'pro') || 'free';
+    return (data.tier as 'free' | 'premium') || 'free';
   } catch {
     return 'free';
   }

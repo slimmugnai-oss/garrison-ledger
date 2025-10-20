@@ -51,7 +51,7 @@ async function getSystemMetrics() {
   const { count: proUsers } = await supabase
     .from('entitlements')
     .select('*', { count: 'exact', head: true })
-    .eq('tier', 'pro')
+    .eq('tier', 'premium')
     .eq('status', 'active')
     .not('stripe_subscription_id', 'is', null);
 
