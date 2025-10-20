@@ -23,7 +23,7 @@ export interface AmenityData {
  * Fetch amenities data for a ZIP code
  */
 export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
-  const cacheKey = `amenities:v3:${zip}`; // v3 to bust cache and test new API
+  const cacheKey = `amenities:v4:${zip}`; // v4 - unrestricted API key
   const cached = await getCache<AmenityData>(cacheKey);
   if (cached) {
     console.log(`[Amenities] Cache hit for ZIP ${zip}`);

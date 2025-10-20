@@ -22,7 +22,7 @@ export interface MilitaryAmenitiesData {
  * Fetch military amenities data for a ZIP code
  */
 export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryAmenitiesData> {
-  const cacheKey = `military:v3:${zip}`; // v3 to bust cache and test new API
+  const cacheKey = `military:v4:${zip}`; // v4 - unrestricted API key
   const cached = await getCache<MilitaryAmenitiesData>(cacheKey);
   if (cached) {
     console.log(`[Military] Cache hit for ZIP ${zip}`);
