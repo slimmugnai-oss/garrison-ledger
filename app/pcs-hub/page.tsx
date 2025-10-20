@@ -49,17 +49,18 @@ export default function PCSHub() {
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/dashboard/tools/pcs-planner"
+                href="/dashboard/pcs-copilot"
                 className="inline-flex items-center justify-center gap-2 bg-surface text-info px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                <Icon name="Calculator" className="h-5 w-5" />
-                Use PCS Financial Planner
+                <Icon name="Truck" className="h-5 w-5" />
+                Open PCS Copilot
               </Link>
               <Link
-                href="/dashboard/assessment"
+                href="/dashboard/navigator"
                 className="inline-flex items-center justify-center gap-2 bg-info/20 backdrop-blur border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold hover:bg-info/30 transition-all"
               >
-                Get Personalized PCS Plan
+                <Icon name="MapPin" className="h-5 w-5" />
+                Find Best Neighborhoods
               </Link>
             </div>
           </div>
@@ -824,24 +825,24 @@ export default function PCSHub() {
               
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <Link
-                  href="/dashboard/tools/pcs-planner"
+                  href="/dashboard/pcs-copilot"
                   className="bg-surface text-primary rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group"
                 >
-                  <Icon name="Calculator" className="h-8 w-8 text-info mb-3" />
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-info transition-colors">PCS Financial Planner</h3>
+                  <Icon name="Truck" className="h-8 w-8 text-info mb-3" />
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-info transition-colors">PCS Copilot</h3>
                   <p className="text-sm text-body">
-                    Calculate entitlements, estimate costs, and determine PPM profit potential.
+                    Maximize DITY move profit with AI-powered expense tracking and reimbursement estimates.
                   </p>
                 </Link>
                 
                 <Link
-                  href="/dashboard/assessment"
+                  href="/dashboard/navigator"
                   className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-slate-700"
                 >
-                  <Icon name="Sparkles" className="h-8 w-8 mb-3" />
-                  <h3 className="text-xl font-bold mb-2">Get AI-Curated PCS Plan</h3>
+                  <Icon name="MapPin" className="h-8 w-8 mb-3" />
+                  <h3 className="text-xl font-bold mb-2">Base Navigator</h3>
                   <p className="text-sm text-white/90">
-                    Take 5-minute assessment and get personalized PCS financial strategy.
+                    Find the perfect neighborhood near your next base with family fit scores.
                   </p>
                 </Link>
               </div>
@@ -887,13 +888,6 @@ export default function PCSHub() {
               href: '/career-hub',
               icon: 'Briefcase',
               category: 'Guide'
-            },
-            {
-              title: 'Get Your AI Plan',
-              description: 'Personalized PCS financial strategy with 8-10 expert content blocks curated for you.',
-              href: '/dashboard/plan',
-              icon: 'Sparkles',
-              category: 'AI Plan'
             },
           ]}
         />

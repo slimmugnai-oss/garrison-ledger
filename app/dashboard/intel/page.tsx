@@ -212,19 +212,20 @@ export default async function IntelLibraryPage({
 
                       {/* Preview */}
                       {isLocked ? (
-                        <div className="py-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                          <Icon name="Lock" className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-600 mb-3">
+                        <div className="py-8 text-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+                          <Icon name="Lock" className="w-12 h-12 text-blue-600 mx-auto mb-3" />
+                          <p className="text-base font-semibold text-gray-900 mb-2">
                             Premium Intel Card
                           </p>
-                          <PremiumGate>
-                            <a
-                              href="/dashboard/upgrade"
-                              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm"
-                            >
-                              Upgrade to Premium →
-                            </a>
-                          </PremiumGate>
+                          <p className="text-sm text-gray-600 mb-4 max-w-xs mx-auto">
+                            This advanced intelligence card is available exclusively for Premium members.
+                          </p>
+                          <a
+                            href="/dashboard/upgrade"
+                            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm shadow-lg"
+                          >
+                            Upgrade to Premium →
+                          </a>
                         </div>
                       ) : (
                         <>

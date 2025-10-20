@@ -17,6 +17,21 @@ export default function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const pathname = usePathname();
 
+  // Dropdown close timers
+  const [closeTimers, setCloseTimers] = useState<{[key: string]: NodeJS.Timeout}>({});
+
+  const handleDropdownMouseEnter = (dropdown: string, setter: (val: boolean) => void) => {
+    if (closeTimers[dropdown]) {
+      clearTimeout(closeTimers[dropdown]);
+    }
+    setter(true);
+  };
+
+  const handleDropdownMouseLeave = (dropdown: string, setter: (val: boolean) => void) => {
+    const timer = setTimeout(() => setter(false), 300);
+    setCloseTimers(prev => ({ ...prev, [dropdown]: timer }));
+  };
+
   // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -166,8 +181,8 @@ export default function Header() {
                 {/* Dashboard Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setDashboardOpen(true)}
-                onMouseLeave={() => setDashboardOpen(false)}
+                onMouseEnter={() => handleDropdownMouseEnter('dashboard', setDashboardOpen)}
+                onMouseLeave={() => handleDropdownMouseLeave('dashboard', setDashboardOpen)}
               >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard') 
@@ -183,8 +198,8 @@ export default function Header() {
                 {dashboardOpen && (
                   <div 
                       className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => setDashboardOpen(true)}
-                      onMouseLeave={() => setDashboardOpen(false)}
+                      onMouseEnter={() => handleDropdownMouseEnter('dashboard', setDashboardOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave('dashboard', setDashboardOpen)}
                     >
                       <div className="p-3">
                         <Link href="/dashboard" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -234,8 +249,8 @@ export default function Header() {
               {/* Premium Tools Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setPremiumToolsOpen(true)}
-                onMouseLeave={() => setPremiumToolsOpen(false)}
+                onMouseEnter={() => handleDropdownMouseEnter('premium', setPremiumToolsOpen)}
+                onMouseLeave={() => handleDropdownMouseLeave('premium', setPremiumToolsOpen)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel')
@@ -251,8 +266,8 @@ export default function Header() {
                 {premiumToolsOpen && (
                   <div 
                     className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => setPremiumToolsOpen(true)}
-                    onMouseLeave={() => setPremiumToolsOpen(false)}
+                    onMouseEnter={() => handleDropdownMouseEnter('premium', setPremiumToolsOpen)}
+                    onMouseLeave={() => handleDropdownMouseLeave('premium', setPremiumToolsOpen)}
                   >
                     <div className="p-3">
                       {/* LES Auditor */}
@@ -340,8 +355,8 @@ export default function Header() {
                 {/* Calculators Dropdown */}
               <div 
                 className="relative"
-                  onMouseEnter={() => setCoreToolsOpen(true)}
-                  onMouseLeave={() => setCoreToolsOpen(false)}
+                  onMouseEnter={() => handleDropdownMouseEnter('calculators', setCoreToolsOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave('calculators', setCoreToolsOpen)}
               >
                   <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard/tools') 
@@ -357,8 +372,8 @@ export default function Header() {
                   {coreToolsOpen && (
                     <div 
                       className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => setCoreToolsOpen(true)}
-                      onMouseLeave={() => setCoreToolsOpen(false)}
+                      onMouseEnter={() => handleDropdownMouseEnter('calculators', setCoreToolsOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave('calculators', setCoreToolsOpen)}
                     >
                       <div className="p-3">
                         <Link href="/dashboard/tools/tsp-modeler" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -447,8 +462,8 @@ export default function Header() {
               {/* Resources Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setIntelligenceOpen(true)}
-                onMouseLeave={() => setIntelligenceOpen(false)}
+                onMouseEnter={() => handleDropdownMouseEnter('resources', setIntelligenceOpen)}
+                onMouseLeave={() => handleDropdownMouseLeave('resources', setIntelligenceOpen)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')
@@ -464,8 +479,8 @@ export default function Header() {
                 {intelligenceOpen && (
                   <div 
                     className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => setIntelligenceOpen(true)}
-                    onMouseLeave={() => setIntelligenceOpen(false)}
+                    onMouseEnter={() => handleDropdownMouseEnter('resources', setIntelligenceOpen)}
+                    onMouseLeave={() => handleDropdownMouseLeave('resources', setIntelligenceOpen)}
                   >
                     <div className="p-3">
                       <Link href="/dashboard/listening-post" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
@@ -516,8 +531,8 @@ export default function Header() {
               {/* Toolkits Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setResourcesOpen(true)}
-                onMouseLeave={() => setResourcesOpen(false)}
+                onMouseEnter={() => handleDropdownMouseEnter('toolkits', setResourcesOpen)}
+                onMouseLeave={() => handleDropdownMouseLeave('toolkits', setResourcesOpen)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
                   isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping')
@@ -533,8 +548,8 @@ export default function Header() {
                 {resourcesOpen && (
                   <div 
                     className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => setResourcesOpen(true)}
-                    onMouseLeave={() => setResourcesOpen(false)}
+                    onMouseEnter={() => handleDropdownMouseEnter('toolkits', setResourcesOpen)}
+                    onMouseLeave={() => handleDropdownMouseLeave('toolkits', setResourcesOpen)}
                   >
                     <div className="p-3">
                       <Link href="/pcs-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${

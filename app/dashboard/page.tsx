@@ -18,7 +18,7 @@ import Badge from '../components/ui/Badge';
 
 export const metadata: Metadata = {
   title: "Dashboard - Garrison Ledger",
-  description: "Your military financial intelligence command center. Access 4 premium tools: LES Auditor, Base Navigator, TDY Copilot, and Intel Library.",
+  description: "Your military financial intelligence command center. Access 5 premium tools: LES Auditor, PCS Copilot, Base Navigator, TDY Copilot, and Intel Library.",
 };
 
 export default async function Dashboard() {
@@ -91,13 +91,13 @@ export default async function Dashboard() {
                 <Icon name="Star" className="w-6 h-6 text-yellow-600" />
                 <div>
                   <h3 className="font-semibold text-yellow-900">Premium Member</h3>
-                  <p className="text-sm text-yellow-800">Unlimited access to all 4 premium tools</p>
+                  <p className="text-sm text-yellow-800">Unlimited access to all 5 premium tools</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* 4 Premium Tools - Hero Section */}
+          {/* 5 Premium Tools - Hero Section */}
           <div className="mb-12">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Your Premium Tools</h2>
             

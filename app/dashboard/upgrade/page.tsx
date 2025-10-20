@@ -16,7 +16,7 @@ import Icon from '../../components/ui/Icon';
 
 export const metadata: Metadata = {
   title: "Upgrade to Premium - Garrison Ledger",
-  description: "Unlimited access to 4 premium tools: LES Auditor, Base Navigator, TDY Copilot, Intel Library. $9.99/month.",
+  description: "Unlimited access to 5 premium tools: LES Auditor, PCS Copilot, Base Navigator, TDY Copilot, Intel Library. $9.99/month.",
 };
 
 export default async function UpgradePage() {
@@ -47,7 +47,7 @@ export default async function UpgradePage() {
               You're Already Premium!
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Enjoy unlimited access to all 4 tools
+              Enjoy unlimited access to all 5 tools
             </p>
             <BillingPortalButton />
           </div>
@@ -69,10 +69,10 @@ export default async function UpgradePage() {
               Upgrade to Premium
             </h1>
             <p className="text-2xl text-gray-600 mb-6">
-              Unlock unlimited access to all 4 premium tools
+              Unlock unlimited access to all 5 premium tools
             </p>
             <p className="text-lg text-gray-500">
-              One price. Four tools. Unlimited use.
+              One price. Five tools. Unlimited use.
             </p>
           </div>
 
