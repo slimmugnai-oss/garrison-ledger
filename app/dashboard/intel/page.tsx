@@ -17,6 +17,7 @@ import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { getAllIntelCards } from '@/lib/content/mdx-loader';
+import { extractTitleAndBluf, normalizeTags } from '@/lib/content/preview';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -80,17 +81,22 @@ export default async function IntelLibraryPage({
     cards = cards.filter(c => c.frontmatter.tags.includes(tag));
   }
 
-  // Convert to format expected by UI
-  const cardsData = cards.map(c => ({
-    id: c.frontmatter.id,
-    slug: c.slug,
-    title: c.frontmatter.title,
-    domain: c.frontmatter.domain,
-    tags: c.frontmatter.tags,
-    gating: c.frontmatter.gating,
-    as_of_date: c.frontmatter.asOf,
-    html: c.content.substring(0, 200) // Preview
-  }));
+  // Convert to format expected by UI with clean previews
+  const cardsData = cards.map(c => {
+    const preview = extractTitleAndBluf(c.content);
+    const cleanTags = normalizeTags(c.frontmatter.tags);
+    
+    return {
+      id: c.frontmatter.id,
+      slug: c.slug,
+      title: c.frontmatter.title || preview.title,
+      bluf: preview.bluf,
+      domain: c.frontmatter.domain,
+      tags: cleanTags,
+      gating: c.frontmatter.gating,
+      as_of_date: c.frontmatter.asOf,
+    };
+  });
 
   // Group by domain
   const domains = ['finance', 'pcs', 'deployment', 'career', 'lifestyle'];
@@ -229,11 +235,12 @@ export default async function IntelLibraryPage({
                         </div>
                       ) : (
                         <>
+                          {/* Clean BLUF preview - no markdown symbols */}
                           <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                            {card.html?.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                            {card.bluf}
                           </p>
 
-                          {/* Tags */}
+                          {/* Tags - clean, no leading # */}
                           {card.tags && card.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
                               {card.tags.slice(0, 3).map((t: string) => (
