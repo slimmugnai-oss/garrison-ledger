@@ -270,10 +270,18 @@ export function computeChildWeightedSchoolScore(
     ? Math.max(0, Math.min(10, weightedSum / denominator))
     : 0;
 
-  // Get top 3 schools by rating
-  const top = [...schools]
+  // Get top schools by rating, filtered to only relevant grade levels
+  const relevantSchools = schools.filter(school => {
+    const schoolBuckets = gradesToBuckets(school.grades);
+    // Only include schools that match at least one active grade level
+    return schoolBuckets.some(bucket => buckets[bucket] > 0);
+  });
+
+  const top = [...relevantSchools]
     .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, 3);
+
+  console.log(`[Schools] Filtered ${relevantSchools.length} relevant schools from ${schools.length} total`);
 
   return { score10, top };
 }

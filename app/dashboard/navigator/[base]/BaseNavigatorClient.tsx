@@ -127,12 +127,12 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
     }
   };
 
-  // Auto-compute on mount
-  useEffect(() => {
-    if (bahMonthlyCents > 0) {
-      computeRankings();
-    }
-  }, []);
+  // Do NOT auto-compute on mount - wait for user to fill out filters and click button
+  // useEffect(() => {
+  //   if (bahMonthlyCents > 0) {
+  //     computeRankings();
+  //   }
+  // }, []);
 
   // Determine which results to show (gating)
   const visibleResults = isPremium ? results : results.slice(0, 3);
