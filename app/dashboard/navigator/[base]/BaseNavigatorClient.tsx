@@ -375,6 +375,9 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                           <h4 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
                             <Icon name="GraduationCap" className="w-4 h-4" />
                             Top Schools
+                            {isPremium && (
+                              <Badge variant="info" className="ml-1">Premium</Badge>
+                            )}
                           </h4>
                           {result.payload.top_schools.length > 0 ? (
                             <div className="space-y-1">
@@ -387,8 +390,21 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                 </div>
                               ))}
                             </div>
+                          ) : isPremium ? (
+                            <div className="bg-yellow-50 border border-yellow-200 rounded p-2">
+                              <p className="text-xs text-yellow-800">
+                                <strong>API Configuration Needed:</strong> School ratings require GreatSchools API key.
+                                Check server logs for details.
+                              </p>
+                            </div>
                           ) : (
-                            <p className="text-sm text-gray-500">No school data</p>
+                            <div className="bg-blue-50 border border-blue-200 rounded p-2">
+                              <p className="text-xs text-blue-800">
+                                <a href="/dashboard/upgrade" className="underline hover:text-blue-900">
+                                  Upgrade to Premium
+                                </a> to see school ratings from GreatSchools
+                              </p>
+                            </div>
                           )}
                         </div>
 

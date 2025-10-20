@@ -14,18 +14,23 @@ import { getCache, setCache } from '@/lib/cache';
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   const cacheKey = `gs:zip:${zip}`;
   const cached = await getCache<School[]>(cacheKey);
-  if (cached) return cached;
+  if (cached) {
+    console.log(`[Schools] Cache hit for ZIP ${zip}`);
+    return cached;
+  }
 
   const apiKey = process.env.GREAT_SCHOOLS_API_KEY;
   
   if (!apiKey) {
-    console.warn('[Schools] GreatSchools API key not configured');
+    console.warn('[Schools] ⚠️ GreatSchools API key not configured - set GREAT_SCHOOLS_API_KEY in Vercel');
+    console.warn('[Schools] School ratings will not be available. See docs/active/BASE_NAVIGATOR_API_SETUP.md');
     return [];
   }
 
   try {
     // GreatSchools NearbySchools API v2
     // Documentation: https://www.greatschools.org/api/
+    console.log(`[Schools] Fetching schools for ZIP ${zip}...`);
     const response = await fetch(
       `https://api.greatschools.org/nearby-schools?zip=${zip}&limit=20&page=0`,
       {
@@ -38,7 +43,14 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[Schools] API error:', response.status, errorText);
+      console.error(`[Schools] ❌ API error for ZIP ${zip}:`, response.status, errorText);
+      
+      if (response.status === 410) {
+        console.error('[Schools] 410 Error = v1 API deprecated. You need v2 API key from GreatSchools');
+      } else if (response.status === 401) {
+        console.error('[Schools] 401 Unauthorized = Invalid or expired API key');
+      }
+      
       return [];
     }
 
@@ -54,6 +66,11 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       type: s.type || 'public',
       distance_mi: s.distance
     }));
+
+    console.log(`[Schools] ✅ Fetched ${schools.length} schools for ZIP ${zip}`);
+    if (schools.length > 0) {
+      console.log(`[Schools] Top school: ${schools[0].name} (${schools[0].rating}/10)`);
+    }
 
     await setCache(cacheKey, schools, 24 * 3600); // 24h cache
     return schools;

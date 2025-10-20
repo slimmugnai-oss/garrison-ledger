@@ -277,6 +277,7 @@ export const ssot = {
     github: "https://github.com/yourusername/garrison-ledger",
     docs: {
       systemStatus: "SYSTEM_STATUS.md",
+      changelog: "CHANGELOG.md",
       development: "docs/DEVELOPMENT_WORKFLOW.md",
       iconUsage: "docs/ICON_USAGE_GUIDE.md"
     },
