@@ -139,7 +139,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
           <nav className="text-sm mb-4">
             <a href="/dashboard" className="text-blue-600 hover:text-blue-700">Dashboard</a>
             <span className="mx-2 text-gray-400">→</span>
-            <a href="/base-guides" className="text-blue-600 hover:text-blue-700">Base Guides</a>
+            <a href="/dashboard/navigator" className="text-blue-600 hover:text-blue-700">Base Navigator</a>
             <span className="mx-2 text-gray-400">→</span>
             <span className="text-gray-600">{base.name} Navigator</span>
           </nav>

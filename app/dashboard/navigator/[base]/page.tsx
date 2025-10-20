@@ -58,7 +58,7 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
                 Base code <code className="bg-gray-100 px-2 py-1 rounded">{baseCode}</code> not found.
               </p>
               <a
-                href="/base-guides"
+                href="/dashboard/navigator"
                 className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 ← Browse All Bases
