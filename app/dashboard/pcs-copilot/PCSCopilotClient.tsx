@@ -41,6 +41,63 @@ export default function PCSCopilotClient({
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
   const [showNewClaimModal, setShowNewClaimModal] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [formData, setFormData] = useState({
+    claim_name: '',
+    pcs_orders_date: '',
+    departure_date: '',
+    arrival_date: '',
+    origin_base: userProfile.currentBase || '',
+    destination_base: '',
+    travel_method: 'ppm',
+    dependents_count: 0,
+    rank_at_pcs: userProfile.rank || '',
+    branch: userProfile.branch || ''
+  });
+
+  const handleCreateClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCreating(true);
+
+    try {
+      const response = await fetch('/api/pcs/claim', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Add new claim to the list
+        setClaims(prev => [result.claim, ...prev]);
+        setShowNewClaimModal(false);
+        // Reset form
+        setFormData({
+          claim_name: '',
+          pcs_orders_date: '',
+          departure_date: '',
+          arrival_date: '',
+          origin_base: userProfile.currentBase || '',
+          destination_base: '',
+          travel_method: 'ppm',
+          dependents_count: 0,
+          rank_at_pcs: userProfile.rank || '',
+          branch: userProfile.branch || ''
+        });
+      } else {
+        console.error('Failed to create claim:', result.error);
+        alert('Failed to create claim. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error creating claim:', error);
+      alert('Failed to create claim. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <>
@@ -350,20 +407,184 @@ export default function PCSCopilotClient({
       </div>
       <Footer />
 
-      {/* New Claim Modal - Would implement with form */}
+      {/* New Claim Modal */}
       {showNewClaimModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold text-slate-900 mb-6">Create New PCS Claim</h3>
-            <p className="text-slate-600 mb-6">
-              Coming soon: Quick form to create your claim package
-            </p>
-            <button
-              onClick={() => setShowNewClaimModal(false)}
-              className="px-6 py-3 bg-gray-200 text-slate-900 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Close
-            </button>
+            
+            <form onSubmit={handleCreateClaim} className="space-y-6">
+              {/* Claim Name */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Claim Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.claim_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, claim_name: e.target.value }))}
+                  placeholder="e.g., JBLM to Fort Bragg PCS"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              {/* PCS Orders Date */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  PCS Orders Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.pcs_orders_date}
+                  onChange={(e) => setFormData(prev => ({ ...prev, pcs_orders_date: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              {/* Travel Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Departure Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.departure_date}
+                    onChange={(e) => setFormData(prev => ({ ...prev, departure_date: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Arrival Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.arrival_date}
+                    onChange={(e) => setFormData(prev => ({ ...prev, arrival_date: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Bases */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Origin Base
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.origin_base}
+                    onChange={(e) => setFormData(prev => ({ ...prev, origin_base: e.target.value }))}
+                    placeholder="e.g., JBLM"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Destination Base
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.destination_base}
+                    onChange={(e) => setFormData(prev => ({ ...prev, destination_base: e.target.value }))}
+                    placeholder="e.g., Fort Bragg"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Travel Method & Dependents */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Travel Method
+                  </label>
+                  <select
+                    value={formData.travel_method}
+                    onChange={(e) => setFormData(prev => ({ ...prev, travel_method: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="ppm">PPM (Personally Procured Move)</option>
+                    <option value="government">Government Move</option>
+                    <option value="mixed">Mixed Move</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Number of Dependents
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.dependents_count}
+                    onChange={(e) => setFormData(prev => ({ ...prev, dependents_count: parseInt(e.target.value) || 0 }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              {/* Rank & Branch */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Rank at PCS
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.rank_at_pcs}
+                    onChange={(e) => setFormData(prev => ({ ...prev, rank_at_pcs: e.target.value }))}
+                    placeholder="e.g., E-5, O-3"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Branch
+                  </label>
+                  <select
+                    value={formData.branch}
+                    onChange={(e) => setFormData(prev => ({ ...prev, branch: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Select Branch</option>
+                    <option value="Army">Army</option>
+                    <option value="Navy">Navy</option>
+                    <option value="Air Force">Air Force</option>
+                    <option value="Marine Corps">Marine Corps</option>
+                    <option value="Coast Guard">Coast Guard</option>
+                    <option value="Space Force">Space Force</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex gap-4 pt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowNewClaimModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-200 text-slate-900 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreating}
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isCreating ? 'Creating...' : 'Create Claim'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
