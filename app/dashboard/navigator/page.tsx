@@ -23,10 +23,6 @@ export default async function BaseNavigatorMainPage() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');
 
-  // Group bases by region
-  const conusBases = bases.filter(b => b.region === 'CONUS');
-  const oconusBases = bases.filter(b => b.region === 'OCONUS');
-
   return (
     <>
       <Header />
@@ -43,16 +39,16 @@ export default async function BaseNavigatorMainPage() {
             </p>
           </div>
 
-          {/* CONUS Bases */}
-          <div className="mb-12">
+          {/* All Bases */}
+          <div>
             <div className="flex items-center gap-3 mb-6">
               <Icon name="MapPin" className="w-6 h-6 text-blue-600" />
-              <h2 className="text-2xl font-bold text-gray-900">CONUS Bases</h2>
-              <Badge variant="info">{conusBases.length} bases</Badge>
+              <h2 className="text-2xl font-bold text-gray-900">Available Bases</h2>
+              <Badge variant="info">{bases.length} bases</Badge>
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {conusBases.map((base, index) => (
+              {bases.map((base, index) => (
                 <AnimatedCard key={base.code} delay={index * 0.05}>
                   <a
                     href={`/dashboard/navigator/${base.code.toLowerCase()}`}
@@ -68,61 +64,14 @@ export default async function BaseNavigatorMainPage() {
                       <Icon name="ArrowRight" className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                     </div>
                     
-                    <div className="text-sm text-gray-500">
-                      {base.state && `${base.state}, `}{base.country}
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                      <Icon name="MapPin" className="w-4 h-4" />
+                      <span>{base.state || 'International'}</span>
                     </div>
                     
-                    {base.bah && (
-                      <div className="mt-3 pt-3 border-t border-gray-100">
-                        <div className="text-xs text-gray-500">E-5 BAH</div>
-                        <div className="text-sm font-semibold text-green-600">
-                          ${base.bah.toLocaleString()}/mo
-                        </div>
-                      </div>
-                    )}
-                  </a>
-                </AnimatedCard>
-              ))}
-            </div>
-          </div>
-
-          {/* OCONUS Bases */}
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <Icon name="Globe" className="w-6 h-6 text-purple-600" />
-              <h2 className="text-2xl font-bold text-gray-900">OCONUS Bases</h2>
-              <Badge variant="warning">{oconusBases.length} bases</Badge>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {oconusBases.map((base, index) => (
-                <AnimatedCard key={base.code} delay={index * 0.05}>
-                  <a
-                    href={`/dashboard/navigator/${base.code.toLowerCase()}`}
-                    className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg hover:border-purple-300 transition-all group"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
-                          {base.name}
-                        </h3>
-                        <p className="text-sm text-gray-600">{base.code}</p>
-                      </div>
-                      <Icon name="ArrowRight" className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
+                    <div className="text-xs text-gray-500 mb-3">
+                      {base.branch}
                     </div>
-                    
-                    <div className="text-sm text-gray-500">
-                      {base.state && `${base.state}, `}{base.country}
-                    </div>
-                    
-                    {base.bah && (
-                      <div className="mt-3 pt-3 border-t border-gray-100">
-                        <div className="text-xs text-gray-500">E-5 BAH</div>
-                        <div className="text-sm font-semibold text-green-600">
-                          ${base.bah.toLocaleString()}/mo
-                        </div>
-                      </div>
-                    )}
                   </a>
                 </AnimatedCard>
               ))}
