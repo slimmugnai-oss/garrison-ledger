@@ -1,8 +1,10 @@
 /**
- * WEATHER PROVIDER (Google Weather via RapidAPI)
+ * WEATHER PROVIDER (Google Weather API)
  * 
  * Computes weather comfort index (0-10) for a ZIP code
  * Server-only, cached 24h
+ * 
+ * Requires: GOOGLE_WEATHER_API_KEY
  */
 
 import { getCache, setCache } from '@/lib/cache';
@@ -17,11 +19,10 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) return cached;
 
-  const apiKey = process.env.RAPIDAPI_KEY;
-  const host = 'google-weather.p.rapidapi.com';
+  const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
 
   if (!apiKey) {
-    console.warn('[Weather] Google Weather API key not configured');
+    console.warn('[Weather] GOOGLE_WEATHER_API_KEY not configured');
     return {
       index10: 7, // Neutral-positive score
       note: 'Weather data unavailable'
@@ -29,12 +30,12 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   }
 
   try {
-    // Google Weather API via RapidAPI
+    // Google Weather API
     const response = await fetch(
-      `https://${host}/weather?q=${zip}&units=imperial`,
+      `https://google-weather.p.rapidapi.com/weather?q=${zip}&units=imperial`,
       { 
         headers: { 
-          'X-RapidAPI-Host': host,
+          'X-RapidAPI-Host': 'google-weather.p.rapidapi.com',
           'X-RapidAPI-Key': apiKey,
           'Accept': 'application/json'
         },
