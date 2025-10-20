@@ -9,7 +9,8 @@ import type { School, KidsGrade } from '@/app/types/navigator';
 import { getCache, setCache } from '@/lib/cache';
 
 /**
- * Fetch schools by ZIP from GreatSchools API
+ * Fetch schools by ZIP from GreatSchools API v2
+ * V2 requires lat/lon, so we need to geocode ZIP first
  */
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   const cacheKey = `gs:zip:${zip}`;
@@ -28,15 +29,25 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   }
 
   try {
-    // GreatSchools NearbySchools API v2
-    // Documentation: https://www.greatschools.org/api/
-    console.log(`[Schools] Fetching schools for ZIP ${zip}...`);
+    // Step 1: Convert ZIP to lat/lon using geocoding
+    console.log(`[Schools] Geocoding ZIP ${zip}...`);
+    const { lat, lon } = await geocodeZip(zip);
+    
+    if (!lat || !lon) {
+      console.warn(`[Schools] Could not geocode ZIP ${zip}`);
+      return [];
+    }
+
+    // Step 2: Fetch schools using GreatSchools v2 API
+    // Documentation: https://gs-api.greatschools.org/v2/nearby-schools
+    console.log(`[Schools] Fetching schools near ${lat}, ${lon} (ZIP ${zip})...`);
     const response = await fetch(
-      `https://api.greatschools.org/nearby-schools?zip=${zip}&limit=20&page=0`,
+      `https://gs-api.greatschools.org/v2/nearby-schools?lat=${lat}&lon=${lon}&limit=20&distance=5`,
       {
         headers: {
           'X-API-Key': apiKey,
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Content': 'application/json'
         }
       }
     );
@@ -46,9 +57,11 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       console.error(`[Schools] ❌ API error for ZIP ${zip}:`, response.status, errorText);
       
       if (response.status === 410) {
-        console.error('[Schools] 410 Error = v1 API deprecated. You need v2 API key from GreatSchools');
+        console.error('[Schools] 410 Error = v1 API deprecated. Using v2 now.');
       } else if (response.status === 401) {
         console.error('[Schools] 401 Unauthorized = Invalid or expired API key');
+      } else if (response.status === 403) {
+        console.error('[Schools] 403 Forbidden = API key may not have access to this endpoint');
       }
       
       return [];
@@ -57,14 +70,14 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     const data = await response.json();
     
     // Parse v2 API response structure
-    // Response has: { schools: [], cur_page, total_count, etc. }
+    // Response: { schools: [...], cur_page, total_count, etc. }
     const schools: School[] = (data.schools || []).map((s: any) => ({
       name: s.name || 'Unknown School',
-      rating: s.rating?.school_rating || 0, // v2 uses nested rating object
-      grades: s.grades_offered || s.level || 'K-12',
-      address: s.address?.street || s.address?.city || '',
+      rating: parseRatingBand(s['rating-band']), // v2 uses rating-band string
+      grades: s.level || 'K-12',
+      address: `${s.street || ''}, ${s.city || ''}, ${s.state || ''}`.trim(),
       type: s.type || 'public',
-      distance_mi: s.distance
+      distance_mi: s.distance || 0
     }));
 
     console.log(`[Schools] ✅ Fetched ${schools.length} schools for ZIP ${zip}`);
@@ -79,6 +92,74 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     console.error('[Schools] Fetch error:', error);
     return [];
   }
+}
+
+/**
+ * Convert ZIP code to lat/lon coordinates
+ * Uses simple US ZIP database or geocoding service
+ */
+async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
+  const cacheKey = `geocode:${zip}`;
+  const cached = await getCache<{ lat: number; lon: number }>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    // Use OpenStreetMap Nominatim (free, no API key needed)
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?postalcode=${zip}&country=us&format=json&limit=1`,
+      {
+        headers: {
+          'User-Agent': 'GarrisonLedger/1.0' // Required by Nominatim
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`[Schools] Geocoding error for ZIP ${zip}:`, response.status);
+      return { lat: 0, lon: 0 };
+    }
+
+    const data = await response.json();
+    
+    if (data.length === 0) {
+      console.warn(`[Schools] No geocoding results for ZIP ${zip}`);
+      return { lat: 0, lon: 0 };
+    }
+
+    const result = {
+      lat: parseFloat(data[0].lat),
+      lon: parseFloat(data[0].lon)
+    };
+
+    // Cache for 30 days (ZIP coords don't change)
+    await setCache(cacheKey, result, 30 * 24 * 3600);
+    
+    return result;
+
+  } catch (error) {
+    console.error('[Schools] Geocoding fetch error:', error);
+    return { lat: 0, lon: 0 };
+  }
+}
+
+/**
+ * Parse GreatSchools rating-band to 0-10 numeric score
+ * V2 API returns rating-band as string, not numeric rating
+ */
+function parseRatingBand(ratingBand: string | undefined): number {
+  if (!ratingBand) return 0;
+  
+  // GreatSchools rating bands (approximate conversions)
+  const bandMap: Record<string, number> = {
+    'above-average': 8,
+    'average': 6,
+    'below-average': 4,
+    'well-above-average': 9,
+    'well-below-average': 3
+  };
+
+  const normalized = ratingBand.toLowerCase().trim();
+  return bandMap[normalized] || 5; // Default to 5 if unknown
 }
 
 /**
