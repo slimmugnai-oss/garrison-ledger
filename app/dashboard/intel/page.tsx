@@ -17,6 +17,7 @@ import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PremiumGate from '@/app/components/premium/PremiumGate';
 import { getAllIntelCards } from '@/lib/content/mdx-loader';
+import { marked } from 'marked';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -80,8 +81,38 @@ export default async function IntelLibraryPage({
     cards = cards.filter(c => c.frontmatter.tags.includes(tag));
   }
 
-  // Convert to format expected by UI
-  const cardsData = cards.map(c => ({
+  // Helper function to extract clean preview text
+  const extractPreview = async (markdown: string): Promise<string> => {
+    // Remove frontmatter
+    let cleaned = markdown.replace(/^---[\s\S]*?---\s*/m, '');
+    
+    // Find BLUF line if present
+    const blufMatch = cleaned.match(/\*\*BLUF:\*\*\s*(.+?)(?=\n\n|\n#|$)/s);
+    if (blufMatch) {
+      cleaned = blufMatch[1];
+    } else {
+      // Otherwise get first paragraph after title
+      cleaned = cleaned.replace(/^#.*\n/, ''); // Remove first heading
+      const firstPara = cleaned.split('\n\n')[0] || cleaned.substring(0, 300);
+      cleaned = firstPara;
+    }
+    
+    // Convert markdown to HTML then strip tags
+    const html = await marked.parse(cleaned, { async: true });
+    const text = html.replace(/<[^>]*>/g, '').trim();
+    
+    // Truncate at word boundary
+    if (text.length > 200) {
+      const truncated = text.substring(0, 200);
+      const lastSpace = truncated.lastIndexOf(' ');
+      return truncated.substring(0, lastSpace > 150 ? lastSpace : 200) + '...';
+    }
+    
+    return text;
+  };
+
+  // Convert to format expected by UI with clean previews
+  const cardsData = await Promise.all(cards.map(async c => ({
     id: c.frontmatter.id,
     slug: c.slug,
     title: c.frontmatter.title,
@@ -89,8 +120,8 @@ export default async function IntelLibraryPage({
     tags: c.frontmatter.tags,
     gating: c.frontmatter.gating,
     as_of_date: c.frontmatter.asOf,
-    html: c.content.substring(0, 200) // Preview
-  }));
+    preview: await extractPreview(c.content)
+  })));
 
   // Group by domain
   const domains = ['finance', 'pcs', 'deployment', 'career', 'lifestyle'];
@@ -229,8 +260,9 @@ export default async function IntelLibraryPage({
                         </div>
                       ) : (
                         <>
+                          {/* Clean preview text - markdown stripped via marked.js */}
                           <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                            {card.html?.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                            {card.preview}
                           </p>
 
                           {/* Tags */}
