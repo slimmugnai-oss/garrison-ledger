@@ -163,7 +163,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
           return (
             <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className={`w-10 h-10 ${iconConfig.color} rounded-full flex items-center justify-center flex-shrink-0`}>
-                <Icon name={iconConfig.icon} className="h-5 w-5" />
+                <Icon name={iconConfig.icon as any} className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm text-gray-900">

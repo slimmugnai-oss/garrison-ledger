@@ -20,6 +20,7 @@ export function useDashboardAnalytics() {
         action: 'view',
         timestamp: Date.now()
       })
+    });
   };
 
   const trackWidgetClick = (widgetName: string, action: string, metadata?: Record<string, any>) => {
@@ -35,6 +36,7 @@ export function useDashboardAnalytics() {
         metadata,
         timestamp: Date.now()
       })
+    });
   };
 
   return { trackWidgetView, trackWidgetClick };

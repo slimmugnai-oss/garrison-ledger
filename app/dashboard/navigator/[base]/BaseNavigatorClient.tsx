@@ -48,6 +48,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
     setLoading(true);
     setError(null);
 
+    console.log('Computing rankings with:', {
       bedrooms,
       bahMonthlyCents,
       kidsGrades
