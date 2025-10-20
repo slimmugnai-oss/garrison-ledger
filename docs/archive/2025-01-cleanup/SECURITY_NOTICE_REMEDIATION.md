@@ -11,7 +11,7 @@
 During implementation of the SSOT security baseline, the following API keys were found exposed in documentation:
 
 ### 1. Google Weather API Key
-- **Pattern:** `AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU`
+- **Pattern:** `AIzaSy****puU`
 - **Locations:** 6 files
   - `docs/active/BASE_GUIDES_AUDIT.md`
   - `docs/active/EXTERNAL_DATA_API_SETUP_V3.md`
@@ -20,7 +20,7 @@ During implementation of the SSOT security baseline, the following API keys were
   - Others
 
 ### 2. GreatSchools API Key
-- **Pattern:** `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
+- **Pattern:** `uMuZ****Cld`
 - **Locations:** 3 files
   - `docs/active/EXTERNAL_DATA_API_SETUP_V3.md`
   - `docs/active/EXTERNAL_DATA_API_SETUP.md`
@@ -184,7 +184,7 @@ git push --force
 GOOGLE_API_KEY=AIza****puU (get from Vercel env vars)
 
 # ❌ WRONG
-GOOGLE_API_KEY=AIzaSyCgVJ6wbaox0bBaBSeQgTFqOA1alEsnpuU
+GOOGLE_API_KEY=AIzaSy****puU
 ```
 
 ### Emergency Contact
