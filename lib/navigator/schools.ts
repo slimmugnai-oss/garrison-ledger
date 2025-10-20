@@ -13,19 +13,13 @@ import { getCache, setCache } from '@/lib/cache';
  * V2 requires lat/lon, so we need to geocode ZIP first
  */
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
-  const cacheKey = `gs:zip:${zip}`;
+  // CRITICAL: v2 cache key to bust corrupted v1 data
+  const cacheKey = `gs:zip:v2:${zip}`;
   
-  // TEMPORARY: Force fresh data to debug caching issue
-  const forceRefresh = process.env.FORCE_SCHOOLS_REFRESH === 'true';
-  
-  if (!forceRefresh) {
-    const cached = await getCache<School[]>(cacheKey);
-    if (cached) {
-      console.log(`[Schools] Cache hit for ZIP ${zip}`);
-      return cached;
-    }
-  } else {
-    console.log(`[Schools] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  const cached = await getCache<School[]>(cacheKey);
+  if (cached) {
+    console.log(`[Schools] Cache hit for ZIP ${zip}`);
+    return cached;
   }
 
   const apiKey = process.env.GREAT_SCHOOLS_API_KEY;
@@ -47,7 +41,6 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     }
 
     // Step 2: Fetch schools using GreatSchools v2 API
-    // Documentation: https://gs-api.greatschools.org/v2/nearby-schools
     console.log(`[Schools] Fetching schools near ${lat}, ${lon} (ZIP ${zip})...`);
     const response = await fetch(
       `https://gs-api.greatschools.org/v2/nearby-schools?lat=${lat}&lon=${lon}&limit=20&distance=5`,
@@ -80,12 +73,15 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
     const schools: School[] = (data.schools || []).map((s: any, index: number) => {
-      const ratingBand = s['rating_band']; // Fixed: underscore, not hyphen
+      const ratingBand = s['rating_band']; // CRITICAL: Must be underscore, not hyphen
       const rating = parseRatingBand(ratingBand);
+      
+      // VALIDATION: Ensure rating is always a valid number, never undefined/null/NaN
+      const validatedRating = typeof rating === 'number' && !isNaN(rating) ? rating : 7;
       
       return {
         name: s.name || 'Unknown School',
-        rating, // v2 uses rating-band string (may be null)
+        rating: validatedRating, // MUST be valid number
         grades: s.level || 'K-12',
         address: `${s.street || ''}, ${s.city || ''}, ${s.state || ''}`.trim(),
         type: s.type || 'public',

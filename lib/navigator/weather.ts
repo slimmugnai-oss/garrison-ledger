@@ -15,19 +15,13 @@ import { getCache, setCache } from '@/lib/cache';
  */
 export async function weatherComfortIndex(zip: string): Promise<{ index10: number; note: string }> {
   
-  const cacheKey = `gweather:index:${zip}`;
+  // CRITICAL: v4 cache key to bust corrupted old data
+  const cacheKey = `gweather:index:v4:${zip}`;
   
-  // TEMPORARY: Force fresh data to debug caching issue
-  const forceRefresh = process.env.FORCE_WEATHER_REFRESH === 'true';
-  
-  if (!forceRefresh) {
-    const cached = await getCache<{ index10: number; note: string }>(cacheKey);
-    if (cached) {
-      console.log(`[Weather] Cache hit for ZIP ${zip}`);
-      return cached;
-    }
-  } else {
-    console.log(`[Weather] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  const cached = await getCache<{ index10: number; note: string }>(cacheKey);
+  if (cached) {
+    console.log(`[Weather] Cache hit for ZIP ${zip}`);
+    return cached;
   }
 
   const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
@@ -147,16 +141,22 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     // Google Weather API structure (from actual logs):
     // { temperature: { degrees: 16.7, unit: "CELSIUS" }, weatherCondition: { description: { text: "Sunny" } }, ... }
     
-    // Temperature (convert to Fahrenheit if needed)
-    const tempValue = data.temperature?.degrees || 70;
+    // CRITICAL: Extract temperature with validation
+    const tempValue = data.temperature?.degrees;
     const tempUnit = data.temperature?.unit || 'FAHRENHEIT';
-    const tempF = tempUnit === 'CELSIUS' ? (tempValue * 9/5) + 32 : tempValue;
     
-    // Humidity (not in the response structure we see, so use default)
-    const humidity = 50; // Default since not in response
+    // VALIDATION: Ensure temp is a valid number, never undefined/NaN/object
+    const validTempValue = typeof tempValue === 'number' && !isNaN(tempValue) ? tempValue : 70;
+    const tempF = tempUnit === 'CELSIUS' ? (validTempValue * 9/5) + 32 : validTempValue;
     
-    // Condition/description
-    const description = data.weatherCondition?.description?.text || 'unknown';
+    // CRITICAL: Extract description with validation
+    const descriptionObj = data.weatherCondition?.description?.text;
+    
+    // VALIDATION: Ensure description is a string, never an object
+    const description = typeof descriptionObj === 'string' ? descriptionObj : 'Moderate';
+    
+    // Humidity (not in response, use neutral default)
+    const humidity = 50;
     
     // Compute comfort index based on current conditions
     let index = 10;
@@ -182,10 +182,18 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     // Clamp to 0-10
     index = Math.max(0, Math.min(10, index));
 
-    const note = `Current: ${Math.round(tempF)}°F, ${Math.round(humidity)}% humidity, ${description}`;
+    // VALIDATION: Ensure all values are valid before constructing note
+    const validTempF = typeof tempF === 'number' && !isNaN(tempF) ? Math.round(tempF) : 70;
+    const validHumidity = typeof humidity === 'number' && !isNaN(humidity) ? Math.round(humidity) : 50;
+    const validDescription = typeof description === 'string' ? description : 'Moderate';
+    
+    const note = `Current: ${validTempF}°F, ${validHumidity}% humidity, ${validDescription}`;
+
+    // VALIDATION: Ensure index is valid number
+    const validIndex = typeof index === 'number' && !isNaN(index) ? Math.round(index * 10) / 10 : 7;
 
     return {
-      index10: Math.round(index * 10) / 10,
+      index10: validIndex,
       note
     };
 
