@@ -34,37 +34,12 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     // Full implementation requires OpenWeatherMap or WeatherAPI integration
     
     // For v1: Return neutral score
-    return {
+    // Full weather integration (OpenWeatherMap or Google) coming in v1.1
+    const result = {
       index10: 7, // Neutral-positive score
       note: 'Weather data integration coming in v1.1'
     };
-
-    /* Future: OpenWeatherMap integration
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&appid=${apiKey}&units=imperial`,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    */
-
-    if (!response.ok) {
-      console.error('[Weather] API error:', response.status);
-      return { index10: 5, note: 'Weather data unavailable' };
-    }
-
-    const data = await response.json();
     
-    // Analyze weather data to compute comfort index
-    const analysis = analyzeWeatherData(data);
-    
-    const result = {
-      index10: analysis.comfortIndex,
-      note: analysis.note
-    };
-
     await setCache(cacheKey, result, 7 * 24 * 3600); // 7 day cache
     return result;
 
