@@ -2,9 +2,10 @@ type Props = {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
   size?: 'sm' | 'md' | 'lg';
+  className?: string;
 };
 
-export default function Badge({ children, variant = 'primary', size = 'md' }: Props) {
+export default function Badge({ children, variant = 'primary', size = 'md', className = '' }: Props) {
   const sizeStyles = {
     sm: 'px-2 py-0.5 text-xs',
     md: 'px-3 py-1 text-sm',
@@ -22,7 +23,7 @@ export default function Badge({ children, variant = 'primary', size = 'md' }: Pr
   }[variant];
 
   return (
-    <span className={`badge ${variantStyles} ${sizeStyles} font-semibold uppercase tracking-wider`}>
+    <span className={`badge ${variantStyles} ${sizeStyles} font-semibold uppercase tracking-wider ${className}`}>
       {children}
     </span>
   );
