@@ -48,6 +48,12 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
     setLoading(true);
     setError(null);
 
+    console.log('[Navigator] Computing rankings with filters:', {
+      bedrooms,
+      bahMonthlyCents,
+      kidsGrades
+    });
+
     try {
       const response = await fetch('/api/navigator/base', {
         method: 'POST',
