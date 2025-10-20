@@ -16,60 +16,65 @@ export default function IntelCardContent({ content }: { content: string }) {
     // Configure marked with custom renderer
     const renderer = new marked.Renderer();
     
-    // Custom header rendering
-    renderer.heading = (text, level) => {
+    // Custom header rendering (updated signature for marked v4+)
+    renderer.heading = ({ tokens, depth }) => {
+      const text = tokens.map(t => t.raw).join('');
       const classes = {
         1: 'text-4xl font-bold text-gray-900 mb-6 font-lora border-b-2 border-gray-200 pb-3',
         2: 'text-3xl font-semibold text-gray-900 mt-10 mb-5 font-lora',
         3: 'text-2xl font-semibold text-gray-900 mt-8 mb-4 font-lora',
         4: 'text-xl font-semibold text-gray-900 mt-6 mb-3'
       };
-      return `<h${level} class="${classes[level as keyof typeof classes] || classes[4]}">${text}</h${level}>`;
+      return `<h${depth} class="${classes[depth as keyof typeof classes] || classes[4]}">${text}</h${depth}>`;
     };
 
-    // Custom table rendering
-    renderer.table = (header, body) => {
-      return `<table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow-sm my-6"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+    // Custom table rendering (updated signature)
+    renderer.table = ({ header, rows }) => {
+      return `<table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow-sm my-6"><thead>${header}</thead><tbody>${rows}</tbody></table>`;
     };
 
-    renderer.tablerow = (content) => {
-      return `<tr>${content}</tr>`;
+    renderer.tablerow = ({ text }) => {
+      return `<tr>${text}</tr>`;
     };
 
-    renderer.tablecell = (content, flags) => {
-      const tag = flags.header ? 'th' : 'td';
-      const classes = flags.header 
+    renderer.tablecell = ({ text, header, align }) => {
+      const tag = header ? 'th' : 'td';
+      const classes = header 
         ? 'px-4 py-3 border-b-2 border-gray-300 text-left font-bold text-gray-900 bg-gray-50'
         : 'px-4 py-3 border-b border-gray-200 text-gray-700';
-      return `<${tag} class="${classes}">${content}</${tag}>`;
+      return `<${tag} class="${classes}">${text}</${tag}>`;
     };
 
-    // Custom link rendering
-    renderer.link = (href, title, text) => {
+    // Custom link rendering (updated signature)
+    renderer.link = ({ href, title, tokens }) => {
+      const text = tokens.map(t => t.raw).join('');
       return `<a href="${href}" class="text-blue-600 hover:text-blue-700 font-semibold underline decoration-2 underline-offset-2 hover:decoration-blue-700 transition-colors" target="_blank" rel="noopener noreferrer">${text} →</a>`;
     };
 
-    // Custom list rendering
-    renderer.listitem = (text) => {
+    // Custom list rendering (updated signature)
+    renderer.listitem = ({ text }) => {
       return `<li class="ml-6 mb-2 text-gray-700 leading-relaxed">${text}</li>`;
     };
 
-    // Custom paragraph rendering
-    renderer.paragraph = (text) => {
+    // Custom paragraph rendering (updated signature)
+    renderer.paragraph = ({ tokens }) => {
+      const text = tokens.map(t => t.raw).join('');
       return `<p class="text-gray-700 leading-relaxed mb-6 text-base">${text}</p>`;
     };
 
-    // Custom strong rendering
-    renderer.strong = (text) => {
+    // Custom strong rendering (updated signature)
+    renderer.strong = ({ tokens }) => {
+      const text = tokens.map(t => t.raw).join('');
       return `<strong class="font-bold text-gray-900">${text}</strong>`;
     };
 
-    // Custom emphasis rendering
-    renderer.em = (text) => {
+    // Custom emphasis rendering (updated signature)
+    renderer.em = ({ tokens }) => {
+      const text = tokens.map(t => t.raw).join('');
       return `<em class="italic text-gray-700">${text}</em>`;
     };
 
-    // Custom horizontal rule rendering
+    // Custom horizontal rule rendering (updated signature)
     renderer.hr = () => {
       return '<hr class="border-gray-300 my-8" />';
     };
