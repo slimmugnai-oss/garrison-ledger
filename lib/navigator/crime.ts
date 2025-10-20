@@ -21,17 +21,11 @@ export interface CrimeData {
  * Fetch crime and safety data for a ZIP code
  */
 export async function fetchCrimeData(zip: string): Promise<CrimeData> {
-  const cacheKey = `crime:${zip}`;
-  const forceRefresh = process.env.FORCE_CRIME_REFRESH === 'true'; // TEMPORARY: Force fresh data
-  
-  if (!forceRefresh) {
-    const cached = await getCache<CrimeData>(cacheKey);
-    if (cached) {
-      console.log(`[Crime] Cache hit for ZIP ${zip}`);
-      return cached;
-    }
-  } else {
-    console.log(`[Crime] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  const cacheKey = `crime:v2:${zip}`; // v2 to bust old cache
+  const cached = await getCache<CrimeData>(cacheKey);
+  if (cached) {
+    console.log(`[Crime] Cache hit for ZIP ${zip}`);
+    return cached;
   }
 
   const apiKey = process.env.CRIME_API_KEY;

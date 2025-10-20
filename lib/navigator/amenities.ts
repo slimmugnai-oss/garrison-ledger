@@ -23,17 +23,11 @@ export interface AmenityData {
  * Fetch amenities data for a ZIP code
  */
 export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
-  const cacheKey = `amenities:${zip}`;
-  const forceRefresh = process.env.FORCE_AMENITIES_REFRESH === 'true'; // TEMPORARY: Force fresh data
-  
-  if (!forceRefresh) {
-    const cached = await getCache<AmenityData>(cacheKey);
-    if (cached) {
-      console.log(`[Amenities] Cache hit for ZIP ${zip}`);
-      return cached;
-    }
-  } else {
-    console.log(`[Amenities] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  const cacheKey = `amenities:v2:${zip}`; // v2 to bust old cache
+  const cached = await getCache<AmenityData>(cacheKey);
+  if (cached) {
+    console.log(`[Amenities] Cache hit for ZIP ${zip}`);
+    return cached;
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
