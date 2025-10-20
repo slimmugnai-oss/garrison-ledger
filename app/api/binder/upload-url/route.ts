@@ -108,14 +108,12 @@ export async function POST(req: NextRequest) {
     .eq('user_id', userId)
     .maybeSingle();
   
-  const tier = (entitlement?.tier === 'premium' || entitlement?.tier === 'pro') && entitlement?.status === 'active' 
-    ? entitlement.tier 
+  const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
+    ? 'premium'
     : 'free';
   
   let storageLimit = FREE_STORAGE_LIMIT;
-  if (tier === 'pro') {
-    storageLimit = PRO_STORAGE_LIMIT;
-  } else if (tier === 'premium') {
+  if (tier === 'premium') {
     storageLimit = PREMIUM_STORAGE_LIMIT;
   }
 
