@@ -569,9 +569,9 @@ export default function PCSCopilotClient({
 
               {/* Form Actions */}
               <div className="flex gap-4 pt-6">
-                <button
+            <button
                   type="button"
-                  onClick={() => setShowNewClaimModal(false)}
+              onClick={() => setShowNewClaimModal(false)}
                   className="flex-1 px-6 py-3 bg-gray-200 text-slate-900 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
                 >
                   Cancel
@@ -582,7 +582,7 @@ export default function PCSCopilotClient({
                   className="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCreating ? 'Creating...' : 'Create Claim'}
-                </button>
+            </button>
               </div>
             </form>
           </div>
