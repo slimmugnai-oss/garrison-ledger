@@ -238,13 +238,13 @@ export default function Header() {
                 onMouseLeave={() => setPremiumToolsOpen(false)}
               >
                 <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel-library')
+                  isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel')
                     ? 'text-slate-900 dark:text-white' 
                     : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
                 }`}>
                   Premium Tools
                   <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${premiumToolsOpen ? 'rotate-180' : ''}`} />
-                  {(isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel-library')) && (
+                  {(isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel')) && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
                   )}
                 </button>
@@ -319,12 +319,12 @@ export default function Header() {
                       </Link>
 
                       {/* Intel Library */}
-                      <Link href="/dashboard/intel-library" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/intel-library') || isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                      <Link href="/dashboard/intel" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                        isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                       }`}>
                         <Icon name="BookOpen" className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/intel-library') || isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'text-indigo-600' : 'text-slate-900 dark:text-white group-hover:text-indigo-600'}`}>
+                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'text-indigo-600' : 'text-slate-900 dark:text-white group-hover:text-indigo-600'}`}>
                             Intel Library
                           </div>
                           <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -709,7 +709,7 @@ export default function Header() {
                       <span className="font-medium">TDY Copilot</span>
                       <span className="ml-auto text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-700">New</span>
                     </Link>
-                    <Link href="/dashboard/intel-library" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/dashboard/intel" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="BookOpen" className="w-5 h-5 text-indigo-600" />
                       <span className="font-medium">Intel Library</span>
                       </Link>
