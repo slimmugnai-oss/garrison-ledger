@@ -78,6 +78,7 @@ export function DashboardAnalyticsProvider({ children }: { children: React.React
                   action: 'view',
                   timestamp: Date.now()
                 })
+              });
             }
           }
         });

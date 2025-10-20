@@ -50,6 +50,7 @@ export function trackEvent(event: AnalyticsEvent, properties?: EventProperties) 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ event, properties, timestamp: new Date().toISOString() })
+    });
   }
 }
 

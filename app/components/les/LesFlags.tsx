@@ -48,8 +48,10 @@ export default function LesFlags({ flags, tier, summary }: Props) {
             properties: { flag_code: flag.flag_code },
             timestamp: new Date().toISOString()
           })
+        });
       }
     } catch (err) {
+      console.error('Error tracking LES copy:', err);
     }
   };
 

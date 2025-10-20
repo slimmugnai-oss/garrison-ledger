@@ -243,7 +243,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
             >
               <div className="flex items-start justify-between mb-2">
                 <Icon 
-                  name={getCalculatorIcon(scenario.calculator_type)} 
+                  name={getCalculatorIcon(scenario.calculator_type) as any} 
                   className={`h-5 w-5 ${getCalculatorColor(scenario.calculator_type)}`} 
                 />
                 <Icon name="Calculator" className="h-4 w-4 text-green-600" />

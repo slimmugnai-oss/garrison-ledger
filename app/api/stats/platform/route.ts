@@ -22,21 +22,9 @@ export async function GET() {
       .from('user_profiles')
       .select('*', { count: 'exact', head: true });
 
-    // Get total plans generated
-    const { count: totalPlans } = await supabaseAdmin
-      .from('user_plans')
-      .select('*', { count: 'exact', head: true })
-      .not('summary', 'is', null); // Only completed plans
-
-    // Get plans generated this week
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    
-    const { count: weeklyPlans } = await supabaseAdmin
-      .from('user_plans')
-      .select('*', { count: 'exact', head: true })
-      .not('summary', 'is', null)
-      .gte('created_at', oneWeekAgo.toISOString());
+    // Plans system removed - set to 0
+    const totalPlans = 0;
+    const weeklyPlans = 0;
 
     // Get content blocks count
     const { count: contentBlocks } = await supabaseAdmin
