@@ -332,7 +332,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <Icon name="GraduationCap" className="w-5 h-5 text-green-600" />
-                                    <span className="font-semibold text-gray-900">Schools (40%)</span>
+                                    <span className="font-semibold text-gray-900">Schools (30%)</span>
                                   </div>
                                   <span className="text-2xl font-bold text-green-600">
                                     {Math.round(result.subscores.schools)}
@@ -351,7 +351,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <Icon name="Home" className="w-5 h-5 text-blue-600" />
-                                    <span className="font-semibold text-gray-900">Rent vs BAH (30%)</span>
+                                    <span className="font-semibold text-gray-900">Rent vs BAH (25%)</span>
                                   </div>
                                   <span className="text-2xl font-bold text-blue-600">
                                     {Math.round(result.subscores.rentVsBah)}
@@ -370,7 +370,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <Icon name="MapPin" className="w-5 h-5 text-purple-600" />
-                                    <span className="font-semibold text-gray-900">Commute (20%)</span>
+                                    <span className="font-semibold text-gray-900">Commute (15%)</span>
                                   </div>
                                   <span className="text-2xl font-bold text-purple-600">
                                     {Math.round(result.subscores.commute)}
@@ -399,6 +399,82 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                   <div
                                     className="h-full bg-yellow-500 rounded-full"
                                     style={{ width: `${result.subscores.weather}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Safety */}
+                              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="Shield" className="w-5 h-5 text-red-600" />
+                                    <span className="font-semibold text-gray-900">Safety (10%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-red-600">
+                                    {Math.round(result.subscores.safety)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-red-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-red-500 rounded-full"
+                                    style={{ width: `${result.subscores.safety}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Amenities */}
+                              <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="ShoppingBag" className="w-5 h-5 text-indigo-600" />
+                                    <span className="font-semibold text-gray-900">Amenities (5%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-indigo-600">
+                                    {Math.round(result.subscores.amenities)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-indigo-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-indigo-500 rounded-full"
+                                    style={{ width: `${result.subscores.amenities}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Demographics */}
+                              <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="Users" className="w-5 h-5 text-teal-600" />
+                                    <span className="font-semibold text-gray-900">Demographics (3%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-teal-600">
+                                    {Math.round(result.subscores.demographics)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-teal-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-teal-500 rounded-full"
+                                    style={{ width: `${result.subscores.demographics}%` }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Military Amenities */}
+                              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <Icon name="Shield" className="w-5 h-5 text-slate-600" />
+                                    <span className="font-semibold text-gray-900">Military (2%)</span>
+                                  </div>
+                                  <span className="text-2xl font-bold text-slate-600">
+                                    {Math.round(result.subscores.military)}
+                                  </span>
+                                </div>
+                                <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-slate-500 rounded-full"
+                                    style={{ width: `${result.subscores.military}%` }}
                                   />
                                 </div>
                               </div>
@@ -488,7 +564,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                             </div>
 
                             {/* Commute & Weather */}
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 gap-4 mb-6">
                               <div className="bg-gray-50 rounded-lg p-4">
                                 <h6 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
                                   <Icon name="MapPin" className="w-4 h-4" />
@@ -505,6 +581,106 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                                 <p className="text-gray-700">{result.payload.weather_note}</p>
                               </div>
                             </div>
+
+                            {/* Safety & Crime */}
+                            {result.payload.crime_data && (
+                              <div className="mb-6">
+                                <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                  <Icon name="Shield" className="w-5 h-5" />
+                                  Safety & Crime
+                                </h5>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                  <p className="text-gray-700 mb-2">{result.payload.crime_data.note}</p>
+                                  <div className="grid grid-cols-2 gap-3 text-sm">
+                                    <div>
+                                      <span className="text-gray-600">Crime Rate:</span>
+                                      <span className="ml-2 font-semibold">{result.payload.crime_data.crime_rate_per_1000}/1000</span>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-600">Violent:</span>
+                                      <span className="ml-2 font-semibold">{result.payload.crime_data.violent_crime_rate}/1000</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Amenities */}
+                            {result.payload.amenities_data && (
+                              <div className="mb-6">
+                                <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                  <Icon name="ShoppingBag" className="w-5 h-5" />
+                                  Local Amenities
+                                </h5>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                  <p className="text-gray-700 mb-3">{result.payload.amenities_data.note}</p>
+                                  <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <div className="flex items-center gap-2">
+                                      <Icon name="ShoppingBag" className="w-4 h-4 text-gray-600" />
+                                      <span>{result.payload.amenities_data.grocery_stores} Grocery</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Icon name="Users" className="w-4 h-4 text-gray-600" />
+                                      <span>{result.payload.amenities_data.restaurants} Restaurants</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Icon name="Heart" className="w-4 h-4 text-gray-600" />
+                                      <span>{result.payload.amenities_data.gyms} Gyms</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Icon name="Shield" className="w-4 h-4 text-gray-600" />
+                                      <span>{result.payload.amenities_data.hospitals} Hospitals</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Demographics */}
+                            {result.payload.demographics_data && (
+                              <div className="mb-6">
+                                <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                  <Icon name="Users" className="w-5 h-5" />
+                                  Demographics
+                                </h5>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                  <p className="text-gray-700">{result.payload.demographics_data.note}</p>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Military Amenities */}
+                            {result.payload.military_data && (
+                              <div className="mb-6">
+                                <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                  <Icon name="Shield" className="w-5 h-5" />
+                                  Military Amenities
+                                </h5>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                  <p className="text-gray-700 mb-3">{result.payload.military_data.note}</p>
+                                  <div className="grid grid-cols-2 gap-2 text-sm">
+                                    {result.payload.military_data.commissary_distance_mi && (
+                                      <div>
+                                        <span className="text-gray-600">Commissary:</span>
+                                        <span className="ml-2 font-semibold">{result.payload.military_data.commissary_distance_mi.toFixed(1)} mi</span>
+                                      </div>
+                                    )}
+                                    {result.payload.military_data.exchange_distance_mi && (
+                                      <div>
+                                        <span className="text-gray-600">Exchange:</span>
+                                        <span className="ml-2 font-semibold">{result.payload.military_data.exchange_distance_mi.toFixed(1)} mi</span>
+                                      </div>
+                                    )}
+                                    {result.payload.military_data.va_facility_distance_mi && (
+                                      <div>
+                                        <span className="text-gray-600">VA Facility:</span>
+                                        <span className="ml-2 font-semibold">{result.payload.military_data.va_facility_distance_mi.toFixed(1)} mi</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
