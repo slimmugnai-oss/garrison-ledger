@@ -213,29 +213,30 @@ export default function Header() {
                             </div>
                     </div>
                         </Link>
-                        <Link href="/dashboard/plan" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/plan') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/intel" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/intel') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
-                          <Icon name="Sparkles" className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                          <Icon name="BookOpen" className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/plan') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-indigo-600'}`}>
-                              AI Plan
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/intel') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-indigo-600'}`}>
+                              Intel Library
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Personalized strategy
+                              Live reference data
                             </div>
                           </div>
                     </Link>
-                        <Link href="/dashboard/assessment" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/assessment') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/tdy-voucher" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/tdy-voucher') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
-                          <Icon name="ClipboardCheck" className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <Icon name="File" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/assessment') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-green-600'}`}>
-                              Assessment
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tdy-voucher') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                              TDY Copilot
+                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">New</span>
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Financial intelligence
+                              Travel voucher builder
                             </div>
                           </div>
                     </Link>
@@ -268,14 +269,28 @@ export default function Header() {
                         <Link href="/dashboard/paycheck-audit" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
                           isActivePath('/dashboard/paycheck-audit') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
-                          <Icon name="Shield" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <Icon name="DollarSign" className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/paycheck-audit') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
-                              Paycheck Audit
-                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Beta</span>
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/paycheck-audit') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-green-600'}`}>
+                              LES Auditor
+                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">New</span>
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Verify LES for discrepancies
+                              Catch pay errors
+                            </div>
+                          </div>
+                    </Link>
+                        <Link href="/base-guides" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/base-guides') || isActivePath('/dashboard/navigator') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        }`}>
+                          <Icon name="MapPin" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <div className={`font-semibold text-sm ${isActivePath('/base-guides') || isActivePath('/dashboard/navigator') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                              Base Navigator
+                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">New</span>
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                              Find neighborhoods
                             </div>
                           </div>
                     </Link>
