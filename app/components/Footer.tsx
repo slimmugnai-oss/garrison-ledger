@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-card dark:bg-slate-900 border-t border-border dark:border-slate-700 mt-20 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand with Authority */}
           <div>
             <div className="text-xl font-bold text-text-headings dark:text-white/90 mb-4">
@@ -31,28 +31,60 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Platform */}
+          {/* Premium Tools */}
           <div>
-            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Platform</h3>
+            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Premium Tools</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/dashboard" className="text-text-body dark:text-muted hover:text-primary-accent dark:hover:text-info transition-colors">
-                  Dashboard
+                <Link href="/dashboard/paycheck-audit" className="text-text-body dark:text-muted hover:text-primary-accent dark:hover:text-info transition-colors">
+                  LES Auditor
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/assessment" className="text-text-body hover:text-primary-accent transition-colors">
-                  Assessment
+                <Link href="/dashboard/pcs-copilot" className="text-text-body hover:text-primary-accent transition-colors">
+                  PCS Copilot
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/plan" className="text-text-body hover:text-primary-accent transition-colors">
-                  Your Plan
+                <Link href="/dashboard/navigator" className="text-text-body hover:text-primary-accent transition-colors">
+                  Base Navigator
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/upgrade" className="text-text-body hover:text-primary-accent transition-colors">
-                  Upgrade
+                <Link href="/dashboard/tdy-voucher" className="text-text-body hover:text-primary-accent transition-colors">
+                  TDY Copilot
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard/intel" className="text-text-body hover:text-primary-accent transition-colors">
+                  Intel Library
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Toolkits */}
+          <div>
+            <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Toolkits</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/pcs-hub" className="text-text-body hover:text-primary-accent transition-colors">
+                  PCS Hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/career-hub" className="text-text-body hover:text-primary-accent transition-colors">
+                  Career Hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/deployment" className="text-text-body hover:text-primary-accent transition-colors">
+                  Deployment Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/on-base-shopping" className="text-text-body hover:text-primary-accent transition-colors">
+                  On-Base Shopping
                 </Link>
               </li>
             </ul>
@@ -63,28 +95,23 @@ export default function Footer() {
             <h3 className="font-bold text-text-headings dark:text-white/90 mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/career-hub" className="text-text-body hover:text-primary-accent transition-colors">
-                  Career Hub
+                <Link href="/dashboard/listening-post" className="text-text-body hover:text-primary-accent transition-colors">
+                  Listening Post
                 </Link>
               </li>
               <li>
-                <Link href="/pcs-hub" className="text-text-body hover:text-primary-accent transition-colors">
-                  PCS Hub
+                <Link href="/dashboard/directory" className="text-text-body hover:text-primary-accent transition-colors">
+                  Directory
                 </Link>
               </li>
               <li>
-                <Link href="/base-guides" className="text-text-body hover:text-primary-accent transition-colors">
-                  Base Guides
+                <Link href="/dashboard/referrals" className="text-text-body hover:text-primary-accent transition-colors">
+                  Refer & Earn
                 </Link>
               </li>
               <li>
-                <Link href="/on-base-shopping" className="text-text-body hover:text-primary-accent transition-colors">
-                  On-Base Shopping
-                </Link>
-              </li>
-              <li>
-                <Link href="/deployment" className="text-text-body hover:text-primary-accent transition-colors">
-                  Deployment Guide
+                <Link href="/dashboard/upgrade" className="text-text-body hover:text-primary-accent transition-colors">
+                  Upgrade
                 </Link>
               </li>
             </ul>
