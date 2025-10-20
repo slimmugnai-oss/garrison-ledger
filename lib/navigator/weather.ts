@@ -19,10 +19,10 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) return cached;
 
-  const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
+  const apiKey = process.env.RAPIDAPI_KEY;
 
   if (!apiKey) {
-    console.warn('[Weather] GOOGLE_WEATHER_API_KEY not configured');
+    console.warn('[Weather] ⚠️ RAPIDAPI_KEY not configured - weather data unavailable');
     return {
       index10: 7, // Neutral-positive score
       note: 'Weather data unavailable'
@@ -30,12 +30,12 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   }
 
   try {
-    // Google Weather API
+    // OpenWeatherMap API via RapidAPI
     const response = await fetch(
-      `https://google-weather.p.rapidapi.com/weather?q=${zip}&units=imperial`,
+      `https://community-open-weather-map.p.rapidapi.com/weather?zip=${zip},us&units=imperial`,
       { 
         headers: { 
-          'X-RapidAPI-Host': 'google-weather.p.rapidapi.com',
+          'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
           'X-RapidAPI-Key': apiKey,
           'Accept': 'application/json'
         },
@@ -68,63 +68,40 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
 }
 
 /**
- * Analyze weather data from Google Weather and compute comfort index
+ * Analyze weather data from OpenWeatherMap and compute comfort index
  */
 function analyzeWeatherData(data: any): { index10: number; note: string } {
   
   try {
-    // Google Weather API structure:
-    // { current_condition: [...], weather: [...] }
+    // OpenWeatherMap API structure:
+    // { main: { temp, humidity }, weather: [...] }
     
-    const current = data.current_condition?.[0];
-    const tempF = parseInt(current?.temp_F) || 70;
-    const humidity = parseInt(current?.humidity) || 50;
+    const tempF = data.main?.temp || 70;
+    const humidity = data.main?.humidity || 50;
+    const description = data.weather?.[0]?.description || 'unknown';
     
-    // Get forecast data (if available)
-    const forecast = data.weather || [];
-    
-    // Count extreme days in forecast
-    let hotDays = 0;
-    let coldDays = 0;
-    let precipDays = 0;
-    let summerHiF = tempF;
-    let winterLoF = tempF;
-
-    for (const day of forecast.slice(0, 7)) {
-      const maxTemp = parseInt(day.maxtempF) || tempF;
-      const minTemp = parseInt(day.mintempF) || tempF;
-      const precipMM = parseFloat(day.precipMM) || 0;
-
-      // Track extremes
-      if (maxTemp > summerHiF) summerHiF = maxTemp;
-      if (minTemp < winterLoF) winterLoF = minTemp;
-
-      // Count uncomfortable days
-      if (maxTemp > 90) hotDays++;
-      if (minTemp < 32) coldDays++;
-      if (precipMM > 5) precipDays++;
-    }
-
-    // Compute comfort index (start at 10, subtract penalties)
+    // Compute comfort index based on current conditions
     let index = 10;
     
     // Temperature penalties
-    index -= Math.min(3, hotDays * 0.5);     // -0.5 per hot day (max -3)
-    index -= Math.min(3, coldDays * 0.5);    // -0.5 per cold day (max -3)
-    
-    // Precipitation penalty
-    index -= Math.min(2, precipDays * 0.3);  // -0.3 per rainy day (max -2)
+    if (tempF > 90) index -= 2;
+    else if (tempF > 85) index -= 1;
+    else if (tempF < 32) index -= 2;
+    else if (tempF < 40) index -= 1;
     
     // Humidity penalty (if extreme)
     if (humidity > 80) index -= 1;
     if (humidity < 20) index -= 0.5;
+    
+    // Weather condition penalties
+    if (description.includes('rain') || description.includes('drizzle')) index -= 0.5;
+    if (description.includes('storm') || description.includes('thunder')) index -= 1;
+    if (description.includes('snow')) index -= 1;
 
     // Clamp to 0-10
     index = Math.max(0, Math.min(10, index));
 
-    const note = forecast.length > 0
-      ? `${Math.round(summerHiF)}°F summer highs, ${Math.round(winterLoF)}°F winter lows; ${precipDays} rainy days (7d forecast)`
-      : `Current: ${tempF}°F, ${humidity}% humidity`;
+    const note = `Current: ${Math.round(tempF)}°F, ${humidity}% humidity, ${description}`;
 
     return {
       index10: Math.round(index * 10) / 10,
