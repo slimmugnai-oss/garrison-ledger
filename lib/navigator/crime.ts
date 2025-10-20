@@ -48,10 +48,11 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
     // Step 2: Fetch crime data from FBI Crime Data API
     console.log(`[Crime] Fetching crime data for ZIP ${zip}...`);
     const response = await fetch(
-      `https://api.usa.gov/crime/fbi/sapi/api/nibrs/violent-crime/offense/national/2022/2022?API_KEY=${apiKey}`,
+      `https://api.usa.gov/crime/fbi/sapi/api/nibrs/violent-crime/offense/national/2022/2022`,
       {
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'X-API-Key': apiKey  // api.usa.gov uses X-API-Key header
         }
       }
     );
