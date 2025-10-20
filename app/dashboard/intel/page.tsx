@@ -86,8 +86,8 @@ export default async function IntelLibraryPage({
     // Remove frontmatter
     let cleaned = markdown.replace(/^---[\s\S]*?---\s*/m, '');
     
-    // Find BLUF line if present
-    const blufMatch = cleaned.match(/\*\*BLUF:\*\*\s*(.+?)(?=\n\n|\n#|$)/s);
+    // Find BLUF line if present (use [\s\S] instead of /s flag for compatibility)
+    const blufMatch = cleaned.match(/\*\*BLUF:\*\*\s*([\s\S]+?)(?=\n\n|\n#|$)/);
     if (blufMatch) {
       cleaned = blufMatch[1];
     } else {
