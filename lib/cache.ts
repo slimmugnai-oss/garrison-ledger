@@ -16,7 +16,7 @@ export async function getCache<T>(key: string): Promise<T | null> {
     // Use base_external_data_cache (the table that actually exists)
     const { data, error } = await supabaseAdmin
       .from('base_external_data_cache')
-      .select('data, cached_at')
+      .select('data, created_at') // Column is created_at not cached_at
       .eq('base_id', key) // Column is base_id not key
       .maybeSingle();
 
@@ -65,7 +65,8 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
       .upsert({
         base_id: key, // Use base_id column
         data: wrappedPayload,
-        cached_at: new Date().toISOString()
+        created_at: new Date().toISOString(), // Column is created_at not cached_at
+        updated_at: new Date().toISOString()
       }, {
         onConflict: 'base_id'
       });

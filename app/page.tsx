@@ -67,67 +67,83 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 max-w-7xl mx-auto">
             {/* LES Auditor */}
             <AnimatedCard>
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-8 h-full">
-                <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                  <Icon name="DollarSign" className="w-8 h-8 text-green-600" />
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6 h-full">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="DollarSign" className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">LES Auditor</h3>
-                <p className="text-gray-700 mb-4">
-                  Catch pay errors before you do. Upload your LES, verify BAH/BAS/COLA, detect underpayments.
+                <h3 className="text-xl font-bold text-gray-900 mb-2">LES Auditor</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  Catch pay errors. Verify BAH/BAS/COLA.
                 </p>
-                <div className="text-sm font-semibold text-green-700">
-                  Average recovery: $250+
+                <div className="text-xs font-semibold text-green-700">
+                  Avg recovery: $250+
+                </div>
+              </div>
+            </AnimatedCard>
+
+            {/* PCS Copilot */}
+            <AnimatedCard delay={0.1}>
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-lg p-6 h-full">
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="Truck" className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">PCS Copilot</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  Maximize DITY move profit. Track expenses.
+                </p>
+                <div className="text-xs font-semibold text-orange-700">
+                  Avg profit: $2,000+
                 </div>
               </div>
             </AnimatedCard>
 
             {/* Base Navigator */}
-            <AnimatedCard delay={0.1}>
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-8 h-full">
-                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                  <Icon name="MapPin" className="w-8 h-8 text-blue-600" />
+            <AnimatedCard delay={0.2}>
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6 h-full">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="MapPin" className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Base Navigator</h3>
-                <p className="text-gray-700 mb-4">
-                  Find your perfect neighborhood. Family Fit Score combines schools, rent vs BAH, commute, and weather.
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Base Navigator</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  Find perfect neighborhood. Schools + rent.
                 </p>
-                <div className="text-sm font-semibold text-blue-700">
-                  4 data sources, 1 score
+                <div className="text-xs font-semibold text-blue-700">
+                  4 data sources
                 </div>
               </div>
             </AnimatedCard>
 
             {/* TDY Copilot */}
-            <AnimatedCard delay={0.2}>
-              <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-8 h-full">
-                <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                  <Icon name="File" className="w-8 h-8 text-purple-600" />
+            <AnimatedCard delay={0.3}>
+              <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-6 h-full">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="File" className="w-6 h-6 text-purple-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">TDY Copilot</h3>
-                <p className="text-gray-700 mb-4">
-                  Build travel vouchers in 20 minutes. Auto-parse receipts, validate per-diem, check compliance.
+                <h3 className="text-xl font-bold text-gray-900 mb-2">TDY Copilot</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  Build travel vouchers in 20 min.
                 </p>
-                <div className="text-sm font-semibold text-purple-700">
-                  Saves 2 hours per voucher
+                <div className="text-xs font-semibold text-purple-700">
+                  Saves 2 hours
                 </div>
               </div>
             </AnimatedCard>
 
             {/* Intel Library */}
-            <AnimatedCard delay={0.3}>
-              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-8 h-full">
-                <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
-                  <Icon name="BookOpen" className="w-8 h-8 text-indigo-600" />
+            <AnimatedCard delay={0.4}>
+              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-6 h-full">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="BookOpen" className="w-6 h-6 text-indigo-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Intel Library</h3>
-                <p className="text-gray-700 mb-4">
-                  Reference cards with live data. BAH, BAS, TSP limits auto-update from official sources.
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Intel Library</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  Live BAH/BAS/TSP data. Always current.
                 </p>
-                <div className="text-sm font-semibold text-indigo-700">
-                  Always current, always factual
+                <div className="text-xs font-semibold text-indigo-700">
+                  12 cards, auto-update
                 </div>
               </div>
             </AnimatedCard>
