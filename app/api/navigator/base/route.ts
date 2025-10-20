@@ -30,20 +30,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Rate limiting (10/day per user)
-    const { data: quotaCheck } = await supabaseAdmin
-      .from('api_quota')
-      .select('count')
+    // Check premium status
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
       .eq('user_id', userId)
-      .eq('route', 'navigator_base')
-      .eq('day', new Date().toISOString().split('T')[0])
       .maybeSingle();
 
-    if (quotaCheck && quotaCheck.count >= 10) {
-      return NextResponse.json(
-        { error: 'Daily limit reached (10 base computations/day). Upgrade for more headroom.' },
-        { status: 429 }
-      );
+    const tier = entitlement?.tier || 'free';
+    const isPremium = tier === 'premium' && entitlement?.status === 'active';
+
+    // Rate limiting (Free: 3/day, Premium: Unlimited)
+    if (!isPremium) {
+      const { data: quotaCheck } = await supabaseAdmin
+        .from('api_quota')
+        .select('count')
+        .eq('user_id', userId)
+        .eq('route', 'navigator_base')
+        .eq('day', new Date().toISOString().split('T')[0])
+        .maybeSingle();
+
+      const FREE_DAILY_LIMIT = 3;
+
+      if (quotaCheck && quotaCheck.count >= FREE_DAILY_LIMIT) {
+        return NextResponse.json(
+          { error: `Daily limit reached (${FREE_DAILY_LIMIT} base computations/day for free tier). Upgrade to Premium for unlimited access.` },
+          { status: 429 }
+        );
+      }
     }
 
     // Parse request
@@ -137,17 +151,27 @@ export async function POST(request: NextRequest) {
     // Sort by family_fit_score descending
     results.sort((a, b) => b.family_fit_score - a.family_fit_score);
 
-    // Track usage
-    await supabaseAdmin
-      .from('api_quota')
-      .upsert({
-        user_id: userId,
-        route: 'navigator_base',
-        day: new Date().toISOString().split('T')[0],
-        count: (quotaCheck?.count || 0) + 1
-      }, {
-        onConflict: 'user_id,route,day'
-      });
+    // Track usage (only for free users, premium is unlimited)
+    if (!isPremium) {
+      const { data: quotaCheck } = await supabaseAdmin
+        .from('api_quota')
+        .select('count')
+        .eq('user_id', userId)
+        .eq('route', 'navigator_base')
+        .eq('day', new Date().toISOString().split('T')[0])
+        .maybeSingle();
+
+      await supabaseAdmin
+        .from('api_quota')
+        .upsert({
+          user_id: userId,
+          route: 'navigator_base',
+          day: new Date().toISOString().split('T')[0],
+          count: (quotaCheck?.count || 0) + 1
+        }, {
+          onConflict: 'user_id,route,day'
+        });
+    }
 
     // Analytics
     await supabaseAdmin
