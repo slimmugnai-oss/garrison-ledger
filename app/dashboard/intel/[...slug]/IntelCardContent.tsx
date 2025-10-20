@@ -13,80 +13,7 @@ export default function IntelCardContent({ content }: { content: string }) {
   const [processedContent, setProcessedContent] = useState<string>('');
 
   useEffect(() => {
-    // Configure marked with custom renderer
-    const renderer = new marked.Renderer();
-    
-    // Custom header rendering (updated signature for marked v4+)
-    renderer.heading = ({ tokens, depth }) => {
-      const text = tokens.map(t => t.raw).join('');
-      const classes = {
-        1: 'text-4xl font-bold text-gray-900 mb-6 font-lora border-b-2 border-gray-200 pb-3',
-        2: 'text-3xl font-semibold text-gray-900 mt-10 mb-5 font-lora',
-        3: 'text-2xl font-semibold text-gray-900 mt-8 mb-4 font-lora',
-        4: 'text-xl font-semibold text-gray-900 mt-6 mb-3'
-      };
-      return `<h${depth} class="${classes[depth as keyof typeof classes] || classes[4]}">${text}</h${depth}>`;
-    };
-
-    // Custom table rendering (updated signature)
-    renderer.table = ({ header, rows }) => {
-      return `<table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow-sm my-6"><thead>${header}</thead><tbody>${rows}</tbody></table>`;
-    };
-
-    renderer.tablerow = ({ text }) => {
-      return `<tr>${text}</tr>`;
-    };
-
-    renderer.tablecell = ({ text, header, align }) => {
-      const tag = header ? 'th' : 'td';
-      const classes = header 
-        ? 'px-4 py-3 border-b-2 border-gray-300 text-left font-bold text-gray-900 bg-gray-50'
-        : 'px-4 py-3 border-b border-gray-200 text-gray-700';
-      return `<${tag} class="${classes}">${text}</${tag}>`;
-    };
-
-    // Custom link rendering (updated signature)
-    renderer.link = ({ href, title, tokens }) => {
-      const text = tokens.map(t => t.raw).join('');
-      return `<a href="${href}" class="text-blue-600 hover:text-blue-700 font-semibold underline decoration-2 underline-offset-2 hover:decoration-blue-700 transition-colors" target="_blank" rel="noopener noreferrer">${text} →</a>`;
-    };
-
-    // Custom list rendering (updated signature)
-    renderer.listitem = ({ text }) => {
-      return `<li class="ml-6 mb-2 text-gray-700 leading-relaxed">${text}</li>`;
-    };
-
-    // Custom paragraph rendering (updated signature)
-    renderer.paragraph = ({ tokens }) => {
-      const text = tokens.map(t => t.raw).join('');
-      return `<p class="text-gray-700 leading-relaxed mb-6 text-base">${text}</p>`;
-    };
-
-    // Custom strong rendering (updated signature)
-    renderer.strong = ({ tokens }) => {
-      const text = tokens.map(t => t.raw).join('');
-      return `<strong class="font-bold text-gray-900">${text}</strong>`;
-    };
-
-    // Custom emphasis rendering (updated signature)
-    renderer.em = ({ tokens }) => {
-      const text = tokens.map(t => t.raw).join('');
-      return `<em class="italic text-gray-700">${text}</em>`;
-    };
-
-    // Custom horizontal rule rendering (updated signature)
-    renderer.hr = () => {
-      return '<hr class="border-gray-300 my-8" />';
-    };
-
-    // Set the custom renderer
-    marked.setOptions({
-      renderer: renderer,
-      gfm: true, // GitHub Flavored Markdown
-      breaks: true
-    });
-
-    // Process the markdown
+    // Process the markdown with custom component replacements
     let processed = content
       .replace(/---[\s\S]*?---\s*/, '') // Remove frontmatter
       .replace(/\*\*BLUF:\*\*\s*(.+?)(?=\n\n)/g, 
@@ -100,9 +27,12 @@ export default function IntelCardContent({ content }: { content: string }) {
       .replace(/<AsOf\s+source="([^"]+)"\s*\/?>/g, 
         '<div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium mt-3 border border-gray-300"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>🕒 Last verified: Latest data</div>');
 
-    // Parse with marked (async in newer versions)
+    // Parse with marked.parse() using simple config
     const parseMarkdown = async () => {
-      const result = await marked(processed);
+      const result = await marked.parse(processed, {
+        gfm: true,
+        breaks: true,
+      });
       setProcessedContent(result);
     };
     
@@ -110,7 +40,69 @@ export default function IntelCardContent({ content }: { content: string }) {
   }, [content]);
 
   return (
-    <article className="prose prose-lg max-w-none bg-white rounded-xl p-8 shadow-sm border border-gray-200">
+    <article className="max-w-none bg-white rounded-xl p-8 shadow-sm border border-gray-200">
+      <style jsx>{`
+        .mdx-content :global(h1) {
+          @apply text-4xl font-bold text-gray-900 mb-6 font-lora border-b-2 border-gray-200 pb-3;
+        }
+        .mdx-content :global(h2) {
+          @apply text-3xl font-semibold text-gray-900 mt-10 mb-5 font-lora;
+        }
+        .mdx-content :global(h3) {
+          @apply text-2xl font-semibold text-gray-900 mt-8 mb-4 font-lora;
+        }
+        .mdx-content :global(h4) {
+          @apply text-xl font-semibold text-gray-900 mt-6 mb-3;
+        }
+        .mdx-content :global(p) {
+          @apply text-gray-700 leading-relaxed mb-6 text-base;
+        }
+        .mdx-content :global(strong) {
+          @apply font-bold text-gray-900;
+        }
+        .mdx-content :global(em) {
+          @apply italic text-gray-700;
+        }
+        .mdx-content :global(ul), .mdx-content :global(ol) {
+          @apply mb-6 space-y-2;
+        }
+        .mdx-content :global(li) {
+          @apply ml-6 text-gray-700 leading-relaxed;
+        }
+        .mdx-content :global(ul li) {
+          @apply list-disc;
+        }
+        .mdx-content :global(ol li) {
+          @apply list-decimal;
+        }
+        .mdx-content :global(a) {
+          @apply text-blue-600 hover:text-blue-700 font-semibold underline decoration-2 underline-offset-2 hover:decoration-blue-700 transition-colors;
+        }
+        .mdx-content :global(table) {
+          @apply w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow-sm my-6;
+        }
+        .mdx-content :global(thead) {
+          @apply bg-gray-50;
+        }
+        .mdx-content :global(th) {
+          @apply px-4 py-3 border-b-2 border-gray-300 text-left font-bold text-gray-900;
+        }
+        .mdx-content :global(td) {
+          @apply px-4 py-3 border-b border-gray-200 text-gray-700;
+        }
+        .mdx-content :global(hr) {
+          @apply border-gray-300 my-8;
+        }
+        .mdx-content :global(code) {
+          @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800;
+        }
+        .mdx-content :global(pre) {
+          @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6;
+        }
+        .mdx-content :global(blockquote) {
+          @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-6;
+        }
+      `}</style>
       <div
         className="mdx-content"
         dangerouslySetInnerHTML={{ __html: processedContent }}
