@@ -145,28 +145,61 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
               </div>
             </div>
 
-            {/* Content (simplified HTML view for v1) */}
+            {/* Content (markdown to HTML conversion) */}
             <article className="prose prose-lg max-w-none bg-white rounded-lg p-8">
-              <div 
-                className="mdx-content"
-                dangerouslySetInnerHTML={{ 
-                  __html: card.content
-                    .replace(/---[\s\S]*?---/, '') // Remove frontmatter
-                    .replace(/```[\s\S]*?```/g, '<pre class="bg-gray-900 text-white p-4 rounded">$&</pre>') // Style code blocks
-                    .replace(/^# (.+)$/gm, '<h1 class="text-4xl font-bold mb-6">$1</h1>') // H1
-                    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-semibold mt-8 mb-4">$1</h2>') // H2
-                    .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold mt-6 mb-3">$1</h3>') // H3
-                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // Bold
-                    .replace(/\*(.+?)\*/g, '<em>$1</em>') // Italic
-                    .replace(/<DataRef[^>]*>/g, '<span class="font-semibold text-blue-600">[Live Data]</span>') // Placeholder for DataRef
-                    .replace(/<RateBadge[^>]*>/g, '<div class="inline-block bg-blue-100 text-blue-900 px-4 py-2 rounded">[Rate Badge]</div>') // Placeholder
-                    .replace(/<Disclaimer[^>]*\/>/g, '<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4"><strong>Disclaimer:</strong> Educational information only.</div>') // Disclaimer
-                    .replace(/<AsOf[^>]*\/>/g, '<span class="text-sm text-gray-600">(As of latest data)</span>') // AsOf
-                }}
-              />
+              <div className="mdx-content space-y-4">
+                {card.content
+                  .replace(/---[\s\S]*?---\s*/, '') // Remove frontmatter
+                  .split('\n\n') // Split by paragraphs
+                  .map((block, i) => {
+                    // Headers
+                    if (block.startsWith('# ')) {
+                      return <h1 key={i} className="text-4xl font-bold text-gray-900 mb-6 font-lora">{block.substring(2)}</h1>;
+                    }
+                    if (block.startsWith('## ')) {
+                      return <h2 key={i} className="text-2xl font-semibold text-gray-900 mt-8 mb-4 font-lora">{block.substring(3)}</h2>;
+                    }
+                    if (block.startsWith('### ')) {
+                      return <h3 key={i} className="text-xl font-semibold text-gray-900 mt-6 mb-3 font-lora">{block.substring(4)}</h3>;
+                    }
+                    
+                    // Special components (show placeholders)
+                    if (block.includes('<Disclaimer')) {
+                      return (
+                        <div key={i} className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4">
+                          <p className="text-sm text-blue-800"><strong>Disclaimer:</strong> Educational information only - not financial advice.</p>
+                        </div>
+                      );
+                    }
+                    
+                    // BLUF (special formatting)
+                    if (block.startsWith('**BLUF:**')) {
+                      const text = block.replace(/\*\*BLUF:\*\*\s*/, '');
+                      return (
+                        <div key={i} className="bg-blue-50 border-l-4 border-blue-600 p-4 my-4">
+                          <p className="text-sm font-semibold text-blue-900 mb-1">BOTTOM LINE UP FRONT:</p>
+                          <p className="text-gray-800">{text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>
+                        </div>
+                      );
+                    }
+                    
+                    // Regular paragraphs (process bold/italic)
+                    const processedText = block
+                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                      .replace(/<DataRef[^>]*>/g, '<span class="font-semibold text-blue-600">[Live Data]</span>')
+                      .replace(/<AsOf[^>]*\/>/g, '<span class="text-sm text-gray-600">(As of latest data)</span>');
+                    
+                    return (
+                      <div key={i} className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: processedText }} />
+                    );
+                  })
+                }
+              </div>
+              
               <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
                 <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> This is a simplified view. Dynamic data components (<code>&lt;DataRef&gt;</code>, <code>&lt;RateBadge&gt;</code>) will be fully functional in v1.1.
+                  <strong>Note:</strong> Simplified view for v1. Full MDX rendering with live data coming in v1.1.
                 </p>
               </div>
             </article>
