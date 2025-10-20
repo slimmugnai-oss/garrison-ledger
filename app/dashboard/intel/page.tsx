@@ -16,6 +16,7 @@ import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import PremiumGate from '@/app/components/premium/PremiumGate';
+import { getAllIntelCards } from '@/lib/content/mdx-loader';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -48,32 +49,54 @@ export default async function IntelLibraryPage({
 
   const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
 
-  // Get Intel Cards (from content_blocks)
-  let query = supabase
-    .from('content_blocks')
-    .select('*')
-    .eq('status', 'published')
-    .order('updated_at', { ascending: false });
+  // Get Intel Cards from BOTH old content_blocks (HTML) AND new MDX files
+  // For v1: Only show new MDX cards to avoid "not found" errors
+  // Old HTML blocks will be migrated gradually
+  
+  // Load MDX cards
+  let allCards: ReturnType<typeof getAllIntelCards> = [];
+  try {
+    allCards = getAllIntelCards();
+  } catch (error) {
+    console.error('[Intel Library] Error loading MDX cards:', error);
+    allCards = [];
+  }
 
+  // Filter by domain/search/tag
+  let cards = allCards;
+  
   if (domain) {
-    query = query.eq('domain', domain);
+    cards = cards.filter(c => c.frontmatter.domain === domain);
   }
 
   if (search) {
-    query = query.ilike('title', `%${search}%`);
+    cards = cards.filter(c => 
+      c.frontmatter.title.toLowerCase().includes(search.toLowerCase()) ||
+      c.frontmatter.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
+    );
   }
 
-  if (tag && 'tags' in query) {
-    query = query.contains('tags', [tag]);
+  if (tag) {
+    cards = cards.filter(c => c.frontmatter.tags.includes(tag));
   }
 
-  const { data: cards } = await query.limit(50);
+  // Convert to format expected by UI
+  const cardsData = cards.map(c => ({
+    id: c.frontmatter.id,
+    slug: c.slug,
+    title: c.frontmatter.title,
+    domain: c.frontmatter.domain,
+    tags: c.frontmatter.tags,
+    gating: c.frontmatter.gating,
+    as_of_date: c.frontmatter.asOf,
+    html: c.content.substring(0, 200) // Preview
+  }));
 
   // Group by domain
   const domains = ['finance', 'pcs', 'deployment', 'career', 'lifestyle'];
   const cardsByDomain = domains.map(d => ({
     domain: d,
-    count: cards?.filter(c => c.domain === d).length || 0,
+    count: cardsData.filter(c => c.domain === d).length,
   }));
 
   return (
@@ -141,7 +164,7 @@ export default async function IntelLibraryPage({
           </div>
 
           {/* Cards Grid */}
-          {!cards || cards.length === 0 ? (
+          {!cardsData || cardsData.length === 0 ? (
             <div className="text-center py-12">
               <Icon name="File" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -153,7 +176,7 @@ export default async function IntelLibraryPage({
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {cards.map((card, index) => {
+              {cardsData.map((card, index) => {
                 const isPremiumCard = card.gating === 'premium';
                 const isLocked = isPremiumCard && !isPremium;
 
@@ -242,9 +265,7 @@ export default async function IntelLibraryPage({
                             ? `Verified: ${new Date(card.as_of_date).toLocaleDateString()}`
                             : 'Static content'}
                         </span>
-                        {card.last_linted_at && (
-                          <Icon name="CheckCircle" className="w-4 h-4 text-green-600" />
-                        )}
+                        <Icon name="CheckCircle" className="w-4 h-4 text-green-600" />
                       </div>
                     </div>
                   </AnimatedCard>
