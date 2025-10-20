@@ -39,7 +39,6 @@ export default function ContentReviewPage() {
         setPendingItems(data.items || []);
       }
     } catch (error) {
-      console.error('Failed to load pending items:', error);
     } finally {
       setLoading(false);
     }
@@ -60,7 +59,6 @@ export default function ContentReviewPage() {
         loadPendingItems(); // Refresh list
       }
     } catch (error) {
-      console.error('Triage failed:', error);
       alert('Failed to triage item');
     } finally {
       setTriaging(null);
@@ -105,7 +103,6 @@ export default function ContentReviewPage() {
         loadPendingItems(); // Refresh list
       }
     } catch (error) {
-      console.error('Conversion failed:', error);
       alert('Failed to convert item');
     } finally {
       setConverting(null);
@@ -125,7 +122,6 @@ export default function ContentReviewPage() {
       });
       loadPendingItems();
     } catch (error) {
-      console.error('Rejection failed:', error);
     }
   };
 

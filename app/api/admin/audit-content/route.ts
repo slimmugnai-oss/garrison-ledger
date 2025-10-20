@@ -24,7 +24,6 @@ const RED_FLAGS = {
 
 export async function GET(req: NextRequest) {
   try {
-    console.log('[Content Audit] Starting audit...');
     
     // Load all content blocks
     const { data: blocks, error } = await supabaseAdmin
@@ -33,11 +32,9 @@ export async function GET(req: NextRequest) {
       .order('content_rating', { ascending: false });
     
     if (error) {
-      console.error('[Content Audit] Error loading blocks:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     
-    console.log(`[Content Audit] Loaded ${blocks.length} content blocks`);
     
     const results = {
       auditDate: new Date().toISOString(),
@@ -250,13 +247,10 @@ export async function GET(req: NextRequest) {
       });
     }
     
-    console.log('[Content Audit] Complete');
-    console.log(`[Content Audit] Flagged ${results.flagged.length} of ${results.total} blocks (${Math.round(results.flagged.length / results.total * 100)}%)`);
     
     return NextResponse.json(results);
     
   } catch (error) {
-    console.error('[Content Audit] Error:', error);
     return NextResponse.json({ 
       error: "Audit failed",
       details: error instanceof Error ? error.message : 'Unknown error'

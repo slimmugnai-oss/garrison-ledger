@@ -27,7 +27,6 @@ export default function UpcomingExpirations() {
           setIsPremium(data.isPremium);
         }
       } catch (error) {
-        console.error("Error loading reminders:", error);
       } finally {
         setLoading(false);
       }

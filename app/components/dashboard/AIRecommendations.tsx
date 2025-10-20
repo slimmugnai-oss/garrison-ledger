@@ -40,7 +40,6 @@ export default function AIRecommendations() {
       setRecommendations(data.recommendations || []);
       setInsights(data.insights);
     } catch (error) {
-      console.error('Error fetching recommendations:', error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +57,6 @@ export default function AIRecommendations() {
         body: JSON.stringify({ is_dismissed: true })
       });
     } catch (error) {
-      console.error('Error dismissing recommendation:', error);
     }
   };
 

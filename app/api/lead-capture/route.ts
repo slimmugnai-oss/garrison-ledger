@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
         });
       }
       
-      console.error('[Lead Capture] Insert error:', insertError);
       return NextResponse.json({ error: "Failed to capture lead" }, { status: 500 });
     }
 
@@ -102,7 +101,6 @@ export async function POST(req: NextRequest) {
           }),
         });
       } catch (emailError) {
-        console.error('[Lead Capture] Email error:', emailError);
         // Don't fail the request if email fails
       }
     }
@@ -113,7 +111,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Lead Capture] Error:', error);
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }

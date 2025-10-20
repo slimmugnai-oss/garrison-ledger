@@ -136,15 +136,9 @@ export default async function ToolsPage() {
           <AnimatedCard className="mt-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-12 text-white text-center shadow-2xl" delay={200}>
             <h2 className="text-3xl font-bold mb-4">Need Help Choosing?</h2>
             <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-              Our AI-powered assessment can recommend the best tools for your specific situation and goals.
+              Browse our comprehensive library of financial tools and resources tailored for military families.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/dashboard/assessment"
-                className="px-8 py-4 bg-white text-slate-800 rounded-xl font-bold hover:shadow-xl transition-all hover:-translate-y-0.5"
-              >
-                Take Assessment
-              </Link>
               <Link 
                 href="/dashboard/library?search=financial+tools"
                 className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-semibold hover:bg-white/10 transition-all"

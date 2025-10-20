@@ -37,7 +37,6 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
-    console.error('[Analytics] Failed to record event:', error);
   }
 }
 
@@ -114,7 +113,6 @@ export async function POST(req: NextRequest) {
       .eq('upload_id', uploadId);
 
     if (linesError) {
-      console.error('[LES Audit] Lines fetch error:', linesError);
       return NextResponse.json(
         { error: 'Failed to load parsed lines' },
         { status: 500 }
@@ -177,7 +175,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (snapshotError) {
-      console.error('[LES Audit] Snapshot insert error:', snapshotError);
       // Continue anyway - not critical
     }
 
@@ -203,7 +200,6 @@ export async function POST(req: NextRequest) {
         .insert(flagRows);
 
       if (flagsError) {
-        console.error('[LES Audit] Flags insert error:', flagsError);
         // Continue anyway - flags are in response
       }
     }
@@ -230,7 +226,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[LES Audit] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -257,7 +252,6 @@ async function getUserProfile(userId: string): Promise<{
       .maybeSingle();
 
     if (error || !data) {
-      console.warn('[LES Audit] Profile not found for user:', userId);
       return null;
     }
 
@@ -269,7 +263,6 @@ async function getUserProfile(userId: string): Promise<{
       yos: data.years_of_service
     };
   } catch (error) {
-    console.error('[LES Audit] Profile fetch error:', error);
     return null;
   }
 }

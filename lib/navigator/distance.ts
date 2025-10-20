@@ -23,7 +23,6 @@ export async function commuteMinutesFromZipToGate(args: {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
-    console.warn('[Distance] Google Maps API key not configured');
     return { am: null, pm: null };
   }
 
@@ -53,7 +52,6 @@ export async function commuteMinutesFromZipToGate(args: {
     return result;
 
   } catch (error) {
-    console.error('[Distance] Commute calculation error:', error);
     return { am: null, pm: null };
   }
 }
@@ -79,21 +77,18 @@ async function callDistanceMatrix(args: {
     const response = await fetch(url.toString());
     
     if (!response.ok) {
-      console.error('[Distance Matrix] HTTP error:', response.status);
       return null;
     }
 
     const data = await response.json();
 
     if (data.status !== 'OK' || !data.rows?.[0]?.elements?.[0]) {
-      console.error('[Distance Matrix] API error:', data.status);
       return null;
     }
 
     const element = data.rows[0].elements[0];
 
     if (element.status !== 'OK' || !element.duration_in_traffic) {
-      console.error('[Distance Matrix] No duration data:', element.status);
       return null;
     }
 
@@ -104,7 +99,6 @@ async function callDistanceMatrix(args: {
     return minutes;
 
   } catch (error) {
-    console.error('[Distance Matrix] Call error:', error);
     return null;
   }
 }

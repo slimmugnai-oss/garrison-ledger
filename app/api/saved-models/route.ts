@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
     });
 
   if (error) {
-    console.error('Error saving model:', error);
     return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 

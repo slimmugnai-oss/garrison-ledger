@@ -48,7 +48,6 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
     setLoading(true);
     setError(null);
 
-    console.log('[Navigator] Computing rankings with filters:', {
       bedrooms,
       bahMonthlyCents,
       kidsGrades
@@ -89,7 +88,6 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
       const newGrades = prev.includes(grade)
         ? prev.filter(g => g !== grade)
         : [...prev, grade];
-      console.log('Kids grades updated:', newGrades);
       return newGrades;
     });
   };
@@ -123,7 +121,6 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
         })
       });
     } catch (err) {
-      console.error('Failed to save watchlist:', err);
     }
   };
 

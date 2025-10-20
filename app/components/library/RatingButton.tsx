@@ -22,7 +22,6 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
         setUserRating(data.rating.rating);
       }
     } catch (error) {
-      console.error('Error fetching user rating:', error);
     }
   };
 
@@ -52,7 +51,6 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
         onRatingChange?.(rating);
       }
     } catch (error) {
-      console.error('Error submitting rating:', error);
       alert('Failed to submit rating');
     } finally {
       setIsLoading(false);

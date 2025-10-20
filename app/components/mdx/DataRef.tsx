@@ -69,7 +69,6 @@ export default async function DataRef(props: DataRefProps) {
     );
 
   } catch (error) {
-    console.error('[DataRef] Error:', error);
     return (
       <span className="inline-flex items-center gap-1.5 text-red-600 bg-red-50 px-2 py-0.5 rounded text-sm">
         <Icon name="AlertCircle" className="w-3.5 h-3.5" />

@@ -42,7 +42,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('[AI Explainer Quota Check] Error:', error);
     return NextResponse.json({ 
       canUse: true,  // Fail open
       error: 'Failed to check quota'

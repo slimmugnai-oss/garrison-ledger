@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (dbError) {
-      console.error('Database error:', dbError);
       return NextResponse.json(
         { error: 'Failed to submit contact form' },
         { status: 500 }
@@ -120,7 +119,6 @@ View in Supabase: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/editor 
       }
     } catch (emailError) {
       // Log but don't fail the request if email fails
-      console.error('Failed to send email notification:', emailError);
     }
 
     return NextResponse.json({
@@ -129,7 +127,6 @@ View in Supabase: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/editor 
       message: 'Message sent successfully',
     });
   } catch (error) {
-    console.error('Contact API error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

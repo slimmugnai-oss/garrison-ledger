@@ -57,7 +57,6 @@ const fetchComparisonData = async (baseIds: string[]): Promise<BaseComparisonDat
     const data = await response.json();
     return data.bases || [];
   } catch (error) {
-    console.error('Error fetching comparison data:', error);
     return [];
   }
 };

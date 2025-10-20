@@ -38,7 +38,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       // Add bookmark activities
       if (bookmarks.bookmarks) {
-        bookmarks.bookmarks.slice(0, 3).forEach((b: any) => {
+        bookmarks.bookmarks.slice(0, 3).forEach((b: { id: string; content_block?: { title?: string }; created_at: string; content_id: string }) => {
           recentActivities.push({
             id: b.id,
             type: 'bookmark',
@@ -51,7 +51,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       // Add scenario activities
       if (scenarios.scenarios) {
-        scenarios.scenarios.slice(0, 3).forEach((s: any) => {
+        scenarios.scenarios.slice(0, 3).forEach((s: { id: string; scenario_name: string; created_at: string; calculator_type: string }) => {
           recentActivities.push({
             id: s.id,
             type: 'scenario',
@@ -69,7 +69,6 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       setActivities(recentActivities.slice(0, 5));
     } catch (error) {
-      console.error('Error fetching activities:', error);
     } finally {
       setLoading(false);
     }
@@ -164,7 +163,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
           return (
             <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className={`w-10 h-10 ${iconConfig.color} rounded-full flex items-center justify-center flex-shrink-0`}>
-                <Icon name={iconConfig.icon as any} className="h-5 w-5" />
+                <Icon name={iconConfig.icon} className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm text-gray-900">

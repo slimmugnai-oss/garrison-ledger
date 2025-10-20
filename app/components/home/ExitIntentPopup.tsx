@@ -64,7 +64,6 @@ export default function ExitIntentPopup() {
         setIsVisible(false);
       }, 3000);
     } catch (error) {
-      console.error('Lead capture error:', error);
     } finally {
       setIsSubmitting(false);
     }

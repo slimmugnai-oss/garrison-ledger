@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating shared calculation:', error);
       return NextResponse.json(
         { error: "Failed to create share link" },
         { status: 500 }
@@ -52,7 +51,6 @@ export async function POST(req: NextRequest) {
       url: shareUrl
     });
   } catch (error) {
-    console.error('Error in share-calculation:', error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -104,7 +102,6 @@ export async function GET(req: NextRequest) {
       viewCount: sharedCalc.view_count + 1
     });
   } catch (error) {
-    console.error('Error fetching shared calculation:', error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

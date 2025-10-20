@@ -30,7 +30,6 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      console.error('Error searching content:', error);
       return NextResponse.json(
         { error: 'Failed to search content' },
         { status: 500 }
@@ -46,7 +45,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Content search error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -80,7 +80,6 @@ export async function POST(request: NextRequest) {
     const results: NeighborhoodCard[] = [];
 
     for (const zip of base.candidateZips) {
-      console.log(`[Navigator] Processing ZIP ${zip}...`);
 
       // Fetch data in parallel
       const [schoolsData, medianRent, sampleListings, commute, weather, crimeData, amenitiesData, militaryData] = await Promise.all([
@@ -106,12 +105,10 @@ export async function POST(request: NextRequest) {
       };
 
       // Compute school score
-      console.log(`[Navigator] Computing school score for ZIP ${zip} with grades:`, kidsGrades);
       const { score10: schoolScore10, top: topSchools } = computeChildWeightedSchoolScore(
         schoolsData,
         kidsGrades as KidsGrade[]
       );
-      console.log(`[Navigator] ZIP ${zip} school score: ${schoolScore10}/10 (${topSchools.length} schools)`);
 
       // Compute family fit score
       const scoreResult = familyFitScore100({
@@ -250,7 +247,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    console.error('[Navigator Base] Error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',

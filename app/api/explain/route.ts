@@ -191,7 +191,6 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
     });
 
   } catch (error) {
-    console.error('[Explain] Gemini error:', error);
     
     // Fallback to deterministic if AI fails
     const fallback = generateFallbackExplanation(tool, inputs, outputs);

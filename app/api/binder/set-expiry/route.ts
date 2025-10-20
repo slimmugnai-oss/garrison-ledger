@@ -49,7 +49,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) {
-    console.error("Error updating expiry:", error);
     return NextResponse.json(
       { error: "Failed to update expiry date" },
       { status: 500 }

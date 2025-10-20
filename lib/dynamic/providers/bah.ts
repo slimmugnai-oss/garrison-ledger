@@ -40,7 +40,6 @@ export async function getBAHRate(params: BAHParams): Promise<ProviderResult> {
       .maybeSingle();
 
     if (error) {
-      console.error('[BAH Provider] Query error:', error);
       return {
         data: null,
         error: `Database error: ${error.message}`,
@@ -49,7 +48,6 @@ export async function getBAHRate(params: BAHParams): Promise<ProviderResult> {
     }
 
     if (!data) {
-      console.warn(`[BAH Provider] No rate found for ${paygrade} at ${mha} (deps: ${withDependents})`);
       return {
         data: null,
         error: `No BAH rate found for ${paygrade} at ${mha}`,
@@ -74,7 +72,6 @@ export async function getBAHRate(params: BAHParams): Promise<ProviderResult> {
     };
 
   } catch (error) {
-    console.error('[BAH Provider] Unexpected error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -136,7 +133,6 @@ export async function getBAHRatesByLocation(params: {
     }));
 
   } catch (error) {
-    console.error('[BAH Provider] getBAHRatesByLocation error:', error);
     return [];
   }
 }

@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (dbError) {
-      console.error('Error storing email:', dbError);
       // Continue anyway - don't fail the request
     }
 
@@ -44,7 +43,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Lead magnet error:', error);
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }

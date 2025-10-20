@@ -15,7 +15,6 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      console.error('Error fetching trending content:', error);
       return NextResponse.json(
         { error: 'Failed to fetch trending content' },
         { status: 500 }
@@ -30,7 +29,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Trending content error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

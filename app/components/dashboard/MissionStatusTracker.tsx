@@ -59,22 +59,22 @@ export default function MissionStatusTracker({
                 description: 'Set up your military profile'
               },
               {
-                id: 'assessment',
-                title: 'Take Assessment',
-                completed: hasAssessment,
-                progress: hasAssessment ? 100 : 0,
-                link: '/dashboard/assessment',
-                icon: 'ClipboardCheck',
-                description: '5-minute financial assessment'
+                id: 'tools',
+                title: 'Use Calculators',
+                completed: true,
+                progress: 100,
+                link: '/dashboard/tools',
+                icon: 'Calculator',
+                description: 'Financial planning tools'
               },
               {
-                id: 'plan',
-                title: 'Generate AI Plan',
-                completed: hasPlan,
-                progress: hasPlan ? 100 : 0,
-                link: '/dashboard/plan',
-                icon: 'Sparkles',
-                description: 'Get personalized guidance'
+                id: 'intel',
+                title: 'Browse Intel',
+                completed: true,
+                progress: 100,
+                link: '/dashboard/intel',
+                icon: 'BookOpen',
+                description: 'Live financial data'
               },
               {
                 id: 'calculator',

@@ -35,7 +35,6 @@ const Icon: FC<IconProps> = ({
   
   if (!IconComponent) {
     // This should never happen due to TypeScript, but defensive programming
-    console.error(`Icon "${name}" not found in registry`);
     return null;
   }
   

@@ -4,6 +4,7 @@
  * Shows relevant Intel Cards in sidebar
  */
 
+import Link from 'next/link';
 import IntelCardEmbed from '../mdx/IntelCardEmbed';
 
 interface IntelCardSidebarProps {
@@ -29,12 +30,12 @@ export default async function IntelCardSidebar({ baseName, mha }: IntelCardSideb
         <IntelCardEmbed key={card.slug} slug={card.slug} compact />
       ))}
 
-      <a
+      <Link
         href="/dashboard/intel?domain=pcs"
         className="block text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm"
       >
         View All PCS Intel →
-      </a>
+      </Link>
     </div>
   );
 }

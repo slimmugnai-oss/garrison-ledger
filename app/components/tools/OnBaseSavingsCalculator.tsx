@@ -47,7 +47,6 @@ export default function OnBaseSavingsCalculator() {
             setSalesTaxRate(data.input.salesTaxRate || 7);
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -103,7 +102,7 @@ export default function OnBaseSavingsCalculator() {
               starCardSavings
             }
           })
-        }).catch(console.error);
+        });
       }, 2000);
       saveTimeoutRef.current = timeout;
     }

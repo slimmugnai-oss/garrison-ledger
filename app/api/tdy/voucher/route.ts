@@ -123,7 +123,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ voucher });
 
   } catch (error) {
-    console.error('[TDY Voucher] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

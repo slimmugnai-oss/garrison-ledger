@@ -46,12 +46,6 @@ export default function QuickActions({ isPremium = false }: QuickActionsProps) {
       label: 'Upload Doc',
       action: () => router.push('/dashboard/binder'),
       color: 'bg-green-500/20 hover:bg-green-500/30 text-green-100'
-    },
-    {
-      icon: 'RefreshCw',
-      label: 'Update Plan',
-      action: () => router.push('/dashboard/assessment'),
-      color: 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-100'
     }
   ];
 
@@ -70,7 +64,7 @@ export default function QuickActions({ isPremium = false }: QuickActionsProps) {
                 onClick={action.action}
                 className={`${action.color} px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 flex items-center gap-2`}
               >
-                <Icon name={action.icon as any} className="h-4 w-4" />
+                <Icon name={action.icon} className="h-4 w-4" />
                 <span className="hidden md:inline">{action.label}</span>
               </button>
             ))}

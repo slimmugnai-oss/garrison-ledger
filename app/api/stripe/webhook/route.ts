@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
-    console.error('Webhook signature verification failed:', err);
     return new Response('Webhook signature verification failed', { status: 400 });
   }
 
@@ -24,7 +23,6 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed':
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log('Payment successful:', session.id);
       
       // Update entitlements for the user
       if (session.metadata?.userId) {
@@ -62,7 +60,6 @@ export async function POST(req: NextRequest) {
             updated_at: new Date().toISOString()
           });
         
-        console.log(`Updated entitlements for user ${userId} to ${tier} tier`);
         
         // 🎯 PROCESS REFERRAL CONVERSION (Give $10 rewards to both users)
         try {
@@ -72,13 +69,10 @@ export async function POST(req: NextRequest) {
             });
           
           if (conversionResult) {
-            console.log('✅ Referral rewards processed for user:', userId);
             // TODO: Send email notifications to both users about their $10 credit
           } else {
-            console.log('ℹ️ No pending referral found for user:', userId);
           }
         } catch (refError) {
-          console.error('⚠️ Referral conversion error (non-critical):', refError);
           // Don't fail the webhook if referral processing fails
         }
       }
@@ -87,17 +81,14 @@ export async function POST(req: NextRequest) {
     
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log('Payment intent succeeded:', paymentIntent.id);
       break;
     
     case 'invoice.payment_succeeded':
       const invoice = event.data.object as Stripe.Invoice;
-      console.log('Invoice payment succeeded:', invoice.id);
       break;
     
     case 'customer.subscription.deleted':
       const subscription = event.data.object as Stripe.Subscription;
-      console.log('Subscription cancelled:', subscription.id);
       
       // Revoke premium access
       await supabaseAdmin
@@ -108,12 +99,10 @@ export async function POST(req: NextRequest) {
         })
         .eq('stripe_subscription_id', subscription.id);
       
-      console.log('Revoked premium access for subscription:', subscription.id);
       
       break;
     
     default:
-      console.log(`Unhandled event type: ${event.type}`);
   }
 
   return NextResponse.json({ received: true });

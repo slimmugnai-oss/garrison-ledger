@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching collaboration data:', error);
     return NextResponse.json(
       { error: 'Failed to fetch collaboration data' },
       { status: 500 }
@@ -94,7 +93,6 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error) {
-        console.error('Error creating invitation:', error);
         return NextResponse.json({ error: 'Failed to create invitation' }, { status: 500 });
       }
 
@@ -137,7 +135,6 @@ export async function POST(request: NextRequest) {
         .eq('id', connection.id);
 
       if (updateError) {
-        console.error('Error updating connection:', updateError);
         return NextResponse.json({ error: 'Failed to connect' }, { status: 500 });
       }
 
@@ -162,7 +159,6 @@ export async function POST(request: NextRequest) {
         });
 
       if (error) {
-        console.error('Error sharing calculator:', error);
         return NextResponse.json({ error: 'Failed to share' }, { status: 500 });
       }
 
@@ -172,7 +168,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
   } catch (error) {
-    console.error('Error in collaboration POST:', error);
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }
@@ -197,14 +192,12 @@ export async function DELETE(request: NextRequest) {
       .eq('status', 'active');
 
     if (error) {
-      console.error('Error disconnecting:', error);
       return NextResponse.json({ error: 'Failed to disconnect' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error in collaboration DELETE:', error);
     return NextResponse.json(
       { error: 'Failed to disconnect' },
       { status: 500 }

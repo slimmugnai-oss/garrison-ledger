@@ -114,7 +114,6 @@ export default function IntelAnalyticsDashboard() {
         }
       });
     } catch (error) {
-      console.error('Failed to fetch analytics:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);

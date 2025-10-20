@@ -19,7 +19,6 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
           setIsPremium(data.isPremium);
         }
       } catch (err) {
-        console.error('Failed to check premium status:', err);
       }
     }
     checkPremium();
@@ -70,7 +69,6 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
       }
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error streaming explanation:', error);
       }
     } finally {
       setLoading(false);

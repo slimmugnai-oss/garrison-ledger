@@ -122,7 +122,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[PCS Package] Error:', error);
     return NextResponse.json({ 
       error: 'Package generation failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 

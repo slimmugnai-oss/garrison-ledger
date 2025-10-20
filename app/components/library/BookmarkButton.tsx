@@ -25,7 +25,6 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
         setIsBookmarked(isCurrentlyBookmarked || false);
       }
     } catch (error) {
-      console.error('Error checking bookmark status:', error);
       setIsBookmarked(false);
     }
   };
@@ -60,7 +59,6 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
         }
       }
     } catch (error) {
-      console.error('Error toggling bookmark:', error);
       alert('Failed to update bookmark');
     } finally {
       setIsLoading(false);

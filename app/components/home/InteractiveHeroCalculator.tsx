@@ -17,7 +17,7 @@ export default function InteractiveHeroCalculator() {
   const calculateSavings = () => {
     let tspSavings = 0;
     let pcsSavings = 0;
-    let shoppingSavings = 447; // Base commissary savings
+    const shoppingSavings = 447; // Base commissary savings
 
     // TSP Savings based on rank and optimization status (only for service members)
     if (!hasOptimizedTSP && !rank.includes('Military Spouse')) {

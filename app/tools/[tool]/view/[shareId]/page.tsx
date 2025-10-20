@@ -26,7 +26,6 @@ async function getSharedCalculation(shareId: string) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching shared calculation:', error);
     return null;
   }
 }

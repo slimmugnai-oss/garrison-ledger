@@ -46,7 +46,6 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setItems(items || []);
       }
     } catch (error) {
-      console.error('Failed to load data:', error);
     }
   };
 
@@ -71,7 +70,6 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setStep(3);
       }
     } catch (error) {
-      console.error('Estimate failed:', error);
     } finally {
       setLoading(false);
     }
@@ -94,7 +92,6 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setStep(4);
       }
     } catch (error) {
-      console.error('Check failed:', error);
     } finally {
       setLoading(false);
     }

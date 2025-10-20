@@ -43,7 +43,6 @@ export async function GET(req: NextRequest) {
     .order("expires_on", { ascending: true });
 
   if (error) {
-    console.error("Error fetching reminders:", error);
     return NextResponse.json(
       { error: "Failed to fetch reminders" },
       { status: 500 }

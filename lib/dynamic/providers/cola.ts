@@ -61,7 +61,6 @@ export async function getCOLARate(params: COLAParams): Promise<ProviderResult> {
     };
 
   } catch (error) {
-    console.error('[COLA Provider] Error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

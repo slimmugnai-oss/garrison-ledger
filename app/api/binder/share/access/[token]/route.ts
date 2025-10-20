@@ -61,7 +61,6 @@ export async function GET(
     .createSignedUrl(share.binder_files.object_path, 3600);
 
   if (signedError || !signedUrl) {
-    console.error("Error creating signed URL:", signedError);
     return NextResponse.json(
       { error: "Failed to access file" },
       { status: 500 }

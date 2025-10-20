@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (upsertError) {
-      console.error('[Quick Start] Database error:', upsertError);
       return NextResponse.json(
         { error: 'Failed to save profile' },
         { status: 500 }
@@ -74,7 +73,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('[Quick Start] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -169,7 +169,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('[Navigator Analyze] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

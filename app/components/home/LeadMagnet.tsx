@@ -24,7 +24,6 @@ export default function LeadMagnet() {
       
       setSubmitted(true);
     } catch (error) {
-      console.error('Error submitting:', error);
     } finally {
       setLoading(false);
     }

@@ -66,7 +66,6 @@ export async function importAuditToDatabase(auditPath: string): Promise<{
         .maybeSingle();
 
       if (!block) {
-        console.warn(`⚠️  No block found for "${item.title}"`);
         skipped++;
         continue;
       }
@@ -84,7 +83,6 @@ export async function importAuditToDatabase(auditPath: string): Promise<{
           });
 
         if (error) {
-          console.error(`❌ Error inserting flag for "${item.title}":`, error);
           errors++;
         } else {
           imported++;
@@ -92,7 +90,6 @@ export async function importAuditToDatabase(auditPath: string): Promise<{
       }
 
     } catch (error) {
-      console.error(`❌ Error processing "${item.title}":`, error);
       errors++;
     }
   }
@@ -172,21 +169,14 @@ if (require.main === module) {
 
   (async () => {
     if (command === 'import') {
-      console.log(`📥 Importing audit from ${auditPath}...\n`);
       
       const result = await importAuditToDatabase(auditPath);
       
-      console.log('📊 Import Results:');
-      console.log(`- Imported: ${result.imported} flags`);
-      console.log(`- Skipped: ${result.skipped} items (no matching block)`);
-      console.log(`- Errors: ${result.errors}\n`);
       
       if (result.imported > 0) {
-        console.log('✅ Audit imported successfully!');
       }
 
     } else if (command === 'generate') {
-      console.log('🔍 Generating audit from content blocks...\n');
       
       const audit = await generateAuditFromContentBlocks();
       
@@ -199,15 +189,8 @@ if (require.main === module) {
       const outputPath = path.join(outputDir, `audit-${new Date().toISOString().split('T')[0]}.json`);
       fs.writeFileSync(outputPath, JSON.stringify(audit, null, 2));
       
-      console.log(`📊 Generated audit:`);
-      console.log(`- Total items: ${audit.totalItems}`);
-      console.log(`- Output: ${outputPath}\n`);
-      console.log('✅ Audit generated!');
 
     } else {
-      console.log('Usage:');
-      console.log('  ts-node lib/content/audit.ts import [path]');
-      console.log('  ts-node lib/content/audit.ts generate');
     }
   })();
 }

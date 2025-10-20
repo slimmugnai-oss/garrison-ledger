@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     }
 
     // EXTRACT USER INTENT FROM ASSESSMENT
-    let userIntent = {
+    const userIntent = {
       lifeStage: 'early-career', // early-career, mid-career, pre-retirement, post-retirement
       primaryGoals: [] as string[], // retirement, pcs, deployment, family, career
       riskTolerance: 'moderate', // conservative, moderate, aggressive
@@ -194,7 +194,6 @@ export async function GET(request: NextRequest) {
     const { data: candidateBlocks, error } = await query.limit(50);
 
     if (error) {
-      console.error('Error fetching candidate blocks:', error);
       return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });
     }
 
@@ -326,7 +325,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    console.error('Personalized content error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
       'svix-signature': svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error('Error verifying webhook:', err);
     return new Response('Error occurred', {
       status: 400,
     });
@@ -58,7 +57,6 @@ export async function POST(req: NextRequest) {
     const email = email_addresses[0]?.email_address;
 
     if (!email) {
-      console.error('No email found in webhook data');
       return new Response('No email found', { status: 400 });
     }
 
@@ -74,7 +72,6 @@ export async function POST(req: NextRequest) {
         ]);
 
       if (profileError) {
-        console.error('Error inserting user_profile:', profileError);
         return new Response('Database error', { status: 500 });
       }
 
@@ -90,7 +87,6 @@ export async function POST(req: NextRequest) {
         ]);
 
       if (entitlementError) {
-        console.error('Error creating entitlement:', entitlementError);
         // Don't fail the webhook - user profile is created, entitlement can be fixed later
       }
 
@@ -108,13 +104,11 @@ export async function POST(req: NextRequest) {
         ]);
 
       if (gamificationError) {
-        console.error('Error creating gamification:', gamificationError);
         // Don't fail the webhook - core profile is created
       }
 
       return new Response('User created successfully', { status: 200 });
     } catch (error) {
-      console.error('Unexpected error:', error);
       return new Response('Internal server error', { status: 500 });
     }
   }

@@ -87,7 +87,6 @@ export async function POST(req: NextRequest) {
       });
 
     if (uploadError) {
-      console.error('[PCS Upload] Storage error:', uploadError);
       return NextResponse.json({ 
         error: 'Upload failed', 
         details: uploadError.message 
@@ -111,7 +110,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (dbError) {
-      console.error('[PCS Upload] Database error:', dbError);
       return NextResponse.json({ 
         error: 'Failed to create document record', 
         details: dbError.message 
@@ -133,7 +131,6 @@ export async function POST(req: NextRequest) {
       });
 
     // Start OCR processing (async)
-    processOCR(document.id, fileData, contentType, documentType).catch(console.error);
 
     return NextResponse.json({
       success: true,
@@ -146,7 +143,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[PCS Upload] Error:', error);
     return NextResponse.json({ 
       error: 'Upload failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 
@@ -247,7 +243,6 @@ async function processOCR(
     }
 
   } catch (error) {
-    console.error('[PCS OCR] Error:', error);
     
     // Update status to failed
     await supabaseAdmin

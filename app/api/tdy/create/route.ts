@@ -53,7 +53,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('[TDY Create] Database error:', error);
       return NextResponse.json({ error: 'Failed to create trip' }, { status: 500 });
     }
 
@@ -77,7 +76,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ tripId: data.id });
 
   } catch (error) {
-    console.error('[TDY Create] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

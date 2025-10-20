@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const { priceId, successUrl, cancelUrl } = await req.json();
     
     // Log the request for debugging
-    console.log('Creating checkout session with:', {
+    console.log('Checkout session request:', {
       priceId,
       userEmail: user.emailAddresses[0]?.emailAddress,
       userId: user.id
@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
         .rpc('get_user_credit_balance', { p_user_id: user.id });
       
       if (creditBalance && creditBalance > 0) {
-        console.log(`💰 User has ${creditBalance} cents in referral credits`);
         
         // Create one-time Stripe coupon for their credit amount
         const coupon = await stripe.coupons.create({
@@ -38,7 +37,6 @@ export async function POST(req: NextRequest) {
         });
         
         discountCouponId = coupon.id;
-        console.log('✅ Created discount coupon:', coupon.id, `for $${(creditBalance / 100).toFixed(2)}`);
         
         // Mark credits as used (negative entry)
         await supabaseAdmin
@@ -50,24 +48,21 @@ export async function POST(req: NextRequest) {
             description: `Applied $${(creditBalance / 100).toFixed(2)} credit to premium purchase`,
           });
       } else {
-        console.log('ℹ️ No referral credits available for user');
       }
     } catch (creditError) {
-      console.error('⚠️ Credit check error (non-critical):', creditError);
       // Continue without discount if credit check fails
     }
 
     // Test if the price ID exists
     try {
       const price = await stripe.prices.retrieve(priceId);
-      console.log('Price found:', {
+      console.log('Price retrieved:', {
         id: price.id,
         amount: price.unit_amount,
         currency: price.currency,
         active: price.active
       });
     } catch (priceError) {
-      console.error('Price ID error:', priceError);
       return NextResponse.json({
         error: 'Invalid price ID',
         details: priceError instanceof Error ? priceError.message : 'Unknown error'
@@ -94,7 +89,7 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    console.log('Checkout session created successfully:', {
+    console.log('Checkout session created:', {
       sessionId: session.id,
       url: session.url
     });
@@ -104,8 +99,6 @@ export async function POST(req: NextRequest) {
       url: session.url 
     });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
     return NextResponse.json(
       { 
         error: 'Failed to create checkout session',

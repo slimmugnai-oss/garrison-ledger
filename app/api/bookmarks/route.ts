@@ -27,7 +27,6 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      console.error('Error fetching bookmarks:', error);
       return NextResponse.json(
         { error: 'Failed to fetch bookmarks' },
         { status: 500 }
@@ -41,7 +40,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Bookmarks GET error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -87,7 +85,6 @@ export async function POST(request: Request) {
         );
       }
       
-      console.error('Error creating bookmark:', error);
       return NextResponse.json(
         { error: 'Failed to create bookmark' },
         { status: 500 }
@@ -109,7 +106,6 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Bookmarks POST error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -142,7 +138,6 @@ export async function DELETE(request: Request) {
       .eq('content_block_id', contentId);
 
     if (error) {
-      console.error('Error deleting bookmark:', error);
       return NextResponse.json(
         { error: 'Failed to delete bookmark' },
         { status: 500 }
@@ -155,7 +150,6 @@ export async function DELETE(request: Request) {
     });
 
   } catch (error) {
-    console.error('Bookmarks DELETE error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

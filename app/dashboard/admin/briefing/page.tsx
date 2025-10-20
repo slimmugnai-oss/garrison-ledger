@@ -160,7 +160,6 @@ export default function BriefingAdminPage() {
         .eq('id', selectedItem.id);
       
       if (updateError) {
-        console.error('Error updating feed_item:', updateError);
       }
       
       alert(`✅ Promoted to content_blocks as "${slug}"`);
@@ -170,7 +169,6 @@ export default function BriefingAdminPage() {
       setSelectedItem(null);
       
     } catch (error) {
-      console.error('Promotion error:', error);
       alert('Error during promotion');
     }
     
@@ -228,7 +226,6 @@ export default function BriefingAdminPage() {
       alert('✨ Content curated by AI with smart metadata! Review and edit before promoting.');
       
     } catch (error) {
-      console.error('Auto-curation error:', error);
       alert('Failed to curate content');
     }
     

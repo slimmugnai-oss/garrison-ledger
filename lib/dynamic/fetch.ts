@@ -38,7 +38,6 @@ export async function getCached<T>(
     return { data: freshData, fromCache: false };
 
   } catch (error) {
-    console.error('[Fetch] getCached error:', error);
     // On cache error, try to fetch fresh
     const freshData = await fetchFn();
     return { data: freshData, fromCache: false };
@@ -70,7 +69,6 @@ async function readCache<T>(cacheKey: string): Promise<CacheEntry<T> | null> {
     return entry;
 
   } catch (error) {
-    console.error('[Fetch] readCache error:', error);
     return null;
   }
 }
@@ -103,11 +101,9 @@ async function writeCache<T>(
       });
 
     if (error) {
-      console.error('[Fetch] writeCache error:', error);
     }
 
   } catch (error) {
-    console.error('[Fetch] writeCache error:', error);
   }
 }
 
@@ -121,7 +117,6 @@ export async function invalidateCache(cacheKey: string): Promise<void> {
       .delete()
       .eq('key', cacheKey);
   } catch (error) {
-    console.error('[Fetch] invalidateCache error:', error);
   }
 }
 
@@ -150,7 +145,6 @@ export async function invalidateCachePattern(pattern: string): Promise<void> {
     }
 
   } catch (error) {
-    console.error('[Fetch] invalidateCachePattern error:', error);
   }
 }
 
@@ -195,7 +189,6 @@ export async function refreshSourceData(source: string): Promise<{
       .maybeSingle();
 
     if (!feed) {
-      console.warn(`[Fetch] No feed config for ${source}`);
       return { refreshed: 0, errors: 1 };
     }
 
@@ -215,7 +208,6 @@ export async function refreshSourceData(source: string): Promise<{
     refreshed = 1;
 
   } catch (error) {
-    console.error(`[Fetch] refreshSourceData error for ${source}:`, error);
     
     // Update feed status to error
     await supabaseAdmin
@@ -257,7 +249,6 @@ export async function getAllFeedStatuses() {
     }));
 
   } catch (error) {
-    console.error('[Fetch] getAllFeedStatuses error:', error);
     return [];
   }
 }

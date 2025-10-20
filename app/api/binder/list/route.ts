@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
   const { data: files, error: filesError } = await query;
 
   if (filesError) {
-    console.error("Error fetching files:", filesError);
     return NextResponse.json(
       { error: "Failed to fetch files" },
       { status: 500 }
@@ -97,7 +96,6 @@ export async function GET(req: NextRequest) {
       folderCounts
     });
   } catch (error) {
-    console.error("List API error:", error);
     return NextResponse.json(
       { 
         error: "Internal server error",

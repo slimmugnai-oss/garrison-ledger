@@ -20,7 +20,6 @@ export function useDashboardAnalytics() {
         action: 'view',
         timestamp: Date.now()
       })
-    }).catch(console.error);
   };
 
   const trackWidgetClick = (widgetName: string, action: string, metadata?: Record<string, any>) => {
@@ -36,7 +35,6 @@ export function useDashboardAnalytics() {
         metadata,
         timestamp: Date.now()
       })
-    }).catch(console.error);
   };
 
   return { trackWidgetView, trackWidgetClick };
@@ -78,7 +76,6 @@ export function DashboardAnalyticsProvider({ children }: { children: React.React
                   action: 'view',
                   timestamp: Date.now()
                 })
-              }).catch(console.error);
             }
           }
         });

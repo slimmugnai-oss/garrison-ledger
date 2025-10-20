@@ -161,7 +161,6 @@ export async function generateCSVReport(): Promise<string> {
  */
 if (require.main === module) {
   (async () => {
-    console.log('📊 Generating content remediation report...\n');
 
     const outputDir = 'ops/reports';
     if (!fs.existsSync(outputDir)) {
@@ -174,15 +173,12 @@ if (require.main === module) {
     const html = await generateHTMLReport();
     const htmlPath = path.join(outputDir, `remediation-${timestamp}.html`);
     fs.writeFileSync(htmlPath, html);
-    console.log(`✅ HTML report: ${htmlPath}`);
 
     // Generate CSV
     const csv = await generateCSVReport();
     const csvPath = path.join(outputDir, `remediation-${timestamp}.csv`);
     fs.writeFileSync(csvPath, csv);
-    console.log(`✅ CSV report: ${csvPath}`);
 
-    console.log('\n📋 Reports generated successfully!');
   })();
 }
 

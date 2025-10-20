@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
   const { error } = await query;
 
   if (error) {
-    console.error("Error revoking share:", error);
     return NextResponse.json(
       { error: "Failed to revoke share link" },
       { status: 500 }

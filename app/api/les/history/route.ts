@@ -63,7 +63,6 @@ export async function GET(req: NextRequest) {
       .limit(monthsBack);
 
     if (uploadsError) {
-      console.error('[LES History] Uploads fetch error:', uploadsError);
       return NextResponse.json(
         { error: 'Failed to load history' },
         { status: 500 }
@@ -88,7 +87,6 @@ export async function GET(req: NextRequest) {
       .in('upload_id', uploadIds);
 
     if (flagsError) {
-      console.error('[LES History] Flags fetch error:', flagsError);
       // Continue without flags - not critical
     }
 
@@ -137,7 +135,6 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[LES History] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

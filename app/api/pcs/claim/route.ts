@@ -51,7 +51,6 @@ export async function GET() {
     return NextResponse.json({ claims });
 
   } catch (error) {
-    console.error('[PCS Claim GET] Error:', error);
     return NextResponse.json({ 
       error: 'Failed to fetch claims' 
     }, { status: 500 });
@@ -137,7 +136,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[PCS Claim POST] Error:', error);
     return NextResponse.json({ 
       error: 'Failed to create claim' 
     }, { status: 500 });
@@ -194,7 +192,6 @@ export async function PATCH(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[PCS Claim PATCH] Error:', error);
     return NextResponse.json({ 
       error: 'Failed to update claim' 
     }, { status: 500 });

@@ -85,7 +85,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
-      console.error('[TDY Upload] Storage error:', uploadError);
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
     }
 
@@ -104,7 +103,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (docError) {
-      console.error('[TDY Upload] Doc insert error:', docError);
       return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
 
@@ -183,7 +181,6 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('[TDY Upload] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

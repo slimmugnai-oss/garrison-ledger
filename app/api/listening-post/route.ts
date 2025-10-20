@@ -39,7 +39,6 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error("[Listening Post API] Error:", error);
       throw error;
     }
 
@@ -50,7 +49,6 @@ export async function GET(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("[Listening Post API] Fatal error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

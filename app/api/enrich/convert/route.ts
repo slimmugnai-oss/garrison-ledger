@@ -72,7 +72,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error("[Convert] Failed to create content block:", insertError);
       return NextResponse.json({ 
         error: "Failed to create content block",
         details: insertError.message 
@@ -97,7 +96,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Convert] Fatal error:", error);
     return NextResponse.json(
       { 
         error: "Internal server error",

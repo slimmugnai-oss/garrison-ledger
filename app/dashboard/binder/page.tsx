@@ -113,7 +113,6 @@ function BinderContent() {
       setStorage(data.storage);
       setFolderCounts(data.folderCounts || {});
     } catch (error) {
-      console.error('Error loading files:', error);
       setFiles([]);
       setStorage(null);
       setFolderCounts({});
@@ -232,7 +231,6 @@ function BinderContent() {
       setShowUploadModal(false);
       await loadFiles();
     } catch (error) {
-      console.error('Upload error:', error);
       alert('Failed to upload file');
     }
   };
@@ -253,7 +251,6 @@ function BinderContent() {
         loadFiles();
       }
     } catch (error) {
-      console.error('Rename error:', error);
     }
   };
 
@@ -273,7 +270,6 @@ function BinderContent() {
         loadFiles();
       }
     } catch (error) {
-      console.error('Move error:', error);
     }
   };
 
@@ -296,7 +292,6 @@ function BinderContent() {
         loadFiles();
       }
     } catch (error) {
-      console.error('Set expiry error:', error);
     }
   };
 
@@ -314,7 +309,6 @@ function BinderContent() {
         loadFiles();
       }
     } catch (error) {
-      console.error('Delete error:', error);
     }
   };
 
@@ -336,7 +330,6 @@ function BinderContent() {
       setSelectionMode(false);
       loadFiles();
     } catch (error) {
-      console.error('Bulk delete error:', error);
     }
   };
 
@@ -358,7 +351,6 @@ function BinderContent() {
         alert(data.error || 'Failed to create share link');
       }
     } catch (error) {
-      console.error('Share error:', error);
     }
   };
 

@@ -43,14 +43,12 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      console.error('Error tracking dashboard analytics:', error);
       // Don't fail the request - analytics shouldn't break UX
     }
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Dashboard analytics error:', error);
     return NextResponse.json({ success: true }); // Still return success to not break UX
   }
 }
@@ -109,7 +107,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Dashboard analytics GET error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch analytics' },
       { status: 500 }

@@ -55,21 +55,21 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
     },
     {
       number: 2,
-      title: 'Take the Assessment',
-      description: '~6 quick questions to understand your priorities',
-      icon: '📋',
-      status: hasAssessment ? 'complete' : hasProfile ? 'current' : 'locked',
-      link: hasProfile ? '/dashboard/assessment' : '/dashboard/profile/setup',
-      estimatedTime: '3 minutes'
+      title: 'Explore Tools',
+      description: 'Use our calculators to optimize your finances',
+      icon: '🧮',
+      status: 'complete',
+      link: '/dashboard/tools',
+      estimatedTime: '5 minutes'
     },
     {
       number: 3,
-      title: 'Get Your AI Plan',
-      description: 'AI curates 8-10 expert blocks tailored to your situation',
-      icon: '✨',
-      status: hasPlan ? 'complete' : hasAssessment ? 'current' : 'locked',
-      link: hasPlan ? '/dashboard/plan' : hasAssessment ? '/dashboard/plan' : '/dashboard/profile/setup',
-      estimatedTime: '30 seconds'
+      title: 'Browse Intel',
+      description: 'Access live BAH, BAS, and TSP data',
+      icon: '📊',
+      status: 'complete',
+      link: '/dashboard/intel',
+      estimatedTime: '2 minutes'
     }
   ];
 

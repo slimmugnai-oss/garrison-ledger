@@ -67,7 +67,6 @@ export async function POST(req: NextRequest) {
         .eq('entry_type', 'manual'); // Only count manual entries against quota
 
       if (countError) {
-        console.error('[Manual Entry] Quota check error:', countError);
         return NextResponse.json(
           { error: 'Failed to check entry quota' },
           { status: 500 }
@@ -140,7 +139,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError || !uploadRecord) {
-      console.error('[Manual Entry] DB insert error:', insertError);
       return NextResponse.json(
         { error: 'Failed to save manual entry' },
         { status: 500 }
@@ -191,7 +189,6 @@ export async function POST(req: NextRequest) {
         .insert(lineRows);
 
       if (linesError) {
-        console.error('[Manual Entry] Lines insert error:', linesError);
         // Continue anyway - not critical
       }
     }
@@ -286,7 +283,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Manual Entry] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -361,7 +357,6 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
-    console.error('[Analytics] Failed to record event:', error);
   }
 }
 

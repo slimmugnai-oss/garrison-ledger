@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("[Referral Convert] Error:", error);
       return NextResponse.json({ error: "Failed to process conversion" }, { status: 500 });
     }
 
@@ -62,10 +61,8 @@ export async function POST(req: NextRequest) {
       if (referralData) {
         // TODO: Send email to referrer (you earned $10!)
         // TODO: Send email to referee (you got $10 credit!)
-        console.log("[Referral Convert] Conversion successful:", referralData);
       }
     } catch (emailError) {
-      console.error("[Referral Convert] Email notification error:", emailError);
       // Don't fail the conversion if email fails
     }
 
@@ -75,7 +72,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Referral Convert] Fatal error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

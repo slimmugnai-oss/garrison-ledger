@@ -48,7 +48,6 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
       // Show success message
       alert('✅ Professional PDF report downloaded! Check your downloads folder.');
     } catch (error) {
-      console.error('Error generating PDF:', error);
       alert('Failed to generate PDF. Please try again.');
     } finally {
       setIsExporting(false);
@@ -80,7 +79,6 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
         throw new Error('Failed to send email');
       }
     } catch (error) {
-      console.error('Error emailing results:', error);
       alert('Failed to send email. Please try again.');
     }
   }
@@ -111,7 +109,6 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
         throw new Error('Failed to create share link');
       }
     } catch (error) {
-      console.error('Error creating share link:', error);
       alert('Failed to create share link. Please try again.');
     }
   }

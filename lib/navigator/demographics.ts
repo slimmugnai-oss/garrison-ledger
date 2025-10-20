@@ -26,19 +26,16 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
   const cacheKey = `demographics:${zip}`;
   const cached = await getCache<DemographicsData>(cacheKey);
   if (cached) {
-    console.log(`[Demographics] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.RAPIDAPI_KEY;
   
   if (!apiKey) {
-    console.warn('[Demographics] ⚠️ RapidAPI key not configured - set RAPIDAPI_KEY in Vercel');
     return getDefaultDemographicsData();
   }
 
   try {
-    console.log(`[Demographics] Fetching demographics for ZIP ${zip}...`);
     
     // RapidAPI Demographics endpoint (much easier than Census)
     const response = await fetch(
@@ -53,7 +50,6 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
     );
 
     if (!response.ok) {
-      console.error(`[Demographics] RapidAPI error for ZIP ${zip}:`, response.status);
       return getDefaultDemographicsData();
     }
 
@@ -61,12 +57,10 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
     const demographicsData = parseDemographicsData(data, zip);
     
     await setCache(cacheKey, demographicsData, 30 * 24 * 3600); // 30 days
-    console.log(`[Demographics] ✅ Demographics data fetched for ZIP ${zip}: Score ${demographicsData.demographics_score}/10`);
     
     return demographicsData;
 
   } catch (error) {
-    console.error('[Demographics] Fetch error:', error);
     return getDefaultDemographicsData();
   }
 }
@@ -78,7 +72,6 @@ function parseDemographicsData(data: any, zip: string): DemographicsData {
   try {
     // RapidAPI Demographics response structure (adjust based on actual API)
     if (!data || !data.demographics) {
-      console.warn(`[Demographics] No demographics data returned for ZIP ${zip}`);
       return getDefaultDemographicsData();
     }
 
@@ -109,7 +102,6 @@ function parseDemographicsData(data: any, zip: string): DemographicsData {
     };
 
   } catch (error) {
-    console.error('[Demographics] Parse error:', error);
     return getDefaultDemographicsData();
   }
 }

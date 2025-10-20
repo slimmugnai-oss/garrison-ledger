@@ -65,7 +65,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Error checking library access:', error);
     return NextResponse.json({ 
       canView: false, 
       reason: 'Server error' 

@@ -34,7 +34,6 @@ export default function LesHistory({ tier, isPremium, uploads }: Props) {
         setHistoryData(data.uploads);
       }
     } catch (err) {
-      console.error('Failed to load history:', err);
     } finally {
       setLoading(false);
     }

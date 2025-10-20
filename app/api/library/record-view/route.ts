@@ -66,7 +66,6 @@ export async function POST() {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error recording library view:', error);
     return NextResponse.json({ 
       error: 'Failed to record view' 
     }, { status: 500 });

@@ -35,7 +35,6 @@ export async function getTRICARECost(params: TRICAREParams): Promise<ProviderRes
       .maybeSingle();
 
     if (error || !data) {
-      console.warn(`[TRICARE Provider] No value found for ${lookupKey}`);
       return {
         data: null,
         error: `No TRICARE cost found for ${lookupKey}`,
@@ -72,7 +71,6 @@ export async function getTRICARECost(params: TRICAREParams): Promise<ProviderRes
     };
 
   } catch (error) {
-    console.error('[TRICARE Provider] Error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

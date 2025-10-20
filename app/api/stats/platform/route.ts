@@ -53,7 +53,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('[Platform Stats] Error:', error);
     
     // Return fallback stats on error
     return NextResponse.json({

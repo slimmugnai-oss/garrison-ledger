@@ -87,7 +87,6 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
         setExternalData(data);
       }
     } catch (error) {
-      console.error('Failed to load external data:', error);
     } finally {
       setLoadingData(false);
     }

@@ -55,7 +55,6 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error updating ticket:', error);
       return NextResponse.json(
         { error: 'Failed to update ticket status' },
         { status: 500 }
@@ -68,7 +67,6 @@ export async function PATCH(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Ticket update error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

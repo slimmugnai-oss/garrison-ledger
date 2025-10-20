@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("[Referral Track] Error:", error);
       return NextResponse.json({ error: "Failed to record referral" }, { status: 500 });
     }
 
@@ -49,7 +48,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Referral Track] Fatal error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -25,7 +25,6 @@ export async function POST() {
       isPremium = !!access?.is_premium;
     }
   } catch (error) {
-    console.error('Premium check error:', error);
     const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
     isPremium = premiumUsers.includes(userId);
   }
@@ -71,7 +70,6 @@ export async function POST() {
       }
     });
   } catch (error) {
-    console.error('PDF generation error:', error);
     return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
   }
 }

@@ -73,7 +73,6 @@ export default function CareerOpportunityAnalyzer() {
             }
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -191,7 +190,7 @@ export default function CareerOpportunityAnalyzer() {
             },
             output: analysis
           })
-        }).catch(console.error);
+        });
       }, 2000);
       saveTimeoutRef.current = timeout;
     }

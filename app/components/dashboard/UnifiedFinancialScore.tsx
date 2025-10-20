@@ -24,8 +24,6 @@ interface UnifiedFinancialScoreProps {
     hasEmergencyFund: boolean;
     hasDebt: boolean;
     hasCompletedProfile: boolean;
-    hasCompletedAssessment: boolean;
-    hasPlan: boolean;
   };
 }
 
@@ -57,33 +55,6 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
     totalScore += profileScore;
     maxTotalScore += 15;
 
-    // Assessment Completion (15 points)
-    const assessmentScore = profileData.hasCompletedAssessment ? 15 : 0;
-    calculatedMetrics.push({
-      name: 'Assessment',
-      score: assessmentScore,
-      maxScore: 15,
-      target: 'Take assessment',
-      status: assessmentScore >= 15 ? 'excellent' : 'needs-work',
-      recommendation: assessmentScore < 15 ? 'Take the assessment' : undefined,
-      link: '/dashboard/assessment'
-    });
-    totalScore += assessmentScore;
-    maxTotalScore += 15;
-
-    // AI Plan (15 points)
-    const planScore = profileData.hasPlan ? 15 : 0;
-    calculatedMetrics.push({
-      name: 'AI Plan',
-      score: planScore,
-      maxScore: 15,
-      target: 'Generate plan',
-      status: planScore >= 15 ? 'excellent' : 'needs-work',
-      recommendation: planScore < 15 ? 'Generate your AI plan' : undefined,
-      link: '/dashboard/plan'
-    });
-    totalScore += planScore;
-    maxTotalScore += 15;
 
     // Emergency Fund (25 points)
     let efScore = 0;
@@ -167,7 +138,6 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
       link: '/dashboard/library?search=debt+payoff'
     });
     totalScore += debtScore;
-    maxTotalScore += 10;
 
     setHealthScore(totalScore);
     setMetrics(calculatedMetrics);

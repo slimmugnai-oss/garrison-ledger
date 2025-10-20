@@ -18,30 +18,24 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   
   const cached = await getCache<School[]>(cacheKey);
   if (cached) {
-    console.log(`[Schools] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.GREAT_SCHOOLS_API_KEY;
   
   if (!apiKey) {
-    console.warn('[Schools] ⚠️ GreatSchools API key not configured - set GREAT_SCHOOLS_API_KEY in Vercel');
-    console.warn('[Schools] School ratings will not be available. See docs/active/BASE_NAVIGATOR_API_SETUP.md');
     return [];
   }
 
   try {
     // Step 1: Convert ZIP to lat/lon using geocoding
-    console.log(`[Schools] Geocoding ZIP ${zip}...`);
     const { lat, lon } = await geocodeZip(zip);
     
     if (!lat || !lon) {
-      console.warn(`[Schools] Could not geocode ZIP ${zip}`);
       return [];
     }
 
     // Step 2: Fetch schools using GreatSchools v2 API
-    console.log(`[Schools] Fetching schools near ${lat}, ${lon} (ZIP ${zip})...`);
     const response = await fetch(
       `https://gs-api.greatschools.org/v2/nearby-schools?lat=${lat}&lon=${lon}&limit=20&distance=5`,
       {
@@ -55,14 +49,10 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Schools] ❌ API error for ZIP ${zip}:`, response.status, errorText);
       
       if (response.status === 410) {
-        console.error('[Schools] 410 Error = v1 API deprecated. Using v2 now.');
       } else if (response.status === 401) {
-        console.error('[Schools] 401 Unauthorized = Invalid or expired API key');
       } else if (response.status === 403) {
-        console.error('[Schools] 403 Forbidden = API key may not have access to this endpoint');
       }
       
       return [];
@@ -89,15 +79,12 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       };
     });
 
-    console.log(`[Schools] ✅ Fetched ${schools.length} schools for ZIP ${zip}`);
     if (schools.length > 0) {
       const topSchool = schools[0];
       const ratingText = topSchool.rating > 0 ? `${topSchool.rating}/10` : 'No rating';
-      console.log(`[Schools] Top school: ${topSchool.name} (${ratingText})`);
       
       const withRatings = schools.filter(s => s.rating > 0).length;
       if (withRatings === 0) {
-        console.warn(`[Schools] ⚠️ No schools have ratings - GreatSchools API subscription may not include rating-band field`);
       }
     }
 
@@ -105,7 +92,6 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     return schools;
 
   } catch (error) {
-    console.error('[Schools] Fetch error:', error);
     return [];
   }
 }
@@ -131,14 +117,12 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     );
 
     if (!response.ok) {
-      console.error(`[Schools] Geocoding error for ZIP ${zip}:`, response.status);
       return { lat: 0, lon: 0 };
     }
 
     const data = await response.json();
     
     if (data.length === 0) {
-      console.warn(`[Schools] No geocoding results for ZIP ${zip}`);
       return { lat: 0, lon: 0 };
     }
 
@@ -153,7 +137,6 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     return result;
 
   } catch (error) {
-    console.error('[Schools] Geocoding fetch error:', error);
     return { lat: 0, lon: 0 };
   }
 }
@@ -192,7 +175,6 @@ function parseRatingBand(ratingBand: string | undefined | null): number {
   const score = bandMap[normalized];
   
   if (score === undefined) {
-    console.warn(`[Schools] Unknown rating-band: "${ratingBand}" - using default`);
     return 7;
   }
   
@@ -220,13 +202,11 @@ export function computeChildWeightedSchoolScore(
     ? kidsGrades 
     : ['elem', 'middle', 'high'];
   
-  console.log(`[Schools] Active grades for scoring:`, activeGrades, 'from input:', kidsGrades);
   
   activeGrades.forEach(grade => {
     buckets[grade] = 1 / activeGrades.length;
   });
   
-  console.log(`[Schools] Bucket weights:`, buckets);
 
   // Map school grades to buckets
   const gradesToBuckets = (gradeString: string): KidsGrade[] => {
@@ -277,7 +257,6 @@ export function computeChildWeightedSchoolScore(
     .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
     .slice(0, 3);
 
-  console.log(`[Schools] Filtered ${relevantSchools.length} relevant schools from ${schools.length} total`);
 
   return { score10, top };
 }

@@ -16,7 +16,6 @@ export async function compileMDX(content: string): Promise<string> {
 
     return String(compiled);
   } catch (error) {
-    console.error('[MDX Compile] Error:', error);
     return content; // Fallback to raw content
   }
 }

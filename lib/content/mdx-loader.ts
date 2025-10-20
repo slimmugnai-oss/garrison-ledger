@@ -50,7 +50,6 @@ export function getAllIntelCardSlugs(): string[] {
         }
       }
     } catch (error) {
-      console.warn(`[MDX Loader] Could not scan ${dir}:`, error);
     }
   }
 
@@ -66,7 +65,6 @@ export function getIntelCardBySlug(slug: string): IntelCard | null {
     const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
 
     if (!fs.existsSync(filePath)) {
-      console.warn(`[MDX Loader] File not found: ${filePath}`);
       return null;
     }
 
@@ -75,7 +73,6 @@ export function getIntelCardBySlug(slug: string): IntelCard | null {
 
     // Validate frontmatter
     if (!data.id || !data.title || !data.domain) {
-      console.warn(`[MDX Loader] Invalid frontmatter in ${slug}`);
       return null;
     }
 
@@ -87,7 +84,6 @@ export function getIntelCardBySlug(slug: string): IntelCard | null {
     };
 
   } catch (error) {
-    console.error(`[MDX Loader] Error loading ${slug}:`, error);
     return null;
   }
 }

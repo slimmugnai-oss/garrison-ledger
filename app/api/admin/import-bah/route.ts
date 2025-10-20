@@ -104,7 +104,6 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('[BAH Import] Starting import...');
 
     // Read CSV file
     const csvPath = join(process.cwd(), 'lib', 'data', '2025_BAH_Rates.csv');
@@ -148,7 +147,6 @@ export async function POST() {
       allRates.push(...rates);
     }
 
-    console.log(`[BAH Import] Parsed ${allRates.length} rates`);
 
     // Delete existing 2025 rates
     const { error: deleteError } = await supabaseAdmin
@@ -157,7 +155,6 @@ export async function POST() {
       .eq('effective_date', effectiveDate);
 
     if (deleteError) {
-      console.warn('[BAH Import] Delete warning:', deleteError);
     }
 
     // Insert in batches
@@ -173,14 +170,12 @@ export async function POST() {
         .insert(batch);
 
       if (error) {
-        console.error(`[BAH Import] Batch error:`, error);
         errors++;
       } else {
         inserted += batch.length;
       }
     }
 
-    console.log(`[BAH Import] Complete: ${inserted} inserted, ${errors} errors`);
 
     return NextResponse.json({
       success: true,
@@ -193,7 +188,6 @@ export async function POST() {
     });
 
   } catch (error) {
-    console.error('[BAH Import] Fatal error:', error);
     return NextResponse.json(
       { 
         error: 'Import failed',
