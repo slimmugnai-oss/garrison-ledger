@@ -136,24 +136,33 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
     };
     
     const searchTerm = searchTerms[facilityType as keyof typeof searchTerms] || facilityType;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchTerm)}&location=${lat},${lon}&radius=50000&key=${apiKey}`;
     
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchTerm)}&location=${lat},${lon}&radius=50000&key=${apiKey}`
-    );
+    console.log(`[Military] Searching for ${facilityType}...`);
+    
+    const response = await fetch(url);
 
     if (!response.ok) {
-      console.error(`[Military] Places API error for ${facilityType}:`, response.status);
+      const errorText = await response.text();
+      console.error(`[Military] Places API error for ${facilityType}:`, response.status, errorText);
       return null;
     }
 
     const data = await response.json();
     
+    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
+      console.error(`[Military] Places API status for ${facilityType}:`, data.status, data.error_message);
+      return null;
+    }
+    
     if (!data.results || data.results.length === 0) {
+      console.log(`[Military] No ${facilityType} found nearby`);
       return null;
     }
 
     // Get the nearest result
     const nearest = data.results[0];
+    console.log(`[Military] Found ${facilityType}: ${nearest.name}`);
     
     // Calculate distance using Haversine formula
     const distance = calculateDistance(lat, lon, nearest.geometry.location.lat, nearest.geometry.location.lng);

@@ -132,17 +132,27 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
  */
 async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey: string): Promise<number> {
   try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=5000&type=${type}&key=${apiKey}`
-    );
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=5000&type=${type}&key=${apiKey}`;
+    console.log(`[Amenities] Fetching ${type} from Places API...`);
+    
+    const response = await fetch(url);
 
     if (!response.ok) {
-      console.error(`[Amenities] Places API error for ${type}:`, response.status);
+      const errorText = await response.text();
+      console.error(`[Amenities] Places API error for ${type}:`, response.status, errorText);
       return 0;
     }
 
     const data = await response.json();
-    return data.results?.length || 0;
+    
+    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
+      console.error(`[Amenities] Places API status for ${type}:`, data.status, data.error_message);
+      return 0;
+    }
+    
+    const count = data.results?.length || 0;
+    console.log(`[Amenities] Found ${count} ${type} places`);
+    return count;
 
   } catch (error) {
     console.error(`[Amenities] Places fetch error for ${type}:`, error);
