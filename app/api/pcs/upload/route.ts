@@ -13,7 +13,7 @@ export const maxDuration = 60;
  * Uses Gemini 2.0 Flash Vision for OCR and data extraction
  * 
  * Free: 3 uploads per month
- * Premium/Pro: Unlimited uploads
+ * Premium: Unlimited uploads
  */
 
 const DOCUMENT_TYPES = {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     if (!isPremium) {
       return NextResponse.json({
         error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        details: 'PCS Money Copilot is available for Premium members only.',
         upgradeRequired: true
       }, { status: 403 });
     }

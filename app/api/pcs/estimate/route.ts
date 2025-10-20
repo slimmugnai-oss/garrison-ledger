@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     if (!isPremium) {
       return NextResponse.json({
         error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium and Pro members only.',
+        details: 'PCS Money Copilot is available for Premium members only.',
         upgradeRequired: true
       }, { status: 403 });
     }
