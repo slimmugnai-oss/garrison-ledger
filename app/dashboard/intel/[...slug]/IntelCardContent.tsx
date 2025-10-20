@@ -49,6 +49,30 @@ export default function IntelCardContent({ content }: { content: string }) {
         .replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
           '<a href="$2" class="text-blue-600 hover:text-blue-700 font-semibold underline decoration-2 underline-offset-2 hover:decoration-blue-700 transition-colors" target="_blank" rel="noopener noreferrer">$1 →</a>')
         
+        // Tables with proper styling - simple approach
+        .replace(/\|(.+?)\|/g, (match, content) => {
+          const cells = content.split('|').map(cell => cell.trim()).filter(cell => cell);
+          if (cells.length > 1) {
+            return `<td class="px-4 py-3 border-b border-gray-200 text-gray-700">${cells.join('</td><td class="px-4 py-3 border-b border-gray-200 text-gray-700">')}</td>`;
+          }
+          return match;
+        })
+        .replace(/^\|(.+?)\|$/gm, (match, content) => {
+          const cells = content.split('|').map(cell => cell.trim()).filter(cell => cell);
+          if (cells.length > 1) {
+            // Check if this looks like a header row (contains **text**)
+            const isHeader = cells.some(cell => cell.includes('**'));
+            if (isHeader) {
+              return `<tr class="bg-gray-50"><th class="px-4 py-3 border-b-2 border-gray-300 text-left font-bold text-gray-900">${cells.join('</th><th class="px-4 py-3 border-b-2 border-gray-300 text-left font-bold text-gray-900">')}</th></tr>`;
+            } else {
+              return `<tr><td class="px-4 py-3 border-b border-gray-200 text-gray-700">${cells.join('</td><td class="px-4 py-3 border-b border-gray-200 text-gray-700">')}</td></tr>`;
+            }
+          }
+          return match;
+        })
+        .replace(/\|:?-+:?\|/g, '') // Remove separator rows like |---|---|
+        .replace(/(<tr>.*<\/tr>)/g, '<table class="w-full border-collapse border border-gray-300 rounded-lg overflow-hidden shadow-sm my-6"><tbody>$1</tbody></table>')
+        
         // Lists with better spacing
         .replace(/^- (.+)$/gm, '<li class="ml-6 mb-2 text-gray-700 leading-relaxed">• $1</li>')
         .replace(/^\d+\. (.+)$/gm, '<li class="ml-6 mb-2 text-gray-700 leading-relaxed">$1</li>')
