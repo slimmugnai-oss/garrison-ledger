@@ -17,10 +17,10 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
   if (cached !== null) return cached;
 
   const host = process.env.ZILLOW_RAPIDAPI_HOST;
-  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY;
+  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
-    console.warn('[Housing] Zillow API not configured');
+    console.warn('[Housing] Zillow API not configured. Host:', host ? 'set' : 'missing', 'Key:', apiKey ? 'set' : 'missing');
     return null;
   }
 

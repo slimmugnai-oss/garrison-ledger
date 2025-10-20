@@ -13,10 +13,11 @@ import { supabaseAdmin } from '@/lib/supabase';
  */
 export async function getCache<T>(key: string): Promise<T | null> {
   try {
+    // Use base_external_data_cache (the table that actually exists)
     const { data, error } = await supabaseAdmin
-      .from('external_cache')
+      .from('base_external_data_cache')
       .select('data, cached_at')
-      .eq('key', key)
+      .eq('base_id', key) // Column is base_id not key
       .maybeSingle();
 
     if (error || !data) {
@@ -60,13 +61,13 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
     };
 
     const { error } = await supabaseAdmin
-      .from('external_cache')
+      .from('base_external_data_cache')
       .upsert({
-        key,
+        base_id: key, // Use base_id column
         data: wrappedPayload,
         cached_at: new Date().toISOString()
       }, {
-        onConflict: 'key'
+        onConflict: 'base_id'
       });
 
     if (error) {
@@ -84,9 +85,9 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
 export async function deleteCache(key: string): Promise<void> {
   try {
     await supabaseAdmin
-      .from('external_cache')
+      .from('base_external_data_cache')
       .delete()
-      .eq('key', key);
+      .eq('base_id', key);
   } catch (error) {
     console.error('[Cache] deleteCache error:', error);
   }
@@ -98,9 +99,9 @@ export async function deleteCache(key: string): Promise<void> {
 export async function deleteCachePattern(pattern: string): Promise<void> {
   try {
     await supabaseAdmin
-      .from('external_cache')
+      .from('base_external_data_cache')
       .delete()
-      .ilike('key', `${pattern}%`);
+      .ilike('base_id', `${pattern}%`);
   } catch (error) {
     console.error('[Cache] deleteCachePattern error:', error);
   }
