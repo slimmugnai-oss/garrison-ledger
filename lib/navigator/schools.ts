@@ -15,11 +15,17 @@ import { getCache, setCache } from '@/lib/cache';
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   const cacheKey = `gs:zip:${zip}`;
   
-  // Check cache first (rating issue is now fixed)
-  const cached = await getCache<School[]>(cacheKey);
-  if (cached) {
-    console.log(`[Schools] Cache hit for ZIP ${zip}`);
-    return cached;
+  // TEMPORARY: Force fresh data to debug caching issue
+  const forceRefresh = process.env.FORCE_SCHOOLS_REFRESH === 'true';
+  
+  if (!forceRefresh) {
+    const cached = await getCache<School[]>(cacheKey);
+    if (cached) {
+      console.log(`[Schools] Cache hit for ZIP ${zip}`);
+      return cached;
+    }
+  } else {
+    console.log(`[Schools] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
   }
 
   const apiKey = process.env.GREAT_SCHOOLS_API_KEY;

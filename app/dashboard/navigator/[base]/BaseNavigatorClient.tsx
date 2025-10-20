@@ -549,8 +549,8 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
               })}
             </div>
 
-            {/* Premium Gate for Additional Results */}
-            {results.length > 3 && (
+            {/* Premium Gate for Additional Results - Only show for non-premium users */}
+            {results.length > 3 && !isPremium && (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 text-center">
                 <Icon name="Lock" className="w-16 h-16 text-blue-600 mx-auto mb-4" />
                 <h3 className="text-2xl font-bold text-blue-900 mb-2">

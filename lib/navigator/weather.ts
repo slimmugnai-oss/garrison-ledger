@@ -16,8 +16,19 @@ import { getCache, setCache } from '@/lib/cache';
 export async function weatherComfortIndex(zip: string): Promise<{ index10: number; note: string }> {
   
   const cacheKey = `gweather:index:${zip}`;
-  const cached = await getCache<{ index10: number; note: string }>(cacheKey);
-  if (cached) return cached;
+  
+  // TEMPORARY: Force fresh data to debug caching issue
+  const forceRefresh = process.env.FORCE_WEATHER_REFRESH === 'true';
+  
+  if (!forceRefresh) {
+    const cached = await getCache<{ index10: number; note: string }>(cacheKey);
+    if (cached) {
+      console.log(`[Weather] Cache hit for ZIP ${zip}`);
+      return cached;
+    }
+  } else {
+    console.log(`[Weather] 🔄 Force refresh for ZIP ${zip} (debugging mode)`);
+  }
 
   const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
 
