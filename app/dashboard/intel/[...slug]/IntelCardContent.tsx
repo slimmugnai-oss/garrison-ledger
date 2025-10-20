@@ -100,10 +100,13 @@ export default function IntelCardContent({ content }: { content: string }) {
       .replace(/<AsOf\s+source="([^"]+)"\s*\/?>/g, 
         '<div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium mt-3 border border-gray-300"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>🕒 Last verified: Latest data</div>');
 
-    // Parse with marked
-    processed = marked(processed);
-
-    setProcessedContent(processed);
+    // Parse with marked (async in newer versions)
+    const parseMarkdown = async () => {
+      const result = await marked(processed);
+      setProcessedContent(result);
+    };
+    
+    parseMarkdown();
   }, [content]);
 
   return (
