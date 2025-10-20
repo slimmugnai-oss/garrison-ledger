@@ -51,7 +51,7 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     console.log(`[Amenities] Fetching amenities for ${lat}, ${lon} (ZIP ${zip})...`);
     
     const amenitiesData = await Promise.all([
-      fetchPlacesByType(lat, lon, 'grocery_or_supermarket', apiKey),
+      fetchPlacesByType(lat, lon, 'supermarket', apiKey), // New API uses 'supermarket' not 'grocery_or_supermarket'
       fetchPlacesByType(lat, lon, 'restaurant', apiKey),
       fetchPlacesByType(lat, lon, 'gym', apiKey),
       fetchPlacesByType(lat, lon, 'hospital', apiKey),
@@ -132,25 +132,39 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
  */
 async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey: string): Promise<number> {
   try {
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=5000&type=${type}&key=${apiKey}`;
-    console.log(`[Amenities] Fetching ${type} from Places API...`);
+    console.log(`[Amenities] Fetching ${type} from Places API (New)...`);
     
-    const response = await fetch(url);
+    // New Places API uses POST with different format
+    const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress'
+      },
+      body: JSON.stringify({
+        includedTypes: [type],
+        maxResultCount: 20,
+        locationRestriction: {
+          circle: {
+            center: {
+              latitude: lat,
+              longitude: lon
+            },
+            radius: 5000.0
+          }
+        }
+      })
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Amenities] Places API error for ${type}:`, response.status, errorText);
+      console.error(`[Amenities] Places API (New) error for ${type}:`, response.status, errorText);
       return 0;
     }
 
     const data = await response.json();
-    
-    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-      console.error(`[Amenities] Places API status for ${type}:`, data.status, data.error_message);
-      return 0;
-    }
-    
-    const count = data.results?.length || 0;
+    const count = data.places?.length || 0;
     console.log(`[Amenities] Found ${count} ${type} places`);
     return count;
 
