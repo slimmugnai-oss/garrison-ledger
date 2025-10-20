@@ -15,6 +15,7 @@ import Badge from '@/app/components/ui/Badge';
 import IntelCardContent from './IntelCardContent';
 import ShareButton from './ShareButton';
 import type { Metadata } from 'next';
+import { bundleMDX } from 'mdx-bundler';
 
 export async function generateStaticParams() {
   const slugs = getAllIntelCardSlugs();
@@ -94,6 +95,16 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
     redirect(`/dashboard/upgrade?feature=intel-${slugPath}`);
   }
 
+  // Compile MDX to executable code
+  const { code } = await bundleMDX({
+    source: card.content,
+    mdxOptions(options) {
+      options.remarkPlugins = [...(options.remarkPlugins ?? [])];
+      options.rehypePlugins = [...(options.rehypePlugins ?? [])];
+      return options;
+    },
+  });
+
   return (
     <>
       <Header />
@@ -144,7 +155,7 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
             </div>
 
             {/* Content - Using IntelCardContent client component */}
-            <IntelCardContent content={card.content} />
+            <IntelCardContent code={code} />
           </div>
 
           {/* Footer Actions */}

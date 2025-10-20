@@ -5,7 +5,10 @@
  * Used for rendering Intel Cards with custom components
  */
 
-import { Disclaimer, AsOf, DataRef, RateBadge } from '@/app/components/mdx';
+import Disclaimer from '@/app/components/mdx/Disclaimer';
+import AsOf from '@/app/components/mdx/AsOf';
+import DataRef from '@/app/components/mdx/DataRef';
+import RateBadge from '@/app/components/mdx/RateBadge';
 
 /**
  * Custom MDX components
