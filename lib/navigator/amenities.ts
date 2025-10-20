@@ -159,13 +159,20 @@ async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Amenities] Places API (New) error for ${type}:`, response.status, errorText);
+      console.error(`[Amenities] ❌ Places API (New) HTTP ${response.status} for ${type}:`, errorText);
       return 0;
     }
 
     const data = await response.json();
+    console.log(`[Amenities] Raw API response for ${type}:`, JSON.stringify(data).substring(0, 500));
+    
+    if (data.error) {
+      console.error(`[Amenities] ❌ API error for ${type}:`, data.error);
+      return 0;
+    }
+    
     const count = data.places?.length || 0;
-    console.log(`[Amenities] Found ${count} ${type} places`);
+    console.log(`[Amenities] ✅ Found ${count} ${type} places`);
     return count;
 
   } catch (error) {

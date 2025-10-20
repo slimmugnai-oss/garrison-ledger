@@ -164,11 +164,17 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Military] Places API (New) error for ${facilityType}:`, response.status, errorText);
+      console.error(`[Military] ❌ Places API (New) HTTP ${response.status} for ${facilityType}:`, errorText);
       return null;
     }
 
     const data = await response.json();
+    console.log(`[Military] Raw API response for ${facilityType}:`, JSON.stringify(data).substring(0, 500));
+    
+    if (data.error) {
+      console.error(`[Military] ❌ API error for ${facilityType}:`, data.error);
+      return null;
+    }
     
     if (!data.places || data.places.length === 0) {
       console.log(`[Military] No ${facilityType} found nearby`);
@@ -177,7 +183,7 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
 
     // Get the nearest result
     const nearest = data.places[0];
-    console.log(`[Military] Found ${facilityType}: ${nearest.displayName?.text || 'Unknown'}`);
+    console.log(`[Military] ✅ Found ${facilityType}: ${nearest.displayName?.text || 'Unknown'}`);
     
     // Calculate distance using Haversine formula
     const distance = calculateDistance(lat, lon, nearest.location.latitude, nearest.location.longitude);
