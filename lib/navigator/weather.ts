@@ -1,8 +1,8 @@
 /**
- * WEATHER PROVIDER (Google Weather)
+ * WEATHER PROVIDER (Google Weather via RapidAPI)
  * 
  * Computes weather comfort index (0-10) for a ZIP code
- * Server-only, cached 7 days
+ * Server-only, cached 24h
  */
 
 import { getCache, setCache } from '@/lib/cache';
@@ -17,48 +17,64 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) return cached;
 
-  const apiKey = process.env.GOOGLE_WEATHER_API_KEY || process.env.GOOGLE_API_KEY;
+  const apiKey = process.env.RAPIDAPI_KEY;
+  const host = 'google-weather.p.rapidapi.com';
 
   if (!apiKey) {
     console.warn('[Weather] Google Weather API key not configured');
     return {
-      index10: 5, // Neutral score
+      index10: 7, // Neutral-positive score
       note: 'Weather data unavailable'
     };
   }
 
   try {
-    // Use Official Google Weather API
-    // Note: Google doesn't have a dedicated Weather API - using geocoding + other services
-    // Simplified: Return neutral score with note for v1
-    // Full implementation requires OpenWeatherMap or WeatherAPI integration
+    // Google Weather API via RapidAPI
+    const response = await fetch(
+      `https://${host}/weather?q=${zip}&units=imperial`,
+      { 
+        headers: { 
+          'X-RapidAPI-Host': host,
+          'X-RapidAPI-Key': apiKey,
+          'Accept': 'application/json'
+        },
+        next: { revalidate: 86400 } // 24h cache
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Weather] Google Weather API error:', response.status, errorText);
+      return {
+        index10: 7,
+        note: 'Weather data temporarily unavailable'
+      };
+    }
+
+    const data = await response.json();
+    const result = analyzeWeatherData(data);
     
-    // For v1: Return neutral score
-    // Full weather integration (OpenWeatherMap or Google) coming in v1.1
-    const result = {
-      index10: 7, // Neutral-positive score
-      note: 'Weather data integration coming in v1.1'
-    };
-    
-    await setCache(cacheKey, result, 7 * 24 * 3600); // 7 day cache
+    await setCache(cacheKey, result, 24 * 3600); // 24h cache
     return result;
 
   } catch (error) {
     console.error('[Weather] Fetch error:', error);
     return {
-      index10: 5,
+      index10: 7,
       note: 'Weather data unavailable'
     };
   }
 }
 
 /**
- * Analyze weather data and compute comfort index
+ * Analyze weather data from Google Weather and compute comfort index
  */
-function analyzeWeatherData(data: any): { comfortIndex: number; note: string } {
+function analyzeWeatherData(data: any): { index10: number; note: string } {
   
   try {
-    // Get current conditions
+    // Google Weather API structure:
+    // { current_condition: [...], weather: [...] }
+    
     const current = data.current_condition?.[0];
     const tempF = parseInt(current?.temp_F) || 70;
     const humidity = parseInt(current?.humidity) || 50;
@@ -110,14 +126,14 @@ function analyzeWeatherData(data: any): { comfortIndex: number; note: string } {
       : `Current: ${tempF}°F, ${humidity}% humidity`;
 
     return {
-      comfortIndex: Math.round(index * 10) / 10,
+      index10: Math.round(index * 10) / 10,
       note
     };
 
   } catch (error) {
     console.error('[Weather] Analysis error:', error);
     return {
-      comfortIndex: 5,
+      index10: 7,
       note: 'Unable to analyze weather data'
     };
   }

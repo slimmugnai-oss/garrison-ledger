@@ -74,10 +74,10 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
   if (cached) return cached;
 
   const host = process.env.ZILLOW_RAPIDAPI_HOST;
-  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY;
+  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
-    console.warn('[Housing] Zillow API not configured');
+    console.warn('[Housing] Zillow API not configured. Host:', host ? 'set' : 'missing', 'Key:', apiKey ? 'set' : 'missing');
     return [];
   }
 
@@ -130,9 +130,10 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
   if (cached) return cached;
 
   const host = process.env.ZILLOW_RAPIDAPI_HOST;
-  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY;
+  const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
+    console.warn('[Housing] Zillow API not configured for analyzeListingUrl');
     return null;
   }
 
