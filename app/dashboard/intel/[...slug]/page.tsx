@@ -11,8 +11,8 @@ import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import { getIntelCardBySlug, getAllIntelCardSlugs } from '@/lib/content/mdx-loader';
-import { useMDXComponents } from '@/lib/content/mdx-components';
 import Badge from '@/app/components/ui/Badge';
+import IntelCardContent from './IntelCardContent';
 import type { Metadata } from 'next';
 
 export async function generateStaticParams() {
@@ -93,9 +93,6 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
     redirect(`/dashboard/upgrade?feature=intel-${slugPath}`);
   }
 
-  // Render MDX content with components
-  const components = useMDXComponents({});
-  
   return (
     <>
       <Header />
@@ -145,64 +142,8 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
               </div>
             </div>
 
-            {/* Content (markdown to HTML conversion) */}
-            <article className="prose prose-lg max-w-none bg-white rounded-lg p-8">
-              <div className="mdx-content space-y-4">
-                {card.content
-                  .replace(/---[\s\S]*?---\s*/, '') // Remove frontmatter
-                  .split('\n\n') // Split by paragraphs
-                  .map((block, i) => {
-                    // Headers
-                    if (block.startsWith('# ')) {
-                      return <h1 key={i} className="text-4xl font-bold text-gray-900 mb-6 font-lora">{block.substring(2)}</h1>;
-                    }
-                    if (block.startsWith('## ')) {
-                      return <h2 key={i} className="text-2xl font-semibold text-gray-900 mt-8 mb-4 font-lora">{block.substring(3)}</h2>;
-                    }
-                    if (block.startsWith('### ')) {
-                      return <h3 key={i} className="text-xl font-semibold text-gray-900 mt-6 mb-3 font-lora">{block.substring(4)}</h3>;
-                    }
-                    
-                    // Special components (show placeholders)
-                    if (block.includes('<Disclaimer')) {
-                      return (
-                        <div key={i} className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-4">
-                          <p className="text-sm text-blue-800"><strong>Disclaimer:</strong> Educational information only - not financial advice.</p>
-                        </div>
-                      );
-                    }
-                    
-                    // BLUF (special formatting)
-                    if (block.startsWith('**BLUF:**')) {
-                      const text = block.replace(/\*\*BLUF:\*\*\s*/, '');
-                      return (
-                        <div key={i} className="bg-blue-50 border-l-4 border-blue-600 p-4 my-4">
-                          <p className="text-sm font-semibold text-blue-900 mb-1">BOTTOM LINE UP FRONT:</p>
-                          <p className="text-gray-800">{text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>
-                        </div>
-                      );
-                    }
-                    
-                    // Regular paragraphs (process bold/italic)
-                    const processedText = block
-                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                      .replace(/<DataRef[^>]*>/g, '<span class="font-semibold text-blue-600">[Live Data]</span>')
-                      .replace(/<AsOf[^>]*\/>/g, '<span class="text-sm text-gray-600">(As of latest data)</span>');
-                    
-                    return (
-                      <div key={i} className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: processedText }} />
-                    );
-                  })
-                }
-              </div>
-              
-              <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> Simplified view for v1. Full MDX rendering with live data coming in v1.1.
-                </p>
-              </div>
-            </article>
+            {/* Content - Using IntelCardContent client component */}
+            <IntelCardContent content={card.content} />
           </div>
 
           {/* Footer Actions */}
