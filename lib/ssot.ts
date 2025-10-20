@@ -132,12 +132,12 @@ export const ssot = {
   vendors: {
     weather: {
       name: "Google Weather API",
-      provider: "RapidAPI",
+      provider: "Google",
       cacheDays: 1,
       cacheHours: 24,
       attribution: "Google",
       licenseDoc: "docs/vendors/weather.md",
-      apiUrl: "https://google-weather.p.rapidapi.com/weather"
+      apiUrl: "https://weather.googleapis.com/v1/currentConditions:lookup"
     },
     housing: {
       name: "Zillow Market Data",
@@ -155,6 +155,38 @@ export const ssot = {
       attribution: "GreatSchools",
       licenseDoc: "docs/vendors/greatschools.md",
       tier: "premium"
+    },
+    crime: {
+      name: "Crime Data API",
+      provider: "Configurable",
+      cacheDays: 30,
+      attribution: "Crime Data Provider",
+      licenseDoc: "docs/vendors/crime.md",
+      apiUrl: "https://api.crime-data.com/v1/crime"
+    },
+    amenities: {
+      name: "Google Places API",
+      provider: "Google",
+      cacheDays: 30,
+      attribution: "Google",
+      licenseDoc: "docs/vendors/amenities.md",
+      apiUrl: "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    },
+    demographics: {
+      name: "RapidAPI Demographics",
+      provider: "RapidAPI",
+      cacheDays: 30,
+      attribution: "Demographics Provider",
+      licenseDoc: "docs/vendors/demographics.md",
+      apiUrl: "https://demographics-api.p.rapidapi.com/demographics"
+    },
+    military: {
+      name: "Google Places API",
+      provider: "Google",
+      cacheDays: 30,
+      attribution: "Google",
+      licenseDoc: "docs/vendors/military.md",
+      apiUrl: "https://maps.googleapis.com/maps/api/place/textsearch/json"
     }
   },
 

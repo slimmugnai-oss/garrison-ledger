@@ -13,6 +13,10 @@ import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/naviga
 import { fetchMedianRent, fetchSampleListings } from '@/lib/navigator/housing';
 import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
 import { weatherComfortIndex } from '@/lib/navigator/weather';
+import { fetchCrimeData } from '@/lib/navigator/crime';
+import { fetchAmenitiesData } from '@/lib/navigator/amenities';
+import { fetchDemographicsData } from '@/lib/navigator/demographics';
+import { fetchMilitaryAmenitiesData } from '@/lib/navigator/military';
 import { familyFitScore100 } from '@/lib/navigator/score';
 import type { NavigatorRequest, NavigatorResponse, NeighborhoodCard, KidsGrade } from '@/app/types/navigator';
 
@@ -80,12 +84,16 @@ export async function POST(request: NextRequest) {
       console.log(`[Navigator] Processing ZIP ${zip}...`);
 
       // Fetch data in parallel
-      const [schoolsData, medianRent, sampleListings, commute, weather] = await Promise.all([
+      const [schoolsData, medianRent, sampleListings, commute, weather, crimeData, amenitiesData, demographicsData, militaryData] = await Promise.all([
         fetchSchoolsByZip(zip),
         fetchMedianRent(zip, bedrooms),
         fetchSampleListings(zip, bedrooms),
         commuteMinutesFromZipToGate({ zip, gate: base.gate }),
-        weatherComfortIndex(zip)
+        weatherComfortIndex(zip),
+        fetchCrimeData(zip),
+        fetchAmenitiesData(zip),
+        fetchDemographicsData(zip),
+        fetchMilitaryAmenitiesData(zip)
       ]);
 
       // Compute school score
@@ -101,7 +109,11 @@ export async function POST(request: NextRequest) {
         bahMonthlyCents,
         amMin: commute.am,
         pmMin: commute.pm,
-        weather10: weather.index10
+        weather10: weather.index10,
+        safety10: crimeData.safety_score,
+        amenities10: amenitiesData.amenities_score,
+        demographics10: demographicsData.demographics_score,
+        military10: militaryData.military_score
       });
 
       // Upsert to neighborhood_profiles
@@ -143,7 +155,40 @@ export async function POST(request: NextRequest) {
           weather_note: weather.note,
           commute_text: (commute.am && commute.pm)
             ? `AM ${commute.am} min / PM ${commute.pm} min`
-            : 'Commute estimate unavailable'
+            : 'Commute estimate unavailable',
+          crime_data: {
+            safety_score: crimeData.safety_score,
+            crime_rate_per_1000: crimeData.crime_rate_per_1000,
+            violent_crime_rate: crimeData.violent_crime_rate,
+            property_crime_rate: crimeData.property_crime_rate,
+            note: crimeData.note
+          },
+          amenities_data: {
+            amenities_score: amenitiesData.amenities_score,
+            grocery_stores: amenitiesData.grocery_stores,
+            restaurants: amenitiesData.restaurants,
+            gyms: amenitiesData.gyms,
+            hospitals: amenitiesData.hospitals,
+            shopping_centers: amenitiesData.shopping_centers,
+            note: amenitiesData.note
+          },
+          demographics_data: {
+            demographics_score: demographicsData.demographics_score,
+            population: demographicsData.population,
+            median_age: demographicsData.median_age,
+            median_income: demographicsData.median_income,
+            diversity_index: demographicsData.diversity_index,
+            family_households: demographicsData.family_households,
+            note: demographicsData.note
+          },
+          military_data: {
+            military_score: militaryData.military_score,
+            commissary_distance_mi: militaryData.commissary_distance_mi,
+            exchange_distance_mi: militaryData.exchange_distance_mi,
+            va_facility_distance_mi: militaryData.va_facility_distance_mi,
+            military_housing_distance_mi: militaryData.military_housing_distance_mi,
+            note: militaryData.note
+          }
         }
       });
     }

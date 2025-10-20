@@ -2,10 +2,14 @@
  * NEIGHBORHOOD SCORING ENGINE
  * 
  * Computes family fit scores based on:
- * - Schools (40% weight)
- * - Rent vs BAH (30% weight)
- * - Commute (20% weight)
+ * - Schools (30% weight)
+ * - Rent vs BAH (25% weight)
+ * - Commute (15% weight)
  * - Weather (10% weight)
+ * - Safety (10% weight) - NEW
+ * - Amenities (5% weight) - NEW
+ * - Demographics (3% weight) - NEW
+ * - Military (2% weight) - NEW
  */
 
 import { ssot } from '@/lib/ssot';
@@ -117,6 +121,34 @@ export function weatherScore100(index10: number): number {
 }
 
 /**
+ * Convert safety score (0-10) to 0-100 scale
+ */
+export function safetyScore100(score10: number): number {
+  return Math.round(Math.max(0, Math.min(10, score10)) * 10);
+}
+
+/**
+ * Convert amenities score (0-10) to 0-100 scale
+ */
+export function amenitiesScore100(score10: number): number {
+  return Math.round(Math.max(0, Math.min(10, score10)) * 10);
+}
+
+/**
+ * Convert demographics score (0-10) to 0-100 scale
+ */
+export function demographicsScore100(score10: number): number {
+  return Math.round(Math.max(0, Math.min(10, score10)) * 10);
+}
+
+/**
+ * Convert military score (0-10) to 0-100 scale
+ */
+export function militaryScore100(score10: number): number {
+  return Math.round(Math.max(0, Math.min(10, score10)) * 10);
+}
+
+/**
  * Compute final family fit score (0-100)
  * Weighted combination of all subscores
  */
@@ -128,8 +160,21 @@ export function familyFitScore100(
     amMin: number | null;
     pmMin: number | null;
     weather10: number;
+    safety10: number;
+    amenities10: number;
+    demographics10: number;
+    military10: number;
   },
-  weights = { schools: 0.40, rentVsBah: 0.30, commute: 0.20, weather: 0.10 }
+  weights = { 
+    schools: 0.30, 
+    rentVsBah: 0.25, 
+    commute: 0.15, 
+    weather: 0.10,
+    safety: 0.10,
+    amenities: 0.05,
+    demographics: 0.03,
+    military: 0.02
+  }
 ): {
   total: number;
   subs: {
@@ -137,6 +182,10 @@ export function familyFitScore100(
     rentVsBah: number;
     commute: number;
     weather: number;
+    safety: number;
+    amenities: number;
+    demographics: number;
+    military: number;
   };
 } {
   
@@ -144,12 +193,20 @@ export function familyFitScore100(
   const rentScore = rentVsBahScore100(subscores.medianRentCents, subscores.bahMonthlyCents);
   const commuteScore = commuteScore100(subscores.amMin, subscores.pmMin);
   const weatherScore = weatherScore100(subscores.weather10);
+  const safetyScore = safetyScore100(subscores.safety10);
+  const amenitiesScore = amenitiesScore100(subscores.amenities10);
+  const demographicsScore = demographicsScore100(subscores.demographics10);
+  const militaryScore = militaryScore100(subscores.military10);
 
   const total = Math.round(
     schoolScore * weights.schools +
     rentScore * weights.rentVsBah +
     commuteScore * weights.commute +
-    weatherScore * weights.weather
+    weatherScore * weights.weather +
+    safetyScore * weights.safety +
+    amenitiesScore * weights.amenities +
+    demographicsScore * weights.demographics +
+    militaryScore * weights.military
   );
 
   return {
@@ -158,7 +215,11 @@ export function familyFitScore100(
       schools: schoolScore,
       rentVsBah: rentScore,
       commute: commuteScore,
-      weather: weatherScore
+      weather: weatherScore,
+      safety: safetyScore,
+      amenities: amenitiesScore,
+      demographics: demographicsScore,
+      military: militaryScore
     }
   };
 }

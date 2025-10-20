@@ -44,6 +44,10 @@ export interface NeighborhoodCard {
     rentVsBah: number;    // 0-100
     commute: number;      // 0-100
     weather: number;      // 0-100
+    safety: number;       // 0-100 (NEW)
+    amenities: number;    // 0-100 (NEW)
+    demographics: number; // 0-100 (NEW)
+    military: number;     // 0-100 (NEW)
   };
   school_score: number;        // 0-10
   median_rent_cents: number | null;
@@ -55,6 +59,40 @@ export interface NeighborhoodCard {
     sample_listings: Listing[];
     weather_note: string;
     commute_text: string;
+    // NEW: Additional data payloads
+    crime_data?: {
+      safety_score: number;
+      crime_rate_per_1000: number;
+      violent_crime_rate: number;
+      property_crime_rate: number;
+      note: string;
+    };
+    amenities_data?: {
+      amenities_score: number;
+      grocery_stores: number;
+      restaurants: number;
+      gyms: number;
+      hospitals: number;
+      shopping_centers: number;
+      note: string;
+    };
+    demographics_data?: {
+      demographics_score: number;
+      population: number;
+      median_age: number;
+      median_income: number;
+      diversity_index: number;
+      family_households: number;
+      note: string;
+    };
+    military_data?: {
+      military_score: number;
+      commissary_distance_mi: number | null;
+      exchange_distance_mi: number | null;
+      va_facility_distance_mi: number | null;
+      military_housing_distance_mi: number | null;
+      note: string;
+    };
   };
 }
 
