@@ -6,12 +6,15 @@
 'use client';
 
 export default function IntelCardContent({ content }: { content: string }) {
-  // Step-by-step markdown processing
+  // SIMPLE markdown processing that actually works
   const processMarkdown = (md: string): string => {
     let html = md;
     
-    // Step 1: Remove frontmatter
+    // Remove frontmatter
     html = html.replace(/^---[\s\S]*?---\s*/m, '');
+    
+    // Line breaks to spaces within paragraphs
+    html = html.replace(/([^\n])\n([^\n#*-])/g, '$1 $2');
     
     // Step 2: Process BLUF FIRST (before bold/italic processing)
     html = html.replace(/\*\*BLUF:\*\*\s*([^\n]+)/g, 
