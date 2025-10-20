@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     // Return PDF as downloadable file
     const fileName = `PCS_Claim_${claim.claim_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
