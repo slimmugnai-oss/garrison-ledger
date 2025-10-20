@@ -24,30 +24,34 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   }
 
   try {
-    // GreatSchools API call (example endpoint - adjust to actual API)
+    // GreatSchools NearbySchools API v2
+    // Documentation: https://www.greatschools.org/api/
     const response = await fetch(
-      `https://api.greatschools.org/schools?state=&zip=${zip}&limit=20`,
+      `https://api.greatschools.org/nearby-schools?zip=${zip}&limit=20&page=0`,
       {
         headers: {
-          'X-API-Key': apiKey
+          'X-API-Key': apiKey,
+          'Accept': 'application/json'
         }
       }
     );
 
     if (!response.ok) {
-      console.error('[Schools] API error:', response.status);
+      const errorText = await response.text();
+      console.error('[Schools] API error:', response.status, errorText);
       return [];
     }
 
     const data = await response.json();
     
-    // Parse and normalize (adjust based on actual API response structure)
+    // Parse v2 API response structure
+    // Response has: { schools: [], cur_page, total_count, etc. }
     const schools: School[] = (data.schools || []).map((s: any) => ({
       name: s.name || 'Unknown School',
-      rating: parseFloat(s.rating) || 0, // Normalize to 0-10
-      grades: s.gradeLevels || s.grades || 'K-12',
-      address: s.address,
-      type: s.type,
+      rating: s.rating?.school_rating || 0, // v2 uses nested rating object
+      grades: s.grades_offered || s.level || 'K-12',
+      address: s.address?.street || s.address?.city || '',
+      type: s.type || 'public',
       distance_mi: s.distance
     }));
 
