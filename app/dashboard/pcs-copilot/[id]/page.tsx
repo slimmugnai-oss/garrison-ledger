@@ -10,12 +10,13 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function PCSClaimPage({ params }: PageProps) {
+  const { id } = await params;
   const user = await currentUser();
   if (!user) redirect('/sign-in');
 
@@ -38,7 +39,7 @@ export default async function PCSClaimPage({ params }: PageProps) {
   const { data: claim, error } = await supabaseAdmin
     .from('pcs_claims')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id)
     .single();
 
