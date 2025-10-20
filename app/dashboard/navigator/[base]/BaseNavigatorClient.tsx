@@ -426,7 +426,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                               <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    <Icon name="ShoppingBag" className="w-5 h-5 text-indigo-600" />
+                                    <Icon name="ShoppingCart" className="w-5 h-5 text-indigo-600" />
                                     <span className="font-semibold text-gray-900">Amenities (5%)</span>
                                   </div>
                                   <span className="text-2xl font-bold text-indigo-600">
@@ -609,14 +609,14 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                             {result.payload.amenities_data && (
                               <div className="mb-6">
                                 <h5 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                  <Icon name="ShoppingBag" className="w-5 h-5" />
+                                  <Icon name="ShoppingCart" className="w-5 h-5" />
                                   Local Amenities
                                 </h5>
                                 <div className="bg-gray-50 rounded-lg p-4">
                                   <p className="text-gray-700 mb-3">{result.payload.amenities_data.note}</p>
                                   <div className="grid grid-cols-2 gap-2 text-sm">
                                     <div className="flex items-center gap-2">
-                                      <Icon name="ShoppingBag" className="w-4 h-4 text-gray-600" />
+                                      <Icon name="ShoppingCart" className="w-4 h-4 text-gray-600" />
                                       <span>{result.payload.amenities_data.grocery_stores} Grocery</span>
                                     </div>
                                     <div className="flex items-center gap-2">
