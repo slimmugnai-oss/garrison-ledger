@@ -22,7 +22,7 @@ const RED_FLAGS = {
   BENEFITS: /\b(TSP match|BRS|High-3|GI Bill|SGLI|TRICARE|BAH rate)\b/gi,
 };
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     
     // Load all content blocks
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     const results = {
       auditDate: new Date().toISOString(),
       total: blocks.length,
-      flagged: [] as any[],
+      flagged: [] as Record<string, unknown>[],
       stats: {
         specificYears: 0,
         specificAmounts: 0,
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
         oldContent: 0,
         noDisclaimer: 0,
       },
-      recommendations: [] as any[]
+      recommendations: [] as string[]
     };
     
     for (const block of blocks) {

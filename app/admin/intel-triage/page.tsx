@@ -38,15 +38,15 @@ export default async function IntelTriagePage() {
 
   // Group by block
   const flaggedBlocks = new Map<string, {
-    block: any;
-    flags: any[];
+    block: Record<string, unknown>;
+    flags: Record<string, unknown>[];
     criticalCount: number;
     highCount: number;
   }>();
 
   for (const flag of flags || []) {
-    const block = (flag as any).content_blocks;
-    const existing = flaggedBlocks.get(block.id);
+    const block = (flag as Record<string, unknown>).content_blocks as Record<string, unknown>;
+    const existing = flaggedBlocks.get(block.id as string);
 
     if (existing) {
       existing.flags.push(flag);
@@ -201,7 +201,7 @@ export default async function IntelTriagePage() {
 
                   {/* Flags */}
                   <div className="space-y-3">
-                    {flags.map((flag: any) => (
+                    {flags.map((flag: Record<string, unknown>) => (
                       <div
                         key={flag.id}
                         className={`border-l-4 rounded-lg p-4 ${
