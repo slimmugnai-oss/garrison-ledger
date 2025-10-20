@@ -34,7 +34,7 @@ const SECRET_PATTERNS = [
   },
   {
     name: 'GreatSchools API Key',
-    pattern: /uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld/g,
+    pattern: /uMuZ[a-zA-Z0-9_-]{20,}Cld/g,
     severity: 'HIGH',
     mask: (match: string) => `${match.slice(0, 4)}****${match.slice(-3)}`
   },

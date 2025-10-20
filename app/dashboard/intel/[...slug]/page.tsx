@@ -13,6 +13,7 @@ import Footer from '@/app/components/Footer';
 import { getIntelCardBySlug, getAllIntelCardSlugs } from '@/lib/content/mdx-loader';
 import Badge from '@/app/components/ui/Badge';
 import IntelCardContent from './IntelCardContent';
+import ShareButton from './ShareButton';
 import type { Metadata } from 'next';
 
 export async function generateStaticParams() {
@@ -156,16 +157,7 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
             </a>
             
             <div className="flex gap-3">
-              <button
-                onClick={() => navigator.share?.({
-                  title: card.frontmatter.title,
-                  text: `Check out this Intel Card: ${card.frontmatter.title}`,
-                  url: window.location.href
-                })}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm"
-              >
-                Share
-              </button>
+              <ShareButton title={card.frontmatter.title} />
             </div>
           </div>
         </div>

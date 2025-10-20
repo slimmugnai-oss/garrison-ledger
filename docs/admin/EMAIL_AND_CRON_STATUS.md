@@ -93,7 +93,7 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 
 **Step 1:** Add to Vercel environment variables:
 ```
-CRON_SECRET=your_random_secret_string_here
+CRON_SECRET=****_masked
 ```
 
 **Step 2:** Create `vercel.json` cron config:

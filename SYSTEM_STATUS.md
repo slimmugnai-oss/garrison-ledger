@@ -570,7 +570,7 @@ All counts below are **auto-generated** - DO NOT hand-edit:
 - **Status:** ✅ Live and working
 
 **✅ GreatSchools API (Premium/Pro Only - $97/month):**
-- **API Key:** `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
+- **API Key:** `uMuZ****Cld`
 - **Cost:** $97/month (15k calls included)
 - **Data:** School ratings, rating bands, top schools, school counts
 - **Gating:** Premium/Pro users only (drives conversions)

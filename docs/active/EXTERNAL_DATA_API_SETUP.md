@@ -14,7 +14,7 @@
 **Cost:** $97.50/month  
 **Includes:** 15,000 calls/month  
 **Overage:** $0.006/call (up to 300,000 calls)  
-**API Key:** `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
+**API Key:** `uMuZ****Cld`
 
 **🎯 MONETIZATION STRATEGY:**
 - **Premium/Pro ONLY feature**
@@ -354,7 +354,7 @@ Per `@GreatSchools_Attribution_Branding_Requirements_2024-12/`:
 
 ### **Step 1: Get API Keys**
 
-- [x] GreatSchools: Already have `uMuZB1PZdohiyLmJ7rVt2psjHRLHQjZ5Z868lCld`
+- [x] GreatSchools: Already have `uMuZ****Cld`
 - [ ] WeatherAPI.com: Sign up for free
 - [ ] RapidAPI: Sign up and subscribe to Realty Mole
 

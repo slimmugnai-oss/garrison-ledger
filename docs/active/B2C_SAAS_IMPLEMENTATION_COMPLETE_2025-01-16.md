@@ -514,7 +514,7 @@ AFTER:
 RESEND_API_KEY=re_...
 
 # Add for cron jobs
-CRON_SECRET=your_secure_random_string_here
+CRON_SECRET=****_masked
 ```
 
 ### Cron Jobs (Set Up)

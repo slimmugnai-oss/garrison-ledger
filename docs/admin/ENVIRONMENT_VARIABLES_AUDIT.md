@@ -137,7 +137,7 @@ NEXT_PUBLIC_ADMIN_API_SECRET=public_secret_...
 
 ### **8. CRON JOB AUTHENTICATION**
 ```
-CRON_SECRET=random_secret_string
+CRON_SECRET=****_masked
 ```
 **Used In:**
 - Content enrichment cron (`/api/enrich/triage`, `/api/enrich/batch`)

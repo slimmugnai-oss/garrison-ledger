@@ -68,7 +68,7 @@ GEMINI_API_KEY=AIzaxxx
 
 ### **Internal API Secret**
 ```
-INTERNAL_API_SECRET=your-random-secret-string-here
+INTERNAL_API_SECRET=****_masked
 ```
 
 **What it's for:**
