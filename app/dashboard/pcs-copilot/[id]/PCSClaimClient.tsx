@@ -158,11 +158,40 @@ export default function PCSClaimClient({
     setIsDownloading(true);
     
     try {
-      // For now, show a message that this feature is coming soon
-      alert('Download Package feature is coming soon! This will generate a complete claim package with all your documents and calculations.');
+      const response = await fetch('/api/pcs/package', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          claimId: claim.id,
+          includeDocuments: true
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Download failed');
+      }
+
+      // Get the PDF blob
+      const blob = await response.blob();
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `PCS_Claim_${claim.claim_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
     } catch (error) {
       console.error('Download error:', error);
-      alert('Download failed. Please try again.');
+      alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsDownloading(false);
     }
