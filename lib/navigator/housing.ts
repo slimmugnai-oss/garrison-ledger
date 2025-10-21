@@ -34,6 +34,7 @@ interface ZillowSearchResponse {
   props?: ZillowProperty[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ZillowPropertyResponse extends ZillowProperty {}
 
 /**
