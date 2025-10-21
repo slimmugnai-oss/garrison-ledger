@@ -8,12 +8,20 @@ export const runtime = "nodejs";
 
 type UserProfile = {
   user_id: string;
+  // Basic Info
+  age?: number | null;
+  gender?: string | null;
+  birth_year?: number | null;
+  years_of_service?: number | null;
+  // Military Identity
+  service_status?: string | null;
   rank?: string | null;
   branch?: string | null;
   mos_afsc_rate?: string | null;
   component?: string | null;
   time_in_service_months?: number | null;
   clearance_level?: string | null;
+  // Location & Timeline
   current_base?: string | null;
   next_base?: string | null;
   pcs_date?: string | null;
@@ -21,13 +29,18 @@ type UserProfile = {
   deployment_count?: number | null;
   deployment_status?: string | null;
   last_deployment_date?: string | null;
+  // Family
   marital_status?: string | null;
+  spouse_service_status?: string | null;
+  spouse_age?: number | null;
   spouse_military?: boolean | null;
   spouse_employed?: boolean | null;
   spouse_career_field?: string | null;
   children?: unknown | null;
   num_children?: number | null;
   has_efmp?: boolean | null;
+  has_dependents?: boolean | null; // CRITICAL: Added for LES Auditor
+  // Financial
   tsp_balance_range?: string | null;
   tsp_allocation?: string | null;
   debt_amount_range?: string | null;
@@ -36,15 +49,19 @@ type UserProfile = {
   bah_amount?: number | null;
   housing_situation?: string | null;
   owns_rental_properties?: boolean | null;
+  // Goals
   long_term_goal?: string | null;
   retirement_age_target?: number | null;
   career_interests?: string[] | null;
   financial_priorities?: string[] | null;
+  education_level?: string | null;
   education_goals?: string[] | null;
+  // Preferences
   content_difficulty_pref?: string | null;
   urgency_level?: string | null;
   communication_pref?: string | null;
   timezone?: string | null;
+  // System
   profile_completed?: boolean | null;
   profile_completed_at?: string | null;
 };
