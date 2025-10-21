@@ -26,7 +26,7 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
       if (data.success && data.rating) {
         setUserRating(data.rating.rating);
       }
-    } catch (error) {
+    } catch {
       // Failed to load existing rating - not critical, user can still rate
     }
   };
