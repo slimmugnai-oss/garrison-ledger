@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 
@@ -15,9 +17,7 @@ export const runtime = 'nodejs';
 export async function GET() {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
@@ -30,11 +30,7 @@ export async function GET() {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     // Get all claims for user
@@ -45,24 +41,22 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logger.error('[PCSClaim] Failed to fetch claims', error, { userId });
+      throw Errors.databaseError('Failed to fetch claims');
     }
 
+    logger.info('[PCSClaim] Claims fetched', { userId, count: claims?.length || 0 });
     return NextResponse.json({ claims });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Failed to fetch claims' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
@@ -75,11 +69,7 @@ export async function POST(req: NextRequest) {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     const body = await req.json();
@@ -114,11 +104,12 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logger.error('[PCSClaim] Failed to create claim', error, { userId });
+      throw Errors.databaseError('Failed to create claim');
     }
 
-    // Track analytics
-    await supabaseAdmin
+    // Track analytics (fire and forget)
+    supabaseAdmin
       .from('pcs_analytics')
       .insert({
         user_id: userId,
@@ -128,26 +119,26 @@ export async function POST(req: NextRequest) {
           travel_method: claim.travel_method,
           dependents: claim.dependents_count
         }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[PCSClaim] Failed to track analytics', { userId, claimId: claim.id, error: analyticsError });
       });
 
+    logger.info('[PCSClaim] Claim created', { userId, claimId: claim.id, travelMethod: claim.travel_method });
     return NextResponse.json({
       success: true,
       claim
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Failed to create claim' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
@@ -160,15 +151,15 @@ export async function PATCH(req: NextRequest) {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     const body = await req.json();
     const { claimId, ...updates } = body;
+
+    if (!claimId) {
+      throw Errors.invalidInput('claimId is required');
+    }
 
     // Update claim
     const { data: claim, error } = await supabaseAdmin
@@ -183,18 +174,18 @@ export async function PATCH(req: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logger.error('[PCSClaim] Failed to update claim', error, { userId, claimId });
+      throw Errors.databaseError('Failed to update claim');
     }
 
+    logger.info('[PCSClaim] Claim updated', { userId, claimId, updatedFields: Object.keys(updates) });
     return NextResponse.json({
       success: true,
       claim
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Failed to update claim' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

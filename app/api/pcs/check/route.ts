@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -21,11 +23,10 @@ interface CheckRequest {
 }
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
@@ -38,26 +39,27 @@ export async function POST(req: NextRequest) {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     const body: CheckRequest = await req.json();
     const { claimId } = body;
 
+    if (!claimId) {
+      throw Errors.invalidInput('claimId is required');
+    }
+
     // Get claim
-    const { data: claim } = await supabaseAdmin
+    const { data: claim, error: claimError } = await supabaseAdmin
       .from('pcs_claims')
       .select('*')
       .eq('id', claimId)
       .eq('user_id', userId)
       .single();
 
-    if (!claim) {
-      return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+    if (claimError || !claim) {
+      logger.warn('[PCSCheck] Claim not found', { userId, claimId });
+      throw Errors.notFound('PCS claim');
     }
 
     // Get all documents
@@ -244,8 +246,8 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', claimId);
 
-    // Track analytics
-    await supabaseAdmin
+    // Track analytics (fire and forget)
+    supabaseAdmin
       .from('pcs_analytics')
       .insert({
         user_id: userId,
@@ -256,7 +258,19 @@ export async function POST(req: NextRequest) {
           total_checks: totalChecks,
           critical_errors: criticalErrors
         }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[PCSCheck] Failed to track analytics', { userId, claimId, error: analyticsError });
       });
+
+    const duration = Date.now() - startTime;
+    logger.info('[PCSCheck] Claim validation completed', { 
+      userId, 
+      claimId, 
+      readinessScore, 
+      totalChecks,
+      duration 
+    });
 
     return NextResponse.json({
       success: true,
@@ -269,10 +283,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Validation failed', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

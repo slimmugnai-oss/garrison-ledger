@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,7 +18,13 @@ export async function POST(request: NextRequest) {
     const { email, type } = body;
 
     if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+      throw Errors.invalidInput('Email is required');
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw Errors.invalidInput('Invalid email format');
     }
 
     // Store lead in database
@@ -30,7 +38,10 @@ export async function POST(request: NextRequest) {
       });
 
     if (dbError) {
-      // Continue anyway - don't fail the request
+      // Continue anyway - don't fail the request, but log it
+      logger.warn('[LeadMagnet] Failed to save email capture', { email, type, error: dbError });
+    } else {
+      logger.info('[LeadMagnet] Email captured', { email: email.split('@')[1], type }); // Log domain only (PII-safe)
     }
 
     // TODO: Send email with PCS checklist PDF
@@ -43,10 +54,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
