@@ -10,14 +10,8 @@ import type {
   TSPOutputs,
   HouseHackInputs,
   HouseHackOutputs,
-  SDPInputs,
-  SDPOutputs,
   PCSInputs,
-  PCSOutputs,
-  OnBaseSavingsInputs,
-  OnBaseSavingsOutputs,
-  RetirementInputs,
-  RetirementOutputs
+  PCSOutputs
 } from '@/lib/types/pdf-inputs';
 
 const BRAND_COLOR = '#2563eb'; // Blue-600

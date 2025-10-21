@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const contentId = searchParams.get('contentId');
     const timeRange = searchParams.get('timeRange') || '30'; // days
-    const metricType = searchParams.get('metric') || 'overview';
 
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - parseInt(timeRange, 10));
