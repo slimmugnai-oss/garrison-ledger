@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { renderOnboardingDay1, renderWeeklyDigest, getEmailSubject } from '@/lib/email-templates';
+import { EMAIL_CONFIG } from '@/lib/email-config';
 
 export const runtime = "nodejs";
 
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Garrison Ledger <noreply@familymedia.com>',
+        from: EMAIL_CONFIG.from,
         to: [testEmail],
         subject: `[TEST] ${subject}`,
         html

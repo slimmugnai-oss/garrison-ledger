@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { EMAIL_CONFIG } from '@/lib/email-config';
 
 export const runtime = 'nodejs';
 
@@ -97,7 +98,7 @@ Reply directly to this email to respond to the user.
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Garrison Ledger <noreply@familymedia.com>',
+          from: EMAIL_CONFIG.from,
           to: ['joemugnai@familymedia.com'],
           reply_to: email,
           subject: emailSubject,

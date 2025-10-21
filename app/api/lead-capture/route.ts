@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from "@/lib/logger";
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { EMAIL_CONFIG } from '@/lib/email-config';
 
 export const runtime = "nodejs";
 
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Garrison Ledger <noreply@familymedia.com>',
+            from: EMAIL_CONFIG.from,
             to: [email],
             subject: '🎁 Your FREE PCS Financial Checklist',
             html: `
