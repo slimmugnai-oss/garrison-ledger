@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,10 +13,7 @@ const supabaseAdmin = createClient(
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Get spouse connection
     const { data: connection } = await supabaseAdmin.rpc('get_spouse_connection', {
@@ -43,6 +42,12 @@ export async function GET(request: NextRequest) {
       .eq('user_id', userId)
       .maybeSingle();
 
+    logger.info('[Collaboration] Collaboration data fetched', { 
+      userId, 
+      hasConnection: true,
+      sharedDataCount: sharedData?.length || 0
+    });
+
     return NextResponse.json({
       hasConnection: true,
       connection: conn,
@@ -51,10 +56,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch collaboration data' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -62,20 +64,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body = await request.json();
     const { action, ...data } = body;
 
+    if (!action) {
+      throw Errors.invalidInput("action is required");
+    }
+
     if (action === 'create_invitation') {
       // Generate connection code
-      const { data: code } = await supabaseAdmin.rpc('generate_connection_code');
+      const { data: code, error: codeError } = await supabaseAdmin.rpc('generate_connection_code');
       
-      if (!code) {
-        return NextResponse.json({ error: 'Failed to generate code' }, { status: 500 });
+      if (codeError || !code) {
+        logger.error('[Collaboration] Failed to generate connection code', codeError, { userId });
+        throw Errors.databaseError('Failed to generate connection code');
       }
 
       // Create pending connection
@@ -93,9 +97,11 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error) {
-        return NextResponse.json({ error: 'Failed to create invitation' }, { status: 500 });
+        logger.error('[Collaboration] Failed to create invitation', error, { userId });
+        throw Errors.databaseError('Failed to create invitation');
       }
 
+      logger.info('[Collaboration] Invitation created', { userId, code });
       return NextResponse.json({ 
         success: true, 
         code,
@@ -105,6 +111,10 @@ export async function POST(request: NextRequest) {
 
     if (action === 'use_code') {
       const { code } = data;
+
+      if (!code) {
+        throw Errors.invalidInput('Connection code is required');
+      }
 
       // Find connection by code
       const { data: connection, error } = await supabaseAdmin
@@ -116,12 +126,14 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error || !connection) {
-        return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
+        logger.warn('[Collaboration] Invalid or expired code', { userId, code });
+        throw Errors.invalidInput('Invalid or expired connection code');
       }
 
       // Can't connect to yourself
       if (connection.user_id_1 === userId) {
-        return NextResponse.json({ error: 'Cannot connect to yourself' }, { status: 400 });
+        logger.warn('[Collaboration] User tried to connect to self', { userId });
+        throw Errors.invalidInput('Cannot connect to yourself');
       }
 
       // Update connection with second user
@@ -135,9 +147,11 @@ export async function POST(request: NextRequest) {
         .eq('id', connection.id);
 
       if (updateError) {
-        return NextResponse.json({ error: 'Failed to connect' }, { status: 500 });
+        logger.error('[Collaboration] Failed to activate connection', updateError, { userId, code });
+        throw Errors.databaseError('Failed to connect');
       }
 
+      logger.info('[Collaboration] Connection activated', { userId, code, partnerId: connection.user_id_1 });
       return NextResponse.json({ 
         success: true,
         message: 'Successfully connected!' 
@@ -146,6 +160,10 @@ export async function POST(request: NextRequest) {
 
     if (action === 'share_calculator') {
       const { connectionId, calculatorName, inputs, outputs, notes } = data;
+
+      if (!connectionId || !calculatorName) {
+        throw Errors.invalidInput('connectionId and calculatorName are required');
+      }
 
       const { error } = await supabaseAdmin
         .from('shared_calculator_data')
@@ -159,19 +177,19 @@ export async function POST(request: NextRequest) {
         });
 
       if (error) {
-        return NextResponse.json({ error: 'Failed to share' }, { status: 500 });
+        logger.error('[Collaboration] Failed to share calculator', error, { userId, connectionId, calculatorName });
+        throw Errors.databaseError('Failed to share calculator data');
       }
 
+      logger.info('[Collaboration] Calculator shared', { userId, connectionId, calculatorName });
       return NextResponse.json({ success: true });
     }
 
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    logger.warn('[Collaboration] Invalid action', { userId, action });
+    throw Errors.invalidInput(`Invalid action: ${action}`);
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -179,10 +197,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Update connection status to disconnected
     const { error } = await supabaseAdmin
@@ -192,16 +207,15 @@ export async function DELETE(request: NextRequest) {
       .eq('status', 'active');
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to disconnect' }, { status: 500 });
+      logger.error('[Collaboration] Failed to disconnect', error, { userId });
+      throw Errors.databaseError('Failed to disconnect');
     }
 
+    logger.info('[Collaboration] Connection disconnected', { userId });
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to disconnect' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

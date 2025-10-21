@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,20 +10,14 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
     const { tool, data } = await req.json();
 
     if (!tool || !data) {
-      return NextResponse.json(
-        { error: "Tool and data are required" },
-        { status: 400 }
-      );
+      throw Errors.invalidInput("Tool and data are required");
     }
 
     // Create shared calculation
@@ -36,40 +32,33 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json(
-        { error: "Failed to create share link" },
-        { status: 500 }
-      );
+      logger.error('[ShareCalc] Failed to create share link', error, { userId, tool });
+      throw Errors.databaseError("Failed to create share link");
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://garrisonledger.com';
     const shareUrl = `${baseUrl}/tools/${tool}/view/${sharedCalc.id}`;
 
+    logger.info('[ShareCalc] Share link created', { userId, tool, shareId: sharedCalc.id });
     return NextResponse.json({
       success: true,
       shareId: sharedCalc.id,
       url: shareUrl
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
 // Get shared calculation by ID
 export async function GET(req: NextRequest) {
-  const shareId = req.nextUrl.searchParams.get('id');
-
-  if (!shareId) {
-    return NextResponse.json(
-      { error: "Share ID is required" },
-      { status: 400 }
-    );
-  }
-
   try {
+    const shareId = req.nextUrl.searchParams.get('id');
+
+    if (!shareId) {
+      throw Errors.invalidInput("Share ID (id) is required");
+    }
+
     const { data: sharedCalc, error } = await supabase
       .from('shared_calculations')
       .select('*')
@@ -77,23 +66,25 @@ export async function GET(req: NextRequest) {
       .single();
 
     if (error || !sharedCalc) {
-      return NextResponse.json(
-        { error: "Share not found" },
-        { status: 404 }
-      );
+      logger.warn('[ShareCalc] Share not found', { shareId });
+      throw Errors.notFound("Shared calculation");
     }
 
     // Check if expired
     if (new Date(sharedCalc.expires_at) < new Date()) {
+      logger.warn('[ShareCalc] Expired share accessed', { shareId });
       return NextResponse.json(
         { error: "This share link has expired" },
         { status: 410 }
       );
     }
 
-    // Increment view count
-    await supabase.rpc('increment_share_view_count', { share_id: shareId });
+    // Increment view count (fire and forget)
+    supabase.rpc('increment_share_view_count', { share_id: shareId }).catch((viewError) => {
+      logger.warn('[ShareCalc] Failed to increment view count', { shareId, error: viewError });
+    });
 
+    logger.info('[ShareCalc] Share accessed', { shareId, tool: sharedCalc.tool, viewCount: sharedCalc.view_count + 1 });
     return NextResponse.json({
       success: true,
       tool: sharedCalc.tool,
@@ -102,10 +93,7 @@ export async function GET(req: NextRequest) {
       viewCount: sharedCalc.view_count + 1
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
