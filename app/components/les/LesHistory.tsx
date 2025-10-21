@@ -18,7 +18,7 @@ interface Props {
   }>;
 }
 
-export default function LesHistory({ tier, isPremium, uploads }: Props) {
+export default function LesHistory({ tier, isPremium: _isPremium, uploads: _uploads }: Props) {
   const [historyData, setHistoryData] = useState<LesHistoryItem[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -83,7 +83,7 @@ export default function LesHistory({ tier, isPremium, uploads }: Props) {
 }
 
 // History Card Component
-function HistoryCard({ item, tier }: { item: LesHistoryItem; tier: string }) {
+function HistoryCard({ item, tier: _tier }: { item: LesHistoryItem; tier: string }) {
   const hasFlags = item.flagCounts.red > 0 || item.flagCounts.yellow > 0 || item.flagCounts.green > 0;
   const totalFlags = item.flagCounts.red + item.flagCounts.yellow + item.flagCounts.green;
   const uploadDate = new Date(item.uploadedAt);

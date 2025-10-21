@@ -14,7 +14,7 @@ interface Props {
 
 type EntryState = 'idle' | 'auditing' | 'complete' | 'error';
 
-export default function LesManualEntry({ tier, isPremium, hasProfile, monthlyEntriesCount }: Props) {
+export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile, monthlyEntriesCount: _monthlyEntriesCount }: Props) {
   const [state, setState] = useState<EntryState>('idle');
   const [auditData, setAuditData] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);

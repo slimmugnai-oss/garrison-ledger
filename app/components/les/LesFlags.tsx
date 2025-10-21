@@ -26,7 +26,7 @@ export default function LesFlags({ flags, tier, summary }: Props) {
 
   // Free tier: show max 2 flags
   const isFree = tier === 'free';
-  const visibleFlags = isFree ? flags.slice(0, 2) : flags;
+  const _visibleFlags = isFree ? flags.slice(0, 2) : flags;
   const hiddenCount = isFree && flags.length > 2 ? flags.length - 2 : 0;
 
   const handleCopyTemplate = async (flag: PayFlag, index: number) => {
@@ -178,7 +178,7 @@ export default function LesFlags({ flags, tier, summary }: Props) {
 // Flag Card Component
 function FlagCard({
   flag,
-  index,
+  index: _index,
   onCopy,
   copied,
   showCopy = true
@@ -262,7 +262,7 @@ function FlagCard({
 }
 
 // Generate email template for flag
-function generateEmailTemplate(flag: PayFlag, summary: any): string {
+function generateEmailTemplate(flag: PayFlag, _summary: any): string {
   const now = new Date();
   const monthYear = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 

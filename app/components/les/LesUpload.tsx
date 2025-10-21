@@ -17,7 +17,7 @@ interface Props {
 
 type UploadState = 'idle' | 'uploading' | 'parsing' | 'parsed' | 'auditing' | 'complete' | 'error';
 
-export default function LesUpload({ tier, isPremium, hasProfile, monthlyUploadsCount }: Props) {
+export default function LesUpload({ tier, isPremium: _isPremium, hasProfile, monthlyUploadsCount }: Props) {
   const [state, setState] = useState<UploadState>('idle');
   const [uploadData, setUploadData] = useState<LesUploadResponse | null>(null);
   const [auditData, setAuditData] = useState<LesAuditResponse | null>(null);
