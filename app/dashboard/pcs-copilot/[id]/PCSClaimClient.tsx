@@ -101,7 +101,7 @@ export default function PCSClaimClient({
         } else {
           alert(`Upload failed: ${result.error}`);
         }
-      } catch (error) {
+      } catch {
         alert('Upload failed. Please try again.');
       }
     }
@@ -142,7 +142,7 @@ export default function PCSClaimClient({
       } else {
         alert(`Calculation failed: ${result.error}`);
       }
-    } catch (error) {
+    } catch {
       alert('Calculation failed. Please try again.');
     } finally {
       setIsCalculating(false);
@@ -184,8 +184,8 @@ export default function PCSClaimClient({
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-    } catch (error) {
-      alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (err) {
+      alert(`Download failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsDownloading(false);
     }
