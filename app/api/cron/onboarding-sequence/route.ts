@@ -92,7 +92,11 @@ export async function POST(req: NextRequest) {
         const nextEmailDate = new Date();
         nextEmailDate.setDate(nextEmailDate.getDate() + 1); // Next email tomorrow
 
-        const updateData: any = {
+        const updateData: {
+          onboarding_day: number;
+          next_onboarding_email: string | null;
+          onboarding_sequence_completed?: boolean;
+        } = {
           onboarding_day: nextDay,
           next_onboarding_email: nextEmailDate.toISOString()
         };

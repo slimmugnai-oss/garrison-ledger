@@ -52,8 +52,8 @@ export default function TestEmailModal({ isOpen, onClose }: TestEmailModalProps)
         setTestEmail('');
       }, 2000);
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to send test email');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send test email');
     } finally {
       setLoading(false);
     }

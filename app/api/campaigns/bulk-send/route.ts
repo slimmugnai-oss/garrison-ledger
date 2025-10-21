@@ -196,7 +196,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function getRecipients(segment: any): Promise<Array<{ email: string; user_id?: string }>> {
+async function getRecipients(segment: { premiumOnly?: boolean; hasPlan?: boolean } | null): Promise<Array<{ email: string; user_id?: string }>> {
   // If no segment specified, get all subscribed users
   if (!segment) {
     const { data: preferences } = await supabaseAdmin

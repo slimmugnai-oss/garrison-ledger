@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function getTestEmailContent(templateType: string, data: any = {}): { subject: string; html: string } {
+function getTestEmailContent(templateType: string, data: { userName?: string; subject?: string; html?: string } = {}): { subject: string; html: string } {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://garrison-ledger.vercel.app';
   const userName = data.userName || 'Service Member';
   const unsubscribeUrl = `${baseUrl}/dashboard/settings`;

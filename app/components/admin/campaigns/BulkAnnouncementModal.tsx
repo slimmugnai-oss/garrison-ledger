@@ -14,7 +14,7 @@ export default function BulkAnnouncementModal({ isOpen, onClose }: BulkAnnouncem
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{ totalRecipients: number; sent: number; failed: number } | null>(null);
 
   const handleSend = async () => {
     if (!subject || !message) {
@@ -76,8 +76,8 @@ export default function BulkAnnouncementModal({ isOpen, onClose }: BulkAnnouncem
         setResult(null);
       }, 5000);
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to send bulk announcement');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send bulk announcement');
     } finally {
       setLoading(false);
     }

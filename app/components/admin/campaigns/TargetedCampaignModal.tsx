@@ -15,7 +15,7 @@ export default function TargetedCampaignModal({ isOpen, onClose }: TargetedCampa
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{ totalRecipients: number; sent: number; failed: number } | null>(null);
 
   const getSegmentConfig = () => {
     switch (segment) {
@@ -105,8 +105,8 @@ export default function TargetedCampaignModal({ isOpen, onClose }: TargetedCampa
         setResult(null);
       }, 5000);
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to send targeted campaign');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send targeted campaign');
     } finally {
       setLoading(false);
     }
@@ -140,7 +140,7 @@ export default function TargetedCampaignModal({ isOpen, onClose }: TargetedCampa
             </label>
             <select
               value={segment}
-              onChange={(e) => setSegment(e.target.value as any)}
+              onChange={(e) => setSegment(e.target.value as 'premium' | 'free' | 'has_plan' | 'no_plan')}
               className="w-full px-4 py-2 border border-subtle rounded-lg focus:ring-2 focus:ring-info focus:border-info"
             >
               <option value="premium">Premium Subscribers</option>
