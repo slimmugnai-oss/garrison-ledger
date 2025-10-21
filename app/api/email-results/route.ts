@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Resend } from 'resend';
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 // Initialize Resend only if API key is available
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
@@ -17,7 +19,7 @@ const fmt = (value: number) => {
 
 // Email templates for each calculator
 const templates = {
-  tsp: (data: any) => `
+  tsp: (data: Record<string, unknown>) => `
     <h2>Your TSP Allocation Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -136,41 +138,31 @@ const templates = {
 };
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+  const startTime = Date.now();
   try {
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
     // Get user email from Clerk
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
     const userEmail = user.emailAddresses[0]?.emailAddress;
 
     if (!userEmail) {
-      return NextResponse.json(
-        { error: "User email not found" },
-        { status: 400 }
-      );
+      logger.warn('[EmailResults] User email not found', { userId });
+      throw Errors.invalidInput("User email not found in account");
     }
 
     const { tool, data } = await req.json();
 
     if (!tool || !data) {
-      return NextResponse.json(
-        { error: "Tool and data are required" },
-        { status: 400 }
-      );
+      throw Errors.invalidInput("Tool and data are required");
     }
 
     // Get template function
     const templateFn = templates[tool as keyof typeof templates];
     if (!templateFn) {
-      return NextResponse.json(
-        { error: "Invalid tool" },
-        { status: 400 }
-      );
+      throw Errors.invalidInput(`Invalid tool: ${tool}. Must be one of: ${Object.keys(templates).join(', ')}`);
     }
 
     // Generate email HTML
@@ -223,10 +215,8 @@ export async function POST(req: NextRequest) {
 
     // Check if Resend is configured
     if (!resend) {
-      return NextResponse.json(
-        { error: "Email service not configured" },
-        { status: 503 }
-      );
+      logger.error('[EmailResults] RESEND_API_KEY not configured');
+      throw Errors.externalApiError("Resend", "Email service not configured");
     }
 
     // Send email using Resend
@@ -238,21 +228,19 @@ export async function POST(req: NextRequest) {
     });
 
     if (emailError) {
-      return NextResponse.json(
-        { error: "Failed to send email" },
-        { status: 500 }
-      );
+      logger.error('[EmailResults] Failed to send email', emailError, { userId, tool, userEmail: userEmail.split('@')[1] });
+      throw Errors.externalApiError("Resend", "Failed to send email");
     }
 
+    const duration = Date.now() - startTime;
+    logger.info('[EmailResults] Email sent', { userId, tool, emailId: emailData?.id, duration });
+    
     return NextResponse.json({
       success: true,
       emailId: emailData?.id
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
