@@ -41,7 +41,7 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
       const updated = [newView, ...recentViews.filter((v: any) => v.baseId !== baseId)].slice(0, 5);
       localStorage.setItem('recent_base_views', JSON.stringify(updated));
     }
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -57,7 +57,7 @@ export async function trackBaseSearch(query: string, resultsCount: number, userI
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -73,7 +73,7 @@ export async function trackFilterUsage(filterType: string, filterValue: string, 
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -90,7 +90,7 @@ export async function trackGuideClickthrough(baseId: string, baseName: string, u
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -139,7 +139,7 @@ export function addToComparison(baseId: string, baseName: string, branch: string
     localStorage.setItem('base_comparison', JSON.stringify(updated));
     
     return { success: true, count: updated.length };
-  } catch (error) {
+  } catch {
     return { success: false, message: 'Failed to add base' };
   }
 }
@@ -156,7 +156,7 @@ export function removeFromComparison(baseId: string) {
     localStorage.setItem('base_comparison', JSON.stringify(updated));
     
     return { success: true, count: updated.length };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }

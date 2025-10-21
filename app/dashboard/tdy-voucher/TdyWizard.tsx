@@ -45,7 +45,7 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         const { items } = await itemsRes.json();
         setItems(items || []);
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -69,7 +69,7 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setTotals(totals);
         setStep(3);
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setFlags(flags);
         setStep(4);
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }

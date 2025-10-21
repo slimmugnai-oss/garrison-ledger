@@ -90,7 +90,7 @@ export default function PCSCopilotClient({
       } else {
         alert('Failed to create claim. Please try again.');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to create claim. Please try again.');
     } finally {
       setIsCreating(false);

@@ -294,7 +294,7 @@ export async function trackCalculatorLaunch(
         metadata: { calculatorId, userId }
       })
     });
-  } catch (error) {
+  } catch {
   }
 }
 

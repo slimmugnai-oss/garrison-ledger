@@ -44,7 +44,7 @@ export default function CollaboratePage() {
         setConnection(data.connection);
         setSharedData(data.sharedData);
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -63,7 +63,7 @@ export default function CollaboratePage() {
       if (data.success) {
         setInviteCode(data.code);
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -93,7 +93,7 @@ export default function CollaboratePage() {
       } else {
         alert(data.error || 'Failed to connect');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to connect');
     }
   };
@@ -113,7 +113,7 @@ export default function CollaboratePage() {
         setSharedData([]);
         alert('Disconnected successfully');
       }
-    } catch (error) {
+    } catch {
     }
   };
 

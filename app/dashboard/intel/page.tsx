@@ -57,7 +57,7 @@ export default async function IntelLibraryPage({
   let allCards: ReturnType<typeof getAllIntelCards> = [];
   try {
     allCards = getAllIntelCards();
-  } catch (error) {
+  } catch {
     allCards = [];
   }
 
