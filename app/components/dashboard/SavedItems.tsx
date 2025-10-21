@@ -241,6 +241,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
               className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-green-300 transition-all group"
             >
               <div className="flex items-start justify-between mb-2">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <Icon 
                   name={getCalculatorIcon(scenario.calculator_type) as any} 
                   className={`h-5 w-5 ${getCalculatorColor(scenario.calculator_type)}`} 

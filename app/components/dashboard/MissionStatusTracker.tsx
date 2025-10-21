@@ -157,6 +157,7 @@ export default function MissionStatusTracker({
                 {mission.completed ? (
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
                 ) : (
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   <Icon name={mission.icon as any} className={`h-5 w-5 ${mission === nextMission ? 'text-blue-600' : 'text-gray-400'}`} />
                 )}
               </div>

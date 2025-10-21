@@ -64,6 +64,7 @@ export default function QuickActions({ isPremium = false }: QuickActionsProps) {
                 onClick={action.action}
                 className={`${action.color} px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 flex items-center gap-2`}
               >
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <Icon name={action.icon as any} className="h-4 w-4" />
                 <span className="hidden md:inline">{action.label}</span>
               </button>

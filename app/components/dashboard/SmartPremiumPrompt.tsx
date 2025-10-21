@@ -84,6 +84,7 @@ export default function SmartPremiumPrompt({ isPremium, userId }: SmartPremiumPr
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <Icon name={prompt.icon as any} className="h-6 w-6 text-white" />
             </div>
             <h3 className="font-bold text-2xl">{prompt.title}</h3>

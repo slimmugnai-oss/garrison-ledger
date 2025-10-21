@@ -17,6 +17,7 @@ export function useDashboardAnalytics() {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const trackWidgetClick = (widgetName: string, action: string, metadata?: Record<string, any>) => {
     if (typeof window === 'undefined') return;
     

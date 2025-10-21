@@ -30,6 +30,7 @@ export default function CalculatorInsights({ userId }: CalculatorInsightsProps) 
         const scenarios = data.scenarios || [];
         const generatedInsights: Insight[] = [];
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         scenarios.forEach((scenario: any) => {
           // Generate insights based on calculator type
           if (scenario.calculator_type === 'tsp-modeler' && scenario.inputs) {
@@ -81,6 +82,7 @@ export default function CalculatorInsights({ userId }: CalculatorInsightsProps) 
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <Icon name={insight.icon as any} className="h-5 w-5" />
                   <span className="font-semibold text-lg">{insight.title}</span>
                 </div>

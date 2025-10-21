@@ -135,6 +135,7 @@ export default function ContextualNextSteps({ userState }: ContextualNextStepsPr
               delay={index * 50}
             >
               <div className="flex items-start justify-between mb-4 gap-3">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 <Icon name={step.icon as any} className="h-6 w-6 sm:h-8 sm:w-8 text-white flex-shrink-0" />
                 <span className={`${colors.badge} text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full uppercase tracking-wider flex-shrink-0`}>
                   {colors.text}

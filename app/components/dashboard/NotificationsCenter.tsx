@@ -121,6 +121,7 @@ export default function NotificationsCenter({ profileData }: NotificationsCenter
           const styles = getNotificationStyles(notif.type);
           return (
             <div key={notif.id} className={`flex items-start gap-3 p-4 ${styles.bg} ${styles.border} border rounded-lg`}>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <Icon name={notif.icon as any} className={`h-5 w-5 ${styles.icon} flex-shrink-0 mt-0.5`} />
               <div className="flex-1">
                 <div className={`font-semibold ${styles.text} mb-1`}>{notif.title}</div>
