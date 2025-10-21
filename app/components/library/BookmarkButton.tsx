@@ -24,7 +24,7 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
         const isCurrentlyBookmarked = data.bookmarks?.some((b: any) => b.content_id === contentId);
         setIsBookmarked(isCurrentlyBookmarked || false);
       }
-    } catch (error) {
+    } catch {
       setIsBookmarked(false);
     }
   };
@@ -58,7 +58,7 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
           onBookmarkChange?.(true);
         }
       }
-    } catch (error) {
+    } catch {
       alert('Failed to update bookmark');
     } finally {
       setIsLoading(false);

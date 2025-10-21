@@ -99,8 +99,10 @@ export default function SdpStrategist() {
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
-      } catch (error) {
-        console.error('Error saving analysis:', error);
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error saving analysis:', err);
+        }
       } finally {
         setLoading(false);
       }
@@ -358,7 +360,7 @@ export default function SdpStrategist() {
                     });
                     const data = await response.json();
                     setApiData(data);
-                  } catch (error) {
+                  } catch {
                   } finally {
                     setLoading(false);
                   }

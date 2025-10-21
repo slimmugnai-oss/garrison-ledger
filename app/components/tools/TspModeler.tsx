@@ -155,8 +155,10 @@ export default function TspModeler() {
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
-      } catch (error) {
-        console.error('Error saving analysis:', error);
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error saving analysis:', err);
+        }
       } finally {
         setLoading(false);
       }
@@ -300,7 +302,7 @@ export default function TspModeler() {
                     });
                     const data = await response.json();
                     setApiData(data);
-                  } catch (error) {
+                  } catch {
                   } finally {
                     setLoading(false);
                   }

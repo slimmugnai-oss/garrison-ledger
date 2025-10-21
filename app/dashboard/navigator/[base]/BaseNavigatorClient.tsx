@@ -136,7 +136,7 @@ export default function BaseNavigatorClient({
           kids_grades: kidsGrades
         })
       });
-    } catch (err) {
+    } catch {
     }
   };
 

@@ -84,7 +84,7 @@ function BaseCardUltimate({ base, index }: BaseCardUltimateProps) {
       const data = await response.json();
       
       setExternalData(data);
-    } catch (error) {
+    } catch {
       setExternalData({ error: 'Failed to load data' });
     } finally {
       setLoadingData(false);

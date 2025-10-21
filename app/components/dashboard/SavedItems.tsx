@@ -57,7 +57,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
         const scenariosData = await scenariosResponse.json();
         setSavedScenarios(scenariosData.scenarios?.slice(0, 6) || []);
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }

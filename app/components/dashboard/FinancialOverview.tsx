@@ -26,7 +26,7 @@ export default function FinancialOverview() {
       const response = await fetch('/api/financial-overview');
       const result = await response.json();
       setData(result);
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }
