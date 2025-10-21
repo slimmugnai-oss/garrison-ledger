@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -34,14 +36,17 @@ interface UploadRequest {
 }
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body: UploadRequest = await req.json();
     const { claimId, documentType, fileName, fileData, contentType } = body;
+
+    if (!claimId || !documentType || !fileName || !fileData || !contentType) {
+      throw Errors.invalidInput('claimId, documentType, fileName, fileData, and contentType are required');
+    }
 
     // Check user's tier and upload limits
     const { data: entitlement } = await supabaseAdmin
@@ -55,11 +60,7 @@ export async function POST(req: NextRequest) {
 
     // PREMIUM-ONLY FEATURE: Block free users completely
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     // Verify claim belongs to user
@@ -71,7 +72,8 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (!claim) {
-      return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+      logger.warn('[PCSUpload] Claim not found', { userId, claimId });
+      throw Errors.notFound('PCS claim');
     }
 
     // Upload to Supabase Storage
@@ -87,10 +89,8 @@ export async function POST(req: NextRequest) {
       });
 
     if (uploadError) {
-      return NextResponse.json({ 
-        error: 'Upload failed', 
-        details: uploadError.message 
-      }, { status: 500 });
+      logger.error('[PCSUpload] Storage upload failed', uploadError, { userId, claimId, fileName });
+      throw Errors.externalApiError('Supabase Storage', 'Upload failed');
     }
 
     // Create document record
@@ -110,14 +110,12 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (dbError) {
-      return NextResponse.json({ 
-        error: 'Failed to create document record', 
-        details: dbError.message 
-      }, { status: 500 });
+      logger.error('[PCSUpload] Failed to create document record', dbError, { userId, claimId, fileName });
+      throw Errors.databaseError('Failed to create document record');
     }
 
-    // Track analytics
-    await supabaseAdmin
+    // Track analytics (fire and forget)
+    supabaseAdmin
       .from('pcs_analytics')
       .insert({
         user_id: userId,
@@ -128,7 +126,20 @@ export async function POST(req: NextRequest) {
           document_type: documentType,
           file_size: fileBuffer.length
         }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[PCSUpload] Failed to track analytics', { userId, claimId, error: analyticsError });
       });
+
+    const duration = Date.now() - startTime;
+    logger.info('[PCSUpload] Document uploaded', { 
+      userId, 
+      claimId, 
+      documentId: document.id,
+      documentType,
+      fileSize: fileBuffer.length,
+      duration
+    });
 
     // Start OCR processing (async)
 
@@ -143,10 +154,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Upload failed', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
@@ -243,6 +251,7 @@ async function processOCR(
     }
 
   } catch (error) {
+    logger.error('[PCSUpload] OCR processing failed', error, { documentId, documentType });
     
     // Update status to failed
     await supabaseAdmin
