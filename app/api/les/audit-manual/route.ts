@@ -22,6 +22,8 @@ import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { compareLesToExpected } from '@/lib/les/compare';
 import type { LesLine } from '@/app/types/les';
 import { ssot } from '@/lib/ssot';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -39,17 +41,13 @@ interface ManualEntryRequest {
 }
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
     // ==========================================================================
     // 1. AUTHENTICATION
     // ==========================================================================
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // ==========================================================================
     // 2. TIER GATING & QUOTA CHECK
@@ -93,18 +91,16 @@ export async function POST(req: NextRequest) {
     const { month, year, allowances } = body;
 
     if (!month || !year || !allowances) {
-      return NextResponse.json(
-        { error: 'month, year, and allowances are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('month, year, and allowances are required');
     }
 
     // Validate month/year
     if (month < 1 || month > 12) {
-      return NextResponse.json(
-        { error: 'Invalid month (must be 1-12)' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Invalid month (must be 1-12)');
+    }
+
+    if (year < 2020 || year > new Date().getFullYear() + 1) {
+      throw Errors.invalidInput('Invalid year');
     }
 
     // ==========================================================================
@@ -189,7 +185,7 @@ export async function POST(req: NextRequest) {
         .insert(lineRows);
 
       if (linesError) {
-        // Continue anyway - not critical
+        logger.warn('[LESManual] Failed to insert line items', { userId, uploadId: uploadRecord.id, error: linesError });
       }
     }
 
@@ -199,13 +195,8 @@ export async function POST(req: NextRequest) {
     const profile = await getUserProfile(userId);
     
     if (!profile) {
-      return NextResponse.json(
-        {
-          error: 'Profile not found',
-          suggestion: 'Please complete your profile (paygrade, location, dependents) before running audit'
-        },
-        { status: 400 }
-      );
+      logger.warn('[LESManual] Profile incomplete', { userId });
+      throw Errors.invalidInput('Please complete your profile (paygrade, location, dependents) before running audit');
     }
 
     // ==========================================================================
@@ -264,13 +255,26 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 9. ANALYTICS
     // ==========================================================================
-    await recordAnalyticsEvent(userId, 'les_audit_run', {
+    const duration = Date.now() - startTime;
+
+    // Analytics (fire and forget)
+    recordAnalyticsEvent(userId, 'les_audit_run', {
       upload_id: uploadRecord.id,
       month,
       year,
       entry_type: 'manual',
       num_flags: comparison.flags.length,
       red_count: comparison.flags.filter(f => f.severity === 'red').length
+    }).catch((analyticsError) => {
+      logger.warn('[LESManual] Failed to track analytics', { userId, error: analyticsError });
+    });
+
+    logger.info('[LESManual] Manual audit completed', { 
+      userId, 
+      month, 
+      year,
+      flagCount: comparison.flags.length,
+      duration
     });
 
     // ==========================================================================
@@ -283,10 +287,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -306,7 +307,8 @@ async function getUserTier(userId: string): Promise<'free' | 'premium'> {
     }
 
     return (data.tier as 'free' | 'premium') || 'free';
-  } catch {
+  } catch (tierError) {
+    logger.warn('[LESManual] Failed to get user tier, defaulting to free', { userId, error: tierError });
     return 'free';
   }
 }
@@ -337,7 +339,8 @@ async function getUserProfile(userId: string): Promise<{
       with_dependents: Boolean(data.dependents),
       yos: data.years_of_service
     };
-  } catch {
+  } catch (profileError) {
+    logger.warn('[LESManual] Failed to get user profile', { userId, error: profileError });
     return null;
   }
 }
@@ -345,7 +348,7 @@ async function getUserProfile(userId: string): Promise<{
 /**
  * Record analytics event
  */
-async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, any>) {
+async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, unknown>) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
       method: 'POST',
@@ -357,6 +360,7 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
+    logger.warn('[LESManual] Analytics fetch failed', { userId, event, error });
   }
 }
 

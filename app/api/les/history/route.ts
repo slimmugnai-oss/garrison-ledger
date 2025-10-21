@@ -18,6 +18,8 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { LesHistoryItem } from '@/app/types/les';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -28,12 +30,7 @@ export async function GET(req: NextRequest) {
     // 1. AUTHENTICATION
     // ==========================================================================
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // ==========================================================================
     // 2. PARSE QUERY PARAMS
@@ -63,14 +60,13 @@ export async function GET(req: NextRequest) {
       .limit(monthsBack);
 
     if (uploadsError) {
-      return NextResponse.json(
-        { error: 'Failed to load history' },
-        { status: 500 }
-      );
+      logger.error('[LESHistory] Failed to load history', uploadsError, { userId });
+      throw Errors.databaseError('Failed to load upload history');
     }
 
     if (!uploads || uploads.length === 0) {
       // No uploads yet - return empty array
+      logger.info('[LESHistory] No uploads found', { userId });
       return NextResponse.json({
         uploads: []
       });
@@ -87,7 +83,7 @@ export async function GET(req: NextRequest) {
       .in('upload_id', uploadIds);
 
     if (flagsError) {
-      // Continue without flags - not critical
+      logger.warn('[LESHistory] Failed to load flags', { userId, error: flagsError });
     }
 
     // Group flags by upload_id
@@ -130,15 +126,13 @@ export async function GET(req: NextRequest) {
       };
     });
 
+    logger.info('[LESHistory] History fetched', { userId, uploadCount: historyItems.length });
     return NextResponse.json({
       uploads: historyItems
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

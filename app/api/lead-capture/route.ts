@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -18,7 +20,13 @@ export async function POST(req: NextRequest) {
 
     // Validate email
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+      throw Errors.invalidInput("Valid email address is required");
+    }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw Errors.invalidInput("Invalid email format");
     }
 
     // Store lead in database
@@ -37,13 +45,15 @@ export async function POST(req: NextRequest) {
     if (insertError) {
       // Check if email already exists
       if (insertError.code === '23505') { // Unique violation
+        logger.info('[LeadCapture] Duplicate email attempt', { email: email.split('@')[1], source });
         return NextResponse.json({ 
           success: true, 
           message: "You're already subscribed!" 
         });
       }
       
-      return NextResponse.json({ error: "Failed to capture lead" }, { status: 500 });
+      logger.error('[LeadCapture] Failed to capture lead', insertError, { email: email.split('@')[1], source });
+      throw Errors.databaseError("Failed to capture lead");
     }
 
     // Send welcome email with lead magnet (if Resend is configured)
@@ -102,16 +112,18 @@ export async function POST(req: NextRequest) {
         });
       } catch (emailError) {
         // Don't fail the request if email fails
+        logger.warn('[LeadCapture] Failed to send email', { email: email.split('@')[1], lead_magnet, error: emailError });
       }
     }
 
+    logger.info('[LeadCapture] Lead captured', { email: email.split('@')[1], source, lead_magnet });
     return NextResponse.json({ 
       success: true,
       message: "Check your email for your free checklist!"
     });
 
   } catch (error) {
-    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
