@@ -14,6 +14,7 @@ import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import IntelCardLink from '@/app/components/les/IntelCardLink';
 import AuditProvenancePopover from '@/app/components/les/AuditProvenancePopover';
 import ExportAuditPDF from '@/app/components/les/ExportAuditPDF';
+import LesManualEntry from '@/app/components/les/LesManualEntry';
 import type { LesAuditResponse, PayFlag } from '@/app/types/les';
 
 interface Props {
@@ -42,6 +43,7 @@ export default function PaycheckAuditClient({
   const [auditResult, setAuditResult] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [entryMode, setEntryMode] = useState<'upload' | 'manual'>('upload');
 
   /**
    * Handle file upload
@@ -133,6 +135,34 @@ export default function PaycheckAuditClient({
           </p>
         </div>
 
+        {/* Entry Mode Tabs */}
+        <div className="mb-8">
+          <div className="flex gap-2 border-b border-gray-200">
+            <button
+              onClick={() => setEntryMode('upload')}
+              className={`px-6 py-3 font-medium transition-colors relative ${
+                entryMode === 'upload'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Icon name="Upload" className="inline-block w-4 h-4 mr-2" />
+              Upload PDF
+            </button>
+            <button
+              onClick={() => setEntryMode('manual')}
+              className={`px-6 py-3 font-medium transition-colors relative ${
+                entryMode === 'manual'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Icon name="Edit" className="inline-block w-4 h-4 mr-2" />
+              Manual Entry
+            </button>
+          </div>
+        </div>
+
         {/* Usage Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -174,7 +204,7 @@ export default function PaycheckAuditClient({
         </div>
 
         {/* Upload Section */}
-        {!auditResult && !parsing && (
+        {entryMode === 'upload' && !auditResult && !parsing && (
           <AnimatedCard>
             <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-12">
               <div className="text-center">
@@ -228,6 +258,16 @@ export default function PaycheckAuditClient({
               </div>
             </div>
           </AnimatedCard>
+        )}
+
+        {/* Manual Entry Section */}
+        {entryMode === 'manual' && !auditResult && !parsing && (
+          <LesManualEntry
+            tier={isPremium ? 'premium' : 'free'}
+            isPremium={isPremium}
+            hasProfile={!!(userProfile.rank && userProfile.currentBase && userProfile.hasDependents !== null && userProfile.hasDependents !== undefined)}
+            monthlyEntriesCount={uploadsThisMonth}
+          />
         )}
 
         {/* Parsing State */}
