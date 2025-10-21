@@ -29,6 +29,19 @@ type ApiResponse = {
   diff?: number;
 };
 
+// Helper: Convert TSP balance range to numeric midpoint
+function getTSPBalanceMidpoint(range: string): number | null {
+  const map: Record<string, number> = {
+    '0-25k': 12500,
+    '25k-50k': 37500,
+    '50k-100k': 75000,
+    '100k-200k': 150000,
+    '200k+': 250000,
+    'prefer-not-to-say': 50000
+  };
+  return map[range] || null;
+}
+
 export default function TspModeler() {
   const { isPremium } = usePremiumStatus();
 
@@ -67,7 +80,31 @@ export default function TspModeler() {
     track('tsp_view');
   }, []);
 
-  // Load saved model on mount (premium only)
+  // Auto-populate from profile (CRITICAL UX IMPROVEMENT)
+  useEffect(() => {
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(profile => {
+        if (profile) {
+          // Auto-fill age
+          if (profile.age) setAge(profile.age);
+          
+          // Auto-fill retirement age target
+          if (profile.retirement_age_target) setRet(profile.retirement_age_target);
+          
+          // Auto-fill TSP balance from range (use midpoint)
+          if (profile.tsp_balance_range) {
+            const midpoint = getTSPBalanceMidpoint(profile.tsp_balance_range);
+            if (midpoint) setBal(midpoint);
+          }
+        }
+      })
+      .catch(() => {
+        // Profile fetch failed - user will enter manually
+      });
+  }, []);
+
+  // Load saved model on mount (premium only) - takes precedence over profile
   useEffect(() => {
     if (isPremium) {
       fetch('/api/saved-models?tool=tsp')

@@ -88,7 +88,28 @@ export default function PcsFinancialPlanner() {
     track('pcs_financial_planner_view');
   }, []);
 
-  // Load saved model on mount (premium only)
+  // Auto-populate from profile (CRITICAL UX IMPROVEMENT)
+  useEffect(() => {
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(profile => {
+        if (profile) {
+          // Auto-fill rank from paygrade
+          if (profile.paygrade && !rankGroup) {
+            setRankGroup(profile.paygrade); // E-5, O-3, etc.
+          }
+          // Auto-fill dependency status from has_dependents
+          if (profile.has_dependents !== null && profile.has_dependents !== undefined && !dependencyStatus) {
+            setDependencyStatus(profile.has_dependents ? 'with' : 'without');
+          }
+        }
+      })
+      .catch(() => {
+        // Profile fetch failed - user will enter manually
+      });
+  }, []);
+
+  // Load saved model on mount (premium only) - takes precedence over profile
   useEffect(() => {
     if (isPremium) {
       fetch('/api/saved-models?tool=pcs')

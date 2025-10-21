@@ -58,7 +58,42 @@ export default function CareerOpportunityAnalyzer() {
     track('career_opportunity_analyzer_view');
   }, []);
 
-  // Load saved model on mount (premium only)
+  // Auto-populate from profile (UX IMPROVEMENT)
+  useEffect(() => {
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(profile => {
+        if (profile && profile.current_base) {
+          // Try to set current location from profile
+          // Extract city and state from current_base (e.g., "Fort Liberty, NC" → "Fayetteville, NC")
+          const baseToCity: Record<string, { city: string; state: string }> = {
+            'West Point': { city: 'West Point', state: 'NY' },
+            'Fort Liberty, NC': { city: 'Fayetteville', state: 'NC' },
+            'Fort Bragg, NC': { city: 'Fayetteville', state: 'NC' },
+            'Fort Cavazos, TX': { city: 'Killeen', state: 'TX' },
+            'Fort Hood, TX': { city: 'Killeen', state: 'TX' },
+            // Can expand this mapping as needed
+          };
+          
+          const cityData = baseToCity[profile.current_base];
+          if (cityData) {
+            setCurrentData(prev => ({
+              ...prev,
+              city: { 
+                city: cityData.city, 
+                state: cityData.state, 
+                cost_of_living_index: prev.city?.cost_of_living_index || 100 
+              }
+            }));
+          }
+        }
+      })
+      .catch(() => {
+        // Profile fetch failed - user will enter manually
+      });
+  }, []);
+
+  // Load saved model on mount (premium only) - takes precedence over profile
   useEffect(() => {
     if (isPremium) {
       fetch('/api/saved-models?tool=career')

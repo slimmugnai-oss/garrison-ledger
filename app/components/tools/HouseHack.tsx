@@ -47,7 +47,32 @@ export default function HouseHack() {
     track('house_view');
   }, []);
 
-  // Load saved model on mount (premium only)
+  // Auto-populate BAH from profile (CRITICAL UX IMPROVEMENT)
+  useEffect(() => {
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(profile => {
+        if (profile && profile.paygrade && profile.mha_code) {
+          // Fetch actual BAH rate from database
+          const hasDeps = profile.has_dependents || false;
+          fetch(`/api/bah/lookup?paygrade=${profile.paygrade}&mha=${profile.mha_code}&dependents=${hasDeps}`)
+            .then(r => r.json())
+            .then(bahData => {
+              if (bahData.rate) {
+                setBah(bahData.rate);
+              }
+            })
+            .catch(() => {
+              // BAH lookup failed - user will enter manually
+            });
+        }
+      })
+      .catch(() => {
+        // Profile fetch failed - user will enter manually
+      });
+  }, []);
+
+  // Load saved model on mount (premium only) - takes precedence over profile
   useEffect(() => {
     if (isPremium) {
       fetch('/api/saved-models?tool=house')
