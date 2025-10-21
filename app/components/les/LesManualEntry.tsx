@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/app/components/ui/Icon';
 import LesFlags from './LesFlags';
 import type { LesAuditResponse } from '@/app/types/les';
@@ -10,11 +10,16 @@ interface Props {
   isPremium: boolean;
   hasProfile: boolean;
   monthlyEntriesCount: number;
+  userProfile?: {
+    rank?: string;
+    currentBase?: string;
+    hasDependents?: boolean;
+  };
 }
 
-type EntryState = 'idle' | 'auditing' | 'complete' | 'error';
+type EntryState = 'idle' | 'auditing' | 'complete' | 'error' | 'loading';
 
-export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile, monthlyEntriesCount: _monthlyEntriesCount }: Props) {
+export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile, monthlyEntriesCount: _monthlyEntriesCount, userProfile }: Props) {
   const [state, setState] = useState<EntryState>('idle');
   const [auditData, setAuditData] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +31,39 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
   const [bah, setBah] = useState('');
   const [bas, setBas] = useState('');
   const [cola, setCola] = useState('');
+  const [autoFilled, setAutoFilled] = useState(false);
+
+  // Auto-populate expected values based on user profile
+  useEffect(() => {
+    if (hasProfile && userProfile && !autoFilled) {
+      setState('loading');
+      
+      // Fetch expected pay values from our own audit system
+      fetch('/api/les/expected-values', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          month,
+          year,
+          rank: userProfile.rank,
+          location: userProfile.currentBase,
+          hasDependents: userProfile.hasDependents
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.bah) setBah((data.bah / 100).toFixed(2));
+        if (data.bas) setBas((data.bas / 100).toFixed(2));
+        if (data.cola) setCola((data.cola / 100).toFixed(2));
+        setAutoFilled(true);
+        setState('idle');
+      })
+      .catch(() => {
+        // Silently fail, user can enter manually
+        setState('idle');
+      });
+    }
+  }, [hasProfile, userProfile, autoFilled, month, year]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,8 +150,19 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
           <div>
             <h3 className="font-semibold text-blue-900">Quick Manual Entry</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Don't have your LES PDF? Enter your allowances manually for instant verification.
-              Perfect for deployed service members or quick spot checks.
+              {autoFilled ? (
+                <>
+                  ✅ <strong>Auto-filled</strong> with your expected allowances based on your rank, location, and dependent status. 
+                  Adjust the values to match your actual LES, then click "Run Audit" to compare.
+                </>
+              ) : state === 'loading' ? (
+                <>Loading your expected allowances...</>
+              ) : (
+                <>
+                  Don't have your LES PDF? Enter your allowances manually for instant verification.
+                  Perfect for deployed service members or quick spot checks.
+                </>
+              )}
             </p>
           </div>
         </div>

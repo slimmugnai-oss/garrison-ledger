@@ -267,6 +267,7 @@ export default function PaycheckAuditClient({
             isPremium={isPremium}
             hasProfile={!!(userProfile.rank && userProfile.currentBase && userProfile.hasDependents !== null && userProfile.hasDependents !== undefined)}
             monthlyEntriesCount={uploadsThisMonth}
+            userProfile={userProfile}
           />
         )}
 
