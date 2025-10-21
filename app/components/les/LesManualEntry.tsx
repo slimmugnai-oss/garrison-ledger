@@ -42,6 +42,20 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
   // Form values - Base Pay
   const [basePay, setBasePay] = useState('');
   
+  // Form values - Deductions
+  const [tsp, setTsp] = useState('');
+  const [sgli, setSgli] = useState('');
+  const [dental, setDental] = useState('');
+  
+  // Form values - Taxes
+  const [federalTax, setFederalTax] = useState('');
+  const [stateTax, setStateTax] = useState('');
+  const [fica, setFica] = useState('');
+  const [medicare, setMedicare] = useState('');
+  
+  // Form values - Net Pay
+  const [netPay, setNetPay] = useState('');
+  
   // Auto-fill tracking
   const [autoFilled, setAutoFilled] = useState({
     bah: false,
@@ -51,7 +65,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
     hfpIdp: false,
     fsa: false,
     flpp: false,
-    basePay: false
+    basePay: false,
+    tsp: false,
+    sgli: false,
+    dental: false,
+    federalTax: false,
+    stateTax: false,
+    fica: false,
+    medicare: false,
+    netPay: false
   });
   const [fallbackMessage, setFallbackMessage] = useState<string | null>(null);
 
@@ -114,6 +136,44 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
           newAutoFilled.basePay = true;
         }
         
+        // Deductions
+        if (data.tsp && data.tsp > 0) {
+          setTsp((data.tsp / 100).toFixed(2));
+          newAutoFilled.tsp = true;
+        }
+        if (data.sgli && data.sgli > 0) {
+          setSgli((data.sgli / 100).toFixed(2));
+          newAutoFilled.sgli = true;
+        }
+        if (data.dental && data.dental > 0) {
+          setDental((data.dental / 100).toFixed(2));
+          newAutoFilled.dental = true;
+        }
+        
+        // Taxes
+        if (data.federal_tax && data.federal_tax > 0) {
+          setFederalTax((data.federal_tax / 100).toFixed(2));
+          newAutoFilled.federalTax = true;
+        }
+        if (data.state_tax && data.state_tax > 0) {
+          setStateTax((data.state_tax / 100).toFixed(2));
+          newAutoFilled.stateTax = true;
+        }
+        if (data.fica && data.fica > 0) {
+          setFica((data.fica / 100).toFixed(2));
+          newAutoFilled.fica = true;
+        }
+        if (data.medicare && data.medicare > 0) {
+          setMedicare((data.medicare / 100).toFixed(2));
+          newAutoFilled.medicare = true;
+        }
+        
+        // Net Pay
+        if (data.net_pay && data.net_pay > 0) {
+          setNetPay((data.net_pay / 100).toFixed(2));
+          newAutoFilled.netPay = true;
+        }
+        
         // Check if fallback values were used
         if (data.fallback && data.message) {
           setFallbackMessage(data.message);
@@ -157,7 +217,19 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
             FSA: fsa ? Math.round(parseFloat(fsa) * 100) : undefined,
             FLPP: flpp ? Math.round(parseFloat(flpp) * 100) : undefined
           },
-          basePay: basePay ? Math.round(parseFloat(basePay) * 100) : undefined
+          basePay: basePay ? Math.round(parseFloat(basePay) * 100) : undefined,
+          deductions: {
+            TSP: tsp ? Math.round(parseFloat(tsp) * 100) : undefined,
+            SGLI: sgli ? Math.round(parseFloat(sgli) * 100) : undefined,
+            DENTAL: dental ? Math.round(parseFloat(dental) * 100) : undefined
+          },
+          taxes: {
+            FITW: federalTax ? Math.round(parseFloat(federalTax) * 100) : undefined,
+            SITW: stateTax ? Math.round(parseFloat(stateTax) * 100) : undefined,
+            FICA: fica ? Math.round(parseFloat(fica) * 100) : undefined,
+            MEDICARE: medicare ? Math.round(parseFloat(medicare) * 100) : undefined
+          },
+          netPay: netPay ? Math.round(parseFloat(netPay) * 100) : undefined
         })
       });
 
@@ -187,6 +259,14 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
     setFsa('');
     setFlpp('');
     setBasePay('');
+    setTsp('');
+    setSgli('');
+    setDental('');
+    setFederalTax('');
+    setStateTax('');
+    setFica('');
+    setMedicare('');
+    setNetPay('');
     setAutoFilled({
       bah: false,
       bas: false,
@@ -195,7 +275,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
       hfpIdp: false,
       fsa: false,
       flpp: false,
-      basePay: false
+      basePay: false,
+      tsp: false,
+      sgli: false,
+      dental: false,
+      federalTax: false,
+      stateTax: false,
+      fica: false,
+      medicare: false,
+      netPay: false
     });
   };
 
@@ -400,6 +488,110 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               onOverride={() => setAutoFilled(prev => ({ ...prev, basePay: false }))}
               helpText='Found on LES as "BASE PAY" - Your monthly base pay based on rank and years of service'
             />
+          </div>
+
+          {/* Deductions Section */}
+          <div className="space-y-4 pt-4">
+            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Deductions</h4>
+            
+            <CurrencyInput
+              label="TSP Contribution"
+              value={tsp}
+              autoFilled={autoFilled.tsp}
+              onChange={setTsp}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, tsp: false }))}
+              helpText='Found on LES as "TSP" or "THRIFT SAVINGS PLAN"'
+              optional
+            />
+
+            <CurrencyInput
+              label="SGLI Premium"
+              value={sgli}
+              autoFilled={autoFilled.sgli}
+              onChange={setSgli}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, sgli: false }))}
+              helpText='Found on LES as "SGLI" - Life insurance premium'
+              optional
+            />
+
+            <CurrencyInput
+              label="Dental Insurance"
+              value={dental}
+              autoFilled={autoFilled.dental}
+              onChange={setDental}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, dental: false }))}
+              helpText='Found on LES as "DENTAL" or "TRICARE DENTAL"'
+              optional
+            />
+          </div>
+
+          {/* Taxes Section */}
+          <div className="space-y-4 pt-4">
+            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Taxes</h4>
+            
+            <CurrencyInput
+              label="Federal Income Tax Withheld"
+              value={federalTax}
+              autoFilled={autoFilled.federalTax}
+              onChange={setFederalTax}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, federalTax: false }))}
+              helpText='Found on LES as "FED TAX" or "FITW"'
+              optional
+            />
+
+            <CurrencyInput
+              label="State Income Tax Withheld"
+              value={stateTax}
+              autoFilled={autoFilled.stateTax}
+              onChange={setStateTax}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, stateTax: false }))}
+              helpText='Found on LES as "STATE TAX" or "SITW" (0 for no-tax states)'
+              optional
+            />
+
+            <CurrencyInput
+              label="FICA (Social Security Tax)"
+              value={fica}
+              autoFilled={autoFilled.fica}
+              onChange={setFica}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, fica: false }))}
+              helpText='Found on LES as "FICA" or "SOC SEC" - Typically 6.2% of gross pay'
+              optional
+            />
+
+            <CurrencyInput
+              label="Medicare Tax"
+              value={medicare}
+              autoFilled={autoFilled.medicare}
+              onChange={setMedicare}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, medicare: false }))}
+              helpText='Found on LES as "MEDICARE" - Typically 1.45% of gross pay'
+              optional
+            />
+          </div>
+
+          {/* Net Pay Section */}
+          <div className="space-y-4 pt-4">
+            <h4 className="text-md font-semibold text-gray-900 border-b pb-2 flex items-center gap-2">
+              <Icon name="DollarSign" className="w-5 h-5 text-green-600" />
+              Net Pay (The Bottom Line)
+            </h4>
+            
+            <CurrencyInput
+              label="Net Pay (Take-Home)"
+              value={netPay}
+              autoFilled={autoFilled.netPay}
+              onChange={setNetPay}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, netPay: false }))}
+              helpText='Found on LES as "NET PAY" - The amount that actually hits your bank account'
+            />
+            
+            <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+              <p className="text-xs text-green-800">
+                <Icon name="Info" className="inline w-3 h-3 mr-1" />
+                Net Pay = (Base Pay + Allowances + Special Pays) - (Deductions + Taxes)
+              </p>
+            </div>
           </div>
 
           {/* Submit Button */}

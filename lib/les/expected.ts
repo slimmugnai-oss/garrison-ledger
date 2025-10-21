@@ -109,6 +109,45 @@ export async function buildExpectedSnapshot(
     }
   }
 
+  // =============================================================================
+  // Calculate Gross Pay (for deduction/tax calculations)
+  // =============================================================================
+  const grossPayCents = (expected.base_pay_cents || 0) +
+                        (expected.bah_cents || 0) +
+                        (expected.bas_cents || 0) +
+                        (expected.cola_cents || 0) +
+                        (expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
+
+  // =============================================================================
+  // Deductions (TSP, SGLI, Dental)
+  // =============================================================================
+  const deductions = await computeDeductions(userId, grossPayCents);
+  if (deductions.tsp_cents) expected.tsp_cents = deductions.tsp_cents;
+  if (deductions.sgli_cents) expected.sgli_cents = deductions.sgli_cents;
+  if (deductions.dental_cents) expected.dental_cents = deductions.dental_cents;
+
+  // =============================================================================
+  // Taxes (Federal, State, FICA, Medicare)
+  // =============================================================================
+  const taxes = await computeTaxes(userId, grossPayCents, year);
+  if (taxes.federal_tax_cents) expected.federal_tax_cents = taxes.federal_tax_cents;
+  if (taxes.state_tax_cents) expected.state_tax_cents = taxes.state_tax_cents;
+  if (taxes.fica_cents) expected.fica_cents = taxes.fica_cents;
+  if (taxes.medicare_cents) expected.medicare_cents = taxes.medicare_cents;
+
+  // =============================================================================
+  // Net Pay = Gross - Deductions - Taxes
+  // =============================================================================
+  const totalDeductions = (deductions.tsp_cents || 0) +
+                          (deductions.sgli_cents || 0) +
+                          (deductions.dental_cents || 0);
+  const totalTaxes = (taxes.federal_tax_cents || 0) +
+                     (taxes.state_tax_cents || 0) +
+                     (taxes.fica_cents || 0) +
+                     (taxes.medicare_cents || 0);
+  
+  expected.net_pay_cents = grossPayCents - totalDeductions - totalTaxes;
+
   return {
     user_id: userId,
     month,
@@ -302,6 +341,151 @@ async function computeBasePay(
     return data.monthly_rate_cents;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Compute deductions (TSP, SGLI, Dental) from profile
+ * Returns object with expected deduction amounts
+ */
+async function computeDeductions(
+  userId: string,
+  grossPayCents: number
+): Promise<{
+  tsp_cents?: number;
+  sgli_cents?: number;
+  dental_cents?: number;
+}> {
+  const result: { tsp_cents?: number; sgli_cents?: number; dental_cents?: number } = {};
+  
+  try {
+    const { data: profile } = await supabaseAdmin
+      .from('user_profiles')
+      .select('tsp_contribution_percent, sgli_coverage_amount, has_dental_insurance')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (!profile) return result;
+    
+    // TSP Contribution
+    if (profile.tsp_contribution_percent && profile.tsp_contribution_percent > 0) {
+      result.tsp_cents = Math.round(grossPayCents * profile.tsp_contribution_percent);
+    }
+    
+    // SGLI Premium (query from sgli_rates table)
+    if (profile.sgli_coverage_amount && profile.sgli_coverage_amount > 0) {
+      const { data: sgliRate } = await supabaseAdmin
+        .from('sgli_rates')
+        .select('monthly_premium_cents')
+        .eq('coverage_amount', profile.sgli_coverage_amount)
+        .maybeSingle();
+      
+      if (sgliRate) {
+        result.sgli_cents = sgliRate.monthly_premium_cents;
+      }
+    }
+    
+    // Dental Insurance (typical premium $13-15/month for individual, $30-35 for family)
+    if (profile.has_dental_insurance) {
+      // Use typical rate - users will override if different
+      result.dental_cents = 1400; // $14/month typical
+    }
+    
+    return result;
+  } catch {
+    return result;
+  }
+}
+
+/**
+ * Compute taxes (Federal, State, FICA, Medicare) from profile and tax tables
+ * Returns object with expected tax amounts
+ * Note: Tax calculations are estimates - actual withholding varies by W-4 settings
+ */
+async function computeTaxes(
+  userId: string,
+  grossPayCents: number,
+  year: number
+): Promise<{
+  federal_tax_cents?: number;
+  state_tax_cents?: number;
+  fica_cents?: number;
+  medicare_cents?: number;
+}> {
+  const result: { federal_tax_cents?: number; state_tax_cents?: number; fica_cents?: number; medicare_cents?: number } = {};
+  
+  try {
+    // Get tax constants for the year
+    const { data: taxConstants } = await supabaseAdmin
+      .from('payroll_tax_constants')
+      .select('fica_rate, fica_wage_base_cents, medicare_rate')
+      .eq('effective_year', year)
+      .maybeSingle();
+    
+    if (!taxConstants) return result;
+    
+    // FICA (Social Security) - 6.2% up to wage base
+    const ficaRate = parseFloat(taxConstants.fica_rate as string);
+    const ficaWageBase = taxConstants.fica_wage_base_cents;
+    result.fica_cents = Math.round(Math.min(grossPayCents, ficaWageBase) * ficaRate);
+    
+    // Medicare - 1.45% of all wages
+    const medicareRate = parseFloat(taxConstants.medicare_rate as string);
+    result.medicare_cents = Math.round(grossPayCents * medicareRate);
+    
+    // Federal and State Tax - Get from profile
+    const { data: profile } = await supabaseAdmin
+      .from('user_profiles')
+      .select('filing_status, state_of_residence, w4_allowances')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (profile) {
+      // Federal Tax - Rough estimate based on filing status
+      // This is a simplification - actual tax is complex with brackets
+      // Users should override with actual value from LES
+      if (profile.filing_status) {
+        const annualGross = grossPayCents * 12;
+        let estimatedFederalRate = 0.12; // Default 12% bracket
+        
+        // Adjust for filing status and income level
+        if (profile.filing_status === 'married_filing_jointly') {
+          if (annualGross > 9000000) estimatedFederalRate = 0.22; // $90K+
+          else if (annualGross > 6500000) estimatedFederalRate = 0.12;
+          else estimatedFederalRate = 0.10;
+        } else { // single
+          if (annualGross > 4700000) estimatedFederalRate = 0.22; // $47K+
+          else if (annualGross > 3200000) estimatedFederalRate = 0.12;
+          else estimatedFederalRate = 0.10;
+        }
+        
+        result.federal_tax_cents = Math.round(grossPayCents * estimatedFederalRate);
+      }
+      
+      // State Tax - Query state_tax_rates table
+      if (profile.state_of_residence) {
+        const { data: stateRate } = await supabaseAdmin
+          .from('state_tax_rates')
+          .select('tax_type, flat_rate, avg_rate_mid')
+          .eq('state_code', profile.state_of_residence)
+          .eq('effective_year', year)
+          .maybeSingle();
+        
+        if (stateRate) {
+          if (stateRate.tax_type === 'none') {
+            result.state_tax_cents = 0; // No state income tax
+          } else if (stateRate.tax_type === 'flat' && stateRate.flat_rate) {
+            result.state_tax_cents = Math.round(grossPayCents * parseFloat(stateRate.flat_rate as string));
+          } else if (stateRate.avg_rate_mid) {
+            result.state_tax_cents = Math.round(grossPayCents * parseFloat(stateRate.avg_rate_mid as string));
+          }
+        }
+      }
+    }
+    
+    return result;
+  } catch {
+    return result;
   }
 }
 

@@ -41,6 +41,18 @@ interface ManualEntryRequest {
     FLPP?: number;     // in cents
   };
   basePay?: number;    // in cents
+  deductions?: {
+    TSP?: number;      // in cents
+    SGLI?: number;     // in cents
+    DENTAL?: number;   // in cents
+  };
+  taxes?: {
+    FITW?: number;     // Federal income tax withheld (in cents)
+    SITW?: number;     // State income tax withheld (in cents)
+    FICA?: number;     // Social Security (in cents)
+    MEDICARE?: number; // Medicare (in cents)
+  };
+  netPay?: number;     // in cents
 }
 
 export async function POST(req: NextRequest) {
@@ -91,7 +103,7 @@ export async function POST(req: NextRequest) {
     // 3. PARSE REQUEST
     // ==========================================================================
     const body: ManualEntryRequest = await req.json();
-    const { month, year, allowances, basePay } = body;
+    const { month, year, allowances, basePay, deductions, taxes, netPay } = body;
 
     if (!month || !year || !allowances) {
       throw Errors.invalidInput('month, year, and allowances are required');
@@ -109,8 +121,10 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 4. CREATE MANUAL ENTRY RECORD
     // ==========================================================================
-    // Calculate total allowances (including base pay)
+    // Calculate totals by section
     const totalAllowances = Object.values(allowances).reduce((sum, val) => sum + (val || 0), 0) + (basePay || 0);
+    const totalDeductions = deductions ? Object.values(deductions).reduce((sum, val) => sum + (val || 0), 0) : 0;
+    const totalTaxes = taxes ? Object.values(taxes).reduce((sum, val) => sum + (val || 0), 0) : 0;
     
     const { data: uploadRecord, error: insertError } = await supabaseAdmin
       .from('les_uploads')
@@ -128,13 +142,14 @@ export async function POST(req: NextRequest) {
         parsed_summary: {
           totalsBySection: {
             ALLOWANCE: totalAllowances,
-            DEDUCTION: 0,
+            DEDUCTION: totalDeductions,
             ALLOTMENT: 0,
-            TAX: 0,
+            TAX: totalTaxes,
             OTHER: 0
           },
           allowancesByCode: { ...allowances, ...(basePay ? { BASE_PAY: basePay } : {}) },
-          deductionsByCode: {}
+          deductionsByCode: { ...(deductions || {}) },
+          taxesByCode: { ...(taxes || {}) }
         }
       })
       .select('*')
@@ -224,6 +239,81 @@ export async function POST(req: NextRequest) {
         description: 'Base Pay (Manual Entry)',
         amount_cents: basePay,
         section: 'ALLOWANCE'
+      });
+    }
+
+    // Deductions
+    if (deductions?.TSP) {
+      lines.push({
+        line_code: 'TSP',
+        description: 'TSP Contribution (Manual Entry)',
+        amount_cents: deductions.TSP,
+        section: 'DEDUCTION'
+      });
+    }
+
+    if (deductions?.SGLI) {
+      lines.push({
+        line_code: 'SGLI',
+        description: 'SGLI Premium (Manual Entry)',
+        amount_cents: deductions.SGLI,
+        section: 'DEDUCTION'
+      });
+    }
+
+    if (deductions?.DENTAL) {
+      lines.push({
+        line_code: 'DENTAL',
+        description: 'Dental Insurance (Manual Entry)',
+        amount_cents: deductions.DENTAL,
+        section: 'DEDUCTION'
+      });
+    }
+
+    // Taxes
+    if (taxes?.FITW) {
+      lines.push({
+        line_code: 'FITW',
+        description: 'Federal Income Tax Withheld (Manual Entry)',
+        amount_cents: taxes.FITW,
+        section: 'TAX'
+      });
+    }
+
+    if (taxes?.SITW) {
+      lines.push({
+        line_code: 'SITW',
+        description: 'State Income Tax Withheld (Manual Entry)',
+        amount_cents: taxes.SITW,
+        section: 'TAX'
+      });
+    }
+
+    if (taxes?.FICA) {
+      lines.push({
+        line_code: 'FICA',
+        description: 'FICA / Social Security Tax (Manual Entry)',
+        amount_cents: taxes.FICA,
+        section: 'TAX'
+      });
+    }
+
+    if (taxes?.MEDICARE) {
+      lines.push({
+        line_code: 'MEDICARE',
+        description: 'Medicare Tax (Manual Entry)',
+        amount_cents: taxes.MEDICARE,
+        section: 'TAX'
+      });
+    }
+
+    // Net Pay (stored as OTHER section for tracking)
+    if (netPay) {
+      lines.push({
+        line_code: 'NET_PAY',
+        description: 'Net Pay (Manual Entry)',
+        amount_cents: netPay,
+        section: 'OTHER'
       });
     }
 

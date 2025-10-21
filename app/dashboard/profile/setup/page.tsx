@@ -62,6 +62,15 @@ type ProfilePayload = {
   receives_flpp?: boolean | null;
   flpp_monthly_cents?: number | null;
   
+  // Deductions & Taxes (for LES Auditor)
+  tsp_contribution_percent?: number | null;
+  tsp_contribution_type?: string | null;
+  sgli_coverage_amount?: number | null;
+  has_dental_insurance?: boolean | null;
+  filing_status?: string | null;
+  state_of_residence?: string | null;
+  w4_allowances?: number | null;
+  
   // System
   profile_completed?: boolean | null;
 };
@@ -161,6 +170,14 @@ export default function ProfileSetupPage() {
             fsa_monthly_cents: json?.fsa_monthly_cents ?? null,
             receives_flpp: json?.receives_flpp ?? null,
             flpp_monthly_cents: json?.flpp_monthly_cents ?? null,
+            // Deductions & Taxes
+            tsp_contribution_percent: json?.tsp_contribution_percent ?? null,
+            tsp_contribution_type: json?.tsp_contribution_type ?? null,
+            sgli_coverage_amount: json?.sgli_coverage_amount ?? null,
+            has_dental_insurance: json?.has_dental_insurance ?? null,
+            filing_status: json?.filing_status ?? null,
+            state_of_residence: json?.state_of_residence ?? null,
+            w4_allowances: json?.w4_allowances ?? null,
             // System
             profile_completed: json?.profile_completed ?? false,
           });
@@ -316,9 +333,9 @@ export default function ProfileSetupPage() {
         total = 0; // Don't require any fields
         complete = 0;
         break;
-      // Section 8 removed (preferences) - fields deleted from database
-      case 8:
-        total = 0;
+      case 8: // Deductions & Taxes (optional - for LES Auditor accuracy)
+        // All deduction/tax fields are optional
+        total = 0; // Don't require any fields
         complete = 0;
         break;
     }
@@ -1141,7 +1158,191 @@ export default function ProfileSetupPage() {
             </div>
           </ProfileSection>
 
-          {/* Section 8 (Preferences) removed - fields deleted from database */}
+          {/* Section 8: Deductions & Taxes (Optional - For Complete LES Validation) */}
+          <ProfileSection
+            number={8}
+            title="Deductions & Taxes"
+            icon="📊"
+            description="Optional: Enables complete paycheck validation including net pay verification"
+            expanded={expandedSections.has(8)}
+            onToggle={() => toggleSection(8)}
+            completion={getSectionCompletion(8)}
+          >
+            <div className="space-y-6">
+              {/* Info Banner */}
+              <div className="rounded-lg border border-blue-300 bg-blue-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-semibold text-blue-900">Complete Paycheck Validation</h4>
+                    <p className="text-sm text-blue-800 mt-1">
+                      Configure your deductions and tax settings to enable full LES validation including net pay verification. 
+                      This helps catch errors in TSP contributions, SGLI premiums, and tax withholding.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* TSP Configuration */}
+              <div className="space-y-3">
+                <h5 className="font-semibold text-gray-900">TSP (Thrift Savings Plan)</h5>
+                
+                <ProfileFormField
+                  label="TSP Contribution Percentage"
+                  description="Percentage of gross pay contributed to TSP (e.g., 5% = 0.05)"
+                  success={data.tsp_contribution_percent !== null}
+                >
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    placeholder="e.g., 0.05 for 5%"
+                    className={getInputClass(false, data.tsp_contribution_percent !== null)}
+                    value={data.tsp_contribution_percent ?? ''}
+                    onChange={e => setData(d => ({ ...d, tsp_contribution_percent: e.target.value ? parseFloat(e.target.value) : null }))}
+                  />
+                </ProfileFormField>
+
+                <ProfileFormField
+                  label="TSP Contribution Type"
+                  description="Traditional (pre-tax) or Roth (post-tax)"
+                  success={!!data.tsp_contribution_type}
+                >
+                  <select
+                    className={getInputClass(false, !!data.tsp_contribution_type)}
+                    value={data.tsp_contribution_type ?? ''}
+                    onChange={e => setData(d => ({ ...d, tsp_contribution_type: e.target.value || null }))}
+                  >
+                    <option value="">Select</option>
+                    <option value="traditional">Traditional (Pre-Tax)</option>
+                    <option value="roth">Roth (Post-Tax)</option>
+                    <option value="split">Split (Both)</option>
+                  </select>
+                </ProfileFormField>
+              </div>
+
+              {/* SGLI Configuration */}
+              <div className="space-y-3">
+                <h5 className="font-semibold text-gray-900">SGLI (Life Insurance)</h5>
+                
+                <ProfileFormField
+                  label="SGLI Coverage Amount"
+                  description="Your total SGLI coverage (increments of $50K up to $500K)"
+                  success={data.sgli_coverage_amount !== null}
+                >
+                  <select
+                    className={getInputClass(false, data.sgli_coverage_amount !== null)}
+                    value={data.sgli_coverage_amount ?? ''}
+                    onChange={e => setData(d => ({ ...d, sgli_coverage_amount: e.target.value ? parseInt(e.target.value) : null }))}
+                  >
+                    <option value="">Select</option>
+                    <option value="0">$0 (Declined)</option>
+                    <option value="50000">$50,000</option>
+                    <option value="100000">$100,000</option>
+                    <option value="150000">$150,000</option>
+                    <option value="200000">$200,000</option>
+                    <option value="250000">$250,000</option>
+                    <option value="300000">$300,000</option>
+                    <option value="350000">$350,000</option>
+                    <option value="400000">$400,000 (Maximum)</option>
+                  </select>
+                </ProfileFormField>
+              </div>
+
+              {/* Dental Insurance */}
+              <div className="space-y-3">
+                <ProfileFormField
+                  label="Do you have TRICARE Dental (or other military dental insurance)?"
+                  success={data.has_dental_insurance !== null}
+                >
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.has_dental_insurance === true}
+                        onChange={() => setData(d => ({ ...d, has_dental_insurance: true }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.has_dental_insurance === false}
+                        onChange={() => setData(d => ({ ...d, has_dental_insurance: false }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </ProfileFormField>
+              </div>
+
+              {/* Tax Withholding Configuration */}
+              <div className="space-y-3">
+                <h5 className="font-semibold text-gray-900">Tax Withholding</h5>
+                
+                <ProfileFormField
+                  label="Filing Status"
+                  description="Your tax filing status for withholding calculations"
+                  success={!!data.filing_status}
+                >
+                  <select
+                    className={getInputClass(false, !!data.filing_status)}
+                    value={data.filing_status ?? ''}
+                    onChange={e => setData(d => ({ ...d, filing_status: e.target.value || null }))}
+                  >
+                    <option value="">Select</option>
+                    <option value="single">Single</option>
+                    <option value="married_filing_jointly">Married Filing Jointly</option>
+                    <option value="married_filing_separately">Married Filing Separately</option>
+                    <option value="head_of_household">Head of Household</option>
+                  </select>
+                </ProfileFormField>
+
+                <ProfileFormField
+                  label="State of Legal Residence"
+                  description="For state income tax withholding (your home of record)"
+                  success={!!data.state_of_residence}
+                >
+                  <input
+                    type="text"
+                    placeholder="e.g., CA, TX, FL, NY"
+                    maxLength={2}
+                    className={getInputClass(false, !!data.state_of_residence)}
+                    value={data.state_of_residence ?? ''}
+                    onChange={e => setData(d => ({ ...d, state_of_residence: e.target.value.toUpperCase() || null }))}
+                  />
+                </ProfileFormField>
+
+                <ProfileFormField
+                  label="W-4 Allowances"
+                  description="Number of allowances claimed on your W-4 (affects federal tax withholding)"
+                  success={data.w4_allowances !== null}
+                >
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    placeholder="e.g., 0, 1, 2"
+                    className={getInputClass(false, data.w4_allowances !== null)}
+                    value={data.w4_allowances ?? ''}
+                    onChange={e => setData(d => ({ ...d, w4_allowances: e.target.value ? parseInt(e.target.value) : null }))}
+                  />
+                </ProfileFormField>
+              </div>
+
+              {/* Help Text */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p className="text-xs text-gray-700">
+                  <Icon name="HelpCircle" className="inline w-3 h-3 mr-1" />
+                  <strong>Why configure this?</strong> The LES Auditor can calculate your expected deductions and taxes to verify your net pay is correct. 
+                  Tax calculations are estimates - actual withholding depends on your W-4 settings and year-to-date earnings.
+                </p>
+              </div>
+            </div>
+          </ProfileSection>
         </div>
 
         {/* Mobile Sticky Save Button */}

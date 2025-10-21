@@ -61,7 +61,14 @@ export interface ExpectedSnapshot {
     cola_cents?: number;
     base_pay_cents?: number;
     specials?: ExpectedSpecialPay[];
-    taxes?: Record<string, number>;  // v2 - tax calculations
+    tsp_cents?: number;
+    sgli_cents?: number;
+    dental_cents?: number;
+    federal_tax_cents?: number;
+    state_tax_cents?: number;
+    fica_cents?: number;
+    medicare_cents?: number;
+    net_pay_cents?: number;
   };
 }
 
