@@ -281,6 +281,7 @@ export function generateHouseHackingReport(inputs: HouseHackInputs, outputs: Hou
 /**
  * Generic report generator for other calculators
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateGenericReport(
   title: string,
   inputs: any,
@@ -342,6 +343,7 @@ export function generateGenericReport(
 /**
  * Main function - routes to appropriate report generator
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateCalculatorReport(
   calculatorName: string,
   inputs: any,

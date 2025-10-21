@@ -2,6 +2,7 @@
  * Tests for Logger Utility
  * Ensures PII sanitization and environment-aware logging work correctly
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { logger, sanitizeForLogging } from '../logger';
 
