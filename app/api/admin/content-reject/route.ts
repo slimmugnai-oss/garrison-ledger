@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       throw Errors.forbidden('Admin access required');
     }
 
-    const body = await request.json();
+    const body = await req.json();
     const { feedItemId } = body;
 
     if (!feedItemId) {
