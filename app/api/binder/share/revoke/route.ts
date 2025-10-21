@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -18,51 +20,50 @@ function getAdminClient() {
 }
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let body: { shareId?: string; token?: string };
-
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
+    let body: { shareId?: string; token?: string };
+
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      logger.warn('[BinderShareRevoke] Invalid JSON in request', { userId });
+      throw Errors.invalidInput("Invalid JSON in request body");
+    }
+
+    const { shareId, token } = body;
+
+    if (!shareId && !token) {
+      throw Errors.invalidInput("Either shareId or token is required");
+    }
+
+    const supabase = getAdminClient();
+
+    // Soft delete by setting revoked_at
+    let query = supabase
+      .from("binder_shares")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", userId);
+
+    if (shareId) {
+      query = query.eq("id", shareId);
+    } else if (token) {
+      query = query.eq("token", token);
+    }
+
+    const { error } = await query;
+
+    if (error) {
+      logger.error('[BinderShareRevoke] Failed to revoke share', error, { userId, shareId, token });
+      throw Errors.databaseError("Failed to revoke share link");
+    }
+
+    logger.info('[BinderShareRevoke] Share revoked', { userId, shareId, token });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return errorResponse(error);
   }
-
-  const { shareId, token } = body;
-
-  if (!shareId && !token) {
-    return NextResponse.json(
-      { error: "Missing shareId or token" },
-      { status: 400 }
-    );
-  }
-
-  const supabase = getAdminClient();
-
-  // Soft delete by setting revoked_at
-  let query = supabase
-    .from("binder_shares")
-    .update({ revoked_at: new Date().toISOString() })
-    .eq("user_id", userId);
-
-  if (shareId) {
-    query = query.eq("id", shareId);
-  } else if (token) {
-    query = query.eq("token", token);
-  }
-
-  const { error } = await query;
-
-  if (error) {
-    return NextResponse.json(
-      { error: "Failed to revoke share link" },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({ success: true });
 }
 
