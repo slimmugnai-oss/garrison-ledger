@@ -390,14 +390,7 @@ export default function ProfileSetupPage() {
     }
   }
 
-  function toggleArray(field: keyof ProfilePayload, value: string) {
-    setData(prev => {
-      const arr = (prev[field] as string[] | null) || [];
-      const exists = arr.includes(value);
-      const next = exists ? arr.filter(v => v !== value) : [...arr, value];
-      return { ...prev, [field]: next };
-    });
-  }
+  // toggleArray removed - no multi-select fields remain in streamlined profile
 
   if (loading) {
     return <ProfileLoadingSkeleton />;
