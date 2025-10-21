@@ -75,9 +75,6 @@ export async function GET(request: NextRequest) {
       .map(i => i.content_id) || [];
     
     const bookmarkedContentIds = bookmarks?.map(b => b.content_id) || [];
-    const highRatedContentIds = ratings
-      ?.filter(r => r.rating >= 4)
-      .map(r => r.content_id) || [];
 
     // Get domains and tags from interacted content
     let preferredDomains: string[] = [];

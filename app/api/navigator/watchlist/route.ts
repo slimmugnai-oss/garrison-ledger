@@ -13,7 +13,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
-import type { WatchlistData } from '@/app/types/navigator';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

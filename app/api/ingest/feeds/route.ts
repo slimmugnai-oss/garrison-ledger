@@ -85,7 +85,7 @@ async function processRSSFeed(
     let feedData;
     try {
       feedData = await parser.parseURL(source.url);
-    } catch (error) {
+    } catch {
       // If parsing fails, try to get raw content and clean it
       const response = await fetch(source.url, {
         headers: {
