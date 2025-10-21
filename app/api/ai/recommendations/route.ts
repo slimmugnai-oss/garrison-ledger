@@ -190,7 +190,10 @@ User Calculator Profile:
 - Last calculator: ${lastCalculator}
 
 Detected Patterns:
-${patterns?.map((p: any) => `- ${p.pattern_name}: ${p.frequency} occurrences`).join('\n') || 'None yet'}
+${
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  patterns?.map((p: any) => `- ${p.pattern_name}: ${p.frequency} occurrences`).join('\n') || 'None yet'
+}
 
 Latest Results (${lastCalculator}):
 ${JSON.stringify(lastOutputs, null, 2)}

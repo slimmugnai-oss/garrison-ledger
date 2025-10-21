@@ -5,6 +5,7 @@ import { getComparisonList, removeFromComparison, clearComparison } from '@/app/
 import { badgeColors } from '@/app/data/bases';
 
 export default function ComparisonBar() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [comparisonBases, setComparisonBases] = useState<any[]>([]);
   const [isVisible, setIsVisible] = useState(false);
 

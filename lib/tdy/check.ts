@@ -72,6 +72,7 @@ export async function runChecks(tripId: string, userId: string): Promise<TdyFlag
   if (flags.length === 0) {
     flags.push({
       severity: 'green',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       flag_code: 'ALL_CLEAR' as any,
       message: 'No compliance issues detected',
       suggestion: 'Review totals and proceed to voucher generation'

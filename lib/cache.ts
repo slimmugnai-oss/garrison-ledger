@@ -25,6 +25,7 @@ export async function getCache<T>(key: string): Promise<T | null> {
     }
 
     // Check if we have payload (old schema) or data (new schema)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = data.data || (data as any).payload;
     
     if (!payload) {

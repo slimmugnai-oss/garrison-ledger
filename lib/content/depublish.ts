@@ -32,6 +32,7 @@ export async function depublishCriticalBlocks(): Promise<DepublishResult[]> {
   const blockFlagCounts = new Map<string, { title: string; count: number; status: string }>();
 
   for (const flag of flaggedBlocks) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const block = (flag as any).content_blocks;
     if (block.status !== 'published') {
       continue; // Already not published

@@ -113,6 +113,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
 /**
  * Parse crime API response and compute safety score
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseCrimeData(data: any): CrimeData {
   try {
     // FBI Crime Data API returns national data, so we'll use it as a baseline
