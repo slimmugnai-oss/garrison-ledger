@@ -48,7 +48,7 @@ export default function AIRecommendations() {
       // Silent failure - recommendations are optional dashboard feature
       // Don't show error to user, just hide the widget
       if (process.env.NODE_ENV === 'development') {
-        console.error('[AIRecommendations] Failed to fetch:', error);
+        // Failed to fetch - non-critical widget
       }
       setRecommendations([]);
     } finally {
@@ -74,7 +74,7 @@ export default function AIRecommendations() {
     } catch (error) {
       // If database update fails, revert UI change
       if (process.env.NODE_ENV === 'development') {
-        console.error('[AIRecommendations] Failed to dismiss:', error);
+        // Failed to dismiss - non-critical
       }
       // Refetch to sync with database state
       fetchRecommendations();

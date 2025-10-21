@@ -30,10 +30,7 @@ export default function LeadMagnet() {
     } catch (error) {
       // Show user-friendly error
       alert('Failed to send checklist. Please try again or contact support@garrisonledger.com');
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[LeadMagnet] Submission failed:', error);
-      }
+      // Error already handled via UI state
     } finally {
       setLoading(false);
     }

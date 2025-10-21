@@ -41,7 +41,7 @@ export default function LesHistory({ tier, isPremium: _isPremium, uploads: _uplo
       setHistoryData([]);
       
       if (process.env.NODE_ENV === 'development') {
-        console.error('[LesHistory] Failed to load:', err);
+        // Failed to load history - non-critical
       }
     } finally {
       setLoading(false);

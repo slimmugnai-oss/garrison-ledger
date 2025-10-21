@@ -33,7 +33,7 @@ export default function UpcomingExpirations() {
         setReminders([]);
         
         if (process.env.NODE_ENV === 'development') {
-          console.error('[UpcomingExpirations] Failed to load:', error);
+          // Failed to load - non-critical widget
         }
       } finally {
         setLoading(false);

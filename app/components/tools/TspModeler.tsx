@@ -156,11 +156,9 @@ export default function TspModeler() {
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
-      } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error saving analysis:', err);
-        }
-      } finally {
+            } catch (err) {
+              // Error already handled silently - saving is non-blocking
+            } finally {
         setLoading(false);
       }
     };

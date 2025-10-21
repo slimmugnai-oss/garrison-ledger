@@ -164,7 +164,7 @@ export default function ExportAuditPDF({ auditResult, userProfile }: ExportAudit
       doc.save(filename);
       
     } catch (error) {
-      console.error('[Export PDF] Error:', error);
+      // Export error - user already sees error state
       alert('Failed to generate PDF. Please try again.');
     } finally {
       setGenerating(false);

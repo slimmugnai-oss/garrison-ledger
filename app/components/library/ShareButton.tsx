@@ -36,7 +36,7 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
       }).catch((trackError) => {
         // Analytics tracking failure - don't show to user
         if (process.env.NODE_ENV === 'development') {
-          console.error('[ShareButton] Failed to track share:', trackError);
+          // Tracking failure - non-critical
         }
       });
     } catch (error) {
@@ -45,7 +45,7 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
       alert(`Unable to share: ${errorMessage}. Please copy the URL manually.`);
       
       if (process.env.NODE_ENV === 'development') {
-        console.error('[ShareButton] Share failed:', error);
+        // Share failed - non-critical
       }
     }
   };

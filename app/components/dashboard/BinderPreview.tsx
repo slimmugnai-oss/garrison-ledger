@@ -70,7 +70,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
       setStats(null);
       
       if (process.env.NODE_ENV === 'development') {
-        console.error('[BinderPreview] Failed to load:', error);
+        // Failed to load - non-critical widget
       }
     } finally {
       setLoading(false);

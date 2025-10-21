@@ -28,9 +28,6 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
       }
     } catch (error) {
       // Failed to load existing rating - not critical, user can still rate
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[RatingButton] Failed to fetch user rating:', error);
-      }
     }
   };
 
@@ -65,10 +62,7 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to submit rating';
       alert(message);
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[RatingButton] Rating submission failed:', error);
-      }
+      // Error already handled via UI state
     } finally {
       setIsLoading(false);
     }

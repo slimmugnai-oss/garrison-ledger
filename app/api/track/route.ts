@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 export const runtime = "edge";
 
@@ -12,9 +13,7 @@ export async function POST(req: NextRequest) {
     payload = await req.json(); 
     } catch {
     // Invalid JSON - skip tracking
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[Track] Invalid JSON in request');
-    }
+    logger.debug('[Track] Invalid JSON in request');
     return NextResponse.json({ ok: true });
   }
   
@@ -34,8 +33,8 @@ export async function POST(req: NextRequest) {
     ua: req.headers.get("user-agent")?.slice(0, 400) ?? null,
   });
 
-  if (error && process.env.NODE_ENV === 'development') {
-    console.error('[Track] Failed to insert event', error);
+  if (error) {
+    logger.error('[Track] Failed to insert event', error);
   }
 
   return NextResponse.json({ ok: true }, { headers: { "Cache-Control":"no-store" } });

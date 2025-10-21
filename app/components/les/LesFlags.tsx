@@ -50,7 +50,7 @@ export default function LesFlags({ flags, tier, summary }: Props) {
         });
       }
     } catch (err) {
-      console.error('Error tracking LES copy:', err);
+      // Tracking error - non-critical
     }
   };
 
