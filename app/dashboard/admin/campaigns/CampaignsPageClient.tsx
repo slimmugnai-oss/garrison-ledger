@@ -22,14 +22,23 @@ export default function CampaignsPageClient() {
       <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
-          <div className="mb-8 flex items-center gap-3">
-            <Link href="/dashboard/admin" className="text-text-muted hover:text-text-body">
-              <Icon name="ChevronLeft" className="h-6 w-6" />
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard/admin" className="text-text-muted hover:text-text-body">
+                <Icon name="ChevronLeft" className="h-6 w-6" />
+              </Link>
+              <PageHeader 
+                title="Email Campaign Manager" 
+                subtitle="Manage automated sequences and send manual campaigns"
+              />
+            </div>
+            <Link
+              href="/dashboard/admin/campaigns/analytics"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              <Icon name="BarChart" className="h-5 w-5" />
+              View Analytics
             </Link>
-            <PageHeader 
-              title="Email Campaign Manager" 
-              subtitle="Manage automated sequences and send manual campaigns"
-            />
           </div>
 
           {/* Automated Sequences Status */}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { renderWeeklyDigest, getEmailSubject } from '@/lib/email-templates';
 
 export const runtime = "nodejs";
 
@@ -127,6 +128,9 @@ export async function POST(req: NextRequest) {
 async function sendWeeklyDigest(email: string, data: { userName: string; hasPlan: boolean; planUpdated: boolean }) {
   if (!process.env.RESEND_API_KEY) return;
 
+  const html = await renderWeeklyDigest(data.userName, data.hasPlan, data.planUpdated);
+  const subject = getEmailSubject('weekly_digest', data.userName);
+
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -136,50 +140,8 @@ async function sendWeeklyDigest(email: string, data: { userName: string; hasPlan
     body: JSON.stringify({
       from: 'Garrison Ledger <noreply@familymedia.com>',
       to: [email],
-      subject: `${data.userName}, Your Weekly Military Finance Update 📊`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #2563eb; font-size: 28px; margin-bottom: 16px;">Your Weekly Update 📊</h1>
-          
-          <p style="font-size: 16px; color: #374151; line-height: 1.6;">
-            Hi ${data.userName}, here's what's new at Garrison Ledger this week:
-          </p>
-          
-          ${data.hasPlan ? `
-            <div style="background: #dbeafe; border-left: 4px solid #2563eb; padding: 20px; margin: 24px 0; border-radius: 8px;">
-              <h3 style="margin: 0 0 8px 0; color: #1e40af;">🤖 Your AI Plan ${data.planUpdated ? 'Has Been Updated!' : 'is Ready'}</h3>
-              <p style="margin: 0; font-size: 14px; color: #1e40af;">
-                ${data.planUpdated 
-                  ? 'We\'ve refreshed your plan with new content. Check out the latest recommendations!' 
-                  : 'Your personalized financial plan is waiting for you. Take action this week!'}
-              </p>
-            </div>
-          ` : `
-            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 24px 0; border-radius: 8px;">
-              <h3 style="margin: 0 0 8px 0; color: #92400e;">⚠️ You're Missing Your Personalized Plan</h3>
-              <p style="margin: 0; font-size: 14px; color: #92400e;">
-                Complete your assessment to get AI-curated financial strategies for your unique situation.
-              </p>
-            </div>
-          `}
-          
-          <h3 style="color: #111827; font-size: 20px; margin: 24px 0 12px 0;">📚 New Content This Week</h3>
-          <ul style="font-size: 14px; color: #4b5563; line-height: 1.8;">
-            <li>TSP allocation strategies for 2025 market conditions</li>
-            <li>PCS budgeting for OCONUS moves</li>
-            <li>Deployment SDP maximization tactics</li>
-          </ul>
-          
-          <a href="https://garrison-ledger.vercel.app/dashboard" 
-             style="display: inline-block; background: linear-gradient(to right, #2563eb, #7c3aed); color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; margin: 24px 0;">
-            Open Your Dashboard →
-          </a>
-          
-          <p style="font-size: 12px; color: #9ca3af; margin-top: 32px; text-align: center;">
-            Don't want weekly emails? <a href="https://garrison-ledger.vercel.app/dashboard/settings" style="color: #2563eb;">Update preferences</a>
-          </p>
-        </div>
-      `
+      subject,
+      html
     }),
   });
 
