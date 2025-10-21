@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { getAllBases } from '@/app/data/bases';
 import type { BaseData } from '@/app/data/bases';
 import Icon from '../ui/Icon';
@@ -413,7 +413,6 @@ export default function BaseIntelligenceUltimate() {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<'CONUS' | 'OCONUS' | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Get all bases
   const allBases = useMemo(() => getAllBases(), []);

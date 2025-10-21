@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { getAllBases } from '@/app/data/bases';
 import type { BaseData } from '@/app/data/bases';
 import Icon from '../ui/Icon';

@@ -18,7 +18,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
           const data = await res.json();
           setIsPremium(data.isPremium);
         }
-      } catch (err) {
+      } catch {
       }
     }
     checkPremium();

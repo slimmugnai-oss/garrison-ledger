@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Icon from '../ui/Icon';
 import { basesData } from '@/app/data/bases';
-import type { BaseData } from '@/app/data/bases';
 
 export default function BaseComparisonPanel() {
   const [comparisonList, setComparisonList] = useState<string[]>([]);
@@ -16,31 +15,11 @@ export default function BaseComparisonPanel() {
       if (saved) {
         try {
           setComparisonList(JSON.parse(saved));
-        } catch (e) {
+        } catch {
         }
       }
     }
   }, []);
-
-  const addToComparison = (baseId: string) => {
-    if (comparisonList.includes(baseId)) {
-      return; // Already in list
-    }
-
-    if (comparisonList.length >= 5) {
-      alert('You can compare up to 5 bases at a time');
-      return;
-    }
-
-    const newList = [...comparisonList, baseId];
-    setComparisonList(newList);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('base_comparison_list', JSON.stringify(newList));
-    }
-
-    setIsOpen(true);
-  };
 
   const removeFromComparison = (baseId: string) => {
     const newList = comparisonList.filter(id => id !== baseId);
@@ -49,6 +28,8 @@ export default function BaseComparisonPanel() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('base_comparison_list', JSON.stringify(newList));
     }
+
+    setIsOpen(true);
   };
 
   const clearComparison = () => {

@@ -44,7 +44,7 @@ export default function ReferralCapture() {
           // You could add a toast notification here
         }
       })
-      .catch(err => {
+      .catch(() => {
       });
   }, [isSignedIn, user]);
 

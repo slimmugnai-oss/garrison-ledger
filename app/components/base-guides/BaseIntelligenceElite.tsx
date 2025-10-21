@@ -458,7 +458,7 @@ export default function BaseIntelligenceElite() {
     if (saved) {
       try {
         setFavoriteBases(JSON.parse(saved));
-      } catch (e) {
+      } catch {
       }
     }
   }, []);
