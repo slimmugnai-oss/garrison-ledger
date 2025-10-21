@@ -25,13 +25,14 @@ interface ContentBlock {
   type?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface EnhancedContentBlockProps {
   block: ContentBlock;
   isExpanded: boolean;
   onToggleExpand: () => void;
   onActionClick?: (action: string, data?: any) => void;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function EnhancedContentBlock({ 
   block, 

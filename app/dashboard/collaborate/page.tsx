@@ -13,6 +13,7 @@ interface Connection {
   connected_at: string;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface SharedData {
   id: string;
   shared_by: string;
@@ -22,6 +23,7 @@ interface SharedData {
   notes: string;
   created_at: string;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function CollaboratePage() {
   const [connection, setConnection] = useState<Connection | null>(null);
