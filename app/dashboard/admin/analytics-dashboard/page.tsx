@@ -11,13 +11,34 @@ import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, 
 
 const ADMIN_USER_IDS = ['user_2qG7CqFtj5L8X2dRNJpW0kFYW8f'];
 
+/**
+ * Analytics Dashboard Types
+ */
+interface CalculatorRate {
+  calculator_name: string;
+  started_count: number;
+  completed_count: number;
+  completion_rate: number;
+}
+
+interface ConversionStage {
+  stage: string;
+  user_count: number;
+  conversion_rate: number;
+}
+
+interface TopFeature {
+  feature_name: string;
+  usage_count: number;
+}
+
 export default function AnalyticsDashboard() {
   const { user } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [calculatorRates, setCalculatorRates] = useState<any[]>([]);
-  const [conversionFunnel, setConversionFunnel] = useState<any[]>([]);
-  const [topFeatures, setTopFeatures] = useState<any[]>([]);
+  const [calculatorRates, setCalculatorRates] = useState<CalculatorRate[]>([]);
+  const [conversionFunnel, setConversionFunnel] = useState<ConversionStage[]>([]);
+  const [topFeatures, setTopFeatures] = useState<TopFeature[]>([]);
 
   useEffect(() => {
     if (user && !ADMIN_USER_IDS.includes(user.id)) {
@@ -30,18 +51,29 @@ export default function AnalyticsDashboard() {
   const fetchAnalytics = async () => {
     try {
       // Fetch calculator completion rates
-      const { data: rates } = await (await fetch('/api/admin/analytics/calculator-rates')).json();
+      const ratesResponse = await fetch('/api/admin/analytics/calculator-rates');
+      const { data: rates } = await ratesResponse.json();
       setCalculatorRates(rates || []);
 
       // Fetch conversion funnel
-      const { data: funnel } = await (await fetch('/api/admin/analytics/conversion-funnel')).json();
+      const funnelResponse = await fetch('/api/admin/analytics/conversion-funnel');
+      const { data: funnel } = await funnelResponse.json();
       setConversionFunnel(funnel || []);
 
       // Fetch top features
-      const { data: features } = await (await fetch('/api/admin/analytics/top-features')).json();
+      const featuresResponse = await fetch('/api/admin/analytics/top-features');
+      const { data: features } = await featuresResponse.json();
       setTopFeatures(features || []);
 
     } catch (error) {
+      // Failed to load analytics data - show empty state
+      setCalculatorRates([]);
+      setConversionFunnel([]);
+      setTopFeatures([]);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[AnalyticsDashboard] Failed to load analytics:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -157,7 +189,7 @@ export default function AnalyticsDashboard() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={(entry: any) => entry.feature_name}
+                    label={(entry: TopFeature) => entry.feature_name}
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="usage_count"

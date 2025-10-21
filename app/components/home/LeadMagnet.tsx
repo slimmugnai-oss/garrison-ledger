@@ -16,14 +16,24 @@ export default function LeadMagnet() {
     setLoading(true);
     try {
       // Call API to capture email and send checklist
-      await fetch('/api/lead-magnet', {
+      const response = await fetch('/api/lead-magnet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, type: 'pcs-checklist' })
       });
       
+      if (!response.ok) {
+        throw new Error('Failed to send checklist');
+      }
+      
       setSubmitted(true);
     } catch (error) {
+      // Show user-friendly error
+      alert('Failed to send checklist. Please try again or contact support@garrisonledger.com');
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[LeadMagnet] Submission failed:', error);
+      }
     } finally {
       setLoading(false);
     }

@@ -38,36 +38,46 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
     setLoading(true);
     try {
       const response = await fetch('/api/binder/documents');
-      if (response.ok) {
-        const data = await response.json();
-        const docs = data.documents || [];
-        setDocuments(docs.slice(0, 5)); // Show 5 most recent
-
-        // Calculate stats
-        const totalDocs = docs.length;
-        const categories = [...new Set(docs.map((d: BinderDocument) => d.category))];
-        const now = new Date();
-        const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-        const expiring = docs.filter((d: BinderDocument) => 
-          d.expires_at && new Date(d.expires_at) < thirtyDaysFromNow
-        ).length;
-        const storage = docs.reduce((sum: number, d: BinderDocument) => sum + d.file_size, 0);
-
-        setStats({
-          totalDocuments: totalDocs,
-          categories: categories as string[],
-          expiringDocuments: expiring,
-          storageUsed: storage
-        });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      
+      const data = await response.json();
+      const docs = data.documents || [];
+      setDocuments(docs.slice(0, 5)); // Show 5 most recent
+
+      // Calculate stats
+      const totalDocs = docs.length;
+      const categories = [...new Set(docs.map((d: BinderDocument) => d.category))];
+      const now = new Date();
+      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const expiring = docs.filter((d: BinderDocument) => 
+        d.expires_at && new Date(d.expires_at) < thirtyDaysFromNow
+      ).length;
+      const storage = docs.reduce((sum: number, d: BinderDocument) => sum + d.file_size, 0);
+
+      setStats({
+        totalDocuments: totalDocs,
+        categories: categories as string[],
+        expiringDocuments: expiring,
+        storageUsed: storage
+      });
     } catch (error) {
+      // Failed to load binder data - show empty state
+      setDocuments([]);
+      setStats(null);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[BinderPreview] Failed to load:', error);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    const icons: Record<string, any> = {
+  const getCategoryIcon = (category: string): string => {
+    const icons: Record<string, string> = {
       'Orders': 'File',
       'LES': 'DollarSign',
       'Medical': 'HeartPulse',

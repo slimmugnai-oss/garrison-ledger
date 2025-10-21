@@ -29,11 +29,20 @@ export default function LesHistory({ tier, isPremium, uploads }: Props) {
   const loadHistory = async () => {
     try {
       const response = await fetch('/api/les/history');
-      if (response.ok) {
-        const data = await response.json();
-        setHistoryData(data.uploads);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      
+      const data = await response.json();
+      setHistoryData(data.uploads || []);
     } catch (err) {
+      // Failed to load history - show empty state
+      setHistoryData([]);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[LesHistory] Failed to load:', err);
+      }
     } finally {
       setLoading(false);
     }

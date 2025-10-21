@@ -6,6 +6,37 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 const ADMIN_USER_IDS = ["user_2pjPs1dGeRGZ8укJM9X9pY3DGqL", "user_343xVqjkdILtBkaYAJfE5H8Wq0q"];
 
+/**
+ * Base Analytics Types
+ */
+interface MostViewedBase {
+  base_id: string;
+  base_name: string;
+  view_count: number;
+  unique_users: number;
+}
+
+interface PopularSearch {
+  search_query: string;
+  search_count: number;
+  avg_results_count: number;
+}
+
+interface FilterStat {
+  filter_type: string;
+  filter_value: string;
+  usage_count: number;
+}
+
+interface ClickthroughRate {
+  base_id: string;
+  base_name: string;
+  views: number;
+  clickthroughs: number;
+  ctr: number;
+  ctr_percentage: string;
+}
+
 export default async function BaseAnalyticsPage() {
   const { userId } = await auth();
   
@@ -102,7 +133,7 @@ export default async function BaseAnalyticsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {mostViewed.map((base: any, idx: number) => (
+                    {mostViewed.map((base: MostViewedBase, idx: number) => (
                       <tr key={base.base_id} className="hover:bg-surface-hover">
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
@@ -136,7 +167,7 @@ export default async function BaseAnalyticsPage() {
             
             {popularSearches && popularSearches.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-4">
-                {popularSearches.map((search: any, idx: number) => (
+                {popularSearches.map((search: PopularSearch, idx: number) => (
                   <div key={idx} className="flex items-center justify-between bg-surface-hover rounded-lg p-4 border border-subtle">
                     <div className="flex items-center gap-3">
                       <span className="flex items-center justify-center w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
@@ -169,8 +200,8 @@ export default async function BaseAnalyticsPage() {
                   <h3 className="font-bold text-body mb-3">Branch Filters</h3>
                   <div className="space-y-2">
                     {filterStats
-                      .filter((stat: any) => stat.filter_type === 'branch')
-                      .map((stat: any, idx: number) => (
+                      .filter((stat: FilterStat) => stat.filter_type === 'branch')
+                      .map((stat: FilterStat, idx: number) => (
                         <div key={idx} className="flex items-center justify-between bg-info-subtle rounded-lg p-3">
                           <span className="font-medium text-primary">{stat.filter_value}</span>
                           <span className="font-bold text-info">{stat.usage_count}</span>
@@ -203,7 +234,7 @@ export default async function BaseAnalyticsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {clickthroughRates.map((base: any) => (
+                    {clickthroughRates.map((base: ClickthroughRate) => (
                       <tr key={base.base_id} className="hover:bg-surface-hover">
                         <td className="px-4 py-3 font-medium text-primary">{base.base_name}</td>
                         <td className="px-4 py-3 text-right text-body">{base.views}</td>

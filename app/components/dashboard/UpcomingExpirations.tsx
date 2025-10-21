@@ -20,13 +20,21 @@ export default function UpcomingExpirations() {
     async function loadReminders() {
       try {
         const response = await fetch("/api/binder/reminders?days=60");
-        const data = await response.json();
-
-        if (response.ok) {
-          setReminders(data.reminders || []);
-          setIsPremium(data.isPremium);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
         }
+        
+        const data = await response.json();
+        setReminders(data.reminders || []);
+        setIsPremium(data.isPremium);
       } catch (error) {
+        // Failed to load reminders - show empty state
+        setReminders([]);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[UpcomingExpirations] Failed to load:', error);
+        }
       } finally {
         setLoading(false);
       }
