@@ -578,7 +578,7 @@ function generateDocumentChecklist(documents: DocumentData[]): string {
     { type: 'fuel_receipt', name: 'Fuel Receipts' }
   ];
 
-  const uploadedTypes = new Set(documents.map(d => d.document_type));
+  const _uploadedTypes = new Set(documents.map(d => d.document_type));
 
   const items = requiredDocs.map(req => {
     const uploaded = documents.filter(d => d.document_type === req.type);

@@ -152,7 +152,7 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const _errorText = await response.text();
       return null;
     }
 

@@ -73,7 +73,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const _errorText = await response.text();
       
       if (response.status === 410) {
       } else if (response.status === 401) {
@@ -106,7 +106,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     if (schools.length > 0) {
       const topSchool = schools[0];
-      const ratingText = topSchool.rating > 0 ? `${topSchool.rating}/10` : 'No rating';
+      const _ratingText = topSchool.rating > 0 ? `${topSchool.rating}/10` : 'No rating';
       
       const withRatings = schools.filter(s => s.rating > 0).length;
       if (withRatings === 0) {

@@ -147,7 +147,7 @@ async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey:
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const _errorText = await response.text();
       return 0;
     }
 

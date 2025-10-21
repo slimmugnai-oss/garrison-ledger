@@ -279,9 +279,9 @@ if (require.main === module) {
 
     const results = await lintAllContentBlocks();
 
-    const totalBlocks = results.length;
+    const _totalBlocks = results.length;
     const totalFlags = results.reduce((sum, r) => sum + r.totalFlags, 0);
-    const criticalFlags = results.reduce((sum, r) => sum + r.criticalFlags, 0);
+    const _criticalFlags = results.reduce((sum, r) => sum + r.criticalFlags, 0);
 
 
     // Show blocks with issues
@@ -299,7 +299,7 @@ if (require.main === module) {
         return acc;
       }, {} as Record<string, number>);
 
-      for (const [type, count] of Object.entries(grouped)) {
+      for (const [_type, _count] of Object.entries(grouped)) {
       }
 
     }

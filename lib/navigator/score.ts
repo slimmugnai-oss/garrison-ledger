@@ -12,7 +12,7 @@
  * - Military (2% weight) - NEW
  */
 
-import { ssot } from '@/lib/ssot';
+import { ssot as _ssot } from '@/lib/ssot';
 
 /**
  * Convert school score (0-10) to 0-100 scale

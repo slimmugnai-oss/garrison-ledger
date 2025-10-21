@@ -82,7 +82,7 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
 /**
  * Parse RapidAPI Demographics response
  */
-function parseDemographicsData(data: DemographicsAPIResponse, zip: string): DemographicsData {
+function parseDemographicsData(data: DemographicsAPIResponse, _zip: string): DemographicsData {
   try {
     // RapidAPI Demographics response structure (adjust based on actual API)
     if (!data || !data.demographics) {

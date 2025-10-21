@@ -18,7 +18,7 @@ export async function normalizeReceiptText(args: {
   mileageCentsPerMile: number;
 }): Promise<Omit<TdyItem, 'id' | 'trip_id'>[]> {
   
-  const { trip, docType, text, mileageCentsPerMile } = args;
+  const { trip: _trip, docType, text, mileageCentsPerMile } = args;
 
   // Route to appropriate parser based on docType
   switch (docType) {

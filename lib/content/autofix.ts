@@ -8,7 +8,7 @@
  */
 
 import { supabaseAdmin } from '@/lib/supabase';
-import { lintContentBlock } from './lint';
+import { lintContentBlock as _lintContentBlock } from './lint';
 
 export interface AutoFixResult {
   blockId: string;

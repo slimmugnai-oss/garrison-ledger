@@ -72,7 +72,7 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const _errorText = await response.text();
       
       // Return neutral score on error (doesn't penalize)
       return {

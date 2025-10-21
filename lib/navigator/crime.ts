@@ -53,7 +53,7 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const _errorText = await response.text();
       return getDefaultCrimeData();
     }
 
