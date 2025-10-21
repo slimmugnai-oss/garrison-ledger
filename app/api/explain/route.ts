@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     let body: { tool?: string; inputs?: Record<string, unknown>; outputs?: Record<string, unknown> };
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       logger.warn('[Explain] Invalid JSON in request', { userId });
       throw Errors.invalidInput("Invalid JSON in request body");
     }

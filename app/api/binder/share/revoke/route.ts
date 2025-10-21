@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       logger.warn('[BinderShareRevoke] Invalid JSON in request', { userId });
       throw Errors.invalidInput("Invalid JSON in request body");
     }

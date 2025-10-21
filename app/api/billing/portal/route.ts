@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     if (!userId) throw Errors.unauthorized();
 
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { data: ent, error: entError } = await sb.from("entitlements").select("stripe_customer_id, tier, status").eq("user_id", userId).maybeSingle();
+  const { data: ent } = await sb.from("entitlements").select("stripe_customer_id, tier, status").eq("user_id", userId).maybeSingle();
   
   
   let customerId = ent?.stripe_customer_id;

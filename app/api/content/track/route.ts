@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { errorResponse, Errors } from '@/lib/api-errors';
+import { Errors } from '@/lib/api-errors';
 
 export async function POST(request: Request) {
   try {

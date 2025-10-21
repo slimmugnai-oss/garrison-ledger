@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     let body: { title?: string; summary?: string; source_url?: string };
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       logger.warn('[Curate] Invalid JSON in request', { userId });
       throw Errors.invalidInput("Invalid JSON body");
     }

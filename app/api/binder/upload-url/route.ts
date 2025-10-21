@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { isPremiumServer } from "@/lib/premium";
 import { logger } from "@/lib/logger";
 import { errorResponse, Errors } from "@/lib/api-errors";
 

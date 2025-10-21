@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       logger.warn('[BinderMove] Invalid JSON in request', { userId });
       throw Errors.invalidInput("Invalid JSON in request body");
     }

@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     let body: { referredUserId: string };
     try {
       body = await req.json();
-    } catch (jsonError) {
+    } catch {
       logger.warn('[Referral] Invalid JSON in request', { userId });
       throw Errors.invalidInput("Invalid JSON in request body");
     }

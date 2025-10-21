@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   let payload: { name?: string; path?: string; props?: Record<string, unknown> } = {};
   try { 
     payload = await req.json(); 
-  } catch (parseError) {
+    } catch {
     // Invalid JSON - skip tracking
     if (process.env.NODE_ENV === 'development') {
       console.error('[Track] Invalid JSON in request');
