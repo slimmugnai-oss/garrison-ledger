@@ -174,7 +174,7 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
     
     return Math.round(distance * 10) / 10; // Round to 1 decimal place
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }

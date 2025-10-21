@@ -68,7 +68,7 @@ async function readCache<T>(cacheKey: string): Promise<CacheEntry<T> | null> {
 
     return entry;
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }

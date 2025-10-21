@@ -98,7 +98,7 @@ async function callDistanceMatrix(args: {
 
     return minutes;
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }

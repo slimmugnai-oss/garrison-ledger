@@ -83,7 +83,7 @@ export function getIntelCardBySlug(slug: string): IntelCard | null {
       filePath: filePath.replace(process.cwd(), '')
     };
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }

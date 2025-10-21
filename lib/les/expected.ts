@@ -149,7 +149,7 @@ async function computeBAH(params: {
     }
 
     return data.rate_cents;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -166,7 +166,7 @@ function computeBAS(paygrade: string): number | null {
       return ssot.militaryPay.basMonthlyCents.enlisted;
     }
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -212,7 +212,7 @@ async function computeCOLA(params: {
     }
 
     return data.monthly_amount_cents;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

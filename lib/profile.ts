@@ -17,7 +17,7 @@ export async function getUserProfile(userId: string): Promise<Profile | null> {
     }
 
     return data;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -42,7 +42,7 @@ export async function updateUserProfile(
     }
 
     return data;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

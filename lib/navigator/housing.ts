@@ -85,7 +85,7 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
     await setCache(cacheKey, medianCents, 24 * 3600); // 24h cache
     return medianCents;
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -199,7 +199,7 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
     await setCache(cacheKey, listing, 24 * 3600);
     return listing;
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }
