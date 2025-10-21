@@ -5,7 +5,7 @@ import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Scenario {
   id: string;
   name: string;
@@ -14,7 +14,6 @@ interface Scenario {
   created_at: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ComparisonModeProps {
   tool: string;
   currentInput: Record<string, any>;
@@ -22,6 +21,7 @@ interface ComparisonModeProps {
   renderComparison: (scenarios: Scenario[]) => React.ReactNode;
   onLoadScenario?: (input: Record<string, any>) => void; // Callback to load scenario into calculator
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default function ComparisonMode({ 
   tool, 
