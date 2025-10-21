@@ -141,7 +141,7 @@ export function getRelevantCalculators(content: {
     calculators.push({
       calculatorId: 'blended-retirement',
       calculatorName: 'Blended Retirement Calculator',
-      calculatorPath: '/dashboard/tools/blended-retirement-calculator',
+      calculatorPath: '/dashboard/tools/tsp-modeler',
       relevanceScore: 0.90,
       actionLabel: 'Compare Retirement Options',
       description: 'Compare BRS vs High-3 retirement systems for your career'

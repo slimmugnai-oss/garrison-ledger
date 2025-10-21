@@ -441,13 +441,13 @@ export default function Header() {
                             </div>
                           </div>
                         </Link>
-                        <Link href="/dashboard/tools/retirement-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/retirement-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                        <Link href="/dashboard/tools/tsp-modeler" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
+                          isActivePath('/dashboard/tools/tsp-modeler') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
                         }`}>
                           <Icon name="Calculator" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/retirement-calculator') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              Retirement Calculator
+                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/tsp-modeler') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
+                              TSP Modeler
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                               Military retirement planning
@@ -753,7 +753,7 @@ export default function Header() {
                       <Icon name="ShoppingCart" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">On-Base Savings</span>
                       </Link>
-                    <Link href="/dashboard/tools/retirement-calculator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                       <Icon name="Calculator" className="w-5 h-5 text-emerald-600" />
                       <span className="font-medium">Retirement Calculator</span>
                       </Link>
