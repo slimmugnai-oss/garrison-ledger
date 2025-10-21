@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  
-  if (!userId || !ADMIN_USER_IDS.includes(userId)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const body = await req.json();
+    const { userId } = await auth();
+    
+    if (!userId || !ADMIN_USER_IDS.includes(userId)) {
+      logger.warn('[AdminContentReject] Unauthorized access attempt', { userId });
+      throw Errors.forbidden('Admin access required');
+    }
+
+    const body = await request.json();
     const { feedItemId } = body;
+
+    if (!feedItemId) {
+      throw Errors.invalidInput('feedItemId is required');
+    }
 
     // Update status to news_only (rejected for conversion)
     const { error } = await supabaseAdmin
@@ -21,17 +28,18 @@ export async function POST(req: NextRequest) {
       .update({ status: 'news_only' })
       .eq('id', feedItemId);
 
-    if (error) throw error;
+    if (error) {
+      logger.error('[AdminContentReject] Failed to reject item', error, { userId, feedItemId });
+      throw Errors.databaseError('Failed to update content status');
+    }
 
+    logger.info('[AdminContentReject] Item rejected', { userId, feedItemId });
     return NextResponse.json({
       success: true,
       message: 'Item marked as news only',
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

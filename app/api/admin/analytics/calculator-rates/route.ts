@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const ADMIN_USER_IDS = ['user_2qG7CqFtj5L8X2dRNJpW0kFYW8f'];
 
@@ -14,20 +16,22 @@ export async function GET() {
     const { userId } = await auth();
     
     if (!userId || !ADMIN_USER_IDS.includes(userId)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      logger.warn('[AdminCalcRates] Unauthorized access attempt', { userId });
+      throw Errors.forbidden('Admin access required');
     }
 
     const { data, error } = await supabaseAdmin.rpc('get_calculator_completion_rates');
 
-    if (error) throw error;
+    if (error) {
+      logger.error('[AdminCalcRates] Failed to fetch calculator rates', error, { userId });
+      throw Errors.databaseError('Failed to fetch calculator completion rates');
+    }
 
+    logger.info('[AdminCalcRates] Calculator rates fetched', { userId, count: data?.length || 0 });
     return NextResponse.json({ data });
 
-  } catch {
-    return NextResponse.json(
-      { error: 'Failed to fetch data' },
-      { status: 500 }
-    );
+  } catch (error) {
+    return errorResponse(error);
   }
 }
 
