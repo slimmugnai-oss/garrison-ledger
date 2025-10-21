@@ -252,6 +252,12 @@ export async function POST(req: NextRequest) {
         .insert(flagRows);
     }
 
+    // Update upload status to audit_complete
+    await supabaseAdmin
+      .from('les_uploads')
+      .update({ upload_status: 'audit_complete' })
+      .eq('id', uploadRecord.id);
+
     // ==========================================================================
     // 9. ANALYTICS
     // ==========================================================================
