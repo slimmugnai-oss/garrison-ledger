@@ -10,22 +10,27 @@ import ProfileFormField, { getInputClass } from '@/app/components/profile/Profil
 import ProfileProgress from '@/app/components/profile/ProfileProgress';
 import militaryRanks from '@/lib/data/military-ranks.json';
 import militaryComponents from '@/lib/data/military-components.json';
+import { getRankPaygrade, getRankCategory } from '@/lib/data/rank-paygrade-map';
+import { getBaseMHA, getMHALocationType } from '@/lib/data/base-mha-helpers';
 
 type ProfilePayload = {
   // Basic info
   age?: number | null;
   gender?: string | null;
   years_of_service?: number | null;
-  education_level?: string | null;
+  birth_year?: number | null;
+  
+  // Computed fields (auto-derived, user never edits directly)
+  paygrade?: string | null;
+  rank_category?: string | null;
+  mha_code?: string | null;
+  duty_location_type?: string | null;
   
   // Military identity
   service_status?: string | null;
-  spouse_service_status?: string | null;
   branch?: string | null;
   rank?: string | null;
   component?: string | null;
-  mos_afsc_rate?: string | null;
-  clearance_level?: string | null;
   time_in_service_months?: number | null;
   
   // Location & Deployment
@@ -33,45 +38,53 @@ type ProfilePayload = {
   next_base?: string | null;
   pcs_date?: string | null;
   deployment_count?: number | null;
-  deployment_status?: string | null;
-  last_deployment_date?: string | null;
   
   // Family
   marital_status?: string | null;
-  spouse_age?: number | null;
   spouse_military?: boolean | null;
-  spouse_employed?: boolean | null;
-  spouse_career_field?: string | null;
   num_children?: number | null;
-  children?: Array<{ age: number }> | null;
   has_efmp?: boolean | null;
   has_dependents?: boolean | null;  // Auto-derived from num_children + marital_status
   
   // Financial
   tsp_balance_range?: string | null;
-  tsp_allocation?: string | null;
   debt_amount_range?: string | null;
-  emergency_fund_range?: string | null;
-  monthly_income_range?: string | null;
-  bah_amount?: number | null;
   housing_situation?: string | null;
   owns_rental_properties?: boolean | null;
   
   // Goals
   long_term_goal?: string | null;
   retirement_age_target?: number | null;
-  career_interests?: string[] | null;
   financial_priorities?: string[] | null;
-  education_goals?: string[] | null;
   
-  // Preferences
+  // System
+  profile_completed?: boolean | null;
+  
+  // =========================================================================
+  // TEMPORARY STUB FIELDS - FOR TYPE COMPATIBILITY ONLY
+  // These fields were removed from database but UI still references them
+  // TODO: Remove these stubs when UI cleanup is complete
+  // =========================================================================
+  mos_afsc_rate?: string | null;
+  clearance_level?: string | null;
+  deployment_status?: string | null;
+  last_deployment_date?: string | null;
+  spouse_age?: number | null;
+  spouse_employed?: boolean | null;
+  spouse_career_field?: string | null;
+  spouse_service_status?: string | null;
+  children?: Array<{ age: number }> | null;
+  tsp_allocation?: string | null;
+  emergency_fund_range?: string | null;
+  monthly_income_range?: string | null;
+  bah_amount?: number | null;
+  career_interests?: string[] | null;
+  education_level?: string | null;
+  education_goals?: string[] | null;
   content_difficulty_pref?: string | null;
   urgency_level?: string | null;
   communication_pref?: string | null;
   timezone?: string | null;
-  
-  // System
-  profile_completed?: boolean | null;
 };
 
 type MilitaryRanks = {
@@ -156,53 +169,38 @@ export default function ProfileSetupPage() {
             age: json?.age ?? null,
             gender: json?.gender ?? null,
             years_of_service: json?.years_of_service ?? null,
-            education_level: json?.education_level ?? null,
+            // Computed (loaded but not edited by user)
+            paygrade: json?.paygrade ?? null,
+            rank_category: json?.rank_category ?? null,
+            mha_code: json?.mha_code ?? null,
+            duty_location_type: json?.duty_location_type ?? null,
             // Military
             service_status: json?.service_status ?? null,
-            spouse_service_status: json?.spouse_service_status ?? null,
             branch: json?.branch ?? null,
             rank: json?.rank ?? null,
             component: json?.component ?? null,
-            mos_afsc_rate: json?.mos_afsc_rate ?? null,
-            clearance_level: json?.clearance_level ?? null,
             time_in_service_months: json?.time_in_service_months ?? null,
             // Location & Deployment
             current_base: json?.current_base ?? null,
             next_base: json?.next_base ?? null,
             pcs_date: json?.pcs_date ?? null,
             deployment_count: json?.deployment_count ?? null,
-            deployment_status: json?.deployment_status ?? null,
-            last_deployment_date: json?.last_deployment_date ?? null,
             // Family
             marital_status: json?.marital_status ?? null,
-            spouse_age: json?.spouse_age ?? null,
             spouse_military: json?.spouse_military ?? null,
-            spouse_employed: json?.spouse_employed ?? null,
-            spouse_career_field: json?.spouse_career_field ?? null,
             num_children: json?.num_children ?? null,
-            children: json?.children ?? null,
             has_efmp: json?.has_efmp ?? null,
             has_dependents: json?.has_dependents ?? null,
             // Financial
             tsp_balance_range: json?.tsp_balance_range ?? null,
-            tsp_allocation: json?.tsp_allocation ?? null,
             debt_amount_range: json?.debt_amount_range ?? null,
-            emergency_fund_range: json?.emergency_fund_range ?? null,
-            monthly_income_range: json?.monthly_income_range ?? null,
-            bah_amount: json?.bah_amount ?? null,
             housing_situation: json?.housing_situation ?? null,
             owns_rental_properties: json?.owns_rental_properties ?? null,
             // Goals
             long_term_goal: json?.long_term_goal ?? null,
             retirement_age_target: json?.retirement_age_target ?? null,
-            career_interests: json?.career_interests ?? [],
             financial_priorities: json?.financial_priorities ?? [],
-            education_goals: json?.education_goals ?? [],
-            // Preferences
-            content_difficulty_pref: json?.content_difficulty_pref ?? 'all',
-            urgency_level: json?.urgency_level ?? 'normal',
-            communication_pref: json?.communication_pref ?? null,
-            timezone: json?.timezone ?? null,
+            // System
             profile_completed: json?.profile_completed ?? false,
           });
           // Expand all sections if profile exists
@@ -266,22 +264,8 @@ export default function ProfileSetupPage() {
     }
   }, [data.years_of_service]);
 
-  // Initialize children array when num_children changes
-  useEffect(() => {
-    if (data.num_children !== null && data.num_children !== undefined && data.num_children > 0) {
-      const currentChildren = data.children || [];
-      const newChildren = Array.from({ length: data.num_children }, (_, i) => {
-        return currentChildren[i] || { age: 0 };
-      });
-      if (JSON.stringify(currentChildren) !== JSON.stringify(newChildren)) {
-        setData(d => ({ ...d, children: newChildren }));
-      }
-    } else if (data.num_children === 0 || data.num_children === null) {
-      if (data.children && data.children.length > 0) {
-        setData(d => ({ ...d, children: null }));
-      }
-    }
-  }, [data.num_children, data.children]);
+  // Children array removed - we only track count (num_children) now
+  // Base Navigator uses count, not individual ages
 
   // Auto-derive has_dependents from num_children and marital_status
   // CRITICAL: Required for LES Auditor and Base Navigator BAH calculations
@@ -291,6 +275,38 @@ export default function ProfileSetupPage() {
       setData(d => ({ ...d, has_dependents: derived }));
     }
   }, [data.num_children, data.marital_status, data.has_dependents]);
+
+  // Auto-derive paygrade and rank_category from rank
+  // CRITICAL: Required for LES Auditor, PCS Copilot, all pay calculations
+  useEffect(() => {
+    if (data.rank) {
+      const paygrade = getRankPaygrade(data.rank);
+      const rankCategory = paygrade ? getRankCategory(paygrade) : null;
+      if (data.paygrade !== paygrade || data.rank_category !== rankCategory) {
+        setData(d => ({ 
+          ...d, 
+          paygrade: paygrade ?? undefined, 
+          rank_category: rankCategory ?? undefined 
+        }));
+      }
+    }
+  }, [data.rank, data.paygrade, data.rank_category]);
+
+  // Auto-derive mha_code and duty_location_type from current_base
+  // CRITICAL: Required for BAH lookups in LES Auditor and Base Navigator
+  useEffect(() => {
+    if (data.current_base) {
+      const mhaCode = getBaseMHA(data.current_base);
+      const locationType = mhaCode ? getMHALocationType(mhaCode) : null;
+      if (data.mha_code !== mhaCode || data.duty_location_type !== locationType) {
+        setData(d => ({ 
+          ...d, 
+          mha_code: mhaCode ?? undefined,
+          duty_location_type: locationType ?? undefined
+        }));
+      }
+    }
+  }, [data.current_base, data.mha_code, data.duty_location_type]);
 
   // Section completion calculator
   const getSectionCompletion = (section: number): { complete: number; total: number; percentage: number } => {
@@ -323,40 +339,30 @@ export default function ProfileSetupPage() {
         if (data.deployment_count !== null && data.deployment_count !== undefined) complete++;
         break;
       case 4: // Family
-        total = 3 + (data.marital_status === 'married' ? 3 : 0);
+        total = 3 + (data.marital_status === 'married' ? 1 : 0);
         if (data.marital_status) complete++;
         if (data.num_children !== null && data.num_children !== undefined) complete++;
         if (data.has_efmp !== null && data.has_efmp !== undefined) complete++;
         if (data.marital_status === 'married') {
-          if (data.spouse_age) complete++;
           if (data.spouse_military !== null && data.spouse_military !== undefined) complete++;
-          if (data.spouse_employed !== null && data.spouse_employed !== undefined) complete++;
         }
         break;
       case 5: // Financial
-        total = 6;
+        total = 3;
         if (data.tsp_balance_range) complete++;
-        if (data.tsp_allocation) complete++;
         if (data.debt_amount_range) complete++;
-        if (data.emergency_fund_range) complete++;
         if (data.housing_situation) complete++;
-        if (data.monthly_income_range) complete++;
         break;
       case 6: // Goals
-        total = 3;
+        total = 2;
         if (data.long_term_goal) complete++;
         if (data.retirement_age_target) complete++;
-        if (data.career_interests && data.career_interests.length > 0) complete++;
         break;
-      case 7: // Education
-        total = 2;
-        if (data.education_level) complete++;
-        if (data.education_goals && data.education_goals.length > 0) complete++;
-        break;
-      case 8: // Preferences
-        total = 2;
-        if (data.content_difficulty_pref) complete++;
-        if (data.communication_pref) complete++;
+      // Sections 7 & 8 removed (education, preferences) - fields deleted from database
+      case 7:
+      case 8:
+        total = 0;
+        complete = 0;
         break;
     }
     
