@@ -14,6 +14,7 @@ import RateBadge from '@/app/components/mdx/RateBadge';
  * Custom MDX components
  * These override default HTML elements in MDX
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useMDXComponents(components: Record<string, any> = {}): Record<string, any> {
   return {
     // Custom Intel Card components
