@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { Webhook } from 'svix';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   // Handle CORS preflight requests
@@ -44,7 +45,8 @@ export async function POST(req: NextRequest) {
       'svix-signature': svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    return new Response('Error occurred', {
+    logger.error('[ClerkWebhook] Signature verification failed', err);
+    return new Response('Invalid signature', {
       status: 400,
     });
   }
@@ -57,6 +59,7 @@ export async function POST(req: NextRequest) {
     const email = email_addresses[0]?.email_address;
 
     if (!email) {
+      logger.warn('[ClerkWebhook] User created with no email', { userId: id });
       return new Response('No email found', { status: 400 });
     }
 
@@ -72,6 +75,7 @@ export async function POST(req: NextRequest) {
         ]);
 
       if (profileError) {
+        logger.error('[ClerkWebhook] Failed to create profile', profileError, { userId: id, email: email.split('@')[1] });
         return new Response('Database error', { status: 500 });
       }
 
@@ -88,6 +92,7 @@ export async function POST(req: NextRequest) {
 
       if (entitlementError) {
         // Don't fail the webhook - user profile is created, entitlement can be fixed later
+        logger.warn('[ClerkWebhook] Failed to create entitlement', { userId: id, error: entitlementError });
       }
 
       // Initialize gamification for new user
@@ -105,10 +110,13 @@ export async function POST(req: NextRequest) {
 
       if (gamificationError) {
         // Don't fail the webhook - core profile is created
+        logger.warn('[ClerkWebhook] Failed to create gamification', { userId: id, error: gamificationError });
       }
 
+      logger.info('[ClerkWebhook] New user created', { userId: id, email: email.split('@')[1] });
       return new Response('User created successfully', { status: 200 });
     } catch (error) {
+      logger.error('[ClerkWebhook] Error creating user', error, { userId: id });
       return new Response('Internal server error', { status: 500 });
     }
   }

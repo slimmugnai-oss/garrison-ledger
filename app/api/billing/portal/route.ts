@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
 
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   const { data: ent, error: entError } = await sb.from("entitlements").select("stripe_customer_id, tier, status").eq("user_id", userId).maybeSingle();
@@ -28,18 +31,13 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (err) {
+      logger.warn('[BillingPortal] Failed to find Stripe customer by email', { userId, error: err });
     }
   }
   
   if (!customerId) {
-  }
-  
-  if (!customerId) {
-    return NextResponse.json({ 
-      error: "No Stripe customer found",
-      message: "Your subscription exists but Stripe customer ID is missing. Please contact support to link your account.",
-      debug: { hasEntitlement: !!ent, tier: ent?.tier, status: ent?.status }
-    }, { status: 400 });
+    logger.warn('[BillingPortal] No Stripe customer found', { userId, tier: ent?.tier });
+    throw Errors.invalidInput("No Stripe customer found. Please contact support to link your account");
   }
 
   const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://garrison-ledger.vercel.app";
@@ -49,6 +47,10 @@ export async function POST(req: NextRequest) {
     return_url: `${origin}/dashboard`
   });
 
+  logger.info('[BillingPortal] Portal session created', { userId, customerId });
   return NextResponse.json({ url: session.url });
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
 
