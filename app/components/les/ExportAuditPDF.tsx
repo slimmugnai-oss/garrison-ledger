@@ -124,6 +124,7 @@ export default function ExportAuditPDF({ auditResult, userProfile }: ExportAudit
           }
         });
         
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         yPos = (doc as any).lastAutoTable.finalY + 10;
       }
       

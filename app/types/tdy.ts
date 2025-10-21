@@ -29,6 +29,7 @@ export interface TdyDoc {
   size_bytes: number;
   storage_path: string;
   parsed_ok: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parsed: Record<string, any>;
   created_at?: string;
 }
@@ -49,6 +50,7 @@ export interface TdyItem {
     miles?: number;
     includes_tax?: boolean;
     pretax_cents?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }

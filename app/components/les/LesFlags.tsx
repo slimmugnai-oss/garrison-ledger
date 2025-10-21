@@ -262,6 +262,7 @@ function FlagCard({
 }
 
 // Generate email template for flag
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateEmailTemplate(flag: PayFlag, _summary: any): string {
   const now = new Date();
   const monthYear = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;

@@ -49,6 +49,7 @@ export default function TspModeler() {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load scenario callback
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadScenario = (input: Record<string, any>) => {
     setAge(input.age || 30);
     setRet(input.retire || 50);

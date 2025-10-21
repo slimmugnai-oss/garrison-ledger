@@ -25,6 +25,7 @@ interface ContentBlock {
   type?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface EnhancedContentBlockProps {
   block: ContentBlock;
   isExpanded: boolean;
