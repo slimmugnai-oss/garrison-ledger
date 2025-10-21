@@ -14,21 +14,20 @@ describe('LES Comparison Logic', () => {
       const lesLines: LesLine[] = [
         {
           line_code: 'BAH',
-          line_desc: 'BAH WITH DEPENDENTS',
+          description: 'BAH WITH DEPENDENTS',
           section: 'ALLOWANCE',
-          amount_cents: 200000, // $2000.00
-          ytd_cents: 2400000
+          amount_cents: 200000 // $2000.00
         }
       ];
 
       const snapshot: ExpectedSnapshot = {
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: true,
         expected: {
-          bah_cents: 250000, // $2500.00
-        },
-        profile: {
-          has_dependents: true,
-          rank: 'E-5',
-          current_base: 'KSCP'
+          bah_cents: 250000 // $2500.00
         }
       };
 
@@ -44,10 +43,12 @@ describe('LES Comparison Logic', () => {
     it('should return flags array', () => {
       const lesLines: LesLine[] = [];
       const snapshot: ExpectedSnapshot = {
-        expected: {},
-        profile: {
-          rank: 'E-5'
-        }
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: false,
+        expected: {}
       };
 
       const result = compareLesToExpected(lesLines, snapshot);
@@ -58,10 +59,12 @@ describe('LES Comparison Logic', () => {
     it('should return totals object', () => {
       const lesLines: LesLine[] = [];
       const snapshot: ExpectedSnapshot = {
-        expected: {},
-        profile: {
-          rank: 'E-5'
-        }
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: false,
+        expected: {}
       };
 
       const result = compareLesToExpected(lesLines, snapshot);
@@ -76,19 +79,21 @@ describe('LES Comparison Logic', () => {
       const lesLines: LesLine[] = [
         {
           line_code: 'BAH',
-          line_desc: 'BAH',
+          description: 'BAH',
           section: 'ALLOWANCE',
-          amount_cents: 150000, // $1500
-          ytd_cents: 1800000
+          amount_cents: 150000 // $1500
         }
       ];
 
       const snapshot: ExpectedSnapshot = {
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: true,
+        mha_or_zip: 'KSCP',
         expected: {
-          bah_cents: 200000, // $2000 - should flag $500 underpayment
-        },
-        profile: {
-          rank: 'E-5'
+          bah_cents: 200000 // $2000 - should flag $500 underpayment
         }
       };
 
@@ -105,11 +110,13 @@ describe('LES Comparison Logic', () => {
       ];
 
       const snapshot: ExpectedSnapshot = {
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: true,
         expected: {
-          bah_cents: 200000, // Expected BAH but not on LES
-        },
-        profile: {
-          rank: 'E-5'
+          bah_cents: 200000 // Expected BAH but not on LES
         }
       };
 
@@ -127,10 +134,12 @@ describe('LES Comparison Logic', () => {
     it('should handle empty LES lines', () => {
       const lesLines: LesLine[] = [];
       const snapshot: ExpectedSnapshot = {
-        expected: {},
-        profile: {
-          rank: 'E-5'
-        }
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: false,
+        expected: {}
       };
 
       const result = compareLesToExpected(lesLines, snapshot);
@@ -143,18 +152,19 @@ describe('LES Comparison Logic', () => {
       const lesLines: LesLine[] = [
         {
           line_code: 'BASP',
-          line_desc: 'BASE PAY',
-          section: 'PAY',
-          amount_cents: 350000,
-          ytd_cents: 4200000
+          description: 'BASE PAY',
+          section: 'ALLOWANCE',
+          amount_cents: 350000
         }
       ];
 
       const snapshot: ExpectedSnapshot = {
-        expected: {},
-        profile: {
-          rank: 'E-5'
-        }
+        user_id: 'test-user',
+        month: 10,
+        year: 2025,
+        paygrade: 'E-5',
+        with_dependents: false,
+        expected: {}
       };
 
       const result = compareLesToExpected(lesLines, snapshot);
