@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function GET() {
   try {
@@ -57,6 +59,7 @@ export async function GET() {
     const remaining = Math.max(0, 5 - (profile.library_views_today || 0));
     const canView = remaining > 0;
 
+    logger.info('[LibraryCanView] View permission checked', { userId, isPremium: false, canView, remaining });
     return NextResponse.json({ 
       canView, 
       isPremium: false,
@@ -65,6 +68,7 @@ export async function GET() {
     });
 
   } catch (error) {
+    logger.error('[LibraryCanView] Failed to check view permission', error);
     return NextResponse.json({ 
       canView: false, 
       reason: 'Server error' 

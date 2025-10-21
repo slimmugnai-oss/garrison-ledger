@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -13,13 +15,18 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
+    if (limit < 1 || limit > 50) {
+      throw Errors.invalidInput('Limit must be between 1 and 50');
+    }
+
     // Get leaderboard
     const { data, error } = await supabaseAdmin.rpc('get_referral_leaderboard', {
-      p_limit: Math.min(limit, 50) // Max 50
+      p_limit: limit
     });
 
     if (error) {
-      throw error;
+      logger.error('[ReferralLeaderboard] Failed to fetch leaderboard', error, { limit });
+      throw Errors.databaseError('Failed to fetch referral leaderboard');
     }
 
     // Anonymize user IDs (show only first 8 chars)
@@ -30,6 +37,7 @@ export async function GET(req: NextRequest) {
       earnings: entry.total_earnings_cents,
     }));
 
+    logger.info('[ReferralLeaderboard] Leaderboard fetched', { count: anonymizedData.length, limit });
     return NextResponse.json({
       success: true,
       leaderboard: anonymizedData,
@@ -37,10 +45,7 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

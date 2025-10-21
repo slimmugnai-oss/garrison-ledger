@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -13,15 +15,13 @@ export const runtime = "nodejs";
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body = await req.json();
     const { referralCode } = body;
 
     if (!referralCode) {
-      return NextResponse.json({ error: "Referral code required" }, { status: 400 });
+      throw Errors.invalidInput("Referral code is required");
     }
 
     // Record the referral using database function
@@ -31,27 +31,27 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ error: "Failed to record referral" }, { status: 500 });
+      logger.error('[ReferralTrack] Failed to record referral', error, { userId, referralCode });
+      throw Errors.databaseError("Failed to record referral");
     }
 
     if (!data) {
       // Invalid code or user already referred
+      logger.warn('[ReferralTrack] Invalid or already used code', { userId, referralCode });
       return NextResponse.json({ 
         success: false, 
         message: "Invalid referral code or already used" 
       }, { status: 400 });
     }
 
+    logger.info('[ReferralTrack] Referral recorded', { userId, referralCode });
     return NextResponse.json({
       success: true,
       message: "Referral recorded! You'll get $10 credit when you upgrade to premium."
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
