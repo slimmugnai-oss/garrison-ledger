@@ -7,7 +7,7 @@
 
 import type { PerDiemSpan } from '@/app/types/tdy';
 import { getCache, setCache } from '@/lib/cache';
-import { normalizeLocality, getDateRange } from './util';
+import { normalizeLocality } from './util';
 
 export interface PerDiemRate {
   mie_cents: number;

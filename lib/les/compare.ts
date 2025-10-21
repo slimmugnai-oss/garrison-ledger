@@ -13,8 +13,7 @@ import type {
   ExpectedSnapshot,
   PayFlag,
   ComparisonResult,
-  ComparisonOptions,
-  FlagSeverity
+  ComparisonOptions
 } from '@/app/types/les';
 import { FLAG_CODES } from '@/app/types/les';
 import { ssot } from '@/lib/ssot';

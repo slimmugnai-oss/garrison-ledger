@@ -6,7 +6,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { lintAllContentBlocks, type LintResult } from './lint';
+import { lintAllContentBlocks } from './lint';
 
 /**
  * Generate HTML remediation report

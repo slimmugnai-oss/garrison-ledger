@@ -5,7 +5,7 @@
  * Heuristic-based (v1) - expects common hotel/meal receipt formats
  */
 
-import type { TdyItem, ItemType, DocType } from '@/app/types/tdy';
+import type { TdyItem, DocType } from '@/app/types/tdy';
 import { parseDate } from './util';
 
 /**

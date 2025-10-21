@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Icon from '@/app/components/ui/Icon';
-import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface CalculatorData {
   tsp_balance?: number;

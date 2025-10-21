@@ -6,12 +6,6 @@
 
 import Icon from '../ui/Icon';
 
-interface IntelCardLinkProps {
-  flagCode: string;  // e.g., 'BAH_MISMATCH'
-  title: string;
-  slug: string;      // e.g., 'finance/bah-basics'
-}
-
 const FLAG_TO_CARD_MAP: Record<string, { slug: string; title: string }> = {
   BAH_MISMATCH: { slug: 'finance/bah-basics', title: 'Understanding BAH' },
   BAS_MISSING: { slug: 'finance/bas-basics', title: 'BAS Entitlement' },

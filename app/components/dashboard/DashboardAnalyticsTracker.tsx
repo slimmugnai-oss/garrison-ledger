@@ -2,12 +2,6 @@
 
 import { useEffect } from 'react';
 
-interface AnalyticsEvent {
-  widgetName: string;
-  action: 'view' | 'click' | 'interact';
-  metadata?: Record<string, any>;
-}
-
 export function useDashboardAnalytics() {
   const trackWidgetView = (widgetName: string) => {
     if (typeof window === 'undefined') return;

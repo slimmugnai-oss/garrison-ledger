@@ -6,7 +6,7 @@
  */
 
 import { supabaseAdmin } from '@/lib/supabase';
-import type { CacheEntry, ResolvedData } from './types';
+import type { CacheEntry } from './types';
 
 /**
  * Get cached data or fetch fresh
