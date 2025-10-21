@@ -29,8 +29,8 @@ export default function MissionStatusTracker({
   hasProfile,
   hasAssessment,
   hasPlan,
-  hasCalculation = false,
-  hasBookmark = false
+  hasCalculation: _hasCalculation = false,
+  hasBookmark: _hasBookmark = false
 }: MissionStatusTrackerProps) {
   const [missions, setMissions] = useState<MissionStatus[]>([]);
   const [overallProgress, setOverallProgress] = useState(0);

@@ -39,7 +39,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
   const calculateHealthScore = () => {
     const calculatedMetrics: HealthMetric[] = [];
     let totalScore = 0;
-    let maxTotalScore = 0;
+    let _maxTotalScore = 0;
 
     // Profile Completion (15 points)
     const profileScore = profileData.hasCompletedProfile ? 15 : 0;
@@ -53,7 +53,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
       link: '/dashboard/profile/setup'
     });
     totalScore += profileScore;
-    maxTotalScore += 15;
+    _maxTotalScore += 15;
 
 
     // Emergency Fund (25 points)
@@ -81,7 +81,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
       link: '/dashboard/library?search=emergency+fund'
     });
     totalScore += efScore;
-    maxTotalScore += 25;
+    _maxTotalScore += 25;
 
     // TSP Contributions (20 points)
     let tspScore = 0;
@@ -111,7 +111,7 @@ export default function UnifiedFinancialScore({ profileData }: UnifiedFinancialS
       link: '/dashboard/tools/tsp-modeler'
     });
     totalScore += tspScore;
-    maxTotalScore += 20;
+    _maxTotalScore += 20;
 
     // Debt Management (10 points - inverse scoring)
     let debtScore = 10;

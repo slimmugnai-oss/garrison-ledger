@@ -566,8 +566,3 @@ function RoiBox({
   );
 }
 
-const fmt = (v: number) => v.toLocaleString(undefined, { 
-  style: 'currency', 
-  currency: 'USD', 
-  maximumFractionDigits: 0 
-});
