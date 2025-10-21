@@ -12,16 +12,17 @@ import { extractTextFromPdf, isImageFile, UnsupportedFormatError } from '@/lib/t
 import { normalizeReceiptText } from '@/lib/tdy/normalize';
 import { getMileageRateCents } from '@/lib/tdy/util';
 import type { DocType } from '@/app/types/tdy';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const formData = await request.formData();
     const tripId = formData.get('tripId') as string;
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File;
 
     if (!tripId || !docType || !file) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      throw Errors.invalidInput('tripId, docType, and file are required');
     }
 
     // Verify trip ownership
@@ -40,7 +41,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (tripError || !trip || trip.user_id !== userId) {
-      return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+      logger.warn('[TDYUpload] Trip not found', { userId, tripId });
+      throw Errors.notFound('TDY trip');
     }
 
     // Free tier gating: max 3 docs per trip
@@ -58,18 +60,13 @@ export async function POST(request: NextRequest) {
     const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium && (count || 0) >= 3) {
-      return NextResponse.json(
-        { error: 'Free tier limit: 3 receipts per trip. Upgrade for unlimited.' },
-        { status: 402 }
-      );
+      logger.warn('[TDYUpload] Free tier limit reached', { userId, tripId, count });
+      throw Errors.premiumRequired('Free tier limit: 3 receipts per trip. Upgrade for unlimited');
     }
 
     // Check file type
     if (isImageFile(file.type)) {
-      return NextResponse.json(
-        { error: 'Images not supported in v1. Upload PDF or use Manual Entry.' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Images not supported in v1. Upload PDF or use Manual Entry');
     }
 
     // Upload to storage
@@ -85,7 +82,8 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
-      return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+      logger.error('[TDYUpload] Storage upload failed', uploadError, { userId, tripId, fileName: file.name });
+      throw Errors.externalApiError('Supabase Storage', 'Upload failed');
     }
 
     // Insert doc record
@@ -103,7 +101,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (docError) {
-      return NextResponse.json({ error: 'Database error' }, { status: 500 });
+      logger.error('[TDYUpload] Failed to create doc record', docError, { userId, tripId });
+      throw Errors.databaseError('Failed to create document record');
     }
 
     // Parse and normalize
@@ -140,17 +139,30 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', doc.id);
 
-      // Analytics
-      await supabaseAdmin.from('events').insert({
+      // Analytics (fire and forget)
+      supabaseAdmin.from('events').insert({
         user_id: userId,
         event_type: 'tdy_doc_upload',
         payload: { trip_id: tripId, doc_type: docType }
+      }).catch((analyticsError) => {
+        logger.warn('[TDYUpload] Failed to track doc upload event', { userId, tripId, error: analyticsError });
       });
 
-      await supabaseAdmin.from('events').insert({
+      supabaseAdmin.from('events').insert({
         user_id: userId,
         event_type: 'tdy_items_normalized',
         payload: { trip_id: tripId, count: items.length }
+      }).catch((analyticsError) => {
+        logger.warn('[TDYUpload] Failed to track items event', { userId, tripId, error: analyticsError });
+      });
+
+      const duration = Date.now() - startTime;
+      logger.info('[TDYUpload] Document uploaded and parsed', { 
+        userId, 
+        tripId, 
+        docId: doc.id,
+        itemsCount: items.length,
+        duration
       });
 
       return NextResponse.json({
@@ -162,6 +174,8 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
       if (error instanceof UnsupportedFormatError) {
+        logger.warn('[TDYUpload] Unsupported format', { userId, tripId, docType, error: error.message });
+        
         await supabaseAdmin
           .from('tdy_docs')
           .update({
@@ -181,10 +195,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

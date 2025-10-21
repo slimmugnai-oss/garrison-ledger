@@ -10,16 +10,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { estimateTrip } from '@/lib/tdy/estimate';
 import type { TdyVoucher } from '@/app/types/tdy';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Check premium status
     const { data: entitlement } = await supabaseAdmin
@@ -31,27 +32,25 @@ export async function POST(request: NextRequest) {
     const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json(
-        { error: 'Voucher generation is a premium feature. Upgrade to download ready-to-submit package.' },
-        { status: 402 }
-      );
+      throw Errors.premiumRequired('Voucher generation is a premium feature. Upgrade to download ready-to-submit package');
     }
 
     const { tripId } = await request.json();
 
     if (!tripId) {
-      return NextResponse.json({ error: 'Missing tripId' }, { status: 400 });
+      throw Errors.invalidInput('tripId is required');
     }
 
     // Verify ownership
-    const { data: trip } = await supabaseAdmin
+    const { data: trip, error: tripError } = await supabaseAdmin
       .from('tdy_trips')
       .select('*')
       .eq('id', tripId)
       .single();
 
-    if (!trip || trip.user_id !== userId) {
-      return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+    if (tripError || !trip || trip.user_id !== userId) {
+      logger.warn('[TDYVoucher] Trip not found', { userId, tripId });
+      throw Errors.notFound('TDY trip');
     }
 
     // Get totals
@@ -111,22 +110,31 @@ export async function POST(request: NextRequest) {
       version: 1
     };
 
-    // Analytics
-    await supabaseAdmin
+    // Analytics (fire and forget)
+    supabaseAdmin
       .from('events')
       .insert({
         user_id: userId,
         event_type: 'tdy_voucher_view',
         payload: { trip_id: tripId }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[TDYVoucher] Failed to track analytics', { userId, tripId, error: analyticsError });
       });
+
+    const duration = Date.now() - startTime;
+    logger.info('[TDYVoucher] Voucher generated', { 
+      userId, 
+      tripId, 
+      itemCount: (items?.length || 0),
+      flagCount: (flags?.length || 0),
+      duration
+    });
 
     return NextResponse.json({ voucher });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
