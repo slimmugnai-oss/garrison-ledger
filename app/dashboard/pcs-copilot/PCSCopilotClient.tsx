@@ -40,7 +40,7 @@ export default function PCSCopilotClient({
 }: PCSCopilotClientProps) {
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
   const [showNewClaimModal, setShowNewClaimModal] = useState(false);
-  const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
+  const [_selectedClaim, _setSelectedClaim] = useState<Claim | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     claim_name: '',

@@ -50,8 +50,8 @@ export default function BaseNavigatorClient({
   const [watchedZips, setWatchedZips] = useState<string[]>(initialWatchlist?.zips || []);
 
   // Modals
-  const [showAnalyzer, setShowAnalyzer] = useState(false);
-  const [analyzeUrl, setAnalyzeUrl] = useState('');
+  const [_showAnalyzer, _setShowAnalyzer] = useState(false);
+  const [_analyzeUrl, _setAnalyzeUrl] = useState('');
 
   /**
    * Compute rankings
@@ -149,7 +149,7 @@ export default function BaseNavigatorClient({
 
   // Determine which results to show (gating)
   const visibleResults = isPremium ? results : results.slice(0, 3);
-  const hasMore = results.length > 3 && !isPremium;
+  const _hasMore = results.length > 3 && !isPremium;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">

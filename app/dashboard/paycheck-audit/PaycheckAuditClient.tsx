@@ -405,7 +405,7 @@ export default function PaycheckAuditClient({
               {(auditResult.flags || []).map((flag: PayFlag, index: number) => {
                 const isRed = flag.severity === 'red';
                 const isYellow = flag.severity === 'yellow';
-                const isGreen = flag.severity === 'green';
+                const _isGreen = flag.severity === 'green';
 
                 return (
                   <AnimatedCard key={index} delay={index * 0.1}>
