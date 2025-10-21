@@ -10,9 +10,13 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 minutes for bulk import
+
+const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 
 // Paygrade column mapping
 const PAYGRADE_COLUMNS = [
@@ -97,11 +101,13 @@ function parseDataRow(
 }
 
 export async function POST() {
+  const startTime = Date.now();
   try {
     // Check authentication
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!userId || !ADMIN_USER_IDS.includes(userId)) {
+      logger.warn('[AdminImportBAH] Unauthorized access attempt', { userId });
+      throw Errors.forbidden('Admin access required');
     }
 
 
@@ -155,6 +161,7 @@ export async function POST() {
       .eq('effective_date', effectiveDate);
 
     if (deleteError) {
+      logger.warn('[AdminImportBAH] Failed to delete existing rates (might not exist)', { userId, error: deleteError });
     }
 
     // Insert in batches
@@ -170,12 +177,22 @@ export async function POST() {
         .insert(batch);
 
       if (error) {
+        logger.error('[AdminImportBAH] Batch insert failed', error, { userId, batchStart: i, batchSize: batch.length });
         errors++;
       } else {
         inserted += batch.length;
       }
     }
 
+    const duration = Date.now() - startTime;
+    logger.info('[AdminImportBAH] BAH import completed', { 
+      userId, 
+      inserted, 
+      errors, 
+      totalParsed: allRates.length,
+      mhaCodes: new Set(allRates.map(r => r.mha)).size,
+      duration
+    });
 
     return NextResponse.json({
       success: true,
@@ -188,13 +205,7 @@ export async function POST() {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: 'Import failed',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

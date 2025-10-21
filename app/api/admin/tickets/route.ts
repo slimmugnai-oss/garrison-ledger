@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q']; // slimmugnai@gmail.com
 
@@ -18,29 +20,21 @@ export async function PATCH(request: NextRequest) {
 
     // Check admin authorization
     if (!userId || !ADMIN_USER_IDS.includes(userId)) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Admin access required' },
-        { status: 403 }
-      );
+      logger.warn('[AdminTickets] Unauthorized access attempt', { userId });
+      throw Errors.forbidden('Admin access required');
     }
 
     const body = await request.json();
     const { ticketId, status } = body;
 
     if (!ticketId || !status) {
-      return NextResponse.json(
-        { error: 'ticketId and status are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('ticketId and status are required');
     }
 
     // Validate status
     const validStatuses = ['new', 'in_progress', 'resolved', 'closed'];
     if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
-        { status: 400 }
-      );
+      throw Errors.invalidInput(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
     }
 
     // Update ticket status
@@ -55,22 +49,18 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to update ticket status' },
-        { status: 500 }
-      );
+      logger.error('[AdminTickets] Failed to update ticket', error, { userId, ticketId, status });
+      throw Errors.databaseError('Failed to update ticket status');
     }
 
+    logger.info('[AdminTickets] Ticket updated', { userId, ticketId, newStatus: status });
     return NextResponse.json({
       success: true,
       ticket: data
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
