@@ -40,7 +40,7 @@ export default async function PaycheckAuditPage() {
   // Get user profile (for BAH/grade context)
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('rank, current_base, has_dependents')
+    .select('rank, current_base, has_dependents, paygrade, mha_code, mha_code_override')
     .eq('user_id', user.id)
     .maybeSingle();
 
@@ -65,13 +65,18 @@ export default async function PaycheckAuditPage() {
 
   const hasReachedFreeLimit = !isPremium && (uploadsThisMonth || 0) >= 1;
 
-  // Check profile completeness
+  // Check profile completeness (need computed fields for audit)
   const missingFields: string[] = [];
   if (!profile?.rank) missingFields.push('rank');
   if (!profile?.current_base) missingFields.push('current_base');
   if (profile?.has_dependents === null || profile?.has_dependents === undefined) {
     missingFields.push('has_dependents');
   }
+  
+  // Also check computed fields needed by backend
+  if (!profile?.paygrade) missingFields.push('paygrade');
+  const mhaCode = profile?.mha_code_override || profile?.mha_code;
+  if (!mhaCode) missingFields.push('mha_code');
 
   const profileComplete = missingFields.length === 0;
 
