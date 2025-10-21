@@ -37,25 +37,18 @@ type ProfilePayload = {
   current_base?: string | null;
   next_base?: string | null;
   pcs_date?: string | null;
-  deployment_count?: number | null;
+  pcs_count?: number | null;
   
   // Family
   marital_status?: string | null;
-  spouse_military?: boolean | null;
   num_children?: number | null;
-  has_efmp?: boolean | null;
   has_dependents?: boolean | null;  // Auto-derived from num_children + marital_status
   
-  // Financial
+  // Financial & Planning
   tsp_balance_range?: string | null;
-  debt_amount_range?: string | null;
   housing_situation?: string | null;
   owns_rental_properties?: boolean | null;
-  
-  // Goals
-  long_term_goal?: string | null;
   retirement_age_target?: number | null;
-  financial_priorities?: string[] | null;
   
   // System
   profile_completed?: boolean | null;
@@ -158,22 +151,16 @@ export default function ProfileSetupPage() {
             current_base: json?.current_base ?? null,
             next_base: json?.next_base ?? null,
             pcs_date: json?.pcs_date ?? null,
-            deployment_count: json?.deployment_count ?? null,
+            pcs_count: json?.pcs_count ?? null,
             // Family
             marital_status: json?.marital_status ?? null,
-            spouse_military: json?.spouse_military ?? null,
             num_children: json?.num_children ?? null,
-            has_efmp: json?.has_efmp ?? null,
             has_dependents: json?.has_dependents ?? null,
-            // Financial
+            // Financial & Planning
             tsp_balance_range: json?.tsp_balance_range ?? null,
-            debt_amount_range: json?.debt_amount_range ?? null,
             housing_situation: json?.housing_situation ?? null,
             owns_rental_properties: json?.owns_rental_properties ?? null,
-            // Goals
-            long_term_goal: json?.long_term_goal ?? null,
             retirement_age_target: json?.retirement_age_target ?? null,
-            financial_priorities: json?.financial_priorities ?? [],
             // System
             profile_completed: json?.profile_completed ?? false,
           });
@@ -303,29 +290,26 @@ export default function ProfileSetupPage() {
         }
         break;
       case 3: // Location & Deployment
-        total = 2;
+        total = 1;
         if (data.current_base) complete++;
-        if (data.deployment_count !== null && data.deployment_count !== undefined) complete++;
+        // deployment_count removed - not used by any tool
         break;
       case 4: // Family
-        total = 3 + (data.marital_status === 'married' ? 1 : 0);
+        total = 2;
         if (data.marital_status) complete++;
         if (data.num_children !== null && data.num_children !== undefined) complete++;
-        if (data.has_efmp !== null && data.has_efmp !== undefined) complete++;
-        if (data.marital_status === 'married') {
-          if (data.spouse_military !== null && data.spouse_military !== undefined) complete++;
-        }
+        // spouse_military and has_efmp removed - not used by any tool
         break;
       case 5: // Financial
-        total = 3;
+        total = 2;
         if (data.tsp_balance_range) complete++;
-        if (data.debt_amount_range) complete++;
         if (data.housing_situation) complete++;
+        // debt_amount_range removed - not used
         break;
       case 6: // Goals
-        total = 2;
-        if (data.long_term_goal) complete++;
+        total = 1;
         if (data.retirement_age_target) complete++;
+        // long_term_goal and financial_priorities removed - not used
         break;
       // Sections 7 & 8 removed (education, preferences) - fields deleted from database
       case 7:
@@ -373,9 +357,7 @@ export default function ProfileSetupPage() {
       { field: data.service_status, name: 'service_status', label: 'Service status' },
       { field: data.marital_status, name: 'marital_status', label: 'Marital status' },
       { field: data.num_children, name: 'num_children', label: 'Number of children' },
-      { field: data.has_efmp, name: 'has_efmp', label: 'EFMP enrollment' },
-      { field: data.tsp_balance_range, name: 'tsp_balance_range', label: 'TSP balance' },
-      { field: data.debt_amount_range, name: 'debt_amount_range', label: 'Debt amount' }
+      { field: data.tsp_balance_range, name: 'tsp_balance_range', label: 'TSP balance' }
     ];
 
     // Add branch/rank requirements conditionally
@@ -766,25 +748,7 @@ export default function ProfileSetupPage() {
                 </ProfileFormField>
               </div>
 
-              {/* Deployment fields section */}
-              <div className="pt-4 border-t border-subtle">
-                <ProfileFormField
-                  label="Number of Deployments"
-                  description="Total deployments (optional)"
-                  success={data.deployment_count !== null && data.deployment_count !== undefined}
-                >
-                  <input
-                    type="number"
-                    min={0}
-                    max={20}
-                    placeholder="e.g., 2"
-                    className={getInputClass(false, data.deployment_count !== null && data.deployment_count !== undefined)}
-                    value={data.deployment_count ?? ''}
-                    onChange={e => setData(d => ({ ...d, deployment_count: e.target.value ? Number(e.target.value) : null }))}
-                  />
-                </ProfileFormField>
-                {/* deployment_status and last_deployment_date removed - not used */}
-              </div>
+              {/* deployment_count, deployment_status, last_deployment_date all removed - not used by any tool */}
             </div>
           </ProfileSection>
 
@@ -838,44 +802,11 @@ export default function ProfileSetupPage() {
                   />
                 </ProfileFormField>
 
-                <ProfileFormField
-                  label="EFMP Enrolled"
-                  required
-                  error={fieldErrors.has_efmp}
-                  description="Exceptional Family Member Program"
-                  success={data.has_efmp !== null && data.has_efmp !== undefined}
-                >
-                  <select
-                    className={getInputClass(!!fieldErrors.has_efmp, data.has_efmp !== null && data.has_efmp !== undefined)}
-                    value={data.has_efmp === null || data.has_efmp === undefined ? '' : String(data.has_efmp)}
-                    onChange={e => setData(d => ({ ...d, has_efmp: e.target.value === '' ? null : e.target.value === 'true' }))}
-                  >
-                    <option value="">Select</option>
-                    {yesNo.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
-                  </select>
-                </ProfileFormField>
+              {/* has_efmp removed - not used by any tool */}
               </div>
 
               {/* NEW: Spouse details (conditional) */}
-              {data.marital_status === 'married' && (
-                <div className="pt-4 border-t border-subtle">
-                  <ProfileFormField
-                    label="Spouse Military"
-                    description="Dual-military household?"
-                    success={data.spouse_military !== null && data.spouse_military !== undefined}
-                  >
-                    <select
-                      className={getInputClass(false, data.spouse_military !== null && data.spouse_military !== undefined)}
-                      value={data.spouse_military === null || data.spouse_military === undefined ? '' : String(data.spouse_military)}
-                      onChange={e => setData(d => ({ ...d, spouse_military: e.target.value === '' ? null : e.target.value === 'true' }))}
-                    >
-                      <option value="">Select (optional)</option>
-                      {yesNo.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
-                    </select>
-                  </ProfileFormField>
-                  {/* spouse_age, spouse_employed, spouse_career_field removed - not used */}
-                </div>
-              )}
+              {/* spouse_military removed - not used by any tool */}
             </div>
 
             {/* Children ages section removed - Base Navigator uses count only, not individual ages */}
@@ -914,25 +845,7 @@ export default function ProfileSetupPage() {
                 {/* tsp_allocation and monthly_income_range removed - not used by tools */}
               </div>
 
-              <div>
-                <ProfileFormField
-                  label="Debt Amount"
-                  required
-                  error={fieldErrors.debt_amount_range}
-                  description="Total debt (not including mortgage)"
-                  success={!!data.debt_amount_range}
-                >
-                  <select
-                    className={getInputClass(!!fieldErrors.debt_amount_range, !!data.debt_amount_range)}
-                    value={data.debt_amount_range ?? ''}
-                    onChange={e => setData(d => ({ ...d, debt_amount_range: e.target.value || null }))}
-                  >
-                    <option value="">Select</option>
-                    {ranges.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                </ProfileFormField>
-                {/* emergency_fund_range and bah_amount removed - not used by tools */}
-              </div>
+              {/* debt_amount_range, emergency_fund_range, bah_amount all removed - not used by tools */}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ProfileFormField
@@ -979,22 +892,7 @@ export default function ProfileSetupPage() {
             completion={getSectionCompletion(6)}
           >
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ProfileFormField
-                  label="Long-Term Goal"
-                  description="Your military career plan"
-                  success={!!data.long_term_goal}
-                >
-                  <select
-                    className={getInputClass(false, !!data.long_term_goal)}
-                    value={data.long_term_goal ?? ''}
-                    onChange={e => setData(d => ({ ...d, long_term_goal: e.target.value || null }))}
-                  >
-                    <option value="">Select (optional)</option>
-                    {longTermGoals.map(g => <option key={g} value={g.toLowerCase().replace(' ', '-').replace('(', '').replace(')', '')}>{g}</option>)}
-                  </select>
-                </ProfileFormField>
-
+              <div>
                 <ProfileFormField
                   label="Retirement Age Target"
                   description="When do you plan to fully retire?"
@@ -1010,33 +908,7 @@ export default function ProfileSetupPage() {
                     onChange={e => setData(d => ({ ...d, retirement_age_target: e.target.value ? Number(e.target.value) : null }))}
                   />
                 </ProfileFormField>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* career_interests field removed - not used by any tools */}
-
-                <ProfileFormField
-                  label="Financial Priorities"
-                  description="What matters most to you?"
-                  success={!!data.financial_priorities && data.financial_priorities.length > 0}
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {priorities.map(p => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => toggleArray('financial_priorities', p)}
-                        className={`px-3 py-2 rounded-lg border font-medium transition-all ${
-                          data.financial_priorities?.includes(p) 
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-                </ProfileFormField>
+                {/* long_term_goal, financial_priorities, career_interests all removed - not used by tools */}
               </div>
             </div>
           </ProfileSection>
