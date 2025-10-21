@@ -143,5 +143,9 @@ Please analyze this article and create a curated atomic content block following 
   } catch (error) {
     return errorResponse(error);
   }
+  
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
 
