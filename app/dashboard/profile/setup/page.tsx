@@ -59,32 +59,6 @@ type ProfilePayload = {
   
   // System
   profile_completed?: boolean | null;
-  
-  // =========================================================================
-  // TEMPORARY STUB FIELDS - FOR TYPE COMPATIBILITY ONLY
-  // These fields were removed from database but UI still references them
-  // TODO: Remove these stubs when UI cleanup is complete
-  // =========================================================================
-  mos_afsc_rate?: string | null;
-  clearance_level?: string | null;
-  deployment_status?: string | null;
-  last_deployment_date?: string | null;
-  spouse_age?: number | null;
-  spouse_employed?: boolean | null;
-  spouse_career_field?: string | null;
-  spouse_service_status?: string | null;
-  children?: Array<{ age: number }> | null;
-  tsp_allocation?: string | null;
-  emergency_fund_range?: string | null;
-  monthly_income_range?: string | null;
-  bah_amount?: number | null;
-  career_interests?: string[] | null;
-  education_level?: string | null;
-  education_goals?: string[] | null;
-  content_difficulty_pref?: string | null;
-  urgency_level?: string | null;
-  communication_pref?: string | null;
-  timezone?: string | null;
 };
 
 type MilitaryRanks = {
@@ -321,21 +295,16 @@ export default function ProfileSetupPage() {
         if (data.years_of_service !== null && data.years_of_service !== undefined) complete++;
         break;
       case 2: // Military identity
-        total = data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status) ? 5 : 3;
+        total = data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status) ? 3 : 1;
         if (data.service_status) complete++;
         if (data.service_status && !['military_spouse', 'dod_civilian'].includes(data.service_status)) {
           if (data.branch) complete++;
           if (data.rank) complete++;
-          if (data.mos_afsc_rate) complete++;
-          if (data.clearance_level) complete++;
-        } else if (data.service_status === 'dod_civilian') {
-          if (data.clearance_level) complete++;
         }
         break;
       case 3: // Location & Deployment
-        total = 3;
+        total = 2;
         if (data.current_base) complete++;
-        if (data.deployment_status) complete++;
         if (data.deployment_count !== null && data.deployment_count !== undefined) complete++;
         break;
       case 4: // Family
@@ -406,8 +375,7 @@ export default function ProfileSetupPage() {
       { field: data.num_children, name: 'num_children', label: 'Number of children' },
       { field: data.has_efmp, name: 'has_efmp', label: 'EFMP enrollment' },
       { field: data.tsp_balance_range, name: 'tsp_balance_range', label: 'TSP balance' },
-      { field: data.debt_amount_range, name: 'debt_amount_range', label: 'Debt amount' },
-      { field: data.emergency_fund_range, name: 'emergency_fund_range', label: 'Emergency fund' }
+      { field: data.debt_amount_range, name: 'debt_amount_range', label: 'Debt amount' }
     ];
 
     // Add branch/rank requirements conditionally
@@ -626,22 +594,8 @@ export default function ProfileSetupPage() {
                 {/* Conditional fields based on service status */}
                 {data.service_status === 'military_spouse' ? (
                   <>
-                    <ProfileFormField
-                      label="Spouse's Service Status"
-                      description="Your spouse's military status"
-                      success={!!data.spouse_service_status}
-                    >
-                      <select
-                        className={getInputClass(false, !!data.spouse_service_status)}
-                        value={data.spouse_service_status ?? ''}
-                        onChange={e => setData(d => ({ ...d, spouse_service_status: e.target.value || null }))}
-                      >
-                        <option value="">Select (optional)</option>
-                        {spouseServiceStatuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                      </select>
-                    </ProfileFormField>
-                    <div className="flex items-center justify-center text-sm text-muted italic md:col-span-1">
-                      Branch/rank not applicable
+                    <div className="flex items-center justify-center text-sm text-muted italic md:col-span-2">
+                      Branch/rank not applicable for military spouses
                     </div>
                   </>
                 ) : data.service_status === 'dod_civilian' ? (
@@ -728,39 +682,7 @@ export default function ProfileSetupPage() {
               </div>
 
               {/* NEW: Additional military fields */}
-              {data.service_status && !['military_spouse'].includes(data.service_status) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <ProfileFormField
-                    label="MOS / AFSC / Rate"
-                    description="Your military job code (optional)"
-                    success={!!data.mos_afsc_rate}
-                  >
-                    <input
-                      type="text"
-                      placeholder="e.g., 11B, 2T3X1, BM2"
-                      className={getInputClass(false, !!data.mos_afsc_rate)}
-                      value={data.mos_afsc_rate ?? ''}
-                      onChange={e => setData(d => ({ ...d, mos_afsc_rate: e.target.value || null }))}
-                      maxLength={20}
-                    />
-                  </ProfileFormField>
-
-                  <ProfileFormField
-                    label="Security Clearance"
-                    description="Affects career opportunities"
-                    success={!!data.clearance_level}
-                  >
-                    <select
-                      className={getInputClass(false, !!data.clearance_level)}
-                      value={data.clearance_level ?? ''}
-                      onChange={e => setData(d => ({ ...d, clearance_level: e.target.value || null }))}
-                    >
-                      <option value="">Select (optional)</option>
-                      {clearanceLevels.map(c => <option key={c} value={c.toLowerCase().replace(' ', '-').replace('/', '-')}>{c}</option>)}
-                    </select>
-                  </ProfileFormField>
-                </div>
-              )}
+              {/* MOS/AFSC and Clearance fields removed - not used by any tools */}
             </div>
             {data.service_status && ['reserve', 'national_guard'].includes(data.service_status) && (
               <div className="mt-4">
@@ -844,26 +766,11 @@ export default function ProfileSetupPage() {
                 </ProfileFormField>
               </div>
 
-              {/* NEW: Deployment fields */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-subtle">
-                <ProfileFormField
-                  label="Deployment Status"
-                  description="Current deployment status"
-                  success={!!data.deployment_status}
-                >
-                  <select
-                    className={getInputClass(false, !!data.deployment_status)}
-                    value={data.deployment_status ?? ''}
-                    onChange={e => setData(d => ({ ...d, deployment_status: e.target.value || null }))}
-                  >
-                    <option value="">Select (optional)</option>
-                    {deploymentStatuses.map(s => <option key={s} value={s.toLowerCase().replace(' ', '-')}>{s}</option>)}
-                  </select>
-                </ProfileFormField>
-
+              {/* Deployment fields section */}
+              <div className="pt-4 border-t border-subtle">
                 <ProfileFormField
                   label="Number of Deployments"
-                  description="Total deployments"
+                  description="Total deployments (optional)"
                   success={data.deployment_count !== null && data.deployment_count !== undefined}
                 >
                   <input
@@ -876,19 +783,7 @@ export default function ProfileSetupPage() {
                     onChange={e => setData(d => ({ ...d, deployment_count: e.target.value ? Number(e.target.value) : null }))}
                   />
                 </ProfileFormField>
-
-                <ProfileFormField
-                  label="Last Deployment Date"
-                  description="Most recent deployment"
-                  success={!!data.last_deployment_date}
-                >
-                  <input
-                    type="date"
-                    className={getInputClass(false, !!data.last_deployment_date)}
-                    value={data.last_deployment_date ?? ''}
-                    onChange={e => setData(d => ({ ...d, last_deployment_date: e.target.value || null }))}
-                  />
-                </ProfileFormField>
+                {/* deployment_status and last_deployment_date removed - not used */}
               </div>
             </div>
           </ProfileSection>
@@ -963,23 +858,7 @@ export default function ProfileSetupPage() {
 
               {/* NEW: Spouse details (conditional) */}
               {data.marital_status === 'married' && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-subtle">
-                  <ProfileFormField
-                    label="Spouse Age"
-                    description="For planning purposes"
-                    success={!!data.spouse_age}
-                  >
-                    <input
-                      type="number"
-                      min={17}
-                      max={100}
-                      placeholder="e.g., 30"
-                      className={getInputClass(false, !!data.spouse_age)}
-                      value={data.spouse_age ?? ''}
-                      onChange={e => setData(d => ({ ...d, spouse_age: e.target.value ? Number(e.target.value) : null }))}
-                    />
-                  </ProfileFormField>
-
+                <div className="pt-4 border-t border-subtle">
                   <ProfileFormField
                     label="Spouse Military"
                     description="Dual-military household?"
@@ -994,71 +873,12 @@ export default function ProfileSetupPage() {
                       {yesNo.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
                     </select>
                   </ProfileFormField>
-
-                  <ProfileFormField
-                    label="Spouse Employed"
-                    description="Is your spouse employed?"
-                    success={data.spouse_employed !== null && data.spouse_employed !== undefined}
-                  >
-                    <select
-                      className={getInputClass(false, data.spouse_employed !== null && data.spouse_employed !== undefined)}
-                      value={data.spouse_employed === null || data.spouse_employed === undefined ? '' : String(data.spouse_employed)}
-                      onChange={e => setData(d => ({ ...d, spouse_employed: e.target.value === '' ? null : e.target.value === 'true' }))}
-                    >
-                      <option value="">Select (optional)</option>
-                      {yesNo.map(o => <option key={String(o.value)} value={String(o.value)}>{o.label}</option>)}
-                    </select>
-                  </ProfileFormField>
-
-                  {data.spouse_employed === true && (
-                    <ProfileFormField
-                      label="Spouse Career Field"
-                      description="What field do they work in?"
-                      success={!!data.spouse_career_field}
-                    >
-                      <input
-                        type="text"
-                        placeholder="e.g., Healthcare, IT, Education"
-                        className={getInputClass(false, !!data.spouse_career_field)}
-                        value={data.spouse_career_field ?? ''}
-                        onChange={e => setData(d => ({ ...d, spouse_career_field: e.target.value || null }))}
-                        maxLength={100}
-                      />
-                    </ProfileFormField>
-                  )}
+                  {/* spouse_age, spouse_employed, spouse_career_field removed - not used */}
                 </div>
               )}
             </div>
 
-            {/* Children Ages - Dynamic fields */}
-            {data.num_children !== null && data.num_children !== undefined && data.num_children > 0 && (
-              <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-slate-200 rounded-xl">
-                <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center gap-2">
-                  <span>👨‍👩‍👧‍👦</span> Children&apos;s Ages
-                </h3>
-                <p className="text-sm text-purple-700 mb-4">Helps us provide age-appropriate school info, childcare resources, and family planning</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Array.from({ length: data.num_children }, (_, i) => (
-                    <div key={i}>
-                      <label className="block text-sm font-semibold text-purple-900 mb-2">Child {i + 1} age</label>
-                      <input 
-                        type="number" 
-                        min={0} 
-                        max={26} 
-                        placeholder="Age"
-                        className="w-full border-2 border-purple-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        value={data.children?.[i]?.age ?? ''}
-                        onChange={e => {
-                          const newChildren = [...(data.children || [])];
-                          newChildren[i] = { age: Number(e.target.value) || 0 };
-                          setData(d => ({ ...d, children: newChildren }));
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Children ages section removed - Base Navigator uses count only, not individual ages */}
           </ProfileSection>
 
           {/* Section 5: Financial Snapshot */}
@@ -1091,38 +911,10 @@ export default function ProfileSetupPage() {
                   </select>
                 </ProfileFormField>
 
-                <ProfileFormField
-                  label="TSP Allocation"
-                  description="Current TSP fund allocation"
-                  success={!!data.tsp_allocation}
-                >
-                  <select
-                    className={getInputClass(false, !!data.tsp_allocation)}
-                    value={data.tsp_allocation ?? ''}
-                    onChange={e => setData(d => ({ ...d, tsp_allocation: e.target.value || null }))}
-                  >
-                    <option value="">Select (optional)</option>
-                    {tspAllocations.map(a => <option key={a} value={a.toLowerCase().replace(/[()/ ]/g, '-').replace(/--+/g, '-')}>{a}</option>)}
-                  </select>
-                </ProfileFormField>
-
-                <ProfileFormField
-                  label="Monthly Income"
-                  description="Household income range"
-                  success={!!data.monthly_income_range}
-                >
-                  <select
-                    className={getInputClass(false, !!data.monthly_income_range)}
-                    value={data.monthly_income_range ?? ''}
-                    onChange={e => setData(d => ({ ...d, monthly_income_range: e.target.value || null }))}
-                  >
-                    <option value="">Select (optional)</option>
-                    {incomeRanges.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                </ProfileFormField>
+                {/* tsp_allocation and monthly_income_range removed - not used by tools */}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
                 <ProfileFormField
                   label="Debt Amount"
                   required
@@ -1139,39 +931,7 @@ export default function ProfileSetupPage() {
                     {ranges.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
                 </ProfileFormField>
-
-                <ProfileFormField
-                  label="Emergency Fund"
-                  required
-                  error={fieldErrors.emergency_fund_range}
-                  description="Cash savings for emergencies"
-                  success={!!data.emergency_fund_range}
-                >
-                  <select
-                    className={getInputClass(!!fieldErrors.emergency_fund_range, !!data.emergency_fund_range)}
-                    value={data.emergency_fund_range ?? ''}
-                    onChange={e => setData(d => ({ ...d, emergency_fund_range: e.target.value || null }))}
-                  >
-                    <option value="">Select</option>
-                    {ranges.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                </ProfileFormField>
-
-                <ProfileFormField
-                  label="BAH Amount"
-                  description="Monthly BAH (if applicable)"
-                  success={!!data.bah_amount}
-                >
-                  <input
-                    type="number"
-                    min={0}
-                    max={10000}
-                    placeholder="e.g., 2100"
-                    className={getInputClass(false, !!data.bah_amount)}
-                    value={data.bah_amount ?? ''}
-                    onChange={e => setData(d => ({ ...d, bah_amount: e.target.value ? Number(e.target.value) : null }))}
-                  />
-                </ProfileFormField>
+                {/* emergency_fund_range and bah_amount removed - not used by tools */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1253,28 +1013,7 @@ export default function ProfileSetupPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ProfileFormField
-                  label="Career Interests"
-                  description="Select all that apply"
-                  success={!!data.career_interests && data.career_interests.length > 0}
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {interests.map(i => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => toggleArray('career_interests', i)}
-                        className={`px-3 py-2 rounded-lg border font-medium transition-all ${
-                          data.career_interests?.includes(i) 
-                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                        }`}
-                      >
-                        {i}
-                      </button>
-                    ))}
-                  </div>
-                </ProfileFormField>
+                {/* career_interests field removed - not used by any tools */}
 
                 <ProfileFormField
                   label="Financial Priorities"
@@ -1302,127 +1041,7 @@ export default function ProfileSetupPage() {
             </div>
           </ProfileSection>
 
-          {/* Section 7: Education */}
-          <ProfileSection
-            number={7}
-            title="Education"
-            icon="🎓"
-            description="Your education background and goals"
-            expanded={expandedSections.has(7)}
-            onToggle={() => toggleSection(7)}
-            completion={getSectionCompletion(7)}
-          >
-            <div className="space-y-4">
-              <ProfileFormField
-                label="Education Level"
-                description="Highest level completed"
-                success={!!data.education_level}
-              >
-                <select
-                  className={getInputClass(false, !!data.education_level)}
-                  value={data.education_level ?? ''}
-                  onChange={e => setData(d => ({ ...d, education_level: e.target.value || null }))}
-                >
-                  <option value="">Select (optional)</option>
-                  {educationLevels.map(e => <option key={e} value={e.toLowerCase().replace(' ', '-')}>{e}</option>)}
-                </select>
-              </ProfileFormField>
-
-              <ProfileFormField
-                label="Education Goals"
-                description="Select all that apply"
-                success={!!data.education_goals && data.education_goals.length > 0}
-              >
-                <div className="flex flex-wrap gap-2">
-                  {educationGoalsList.map(g => (
-                    <button
-                      key={g}
-                      type="button"
-                      onClick={() => toggleArray('education_goals', g.toLowerCase().replace(' ', '-').replace('/', '-'))}
-                      className={`px-3 py-2 rounded-lg border font-medium transition-all text-sm ${
-                        data.education_goals?.includes(g.toLowerCase().replace(' ', '-').replace('/', '-'))
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                      }`}
-                    >
-                      {g}
-                    </button>
-                  ))}
-                </div>
-              </ProfileFormField>
-            </div>
-          </ProfileSection>
-
-          {/* Section 8: Preferences */}
-          <ProfileSection
-            number={8}
-            title="Preferences"
-            icon="⚙️"
-            description="How we communicate and deliver content"
-            expanded={expandedSections.has(8)}
-            onToggle={() => toggleSection(8)}
-            completion={getSectionCompletion(8)}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ProfileFormField
-                label="Content Difficulty"
-                description="Preferred content level"
-                success={!!data.content_difficulty_pref}
-              >
-                <select
-                  className={getInputClass(false, !!data.content_difficulty_pref)}
-                  value={data.content_difficulty_pref ?? 'all'}
-                  onChange={e => setData(d => ({ ...d, content_difficulty_pref: e.target.value || 'all' }))}
-                >
-                  {contentDifficultyPrefs.map(p => <option key={p} value={p.toLowerCase().replace(' ', '-')}>{p}</option>)}
-                </select>
-              </ProfileFormField>
-
-              <ProfileFormField
-                label="Communication Preference"
-                description="How to reach you"
-                success={!!data.communication_pref}
-              >
-                <select
-                  className={getInputClass(false, !!data.communication_pref)}
-                  value={data.communication_pref ?? ''}
-                  onChange={e => setData(d => ({ ...d, communication_pref: e.target.value || null }))}
-                >
-                  <option value="">Select (optional)</option>
-                  {communicationPrefs.map(p => <option key={p} value={p.toLowerCase().replace(' ', '-').replace('/', '-')}>{p}</option>)}
-                </select>
-              </ProfileFormField>
-
-              <ProfileFormField
-                label="Urgency Level"
-                description="How soon do you need help?"
-                success={!!data.urgency_level}
-              >
-                <select
-                  className={getInputClass(false, !!data.urgency_level)}
-                  value={data.urgency_level ?? 'normal'}
-                  onChange={e => setData(d => ({ ...d, urgency_level: e.target.value || 'normal' }))}
-                >
-                  {urgencyLevels.map(u => <option key={u} value={u.toLowerCase().replace(/[() ]/g, '-').replace(/--+/g, '-')}>{u}</option>)}
-                </select>
-              </ProfileFormField>
-
-              <ProfileFormField
-                label="Timezone"
-                description="For scheduling and deadlines"
-                success={!!data.timezone}
-              >
-                <input
-                  type="text"
-                  placeholder="e.g., America/New_York"
-                  className={getInputClass(false, !!data.timezone)}
-                  value={data.timezone ?? ''}
-                  onChange={e => setData(d => ({ ...d, timezone: e.target.value || null }))}
-                  maxLength={50}
-                />
-              </ProfileFormField>
-            </div>
-          </ProfileSection>
+          {/* Sections 7 & 8 (Education, Preferences) removed - fields deleted from database */}
         </div>
 
         {/* Mobile Sticky Save Button */}
