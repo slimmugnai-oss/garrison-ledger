@@ -79,39 +79,17 @@ const serviceStatuses = [
   { value: 'dod_civilian', label: 'DoD Civilian / Contractor' }
 ];
 
-const spouseServiceStatuses = [
-  { value: 'active_duty', label: 'Active Duty' },
-  { value: 'reserve', label: 'Reserve' },
-  { value: 'national_guard', label: 'National Guard' },
-  { value: 'retired', label: 'Retired' },
-  { value: 'veteran', label: 'Veteran' }
-];
+// Form option arrays - only keep what's actively used
 const branches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force'];
 const civilianBranches = ['Army','Navy','Air Force','Marines','Coast Guard','Space Force','Multiple / Joint','N/A (not service-specific)'];
 const genders = ['Male','Female','Prefer not to say'];
-const educationLevels = ['High school','Some college','Associate degree','Bachelor degree','Master degree','Doctorate'];
-
-// New field options
-const clearanceLevels = ['None','Secret','Top Secret','TS/SCI','Q Clearance','Other'];
-const deploymentStatuses = ['Never deployed','Pre-deployment','Currently deployed','Post-deployment','Multiple deployments'];
 const housingOptions = ['On-base housing','Rent off-base','Own primary residence','Own rental property','Living with family','Other'];
-const longTermGoals = ['Retire at 20 years','Retire at 30 years','Transition to civilian (soon)','Continue indefinitely','Unsure'];
-const tspAllocations = ['Lifecycle Fund (L2030/L2040/L2050/etc)','G Fund (Government Securities)','F Fund (Fixed Income)','C Fund (Common Stock)','S Fund (Small Cap)','I Fund (International)','Custom mix','Not sure'];
-const communicationPrefs = ['Email','SMS/Text','In-app notifications','Phone call','No preference'];
-const contentDifficultyPrefs = ['Beginner-friendly','Intermediate','Advanced','All levels'];
-const urgencyLevels = ['Low (just browsing)','Normal','High (need help soon)','Crisis (urgent assistance needed)'];
-const educationGoalsList = ['Complete degree','Professional certification','Use MyCAA','Maximize GI Bill','TA/Tuition Assistance','Spouse education','Children college planning'];
+const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+','prefer-not-to-say'];
 
 const yesNo = [
   { label: 'Yes', value: true },
   { label: 'No', value: false },
 ];
-
-const ranges = ['none','1-5k','5-10k','10-25k','25-50k','50k+','prefer-not-to-say'];
-const tspRanges = ['0-25k','25k-50k','50k-100k','100k-200k','200k+','prefer-not-to-say'];
-const incomeRanges = ['<50k','50k-75k','75k-100k','100k-150k','150k+','prefer-not-to-say'];
-const interests = ['federal','entrepreneur','remote','education','transition'];
-const priorities = ['tsp','debt','emergency','house-hack','budget','sdp','investment'];
 
 export default function ProfileSetupPage() {
   const router = useRouter();
