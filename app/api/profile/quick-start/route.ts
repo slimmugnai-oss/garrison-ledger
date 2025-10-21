@@ -8,6 +8,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -17,7 +19,7 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth();
     
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const body = await request.json();
@@ -31,10 +33,9 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields (branch optional for contractors/civilians)
     if (!rank || !current_base) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Missing required fields: rank and current_base', {
+        missing: { rank: !rank, current_base: !current_base }
+      });
     }
 
     // Upsert profile with minimal data
@@ -55,28 +56,37 @@ export async function POST(request: NextRequest) {
       });
 
     if (upsertError) {
-      return NextResponse.json(
-        { error: 'Failed to save profile' },
-        { status: 500 }
-      );
+      logger.error('Failed to save quick start profile', upsertError, { userId });
+      throw Errors.databaseError('Failed to save profile');
     }
 
-    // Analytics
-    await supabaseAdmin
-      .from('events')
-      .insert({
-        user_id: userId,
-        event_type: 'profile_quick_start_complete',
-        payload: { branch, rank }
+    // Analytics (non-blocking)
+    try {
+      await supabaseAdmin
+        .from('events')
+        .insert({
+          user_id: userId,
+          event_type: 'profile_quick_start_complete',
+          payload: { branch, rank }
+        });
+    } catch (analyticsError) {
+      logger.warn('Failed to record profile completion event', {
+        error: analyticsError instanceof Error ? analyticsError.message : 'Unknown',
+        userId
       });
+      // Continue - analytics failure shouldn't block profile save
+    }
+
+    logger.info('Profile quick start completed', {
+      userId: userId.substring(0, 8) + '...',
+      rank,
+      branch: branch || 'N/A'
+    });
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

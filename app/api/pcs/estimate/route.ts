@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 import { calculateDistance } from '@/lib/pcs/distance';
 import { getPerDiemRate } from '@/lib/pcs/per-diem';
 import { 
@@ -33,10 +35,12 @@ const PER_DIEM_TRAVEL_RATE = 0.75;
 const PPM_PAYMENT_PERCENTAGE = 0.95;
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     // PREMIUM-ONLY FEATURE: Check tier
@@ -50,15 +54,15 @@ export async function POST(req: NextRequest) {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only.');
     }
 
     const body: EstimateRequest = await req.json();
     const { claimId } = body;
+
+    if (!claimId) {
+      throw Errors.invalidInput('claimId is required');
+    }
 
     // Get claim details
     const { data: claim, error: claimError } = await supabaseAdmin
@@ -69,7 +73,8 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (claimError || !claim) {
-      return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+      logger.warn('PCS claim not found', { claimId, userId: userId.substring(0, 8) + '...' });
+      throw Errors.notFound('PCS Claim');
     }
 
     // Get user profile for rank info
@@ -245,6 +250,11 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (snapshotError) {
+      logger.error('Failed to create PCS entitlement snapshot', snapshotError, {
+        claimId,
+        userId: userId.substring(0, 8) + '...'
+      });
+      // Continue - snapshot is for history, not critical
     }
 
     // Update claim with entitlements
@@ -263,18 +273,12 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', claimId);
 
-    // Track analytics
-    const { data: claimData } = await supabaseAdmin
-      .from('pcs_claims')
-      .select('user_id')
-      .eq('id', claimId)
-      .single();
-
-    if (claimData) {
+    // Track analytics (non-blocking)
+    try {
       await supabaseAdmin
         .from('pcs_analytics')
         .insert({
-          user_id: claimData.user_id,
+          user_id: userId,
           claim_id: claimId,
           event_type: 'entitlement_calculated',
           event_data: {
@@ -283,7 +287,22 @@ export async function POST(req: NextRequest) {
             potential_left: potentialLeftOnTable
           }
         });
+    } catch (analyticsError) {
+      logger.warn('Failed to record PCS analytics', {
+        error: analyticsError instanceof Error ? analyticsError.message : 'Unknown'
+      });
     }
+
+    const duration = Date.now() - startTime;
+    
+    logger.info('PCS entitlement calculated', {
+      userId: userId.substring(0, 8) + '...',
+      claimId,
+      totalEstimated,
+      potentialLeft: potentialLeftOnTable,
+      confidence: confidenceResult.level,
+      duration_ms: duration
+    });
 
     return NextResponse.json({
       success: true,
@@ -291,10 +310,9 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Calculation failed', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    const duration = Date.now() - startTime;
+    logger.error('PCS calculation failed', error, { duration_ms: duration });
+    return errorResponse(error);
   }
 }
 

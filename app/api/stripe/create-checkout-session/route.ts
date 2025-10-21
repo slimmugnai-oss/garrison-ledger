@@ -2,22 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { currentUser } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
     const user = await currentUser();
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const { priceId, successUrl, cancelUrl } = await req.json();
     
-    // Log the request for debugging
-    console.log('Checkout session request:', {
+    // Log checkout request
+    logger.info('Checkout session requested', {
       priceId,
-      userEmail: user.emailAddresses[0]?.emailAddress,
-      userId: user.id
+      userEmail: user.emailAddresses[0]?.emailAddress ? 'has_email' : 'no_email',
+      userId: user.id.substring(0, 8) + '...'
     });
 
     // 🎯 CHECK REFERRAL CREDITS - Auto-apply discount
@@ -47,26 +52,40 @@ export async function POST(req: NextRequest) {
             source: 'used_for_premium',
             description: `Applied $${(creditBalance / 100).toFixed(2)} credit to premium purchase`,
           });
-      } else {
+        
+        logger.info('Referral credit applied to checkout', {
+          userId: user.id.substring(0, 8) + '...',
+          creditAmount: creditBalance
+        });
       }
     } catch (creditError) {
       // Continue without discount if credit check fails
+      logger.warn('Failed to apply referral credit', {
+        error: creditError instanceof Error ? creditError.message : 'Unknown error',
+        userId: user.id.substring(0, 8) + '...'
+      });
     }
 
-    // Test if the price ID exists
+    // Validate price ID exists
     try {
       const price = await stripe.prices.retrieve(priceId);
-      console.log('Price retrieved:', {
-        id: price.id,
+      
+      logger.debug('Stripe price validated', {
+        priceId: price.id,
         amount: price.unit_amount,
         currency: price.currency,
         active: price.active
       });
+      
+      if (!price.active) {
+        throw Errors.invalidInput('Price is not active');
+      }
     } catch (priceError) {
-      return NextResponse.json({
-        error: 'Invalid price ID',
-        details: priceError instanceof Error ? priceError.message : 'Unknown error'
-      }, { status: 400 });
+      logger.error('Invalid Stripe price ID', priceError, { priceId });
+      throw Errors.invalidInput(
+        'Invalid price ID',
+        { priceId, error: priceError instanceof Error ? priceError.message : 'Unknown' }
+      );
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -89,9 +108,10 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    console.log('Checkout session created:', {
+    logger.info('Checkout session created successfully', {
       sessionId: session.id,
-      url: session.url
+      hasDiscount: Boolean(discountCouponId),
+      userId: user.id.substring(0, 8) + '...'
     });
 
     return NextResponse.json({ 
@@ -99,12 +119,6 @@ export async function POST(req: NextRequest) {
       url: session.url 
     });
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: 'Failed to create checkout session',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }

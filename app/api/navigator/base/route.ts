@@ -8,6 +8,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 import bases from '@/lib/data/bases-seed.json';
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
 import { fetchMedianRent, fetchSampleListings } from '@/lib/navigator/housing';
@@ -23,14 +25,13 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Auth check
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      throw Errors.unauthorized();
     }
 
     // Check premium status
@@ -56,9 +57,15 @@ export async function POST(request: NextRequest) {
       const FREE_DAILY_LIMIT = 3;
 
       if (quotaCheck && quotaCheck.count >= FREE_DAILY_LIMIT) {
-        return NextResponse.json(
-          { error: `Daily limit reached (${FREE_DAILY_LIMIT} base computations/day for free tier). Upgrade to Premium for unlimited access.` },
-          { status: 429 }
+        logger.info('Navigator rate limit hit', {
+          userId: userId.substring(0, 8) + '...',
+          tier,
+          limit: FREE_DAILY_LIMIT,
+          used: quotaCheck.count
+        });
+        
+        throw Errors.rateLimitExceeded(
+          `Daily limit reached (${FREE_DAILY_LIMIT} base computations/day for free tier). Upgrade to Premium for unlimited access.`
         );
       }
     }
@@ -70,10 +77,7 @@ export async function POST(request: NextRequest) {
     // Find base
     const base = bases.find(b => b.code === baseCode);
     if (!base) {
-      return NextResponse.json(
-        { error: 'Unknown base code' },
-        { status: 400 }
-      );
+      throw Errors.notFound('Base', `Base code ${baseCode} not found`);
     }
 
     // Process each candidate ZIP
@@ -226,18 +230,37 @@ export async function POST(request: NextRequest) {
         });
     }
 
-    // Analytics
-    await supabaseAdmin
-      .from('events')
-      .insert({
-        user_id: userId,
-        event_type: 'navigator_compute',
-        payload: {
-          base_code: base.code,
-          bedrooms,
-          result_count: results.length
-        }
+    // Analytics (non-blocking)
+    try {
+      await supabaseAdmin
+        .from('events')
+        .insert({
+          user_id: userId,
+          event_type: 'navigator_compute',
+          payload: {
+            base_code: base.code,
+            bedrooms,
+            result_count: results.length
+          }
+        });
+    } catch (analyticsError) {
+      logger.warn('Failed to record navigator analytics', {
+        error: analyticsError instanceof Error ? analyticsError.message : 'Unknown',
+        userId: userId.substring(0, 8) + '...'
       });
+      // Continue - analytics failure shouldn't block results
+    }
+
+    const duration = Date.now() - startTime;
+    
+    logger.info('Navigator computation complete', {
+      userId: userId.substring(0, 8) + '...',
+      baseCode,
+      zipCount: base.candidateZips.length,
+      resultCount: results.length,
+      duration_ms: duration,
+      tier
+    });
 
     const response: NavigatorResponse = {
       base,
@@ -247,13 +270,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    const duration = Date.now() - startTime;
+    logger.error('Navigator computation failed', error, {
+      duration_ms: duration
+    });
+    return errorResponse(error);
   }
 }
 

@@ -10,6 +10,27 @@
 import { getCache, setCache } from '@/lib/cache';
 
 /**
+ * Google Weather API Response Types
+ */
+interface GoogleWeatherResponse {
+  temperature?: {
+    degrees: number;
+    unit: 'CELSIUS' | 'FAHRENHEIT';
+  };
+  weatherCondition?: {
+    description?: {
+      text: string;
+    };
+  };
+  humidity?: number;
+}
+
+interface NominatimGeocodingResponse {
+  lat: string;
+  lon: string;
+}
+
+/**
  * Compute weather comfort index for a ZIP code
  * Returns 0-10 score and readable note
  */
@@ -99,7 +120,7 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
       return { lat: 0, lon: 0 };
     }
 
-    const data = await response.json();
+    const data = await response.json() as NominatimGeocodingResponse[];
     
     if (data.length === 0) {
       return { lat: 0, lon: 0 };
@@ -123,7 +144,7 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
 /**
  * Analyze weather data from Google Weather API and compute comfort index
  */
-function analyzeWeatherData(data: any): { index10: number; note: string } {
+function analyzeWeatherData(data: GoogleWeatherResponse): { index10: number; note: string } {
   
   try {
     // Google Weather API structure (from actual logs):

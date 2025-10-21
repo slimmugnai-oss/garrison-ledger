@@ -9,6 +9,34 @@ import type { Listing } from '@/app/types/navigator';
 import { getCache, setCache } from '@/lib/cache';
 
 /**
+ * Zillow API Response Types
+ */
+interface ZillowProperty {
+  price?: number;
+  unformattedPrice?: number;
+  address?: {
+    streetAddress?: string;
+    zipcode?: string;
+  };
+  streetAddress?: string;
+  detailUrl?: string;
+  zpid?: string;
+  imgSrc?: string;
+  photos?: string[];
+  bedrooms?: number;
+  bathrooms?: number;
+  latitude?: number;
+  longitude?: number;
+  rentZestimate?: number;
+}
+
+interface ZillowSearchResponse {
+  props?: ZillowProperty[];
+}
+
+interface ZillowPropertyResponse extends ZillowProperty {}
+
+/**
  * Fetch median rent for ZIP and bedroom count
  */
 export async function fetchMedianRent(zip: string, bedrooms: number): Promise<number | null> {
@@ -39,12 +67,12 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as ZillowSearchResponse;
     
     // Extract prices and compute median
     const prices: number[] = (data.props || [])
-      .map((p: any) => p.price || p.unformattedPrice)
-      .filter((p: any) => typeof p === 'number' && p > 0);
+      .map((p) => p.price || p.unformattedPrice)
+      .filter((p): p is number => typeof p === 'number' && p > 0);
 
     if (prices.length === 0) {
       return null;
@@ -92,13 +120,13 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
       return [];
     }
 
-    const data = await response.json();
+    const data = await response.json() as ZillowSearchResponse;
     
     // Parse listings (adjust to actual API structure)
     const listings: Listing[] = (data.props || [])
       .slice(0, 3)
-      .map((p: any) => ({
-        title: p.address || p.streetAddress || 'Listing',
+      .map((p) => ({
+        title: p.address?.streetAddress || p.streetAddress || 'Listing',
         price_cents: (p.price || p.unformattedPrice || 0) * 100,
         url: p.detailUrl || p.zpid ? `https://www.zillow.com/homedetails/${p.zpid}_zpid/` : '',
         photo: p.imgSrc || p.photos?.[0],
@@ -154,7 +182,7 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as ZillowPropertyResponse;
     
     const listing = {
       title: data.address?.streetAddress || 'Listing',

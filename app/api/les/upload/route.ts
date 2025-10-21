@@ -22,11 +22,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { parseLesPdf } from '@/lib/les/parse';
 import { ssot } from '@/lib/ssot';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 /**
  * Record server-side analytics event
  */
-async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, any>) {
+async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, unknown>) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
       method: 'POST',
@@ -38,6 +40,10 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
+    logger.warn('Failed to record analytics event', {
+      event,
+      error: error instanceof Error ? error.message : 'Unknown'
+    });
   }
 }
 
@@ -57,10 +63,7 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      throw Errors.unauthorized();
     }
 
     // ==========================================================================
@@ -85,21 +88,20 @@ export async function POST(req: NextRequest) {
         .eq('year', currentYear);
 
       if (countError) {
-        return NextResponse.json(
-          { error: 'Failed to check upload quota' },
-          { status: 500 }
-        );
+        logger.error('Failed to check upload quota', countError, { userId });
+        throw Errors.databaseError('Failed to check upload quota');
       }
 
       if (count !== null && count >= monthlyQuota) {
-        return NextResponse.json(
-          {
-            error: 'Monthly upload limit reached',
-            quota: monthlyQuota,
-            used: count,
-            upgradeRequired: tier === 'free'
-          },
-          { status: 429 }
+        logger.info('Upload quota exceeded', {
+          userId: userId.substring(0, 8) + '...',
+          quota: monthlyQuota,
+          used: count,
+          tier
+        });
+        
+        throw Errors.premiumRequired(
+          `Monthly upload limit reached (${count}/${monthlyQuota}). Upgrade to Premium for unlimited uploads.`
         );
       }
     }
@@ -111,29 +113,24 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File | null;
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('No file provided');
     }
 
     // Validate file type
     if (file.type !== 'application/pdf') {
-      return NextResponse.json(
-        { error: 'Only PDF files are supported (v1)' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Only PDF files are supported', { 
+        receivedType: file.type 
+      });
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      return NextResponse.json(
-        {
-          error: `File too large (max ${ssot.features.lesAuditor.maxFileSizeMB}MB)`,
+      throw Errors.invalidInput(
+        `File too large (max ${ssot.features.lesAuditor.maxFileSizeMB}MB)`,
+        { 
           maxSize: MAX_FILE_SIZE_BYTES,
-          actualSize: file.size
-        },
-        { status: 400 }
+          actualSize: file.size 
+        }
       );
     }
 
@@ -159,10 +156,12 @@ export async function POST(req: NextRequest) {
       });
 
     if (uploadError) {
-      return NextResponse.json(
-        { error: 'Failed to upload file' },
-        { status: 500 }
-      );
+      logger.error('Failed to upload LES to storage', uploadError, {
+        userId,
+        storagePath,
+        fileSize: file.size
+      });
+      throw Errors.databaseError('Failed to upload file to storage');
     }
 
     // ==========================================================================
@@ -184,14 +183,21 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError || !uploadRecord) {
+      logger.error('Failed to save upload metadata', insertError, {
+        userId,
+        storagePath
+      });
       
       // Cleanup storage on DB failure
-      await supabaseAdmin.storage.from('les_raw').remove([storagePath]);
+      try {
+        await supabaseAdmin.storage.from('les_raw').remove([storagePath]);
+      } catch (cleanupError) {
+        logger.error('Failed to cleanup storage after DB error', cleanupError, {
+          storagePath
+        });
+      }
       
-      return NextResponse.json(
-        { error: 'Failed to save upload metadata' },
-        { status: 500 }
-      );
+      throw Errors.databaseError('Failed to save upload metadata');
     }
 
     // ==========================================================================
@@ -219,6 +225,11 @@ export async function POST(req: NextRequest) {
           .insert(lineRows);
 
         if (linesError) {
+          logger.warn('Failed to save parsed lines', {
+            error: linesError.message,
+            uploadId: uploadRecord.id,
+            lineCount: lineRows.length
+          });
           // Don't fail the whole upload - mark as parse failure
         } else {
           parsedOk = true;
@@ -237,7 +248,12 @@ export async function POST(req: NextRequest) {
         .eq('id', uploadRecord.id);
 
     } catch (parseError) {
+      logger.error('Failed to parse LES PDF', parseError, {
+        uploadId: uploadRecord.id,
+        fileName: file.name
+      });
       // Parse failed - record stays with parsed_ok = false
+      // This is recoverable - user can try re-uploading or use manual entry
     }
 
     // ==========================================================================
@@ -263,6 +279,13 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 8. RETURN RESPONSE
     // ==========================================================================
+    logger.info('LES upload complete', {
+      uploadId: uploadRecord.id,
+      parsedOk,
+      userId: userId.substring(0, 8) + '...',
+      fileSize: file.size
+    });
+
     return NextResponse.json({
       uploadId: uploadRecord.id,
       parsedOk,
@@ -272,10 +295,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -296,7 +316,11 @@ async function getUserTier(userId: string): Promise<'free' | 'premium'> {
     }
 
     return (data.tier as 'free' | 'premium') || 'free';
-  } catch {
+  } catch (error) {
+    logger.warn('Failed to get user tier, defaulting to free', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      userId: userId.substring(0, 8) + '...'
+    });
     return 'free';
   }
 }

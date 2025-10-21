@@ -5,6 +5,20 @@
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import type {
+  TSPInputs,
+  TSPOutputs,
+  HouseHackInputs,
+  HouseHackOutputs,
+  SDPInputs,
+  SDPOutputs,
+  PCSInputs,
+  PCSOutputs,
+  OnBaseSavingsInputs,
+  OnBaseSavingsOutputs,
+  RetirementInputs,
+  RetirementOutputs
+} from '@/lib/types/pdf-inputs';
 
 const BRAND_COLOR = '#2563eb'; // Blue-600
 const SUCCESS_COLOR = '#059669'; // Green-600
@@ -58,7 +72,7 @@ const fmt = (value: number) => {
 /**
  * Generate TSP Modeler Report
  */
-export function generateTSPReport(inputs: any, outputs: any): string {
+export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): string {
   const doc = initializePDF('TSP Allocation Modeler Report');
   
   let yPos = HEADER_HEIGHT + 15;
@@ -150,7 +164,7 @@ export function generateTSPReport(inputs: any, outputs: any): string {
 /**
  * Generate PCS Planner Report
  */
-export function generatePCSReport(inputs: any, outputs: any): string {
+export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): string {
   const doc = initializePDF('PCS Financial Planner Report');
   
   let yPos = HEADER_HEIGHT + 15;
@@ -213,7 +227,7 @@ export function generatePCSReport(inputs: any, outputs: any): string {
 /**
  * Generate House Hacking Report
  */
-export function generateHouseHackingReport(inputs: any, outputs: any): string {
+export function generateHouseHackingReport(inputs: HouseHackInputs, outputs: HouseHackOutputs): string {
   const doc = initializePDF('House Hacking Analysis Report');
   
   let yPos = HEADER_HEIGHT + 15;

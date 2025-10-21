@@ -9,6 +9,20 @@
 
 import { getCache, setCache } from '@/lib/cache';
 
+/**
+ * RapidAPI Demographics Response Types
+ */
+interface DemographicsAPIData {
+  population?: string | number;
+  median_age?: string | number;
+  median_income?: string | number;
+  family_households_percent?: string | number;
+}
+
+interface DemographicsAPIResponse {
+  demographics?: DemographicsAPIData;
+}
+
 export interface DemographicsData {
   demographics_score: number; // 0-10 (10 = most family-friendly)
   population: number;
@@ -53,7 +67,7 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
       return getDefaultDemographicsData();
     }
 
-    const data = await response.json();
+    const data = await response.json() as DemographicsAPIResponse;
     const demographicsData = parseDemographicsData(data, zip);
     
     await setCache(cacheKey, demographicsData, 30 * 24 * 3600); // 30 days
@@ -68,7 +82,7 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
 /**
  * Parse RapidAPI Demographics response
  */
-function parseDemographicsData(data: any, zip: string): DemographicsData {
+function parseDemographicsData(data: DemographicsAPIResponse, zip: string): DemographicsData {
   try {
     // RapidAPI Demographics response structure (adjust based on actual API)
     if (!data || !data.demographics) {
@@ -77,11 +91,22 @@ function parseDemographicsData(data: any, zip: string): DemographicsData {
 
     const demo = data.demographics;
     
-    // Extract data from RapidAPI response
-    const population = parseInt(demo.population) || 0;
-    const medianAge = parseFloat(demo.median_age) || 0;
-    const medianIncome = parseInt(demo.median_income) || 0;
-    const familyHouseholdPercent = parseFloat(demo.family_households_percent) || 0;
+    // Extract data from RapidAPI response (handle string | number | undefined)
+    const population = typeof demo.population === 'string' 
+      ? parseInt(demo.population) || 0 
+      : typeof demo.population === 'number' ? demo.population : 0;
+    
+    const medianAge = typeof demo.median_age === 'string'
+      ? parseFloat(demo.median_age) || 0
+      : typeof demo.median_age === 'number' ? demo.median_age : 0;
+    
+    const medianIncome = typeof demo.median_income === 'string'
+      ? parseInt(demo.median_income) || 0
+      : typeof demo.median_income === 'number' ? demo.median_income : 0;
+    
+    const familyHouseholdPercent = typeof demo.family_households_percent === 'string'
+      ? parseFloat(demo.family_households_percent) || 0
+      : typeof demo.family_households_percent === 'number' ? demo.family_households_percent : 0;
     
     // Calculate diversity index (simplified)
     const diversityIndex = calculateDiversityIndex(population, medianAge);

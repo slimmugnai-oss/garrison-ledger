@@ -11,6 +11,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 import type { WatchlistData } from '@/app/types/navigator';
 
 export const runtime = 'nodejs';
@@ -23,7 +25,7 @@ export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     // Check premium status
@@ -36,10 +38,7 @@ export async function POST(request: NextRequest) {
     const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json(
-        { error: 'Watchlists are a premium feature. Upgrade to save and monitor neighborhoods.' },
-        { status: 402 }
-      );
+      throw Errors.premiumRequired('Watchlists are a premium feature. Upgrade to save and monitor neighborhoods.');
     }
 
     // Parse request
@@ -54,7 +53,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!baseCode) {
-      return NextResponse.json({ error: 'baseCode required' }, { status: 400 });
+      throw Errors.invalidInput('baseCode is required');
     }
 
     // Upsert watchlist
@@ -74,28 +73,38 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to save watchlist' }, { status: 500 });
+      logger.error('Failed to save watchlist', error, { userId, baseCode });
+      throw Errors.databaseError('Failed to save watchlist');
     }
 
-    // Analytics
-    await supabaseAdmin
-      .from('events')
-      .insert({
-        user_id: userId,
-        event_type: 'navigator_watchlist_save',
-        payload: {
-          base_code: baseCode,
-          zips_count: zips.length
-        }
+    // Analytics (non-blocking)
+    try {
+      await supabaseAdmin
+        .from('events')
+        .insert({
+          user_id: userId,
+          event_type: 'navigator_watchlist_save',
+          payload: {
+            base_code: baseCode,
+            zips_count: zips.length
+          }
+        });
+    } catch (analyticsError) {
+      logger.warn('Failed to record watchlist analytics', {
+        error: analyticsError instanceof Error ? analyticsError.message : 'Unknown'
       });
+    }
+
+    logger.info('Watchlist saved', {
+      userId: userId.substring(0, 8) + '...',
+      baseCode,
+      zipCount: zips.length
+    });
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -106,13 +115,13 @@ export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const baseCode = request.nextUrl.searchParams.get('baseCode');
 
     if (!baseCode) {
-      return NextResponse.json({ error: 'baseCode required' }, { status: 400 });
+      throw Errors.invalidInput('baseCode is required');
     }
 
     // Get watchlist
@@ -124,16 +133,14 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch watchlist' }, { status: 500 });
+      logger.error('Failed to fetch watchlist', error, { userId, baseCode });
+      throw Errors.databaseError('Failed to fetch watchlist');
     }
 
     return NextResponse.json({ watchlist: data });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

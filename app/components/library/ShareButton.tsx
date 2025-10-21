@@ -23,8 +23,8 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
         alert('Link copied to clipboard!');
       }
 
-      // Track the share
-      await fetch('/api/content/track', {
+      // Track the share (non-blocking)
+      fetch('/api/content/track', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,8 +33,20 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
           contentId,
           interactionType: 'share',
         }),
+      }).catch((trackError) => {
+        // Analytics tracking failure - don't show to user
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[ShareButton] Failed to track share:', trackError);
+        }
       });
     } catch (error) {
+      // Share/copy failed - show user-friendly message
+      const errorMessage = error instanceof Error ? error.message : 'Failed to share';
+      alert(`Unable to share: ${errorMessage}. Please copy the URL manually.`);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[ShareButton] Share failed:', error);
+      }
     }
   };
 

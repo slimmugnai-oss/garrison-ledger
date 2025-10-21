@@ -21,11 +21,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { compareLesToExpected } from '@/lib/les/compare';
+import { logger } from '@/lib/logger';
 
 /**
  * Record server-side analytics event
  */
-async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, any>) {
+async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, unknown>) {
   try {
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
       method: 'POST',
@@ -37,6 +38,7 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
+    logger.error('Failed to record analytics event', error, { event, userId });
   }
 }
 
@@ -255,7 +257,14 @@ async function getUserProfile(userId: string): Promise<{
 
     // Validate required fields
     if (!data.rank || !data.current_base || data.has_dependents === null) {
-      console.warn('[LES Audit] Profile incomplete for user:', userId);
+      logger.warn('LES Audit: Profile incomplete', {
+        userId: userId.substring(0, 8) + '...',
+        missingFields: {
+          rank: !data.rank,
+          current_base: !data.current_base,
+          has_dependents: data.has_dependents === null
+        }
+      });
       return null;
     }
 
@@ -267,6 +276,7 @@ async function getUserProfile(userId: string): Promise<{
       yos: data.time_in_service || undefined
     };
   } catch (error) {
+    logger.error('LES Audit: Failed to get user profile', error);
     return null;
   }
 }

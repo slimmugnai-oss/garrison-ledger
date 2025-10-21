@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 /**
  * Content Sharing & Collaboration API
@@ -23,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -44,10 +49,8 @@ export async function GET(request: NextRequest) {
     return await getSharedWithMe(userId);
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch shared content' },
-      { status: 500 }
-    );
+    logger.error('Failed to fetch shared content', error);
+    return errorResponse(error);
   }
 }
 
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const body = await request.json();
@@ -70,10 +73,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!contentId || !shareType) {
-      return NextResponse.json(
-        { error: 'contentId and shareType are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('contentId and shareType are required');
     }
 
     // Get content details
@@ -84,10 +84,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (contentError || !content) {
-      return NextResponse.json(
-        { error: 'Content not found' },
-        { status: 404 }
-      );
+      logger.warn('Content not found for sharing', { contentId, userId: userId.substring(0, 8) + '...' });
+      throw Errors.notFound('Content');
     }
 
     // Calculate expiration
@@ -115,10 +113,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (shareError) {
-      return NextResponse.json(
-        { error: 'Failed to create share' },
-        { status: 500 }
-      );
+      logger.error('Failed to create share', shareError, { userId, contentId });
+      throw Errors.databaseError('Failed to create share');
     }
 
     // If private share, create recipient records
@@ -134,21 +130,40 @@ export async function POST(request: NextRequest) {
         .insert(recipientRecords);
 
       if (recipientError) {
+        logger.warn('Failed to create share recipients', {
+          error: recipientError.message,
+          shareId: share.id,
+          recipientCount: recipientIds.length
+        });
+        // Continue - share was created, recipients can be added later
       }
     }
 
-    // Track share action
-    await supabaseAdmin
-      .from('content_interactions')
-      .insert({
-        user_id: userId,
-        content_id: contentId,
-        action: 'share',
-        metadata: { shareType, recipientCount: recipientIds?.length || 0 }
+    // Track share action (non-blocking)
+    try {
+      await supabaseAdmin
+        .from('content_interactions')
+        .insert({
+          user_id: userId,
+          content_id: contentId,
+          action: 'share',
+          metadata: { shareType, recipientCount: recipientIds?.length || 0 }
+        });
+    } catch (trackError) {
+      logger.warn('Failed to track share action', {
+        error: trackError instanceof Error ? trackError.message : 'Unknown'
       });
+    }
 
     // Generate share URL
     const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/library/shared/${share.share_token}`;
+
+    logger.info('Content share created', {
+      userId: userId.substring(0, 8) + '...',
+      contentId,
+      shareType,
+      recipientCount: recipientIds?.length || 0
+    });
 
     return NextResponse.json({
       success: true,
@@ -169,10 +184,8 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to create share' },
-      { status: 500 }
-    );
+    logger.error('Failed to create share', error);
+    return errorResponse(error);
   }
 }
 
@@ -182,17 +195,14 @@ export async function DELETE(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const searchParams = request.nextUrl.searchParams;
     const shareId = searchParams.get('shareId');
 
     if (!shareId) {
-      return NextResponse.json(
-        { error: 'shareId is required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('shareId is required');
     }
 
     // Verify user owns this share
@@ -203,17 +213,17 @@ export async function DELETE(request: NextRequest) {
       .single();
 
     if (fetchError || !share) {
-      return NextResponse.json(
-        { error: 'Share not found' },
-        { status: 404 }
-      );
+      logger.warn('Share not found for deletion', { shareId, userId: userId.substring(0, 8) + '...' });
+      throw Errors.notFound('Share');
     }
 
     if (share.shared_by !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized to delete this share' },
-        { status: 403 }
-      );
+      logger.warn('Unauthorized share deletion attempt', {
+        shareId,
+        requestingUser: userId.substring(0, 8) + '...',
+        owner: share.shared_by.substring(0, 8) + '...'
+      });
+      throw Errors.forbidden('You do not own this share');
     }
 
     // Delete share (cascade will delete recipients)
@@ -223,19 +233,19 @@ export async function DELETE(request: NextRequest) {
       .eq('id', shareId);
 
     if (deleteError) {
-      return NextResponse.json(
-        { error: 'Failed to delete share' },
-        { status: 500 }
-      );
+      logger.error('Failed to delete share', deleteError, { shareId, userId });
+      throw Errors.databaseError('Failed to delete share');
     }
+
+    logger.info('Content share deleted', {
+      userId: userId.substring(0, 8) + '...',
+      shareId
+    });
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to delete share' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import Stripe from 'stripe';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -16,8 +20,11 @@ export async function POST(req: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
+    logger.error('Stripe webhook signature verification failed', err);
     return new Response('Webhook signature verification failed', { status: 400 });
   }
+  
+  logger.info('Stripe webhook received', { eventType: event.type });
 
   // Handle the event
   switch (event.type) {
@@ -69,10 +76,14 @@ export async function POST(req: NextRequest) {
             });
           
           if (conversionResult) {
+            logger.info('Referral conversion processed via Stripe webhook', { userId });
             // TODO: Send email notifications to both users about their $10 credit
-          } else {
           }
         } catch (refError) {
+          logger.warn('Referral conversion failed in Stripe webhook', {
+            error: refError instanceof Error ? refError.message : 'Unknown',
+            userId
+          });
           // Don't fail the webhook if referral processing fails
         }
       }

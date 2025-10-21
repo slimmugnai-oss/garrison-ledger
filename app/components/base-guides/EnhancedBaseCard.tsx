@@ -87,6 +87,11 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
         setExternalData(data);
       }
     } catch (error) {
+      // Log error but don't show to user - external data is optional enhancement
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[BaseCard] Failed to load external data:', error);
+      }
+      // Keep externalData as null - card will function without it
     } finally {
       setLoadingData(false);
     }

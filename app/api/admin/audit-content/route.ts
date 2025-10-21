@@ -36,10 +36,36 @@ export async function GET() {
     }
     
     
+    interface AuditRecommendation {
+      priority: string;
+      category: string;
+      count: number;
+      action: string;
+    }
+
+    interface AuditFlag {
+      severity: string;
+      type: string;
+      count?: number;
+      samples?: string;
+      recommendation: string;
+      monthsOld?: number;
+    }
+
+    interface FlaggedBlock {
+      id: string;
+      title: string;
+      domain: string | null;
+      rating: number | null;
+      created: string;
+      flags: AuditFlag[];
+      priorityScore: number;
+    }
+
     const results = {
       auditDate: new Date().toISOString(),
       total: blocks.length,
-      flagged: [] as Record<string, unknown>[],
+      flagged: [] as FlaggedBlock[],
       stats: {
         specificYears: 0,
         specificAmounts: 0,
@@ -51,12 +77,12 @@ export async function GET() {
         oldContent: 0,
         noDisclaimer: 0,
       },
-      recommendations: [] as string[]
+      recommendations: [] as AuditRecommendation[]
     };
     
     for (const block of blocks) {
       const content = (block.text_content || '') + ' ' + (block.html || '');
-      const flags = [];
+      const flags: AuditFlag[] = [];
       
       // Check each pattern
       const yearMatches = content.match(RED_FLAGS.SPECIFIC_YEARS);
@@ -173,8 +199,8 @@ export async function GET() {
       
       if (flags.length > 0) {
         // Calculate priority score
-        const criticalCount = flags.filter((f: any) => f.severity === 'critical').length;
-        const highCount = flags.filter((f: any) => f.severity === 'high').length;
+        const criticalCount = flags.filter(f => f.severity === 'critical').length;
+        const highCount = flags.filter(f => f.severity === 'high').length;
         const priorityScore = (criticalCount * 100) + (highCount * 10) + flags.length;
         
         results.flagged.push({

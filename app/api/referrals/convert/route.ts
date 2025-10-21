@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
 
 /**
  * CONVERT REFERRAL API
@@ -28,7 +31,7 @@ export async function POST(req: NextRequest) {
     }
     
     if (!targetUserId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     // Process the conversion
@@ -37,7 +40,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ error: "Failed to process conversion" }, { status: 500 });
+      logger.error('Referral conversion RPC failed', error, { userId: targetUserId });
+      throw Errors.databaseError('Failed to process conversion');
     }
 
     if (!data) {
@@ -59,10 +63,17 @@ export async function POST(req: NextRequest) {
         .single();
       
       if (referralData) {
+        logger.info('Referral conversion successful', {
+          referrer: referralData.referrer_user_id.substring(0, 8) + '...',
+          referred: referralData.referred_user_id.substring(0, 8) + '...'
+        });
         // TODO: Send email to referrer (you earned $10!)
         // TODO: Send email to referee (you got $10 credit!)
       }
     } catch (emailError) {
+      logger.warn('Failed to send referral emails', {
+        error: emailError instanceof Error ? emailError.message : 'Unknown'
+      });
       // Don't fail the conversion if email fails
     }
 
@@ -72,10 +83,8 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    logger.error('Referral conversion failed', error);
+    return errorResponse(error);
   }
 }
 

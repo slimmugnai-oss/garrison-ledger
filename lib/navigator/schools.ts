@@ -9,6 +9,31 @@ import type { School, KidsGrade } from '@/app/types/navigator';
 import { getCache, setCache } from '@/lib/cache';
 
 /**
+ * GreatSchools API Response Types
+ */
+interface GreatSchoolsSchool {
+  name: string;
+  'rating_band'?: string; // Note: underscore, not hyphen
+  level?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  type?: string;
+  distance?: number;
+}
+
+interface GreatSchoolsResponse {
+  schools?: GreatSchoolsSchool[];
+  cur_page?: number;
+  total_count?: number;
+}
+
+interface NominatimGeocodingResponse {
+  lat: string;
+  lon: string;
+}
+
+/**
  * Fetch schools by ZIP from GreatSchools API v2
  * V2 requires lat/lon, so we need to geocode ZIP first
  */
@@ -58,11 +83,11 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       return [];
     }
 
-    const data = await response.json();
+    const data = await response.json() as GreatSchoolsResponse;
     
     // Parse v2 API response structure
     // Response: { schools: [...], cur_page, total_count, etc. }
-    const schools: School[] = (data.schools || []).map((s: any, index: number) => {
+    const schools: School[] = (data.schools || []).map((s) => {
       const ratingBand = s['rating_band']; // CRITICAL: Must be underscore, not hyphen
       const rating = parseRatingBand(ratingBand);
       
@@ -120,7 +145,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
       return { lat: 0, lon: 0 };
     }
 
-    const data = await response.json();
+    const data = await response.json() as NominatimGeocodingResponse[];
     
     if (data.length === 0) {
       return { lat: 0, lon: 0 };

@@ -16,12 +16,21 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
   const fetchUserRating = async () => {
     try {
       const response = await fetch(`/api/ratings?contentId=${contentId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
       const data = await response.json();
       
       if (data.success && data.rating) {
         setUserRating(data.rating.rating);
       }
     } catch (error) {
+      // Failed to load existing rating - not critical, user can still rate
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[RatingButton] Failed to fetch user rating:', error);
+      }
     }
   };
 
@@ -46,12 +55,20 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
         }),
       });
 
-      if (response.ok) {
-        setUserRating(rating);
-        onRatingChange?.(rating);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to submit rating');
       }
+
+      setUserRating(rating);
+      onRatingChange?.(rating);
     } catch (error) {
-      alert('Failed to submit rating');
+      const message = error instanceof Error ? error.message : 'Failed to submit rating';
+      alert(message);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[RatingButton] Rating submission failed:', error);
+      }
     } finally {
       setIsLoading(false);
     }

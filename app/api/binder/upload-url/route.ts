@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { isPremiumServer } from "@/lib/premium";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
 
 const FOLDER_NAMES = [
   "Personal Records",
@@ -31,39 +34,37 @@ function getAdminClient() {
 
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let body: {
-    folder: string;
-    displayName: string;
-    contentType: string;
-    sizeBytes: number;
-    docType?: string;
-    expiresOn?: string;
-  };
-
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+    const { userId } = await auth();
+    if (!userId) {
+      throw Errors.unauthorized();
+    }
 
-  const { folder, displayName, contentType, sizeBytes, docType, expiresOn } = body;
+    const body = await req.json();
+    
+    if (!body || typeof body !== 'object') {
+      throw Errors.invalidInput('Invalid request body');
+    }
 
-  // Validate folder
-  if (!FOLDER_NAMES.includes(folder as typeof FOLDER_NAMES[number])) {
-    return NextResponse.json({ error: "Invalid folder" }, { status: 400 });
-  }
+    const { folder, displayName, contentType, sizeBytes, docType, expiresOn } = body;
 
-  // Validate file
-  if (!displayName || !contentType || !sizeBytes) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
+    // Validate folder
+    if (!FOLDER_NAMES.includes(folder as typeof FOLDER_NAMES[number])) {
+      throw Errors.invalidInput('Invalid folder', { folder, validFolders: FOLDER_NAMES });
+    }
 
-  const supabase = getAdminClient();
+    // Validate file
+    if (!displayName || !contentType || !sizeBytes) {
+      throw Errors.invalidInput('Missing required fields', { 
+        missing: { 
+          displayName: !displayName, 
+          contentType: !contentType, 
+          sizeBytes: !sizeBytes 
+        }
+      });
+    }
+
+    const supabase = getAdminClient();
 
   // Ensure user profile exists
   const { error: profileError } = await supabase
@@ -77,108 +78,115 @@ export async function POST(req: NextRequest) {
       onConflict: "id"
     });
 
-  if (profileError) {
-    return NextResponse.json(
-      { error: "Failed to create user profile" },
-      { status: 500 }
-    );
-  }
+    if (profileError) {
+      logger.error('Failed to create user profile for binder', profileError, { userId });
+      throw Errors.databaseError('Failed to initialize user profile');
+    }
 
-  // Check current storage usage
-  const { data: existingFiles, error: fetchError } = await supabase
-    .from("binder_files")
-    .select("size_bytes")
-    .eq("user_id", userId);
+    // Check current storage usage
+    const { data: existingFiles, error: fetchError } = await supabase
+      .from("binder_files")
+      .select("size_bytes")
+      .eq("user_id", userId);
 
-  if (fetchError) {
-    return NextResponse.json(
-      { error: "Failed to check storage usage" },
-      { status: 500 }
-    );
-  }
+    if (fetchError) {
+      logger.error('Failed to check storage usage', fetchError, { userId });
+      throw Errors.databaseError('Failed to check storage usage');
+    }
 
-  const currentUsage = existingFiles?.reduce((sum, f) => sum + (f.size_bytes || 0), 0) || 0;
-  
-  // Get user's tier to determine storage limit
-  const { data: entitlement } = await supabase
-    .from('entitlements')
-    .select('tier, status')
-    .eq('user_id', userId)
-    .maybeSingle();
-  
-  const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
-    ? 'premium'
-    : 'free';
-  
-  let storageLimit = FREE_STORAGE_LIMIT;
-  if (tier === 'premium') {
-    storageLimit = PREMIUM_STORAGE_LIMIT;
-  }
+    const currentUsage = existingFiles?.reduce((sum, f) => sum + (f.size_bytes || 0), 0) || 0;
+    
+    // Get user's tier to determine storage limit
+    const { data: entitlement } = await supabase
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
+      ? 'premium'
+      : 'free';
+    
+    let storageLimit = FREE_STORAGE_LIMIT;
+    if (tier === 'premium') {
+      storageLimit = PREMIUM_STORAGE_LIMIT;
+    }
 
-  if (currentUsage + sizeBytes > storageLimit) {
-    return NextResponse.json(
-      {
-        error: "Storage limit exceeded",
+    if (currentUsage + sizeBytes > storageLimit) {
+      logger.info('Storage limit exceeded', {
+        userId: userId.substring(0, 8) + '...',
         currentUsage,
         limit: storageLimit,
-        tier
-      },
-      { status: 403 }
-    );
-  }
+        tier,
+        requestedSize: sizeBytes
+      });
+      
+      throw Errors.premiumRequired(
+        `Storage limit exceeded. Current: ${(currentUsage / 1024 / 1024).toFixed(0)}MB, Limit: ${(storageLimit / 1024 / 1024).toFixed(0)}MB. ${tier === 'free' ? 'Upgrade to Premium for 5GB storage.' : ''}`
+      );
+    }
 
-  // Generate unique file key
-  const fileId = crypto.randomUUID();
-  const extension = displayName.split(".").pop() || "bin";
-  const objectPath = `${userId}/${folder}/${fileId}.${extension}`;
+    // Generate unique file key
+    const fileId = crypto.randomUUID();
+    const extension = displayName.split(".").pop() || "bin";
+    const objectPath = `${userId}/${folder}/${fileId}.${extension}`;
 
-  // Insert metadata record using service role (bypasses RLS)
-  const { data: fileRecord, error: insertError } = await supabase
-    .from("binder_files")
-    .insert({
-      user_id: userId,
-      object_path: objectPath,
+    // Insert metadata record using service role (bypasses RLS)
+    const { data: fileRecord, error: insertError } = await supabase
+      .from("binder_files")
+      .insert({
+        user_id: userId,
+        object_path: objectPath,
+        folder,
+        doc_type: docType || "other",
+        display_name: displayName,
+        size_bytes: sizeBytes,
+        content_type: contentType,
+        expires_on: expiresOn || null
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      logger.error('Failed to create file record', insertError, { userId, folder });
+      throw Errors.databaseError('Failed to create file record');
+    }
+
+    // Generate signed upload URL (60 seconds)
+    const { data: signedData, error: signedError } = await supabase
+      .storage
+      .from("life_binder")
+      .createSignedUploadUrl(objectPath);
+
+    if (signedError) {
+      logger.error('Failed to generate upload URL', signedError, { userId, objectPath });
+      
+      // Rollback the file record
+      try {
+        await supabase.from("binder_files").delete().eq("id", fileRecord.id);
+      } catch (rollbackError) {
+        logger.error('Failed to rollback file record', rollbackError, { fileId: fileRecord.id });
+      }
+      
+      throw Errors.externalApiError('Storage', 'Failed to generate upload URL');
+    }
+
+    logger.info('Binder upload URL generated', {
+      userId: userId.substring(0, 8) + '...',
+      fileId: fileRecord.id,
       folder,
-      doc_type: docType || "other",
-      display_name: displayName,
-      size_bytes: sizeBytes,
-      content_type: contentType,
-      expires_on: expiresOn || null
-    })
-    .select()
-    .single();
+      sizeBytes
+    });
 
-  if (insertError) {
-    return NextResponse.json(
-      { 
-        error: "Failed to create file record",
-        details: insertError.message,
-        code: insertError.code
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      uploadUrl: signedData.signedUrl,
+      token: signedData.token,
+      path: objectPath,
+      fileId: fileRecord.id
+    });
+    
+  } catch (error) {
+    return errorResponse(error);
   }
-
-  // Generate signed upload URL (60 seconds)
-  const { data: signedData, error: signedError } = await supabase
-    .storage
-    .from("life_binder")
-    .createSignedUploadUrl(objectPath);
-
-  if (signedError) {
-    // Rollback the file record
-    await supabase.from("binder_files").delete().eq("id", fileRecord.id);
-    return NextResponse.json(
-      { error: "Failed to generate upload URL" },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({
-    uploadUrl: signedData.signedUrl,
-    token: signedData.token,
-    path: objectPath,
-    fileId: fileRecord.id
-  });
 }
 

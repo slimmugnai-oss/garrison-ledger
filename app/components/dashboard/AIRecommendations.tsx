@@ -35,11 +35,22 @@ export default function AIRecommendations() {
   const fetchRecommendations = async () => {
     try {
       const response = await fetch('/api/ai/recommendations');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
       const data = await response.json();
       
       setRecommendations(data.recommendations || []);
       setInsights(data.insights);
     } catch (error) {
+      // Silent failure - recommendations are optional dashboard feature
+      // Don't show error to user, just hide the widget
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[AIRecommendations] Failed to fetch:', error);
+      }
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }
@@ -51,12 +62,22 @@ export default function AIRecommendations() {
     
     // Update in database
     try {
-      await fetch(`/api/ai/recommendations/${recId}`, {
+      const response = await fetch(`/api/ai/recommendations/${recId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_dismissed: true })
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to dismiss recommendation');
+      }
     } catch (error) {
+      // If database update fails, revert UI change
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[AIRecommendations] Failed to dismiss:', error);
+      }
+      // Refetch to sync with database state
+      fetchRecommendations();
     }
   };
 

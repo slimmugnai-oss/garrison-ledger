@@ -36,17 +36,35 @@ export default async function IntelTriagePage() {
     .order('created_at', { ascending: false })
     .limit(100);
 
+  // Define proper types for block and flag data
+  interface ContentBlock {
+    id: string;
+    title: string;
+    slug: string | null;
+    domain: string | null;
+    status: string;
+  }
+
+  interface ContentFlag {
+    id: string;
+    severity: string;
+    flag_type: string;
+    sample: string;
+    recommendation: string;
+    content_blocks: ContentBlock;
+  }
+
   // Group by block
   const flaggedBlocks = new Map<string, {
-    block: Record<string, unknown>;
-    flags: Record<string, unknown>[];
+    block: ContentBlock;
+    flags: ContentFlag[];
     criticalCount: number;
     highCount: number;
   }>();
 
-  for (const flag of flags || []) {
-    const block = (flag as Record<string, unknown>).content_blocks as Record<string, unknown>;
-    const existing = flaggedBlocks.get(block.id as string);
+  for (const flag of (flags as ContentFlag[]) || []) {
+    const block = flag.content_blocks;
+    const existing = flaggedBlocks.get(block.id);
 
     if (existing) {
       existing.flags.push(flag);
@@ -166,13 +184,13 @@ export default async function IntelTriagePage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {block.title}
+                          {String(block.title)}
                         </h3>
                         <Badge variant={block.status === 'published' ? 'success' : 'warning'}>
-                          {block.status}
+                          {String(block.status)}
                         </Badge>
                         {block.domain && (
-                          <Badge variant="info">{block.domain}</Badge>
+                          <Badge variant="info">{String(block.domain)}</Badge>
                         )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -193,6 +211,7 @@ export default async function IntelTriagePage() {
                     <a
                       href={`/dashboard/intel/${block.slug || block.id}`}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm"
                     >
                       View Content →
@@ -201,7 +220,7 @@ export default async function IntelTriagePage() {
 
                   {/* Flags */}
                   <div className="space-y-3">
-                    {flags.map((flag: Record<string, unknown>) => (
+                    {flags.map((flag) => (
                       <div
                         key={flag.id}
                         className={`border-l-4 rounded-lg p-4 ${
@@ -222,22 +241,22 @@ export default async function IntelTriagePage() {
                                   'info'
                                 }
                               >
-                                {flag.severity}
+                                {String(flag.severity)}
                               </Badge>
                               <span className="text-sm font-medium text-gray-700">
-                                {flag.flag_type}
+                                {String(flag.flag_type)}
                               </span>
                             </div>
                             <p className="text-sm text-gray-700 mb-2">
-                              <strong>Sample:</strong> {flag.sample}
+                              <strong>Sample:</strong> {String(flag.sample)}
                             </p>
                             <p className="text-sm text-gray-600">
-                              <strong>Fix:</strong> {flag.recommendation}
+                              <strong>Fix:</strong> {String(flag.recommendation)}
                             </p>
                           </div>
 
                           <form action="/api/admin/resolve-flag" method="post">
-                            <input type="hidden" name="flagId" value={flag.id} />
+                            <input type="hidden" name="flagId" value={String(flag.id)} />
                             <button
                               type="submit"
                               className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700"
