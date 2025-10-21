@@ -92,13 +92,21 @@ export async function buildExpectedSnapshot(
   }
 
   // =============================================================================
-  // Special Pays (SDAP, HFP/IDP, etc.)
+  // Special Pays (SDAP, HFP/IDP, FSA, FLPP)
   // =============================================================================
-  // TODO: Implement when profile toggles for special pays are available
-  // For v1, omit unless explicitly configured in user profile
   const specials = await computeSpecialPays(userId, year, month);
   if (specials.length > 0) {
     expected.specials = specials;
+  }
+
+  // =============================================================================
+  // Base Pay
+  // =============================================================================
+  if (yos !== undefined) {
+    const basePayCents = await computeBasePay(paygrade, yos);
+    if (basePayCents !== null) {
+      expected.base_pay_cents = basePayCents;
+    }
   }
 
   return {
@@ -218,40 +226,82 @@ async function computeCOLA(params: {
 }
 
 /**
- * Compute special pays from user profile toggles
+ * Compute special pays from user profile
  * Returns array of special pays or empty array
  * 
- * TODO: Implement when user profile has special pay flags
+ * Reads from existing profile fields: receives_sdap, receives_hfp_idp, receives_fsa, receives_flpp
  */
 async function computeSpecialPays(
-  _userId: string,
+  userId: string,
   _year: number,
   _month: number
 ): Promise<ExpectedSpecialPay[]> {
-  // v1: Return empty array
-  // v1.1: Query user profile for special pay flags (SDAP, HFP/IDP, FLPP, FSA, etc.)
-  // and compute expected amounts from allowances tables or profile-stored values
-  
   try {
-    // Example structure (not implemented yet):
-    /*
-    const { data: profile } = await supabaseAdmin
+    const { data: profile, error } = await supabaseAdmin
       .from('user_profiles')
-      .select('special_pays')
+      .select('receives_sdap, sdap_monthly_cents, receives_hfp_idp, hfp_idp_monthly_cents, receives_fsa, fsa_monthly_cents, receives_flpp, flpp_monthly_cents')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
     
-    if (profile?.special_pays) {
-      return profile.special_pays.map(sp => ({
-        code: sp.code,
-        cents: sp.monthly_cents
-      }));
+    if (error || !profile) {
+      return [];
     }
-    */
     
-    return [];
+    const specials: ExpectedSpecialPay[] = [];
+    
+    // SDAP - Special Duty Assignment Pay
+    if (profile.receives_sdap && profile.sdap_monthly_cents) {
+      specials.push({ code: 'SDAP', cents: profile.sdap_monthly_cents });
+    }
+    
+    // HFP/IDP - Hostile Fire Pay / Imminent Danger Pay
+    if (profile.receives_hfp_idp && profile.hfp_idp_monthly_cents) {
+      specials.push({ code: 'HFP_IDP', cents: profile.hfp_idp_monthly_cents });
+    }
+    
+    // FSA - Family Separation Allowance
+    if (profile.receives_fsa && profile.fsa_monthly_cents) {
+      specials.push({ code: 'FSA', cents: profile.fsa_monthly_cents });
+    }
+    
+    // FLPP - Foreign Language Proficiency Pay
+    if (profile.receives_flpp && profile.flpp_monthly_cents) {
+      specials.push({ code: 'FLPP', cents: profile.flpp_monthly_cents });
+    }
+    
+    return specials;
   } catch {
     return [];
+  }
+}
+
+/**
+ * Compute base pay from military_pay_tables
+ * Returns cents or null if not found
+ */
+async function computeBasePay(
+  paygrade: string,
+  yos: number
+): Promise<number | null> {
+  try {
+    // Query military_pay_tables for base pay
+    // Find the row for this paygrade where yos matches or is the highest yos <= user's yos
+    const { data, error } = await supabaseAdmin
+      .from('military_pay_tables')
+      .select('monthly_rate_cents')
+      .eq('paygrade', paygrade)
+      .lte('years_of_service', yos)
+      .order('years_of_service', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (error || !data) {
+      return null;
+    }
+    
+    return data.monthly_rate_cents;
+  } catch {
+    return null;
   }
 }
 

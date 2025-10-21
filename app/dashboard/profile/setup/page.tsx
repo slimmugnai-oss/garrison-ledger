@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Icon from '@/app/components/ui/Icon';
 import BaseAutocomplete from '@/app/components/ui/BaseAutocomplete';
 import ProfileLoadingSkeleton from '@/app/components/profile/ProfileLoadingSkeleton';
 import ProfileSection from '@/app/components/profile/ProfileSection';
@@ -49,6 +50,17 @@ type ProfilePayload = {
   housing_situation?: string | null;
   owns_rental_properties?: boolean | null;
   retirement_age_target?: number | null;
+  
+  // Special Pays & Allowances (for LES Auditor)
+  mha_code_override?: string | null;
+  receives_sdap?: boolean | null;
+  sdap_monthly_cents?: number | null;
+  receives_hfp_idp?: boolean | null;
+  hfp_idp_monthly_cents?: number | null;
+  receives_fsa?: boolean | null;
+  fsa_monthly_cents?: number | null;
+  receives_flpp?: boolean | null;
+  flpp_monthly_cents?: number | null;
   
   // System
   profile_completed?: boolean | null;
@@ -139,6 +151,16 @@ export default function ProfileSetupPage() {
             housing_situation: json?.housing_situation ?? null,
             owns_rental_properties: json?.owns_rental_properties ?? null,
             retirement_age_target: json?.retirement_age_target ?? null,
+            // Special Pays & Allowances
+            mha_code_override: json?.mha_code_override ?? null,
+            receives_sdap: json?.receives_sdap ?? null,
+            sdap_monthly_cents: json?.sdap_monthly_cents ?? null,
+            receives_hfp_idp: json?.receives_hfp_idp ?? null,
+            hfp_idp_monthly_cents: json?.hfp_idp_monthly_cents ?? null,
+            receives_fsa: json?.receives_fsa ?? null,
+            fsa_monthly_cents: json?.fsa_monthly_cents ?? null,
+            receives_flpp: json?.receives_flpp ?? null,
+            flpp_monthly_cents: json?.flpp_monthly_cents ?? null,
             // System
             profile_completed: json?.profile_completed ?? false,
           });
@@ -289,8 +311,12 @@ export default function ProfileSetupPage() {
         if (data.retirement_age_target) complete++;
         // long_term_goal and financial_priorities removed - not used
         break;
-      // Sections 7 & 8 removed (education, preferences) - fields deleted from database
-      case 7:
+      case 7: // Special Pays & Allowances (optional - for LES Auditor)
+        // All special pays are optional - section can be skipped
+        total = 0; // Don't require any fields
+        complete = 0;
+        break;
+      // Section 8 removed (preferences) - fields deleted from database
       case 8:
         total = 0;
         complete = 0;
@@ -884,7 +910,238 @@ export default function ProfileSetupPage() {
             </div>
           </ProfileSection>
 
-          {/* Sections 7 & 8 (Education, Preferences) removed - fields deleted from database */}
+          {/* Section 7: Special Pays & Allowances (Optional - For LES Auditor Accuracy) */}
+          <ProfileSection
+            number={7}
+            title="Special Pays & Allowances"
+            icon="💵"
+            description="Optional: Improves LES Auditor accuracy if you receive special pays"
+            expanded={expandedSections.has(7)}
+            onToggle={() => toggleSection(7)}
+            completion={getSectionCompletion(7)}
+          >
+            <div className="space-y-6">
+              {/* MHA Override - For bases not in our database */}
+              {data.current_base && !data.mha_code && (
+                <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <Icon name="AlertCircle" className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-yellow-900">MHA Code Not Found</h4>
+                      <p className="text-sm text-yellow-800 mt-1">
+                        We couldn't auto-detect the Military Housing Area (MHA) code for {data.current_base}. 
+                        You can enter it manually below to enable accurate BAH verification.
+                      </p>
+                      <ProfileFormField
+                        label="MHA Code Override"
+                        description="Find this on your LES or at the DFAS BAH Calculator"
+                        success={!!data.mha_code_override}
+                      >
+                        <input
+                          type="text"
+                          placeholder="e.g., NY349, CA926, TX210"
+                          className={getInputClass(false, !!data.mha_code_override)}
+                          value={data.mha_code_override ?? ''}
+                          onChange={e => setData(d => ({ ...d, mha_code_override: e.target.value.toUpperCase() || null }))}
+                          maxLength={10}
+                        />
+                      </ProfileFormField>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Info Banner */}
+              <div className="rounded-lg border border-blue-300 bg-blue-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-semibold text-blue-900">Why Configure Special Pays?</h4>
+                    <p className="text-sm text-blue-800 mt-1">
+                      The LES Auditor can verify your special pays are correct if you configure them here. 
+                      This is completely optional - skip if you don't receive any special pays.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* SDAP - Special Duty Assignment Pay */}
+              <div className="space-y-3">
+                <ProfileFormField
+                  label="Do you receive SDAP (Special Duty Assignment Pay)?"
+                  description="For specific skill identifiers or duty assignments"
+                  success={data.receives_sdap !== null}
+                >
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_sdap === true}
+                        onChange={() => setData(d => ({ ...d, receives_sdap: true }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_sdap === false}
+                        onChange={() => setData(d => ({ ...d, receives_sdap: false, sdap_monthly_cents: null }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </ProfileFormField>
+
+                {data.receives_sdap === true && (
+                  <ProfileFormField
+                    label="SDAP Monthly Amount"
+                    description="Enter the exact amount from your LES"
+                    success={!!data.sdap_monthly_cents}
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-500">$</span>
+                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="e.g., 450.00"
+                        className={getInputClass(false, !!data.sdap_monthly_cents)}
+                        value={data.sdap_monthly_cents ? (data.sdap_monthly_cents / 100).toFixed(2) : ''}
+                        onChange={e => setData(d => ({ 
+                          ...d, 
+                          sdap_monthly_cents: e.target.value ? Math.round(parseFloat(e.target.value) * 100) : null 
+                        }))}
+                        style={{ paddingLeft: '2rem' }}
+                      />
+                    </div>
+                  </ProfileFormField>
+                )}
+              </div>
+
+              {/* HFP/IDP - Hostile Fire Pay / Imminent Danger Pay */}
+              <div className="space-y-3">
+                <ProfileFormField
+                  label="Do you receive HFP/IDP (Hostile Fire Pay / Imminent Danger Pay)?"
+                  description="$225/month for service in hostile fire or imminent danger zones"
+                  success={data.receives_hfp_idp !== null}
+                >
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_hfp_idp === true}
+                        onChange={() => setData(d => ({ ...d, receives_hfp_idp: true, hfp_idp_monthly_cents: 22500 }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_hfp_idp === false}
+                        onChange={() => setData(d => ({ ...d, receives_hfp_idp: false, hfp_idp_monthly_cents: null }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </ProfileFormField>
+              </div>
+
+              {/* FSA - Family Separation Allowance */}
+              <div className="space-y-3">
+                <ProfileFormField
+                  label="Do you receive FSA (Family Separation Allowance)?"
+                  description="$250/month for involuntary separation from family due to military duty"
+                  success={data.receives_fsa !== null}
+                >
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_fsa === true}
+                        onChange={() => setData(d => ({ ...d, receives_fsa: true, fsa_monthly_cents: 25000 }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_fsa === false}
+                        onChange={() => setData(d => ({ ...d, receives_fsa: false, fsa_monthly_cents: null }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </ProfileFormField>
+              </div>
+
+              {/* FLPP - Foreign Language Proficiency Pay */}
+              <div className="space-y-3">
+                <ProfileFormField
+                  label="Do you receive FLPP (Foreign Language Proficiency Pay)?"
+                  description="For certified foreign language proficiency"
+                  success={data.receives_flpp !== null}
+                >
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_flpp === true}
+                        onChange={() => setData(d => ({ ...d, receives_flpp: true }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={data.receives_flpp === false}
+                        onChange={() => setData(d => ({ ...d, receives_flpp: false, flpp_monthly_cents: null }))}
+                        className="w-4 h-4 text-blue-600"
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </ProfileFormField>
+
+                {data.receives_flpp === true && (
+                  <ProfileFormField
+                    label="FLPP Monthly Amount"
+                    description="Enter the exact amount from your LES (varies by language and proficiency level)"
+                    success={!!data.flpp_monthly_cents}
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-500">$</span>
+                      </div>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="e.g., 300.00"
+                        className={getInputClass(false, !!data.flpp_monthly_cents)}
+                        value={data.flpp_monthly_cents ? (data.flpp_monthly_cents / 100).toFixed(2) : ''}
+                        onChange={e => setData(d => ({ 
+                          ...d, 
+                          flpp_monthly_cents: e.target.value ? Math.round(parseFloat(e.target.value) * 100) : null 
+                        }))}
+                        style={{ paddingLeft: '2rem' }}
+                      />
+                    </div>
+                  </ProfileFormField>
+                )}
+              </div>
+            </div>
+          </ProfileSection>
+
+          {/* Section 8 (Preferences) removed - fields deleted from database */}
         </div>
 
         {/* Mobile Sticky Save Button */}

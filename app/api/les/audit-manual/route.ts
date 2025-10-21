@@ -35,9 +35,12 @@ interface ManualEntryRequest {
     BAH?: number;      // in cents
     BAS?: number;      // in cents
     COLA?: number;     // in cents
-    SDAP?: number;     // in cents (future)
-    HFP?: number;      // in cents (future)
+    SDAP?: number;     // in cents
+    HFP_IDP?: number;  // in cents
+    FSA?: number;      // in cents
+    FLPP?: number;     // in cents
   };
+  basePay?: number;    // in cents
 }
 
 export async function POST(req: NextRequest) {
@@ -88,7 +91,7 @@ export async function POST(req: NextRequest) {
     // 3. PARSE REQUEST
     // ==========================================================================
     const body: ManualEntryRequest = await req.json();
-    const { month, year, allowances } = body;
+    const { month, year, allowances, basePay } = body;
 
     if (!month || !year || !allowances) {
       throw Errors.invalidInput('month, year, and allowances are required');
@@ -106,6 +109,9 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 4. CREATE MANUAL ENTRY RECORD
     // ==========================================================================
+    // Calculate total allowances (including base pay)
+    const totalAllowances = Object.values(allowances).reduce((sum, val) => sum + (val || 0), 0) + (basePay || 0);
+    
     const { data: uploadRecord, error: insertError } = await supabaseAdmin
       .from('les_uploads')
       .insert({
@@ -121,13 +127,13 @@ export async function POST(req: NextRequest) {
         parsed_at: new Date().toISOString(),
         parsed_summary: {
           totalsBySection: {
-            ALLOWANCE: Object.values(allowances).reduce((sum, val) => sum + (val || 0), 0),
+            ALLOWANCE: totalAllowances,
             DEDUCTION: 0,
             ALLOTMENT: 0,
             TAX: 0,
             OTHER: 0
           },
-          allowancesByCode: allowances,
+          allowancesByCode: { ...allowances, ...(basePay ? { BASE_PAY: basePay } : {}) },
           deductionsByCode: {}
         }
       })
@@ -146,6 +152,7 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     const lines: LesLine[] = [];
 
+    // Base Allowances
     if (allowances.BAH) {
       lines.push({
         line_code: 'BAH',
@@ -169,6 +176,53 @@ export async function POST(req: NextRequest) {
         line_code: 'COLA',
         description: 'Cost of Living Allowance (Manual Entry)',
         amount_cents: allowances.COLA,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    // Special Pays
+    if (allowances.SDAP) {
+      lines.push({
+        line_code: 'SDAP',
+        description: 'Special Duty Assignment Pay (Manual Entry)',
+        amount_cents: allowances.SDAP,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    if (allowances.HFP_IDP) {
+      lines.push({
+        line_code: 'HFP_IDP',
+        description: 'Hostile Fire Pay / Imminent Danger Pay (Manual Entry)',
+        amount_cents: allowances.HFP_IDP,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    if (allowances.FSA) {
+      lines.push({
+        line_code: 'FSA',
+        description: 'Family Separation Allowance (Manual Entry)',
+        amount_cents: allowances.FSA,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    if (allowances.FLPP) {
+      lines.push({
+        line_code: 'FLPP',
+        description: 'Foreign Language Proficiency Pay (Manual Entry)',
+        amount_cents: allowances.FLPP,
+        section: 'ALLOWANCE'
+      });
+    }
+
+    // Base Pay
+    if (basePay) {
+      lines.push({
+        line_code: 'BASE_PAY',
+        description: 'Base Pay (Manual Entry)',
+        amount_cents: basePay,
         section: 'ALLOWANCE'
       });
     }

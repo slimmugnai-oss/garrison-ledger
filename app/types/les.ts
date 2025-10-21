@@ -59,6 +59,7 @@ export interface ExpectedSnapshot {
     bah_cents?: number;
     bas_cents?: number;
     cola_cents?: number;
+    base_pay_cents?: number;
     specials?: ExpectedSpecialPay[];
     taxes?: Record<string, number>;  // v2 - tax calculations
   };

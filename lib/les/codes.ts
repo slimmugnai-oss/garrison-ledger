@@ -25,6 +25,17 @@ export const LES_CODE_MAP: Record<string, LesCodeMeta> = {
   // ALLOWANCES
   // =============================================================================
   
+  BASE_PAY: {
+    section: 'ALLOWANCE',
+    aliases: [
+      'BASE PAY',
+      'BASIC PAY',
+      'BASE COMPENSATION',
+      'MONTHLY BASE PAY'
+    ],
+    description: 'Base Pay'
+  },
+  
   BAH: {
     section: 'ALLOWANCE',
     aliases: [
@@ -70,25 +81,18 @@ export const LES_CODE_MAP: Record<string, LesCodeMeta> = {
     description: 'Special Duty Assignment Pay'
   },
   
-  HFP: {
+  HFP_IDP: {
     section: 'ALLOWANCE',
     aliases: [
       'HOSTILE FIRE PAY',
       'HOSTILE FIRE/IMMINENT DANGER PAY',
       'HFP/IDP',
-      'IMMINENT DANGER PAY'
-    ],
-    description: 'Hostile Fire Pay / Imminent Danger Pay'
-  },
-  
-  IDP: {
-    section: 'ALLOWANCE',
-    aliases: [
+      'HFP',
+      'IDP',
       'IMMINENT DANGER PAY',
-      'HOSTILE FIRE/IMMINENT DANGER PAY',
       'IDP/HFP'
     ],
-    description: 'Imminent Danger Pay'
+    description: 'Hostile Fire Pay / Imminent Danger Pay'
   },
   
   FSA: {

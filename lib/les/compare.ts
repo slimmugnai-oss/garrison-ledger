@@ -120,7 +120,29 @@ export function compareLesToExpected(
         flags.push(createSpecialPayMissingFlag(specialPay.code, specialPay.cents));
       } else if (Math.abs(delta) > thresholds.specialPayDeltaCents) {
         flags.push(createSpecialPayMismatchFlag(specialPay.code, actual, specialPay.cents, delta));
+      } else {
+        // Special pay verified correct
+        flags.push(createCorrectFlag(specialPay.code, actual));
       }
+    }
+  }
+  
+  // =============================================================================
+  // Base Pay Comparison
+  // =============================================================================
+  if (expected.expected.base_pay_cents !== undefined) {
+    const actualBasePay = parsed.find(line => line.line_code === 'BASE_PAY')?.amount_cents || 0;
+    const expectedBasePay = expected.expected.base_pay_cents;
+    const delta = expectedBasePay - actualBasePay;
+    
+    if (actualBasePay === 0) {
+      // Base pay missing entirely (unusual)
+      flags.push(createBasePayMissingFlag(expectedBasePay, expected));
+    } else if (Math.abs(delta) > 10000) { // $100 threshold for base pay
+      flags.push(createBasePayMismatchFlag(actualBasePay, expectedBasePay, delta, expected));
+    } else {
+      // Base pay verified correct
+      flags.push(createCorrectFlag('BASE_PAY', actualBasePay));
     }
   }
   
@@ -131,6 +153,7 @@ export function compareLesToExpected(
   const expectedAllowancesCents = (expected.expected.bah_cents || 0) +
                                    (expected.expected.bas_cents || 0) +
                                    (expected.expected.cola_cents || 0) +
+                                   (expected.expected.base_pay_cents || 0) +
                                    (expected.expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
   const deltaCents = expectedAllowancesCents - actualAllowancesCents;
   
@@ -295,6 +318,34 @@ function createAllVerifiedFlag(): PayFlag {
     flag_code: FLAG_CODES.ALL_VERIFIED,
     message: 'All allowances verified. No discrepancies found.',
     suggestion: 'Your pay appears correct. Review individual line items in the detailed view.'
+  };
+}
+
+function createBasePayMissingFlag(expected: number, snapshot: ExpectedSnapshot): PayFlag {
+  const expectedDollars = (expected / 100).toFixed(2);
+  
+  return {
+    severity: 'red',
+    flag_code: 'BASE_PAY_MISSING',
+    message: `Base Pay not found on LES. Expected $${expectedDollars}/month for ${snapshot.paygrade} with ${snapshot.yos || 0} years of service.`,
+    suggestion: `File emergency pay ticket with finance office immediately. Base pay is the foundation of all military pay. Bring orders, ID card, and LES. Request retroactive payment.`,
+    ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/',
+    delta_cents: expected
+  };
+}
+
+function createBasePayMismatchFlag(actual: number, expected: number, delta: number, snapshot: ExpectedSnapshot): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  const expectedDollars = (expected / 100).toFixed(2);
+  const deltaDollars = Math.abs(delta / 100).toFixed(2);
+  
+  return {
+    severity: delta > 0 ? 'red' : 'yellow',
+    flag_code: 'BASE_PAY_MISMATCH',
+    message: `Base Pay variance: Received $${actualDollars}, expected $${expectedDollars} for ${snapshot.paygrade} with ${snapshot.yos || 0} YOS. Delta: ${delta > 0 ? '+' : '-'}$${deltaDollars}.`,
+    suggestion: `Contact finance office to verify pay table is correctly applied for your rank and time in service. This could be due to recent promotion not reflected in DJMS, or incorrect YOS calculation. Bring pay tables and service record.`,
+    ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/',
+    delta_cents: delta
   };
 }
 

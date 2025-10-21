@@ -10,6 +10,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { ssot } from '@/lib/ssot';
 import { logger } from '@/lib/logger';
@@ -45,6 +46,15 @@ export async function POST(req: NextRequest) {
       throw Errors.invalidInput('Profile incomplete: rank, location, and dependent status required');
     }
 
+    // Fetch full profile to get years of service for base pay calculation
+    const { data: profile } = await supabaseAdmin
+      .from('user_profiles')
+      .select('time_in_service_months')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    const yos = profile?.time_in_service_months ? Math.floor(profile.time_in_service_months / 12) : undefined;
+
     // Try to build expected snapshot using the same logic as audit
     let snapshot;
     try {
@@ -55,7 +65,7 @@ export async function POST(req: NextRequest) {
         paygrade: rank,
         mha_or_zip: location,
         with_dependents: Boolean(hasDependents),
-        yos: undefined
+        yos
       });
     } catch (error) {
       // If exact match fails (e.g., location not in BAH table), use smart fallbacks
@@ -90,6 +100,11 @@ export async function POST(req: NextRequest) {
       bah: snapshot.expected.bah_cents || (Boolean(hasDependents) ? 180000 : 140000),
       bas: snapshot.expected.bas_cents || (isOfficerRank ? ssot.militaryPay.basMonthlyCents.officer : ssot.militaryPay.basMonthlyCents.enlisted),
       cola: snapshot.expected.cola_cents || 0,
+      base_pay: snapshot.expected.base_pay_cents || 0,
+      sdap: snapshot.expected.specials?.find(sp => sp.code === 'SDAP')?.cents || 0,
+      hfp_idp: snapshot.expected.specials?.find(sp => sp.code === 'HFP_IDP')?.cents || 0,
+      fsa: snapshot.expected.specials?.find(sp => sp.code === 'FSA')?.cents || 0,
+      flpp: snapshot.expected.specials?.find(sp => sp.code === 'FLPP')?.cents || 0,
       snapshot: {
         paygrade: snapshot.paygrade,
         location: snapshot.mha_or_zip,

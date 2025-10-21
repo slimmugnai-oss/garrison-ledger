@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Icon from '@/app/components/ui/Icon';
 import LesFlags from './LesFlags';
+import CurrencyInput from './CurrencyInput';
 import type { LesAuditResponse } from '@/app/types/les';
 
 interface Props {
@@ -24,19 +25,39 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
   const [auditData, setAuditData] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Form values
+  // Form values - Allowances
   const currentDate = new Date();
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [year, setYear] = useState(currentDate.getFullYear());
   const [bah, setBah] = useState('');
   const [bas, setBas] = useState('');
   const [cola, setCola] = useState('');
-  const [autoFilled, setAutoFilled] = useState(false);
+  
+  // Form values - Special Pays
+  const [sdap, setSdap] = useState('');
+  const [hfpIdp, setHfpIdp] = useState('');
+  const [fsa, setFsa] = useState('');
+  const [flpp, setFlpp] = useState('');
+  
+  // Form values - Base Pay
+  const [basePay, setBasePay] = useState('');
+  
+  // Auto-fill tracking
+  const [autoFilled, setAutoFilled] = useState({
+    bah: false,
+    bas: false,
+    cola: false,
+    sdap: false,
+    hfpIdp: false,
+    fsa: false,
+    flpp: false,
+    basePay: false
+  });
   const [fallbackMessage, setFallbackMessage] = useState<string | null>(null);
 
   // Auto-populate expected values based on user profile
   useEffect(() => {
-    if (hasProfile && userProfile && !autoFilled) {
+    if (hasProfile && userProfile && !autoFilled.bah) {
       setState('loading');
       
       // Fetch expected pay values from our own audit system
@@ -53,16 +74,52 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
       })
       .then(res => res.json())
       .then(data => {
-        if (data.bah) setBah((data.bah / 100).toFixed(2));
-        if (data.bas) setBas((data.bas / 100).toFixed(2));
-        if (data.cola && data.cola > 0) setCola((data.cola / 100).toFixed(2));
+        const newAutoFilled = { ...autoFilled };
+        
+        // Allowances
+        if (data.bah) {
+          setBah((data.bah / 100).toFixed(2));
+          newAutoFilled.bah = true;
+        }
+        if (data.bas) {
+          setBas((data.bas / 100).toFixed(2));
+          newAutoFilled.bas = true;
+        }
+        if (data.cola && data.cola > 0) {
+          setCola((data.cola / 100).toFixed(2));
+          newAutoFilled.cola = true;
+        }
+        
+        // Special Pays
+        if (data.sdap && data.sdap > 0) {
+          setSdap((data.sdap / 100).toFixed(2));
+          newAutoFilled.sdap = true;
+        }
+        if (data.hfp_idp && data.hfp_idp > 0) {
+          setHfpIdp((data.hfp_idp / 100).toFixed(2));
+          newAutoFilled.hfpIdp = true;
+        }
+        if (data.fsa && data.fsa > 0) {
+          setFsa((data.fsa / 100).toFixed(2));
+          newAutoFilled.fsa = true;
+        }
+        if (data.flpp && data.flpp > 0) {
+          setFlpp((data.flpp / 100).toFixed(2));
+          newAutoFilled.flpp = true;
+        }
+        
+        // Base Pay
+        if (data.base_pay && data.base_pay > 0) {
+          setBasePay((data.base_pay / 100).toFixed(2));
+          newAutoFilled.basePay = true;
+        }
         
         // Check if fallback values were used
         if (data.fallback && data.message) {
           setFallbackMessage(data.message);
         }
         
-        setAutoFilled(true);
+        setAutoFilled(newAutoFilled);
         setState('idle');
       })
       .catch(() => {
@@ -71,7 +128,7 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
         setState('idle');
       });
     }
-  }, [hasProfile, userProfile, autoFilled, month, year]);
+  }, [hasProfile, userProfile, autoFilled.bah, month, year]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,8 +151,13 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
           allowances: {
             BAH: bah ? Math.round(parseFloat(bah) * 100) : undefined,
             BAS: bas ? Math.round(parseFloat(bas) * 100) : undefined,
-            COLA: cola ? Math.round(parseFloat(cola) * 100) : undefined
-          }
+            COLA: cola ? Math.round(parseFloat(cola) * 100) : undefined,
+            SDAP: sdap ? Math.round(parseFloat(sdap) * 100) : undefined,
+            HFP_IDP: hfpIdp ? Math.round(parseFloat(hfpIdp) * 100) : undefined,
+            FSA: fsa ? Math.round(parseFloat(fsa) * 100) : undefined,
+            FLPP: flpp ? Math.round(parseFloat(flpp) * 100) : undefined
+          },
+          basePay: basePay ? Math.round(parseFloat(basePay) * 100) : undefined
         })
       });
 
@@ -120,6 +182,21 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
     setBah('');
     setBas('');
     setCola('');
+    setSdap('');
+    setHfpIdp('');
+    setFsa('');
+    setFlpp('');
+    setBasePay('');
+    setAutoFilled({
+      bah: false,
+      bas: false,
+      cola: false,
+      sdap: false,
+      hfpIdp: false,
+      fsa: false,
+      flpp: false,
+      basePay: false
+    });
   };
 
   // Audit complete state
@@ -158,21 +235,21 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
           <div>
             <h3 className="font-semibold text-blue-900">Quick Manual Entry</h3>
             <p className="text-sm text-blue-800 mt-1">
-              {autoFilled ? (
+              {(autoFilled.bah || autoFilled.bas || autoFilled.basePay) ? (
                 <>
-                  ✅ <strong>Auto-filled</strong> with {fallbackMessage ? 'typical' : 'your expected'} allowances
+                  ✅ <strong>Auto-filled</strong> with {fallbackMessage ? 'typical' : 'your expected'} pay values
                   {fallbackMessage ? ` (${fallbackMessage})` : ' based on your rank, location, and dependent status.'}
-                  {' '}Adjust the values to match your actual LES, then click "Run Audit" to compare.
+                  {' '}Verify and adjust the values to match your actual LES, then click "Run Audit" to compare.
                 </>
               ) : state === 'loading' ? (
                 <>
                   <Icon name="Loader" className="inline-block w-4 h-4 animate-spin mr-2" />
-                  Loading your expected allowances...
+                  Loading your expected pay values...
                 </>
               ) : (
                 <>
-                  Don't have your LES PDF? Enter your allowances manually for instant verification.
-                  Perfect for deployed service members or quick spot checks.
+                  Enter your LES values manually for instant verification.
+                  Perfect for deployed service members, quick spot checks, or when you don't have PDF access.
                 </>
               )}
             </p>
@@ -227,79 +304,102 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
             </div>
           </div>
 
-          {/* BAH */}
-          <div>
-            <label htmlFor="bah" className="block text-sm font-medium mb-2">
-              BAH (Basic Allowance for Housing)
-              <span className="text-gray-500 font-normal ml-2">$/month</span>
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">$</span>
-              </div>
-              <input
-                id="bah"
-                type="number"
-                step="0.01"
-                placeholder="1500.00"
-                value={bah}
-                onChange={(e) => setBah(e.target.value)}
-                className="w-full rounded-md border border-gray-300 p-3 pl-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-1">
-              Found on LES as "BAH W/DEP" or "BAH W/O DEP"
-            </p>
+          {/* Allowances Section */}
+          <div className="space-y-4">
+            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Basic Allowances</h4>
+            
+            <CurrencyInput
+              label="BAH (Basic Allowance for Housing)"
+              value={bah}
+              autoFilled={autoFilled.bah}
+              onChange={setBah}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, bah: false }))}
+              helpText='Found on LES as "BAH W/DEP" or "BAH W/O DEP"'
+            />
+
+            <CurrencyInput
+              label="BAS (Basic Allowance for Subsistence)"
+              value={bas}
+              autoFilled={autoFilled.bas}
+              onChange={setBas}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, bas: false }))}
+              helpText='Found on LES as "BAS" or "BASIC ALLOW SUBSISTENCE"'
+            />
+
+            <CurrencyInput
+              label="COLA (Cost of Living Allowance)"
+              value={cola}
+              autoFilled={autoFilled.cola}
+              onChange={setCola}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, cola: false }))}
+              helpText='Leave blank if not receiving COLA. Found on LES as "COLA" or "COST OF LIVING"'
+              optional
+            />
           </div>
 
-          {/* BAS */}
-          <div>
-            <label htmlFor="bas" className="block text-sm font-medium mb-2">
-              BAS (Basic Allowance for Subsistence)
-              <span className="text-gray-500 font-normal ml-2">$/month</span>
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">$</span>
-              </div>
-              <input
-                id="bas"
-                type="number"
-                step="0.01"
-                placeholder="460.66"
-                value={bas}
-                onChange={(e) => setBas(e.target.value)}
-                className="w-full rounded-md border border-gray-300 p-3 pl-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-1">
-              Found on LES as "BAS" or "BASIC ALLOW SUBSISTENCE"
-            </p>
-          </div>
+          {/* Special Pays Section */}
+          {(sdap || hfpIdp || fsa || flpp || autoFilled.sdap || autoFilled.hfpIdp || autoFilled.fsa || autoFilled.flpp) && (
+            <div className="space-y-4 pt-4">
+              <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Special Pays</h4>
+              
+              {(sdap || autoFilled.sdap) && (
+                <CurrencyInput
+                  label="SDAP (Special Duty Assignment Pay)"
+                  value={sdap}
+                  autoFilled={autoFilled.sdap}
+                  onChange={setSdap}
+                  onOverride={() => setAutoFilled(prev => ({ ...prev, sdap: false }))}
+                  helpText='Found on LES as "SDAP" or "SPECIAL DUTY ASSIGNMENT PAY"'
+                />
+              )}
 
-          {/* COLA */}
-          <div>
-            <label htmlFor="cola" className="block text-sm font-medium mb-2">
-              COLA (Cost of Living Allowance)
-              <span className="text-gray-500 font-normal ml-2">$/month - Optional</span>
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">$</span>
-              </div>
-              <input
-                id="cola"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                value={cola}
-                onChange={(e) => setCola(e.target.value)}
-                className="w-full rounded-md border border-gray-300 p-3 pl-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+              {(hfpIdp || autoFilled.hfpIdp) && (
+                <CurrencyInput
+                  label="HFP/IDP (Hostile Fire Pay / Imminent Danger Pay)"
+                  value={hfpIdp}
+                  autoFilled={autoFilled.hfpIdp}
+                  onChange={setHfpIdp}
+                  onOverride={() => setAutoFilled(prev => ({ ...prev, hfpIdp: false }))}
+                  helpText='Found on LES as "HFP/IDP" - typically $225/month'
+                />
+              )}
+
+              {(fsa || autoFilled.fsa) && (
+                <CurrencyInput
+                  label="FSA (Family Separation Allowance)"
+                  value={fsa}
+                  autoFilled={autoFilled.fsa}
+                  onChange={setFsa}
+                  onOverride={() => setAutoFilled(prev => ({ ...prev, fsa: false }))}
+                  helpText='Found on LES as "FSA" - typically $250/month'
+                />
+              )}
+
+              {(flpp || autoFilled.flpp) && (
+                <CurrencyInput
+                  label="FLPP (Foreign Language Proficiency Pay)"
+                  value={flpp}
+                  autoFilled={autoFilled.flpp}
+                  onChange={setFlpp}
+                  onOverride={() => setAutoFilled(prev => ({ ...prev, flpp: false }))}
+                  helpText='Found on LES as "FLPP" or "FOREIGN LANGUAGE PAY"'
+                />
+              )}
             </div>
-            <p className="text-xs text-gray-600 mt-1">
-              Leave blank if not receiving COLA. Found on LES as "COLA" or "COST OF LIVING"
-            </p>
+          )}
+
+          {/* Base Pay Section */}
+          <div className="space-y-4 pt-4">
+            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Base Pay</h4>
+            
+            <CurrencyInput
+              label="Base Pay (Monthly)"
+              value={basePay}
+              autoFilled={autoFilled.basePay}
+              onChange={setBasePay}
+              onOverride={() => setAutoFilled(prev => ({ ...prev, basePay: false }))}
+              helpText='Found on LES as "BASE PAY" - Your monthly base pay based on rank and years of service'
+            />
           </div>
 
           {/* Submit Button */}
