@@ -45,6 +45,7 @@ type ProfilePayload = {
   num_children?: number | null;
   children?: Array<{ age: number }> | null;
   has_efmp?: boolean | null;
+  has_dependents?: boolean | null;  // Auto-derived from num_children + marital_status
   
   // Financial
   tsp_balance_range?: string | null;
@@ -181,6 +182,7 @@ export default function ProfileSetupPage() {
             num_children: json?.num_children ?? null,
             children: json?.children ?? null,
             has_efmp: json?.has_efmp ?? null,
+            has_dependents: json?.has_dependents ?? null,
             // Financial
             tsp_balance_range: json?.tsp_balance_range ?? null,
             tsp_allocation: json?.tsp_allocation ?? null,
@@ -280,6 +282,15 @@ export default function ProfileSetupPage() {
       }
     }
   }, [data.num_children, data.children]);
+
+  // Auto-derive has_dependents from num_children and marital_status
+  // CRITICAL: Required for LES Auditor and Base Navigator BAH calculations
+  useEffect(() => {
+    const derived = (data.num_children ?? 0) > 0 || data.marital_status === 'married';
+    if (data.has_dependents !== derived) {
+      setData(d => ({ ...d, has_dependents: derived }));
+    }
+  }, [data.num_children, data.marital_status, data.has_dependents]);
 
   // Section completion calculator
   const getSectionCompletion = (section: number): { complete: number; total: number; percentage: number } => {
@@ -419,10 +430,17 @@ export default function ProfileSetupPage() {
     setFieldErrors({});
     setSaved(false);
     try {
+      // Ensure has_dependents is derived before saving
+      const hasDependents = (data.num_children ?? 0) > 0 || data.marital_status === 'married';
+      
       const res = await fetch('/api/user-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, profile_completed: true }),
+        body: JSON.stringify({ 
+          ...data, 
+          has_dependents: hasDependents,
+          profile_completed: true 
+        }),
       });
       if (!res.ok) throw new Error('Save failed');
       setSaved(true);

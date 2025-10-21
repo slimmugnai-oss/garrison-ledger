@@ -461,6 +461,12 @@ Annual: $578,400/year 🚀
 - ✅ Table name error: `user_entitlements` → `entitlements`
 - ✅ Added profile validation with detailed logging
 - ✅ Verified all components use correct field names
+- ✅ **CRITICAL FIX:** Profile setup now auto-derives `has_dependents`
+  - Logic: `has_dependents = (num_children > 0) || (marital_status === 'married')`
+  - Frontend: Auto-derivation useEffect added
+  - Backend: Submit function ensures field is set
+  - Backfill: All 4 existing profiles updated (0 NULL values remaining)
+  - Impact: LES Auditor now works for users with complete profiles
 
 **Security - HARDENED (2025-10-21):**
 - ✅ **APPLIED:** RLS migration `20251020_les_auditor_rls_fix.sql`
