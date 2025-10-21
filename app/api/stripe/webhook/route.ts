@@ -91,11 +91,11 @@ export async function POST(req: NextRequest) {
       break;
     
     case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      // Future: Handle payment intent succeeded
       break;
     
     case 'invoice.payment_succeeded':
-      const invoice = event.data.object as Stripe.Invoice;
+      // Future: Handle invoice payment succeeded
       break;
     
     case 'customer.subscription.deleted':

@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
         amountDateMap.get(key)?.push(item.id);
       });
 
-      amountDateMap.forEach((ids, key) => {
+      amountDateMap.forEach((ids) => {
         if (ids.length > 1) {
           checks.push({
             check_type: 'warning',
@@ -289,27 +289,5 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/**
- * Calculate distance between two bases
- * Simplified for MVP - should use actual distance API
- */
-function calculateDistance(origin: string | null, destination: string | null): number {
-  // TODO: Implement actual distance calculation using base coordinates
-  // For MVP, return reasonable default
-  return 1000;
-}
-
-/**
- * Calculate travel days between dates
- */
-function calculateTravelDays(departureDate: string | null, arrivalDate: string | null): number {
-  if (!departureDate || !arrivalDate) return 5;
-  
-  const departure = new Date(departureDate);
-  const arrival = new Date(arrivalDate);
-  const diffTime = Math.abs(arrival.getTime() - departure.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  return Math.max(1, diffDays);
-}
+// Removed unused helper functions
 

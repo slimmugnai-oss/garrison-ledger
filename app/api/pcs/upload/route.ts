@@ -18,18 +18,9 @@ export const maxDuration = 60;
  * Premium: Unlimited uploads
  */
 
-const DOCUMENT_TYPES = {
-  orders: 'PCS Orders',
-  weigh_ticket: 'Weigh Ticket',
-  lodging_receipt: 'Lodging Receipt',
-  fuel_receipt: 'Fuel Receipt',
-  meal_receipt: 'Meal Receipt',
-  other: 'Other Document'
-} as const;
-
 interface UploadRequest {
   claimId: string;
-  documentType: keyof typeof DOCUMENT_TYPES;
+  documentType: string;
   fileName: string;
   fileData: string; // Base64 encoded
   contentType: string;

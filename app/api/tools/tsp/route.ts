@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     let bodyRaw: unknown;
     try { 
       bodyRaw = await req.json(); 
-    } catch (jsonError) { 
+    } catch { 
       throw Errors.invalidInput("Invalid JSON in request body");
     }
     

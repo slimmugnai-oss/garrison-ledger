@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Store snapshot in database
-    const { data: snapshotRecord, error: snapshotError } = await supabaseAdmin
+    const { error: snapshotError } = await supabaseAdmin
       .from('expected_pay_snapshot')
       .insert({
         user_id: userId,
@@ -227,7 +227,7 @@ export async function POST(req: NextRequest) {
       summary: comparison.totals
     });
 
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

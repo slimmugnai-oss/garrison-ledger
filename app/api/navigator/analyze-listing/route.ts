@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request
     const body: AnalyzeListingRequest = await request.json();
-    const { baseCode, listingUrl, bedrooms = 3, bahMonthlyCents } = body;
+    const { baseCode, listingUrl, bahMonthlyCents } = body;
 
     if (!baseCode || !listingUrl || !bahMonthlyCents) {
       throw Errors.invalidInput('baseCode, listingUrl, and bahMonthlyCents are required');

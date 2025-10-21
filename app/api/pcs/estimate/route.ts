@@ -7,10 +7,7 @@ import { calculateDistance } from '@/lib/pcs/distance';
 import { getPerDiemRate } from '@/lib/pcs/per-diem';
 import { 
   getDLARate, 
-  checkDLAEligibility, 
   getMALTRate,
-  getWeightAllowance,
-  validatePPMWeight,
   calculateConfidenceScore
 } from '@/lib/pcs/jtr-rules';
 
