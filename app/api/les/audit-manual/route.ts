@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
 async function getUserTier(userId: string): Promise<'free' | 'premium'> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('user_entitlements')
+      .from('entitlements')
       .select('tier')
       .eq('user_id', userId)
       .maybeSingle();
@@ -325,7 +325,7 @@ async function getUserProfile(userId: string): Promise<{
   try {
     const { data, error } = await supabaseAdmin
       .from('user_profiles')
-      .select('paygrade, duty_station, dependents, years_of_service')
+      .select('rank, current_base, has_dependents, time_in_service')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -333,11 +333,24 @@ async function getUserProfile(userId: string): Promise<{
       return null;
     }
 
+    // Validate required fields
+    if (!data.rank || !data.current_base || data.has_dependents === null) {
+      logger.warn('[LESManual] Profile incomplete', {
+        userId: userId.substring(0, 8) + '...',
+        missingFields: {
+          rank: !data.rank,
+          current_base: !data.current_base,
+          has_dependents: data.has_dependents === null
+        }
+      });
+      return null;
+    }
+
     return {
-      paygrade: data.paygrade,
-      mha_or_zip: data.duty_station,
-      with_dependents: Boolean(data.dependents),
-      yos: data.years_of_service
+      paygrade: data.rank,
+      mha_or_zip: data.current_base,
+      with_dependents: Boolean(data.has_dependents),
+      yos: data.time_in_service || undefined
     };
   } catch (profileError) {
     logger.warn('[LESManual] Failed to get user profile', { userId, error: profileError });
