@@ -42,7 +42,7 @@ export default function SdpStrategist() {
   const [apiData, setApiData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [showEnhancements, setShowEnhancements] = useState(true);
+  const [_showEnhancements, _setShowEnhancements] = useState(true);
 
   // Track page view on mount
   useEffect(() => {

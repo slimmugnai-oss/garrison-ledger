@@ -67,7 +67,7 @@ export default function EnhancedContentBlock({
   };
 
   const convertMarkdownTableToHTML = (content: string) => {
-    const tableRegex = /^\|(.+)\|$/gm;
+    const _tableRegex = /^\|(.+)\|$/gm;
     const lines = content.split('\n');
     let inTable = false;
     let tableRows: string[] = [];
@@ -102,7 +102,7 @@ export default function EnhancedContentBlock({
 
   const renderTable = (rows: string[]) => {
     const headerRow = rows[0];
-    const separatorRow = rows[1];
+    const _separatorRow = rows[1];
     const dataRows = rows.slice(2);
 
     const headers = headerRow.split('|').slice(1, -1).map(h => h.trim());

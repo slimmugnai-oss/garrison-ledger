@@ -28,7 +28,7 @@ async function getSystemMetrics() {
   );
 
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const _today = now.toISOString().split('T')[0];
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
 

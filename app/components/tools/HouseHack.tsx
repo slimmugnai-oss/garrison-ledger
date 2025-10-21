@@ -226,10 +226,10 @@ export default function HouseHack() {
               {(() => {
                 // Calculate tax benefits
                 const monthlyMortgage = price * (rate / 100 / 12) * Math.pow(1 + (rate / 100 / 12), 360) / (Math.pow(1 + (rate / 100 / 12), 360) - 1);
-                const annualMortgage = monthlyMortgage * 12;
+                const _annualMortgage = monthlyMortgage * 12;
                 const yearOneInterest = price * (rate / 100); // Simplified first-year interest
                 const depreciation = (price * 0.85) / 27.5; // Land ~15%, structure 85%, 27.5 year depreciation
-                const annualRentalIncome = rent * 12;
+                const _annualRentalIncome = rent * 12;
                 
                 return (
                   <div className="space-y-4">

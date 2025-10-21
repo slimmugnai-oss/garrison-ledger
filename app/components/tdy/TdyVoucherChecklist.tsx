@@ -95,7 +95,7 @@ export default function TdyVoucherChecklist({ tripId, isPremium }: Props) {
     );
   }
 
-  const formatCents = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+  const _formatCents = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg">

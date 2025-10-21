@@ -85,7 +85,7 @@ export default function LesHistory({ tier, isPremium: _isPremium, uploads: _uplo
 // History Card Component
 function HistoryCard({ item, tier: _tier }: { item: LesHistoryItem; tier: string }) {
   const hasFlags = item.flagCounts.red > 0 || item.flagCounts.yellow > 0 || item.flagCounts.green > 0;
-  const totalFlags = item.flagCounts.red + item.flagCounts.yellow + item.flagCounts.green;
+  const _totalFlags = item.flagCounts.red + item.flagCounts.yellow + item.flagCounts.green;
   const uploadDate = new Date(item.uploadedAt);
 
   return (
