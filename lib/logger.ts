@@ -12,8 +12,9 @@
 
 /**
  * Sanitize data for logging by redacting sensitive fields
+ * Exported for testing purposes
  */
-function sanitizeForLogging(data: unknown): unknown {
+export function sanitizeForLogging(data: unknown): unknown {
   if (!data || typeof data !== 'object') {
     return data;
   }
