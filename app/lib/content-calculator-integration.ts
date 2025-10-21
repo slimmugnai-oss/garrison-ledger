@@ -5,6 +5,7 @@
  * and pre-fills calculator inputs based on content context.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface CalculatorLink {
   calculatorId: string;
   calculatorName: string;
@@ -157,11 +158,13 @@ export function getRelevantCalculators(content: {
 /**
  * Extract pre-fill data from content for calculator
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function extractPrefillData(content: {
   html: string;
   tags: string[];
   domain: string;
 }, calculatorId: string): Record<string, any> | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prefillData: Record<string, any> = {};
   const contentText = content.html.toLowerCase();
 
@@ -255,6 +258,7 @@ export function extractPrefillData(content: {
 /**
  * Generate calculator deep link with pre-filled parameters
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateCalculatorLink(
   calculatorPath: string,
   prefillData?: Record<string, any>,
