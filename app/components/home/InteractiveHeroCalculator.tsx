@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { SignUpButton } from '@clerk/nextjs';
 import Icon from '../ui/Icon';
 
 export default function InteractiveHeroCalculator() {
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [rank, setRank] = useState('');
   const [hasPCS, setHasPCS] = useState<boolean | null>(null);

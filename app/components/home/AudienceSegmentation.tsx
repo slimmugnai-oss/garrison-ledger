@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { SignUpButton } from '@clerk/nextjs';
 import AnimatedCard from '../ui/AnimatedCard';
 import Icon from '../ui/Icon';

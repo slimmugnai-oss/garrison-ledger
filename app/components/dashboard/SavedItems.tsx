@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AnimatedCard from '../ui/AnimatedCard';
 import Icon from '../ui/Icon';
-import Badge from '../ui/Badge';
 
 interface SavedContent {
   id: string;

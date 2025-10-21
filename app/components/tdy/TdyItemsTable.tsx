@@ -6,9 +6,7 @@
 
 'use client';
 
-import { useState } from 'react';
 import Icon from '../ui/Icon';
-import Badge from '../ui/Badge';
 import type { TdyItem } from '@/app/types/tdy';
 
 interface Props {

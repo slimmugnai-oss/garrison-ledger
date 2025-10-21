@@ -15,7 +15,6 @@ import Footer from '@/app/components/Footer';
 import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import PremiumGate from '@/app/components/premium/PremiumGate';
 import { getAllIntelCards } from '@/lib/content/mdx-loader';
 import { marked } from 'marked';
 import type { Metadata } from 'next';

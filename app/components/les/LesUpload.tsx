@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import LesFlags from './LesFlags';
 import LesSummary from './LesSummary';

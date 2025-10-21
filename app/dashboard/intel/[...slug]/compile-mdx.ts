@@ -5,7 +5,6 @@
  */
 
 import { compile } from '@mdx-js/mdx';
-import { useMDXComponents } from '@/lib/content/mdx-components';
 
 export async function compileMDX(content: string): Promise<string> {
   try {

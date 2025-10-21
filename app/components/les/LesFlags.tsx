@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
 import Link from 'next/link';
 import type { PayFlag, FlagSeverity } from '@/app/types/les';
 import { centsToDoollars } from '@/app/types/les';
