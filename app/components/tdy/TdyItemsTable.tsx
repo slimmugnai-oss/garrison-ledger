@@ -14,7 +14,7 @@ interface Props {
   onItemsChange: (items: TdyItem[]) => void;
 }
 
-export default function TdyItemsTable({ items, onItemsChange }: Props) {
+export default function TdyItemsTable({ items, onItemsChange: _onItemsChange }: Props) {
   
   if (items.length === 0) {
     return (

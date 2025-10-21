@@ -15,7 +15,7 @@ interface ExportButtonsProps {
   };
 }
 
-export default function ExportButtons({ tool, resultsElementId, data }: ExportButtonsProps) {
+export default function ExportButtons({ tool, resultsElementId: _resultsElementId, data }: ExportButtonsProps) {
   const { isPremium } = usePremiumStatus();
   const [isExporting, setIsExporting] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -98,7 +98,7 @@ export default function ExportButtons({ tool, resultsElementId, data }: ExportBu
       });
 
       if (response.ok) {
-        const { shareId, url } = await response.json();
+        const { url } = await response.json();
         
         // Copy to clipboard
         await navigator.clipboard.writeText(url);

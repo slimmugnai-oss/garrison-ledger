@@ -13,11 +13,10 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
-export default function StorageBar({ used, limit, isPremium }: StorageBarProps) {
+export default function StorageBar({ used, limit, isPremium: _isPremium }: StorageBarProps) {
   const storagePercent = Math.round((used / limit) * 100);
   
   // Determine tier based on limit
-  const FREE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
   const PREMIUM_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   
   let tierLabel = '1 GB Free Storage';

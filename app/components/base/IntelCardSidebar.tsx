@@ -12,7 +12,7 @@ interface IntelCardSidebarProps {
   mha?: string;
 }
 
-export default async function IntelCardSidebar({ baseName, mha }: IntelCardSidebarProps) {
+export default async function IntelCardSidebar({ baseName: _baseName, mha: _mha }: IntelCardSidebarProps) {
   // Relevant Intel Cards for base pages
   const relevantCards = [
     { slug: 'finance/bah-basics', title: 'Understanding BAH' },
