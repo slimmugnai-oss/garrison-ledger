@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { checkAndIncrement } from "@/lib/limits";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "edge";
 
@@ -10,19 +12,24 @@ function toLike(s?: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
 
-  const url = new URL(req.url);
-  const q = url.searchParams.get("q") || "";
-  const type = url.searchParams.get("type") || "";
-  const state = url.searchParams.get("state") || "";
-  const onlyMil = url.searchParams.get("mil") === "1";
-  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
-  const pageSize = Math.min(50, Math.max(5, parseInt(url.searchParams.get("size") || "20")));
-  const offset = (page - 1) * pageSize;
+    const url = new URL(req.url);
+    const q = url.searchParams.get("q") || "";
+    const type = url.searchParams.get("type") || "";
+    const state = url.searchParams.get("state") || "";
+    const onlyMil = url.searchParams.get("mil") === "1";
+    const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
+    const pageSize = Math.min(50, Math.max(5, parseInt(url.searchParams.get("size") || "20")));
+    const offset = (page - 1) * pageSize;
 
-  await checkAndIncrement(userId, "/api/directory/providers", 400);
+    const { allowed } = await checkAndIncrement(userId, "/api/directory/providers", 400);
+    if (!allowed) {
+      logger.warn('[DirectoryProviders] Rate limit exceeded', { userId });
+      throw Errors.rateLimitExceeded("Too many provider searches. Please wait before trying again.");
+    }
 
   // Query approved providers
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -43,11 +50,18 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  query = query.order("created_at", { ascending: false }).range(offset, offset + pageSize - 1);
+    query = query.order("created_at", { ascending: false }).range(offset, offset + pageSize - 1);
 
-  const { data, count, error } = await query;
-  if (error) return NextResponse.json({ error: "Query failed" }, { status: 500 });
+    const { data, count, error } = await query;
+    if (error) {
+      logger.error('[DirectoryProviders] Query failed', error, { userId, type, state, q });
+      throw Errors.databaseError("Failed to search providers");
+    }
 
-  return NextResponse.json({ items: data || [], total: count || 0, page, pageSize }, { headers: { "Cache-Control": "no-store" } });
+    logger.info('[DirectoryProviders] Providers fetched', { userId, resultCount: data?.length || 0, total: count, page });
+    return NextResponse.json({ items: data || [], total: count || 0, page, pageSize }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
 
