@@ -62,14 +62,7 @@ export default function BaseNavigatorClient({
     setLoading(true);
     setError(null);
 
-    // Debug logging only in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Navigator] Computing rankings', {
-        bedrooms,
-        bahMonthlyCents,
-        kidsGrades
-      });
-    }
+    // Computing rankings with current filter values
 
     try {
       const response = await fetch('/api/navigator/base', {

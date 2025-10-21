@@ -113,7 +113,6 @@ export default function PaycheckAuditClient({
       setAuditResult(result);
 
     } catch (err) {
-      console.error('[Paycheck Audit] Error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error occurred. Please try again.');
     } finally {
       setParsing(false);

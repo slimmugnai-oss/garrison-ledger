@@ -70,10 +70,7 @@ export default function AnalyticsDashboard() {
       setCalculatorRates([]);
       setConversionFunnel([]);
       setTopFeatures([]);
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[AnalyticsDashboard] Failed to load analytics:', error);
-      }
+      // Failed to load - show empty state
     } finally {
       setLoading(false);
     }

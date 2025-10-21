@@ -19,6 +19,17 @@ npm run lint || echo "⚠️  ESLint found ${PIPESTATUS[0]} issues. Review outpu
 # 3. Secret scan
 echo "🔒 Running secret scan..."
 npm run secret-scan
+
+# Check for console.log in production code (excluding scripts, tests, and logger.ts)
+echo "🚫 Checking for console statements in production code..."
+CONSOLE_FOUND=$(grep -r "console\." app lib --include="*.ts" --include="*.tsx" --exclude-dir="__tests__" 2>/dev/null | grep -v "lib/logger.ts" | grep -v "// console\." | wc -l | tr -d ' ')
+if [ "$CONSOLE_FOUND" -gt "0" ]; then
+  echo "❌ Found $CONSOLE_FOUND console statement(s) in production code!"
+  echo "   Use 'logger' from lib/logger.ts instead."
+  echo "   Run: grep -r \"console\\.\" app lib --include=\"*.ts\" --include=\"*.tsx\" --exclude-dir=\"__tests__\" | grep -v \"lib/logger.ts\""
+  exit 1
+fi
+echo "✅ No console statements in production code"
 SECRET_EXIT=$?
 if [ $SECRET_EXIT -ne 0 ]; then
   echo "❌ Secret scan failed! Remove secrets before committing."
