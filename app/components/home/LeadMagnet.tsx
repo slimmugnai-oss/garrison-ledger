@@ -27,7 +27,7 @@ export default function LeadMagnet() {
       }
       
       setSubmitted(true);
-    } catch (error) {
+    } catch {
       // Show user-friendly error
       alert('Failed to send checklist. Please try again or contact support@garrisonledger.com');
       // Error already handled via UI state

@@ -28,7 +28,7 @@ export default function UpcomingExpirations() {
         const data = await response.json();
         setReminders(data.reminders || []);
         setIsPremium(data.isPremium);
-      } catch (error) {
+      } catch {
         // Failed to load reminders - show empty state
         setReminders([]);
         

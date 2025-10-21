@@ -44,7 +44,7 @@ export default function AIRecommendations() {
       
       setRecommendations(data.recommendations || []);
       setInsights(data.insights);
-    } catch (error) {
+    } catch {
       // Silent failure - recommendations are optional dashboard feature
       // Don't show error to user, just hide the widget
       if (process.env.NODE_ENV === 'development') {
@@ -71,7 +71,7 @@ export default function AIRecommendations() {
       if (!response.ok) {
         throw new Error('Failed to dismiss recommendation');
       }
-    } catch (error) {
+    } catch {
       // If database update fails, revert UI change
       if (process.env.NODE_ENV === 'development') {
         // Failed to dismiss - non-critical

@@ -33,7 +33,7 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
           contentId,
           interactionType: 'share',
         }),
-      }).catch((trackError) => {
+      }).catch(() => {
         // Analytics tracking failure - don't show to user
         if (process.env.NODE_ENV === 'development') {
           // Tracking failure - non-critical

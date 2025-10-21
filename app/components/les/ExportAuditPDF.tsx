@@ -163,7 +163,7 @@ export default function ExportAuditPDF({ auditResult, userProfile }: ExportAudit
       const filename = `les-audit-${auditResult.snapshot.year}-${String(auditResult.snapshot.month).padStart(2, '0')}.pdf`;
       doc.save(filename);
       
-    } catch (error) {
+    } catch {
       // Export error - user already sees error state
       alert('Failed to generate PDF. Please try again.');
     } finally {

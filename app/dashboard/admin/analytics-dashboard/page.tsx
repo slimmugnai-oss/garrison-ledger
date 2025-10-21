@@ -65,7 +65,7 @@ export default function AnalyticsDashboard() {
       const { data: features } = await featuresResponse.json();
       setTopFeatures(features || []);
 
-    } catch (error) {
+    } catch {
       // Failed to load analytics data - show empty state
       setCalculatorRates([]);
       setConversionFunnel([]);

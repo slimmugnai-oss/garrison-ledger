@@ -114,7 +114,7 @@ export default function HouseHack() {
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
-            } catch (err) {
+            } catch {
               // Error already handled silently - saving is non-blocking
             } finally {
         setLoading(false);

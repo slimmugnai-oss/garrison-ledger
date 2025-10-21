@@ -64,7 +64,7 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
         expiringDocuments: expiring,
         storageUsed: storage
       });
-    } catch (error) {
+    } catch {
       // Failed to load binder data - show empty state
       setDocuments([]);
       setStats(null);

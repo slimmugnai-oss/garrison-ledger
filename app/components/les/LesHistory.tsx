@@ -36,7 +36,7 @@ export default function LesHistory({ tier, isPremium: _isPremium, uploads: _uplo
       
       const data = await response.json();
       setHistoryData(data.uploads || []);
-    } catch (err) {
+    } catch {
       // Failed to load history - show empty state
       setHistoryData([]);
       

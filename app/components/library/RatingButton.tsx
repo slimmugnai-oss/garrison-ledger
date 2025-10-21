@@ -59,10 +59,9 @@ export default function RatingButton({ contentId, initialRating, onRatingChange 
 
       setUserRating(rating);
       onRatingChange?.(rating);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to submit rating';
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to submit rating';
       alert(message);
-      // Error already handled via UI state
     } finally {
       setIsLoading(false);
     }

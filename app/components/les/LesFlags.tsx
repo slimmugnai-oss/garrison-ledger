@@ -49,7 +49,7 @@ export default function LesFlags({ flags, tier, summary }: Props) {
           })
         });
       }
-    } catch (err) {
+    } catch {
       // Tracking error - non-critical
     }
   };
