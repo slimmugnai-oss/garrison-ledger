@@ -93,6 +93,7 @@ export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): strin
     headStyles: { fillColor: BRAND_COLOR }
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   
   // Fund Allocation
@@ -117,6 +118,7 @@ export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): strin
     headStyles: { fillColor: BRAND_COLOR }
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   
   // Results
@@ -141,6 +143,7 @@ export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): strin
   });
   
   // Disclaimer
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'italic');
@@ -182,6 +185,7 @@ export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): strin
     theme: 'plain'
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   
   // Entitlements
@@ -204,6 +208,7 @@ export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): strin
     headStyles: { fillColor: BRAND_COLOR }
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   
   // Bottom Line
@@ -247,6 +252,7 @@ export function generateHouseHackingReport(inputs: HouseHackInputs, outputs: Hou
     theme: 'plain'
   });
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   yPos = (doc as any).lastAutoTable.finalY + 15;
   
   // Financial Analysis
@@ -305,7 +311,8 @@ export function generateGenericReport(
       headStyles: { fillColor: BRAND_COLOR }
     });
     
-    yPos = (doc as any).lastAutoTable.finalY + 15;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  yPos = (doc as any).lastAutoTable.finalY + 15;
   }
   
   // Convert outputs to table data
