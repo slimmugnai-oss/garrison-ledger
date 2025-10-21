@@ -32,6 +32,7 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
   const [bas, setBas] = useState('');
   const [cola, setCola] = useState('');
   const [autoFilled, setAutoFilled] = useState(false);
+  const [fallbackMessage, setFallbackMessage] = useState<string | null>(null);
 
   // Auto-populate expected values based on user profile
   useEffect(() => {
@@ -54,12 +55,19 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
       .then(data => {
         if (data.bah) setBah((data.bah / 100).toFixed(2));
         if (data.bas) setBas((data.bas / 100).toFixed(2));
-        if (data.cola) setCola((data.cola / 100).toFixed(2));
+        if (data.cola && data.cola > 0) setCola((data.cola / 100).toFixed(2));
+        
+        // Check if fallback values were used
+        if (data.fallback && data.message) {
+          setFallbackMessage(data.message);
+        }
+        
         setAutoFilled(true);
         setState('idle');
       })
       .catch(() => {
-        // Silently fail, user can enter manually
+        // Silently fail - user can enter values manually
+        // Error is already logged server-side
         setState('idle');
       });
     }
@@ -152,11 +160,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
             <p className="text-sm text-blue-800 mt-1">
               {autoFilled ? (
                 <>
-                  ✅ <strong>Auto-filled</strong> with your expected allowances based on your rank, location, and dependent status. 
-                  Adjust the values to match your actual LES, then click "Run Audit" to compare.
+                  ✅ <strong>Auto-filled</strong> with {fallbackMessage ? 'typical' : 'your expected'} allowances
+                  {fallbackMessage ? ` (${fallbackMessage})` : ' based on your rank, location, and dependent status.'}
+                  {' '}Adjust the values to match your actual LES, then click "Run Audit" to compare.
                 </>
               ) : state === 'loading' ? (
-                <>Loading your expected allowances...</>
+                <>
+                  <Icon name="Loader" className="inline-block w-4 h-4 animate-spin mr-2" />
+                  Loading your expected allowances...
+                </>
               ) : (
                 <>
                   Don't have your LES PDF? Enter your allowances manually for instant verification.

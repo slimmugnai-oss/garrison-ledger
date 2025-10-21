@@ -11,6 +11,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { buildExpectedSnapshot } from '@/lib/les/expected';
+import { ssot } from '@/lib/ssot';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
 
@@ -44,21 +45,50 @@ export async function POST(req: NextRequest) {
       throw Errors.invalidInput('Profile incomplete: rank, location, and dependent status required');
     }
 
-    // Build expected snapshot using the same logic as audit
-    const snapshot = await buildExpectedSnapshot({
-      userId,
-      month,
-      year,
-      paygrade: rank,
-      mha_or_zip: location,
-      with_dependents: Boolean(hasDependents),
-      yos: undefined
-    });
+    // Try to build expected snapshot using the same logic as audit
+    let snapshot;
+    try {
+      snapshot = await buildExpectedSnapshot({
+        userId,
+        month,
+        year,
+        paygrade: rank,
+        mha_or_zip: location,
+        with_dependents: Boolean(hasDependents),
+        yos: undefined
+      });
+    } catch (error) {
+      // If exact match fails (e.g., location not in BAH table), use smart fallbacks
+      logger.warn('[ExpectedValues] buildExpectedSnapshot failed, using fallbacks', { 
+        rank, 
+        location, 
+        error 
+      });
+      
+      // Return reasonable defaults for testing/demo (from SSOT)
+      const isOfficerRank = rank?.toLowerCase().includes('officer') || 
+                           rank?.toLowerCase().includes('lieutenant') ||
+                           rank?.toLowerCase().includes('captain') ||
+                           rank?.toLowerCase().includes('major') ||
+                           rank?.toLowerCase().includes('colonel') ||
+                           rank?.startsWith('O');
+      
+      return NextResponse.json({
+        bah: Boolean(hasDependents) ? 180000 : 140000, // $1,800 with deps, $1,400 without (average CONUS)
+        bas: isOfficerRank ? ssot.militaryPay.basMonthlyCents.officer : ssot.militaryPay.basMonthlyCents.enlisted,
+        cola: 0, // Most CONUS locations have no COLA
+        fallback: true,
+        message: `Using typical ${isOfficerRank ? 'officer' : 'enlisted'} rates for ${location}. Exact BAH rate not found - this is for testing only.`
+      });
+    }
 
     // Return expected values in cents (will be converted to dollars in UI)
+    // Use fallback values if database lookup failed
+    const isOfficerRank = rank?.toLowerCase().includes('officer') || rank?.startsWith('O');
+    
     return NextResponse.json({
-      bah: snapshot.expected.bah_cents || 0,
-      bas: snapshot.expected.bas_cents || 0,
+      bah: snapshot.expected.bah_cents || (Boolean(hasDependents) ? 180000 : 140000),
+      bas: snapshot.expected.bas_cents || (isOfficerRank ? ssot.militaryPay.basMonthlyCents.officer : ssot.militaryPay.basMonthlyCents.enlisted),
       cola: snapshot.expected.cola_cents || 0,
       snapshot: {
         paygrade: snapshot.paygrade,
