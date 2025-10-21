@@ -37,8 +37,10 @@ export async function POST(request: NextRequest) {
         metadata: metadata || {},
         timestamp: timestamp ? new Date(timestamp).toISOString() : new Date().toISOString()
       })
-      .catch((analyticsError) => {
-        logger.warn('[DashboardAnalytics] Failed to track event', { userId, widgetName, action, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[DashboardAnalytics] Failed to track event', { userId, widgetName, action, error: analyticsError.message });
+        }
       });
 
     logger.debug('[DashboardAnalytics] Event tracked', { userId, widgetName, action });

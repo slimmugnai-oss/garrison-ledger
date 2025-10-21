@@ -144,16 +144,20 @@ export async function POST(request: NextRequest) {
         user_id: userId,
         event_type: 'tdy_doc_upload',
         payload: { trip_id: tripId, doc_type: docType }
-      }).catch((analyticsError) => {
-        logger.warn('[TDYUpload] Failed to track doc upload event', { userId, tripId, error: analyticsError });
+      }).then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[TDYUpload] Failed to track doc upload event', { userId, tripId, error: analyticsError.message });
+        }
       });
 
       supabaseAdmin.from('events').insert({
         user_id: userId,
         event_type: 'tdy_items_normalized',
         payload: { trip_id: tripId, count: items.length }
-      }).catch((analyticsError) => {
-        logger.warn('[TDYUpload] Failed to track items event', { userId, tripId, error: analyticsError });
+      }).then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[TDYUpload] Failed to track items event', { userId, tripId, error: analyticsError.message });
+        }
       });
 
       const duration = Date.now() - startTime;

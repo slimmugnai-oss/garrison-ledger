@@ -118,8 +118,10 @@ export async function POST(request: NextRequest) {
         event_type: 'tdy_voucher_view',
         payload: { trip_id: tripId }
       })
-      .catch((analyticsError) => {
-        logger.warn('[TDYVoucher] Failed to track analytics', { userId, tripId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[TDYVoucher] Failed to track analytics', { userId, tripId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

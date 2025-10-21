@@ -153,8 +153,10 @@ export async function POST(request: NextRequest) {
       }, {
         onConflict: 'user_id,route,day'
       })
-      .catch((quotaError) => {
-        logger.warn('[NavigatorAnalyze] Failed to update quota', { userId, error: quotaError });
+      .then(({ error: quotaError }) => {
+        if (quotaError) {
+          logger.warn('[NavigatorAnalyze] Failed to update quota', { userId, error: quotaError.message });
+        }
       });
 
     // Analytics (fire and forget)
@@ -168,8 +170,10 @@ export async function POST(request: NextRequest) {
           verdict
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[NavigatorAnalyze] Failed to track analytics', { userId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[NavigatorAnalyze] Failed to track analytics', { userId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

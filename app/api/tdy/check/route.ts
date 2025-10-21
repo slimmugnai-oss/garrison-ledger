@@ -82,8 +82,10 @@ export async function POST(request: NextRequest) {
           yellow: yellowCount
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[TDYCheck] Failed to track analytics', { userId, tripId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[TDYCheck] Failed to track analytics', { userId, tripId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

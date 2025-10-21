@@ -67,8 +67,10 @@ export async function POST(request: NextRequest) {
           duration_days: durationDays
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[TDYCreate] Failed to track analytics', { userId, tripId: data.id, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[TDYCreate] Failed to track analytics', { userId, tripId: data.id, error: analyticsError.message });
+        }
       });
 
     logger.info('[TDYCreate] Trip created', { userId, tripId: data.id, durationDays });

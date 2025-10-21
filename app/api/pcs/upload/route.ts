@@ -127,8 +127,10 @@ export async function POST(req: NextRequest) {
           file_size: fileBuffer.length
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[PCSUpload] Failed to track analytics', { userId, claimId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[PCSUpload] Failed to track analytics', { userId, claimId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

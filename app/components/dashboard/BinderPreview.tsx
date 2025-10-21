@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AnimatedCard from '../ui/AnimatedCard';
 import Icon from '../ui/Icon';
+import type { IconName } from '../ui/icon-registry';
 
 interface BinderDocument {
   id: string;
@@ -76,11 +77,11 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
     }
   };
 
-  const getCategoryIcon = (category: string): string => {
-    const icons: Record<string, string> = {
+  const getCategoryIcon = (category: string): IconName => {
+    const icons: Record<string, IconName> = {
       'Orders': 'File',
       'LES': 'DollarSign',
-      'Medical': 'HeartPulse',
+      'Medical': 'Heart',
       'Insurance': 'Shield',
       'Housing': 'Home',
       'Education': 'GraduationCap',

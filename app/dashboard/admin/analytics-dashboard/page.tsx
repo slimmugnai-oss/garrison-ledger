@@ -185,14 +185,18 @@ export default function AnalyticsDashboard() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={topFeatures}
+                    data={topFeatures as any}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={(entry: TopFeature) => entry.feature_name}
+                    label={(props: any) => {
+                      const entry = topFeatures[props.index];
+                      return entry?.feature_name || '';
+                    }}
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="usage_count"
+                    nameKey="feature_name"
                   >
                     {topFeatures.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

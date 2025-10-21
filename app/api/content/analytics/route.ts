@@ -314,8 +314,10 @@ export async function POST(request: NextRequest) {
         action: event,
         metadata: metadata || {}
       })
-      .catch((trackError) => {
-        logger.warn('[ContentAnalytics] Failed to track event', { userId, contentId, event, error: trackError });
+      .then(({ error: trackError }) => {
+        if (trackError) {
+          logger.warn('[ContentAnalytics] Failed to track event', { userId, contentId, event, error: trackError.message });
+        }
       });
 
     logger.debug('[ContentAnalytics] Event tracked', { userId, contentId, event });

@@ -19,7 +19,7 @@ const fmt = (value: number) => {
 
 // Email templates for each calculator
 const templates = {
-  tsp: (data: Record<string, unknown>) => `
+  tsp: (data: { inputs: any; outputs: any }) => `
     <h2>Your TSP Allocation Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -40,7 +40,7 @@ const templates = {
     </div>
   `,
   
-  sdp: (data: any) => `
+  sdp: (data: { inputs: any; outputs: any }) => `
     <h2>Your SDP Strategy Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -58,7 +58,7 @@ const templates = {
     </div>
   `,
   
-  'house-hacking': (data: any) => `
+  'house-hacking': (data: { inputs: any; outputs: any }) => `
     <h2>Your House Hacking Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>

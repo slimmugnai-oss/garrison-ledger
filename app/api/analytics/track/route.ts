@@ -25,8 +25,10 @@ export async function POST(request: NextRequest) {
       event_name: event,
       properties: properties || {},
       created_at: timestamp || new Date().toISOString()
-    }).catch((trackError) => {
-      logger.warn('[AnalyticsTrack] Failed to store event', { userId, event, error: trackError });
+    }).then(({ error: trackError }) => {
+      if (trackError) {
+        logger.warn('[AnalyticsTrack] Failed to store event', { userId, event, error: trackError.message });
+      }
     });
 
     logger.debug('[AnalyticsTrack] Event tracked', { userId, event });

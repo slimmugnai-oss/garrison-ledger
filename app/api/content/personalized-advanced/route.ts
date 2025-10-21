@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -105,7 +107,7 @@ export async function GET(request: NextRequest) {
       const responses = assessment.responses as Record<string, unknown>;
       
       // Determine life stage from years of service
-      const yearsOfService = responses.yearsOfService || 0;
+      const yearsOfService = typeof responses.yearsOfService === 'number' ? responses.yearsOfService : 0;
       if (yearsOfService < 5) userIntent.lifeStage = 'early-career';
       else if (yearsOfService < 15) userIntent.lifeStage = 'mid-career';
       else if (yearsOfService < 20) userIntent.lifeStage = 'pre-retirement';
@@ -123,7 +125,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Determine risk tolerance
-      if (responses.riskTolerance) {
+      if (responses.riskTolerance && typeof responses.riskTolerance === 'string') {
         userIntent.riskTolerance = responses.riskTolerance.toLowerCase();
       }
     }

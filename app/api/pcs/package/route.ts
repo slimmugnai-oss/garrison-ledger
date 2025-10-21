@@ -110,8 +110,10 @@ export async function POST(req: NextRequest) {
           total_estimated: snapshot?.total_estimated || 0
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[PCSPackage] Failed to track analytics', { userId, claimId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[PCSPackage] Failed to track analytics', { userId, claimId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

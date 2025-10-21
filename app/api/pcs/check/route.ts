@@ -259,8 +259,10 @@ export async function POST(req: NextRequest) {
           critical_errors: criticalErrors
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[PCSCheck] Failed to track analytics', { userId, claimId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[PCSCheck] Failed to track analytics', { userId, claimId, error: analyticsError.message });
+        }
       });
 
     const duration = Date.now() - startTime;

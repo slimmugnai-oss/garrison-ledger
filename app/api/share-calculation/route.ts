@@ -80,8 +80,10 @@ export async function GET(req: NextRequest) {
     }
 
     // Increment view count (fire and forget)
-    supabase.rpc('increment_share_view_count', { share_id: shareId }).catch((viewError) => {
-      logger.warn('[ShareCalc] Failed to increment view count', { shareId, error: viewError });
+    supabase.rpc('increment_share_view_count', { share_id: shareId }).then(({ error: viewError }) => {
+      if (viewError) {
+        logger.warn('[ShareCalc] Failed to increment view count', { shareId, error: viewError.message });
+      }
     });
 
     logger.info('[ShareCalc] Share accessed', { shareId, tool: sharedCalc.tool, viewCount: sharedCalc.view_count + 1 });

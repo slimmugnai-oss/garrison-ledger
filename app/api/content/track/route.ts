@@ -30,8 +30,10 @@ export async function POST(request: Request) {
         p_interaction_type: interactionType,
         p_interaction_value: interactionValue
       })
-      .catch((trackError) => {
-        logger.warn('[ContentTrack] Failed to track interaction', { userId, contentId, interactionType, error: trackError });
+      .then(({ error: trackError }) => {
+        if (trackError) {
+          logger.warn('[ContentTrack] Failed to track interaction', { userId, contentId, interactionType, error: trackError.message });
+        }
       });
 
     logger.debug('[ContentTrack] Interaction tracked', { userId, contentId, interactionType });

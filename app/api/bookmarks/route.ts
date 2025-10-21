@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       // Handle duplicate bookmark
       if (error.code === '23505') {
         logger.warn('[Bookmarks] Duplicate bookmark attempt', { userId, contentId });
-        throw new Errors.invalidInput('Content already bookmarked');
+        throw Errors.invalidInput('Content already bookmarked');
       }
       
       logger.error('[Bookmarks] Failed to create bookmark', error, { userId, contentId });
@@ -83,8 +83,10 @@ export async function POST(request: Request) {
       p_content_id: contentId,
       p_interaction_type: 'save',
       p_interaction_value: 1
-    }).catch((trackError) => {
-      logger.warn('[Bookmarks] Failed to track interaction', { userId, contentId, error: trackError });
+    }).then(({ error: trackError }) => {
+      if (trackError) {
+        logger.warn('[Bookmarks] Failed to track interaction', { userId, contentId, error: trackError.message });
+      }
     });
 
     logger.info('[Bookmarks] Bookmark created', { userId, contentId });

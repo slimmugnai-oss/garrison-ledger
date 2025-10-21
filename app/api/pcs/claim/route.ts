@@ -120,8 +120,10 @@ export async function POST(req: NextRequest) {
           dependents: claim.dependents_count
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[PCSClaim] Failed to track analytics', { userId, claimId: claim.id, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[PCSClaim] Failed to track analytics', { userId, claimId: claim.id, error: analyticsError.message });
+        }
       });
 
     logger.info('[PCSClaim] Claim created', { userId, claimId: claim.id, travelMethod: claim.travel_method });

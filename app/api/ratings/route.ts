@@ -82,8 +82,10 @@ export async function POST(request: Request) {
     // Update the content block's overall rating (fire and forget)
     supabaseAdmin.rpc('update_content_rating_from_users', {
       p_content_id: contentId
-    }).catch((updateError) => {
-      logger.warn('[Ratings] Failed to update content aggregate rating', { contentId, error: updateError });
+    }).then(({ error: updateError }) => {
+      if (updateError) {
+        logger.warn('[Ratings] Failed to update content aggregate rating', { contentId, error: updateError.message });
+      }
     });
 
     // Track the rate interaction (fire and forget)
@@ -92,8 +94,10 @@ export async function POST(request: Request) {
       p_content_id: contentId,
       p_interaction_type: 'rate',
       p_interaction_value: rating
-    }).catch((trackError) => {
-      logger.warn('[Ratings] Failed to track interaction', { userId, contentId, error: trackError });
+    }).then(({ error: trackError }) => {
+      if (trackError) {
+        logger.warn('[Ratings] Failed to track interaction', { userId, contentId, error: trackError.message });
+      }
     });
 
     logger.info('[Ratings] Rating saved', { userId, contentId, rating });

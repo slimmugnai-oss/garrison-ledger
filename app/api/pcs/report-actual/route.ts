@@ -135,8 +135,10 @@ export async function POST(req: NextRequest) {
           accuracy_score: accuracyScore
         }
       })
-      .catch((analyticsError) => {
-        logger.warn('[PCSReportActual] Failed to track analytics', { userId, claimId, error: analyticsError });
+      .then(({ error: analyticsError }) => {
+        if (analyticsError) {
+          logger.warn('[PCSReportActual] Failed to track analytics', { userId, claimId, error: analyticsError.message });
+        }
       });
 
     logger.info('[PCSReportActual] Actual reimbursement reported', { 

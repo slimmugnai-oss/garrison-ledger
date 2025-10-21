@@ -142,8 +142,8 @@ export const Errors = {
   validationError: (message: string, details?: Record<string, unknown>) => 
     new APIError(message, 400, ErrorCodes.VALIDATION_ERROR, details),
   
-  databaseError: (message = 'Database operation failed') => 
-    new APIError(message, 500, ErrorCodes.DATABASE_ERROR),
+  databaseError: (message = 'Database operation failed', details?: Record<string, unknown>) => 
+    new APIError(message, 500, ErrorCodes.DATABASE_ERROR, details),
   
   externalApiError: (service: string, message?: string) => 
     new APIError(
