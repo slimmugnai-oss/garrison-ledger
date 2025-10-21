@@ -21,6 +21,8 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { parseLesPdf } from '@/lib/les/parse';
+import { buildExpectedSnapshot } from '@/lib/les/expected';
+import { compareLesToExpected } from '@/lib/les/compare';
 import { ssot } from '@/lib/ssot';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
@@ -205,9 +207,10 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     let parsedOk = false;
     let summary = null;
+    let parseResult: Awaited<ReturnType<typeof parseLesPdf>> | null = null;
 
     try {
-      const parseResult = await parseLesPdf(buffer, { debug: false });
+      parseResult = await parseLesPdf(buffer, { debug: false });
       
       // Insert parsed lines
       if (parseResult.lines.length > 0) {
@@ -243,7 +246,8 @@ export async function POST(req: NextRequest) {
         .update({
           parsed_ok: parsedOk,
           parsed_at: new Date().toISOString(),
-          parsed_summary: summary
+          parsed_summary: summary,
+          upload_status: 'parsed'
         })
         .eq('id', uploadRecord.id);
 
@@ -252,8 +256,132 @@ export async function POST(req: NextRequest) {
         uploadId: uploadRecord.id,
         fileName: file.name
       });
+      
+      // Update status to parse_failed
+      await supabaseAdmin
+        .from('les_uploads')
+        .update({ upload_status: 'parse_failed' })
+        .eq('id', uploadRecord.id);
+      
       // Parse failed - record stays with parsed_ok = false
       // This is recoverable - user can try re-uploading or use manual entry
+    }
+
+    // ==========================================================================
+    // 6B. RUN AUDIT AFTER SUCCESSFUL PARSE
+    // ==========================================================================
+    if (parsedOk && parseResult && parseResult.lines.length > 0) {
+      try {
+        logger.info('[LESUpload] Starting audit workflow', {
+          uploadId: uploadRecord.id,
+          lineCount: parseResult.lines.length,
+          userId: userId.substring(0, 8) + '...'
+        });
+
+        // Load user profile
+        const profile = await getUserProfile(userId);
+        
+        if (profile) {
+          // Build expected snapshot
+          const snapshot = await buildExpectedSnapshot({
+            userId,
+            month,
+            year,
+            paygrade: profile.paygrade,
+            mha_or_zip: profile.mha_or_zip,
+            with_dependents: profile.with_dependents,
+            yos: profile.yos
+          });
+
+          // Store snapshot
+          await supabaseAdmin
+            .from('expected_pay_snapshot')
+            .insert({
+              user_id: userId,
+              upload_id: uploadRecord.id,
+              month,
+              year,
+              paygrade: profile.paygrade,
+              mha_or_zip: profile.mha_or_zip,
+              with_dependents: profile.with_dependents,
+              yos: profile.yos,
+              expected_bah_cents: snapshot.expected.bah_cents,
+              expected_bas_cents: snapshot.expected.bas_cents,
+              expected_cola_cents: snapshot.expected.cola_cents,
+              expected_specials: snapshot.expected.specials
+            });
+
+          // Compare actual vs expected
+          const comparison = compareLesToExpected(parseResult.lines, snapshot);
+
+          // Store flags
+          if (comparison.flags.length > 0) {
+            const flagRows = comparison.flags.map(flag => ({
+              upload_id: uploadRecord.id,
+              severity: flag.severity,
+              flag_code: flag.flag_code,
+              message: flag.message,
+              suggestion: flag.suggestion,
+              ref_url: flag.ref_url,
+              delta_cents: flag.delta_cents
+            }));
+
+            await supabaseAdmin
+              .from('pay_flags')
+              .insert(flagRows);
+          }
+
+          // Update upload status to audit complete
+          await supabaseAdmin
+            .from('les_uploads')
+            .update({ upload_status: 'audit_complete' })
+            .eq('id', uploadRecord.id);
+
+          logger.info('[LESUpload] Audit completed successfully', {
+            uploadId: uploadRecord.id,
+            flagCount: comparison.flags.length,
+            redFlags: comparison.flags.filter(f => f.severity === 'red').length,
+            yellowFlags: comparison.flags.filter(f => f.severity === 'yellow').length,
+            greenFlags: comparison.flags.filter(f => f.severity === 'green').length,
+            userId: userId.substring(0, 8) + '...'
+          });
+
+          // Record analytics
+          await recordAnalyticsEvent(userId, 'les_audit_complete', {
+            upload_id: uploadRecord.id,
+            month,
+            year,
+            flag_count: comparison.flags.length,
+            has_red_flags: comparison.flags.some(f => f.severity === 'red')
+          });
+
+        } else {
+          logger.warn('[LESUpload] Profile incomplete, audit skipped', {
+            uploadId: uploadRecord.id,
+            userId: userId.substring(0, 8) + '...'
+          });
+          
+          // Keep status as 'parsed' - user needs to complete profile
+          // UI can show: "Complete your profile to run audit"
+        }
+      } catch (auditError) {
+        logger.error('[LESUpload] Failed to run audit after upload', auditError, {
+          uploadId: uploadRecord.id,
+          userId: userId.substring(0, 8) + '...'
+        });
+        
+        // Don't fail the upload - mark as audit_failed
+        await supabaseAdmin
+          .from('les_uploads')
+          .update({ upload_status: 'audit_failed' })
+          .eq('id', uploadRecord.id);
+
+        // Record analytics
+        await recordAnalyticsEvent(userId, 'les_audit_failed', {
+          upload_id: uploadRecord.id,
+          error: auditError instanceof Error ? auditError.message : 'Unknown error'
+        });
+      }
     }
 
     // ==========================================================================
@@ -322,6 +450,54 @@ async function getUserTier(userId: string): Promise<'free' | 'premium'> {
       userId: userId.substring(0, 8) + '...'
     });
     return 'free';
+  }
+}
+
+/**
+ * Get user profile for audit
+ */
+async function getUserProfile(userId: string): Promise<{
+  paygrade: string;
+  mha_or_zip?: string;
+  with_dependents: boolean;
+  yos?: number;
+} | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('user_profiles')
+      .select('paygrade, mha_code, mha_code_override, has_dependents, time_in_service_months')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    // Use override if present, otherwise use computed mha_code
+    const mhaCode = data.mha_code_override || data.mha_code;
+
+    // Validate required computed fields
+    if (!data.paygrade || !mhaCode || data.has_dependents === null) {
+      logger.warn('[LESUpload] Profile incomplete', {
+        userId: userId.substring(0, 8) + '...',
+        missingFields: {
+          paygrade: !data.paygrade,
+          mha_code: !mhaCode,
+          has_dependents: data.has_dependents === null
+        }
+      });
+      return null;
+    }
+
+    return {
+      paygrade: data.paygrade,
+      mha_or_zip: mhaCode,
+      with_dependents: Boolean(data.has_dependents),
+      yos: data.time_in_service_months ? Math.floor(data.time_in_service_months / 12) : undefined
+    };
+  } catch (profileError) {
+    logger.warn('[LESUpload] Failed to get user profile', { userId, error: profileError });
+    return null;
   }
 }
 

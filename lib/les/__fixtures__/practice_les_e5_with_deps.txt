@@ -1,0 +1,79 @@
+LEAVE AND EARNINGS STATEMENT
+DEFENSE FINANCE AND ACCOUNTING SERVICE
+
+NAME: JOHNSON, MICHAEL A          SSN: XXX-XX-1234
+RANK/GRADE: E-5                    BRANCH: ARMY
+UNIT: 1ST BN, 327TH INF            DUTY STATION: FORT CAMPBELL, KY
+
+PAY PERIOD: OCTOBER 2025
+PAY DATE: 31 OCT 2025
+
+================================================================================
+ENTITLEMENTS AND ALLOWANCES                                          AMOUNT
+================================================================================
+
+BASE PAY                                                           3,666.00
+BASIC ALLOW HOUS W/DEP                                            1,647.00
+BASIC ALLOW SUBSISTENCE                                             460.66
+SPECIAL DUTY ASSIGNMENT PAY                                         375.00
+
+                                                    TOTAL ENT:    6,148.66
+
+================================================================================
+DEDUCTIONS                                                           AMOUNT
+================================================================================
+
+FEDERAL TAX WITHHELD                                                458.00
+FICA - SOCIAL SECURITY                                              381.62
+MEDICARE TAX                                                         89.15
+TSP CONTRIBUTION                                                    183.30
+SGLI PREMIUM                                                         28.00
+TRICARE DENTAL                                                       12.52
+
+                                                    TOTAL DED:    1,152.59
+
+================================================================================
+ALLOTMENTS                                                           AMOUNT
+================================================================================
+
+DISCRETIONARY ALLOTMENT                                             500.00
+
+                                                  TOTAL ALLOT:      500.00
+
+================================================================================
+SUMMARY                                                              AMOUNT
+================================================================================
+
+TOTAL ENTITLEMENTS                                                6,148.66
+TOTAL DEDUCTIONS                                                  1,152.59
+TOTAL ALLOTMENTS                                                    500.00
+
+NET PAY                                                           4,496.07
+
+================================================================================
+LEAVE BALANCE
+================================================================================
+
+LEAVE BEGIN BALANCE                                                  18.5
+LEAVE EARNED THIS PERIOD                                              2.5
+LEAVE USED THIS PERIOD                                                0.0
+LEAVE END BALANCE                                                    21.0
+
+================================================================================
+YEAR TO DATE (YTD)
+================================================================================
+
+YTD GROSS PAY                                                    61,486.60
+YTD FEDERAL TAX                                                   4,580.00
+YTD FICA TAX                                                      3,812.17
+YTD MEDICARE TAX                                                    891.55
+YTD TSP CONTRIBUTION                                              1,833.00
+
+================================================================================
+END OF STATEMENT
+================================================================================
+
+For questions or discrepancies, contact your local finance office.
+DFAS Customer Service: 1-888-332-7411
+MyPay: https://mypay.dfas.mil
+

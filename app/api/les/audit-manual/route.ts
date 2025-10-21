@@ -325,7 +325,7 @@ async function getUserProfile(userId: string): Promise<{
   try {
     const { data, error } = await supabaseAdmin
       .from('user_profiles')
-      .select('rank, current_base, has_dependents, time_in_service')
+      .select('paygrade, mha_code, mha_code_override, has_dependents, time_in_service_months')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -333,24 +333,36 @@ async function getUserProfile(userId: string): Promise<{
       return null;
     }
 
-    // Validate required fields
-    if (!data.rank || !data.current_base || data.has_dependents === null) {
-      logger.warn('[LESManual] Profile incomplete', {
-        userId: userId.substring(0, 8) + '...',
-        missingFields: {
-          rank: !data.rank,
-          current_base: !data.current_base,
-          has_dependents: data.has_dependents === null
-        }
+    // Validate required computed fields
+    if (!data.paygrade) {
+      logger.warn('[LESManual] Missing paygrade - profile needs computed fields', {
+        userId: userId.substring(0, 8) + '...'
+      });
+      return null;
+    }
+
+    // Use override if present, otherwise use computed mha_code
+    const mhaCode = data.mha_code_override || data.mha_code;
+    
+    if (!mhaCode) {
+      logger.warn('[LESManual] Missing mha_code - base not recognized', {
+        userId: userId.substring(0, 8) + '...'
+      });
+      return null;
+    }
+
+    if (data.has_dependents === null) {
+      logger.warn('[LESManual] Missing has_dependents', {
+        userId: userId.substring(0, 8) + '...'
       });
       return null;
     }
 
     return {
-      paygrade: data.rank,
-      mha_or_zip: data.current_base,
+      paygrade: data.paygrade,
+      mha_or_zip: mhaCode,
       with_dependents: Boolean(data.has_dependents),
-      yos: data.time_in_service || undefined
+      yos: data.time_in_service_months ? Math.floor(data.time_in_service_months / 12) : undefined
     };
   } catch (profileError) {
     logger.warn('[LESManual] Failed to get user profile', { userId, error: profileError });
