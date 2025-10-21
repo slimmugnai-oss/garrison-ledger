@@ -284,7 +284,9 @@ export function generateHouseHackingReport(inputs: HouseHackInputs, outputs: Hou
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateGenericReport(
   title: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   inputs: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   outputs: any
 ): string {
   const doc = initializePDF(title);
@@ -346,7 +348,9 @@ export function generateGenericReport(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateCalculatorReport(
   calculatorName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   inputs: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   outputs: any
 ): string {
   switch (calculatorName) {

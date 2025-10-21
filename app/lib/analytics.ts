@@ -36,7 +36,9 @@ interface EventProperties {
  */
 export function trackEvent(event: AnalyticsEvent, properties?: EventProperties) {
   // Send to Google Analytics
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window !== 'undefined' && (window as any).gtag) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).gtag('event', event, properties);
   }
 

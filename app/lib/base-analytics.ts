@@ -38,6 +38,7 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
       };
       
       // Keep only last 5 views
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updated = [newView, ...recentViews.filter((v: any) => v.baseId !== baseId)].slice(0, 5);
       localStorage.setItem('recent_base_views', JSON.stringify(updated));
     }
@@ -126,6 +127,7 @@ export function addToComparison(baseId: string, baseName: string, branch: string
     const current = getComparisonList();
     
     // Check if already in list
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (current.some((b: any) => b.baseId === baseId)) {
       return { success: false, message: 'Base already in comparison' };
     }
@@ -152,6 +154,7 @@ export function removeFromComparison(baseId: string) {
   
   try {
     const current = getComparisonList();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updated = current.filter((b: any) => b.baseId !== baseId);
     localStorage.setItem('base_comparison', JSON.stringify(updated));
     
