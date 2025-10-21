@@ -18,11 +18,9 @@ interface Achievement {
 interface AchievementBadgesProps {
   userId: string;
   hasProfile: boolean;
-  hasAssessment: boolean;
-  hasPlan: boolean;
 }
 
-export default function AchievementBadges({ userId, hasProfile, hasAssessment, hasPlan }: AchievementBadgesProps) {
+export default function AchievementBadges({ userId, hasProfile }: AchievementBadgesProps) {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [earnedCount, setEarnedCount] = useState(0);
 
@@ -44,20 +42,6 @@ export default function AchievementBadges({ userId, hasProfile, hasAssessment, h
           title: 'Profile Complete',
           description: 'Set up your military profile',
           earned: hasProfile
-        },
-        {
-          id: 'assessment-taken',
-          emoji: '📋',
-          title: 'Assessment Taken',
-          description: 'Completed financial assessment',
-          earned: hasAssessment
-        },
-        {
-          id: 'plan-generated',
-          emoji: '🤖',
-          title: 'AI Plan Generated',
-          description: 'Received personalized plan',
-          earned: hasPlan
         },
         {
           id: 'first-save',
@@ -114,7 +98,7 @@ export default function AchievementBadges({ userId, hasProfile, hasAssessment, h
       setAchievements(achievementList);
       setEarnedCount(achievementList.filter(a => a.earned).length);
     });
-  }, [userId, hasProfile, hasAssessment, hasPlan]);
+  }, [userId, hasProfile]);
 
   const nextAchievement = achievements.find(a => !a.earned);
 

@@ -9,8 +9,6 @@ interface FinancialData {
   hasEmergencyFund: boolean;
   hasDebt: boolean;
   hasCompletedProfile: boolean;
-  hasCompletedAssessment: boolean;
-  hasPlan: boolean;
 }
 
 interface FinancialReadinessScoreProps {
@@ -29,11 +27,6 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
     // Profile completion (20 points)
     if (profileData.hasCompletedProfile) calculatedScore += 20;
     
-    // Assessment completed (15 points)
-    if (profileData.hasCompletedAssessment) calculatedScore += 15;
-    
-    // Has AI plan (15 points)
-    if (profileData.hasPlan) calculatedScore += 15;
     
     // TSP contribution (20 points)
     if (profileData.hasTSP) calculatedScore += 20;
@@ -78,8 +71,6 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
   const getNextSteps = () => {
     const steps = [];
     if (!profileData.hasCompletedProfile) steps.push({ icon: 'User', text: 'Complete your profile', points: 20 });
-    if (!profileData.hasCompletedAssessment) steps.push({ icon: 'ClipboardList', text: 'Take the assessment', points: 15 });
-    if (!profileData.hasPlan) steps.push({ icon: 'File', text: 'Generate your AI plan', points: 15 });
     if (!profileData.hasTSP) steps.push({ icon: 'TrendingUp', text: 'Start TSP contributions', points: 20 });
     if (!profileData.hasEmergencyFund) steps.push({ icon: 'Shield', text: 'Build emergency fund', points: 20 });
     if (profileData.hasDebt) steps.push({ icon: 'DollarSign', text: 'Create debt payoff plan', points: 10 });
@@ -144,7 +135,7 @@ export default function FinancialReadinessScore({ profileData }: FinancialReadin
         </div>
         <div className="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
           <div className="text-2xl font-black mb-1">
-            {(profileData.hasCompletedAssessment ? 15 : 0) + (profileData.hasPlan ? 15 : 0)}/30
+            0/0
           </div>
           <div className="text-xs opacity-75">Planning</div>
         </div>

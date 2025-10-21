@@ -98,18 +98,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9
     },
     {
-      url: `${SITE_URL}/dashboard/assessment`,
-      lastModified,
-      changeFrequency: "weekly" as const,
-      priority: 0.8
-    },
-    {
-      url: `${SITE_URL}/dashboard/plan`,
-      lastModified,
-      changeFrequency: "weekly" as const,
-      priority: 0.9
-    },
-    {
       url: `${SITE_URL}/dashboard/tools/tsp-modeler`,
       lastModified,
       changeFrequency: "weekly" as const,

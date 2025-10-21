@@ -12,6 +12,9 @@ import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import IntelCardLink from '@/app/components/les/IntelCardLink';
+import AuditProvenancePopover from '@/app/components/les/AuditProvenancePopover';
+import ExportAuditPDF from '@/app/components/les/ExportAuditPDF';
+import type { LesAuditResponse, PayFlag } from '@/app/types/les';
 
 interface Props {
   isPremium: boolean;
@@ -35,7 +38,7 @@ export default function PaycheckAuditClient({
   
   const [uploading, setUploading] = useState(false);
   const [parsing, setParsing] = useState(false);
-  const [auditResult, setAuditResult] = useState<any>(null);
+  const [auditResult, setAuditResult] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -65,12 +68,26 @@ export default function PaycheckAuditClient({
 
       if (!uploadRes.ok) {
         const err = await uploadRes.json();
-        throw new Error(err.error || 'Upload failed');
+        // Provide specific error messages based on error type
+        if (err.error?.includes('file too large') || err.error?.includes('File too large')) {
+          throw new Error('File size exceeds 5MB limit. Try compressing your PDF or exporting a smaller date range.');
+        } else if (err.error?.includes('PDF') || err.error?.includes('pdf')) {
+          throw new Error('Only PDF files are supported. Export your LES as PDF from myPay or your service\'s pay portal.');
+        } else if (err.error?.includes('quota') || err.error?.includes('limit')) {
+          throw new Error('Monthly upload limit reached. Upgrade to Premium for unlimited audits.');
+        } else {
+          throw new Error(err.error || 'Upload failed. Please try again.');
+        }
       }
 
-      const { uploadId } = await uploadRes.json();
+      const { uploadId, parsedOk } = await uploadRes.json();
 
       setUploading(false);
+
+      // Check if parse was successful
+      if (!parsedOk) {
+        throw new Error('PDF format not recognized. Try exporting from myPay or contact support if issue persists.');
+      }
 
       // Step 2: Run audit
       const auditRes = await fetch('/api/les/audit', {
@@ -81,14 +98,22 @@ export default function PaycheckAuditClient({
 
       if (!auditRes.ok) {
         const err = await auditRes.json();
-        throw new Error(err.error || 'Audit failed');
+        // Provide specific error messages based on error type
+        if (err.error?.includes('Profile') || err.error?.includes('profile')) {
+          throw new Error('Your profile is incomplete. Please update your rank, base, and dependent status in Profile Settings.');
+        } else if (err.error?.includes('not parsed')) {
+          throw new Error('LES parsing failed. Try re-uploading or use a different PDF export.');
+        } else {
+          throw new Error(err.error || 'Audit failed. Please try again.');
+        }
       }
 
       const result = await auditRes.json();
       setAuditResult(result);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      console.error('[Paycheck Audit] Error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred. Please try again.');
     } finally {
       setParsing(false);
     }
@@ -238,26 +263,79 @@ export default function PaycheckAuditClient({
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <div className="flex items-start gap-3">
-              <Icon name="AlertCircle" className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-red-900 mb-2">
-                  Audit Failed
-                </h3>
-                <p className="text-red-700 mb-4">{error}</p>
-                <button
-                  onClick={() => {
-                    setError(null);
-                    setAuditResult(null);
-                  }}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
-                >
-                  Try Again
-                </button>
+          <AnimatedCard>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <div className="flex items-start gap-3">
+                <Icon name="AlertCircle" className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-red-900 mb-2">
+                    Upload Failed
+                  </h3>
+                  <p className="text-red-700 mb-4">{error}</p>
+                  
+                  {/* Contextual Help */}
+                  <div className="bg-white bg-opacity-50 rounded p-4 mb-4">
+                    <h4 className="text-sm font-semibold text-red-900 mb-2">Quick Fixes:</h4>
+                    <ul className="space-y-1 text-sm text-red-800">
+                      {error.includes('profile') ? (
+                        <>
+                          <li className="flex items-start gap-2">
+                            <span>→</span>
+                            <a href="/dashboard/profile/setup" className="underline hover:text-red-900">
+                              Complete your profile
+                            </a>
+                          </li>
+                        </>
+                      ) : error.includes('PDF') || error.includes('format') ? (
+                        <>
+                          <li className="flex items-start gap-2">
+                            <span>→</span>
+                            <span>Export your LES from myPay as PDF (not screenshot)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span>→</span>
+                            <span>Ensure PDF is readable (not password-protected)</span>
+                          </li>
+                        </>
+                      ) : error.includes('limit') || error.includes('quota') ? (
+                        <>
+                          <li className="flex items-start gap-2">
+                            <span>→</span>
+                            <a href="/dashboard/upgrade?feature=les-auditor" className="underline hover:text-red-900">
+                              Upgrade to Premium for unlimited audits
+                            </a>
+                          </li>
+                        </>
+                      ) : (
+                        <li className="flex items-start gap-2">
+                          <span>→</span>
+                          <span>Contact support if issue persists</span>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        setError(null);
+                        setAuditResult(null);
+                      }}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                    >
+                      Try Again
+                    </button>
+                    <a
+                      href="/dashboard/support"
+                      className="px-4 py-2 bg-white text-red-700 border border-red-300 rounded-lg hover:bg-red-50 font-medium"
+                    >
+                      Get Help
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
         )}
 
         {/* Audit Results */}
@@ -271,16 +349,23 @@ export default function PaycheckAuditClient({
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       Audit Complete
                     </h2>
-                    <p className="text-gray-600">
-                      Pay period: {auditResult.month}/{auditResult.year}
+                    <p className="text-gray-600 mb-2">
+                      Pay period: {auditResult.snapshot.month}/{auditResult.snapshot.year}
                     </p>
+                    <AuditProvenancePopover snapshot={auditResult.snapshot} />
                   </div>
-                  <button
-                    onClick={() => setAuditResult(null)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium"
-                  >
-                    Upload Another
-                  </button>
+                  <div className="flex gap-2">
+                    <ExportAuditPDF 
+                      auditResult={auditResult}
+                      userProfile={userProfile}
+                    />
+                    <button
+                      onClick={() => setAuditResult(null)}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium"
+                    >
+                      Upload Another
+                    </button>
+                  </div>
                 </div>
 
                 {/* Flags Summary */}
@@ -289,7 +374,7 @@ export default function PaycheckAuditClient({
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-red-900">Critical Issues</span>
                       <span className="text-2xl font-bold text-red-600">
-                        {(auditResult.flags || []).filter((f: any) => f.severity === 'red').length}
+                        {(auditResult.flags || []).filter((f: PayFlag) => f.severity === 'red').length}
                       </span>
                     </div>
                   </div>
@@ -298,7 +383,7 @@ export default function PaycheckAuditClient({
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-yellow-900">Warnings</span>
                       <span className="text-2xl font-bold text-yellow-600">
-                        {(auditResult.flags || []).filter((f: any) => f.severity === 'yellow').length}
+                        {(auditResult.flags || []).filter((f: PayFlag) => f.severity === 'yellow').length}
                       </span>
                     </div>
                   </div>
@@ -307,7 +392,7 @@ export default function PaycheckAuditClient({
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-green-900">Verified</span>
                       <span className="text-2xl font-bold text-green-600">
-                        {(auditResult.flags || []).filter((f: any) => f.severity === 'green').length}
+                        {(auditResult.flags || []).filter((f: PayFlag) => f.severity === 'green').length}
                       </span>
                     </div>
                   </div>
@@ -317,7 +402,7 @@ export default function PaycheckAuditClient({
 
             {/* Flag Cards */}
             <div className="space-y-4">
-              {(auditResult.flags || []).map((flag: any, index: number) => {
+              {(auditResult.flags || []).map((flag: PayFlag, index: number) => {
                 const isRed = flag.severity === 'red';
                 const isYellow = flag.severity === 'yellow';
                 const isGreen = flag.severity === 'green';
@@ -353,7 +438,7 @@ export default function PaycheckAuditClient({
                                 isYellow ? 'warning' :
                                 'success'
                               }>
-                                {flag.code}
+                                {flag.flag_code}
                               </Badge>
                               <h3 className="text-lg font-semibold text-gray-900 mt-2">
                                 {flag.message}
@@ -362,17 +447,25 @@ export default function PaycheckAuditClient({
                           </div>
 
                           <p className="text-gray-700 mb-4">
-                            <strong>What to do:</strong> {flag.action}
+                            <strong>What to do:</strong> {flag.suggestion}
                           </p>
 
-                          {flag.details && (
+                          {flag.ref_url && (
                             <div className="bg-white bg-opacity-50 rounded p-3 mb-3 text-sm">
-                              <p className="text-gray-800">{flag.details}</p>
+                              <a 
+                                href={flag.ref_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                              >
+                                View Official Reference
+                                <Icon name="ExternalLink" className="w-3 h-3" />
+                              </a>
                             </div>
                           )}
 
                           {/* Intel Card Link */}
-                          <IntelCardLink flagCode={flag.code} />
+                          <IntelCardLink flagCode={flag.flag_code} />
                         </div>
                       </div>
                     </div>

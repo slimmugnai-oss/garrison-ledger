@@ -79,24 +79,17 @@ export async function depublishCriticalBlocks(): Promise<DepublishResult[]> {
  */
 if (require.main === module) {
   (async () => {
-    console.log('📦 Depublishing blocks with critical flags...\n');
 
     const results = await depublishCriticalBlocks();
 
     if (results.length === 0) {
-      console.log('✅ No blocks need to be depublished!');
       return;
     }
 
-    console.log(`📊 Depublished ${results.length} blocks:\n`);
 
     for (const result of results) {
-      console.log(`📄 ${result.title}`);
-      console.log(`   - Critical flags: ${result.criticalFlags}`);
-      console.log(`   - Status: ${result.previousStatus} → draft\n`);
     }
 
-    console.log('✅ Depublish complete!');
   })();
 }
 

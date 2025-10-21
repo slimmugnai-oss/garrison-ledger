@@ -17,7 +17,6 @@ export default function BaseComparisonPanel() {
         try {
           setComparisonList(JSON.parse(saved));
         } catch (e) {
-          console.error('Failed to parse comparison list:', e);
         }
       }
     }

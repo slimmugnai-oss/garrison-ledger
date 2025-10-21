@@ -22,7 +22,7 @@
 | **Calculators** | ✅ Live | 6 world-class tools |
 | **Intel Cards** | ✅ Live | 12 production cards with real data |
 | **Base Guides** | ✅ Live | 203 bases worldwide (163 CONUS, 40 OCONUS) |
-| **AI System** | ✅ Optimized | Gemini 2.0 Flash ($0.02/plan, 97% cheaper) |
+| **AI System** | ✅ Optimized | Gemini 2.0 Flash for content generation |
 | **Cost per User** | ✅ Profitable | $0.35/month (96.5% margin) |
 | **Mobile** | ✅ Optimized | Fully responsive, touch-optimized |
 | **Security** | ✅ Secure | RLS on all tables, secrets protected |
@@ -50,11 +50,12 @@
    - Integration with Base Navigator
 
 3. **Base Navigator** 🟢 *Active*
-   - Status: Core working, API configuration needed
+   - Status: Fully operational with BAH auto-population
    - 203 bases worldwide
    - Live weather data (OpenWeatherMap)
    - Housing market data (Zillow via RapidAPI)
    - School ratings (GreatSchools - premium only)
+   - Auto-filled BAH based on rank + base + dependents
    - Comfort index & cost of living
 
 4. **TDY Copilot** 🟢 *Active*
@@ -576,6 +577,28 @@ Annual: $578,400/year 🚀
 **Last System Audit:** 2025-10-20  
 **Next Scheduled Audit:** 2026-01-20  
 **System Health:** 🟢 EXCELLENT
+
+---
+
+## 🧹 RECENT CLEANUP (2025-01-20)
+
+### **Plan/Assessment System Removal**
+- ✅ **Removed** plan generation system (no longer used)
+- ✅ **Removed** assessment system (no longer used)
+- ✅ **Dropped** unused database tables: `user_plans`, `user_assessments`, `plan_cache`, `assessments_v2`
+- ✅ **Fixed** TypeScript errors and removed console statements
+- ✅ **Updated** navigation and dashboard components
+- ✅ **Cleaned** ~5,000+ lines of unused code
+
+### **Current Active Features**
+- **Intel Library** - Live BAH/BAS/TSP data
+- **Base Navigator** - Find perfect neighborhoods
+- **LES Auditor** - Catch pay errors automatically
+- **PCS Copilot** - Maximize DITY move profit
+- **TDY Copilot** - Build travel vouchers fast
+- **6 Calculators** - TSP, SDP, House Hacking, PCS Planner, On-Base Savings, Retirement
+- **3 Resources** - Listening Post, Directory, Refer & Earn
+- **4 Toolkits** - PCS Hub, Career Hub, Deployment, On-Base Shopping
 
 ---
 

@@ -76,28 +76,11 @@ async function getSystemMetrics() {
     .not('rank', 'is', null)
     .not('branch', 'is', null);
 
-  // Users who completed assessment
-  const { count: assessmentsCompleted } = await supabase
-    .from('user_assessments')
-    .select('*', { count: 'exact', head: true })
-    .eq('completed', true);
-
-  // Users who generated a plan
-  const { count: plansGenerated } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true });
-
-  // Plans generated today
-  const { count: plansToday } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', today);
-
-  // Plans last 7 days
-  const { count: plans7d } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', sevenDaysAgo);
+  // Assessment and plan systems removed - set to 0
+  const assessmentsCompleted = 0;
+  const plansGenerated = 0;
+  const plansToday = 0;
+  const plans7d = 0;
 
   // === TOOL USAGE ===
 

@@ -26,7 +26,6 @@ export default function BillingPortalButton() {
         setBusy(false);
       }
     } catch (error) {
-      console.error("Error opening billing portal:", error);
       alert("Error opening billing portal. Please try again.");
       setBusy(false);
     }

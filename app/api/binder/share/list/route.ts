@@ -41,7 +41,6 @@ export async function GET(req: NextRequest) {
   const { data: shares, error } = await query.order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching shares:", error);
     return NextResponse.json(
       { error: "Failed to fetch shares" },
       { status: 500 }

@@ -35,7 +35,6 @@ export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
       throw error;
     }
 
-    console.error('[TDY OCR] PDF parsing error:', error);
     throw new UnsupportedFormatError(
       'Could not read PDF. Try a different file or use Manual Entry.'
     );

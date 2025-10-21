@@ -73,7 +73,6 @@ export async function POST(req: NextRequest) {
           });
 
       } catch (error) {
-        console.error(`[Weekly Digest] Failed for ${subscriber.email}:`, error);
         failedCount++;
       }
     }
@@ -86,7 +85,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Weekly Digest] Error:', error);
     return NextResponse.json({ error: "Failed to send digests" }, { status: 500 });
   }
 }

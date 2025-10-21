@@ -38,7 +38,6 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
-    console.error('[Analytics] Failed to record event:', error);
   }
 }
 
@@ -86,7 +85,6 @@ export async function POST(req: NextRequest) {
         .eq('year', currentYear);
 
       if (countError) {
-        console.error('[LES Upload] Quota check error:', countError);
         return NextResponse.json(
           { error: 'Failed to check upload quota' },
           { status: 500 }
@@ -161,7 +159,6 @@ export async function POST(req: NextRequest) {
       });
 
     if (uploadError) {
-      console.error('[LES Upload] Storage upload error:', uploadError);
       return NextResponse.json(
         { error: 'Failed to upload file' },
         { status: 500 }
@@ -187,7 +184,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError || !uploadRecord) {
-      console.error('[LES Upload] DB insert error:', insertError);
       
       // Cleanup storage on DB failure
       await supabaseAdmin.storage.from('les_raw').remove([storagePath]);
@@ -223,7 +219,6 @@ export async function POST(req: NextRequest) {
           .insert(lineRows);
 
         if (linesError) {
-          console.error('[LES Upload] Lines insert error:', linesError);
           // Don't fail the whole upload - mark as parse failure
         } else {
           parsedOk = true;
@@ -242,7 +237,6 @@ export async function POST(req: NextRequest) {
         .eq('id', uploadRecord.id);
 
     } catch (parseError) {
-      console.error('[LES Upload] Parse error:', parseError);
       // Parse failed - record stays with parsed_ok = false
     }
 
@@ -278,7 +272,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[LES Upload] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -293,7 +286,7 @@ export async function POST(req: NextRequest) {
 async function getUserTier(userId: string): Promise<'free' | 'premium'> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('user_entitlements')
+      .from('entitlements')
       .select('tier')
       .eq('user_id', userId)
       .maybeSingle();

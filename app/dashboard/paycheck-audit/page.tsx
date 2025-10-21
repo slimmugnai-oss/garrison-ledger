@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import PaycheckAuditClient from './PaycheckAuditClient';
+import ProfileIncompletePrompt from '@/app/components/les/ProfileIncompletePrompt';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -64,20 +65,34 @@ export default async function PaycheckAuditPage() {
 
   const hasReachedFreeLimit = !isPremium && (uploadsThisMonth || 0) >= 1;
 
+  // Check profile completeness
+  const missingFields: string[] = [];
+  if (!profile?.rank) missingFields.push('rank');
+  if (!profile?.current_base) missingFields.push('current_base');
+  if (profile?.has_dependents === null || profile?.has_dependents === undefined) {
+    missingFields.push('has_dependents');
+  }
+
+  const profileComplete = missingFields.length === 0;
+
   return (
     <>
       <Header />
-      <PaycheckAuditClient
-        isPremium={isPremium}
-        userProfile={{
-          rank: profile?.rank,
-          currentBase: profile?.current_base,
-          hasDependents: profile?.has_dependents
-        }}
-        history={history || []}
-        hasReachedFreeLimit={hasReachedFreeLimit}
-        uploadsThisMonth={uploadsThisMonth || 0}
-      />
+      {!profileComplete ? (
+        <ProfileIncompletePrompt missingFields={missingFields} />
+      ) : (
+        <PaycheckAuditClient
+          isPremium={isPremium}
+          userProfile={{
+            rank: profile?.rank,
+            currentBase: profile?.current_base,
+            hasDependents: profile?.has_dependents
+          }}
+          history={history || []}
+          hasReachedFreeLimit={hasReachedFreeLimit}
+          uploadsThisMonth={uploadsThisMonth || 0}
+        />
+      )}
       <Footer />
     </>
   );

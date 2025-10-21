@@ -59,7 +59,6 @@ export default function SdpStrategist() {
             setAmount(data.input.amount);
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -96,12 +95,12 @@ export default function SdpStrategist() {
                 input: { amount },
                 output: { hy: data.hy, cons: data.cons, mod: data.mod }
               })
-            }).catch(console.error);
+            });
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
       } catch (error) {
-        console.error('Error calculating SDP:', error);
+        console.error('Error saving analysis:', error);
       } finally {
         setLoading(false);
       }
@@ -350,21 +349,16 @@ export default function SdpStrategist() {
               <button
                 onClick={async (e) => {
                   e.preventDefault();
-                  console.log('SDP Generate button clicked!');
                   setLoading(true);
                   try {
-                    console.log('Sending SDP request with:', { amount });
                     const response = await fetch('/api/tools/sdp', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ amount })
                     });
-                    console.log('SDP response status:', response.status);
                     const data = await response.json();
-                    console.log('SDP response data:', data);
                     setApiData(data);
                   } catch (error) {
-                    console.error('Error calculating SDP:', error);
                   } finally {
                     setLoading(false);
                   }

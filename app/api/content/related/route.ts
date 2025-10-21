@@ -22,7 +22,6 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      console.error('Error fetching related content:', error);
       return NextResponse.json(
         { error: 'Failed to fetch related content' },
         { status: 500 }
@@ -36,7 +35,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Related content error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

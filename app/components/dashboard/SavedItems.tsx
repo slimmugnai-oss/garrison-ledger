@@ -19,7 +19,7 @@ interface SavedScenario {
   id: string;
   calculator_type: string;
   scenario_name: string;
-  inputs: any;
+  inputs: Record<string, unknown>;
   result_summary: string;
   created_at: string;
 }
@@ -46,7 +46,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
       if (contentResponse.ok) {
         const contentData = await contentResponse.json();
         const blocks = contentData.bookmarks
-          ?.map((b: any) => b.content_block)
+          ?.map((b: { content_block: unknown }) => b.content_block)
           .filter(Boolean)
           .slice(0, 6) || [];
         setSavedContent(blocks);
@@ -59,7 +59,6 @@ export default function SavedItems({ userId }: SavedItemsProps) {
         setSavedScenarios(scenariosData.scenarios?.slice(0, 6) || []);
       }
     } catch (error) {
-      console.error('Error fetching saved items:', error);
     } finally {
       setLoading(false);
     }
@@ -78,7 +77,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
   };
 
   const getCalculatorIcon = (type: string) => {
-    const icons: Record<string, any> = {
+    const icons: Record<string, string> = {
       'tsp-modeler': 'BarChart',
       'sdp-strategist': 'PiggyBank',
       'pcs-planner': 'Truck',
@@ -244,7 +243,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
             >
               <div className="flex items-start justify-between mb-2">
                 <Icon 
-                  name={getCalculatorIcon(scenario.calculator_type)} 
+                  name={getCalculatorIcon(scenario.calculator_type) as any} 
                   className={`h-5 w-5 ${getCalculatorColor(scenario.calculator_type)}`} 
                 />
                 <Icon name="Calculator" className="h-4 w-4 text-green-600" />

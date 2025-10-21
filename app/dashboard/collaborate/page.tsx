@@ -45,7 +45,6 @@ export default function CollaboratePage() {
         setSharedData(data.sharedData);
       }
     } catch (error) {
-      console.error('Error fetching collaboration data:', error);
     } finally {
       setLoading(false);
     }
@@ -65,7 +64,6 @@ export default function CollaboratePage() {
         setInviteCode(data.code);
       }
     } catch (error) {
-      console.error('Error creating invitation:', error);
     }
   };
 
@@ -96,7 +94,6 @@ export default function CollaboratePage() {
         alert(data.error || 'Failed to connect');
       }
     } catch (error) {
-      console.error('Error using code:', error);
       alert('Failed to connect');
     }
   };
@@ -117,7 +114,6 @@ export default function CollaboratePage() {
         alert('Disconnected successfully');
       }
     } catch (error) {
-      console.error('Error disconnecting:', error);
     }
   };
 

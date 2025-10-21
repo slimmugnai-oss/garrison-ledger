@@ -28,7 +28,6 @@ export async function GET() {
       count: data?.length || 0,
     });
   } catch (error) {
-    console.error("[Admin Content Pending] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

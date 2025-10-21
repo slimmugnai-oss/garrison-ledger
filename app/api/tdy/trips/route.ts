@@ -28,14 +28,12 @@ export async function GET() {
       .limit(20);
 
     if (error) {
-      console.error('[TDY Trips] Database error:', error);
       return NextResponse.json({ error: 'Failed to fetch trips' }, { status: 500 });
     }
 
     return NextResponse.json({ trips: trips || [] });
 
   } catch (error) {
-    console.error('[TDY Trips] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

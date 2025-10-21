@@ -21,7 +21,6 @@ export async function isPremiumServer(userId: string): Promise<boolean> {
       .maybeSingle(); // Use maybeSingle instead of single to handle no results
     
     if (error || !access) {
-      console.log('Premium check - v_user_access error or no data:', error?.message || 'no data');
       // Fallback to entitlements table
       const { data: entitlements } = await sb
         .from("entitlements")
@@ -34,7 +33,6 @@ export async function isPremiumServer(userId: string): Promise<boolean> {
     
     return !!access?.is_premium;
   } catch (error) {
-    console.error('Premium check - Exception:', error);
     // Emergency fallback for known premium users during development
     const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
     return premiumUsers.includes(userId);

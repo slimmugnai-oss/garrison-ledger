@@ -52,7 +52,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) {
-    console.error("Error renaming file:", error);
     return NextResponse.json(
       { error: "Failed to rename file" },
       { status: 500 }

@@ -140,19 +140,16 @@ async function computeBAH(params: {
       .maybeSingle();
 
     if (error) {
-      console.error('[Expected] BAH query error:', error);
       return null;
     }
 
     if (!data) {
       // No BAH rate found - omit rather than guess
-      console.warn(`[Expected] No BAH rate found for ${paygrade} at ${mha_or_zip} (deps: ${with_dependents})`);
       return null;
     }
 
     return data.rate_cents;
   } catch (error) {
-    console.error('[Expected] BAH computation error:', error);
     return null;
   }
 }
@@ -170,7 +167,6 @@ function computeBAS(paygrade: string): number | null {
     }
     return null;
   } catch (error) {
-    console.error('[Expected] BAS computation error:', error);
     return null;
   }
 }
@@ -207,7 +203,6 @@ async function computeCOLA(params: {
       if (error.code === '42P01') { // Table doesn't exist
         return null;
       }
-      console.error('[Expected] COLA query error:', error);
       return null;
     }
 
@@ -218,7 +213,6 @@ async function computeCOLA(params: {
 
     return data.monthly_amount_cents;
   } catch (error) {
-    console.error('[Expected] COLA computation error:', error);
     return null;
   }
 }
@@ -257,7 +251,6 @@ async function computeSpecialPays(
     
     return [];
   } catch (error) {
-    console.error('[Expected] Special pays computation error:', error);
     return [];
   }
 }

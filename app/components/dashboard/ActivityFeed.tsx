@@ -38,7 +38,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       // Add bookmark activities
       if (bookmarks.bookmarks) {
-        bookmarks.bookmarks.slice(0, 3).forEach((b: any) => {
+        bookmarks.bookmarks.slice(0, 3).forEach((b: { id: string; content_block?: { title?: string }; created_at: string; content_id: string }) => {
           recentActivities.push({
             id: b.id,
             type: 'bookmark',
@@ -51,7 +51,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       // Add scenario activities
       if (scenarios.scenarios) {
-        scenarios.scenarios.slice(0, 3).forEach((s: any) => {
+        scenarios.scenarios.slice(0, 3).forEach((s: { id: string; scenario_name: string; created_at: string; calculator_type: string }) => {
           recentActivities.push({
             id: s.id,
             type: 'scenario',
@@ -69,7 +69,6 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       setActivities(recentActivities.slice(0, 5));
     } catch (error) {
-      console.error('Error fetching activities:', error);
     } finally {
       setLoading(false);
     }

@@ -214,7 +214,6 @@ export async function GET(req: NextRequest) {
       section,
     });
   } catch (error) {
-    console.error("[Enhanced Library API] Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

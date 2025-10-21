@@ -49,7 +49,6 @@ export async function GET(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error("[Entitlements API] Query error:", error);
       return NextResponse.json(
         { error: "Failed to fetch entitlement data" },
         { status: 500 }
@@ -79,7 +78,6 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Entitlements API] Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

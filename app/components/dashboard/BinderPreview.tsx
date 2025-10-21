@@ -61,7 +61,6 @@ export default function BinderPreview({ userId }: BinderPreviewProps) {
         });
       }
     } catch (error) {
-      console.error('Error fetching binder data:', error);
     } finally {
       setLoading(false);
     }

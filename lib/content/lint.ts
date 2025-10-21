@@ -276,7 +276,6 @@ function extractSample(lines: string[], lineNum: number, context = 2): string {
  */
 if (require.main === module) {
   (async () => {
-    console.log('🔍 Running content linter...\n');
 
     const results = await lintAllContentBlocks();
 
@@ -284,23 +283,16 @@ if (require.main === module) {
     const totalFlags = results.reduce((sum, r) => sum + r.totalFlags, 0);
     const criticalFlags = results.reduce((sum, r) => sum + r.criticalFlags, 0);
 
-    console.log(`📊 Results:`);
-    console.log(`- Blocks scanned: ${totalBlocks}`);
-    console.log(`- Total flags: ${totalFlags}`);
-    console.log(`- Critical flags: ${criticalFlags}\n`);
 
     // Show blocks with issues
     const blocksWithIssues = results.filter(r => r.totalFlags > 0);
 
     if (blocksWithIssues.length === 0) {
-      console.log('✅ No issues found!');
       return;
     }
 
-    console.log(`⚠️  ${blocksWithIssues.length} blocks with issues:\n`);
 
     for (const result of blocksWithIssues) {
-      console.log(`📄 ${result.title} (${result.totalFlags} flags, ${result.criticalFlags} critical)`);
 
       const grouped = result.flags.reduce((acc, flag) => {
         acc[flag.flagType] = (acc[flag.flagType] || 0) + 1;
@@ -308,10 +300,8 @@ if (require.main === module) {
       }, {} as Record<string, number>);
 
       for (const [type, count] of Object.entries(grouped)) {
-        console.log(`   - ${type}: ${count}`);
       }
 
-      console.log('');
     }
 
     process.exit(totalFlags > 0 ? 1 : 0);

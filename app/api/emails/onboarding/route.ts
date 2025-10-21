@@ -70,7 +70,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('[Onboarding Email] Error:', error);
     return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }
@@ -137,9 +136,9 @@ function getOnboardingEmail(day: number, userName: string): { subject: string; h
             <strong>87 plans generated this week</strong> - Join them!
           </p>
           
-          <a href="https://garrison-ledger.vercel.app/dashboard/assessment" 
+          <a href="https://garrison-ledger.vercel.app/dashboard/tools" 
              style="display: inline-block; background: linear-gradient(to right, #2563eb, #7c3aed); color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; margin: 24px 0;">
-            Take 5-Minute Assessment →
+            Explore Financial Tools →
           </a>
         </div>
       `

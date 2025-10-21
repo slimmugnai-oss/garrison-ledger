@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
     return await getDashboardAnalytics(userId, daysAgo, metricType);
 
   } catch (error) {
-    console.error('Analytics error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch analytics' },
       { status: 500 }
@@ -203,8 +202,8 @@ async function getDashboardAnalytics(userId: string, since: Date, metricType: st
     userInteractions?.filter(i => i.action === 'view').map(i => i.content_id) || []
   ));
 
-  let domainBreakdown: Record<string, number> = {};
-  let typeBreakdown: Record<string, number> = {};
+  const domainBreakdown: Record<string, number> = {};
+  const typeBreakdown: Record<string, number> = {};
 
   if (viewedContentIds.length > 0) {
     const { data: viewedContent } = await supabaseAdmin
@@ -326,7 +325,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      console.error('Error tracking event:', error);
       return NextResponse.json(
         { error: 'Failed to track event' },
         { status: 500 }
@@ -336,7 +334,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Analytics tracking error:', error);
     return NextResponse.json(
       { error: 'Failed to track event' },
       { status: 500 }

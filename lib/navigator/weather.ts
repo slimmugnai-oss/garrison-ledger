@@ -20,30 +20,25 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) {
-    console.log(`[Weather] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
 
   if (!apiKey) {
-    console.warn('[Weather] ⚠️ GOOGLE_WEATHER_API_KEY not configured');
     return { index10: 7, note: 'Weather data unavailable' };
   }
 
   try {
     // Step 1: Get lat/lon for ZIP code (we need this for Google Weather API)
-    console.log(`[Weather] Geocoding ZIP ${zip} for weather lookup...`);
     const { lat, lon } = await geocodeZipForWeather(zip);
     
     if (!lat || !lon) {
-      console.warn(`[Weather] Could not geocode ZIP ${zip} for weather`);
       return { index10: 7, note: 'Weather data unavailable' };
     }
 
     // Step 2: Fetch from Google Weather API
     // Official Google Weather API endpoint
-    console.log(`[Weather] Fetching weather for ${lat}, ${lon} (ZIP ${zip})...`);
     
     const response = await fetch(
       `https://weather.googleapis.com/v1/currentConditions:lookup?key=${apiKey}&location.latitude=${lat}&location.longitude=${lon}`,
@@ -57,7 +52,6 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Weather] Google API error for ZIP ${zip}:`, response.status, errorText);
       
       // Return neutral score on error (doesn't penalize)
       return {
@@ -67,16 +61,13 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     }
 
     const data = await response.json();
-    console.log(`[Weather] DEBUG: Response structure:`, JSON.stringify(data, null, 2).substring(0, 500));
     
     const result = analyzeWeatherData(data);
     await setCache(cacheKey, result, 24 * 3600);
     
-    console.log(`[Weather] ✅ Weather fetched for ZIP ${zip}: ${result.note}`);
     return result;
 
   } catch (error) {
-    console.error('[Weather] Fetch error:', error);
     return {
       index10: 7,
       note: 'Weather data unavailable'
@@ -105,14 +96,12 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
     );
 
     if (!response.ok) {
-      console.error(`[Weather] Geocoding error for ZIP ${zip}:`, response.status);
       return { lat: 0, lon: 0 };
     }
 
     const data = await response.json();
     
     if (data.length === 0) {
-      console.warn(`[Weather] No geocoding results for ZIP ${zip}`);
       return { lat: 0, lon: 0 };
     }
 
@@ -127,7 +116,6 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
     return result;
 
   } catch (error) {
-    console.error('[Weather] Geocoding fetch error:', error);
     return { lat: 0, lon: 0 };
   }
 }
@@ -198,7 +186,6 @@ function analyzeWeatherData(data: any): { index10: number; note: string } {
     };
 
   } catch (error) {
-    console.error('[Weather] Analysis error:', error, 'Data:', JSON.stringify(data).substring(0, 200));
     return {
       index10: 7,
       note: 'Unable to analyze weather data'

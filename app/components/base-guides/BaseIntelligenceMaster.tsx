@@ -71,7 +71,6 @@ function BaseCard({ base }: BaseCardProps) {
       
       setExternalData(data);
     } catch (error) {
-      console.error('Failed to load external data:', error);
       setExternalData({ error: 'Failed to load data' });
     } finally {
       setLoadingData(false);

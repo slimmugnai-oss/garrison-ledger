@@ -19,7 +19,6 @@ export async function GET(req: NextRequest) {
     });
 
     if (error) {
-      console.error("[Referral Leaderboard] Error:", error);
       throw error;
     }
 
@@ -38,7 +37,6 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Referral Leaderboard] Fatal error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

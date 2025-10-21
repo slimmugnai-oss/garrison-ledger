@@ -149,7 +149,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Report Actual] Error:', error);
     return NextResponse.json({ 
       error: 'Report failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 
@@ -206,7 +205,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('[Get Accuracy Stats] Error:', error);
     return NextResponse.json({ 
       error: 'Failed to fetch stats' 
     }, { status: 500 });

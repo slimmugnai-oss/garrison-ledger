@@ -77,7 +77,6 @@ export async function POST(req: NextRequest) {
     .move(currentFile.object_path, newObjectPath);
 
   if (moveError) {
-    console.error("Error moving file in storage:", moveError);
     return NextResponse.json(
       { error: "Failed to move file in storage" },
       { status: 500 }
@@ -97,7 +96,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (updateError) {
-    console.error("Error updating file metadata:", updateError);
     // Try to rollback the storage move
     await supabase.storage.from("life_binder").move(newObjectPath, currentFile.object_path);
     return NextResponse.json(

@@ -205,33 +205,23 @@ function isInsideComment(content: string, position: number): boolean {
  */
 if (require.main === module) {
   (async () => {
-    console.log('🔧 Running content auto-fix...\n');
 
     const results = await autofixAllContentBlocks();
 
     const totalBlocks = results.length;
     const totalFixes = results.reduce((sum, r) => sum + r.fixesApplied, 0);
 
-    console.log(`📊 Results:`);
-    console.log(`- Blocks fixed: ${totalBlocks}`);
-    console.log(`- Total fixes: ${totalFixes}\n`);
 
     if (totalBlocks === 0) {
-      console.log('✅ No fixes needed!');
       return;
     }
 
-    console.log(`🔧 Fixed blocks:\n`);
 
     for (const result of results) {
-      console.log(`📄 ${result.title} (${result.fixesApplied} fixes)`);
       for (const change of result.changes) {
-        console.log(`   ✓ ${change}`);
       }
-      console.log('');
     }
 
-    console.log('✅ Auto-fix complete!');
   })();
 }
 

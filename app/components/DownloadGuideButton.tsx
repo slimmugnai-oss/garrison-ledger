@@ -28,7 +28,6 @@ export default function DownloadGuideButton() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Download error:', error);
       alert('Failed to download guide. Please try again.');
     } finally {
       setGenerating(false);

@@ -57,7 +57,6 @@ export async function getBASRate(params: BASParams): Promise<ProviderResult> {
     };
 
   } catch (error) {
-    console.error('[BAS Provider] Error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

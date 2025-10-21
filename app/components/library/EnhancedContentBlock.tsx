@@ -71,7 +71,7 @@ export default function EnhancedContentBlock({
     const lines = content.split('\n');
     let inTable = false;
     let tableRows: string[] = [];
-    let result: string[] = [];
+    const result: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();

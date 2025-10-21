@@ -22,9 +22,8 @@ const RED_FLAGS = {
   BENEFITS: /\b(TSP match|BRS|High-3|GI Bill|SGLI|TRICARE|BAH rate)\b/gi,
 };
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    console.log('[Content Audit] Starting audit...');
     
     // Load all content blocks
     const { data: blocks, error } = await supabaseAdmin
@@ -33,16 +32,14 @@ export async function GET(req: NextRequest) {
       .order('content_rating', { ascending: false });
     
     if (error) {
-      console.error('[Content Audit] Error loading blocks:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     
-    console.log(`[Content Audit] Loaded ${blocks.length} content blocks`);
     
     const results = {
       auditDate: new Date().toISOString(),
       total: blocks.length,
-      flagged: [] as any[],
+      flagged: [] as Record<string, unknown>[],
       stats: {
         specificYears: 0,
         specificAmounts: 0,
@@ -54,7 +51,7 @@ export async function GET(req: NextRequest) {
         oldContent: 0,
         noDisclaimer: 0,
       },
-      recommendations: [] as any[]
+      recommendations: [] as string[]
     };
     
     for (const block of blocks) {
@@ -250,13 +247,10 @@ export async function GET(req: NextRequest) {
       });
     }
     
-    console.log('[Content Audit] Complete');
-    console.log(`[Content Audit] Flagged ${results.flagged.length} of ${results.total} blocks (${Math.round(results.flagged.length / results.total * 100)}%)`);
     
     return NextResponse.json(results);
     
   } catch (error) {
-    console.error('[Content Audit] Error:', error);
     return NextResponse.json({ 
       error: "Audit failed",
       details: error instanceof Error ? error.message : 'Unknown error'

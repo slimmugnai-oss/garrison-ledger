@@ -25,29 +25,24 @@ export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryA
   const cacheKey = `military:v4:${zip}`; // v4 - unrestricted API key
   const cached = await getCache<MilitaryAmenitiesData>(cacheKey);
   if (cached) {
-    console.log(`[Military] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   
   if (!apiKey) {
-    console.warn('[Military] ⚠️ Google Maps API key not configured - set GOOGLE_MAPS_API_KEY in Vercel');
     return getDefaultMilitaryData();
   }
 
   try {
     // Step 1: Get lat/lon for ZIP code
-    console.log(`[Military] Geocoding ZIP ${zip}...`);
     const { lat, lon } = await geocodeZip(zip);
     
     if (!lat || !lon) {
-      console.warn(`[Military] Could not geocode ZIP ${zip}`);
       return getDefaultMilitaryData();
     }
 
     // Step 2: Fetch military facilities using Google Places API
-    console.log(`[Military] Fetching military facilities for ${lat}, ${lon} (ZIP ${zip})...`);
     
     const [commissaryDist, exchangeDist, vaDist, housingDist] = await Promise.all([
       findNearestMilitaryFacility(lat, lon, 'commissary', apiKey),
@@ -68,12 +63,10 @@ export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryA
     };
     
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
-    console.log(`[Military] ✅ Military amenities data fetched for ZIP ${zip}: Score ${militaryScore}/10`);
     
     return result;
 
   } catch (error) {
-    console.error('[Military] Fetch error:', error);
     return getDefaultMilitaryData();
   }
 }
@@ -97,14 +90,12 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     );
 
     if (!response.ok) {
-      console.error(`[Military] Geocoding error for ZIP ${zip}:`, response.status);
       return { lat: 0, lon: 0 };
     }
 
     const data = await response.json();
     
     if (data.length === 0) {
-      console.warn(`[Military] No geocoding results for ZIP ${zip}`);
       return { lat: 0, lon: 0 };
     }
 
@@ -117,7 +108,6 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     return result;
 
   } catch (error) {
-    console.error('[Military] Geocoding fetch error:', error);
     return { lat: 0, lon: 0 };
   }
 }
@@ -137,7 +127,6 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
     
     const searchTerm = searchTerms[facilityType as keyof typeof searchTerms] || facilityType;
     
-    console.log(`[Military] Searching for ${facilityType} using Places API (New)...`);
     
     // New Places API uses POST with different format for text search
     const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
@@ -164,26 +153,21 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Military] ❌ Places API (New) HTTP ${response.status} for ${facilityType}:`, errorText);
       return null;
     }
 
     const data = await response.json();
-    console.log(`[Military] Raw API response for ${facilityType}:`, JSON.stringify(data).substring(0, 500));
     
     if (data.error) {
-      console.error(`[Military] ❌ API error for ${facilityType}:`, data.error);
       return null;
     }
     
     if (!data.places || data.places.length === 0) {
-      console.log(`[Military] No ${facilityType} found nearby`);
       return null;
     }
 
     // Get the nearest result
     const nearest = data.places[0];
-    console.log(`[Military] ✅ Found ${facilityType}: ${nearest.displayName?.text || 'Unknown'}`);
     
     // Calculate distance using Haversine formula
     const distance = calculateDistance(lat, lon, nearest.location.latitude, nearest.location.longitude);
@@ -191,7 +175,6 @@ async function findNearestMilitaryFacility(lat: number, lon: number, facilityTyp
     return Math.round(distance * 10) / 10; // Round to 1 decimal place
 
   } catch (error) {
-    console.error(`[Military] Places fetch error for ${facilityType}:`, error);
     return null;
   }
 }

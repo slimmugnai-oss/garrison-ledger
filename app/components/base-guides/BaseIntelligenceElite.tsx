@@ -98,7 +98,6 @@ function BaseCardElite({ base, index, onCompare, isComparing, onFavorite, isFavo
       setExternalData(data);
       setRetryCount(0);
     } catch (error) {
-      console.error('Failed to load external data:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to load data';
       setError(errorMsg);
       
@@ -460,7 +459,6 @@ export default function BaseIntelligenceElite() {
       try {
         setFavoriteBases(JSON.parse(saved));
       } catch (e) {
-        console.error('Failed to load favorites:', e);
       }
     }
   }, []);

@@ -58,7 +58,6 @@ export async function POST(req: NextRequest) {
     .remove([file.object_path]);
 
   if (storageError) {
-    console.error("Error deleting file from storage:", storageError);
     // Continue anyway - the metadata deletion is more important
   }
 
@@ -70,7 +69,6 @@ export async function POST(req: NextRequest) {
     .eq("user_id", userId);
 
   if (deleteError) {
-    console.error("Error deleting file metadata:", deleteError);
     return NextResponse.json(
       { error: "Failed to delete file metadata" },
       { status: 500 }

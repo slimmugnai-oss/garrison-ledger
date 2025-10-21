@@ -245,7 +245,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (snapshotError) {
-      console.error('[PCS Estimate] Snapshot error:', snapshotError);
     }
 
     // Update claim with entitlements
@@ -292,7 +291,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[PCS Estimate] Error:', error);
     return NextResponse.json({ 
       error: 'Calculation failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 

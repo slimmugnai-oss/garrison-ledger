@@ -40,7 +40,6 @@ export async function getCache<T>(key: string): Promise<T | null> {
     return (payload.value !== undefined ? payload.value : payload) as T;
 
   } catch (error) {
-    console.error('[Cache] getCache error:', error);
     return null;
   }
 }
@@ -72,11 +71,9 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
       });
 
     if (error) {
-      console.error('[Cache] setCache error:', error);
     }
 
   } catch (error) {
-    console.error('[Cache] setCache error:', error);
   }
 }
 
@@ -90,7 +87,6 @@ export async function deleteCache(key: string): Promise<void> {
       .delete()
       .eq('base_id', key);
   } catch (error) {
-    console.error('[Cache] deleteCache error:', error);
   }
 }
 
@@ -104,7 +100,6 @@ export async function deleteCachePattern(pattern: string): Promise<void> {
       .delete()
       .ilike('base_id', `${pattern}%`);
   } catch (error) {
-    console.error('[Cache] deleteCachePattern error:', error);
   }
 }
 

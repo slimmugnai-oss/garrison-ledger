@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
   const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
   const { data: ent, error: entError } = await sb.from("entitlements").select("stripe_customer_id, tier, status").eq("user_id", userId).maybeSingle();
   
-  console.log('[Billing Portal] User:', userId, 'Entitlement:', ent, 'Error:', entError);
   
   let customerId = ent?.stripe_customer_id;
   
@@ -26,20 +25,16 @@ export async function POST(req: NextRequest) {
           customerId = customers.data[0].id;
           // Update DB with found customer ID
           await sb.from("entitlements").update({ stripe_customer_id: customerId }).eq("user_id", userId);
-          console.log('[Billing Portal] Found and saved customer ID:', customerId);
         }
       }
     } catch (err) {
-      console.error('[Billing Portal] Stripe lookup failed:', err);
     }
   }
   
   if (!customerId) {
-    console.log('[Billing Portal] Full entitlement data:', JSON.stringify(ent));
   }
   
   if (!customerId) {
-    console.error('[Billing Portal] No customer ID found for user:', userId);
     return NextResponse.json({ 
       error: "No Stripe customer found",
       message: "Your subscription exists but Stripe customer ID is missing. Please contact support to link your account.",

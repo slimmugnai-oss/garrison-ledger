@@ -34,7 +34,6 @@ export async function getPerDiemRate(
   const gsaApiKey = process.env.GSA_API_KEY;
 
   if (!gsaApiKey) {
-    console.warn('[Per Diem] GSA API key not configured - using fallback rates');
     return getFallbackRate();
   }
 
@@ -61,7 +60,6 @@ export async function getPerDiemRate(
     );
 
     if (!response.ok) {
-      console.error('[Per Diem] API error:', response.status);
       return getFallbackRate();
     }
 
@@ -79,7 +77,6 @@ export async function getPerDiemRate(
     return rate;
 
   } catch (error) {
-    console.error('[Per Diem] Fetch error:', error);
     return getFallbackRate();
   }
 }
@@ -102,7 +99,6 @@ export async function computePerDiemSpans(args: {
   const rate = await getPerDiemRate(destination, startDate);
 
   if (!rate) {
-    console.warn(`[Per Diem] No rate found for ${destination}`);
     // Return with null rates - will generate RATE_LOOKUP_FAILED flag
     return [{
       locality: normalizeLocality(destination),

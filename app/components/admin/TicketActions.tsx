@@ -51,7 +51,6 @@ export default function TicketActions({
       router.refresh();
 
     } catch (err) {
-      console.error('Error updating ticket:', err);
       setError(err instanceof Error ? err.message : 'Failed to update ticket');
     } finally {
       setIsUpdating(false);

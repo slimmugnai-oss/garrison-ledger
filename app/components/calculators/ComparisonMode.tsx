@@ -49,7 +49,6 @@ export default function ComparisonMode({
         setScenarios(data.scenarios || []);
       }
     } catch (error) {
-      console.error('Error loading scenarios:', error);
     }
   }
 
@@ -91,7 +90,6 @@ export default function ComparisonMode({
         alert('Failed to save scenario. Please try again or check if database migrations are deployed.');
       }
     } catch (error) {
-      console.error('Error saving scenario:', error);
       alert('Failed to save scenario. This feature requires database migration deployment. Check DEPLOYMENT_GUIDE.md');
     } finally {
       setSaving(false);
@@ -117,7 +115,6 @@ export default function ComparisonMode({
         alert('Failed to delete scenario');
       }
     } catch (error) {
-      console.error('Error deleting scenario:', error);
       alert('Failed to delete scenario');
     }
   }

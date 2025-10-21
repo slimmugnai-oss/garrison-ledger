@@ -86,7 +86,6 @@ export default function TspModeler() {
             }
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -152,12 +151,12 @@ export default function TspModeler() {
                 input: { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } },
                 output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff }
               })
-            }).catch(console.error);
+            });
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
       } catch (error) {
-        console.error('Error calculating TSP:', error);
+        console.error('Error saving analysis:', error);
       } finally {
         setLoading(false);
       }
@@ -286,10 +285,8 @@ export default function TspModeler() {
               <button
                 onClick={async (e) => {
                   e.preventDefault();
-                  console.log('TSP Generate button clicked!');
                   setLoading(true);
                   try {
-                    console.log('Sending TSP request with:', { age, retire: ret, balance: bal, monthly: cont, mix: { C: wC, S: wS, I: wI, F: wF, G: wG } });
                     const response = await fetch('/api/tools/tsp', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -301,12 +298,9 @@ export default function TspModeler() {
                         mix: { C: wC, S: wS, I: wI, F: wF, G: wG }
                       })
                     });
-                    console.log('TSP response status:', response.status);
                     const data = await response.json();
-                    console.log('TSP response data:', data);
                     setApiData(data);
                   } catch (error) {
-                    console.error('Error calculating TSP:', error);
                   } finally {
                     setLoading(false);
                   }

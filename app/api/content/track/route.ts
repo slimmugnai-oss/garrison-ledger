@@ -39,7 +39,6 @@ export async function POST(request: Request) {
       });
 
     if (error) {
-      console.error('Error tracking interaction:', error);
       return NextResponse.json(
         { error: 'Failed to track interaction' },
         { status: 500 }
@@ -53,7 +52,6 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Track interaction error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

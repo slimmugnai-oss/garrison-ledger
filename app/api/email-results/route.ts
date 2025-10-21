@@ -238,7 +238,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (emailError) {
-      console.error('Error sending email:', emailError);
       return NextResponse.json(
         { error: "Failed to send email" },
         { status: 500 }
@@ -250,7 +249,6 @@ export async function POST(req: NextRequest) {
       emailId: emailData?.id
     });
   } catch (error) {
-    console.error('Error in email-results:', error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

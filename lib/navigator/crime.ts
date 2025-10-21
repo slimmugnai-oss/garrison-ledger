@@ -24,29 +24,24 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
   const cacheKey = `crime:v2:${zip}`; // v2 to bust old cache
   const cached = await getCache<CrimeData>(cacheKey);
   if (cached) {
-    console.log(`[Crime] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.CRIME_API_KEY;
   
   if (!apiKey) {
-    console.warn('[Crime] ⚠️ Crime API key not configured - set CRIME_API_KEY in Vercel');
     return getDefaultCrimeData();
   }
 
   try {
     // Step 1: Get lat/lon for ZIP code
-    console.log(`[Crime] Geocoding ZIP ${zip}...`);
     const { lat, lon } = await geocodeZip(zip);
     
     if (!lat || !lon) {
-      console.warn(`[Crime] Could not geocode ZIP ${zip}`);
       return getDefaultCrimeData();
     }
 
     // Step 2: Fetch crime data from FBI Crime Data API
-    console.log(`[Crime] Fetching crime data for ZIP ${zip}...`);
     const response = await fetch(
       `https://api.usa.gov/crime/fbi/sapi/api/nibrs/violent-crime/offense/national/2022/2022`,
       {
@@ -59,7 +54,6 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Crime] API error for ZIP ${zip}:`, response.status, errorText);
       return getDefaultCrimeData();
     }
 
@@ -67,12 +61,10 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
     const crimeData = parseCrimeData(data);
     
     await setCache(cacheKey, crimeData, 30 * 24 * 3600); // 30 days
-    console.log(`[Crime] ✅ Crime data fetched for ZIP ${zip}: Safety score ${crimeData.safety_score}/10`);
     
     return crimeData;
 
   } catch (error) {
-    console.error('[Crime] Fetch error:', error);
     return getDefaultCrimeData();
   }
 }
@@ -96,14 +88,12 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     );
 
     if (!response.ok) {
-      console.error(`[Crime] Geocoding error for ZIP ${zip}:`, response.status);
       return { lat: 0, lon: 0 };
     }
 
     const data = await response.json();
     
     if (data.length === 0) {
-      console.warn(`[Crime] No geocoding results for ZIP ${zip}`);
       return { lat: 0, lon: 0 };
     }
 
@@ -116,7 +106,6 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     return result;
 
   } catch (error) {
-    console.error('[Crime] Geocoding fetch error:', error);
     return { lat: 0, lon: 0 };
   }
 }
@@ -160,7 +149,6 @@ function parseCrimeData(data: any): CrimeData {
     };
 
   } catch (error) {
-    console.error('[Crime] Parse error:', error);
     return getDefaultCrimeData();
   }
 }

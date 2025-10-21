@@ -119,18 +119,6 @@ export default async function SettingsPage() {
                   Manage
                 </button>
               </div>
-              <div className="flex items-center justify-between p-4 bg-surface-hover rounded-lg border border-border">
-                <div>
-                  <div className="font-semibold text-text">Assessment Data</div>
-                  <div className="text-sm text-muted mt-1">Your saved assessment answers and preferences</div>
-                </div>
-                <a 
-                  href="/dashboard/assessment"
-                  className="px-4 py-2 bg-surface border border-border rounded-lg text-sm font-semibold text-text hover:bg-surface-hover transition-colors"
-                >
-                  Retake
-                </a>
-              </div>
             </div>
           </AnimatedCard>
 

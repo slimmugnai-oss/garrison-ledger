@@ -114,7 +114,6 @@ export default function PcsFinancialPlanner() {
             setPpmOther(data.input.ppmOther || 100);
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -143,10 +142,8 @@ export default function PcsFinancialPlanner() {
           setPpmWeight(result.data.weight_allowance);
           track('entitlements_fetched', { rank: rankGroup, dependency: dependencyStatus });
         } else {
-          console.error('Failed to fetch entitlements:', result.error);
         }
       } catch (error) {
-        console.error('Error fetching entitlements:', error);
       } finally {
         setLoadingEntitlements(false);
       }
@@ -205,7 +202,7 @@ export default function PcsFinancialPlanner() {
               netProfit
             }
           })
-        }).catch(console.error);
+        });
       }, 2000);
       saveTimeoutRef.current = timeout;
     }

@@ -105,7 +105,6 @@ Please analyze this article and create a curated atomic content block following 
       
       curated = JSON.parse(jsonText.trim());
     } catch {
-      console.error('[Curate] Failed to parse Gemini response:', text);
       return NextResponse.json(
         { error: "Failed to parse AI response", raw: text },
         { status: 500 }
@@ -132,7 +131,6 @@ Please analyze this article and create a curated atomic content block following 
     });
 
   } catch (error) {
-    console.error('[Curate] Gemini API error:', error);
     return NextResponse.json(
       { 
         error: "AI curation failed", 

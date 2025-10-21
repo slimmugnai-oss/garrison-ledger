@@ -78,7 +78,6 @@ async function processRSSFeed(
   const errors: string[] = [];
   
   try {
-    console.log(`[RSS] Processing: ${source.id}`);
     
     // Try to fetch and parse the feed with better error handling
     let feedData;
@@ -86,7 +85,6 @@ async function processRSSFeed(
       feedData = await parser.parseURL(source.url);
     } catch (error) {
       // If parsing fails, try to get raw content and clean it
-      console.log(`[RSS] Parse failed for ${source.id}, trying raw fetch...`, error);
       const response = await fetch(source.url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -147,7 +145,6 @@ async function processRSSFeed(
       
       if (!insertError) {
         newItems++;
-        console.log(`[RSS] ✓ New: ${item.title}`);
       } else {
         errors.push(`${item.link}: ${insertError.message}`);
       }
@@ -171,7 +168,6 @@ async function processWebScrape(
   const errors: string[] = [];
   
   try {
-    console.log(`[Scrape] Processing: ${source.id}`);
     
     // Fetch the index page with realistic browser headers
     const response = await fetch(source.url, {
@@ -219,7 +215,6 @@ async function processWebScrape(
       .filter((url, index, self) => self.indexOf(url) === index) // Unique
       .slice(0, 10); // Limit to 10 per scrape
     
-    console.log(`[Scrape] Found ${links.length} links on ${source.id}`);
     
     for (const link of links) {
       processed++;
@@ -232,7 +227,6 @@ async function processWebScrape(
         .maybeSingle();
       
       if (existing) {
-        console.log(`[Scrape] Skipping duplicate: ${link}`);
         continue;
       }
       
@@ -295,7 +289,6 @@ async function processWebScrape(
         
         if (!insertError) {
           newItems++;
-          console.log(`[Scrape] ✓ New: ${title}`);
         } else {
           errors.push(`${link}: ${insertError.message}`);
         }
@@ -304,7 +297,6 @@ async function processWebScrape(
         await new Promise(resolve => setTimeout(resolve, 2000));
         
       } catch (articleError) {
-        console.error(`[Scrape] Failed to fetch article ${link}:`, articleError);
         // Continue to next article
       }
     }
@@ -340,7 +332,6 @@ export async function GET(req: NextRequest) {
     const sourcesData = await readFile(sourcesPath, 'utf-8');
     sources = JSON.parse(sourcesData);
   } catch (error) {
-    console.error('[Ingest] Failed to load feed-sources.json:', error);
     return NextResponse.json({ error: "Failed to load feed sources" }, { status: 500 });
   }
   
@@ -375,7 +366,6 @@ export async function GET(req: NextRequest) {
       } else if (source.type === 'web_scrape') {
         result = await processWebScrape(source, supabase);
       } else {
-        console.warn(`[Ingest] Unknown source type: ${source.type}`);
         continue;
       }
       
@@ -389,7 +379,6 @@ export async function GET(req: NextRequest) {
       }
       
     } catch (error) {
-      console.error(`[Ingest] Fatal error processing ${source.id}:`, error);
       allErrors.push(`${source.id}: Fatal error`);
     }
   }

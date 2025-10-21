@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Content] Recompute as-of error:', error);
     return NextResponse.json(
       {
         error: 'Internal server error',

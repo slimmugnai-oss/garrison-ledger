@@ -41,7 +41,6 @@ export default function PaymentButton({
         window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
     } finally {
       setLoading(false);
     }

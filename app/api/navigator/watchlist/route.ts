@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      console.error('[Watchlist] Database error:', error);
       return NextResponse.json({ error: 'Failed to save watchlist' }, { status: 500 });
     }
 
@@ -93,7 +92,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('[Watchlist POST] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -126,14 +124,12 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error('[Watchlist GET] Database error:', error);
       return NextResponse.json({ error: 'Failed to fetch watchlist' }, { status: 500 });
     }
 
     return NextResponse.json({ watchlist: data });
 
   } catch (error) {
-    console.error('[Watchlist GET] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

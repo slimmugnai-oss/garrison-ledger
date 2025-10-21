@@ -42,7 +42,6 @@ export function trackEvent(event: AnalyticsEvent, properties?: EventProperties) 
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
-    console.log(`[Analytics] ${event}`, properties);
   }
 
   // Send to our backend for custom analytics
@@ -51,7 +50,7 @@ export function trackEvent(event: AnalyticsEvent, properties?: EventProperties) 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ event, properties, timestamp: new Date().toISOString() })
-    }).catch(console.error);
+    });
   }
 }
 

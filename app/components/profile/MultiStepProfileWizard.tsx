@@ -75,7 +75,6 @@ export default function MultiStepProfileWizard() {
       // Redirect to dashboard
       router.push('/dashboard?onboarding=complete');
     } catch (error) {
-      console.error('Profile submission error:', error);
       alert('Failed to save profile. Please try again.');
     } finally {
       setIsSubmitting(false);

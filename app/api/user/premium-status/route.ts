@@ -25,7 +25,6 @@ export async function GET() {
 
     return NextResponse.json({ isPremium });
   } catch (error) {
-    console.error('Error checking premium status:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

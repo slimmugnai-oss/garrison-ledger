@@ -111,7 +111,6 @@ export async function POST(req: NextRequest) {
         .trim();
       triageData = JSON.parse(cleanJson);
     } catch {
-      console.error("[Triage] Failed to parse Gemini response:", responseText);
       return NextResponse.json({ 
         error: "Failed to parse AI response",
         raw: responseText 
@@ -135,7 +134,6 @@ export async function POST(req: NextRequest) {
       .eq('id', feedItemId);
 
     if (updateError) {
-      console.error("[Triage] Failed to update feed item:", updateError);
     }
 
     return NextResponse.json({
@@ -150,7 +148,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error("[Triage] Fatal error:", error);
     return NextResponse.json(
       { 
         error: "Internal server error",

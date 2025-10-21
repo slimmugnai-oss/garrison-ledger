@@ -88,11 +88,9 @@ export default function PCSCopilotClient({
           branch: userProfile.branch || ''
         });
       } else {
-        console.error('Failed to create claim:', result.error);
         alert('Failed to create claim. Please try again.');
       }
     } catch (error) {
-      console.error('Error creating claim:', error);
       alert('Failed to create claim. Please try again.');
     } finally {
       setIsCreating(false);

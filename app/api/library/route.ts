@@ -70,7 +70,6 @@ export async function GET(req: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error("[Library API] Query error:", error);
       return NextResponse.json(
         { error: "Failed to fetch content blocks" },
         { status: 500 }
@@ -88,7 +87,6 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Library API] Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

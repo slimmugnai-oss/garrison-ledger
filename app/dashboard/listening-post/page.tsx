@@ -40,7 +40,6 @@ function ListeningPostContent() {
         const data = await response.json();
         setFeedItems(data.items || []);
       } catch (err) {
-        console.error('Error loading feed:', err);
         setError('Failed to load news feed. Please try again.');
       } finally {
         setLoading(false);

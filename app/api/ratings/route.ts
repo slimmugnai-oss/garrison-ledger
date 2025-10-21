@@ -32,7 +32,6 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      console.error('Error fetching rating:', error);
       return NextResponse.json(
         { error: 'Failed to fetch rating' },
         { status: 500 }
@@ -45,7 +44,6 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Ratings GET error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -94,7 +92,6 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error('Error saving rating:', error);
       return NextResponse.json(
         { error: 'Failed to save rating' },
         { status: 500 }
@@ -121,7 +118,6 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Ratings POST error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

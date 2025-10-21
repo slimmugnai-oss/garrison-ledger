@@ -23,8 +23,7 @@ export async function GET() {
 
     return NextResponse.json({ data });
 
-  } catch (error) {
-    console.error('Error fetching conversion funnel:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch data' },
       { status: 500 }

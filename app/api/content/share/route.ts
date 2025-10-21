@@ -44,7 +44,6 @@ export async function GET(request: NextRequest) {
     return await getSharedWithMe(userId);
 
   } catch (error) {
-    console.error('Share GET error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch shared content' },
       { status: 500 }
@@ -116,7 +115,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (shareError) {
-      console.error('Error creating share:', shareError);
       return NextResponse.json(
         { error: 'Failed to create share' },
         { status: 500 }
@@ -136,7 +134,6 @@ export async function POST(request: NextRequest) {
         .insert(recipientRecords);
 
       if (recipientError) {
-        console.error('Error adding recipients:', recipientError);
       }
     }
 
@@ -172,7 +169,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Share POST error:', error);
     return NextResponse.json(
       { error: 'Failed to create share' },
       { status: 500 }
@@ -227,7 +223,6 @@ export async function DELETE(request: NextRequest) {
       .eq('id', shareId);
 
     if (deleteError) {
-      console.error('Error deleting share:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete share' },
         { status: 500 }
@@ -237,7 +232,6 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Share DELETE error:', error);
     return NextResponse.json(
       { error: 'Failed to delete share' },
       { status: 500 }
@@ -333,7 +327,6 @@ async function getMyShares(userId: string) {
     .limit(50);
 
   if (error) {
-    console.error('Error fetching my shares:', error);
     return NextResponse.json(
       { error: 'Failed to fetch shares' },
       { status: 500 }
@@ -372,7 +365,6 @@ async function getSharedWithMe(userId: string) {
     .limit(50);
 
   if (error) {
-    console.error('Error fetching shared with me:', error);
     return NextResponse.json(
       { error: 'Failed to fetch shared content' },
       { status: 500 }

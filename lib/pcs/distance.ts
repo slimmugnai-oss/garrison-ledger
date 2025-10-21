@@ -37,7 +37,6 @@ export async function calculateDistance(
   const destinationBase = findBase(destination);
 
   if (!originBase || !destinationBase) {
-    console.warn('[Distance] Base not found:', { origin, destination });
     return { miles: 1000, method: 'cached' }; // Default fallback
   }
 
@@ -54,7 +53,6 @@ export async function calculateDistance(
         return { miles: googleDistance, method: 'google-maps' };
       }
     } catch (error) {
-      console.error('[Distance] Google Maps error:', error);
       // Fall through to Haversine
     }
   }

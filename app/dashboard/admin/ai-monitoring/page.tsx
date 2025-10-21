@@ -24,26 +24,10 @@ async function getAIMetrics() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Plans today
-  const today = new Date().toISOString().split('T')[0];
-  const { count: plansToday } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', today);
-
-  // Plans this month
-  const firstDayOfMonth = new Date();
-  firstDayOfMonth.setDate(1);
-  firstDayOfMonth.setHours(0, 0, 0, 0);
-  const { count: plansThisMonth } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', firstDayOfMonth.toISOString());
-
-  // Total plans all time
-  const { count: totalPlans } = await supabase
-    .from('user_plans')
-    .select('*', { count: 'exact', head: true });
+  // Plans system removed - set to 0
+  const plansToday = 0;
+  const plansThisMonth = 0;
+  const totalPlans = 0;
 
   // Feed items curated (all time)
   const { count: curatedItems } = await supabase
@@ -329,10 +313,8 @@ export default async function AIMonitoringPage() {
   DATE(created_at) as date,
   COUNT(*) as plans,
   COUNT(*) * 0.02 as cost_usd
-FROM user_plans
-WHERE created_at >= NOW() - INTERVAL '30 days'
-GROUP BY DATE(created_at)
-ORDER BY date DESC;`}
+-- Plans system removed - no data available
+SELECT 'No plans system' as message;`}
                 </pre>
               </div>
 
@@ -343,11 +325,8 @@ ORDER BY date DESC;`}
   user_id,
   COUNT(*) as plan_count,
   COUNT(*) * 0.02 as cost_per_user
-FROM user_plans
-WHERE created_at >= NOW() - INTERVAL '7 days'
-GROUP BY user_id
-HAVING COUNT(*) > 5
-ORDER BY plan_count DESC;`}
+-- Plans system removed - no data available
+SELECT 'No plans system' as message;`}
                 </pre>
               </div>
 
@@ -358,10 +337,8 @@ ORDER BY plan_count DESC;`}
   DATE_TRUNC('month', created_at) as month,
   COUNT(*) as plans,
   COUNT(*) * 0.02 as total_cost
-FROM user_plans
-WHERE created_at >= DATE_TRUNC('month', NOW() - INTERVAL '6 months')
-GROUP BY month
-ORDER BY month DESC;`}
+-- Plans system removed - no cost data available
+SELECT 'No plans system' as message;`}
                 </pre>
               </div>
             </div>

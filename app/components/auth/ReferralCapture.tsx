@@ -36,7 +36,6 @@ export default function ReferralCapture() {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          console.log('Referral tracked successfully');
           localStorage.setItem(trackedKey, 'true');
           // Clear the cookie
           document.cookie = 'ref_code=; path=/; max-age=0';
@@ -46,7 +45,6 @@ export default function ReferralCapture() {
         }
       })
       .catch(err => {
-        console.error('Failed to track referral:', err);
       });
   }, [isSignedIn, user]);
 

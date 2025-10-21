@@ -37,7 +37,6 @@ async function recordAnalyticsEvent(userId: string, event: string, properties: R
       })
     });
   } catch (error) {
-    console.error('[Analytics] Failed to record event:', error);
   }
 }
 
@@ -114,7 +113,6 @@ export async function POST(req: NextRequest) {
       .eq('upload_id', uploadId);
 
     if (linesError) {
-      console.error('[LES Audit] Lines fetch error:', linesError);
       return NextResponse.json(
         { error: 'Failed to load parsed lines' },
         { status: 500 }
@@ -177,7 +175,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (snapshotError) {
-      console.error('[LES Audit] Snapshot insert error:', snapshotError);
       // Continue anyway - not critical
     }
 
@@ -203,7 +200,6 @@ export async function POST(req: NextRequest) {
         .insert(flagRows);
 
       if (flagsError) {
-        console.error('[LES Audit] Flags insert error:', flagsError);
         // Continue anyway - flags are in response
       }
     }
@@ -230,7 +226,6 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[LES Audit] Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -240,7 +235,6 @@ export async function POST(req: NextRequest) {
 
 /**
  * Get user profile with required fields for audit
- * TODO: Integrate with your user_profiles table structure
  */
 async function getUserProfile(userId: string): Promise<{
   paygrade: string;
@@ -249,27 +243,30 @@ async function getUserProfile(userId: string): Promise<{
   yos?: number;
 } | null> {
   try {
-    // This is a placeholder - adjust to match your actual profile schema
     const { data, error } = await supabaseAdmin
       .from('user_profiles')
-      .select('paygrade, duty_station, dependents, years_of_service')
+      .select('rank, current_base, has_dependents, time_in_service')
       .eq('user_id', userId)
       .maybeSingle();
 
     if (error || !data) {
-      console.warn('[LES Audit] Profile not found for user:', userId);
       return null;
     }
 
-    // Map your profile fields to expected format
+    // Validate required fields
+    if (!data.rank || !data.current_base || data.has_dependents === null) {
+      console.warn('[LES Audit] Profile incomplete for user:', userId);
+      return null;
+    }
+
+    // Map profile fields to expected format
     return {
-      paygrade: data.paygrade,
-      mha_or_zip: data.duty_station, // Adjust field name as needed
-      with_dependents: Boolean(data.dependents),
-      yos: data.years_of_service
+      paygrade: data.rank,
+      mha_or_zip: data.current_base,
+      with_dependents: Boolean(data.has_dependents),
+      yos: data.time_in_service || undefined
     };
   } catch (error) {
-    console.error('[LES Audit] Profile fetch error:', error);
     return null;
   }
 }

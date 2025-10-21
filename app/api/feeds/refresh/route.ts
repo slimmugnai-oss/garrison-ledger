@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
     // Refresh each source
     const results = [];
     for (const source of sources) {
-      console.log(`[Feeds] Refreshing ${source}...`);
       const result = await refreshSourceData(source);
       results.push({
         source,
@@ -67,7 +66,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[Feeds] Refresh error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',

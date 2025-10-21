@@ -44,10 +44,8 @@ async function getUserAnalytics() {
     .select('*', { count: 'exact', head: true })
     .eq('profile_completed', true);
 
-  // Get users with plans
-  const { count: usersWithPlans } = await supabase
-    .from('user_plans')
-    .select('user_id', { count: 'exact', head: true });
+  // Plans system removed - set to 0
+  const usersWithPlans = 0;
 
   // Get premium users
   const { count: premiumUsers } = await supabase
@@ -63,12 +61,8 @@ async function getUserAnalytics() {
     .select('*', { count: 'exact', head: true })
     .gte('created_at', sevenDaysAgo);
 
-  // Get active users (generated plan in last 30 days)
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const { count: activeUsers } = await supabase
-    .from('user_plans')
-    .select('user_id', { count: 'exact', head: true })
-    .gte('created_at', thirtyDaysAgo);
+  // Plans system removed - set to 0
+  const activeUsers = 0;
 
   // Get recent users with details
   const { data: recentUsers } = await supabase
@@ -236,7 +230,7 @@ LIMIT 12;`}
 {`SELECT 
   COUNT(*) as total_users,
   SUM(CASE WHEN profile_completed THEN 1 ELSE 0 END) as completed_profile,
-  (SELECT COUNT(*) FROM user_plans) as generated_plans,
+  0 as generated_plans,
   (SELECT COUNT(*) FROM entitlements WHERE tier = 'premium') as premium_users
 FROM user_profiles;`}
                 </pre>
@@ -254,10 +248,10 @@ FROM user_profiles;`}
   up.branch,
   COUNT(p.user_id) as plan_count
 FROM user_profiles up
-LEFT JOIN user_plans p ON up.user_id = p.user_id
-WHERE p.created_at >= NOW() - INTERVAL '30 days'
+-- Plans system removed - no plans to join
+WHERE up.created_at >= NOW() - INTERVAL '30 days'
 GROUP BY up.user_id, up.rank, up.branch
-ORDER BY plan_count DESC
+ORDER BY up.created_at DESC
 LIMIT 20;`}
                 </pre>
               </div>

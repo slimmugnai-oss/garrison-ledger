@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ totals });
 
   } catch (error) {
-    console.error('[TDY Estimate] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

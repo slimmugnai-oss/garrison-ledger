@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error tracking analytics:', error);
     // Don't fail the request - analytics shouldn't break user experience
     return NextResponse.json({ success: false }, { status: 200 });
   }

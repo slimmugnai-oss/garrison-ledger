@@ -80,7 +80,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ flags });
 
   } catch (error) {
-    console.error('[TDY Check] Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

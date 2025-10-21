@@ -20,7 +20,6 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
   const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
-    console.warn('[Housing] Zillow API not configured. Host:', host ? 'set' : 'missing', 'Key:', apiKey ? 'set' : 'missing');
     return null;
   }
 
@@ -37,7 +36,6 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
     );
 
     if (!response.ok) {
-      console.error('[Housing] API error:', response.status);
       return null;
     }
 
@@ -60,7 +58,6 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
     return medianCents;
 
   } catch (error) {
-    console.error('[Housing] Fetch error:', error);
     return null;
   }
 }
@@ -77,7 +74,6 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
   const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
-    console.warn('[Housing] Zillow API not configured. Host:', host ? 'set' : 'missing', 'Key:', apiKey ? 'set' : 'missing');
     return [];
   }
 
@@ -93,7 +89,6 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
     );
 
     if (!response.ok) {
-      console.error('[Housing] Listings API error:', response.status);
       return [];
     }
 
@@ -116,7 +111,6 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
     return listings;
 
   } catch (error) {
-    console.error('[Housing] Listings fetch error:', error);
     return [];
   }
 }
@@ -133,7 +127,6 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
   const apiKey = process.env.ZILLOW_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY;
 
   if (!host || !apiKey) {
-    console.warn('[Housing] Zillow API not configured for analyzeListingUrl');
     return null;
   }
 
@@ -141,7 +134,6 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
     // Extract ZPID from URL if possible
     const zpidMatch = url.match(/\/(\d+)_zpid/);
     if (!zpidMatch) {
-      console.warn('[Housing] Could not extract ZPID from URL:', url);
       return null;
     }
 
@@ -180,7 +172,6 @@ export async function analyzeListingUrl(url: string): Promise<Listing & { lat?: 
     return listing;
 
   } catch (error) {
-    console.error('[Housing] Analyze listing error:', error);
     return null;
   }
 }

@@ -26,29 +26,24 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
   const cacheKey = `amenities:v4:${zip}`; // v4 - unrestricted API key
   const cached = await getCache<AmenityData>(cacheKey);
   if (cached) {
-    console.log(`[Amenities] Cache hit for ZIP ${zip}`);
     return cached;
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   
   if (!apiKey) {
-    console.warn('[Amenities] ⚠️ Google Maps API key not configured - set GOOGLE_MAPS_API_KEY in Vercel');
     return getDefaultAmenitiesData();
   }
 
   try {
     // Step 1: Get lat/lon for ZIP code
-    console.log(`[Amenities] Geocoding ZIP ${zip}...`);
     const { lat, lon } = await geocodeZip(zip);
     
     if (!lat || !lon) {
-      console.warn(`[Amenities] Could not geocode ZIP ${zip}`);
       return getDefaultAmenitiesData();
     }
 
     // Step 2: Fetch amenities using Google Places API
-    console.log(`[Amenities] Fetching amenities for ${lat}, ${lon} (ZIP ${zip})...`);
     
     const amenitiesData = await Promise.all([
       fetchPlacesByType(lat, lon, 'supermarket', apiKey), // New API uses 'supermarket' not 'grocery_or_supermarket'
@@ -73,12 +68,10 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     };
     
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
-    console.log(`[Amenities] ✅ Amenities data fetched for ZIP ${zip}: Score ${amenitiesScore}/10`);
     
     return result;
 
   } catch (error) {
-    console.error('[Amenities] Fetch error:', error);
     return getDefaultAmenitiesData();
   }
 }
@@ -102,14 +95,12 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     );
 
     if (!response.ok) {
-      console.error(`[Amenities] Geocoding error for ZIP ${zip}:`, response.status);
       return { lat: 0, lon: 0 };
     }
 
     const data = await response.json();
     
     if (data.length === 0) {
-      console.warn(`[Amenities] No geocoding results for ZIP ${zip}`);
       return { lat: 0, lon: 0 };
     }
 
@@ -122,7 +113,6 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     return result;
 
   } catch (error) {
-    console.error('[Amenities] Geocoding fetch error:', error);
     return { lat: 0, lon: 0 };
   }
 }
@@ -132,7 +122,6 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
  */
 async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey: string): Promise<number> {
   try {
-    console.log(`[Amenities] Fetching ${type} from Places API (New)...`);
     
     // New Places API uses POST with different format
     const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
@@ -159,24 +148,19 @@ async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Amenities] ❌ Places API (New) HTTP ${response.status} for ${type}:`, errorText);
       return 0;
     }
 
     const data = await response.json();
-    console.log(`[Amenities] Raw API response for ${type}:`, JSON.stringify(data).substring(0, 500));
     
     if (data.error) {
-      console.error(`[Amenities] ❌ API error for ${type}:`, data.error);
       return 0;
     }
     
     const count = data.places?.length || 0;
-    console.log(`[Amenities] ✅ Found ${count} ${type} places`);
     return count;
 
   } catch (error) {
-    console.error(`[Amenities] Places fetch error for ${type}:`, error);
     return 0;
   }
 }

@@ -109,7 +109,6 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
       // Redirect to success page
       router.push(`/contact/success?ref=${data.ticketId}`);
     } catch (err) {
-      console.error('Contact form error:', err);
       setError(err instanceof Error ? err.message : 'Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);

@@ -82,7 +82,6 @@ export default async function RateBadge(props: RateBadgeProps) {
     );
 
   } catch (error) {
-    console.error('[RateBadge] Error:', error);
     return (
       <div className="inline-flex items-center gap-2 bg-red-50 border border-red-300 rounded-lg px-4 py-2.5">
         <Icon name="AlertCircle" className="w-5 h-5 text-red-600" />

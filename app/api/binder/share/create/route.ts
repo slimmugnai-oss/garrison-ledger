@@ -90,7 +90,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (shareError) {
-    console.error("Error creating share:", shareError);
     return NextResponse.json(
       { error: "Failed to create share link" },
       { status: 500 }

@@ -46,12 +46,6 @@ export default function QuickActions({ isPremium = false }: QuickActionsProps) {
       label: 'Upload Doc',
       action: () => router.push('/dashboard/binder'),
       color: 'bg-green-500/20 hover:bg-green-500/30 text-green-100'
-    },
-    {
-      icon: 'RefreshCw',
-      label: 'Update Plan',
-      action: () => router.push('/dashboard/assessment'),
-      color: 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-100'
     }
   ];
 

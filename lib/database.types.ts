@@ -554,6 +554,7 @@ export type Database = {
           emergency_fund_range: string | null
           financial_priorities: string[] | null
           gender: string | null
+          has_dependents: boolean | null
           has_efmp: boolean | null
           housing_situation: string | null
           last_assessment_at: string | null
@@ -610,6 +611,7 @@ export type Database = {
           emergency_fund_range?: string | null
           financial_priorities?: string[] | null
           gender?: string | null
+          has_dependents?: boolean | null
           has_efmp?: boolean | null
           housing_situation?: string | null
           last_assessment_at?: string | null
@@ -666,6 +668,7 @@ export type Database = {
           emergency_fund_range?: string | null
           financial_priorities?: string[] | null
           gender?: string | null
+          has_dependents?: boolean | null
           has_efmp?: boolean | null
           housing_situation?: string | null
           last_assessment_at?: string | null

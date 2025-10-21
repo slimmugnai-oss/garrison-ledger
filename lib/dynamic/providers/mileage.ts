@@ -30,7 +30,6 @@ export async function getMileageRate(params: MileageParams = {}): Promise<Provid
       .maybeSingle();
 
     if (error || !data) {
-      console.warn(`[Mileage Provider] No rate found for ${lookupKey}`);
       return {
         data: null,
         error: `No mileage rate found for ${lookupKey}`,
@@ -67,7 +66,6 @@ export async function getMileageRate(params: MileageParams = {}): Promise<Provid
     };
 
   } catch (error) {
-    console.error('[Mileage Provider] Error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

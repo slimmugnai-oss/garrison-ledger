@@ -50,7 +50,6 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('[Feeds] Status error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',

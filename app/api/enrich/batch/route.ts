@@ -52,7 +52,6 @@ export async function GET(req: NextRequest) {
       .limit(50);
 
     if (fetchError) {
-      console.error("[Batch Triage] Fetch error:", fetchError);
       throw fetchError;
     }
 
@@ -128,7 +127,6 @@ Return JSON:`;
         await new Promise(resolve => setTimeout(resolve, 2000));
 
       } catch (itemError) {
-        console.error(`[Batch Triage] Error processing ${item.id}:`, itemError);
         results.errors.push(`${item.id}: ${itemError instanceof Error ? itemError.message : 'Unknown error'}`);
       }
     }
@@ -140,7 +138,6 @@ Return JSON:`;
     });
 
   } catch (error) {
-    console.error("[Batch Triage] Fatal error:", error);
     return NextResponse.json(
       { 
         error: "Internal server error",

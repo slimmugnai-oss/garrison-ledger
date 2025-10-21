@@ -35,7 +35,6 @@ export default function ShareButton({ contentId, title }: ShareButtonProps) {
         }),
       });
     } catch (error) {
-      console.error('Error sharing:', error);
     }
   };
 

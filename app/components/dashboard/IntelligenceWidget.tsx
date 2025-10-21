@@ -15,7 +15,6 @@ async function getPersonalizedContent(userId: string) {
       });
 
     if (error) {
-      console.error('Error fetching personalized content:', error);
       return [];
     }
 
@@ -42,7 +41,6 @@ async function getPersonalizedContent(userId: string) {
 
     return [];
   } catch (error) {
-    console.error('Error in getPersonalizedContent:', error);
     return [];
   }
 }

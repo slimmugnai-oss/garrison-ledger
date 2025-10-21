@@ -88,7 +88,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching recommendations:', error);
     return NextResponse.json(
       { error: 'Failed to fetch recommendations' },
       { status: 500 }
@@ -161,7 +160,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error tracking calculator usage:', error);
     return NextResponse.json(
       { error: 'Failed to track usage' },
       { status: 500 }
@@ -218,7 +216,6 @@ Return ONLY a JSON array of recommendations in this exact format:
 
     const aiClient = getOpenAI();
     if (!aiClient) {
-      console.warn('OpenAI not configured, skipping AI recommendations');
       return;
     }
 
@@ -265,7 +262,6 @@ Return ONLY a JSON array of recommendations in this exact format:
       });
 
   } catch (error) {
-    console.error('Error generating AI recommendations:', error);
     // Don't throw - recommendations are nice-to-have, not critical
   }
 }

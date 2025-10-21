@@ -19,14 +19,26 @@ interface Props {
   userProfile: {
     rank?: string;
     currentBase?: string;
+    hasDependents?: boolean | null;
   };
   initialWatchlist: any;
+  initialBahCents?: number | null;
+  bahSource?: 'auto' | 'manual';
 }
 
-export default function BaseNavigatorClient({ base, isPremium, userProfile, initialWatchlist }: Props) {
+export default function BaseNavigatorClient({ 
+  base, 
+  isPremium, 
+  userProfile, 
+  initialWatchlist,
+  initialBahCents,
+  bahSource = 'manual'
+}: Props) {
   // Filters
   const [bedrooms, setBedrooms] = useState(3);
-  const [bahMonthlyCents, setBahMonthlyCents] = useState(250000); // Default $2,500
+  const [bahMonthlyCents, setBahMonthlyCents] = useState(
+    initialBahCents ?? 250000  // Use auto-filled value or default $2,500
+  );
   const [kidsGrades, setKidsGrades] = useState<KidsGrade[]>([]);
   
   // Results
@@ -48,7 +60,7 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
     setLoading(true);
     setError(null);
 
-    console.log('[Navigator] Computing rankings with filters:', {
+    console.log('Computing rankings with:', {
       bedrooms,
       bahMonthlyCents,
       kidsGrades
@@ -89,7 +101,6 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
       const newGrades = prev.includes(grade)
         ? prev.filter(g => g !== grade)
         : [...prev, grade];
-      console.log('Kids grades updated:', newGrades);
       return newGrades;
     });
   };
@@ -123,7 +134,6 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
         })
       });
     } catch (err) {
-      console.error('Failed to save watchlist:', err);
     }
   };
 
@@ -194,8 +204,25 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 placeholder="2500"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                For {base.mha} (check your LES)
+              <p className="text-xs text-gray-600 mt-1">
+                {bahSource === 'auto' && userProfile.rank && base.mha ? (
+                  <>
+                    Auto-filled for {userProfile.rank} 
+                    {userProfile.hasDependents ? ' with dependents' : ' without dependents'} 
+                    at {base.name} ({base.mha}). You can adjust if needed.
+                  </>
+                ) : userProfile.rank && userProfile.hasDependents === null ? (
+                  <>
+                    For {base.mha} (check your LES). 
+                    <a href="/dashboard/profile/quick-start" className="text-blue-600 hover:underline ml-1">
+                      Update your profile
+                    </a> to auto-fill this field.
+                  </>
+                ) : (
+                  <>
+                    For {base.mha} (check your LES or update your profile to auto-fill)
+                  </>
+                )}
               </p>
             </div>
 
@@ -264,38 +291,40 @@ export default function BaseNavigatorClient({ base, isPremium, userProfile, init
           </div>
         )}
 
-        {/* Results - Top 3 ZIP Codes Only */}
+        {/* Results */}
         {!loading && results.length > 0 && (
           <>
             {/* Header */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 font-lora mb-2">
-                Top 3 Neighborhoods
+                {isPremium ? `All ${results.length} Neighborhoods Ranked` : 'Top 3 Neighborhoods'}
               </h2>
               <p className="text-gray-600">
                 The best ZIP codes for your family, ranked by our comprehensive scoring algorithm.
               </p>
             </div>
 
-            {/* Top 3 ZIP Codes - Enhanced Layout */}
+            {/* Neighborhood Cards */}
             <div className="space-y-8">
-              {results.slice(0, 3).map((result, index) => {
+              {visibleResults.map((result, index) => {
                 const isWatched = watchedZips.includes(result.zip);
                 const scoreBreakdown = getScoreBreakdown(result.family_fit_score);
-                const rankColors = ['bg-gradient-to-r from-yellow-400 to-yellow-600', 'bg-gradient-to-r from-gray-300 to-gray-500', 'bg-gradient-to-r from-amber-600 to-amber-800'];
-                const rankLabels = ['🥇 #1 Choice', '🥈 #2 Choice', '🥉 #3 Choice'];
+                const rankColors = ['bg-gradient-to-r from-yellow-400 to-yellow-600', 'bg-gradient-to-r from-gray-300 to-gray-500', 'bg-gradient-to-r from-amber-600 to-amber-800', 'bg-gradient-to-r from-blue-500 to-blue-700'];
+                const rankLabels = ['🥇 #1 Choice', '🥈 #2 Choice', '🥉 #3 Choice', `#${index + 1} Choice`];
+                const rankColor = rankColors[Math.min(index, rankColors.length - 1)];
+                const rankLabel = index < 3 ? rankLabels[index] : `#${index + 1} Choice`;
 
                 return (
                   <AnimatedCard key={result.zip} delay={index * 0.1}>
                     <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
                       
                       {/* Header Section */}
-                      <div className={`${rankColors[index]} text-white p-6`}>
+                      <div className={`${rankColor} text-white p-6`}>
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-3 mb-2">
                               <span className="text-2xl font-bold">
-                                {rankLabels[index]}
+                                {rankLabel}
                               </span>
                               <h3 className="text-3xl font-bold">
                                 ZIP {result.zip}

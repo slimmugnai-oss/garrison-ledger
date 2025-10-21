@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
       message: 'Item marked as news only',
     });
   } catch (error) {
-    console.error("[Admin Content Reject] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

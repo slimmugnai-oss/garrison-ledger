@@ -62,7 +62,6 @@ export default function HouseHack() {
             setRent(data.input.rent || 2200);
           }
         })
-        .catch(console.error);
     }
   }, [isPremium]);
 
@@ -111,12 +110,12 @@ export default function HouseHack() {
                 input: { price, rate, tax, ins, bah, rent },
                 output: { costs: data.costs, income: data.income, verdict: data.verdict }
               })
-            }).catch(console.error);
+            });
           }, 1000);
           saveTimeoutRef.current = timeout;
         }
       } catch (error) {
-        console.error('Error calculating house hack:', error);
+        console.error('Error saving analysis:', error);
       } finally {
         setLoading(false);
       }
@@ -192,21 +191,16 @@ export default function HouseHack() {
               <button
                 onClick={async (e) => {
                   e.preventDefault();
-                  console.log('House Hacking Generate button clicked!');
                   setLoading(true);
                   try {
-                    console.log('Sending House Hacking request with:', { price, rate, tax, ins, bah, rent });
                     const response = await fetch('/api/tools/house', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ price, rate, tax, ins, bah, rent })
                     });
-                    console.log('House Hacking response status:', response.status);
                     const data = await response.json();
-                    console.log('House Hacking response data:', data);
                     setApiData(data);
                   } catch (error) {
-                    console.error('Error calculating House Hacking:', error);
                   } finally {
                     setLoading(false);
                   }

@@ -27,7 +27,6 @@ export default function FinancialOverview() {
       const result = await response.json();
       setData(result);
     } catch (error) {
-      console.error('Error fetching financial data:', error);
     } finally {
       setLoading(false);
     }

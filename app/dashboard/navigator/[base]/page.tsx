@@ -88,9 +88,32 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
   // Get user profile for BAH lookup
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('rank, current_base')
+    .select('rank, current_base, has_dependents')
     .eq('user_id', user.id)
     .maybeSingle();
+
+  // Query BAH rate if profile is complete
+  let bahRateCents: number | null = null;
+  let bahSource: 'auto' | 'manual' = 'manual';
+
+  if (profile?.rank && profile?.has_dependents !== null && baseData.mha) {
+    // Normalize rank format (E-6 → E06, O-3 → O03, etc.)
+    const normalizedRank = profile.rank.replace(/^([EOW])-(\d)$/, '$10$2');
+    
+    const { data: bahRate } = await supabase
+      .from('bah_rates')
+      .select('rate_cents')
+      .eq('mha', baseData.mha)
+      .eq('paygrade', normalizedRank)
+      .eq('with_dependents', profile.has_dependents)
+      .eq('effective_date', '2025-01-01')
+      .maybeSingle();
+
+    if (bahRate) {
+      bahRateCents = bahRate.rate_cents;
+      bahSource = 'auto';
+    }
+  }
 
   // Get user's watchlist for this base (if exists)
   const { data: watchlist } = await supabase
@@ -108,9 +131,12 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
         isPremium={isPremium}
         userProfile={{
           rank: profile?.rank,
-          currentBase: profile?.current_base
+          currentBase: profile?.current_base,
+          hasDependents: profile?.has_dependents
         }}
         initialWatchlist={watchlist}
+        initialBahCents={bahRateCents}
+        bahSource={bahSource}
       />
       <Footer />
     </>

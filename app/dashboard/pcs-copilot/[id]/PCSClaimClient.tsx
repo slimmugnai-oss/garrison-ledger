@@ -98,13 +98,10 @@ export default function PCSClaimClient({
         const result = await response.json();
         
         if (result.success) {
-          console.log('Upload successful:', result.document);
         } else {
-          console.error('Upload failed:', result.error);
           alert(`Upload failed: ${result.error}`);
         }
       } catch (error) {
-        console.error('Upload error:', error);
         alert('Upload failed. Please try again.');
       }
     }
@@ -143,11 +140,9 @@ export default function PCSClaimClient({
         // Refresh the page to show updated data
         window.location.reload();
       } else {
-        console.error('Calculation failed:', result.error);
         alert(`Calculation failed: ${result.error}`);
       }
     } catch (error) {
-      console.error('Calculation error:', error);
       alert('Calculation failed. Please try again.');
     } finally {
       setIsCalculating(false);
@@ -190,7 +185,6 @@ export default function PCSClaimClient({
       document.body.removeChild(a);
       
     } catch (error) {
-      console.error('Download error:', error);
       alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsDownloading(false);

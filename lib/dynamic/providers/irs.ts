@@ -35,7 +35,6 @@ export async function getIRSLimit(params: IRSParams): Promise<ProviderResult> {
       .maybeSingle();
 
     if (error || !data) {
-      console.warn(`[IRS Provider] No value found for ${lookupKey}`);
       return {
         data: null,
         error: `No IRS/TSP limit found for ${lookupKey}`,
@@ -86,7 +85,6 @@ export async function getIRSLimit(params: IRSParams): Promise<ProviderResult> {
     };
 
   } catch (error) {
-    console.error('[IRS Provider] Error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

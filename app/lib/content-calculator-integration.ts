@@ -295,7 +295,6 @@ export async function trackCalculatorLaunch(
       })
     });
   } catch (error) {
-    console.error('Failed to track calculator launch:', error);
   }
 }
 

@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
     });
 
   if (profileError) {
-    console.error("Error creating/updating profile:", profileError);
     return NextResponse.json(
       { error: "Failed to create user profile" },
       { status: 500 }
@@ -92,7 +91,6 @@ export async function POST(req: NextRequest) {
     .eq("user_id", userId);
 
   if (fetchError) {
-    console.error("Error fetching storage usage:", fetchError);
     return NextResponse.json(
       { error: "Failed to check storage usage" },
       { status: 500 }
@@ -151,17 +149,6 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (insertError) {
-    console.error("Error inserting file record:", insertError);
-    console.error("Insert data:", {
-      user_id: userId,
-      object_path: objectPath,
-      folder,
-      doc_type: docType || "other",
-      display_name: displayName,
-      size_bytes: sizeBytes,
-      content_type: contentType,
-      expires_on: expiresOn || null
-    });
     return NextResponse.json(
       { 
         error: "Failed to create file record",
@@ -179,7 +166,6 @@ export async function POST(req: NextRequest) {
     .createSignedUploadUrl(objectPath);
 
   if (signedError) {
-    console.error("Error creating signed URL:", signedError);
     // Rollback the file record
     await supabase.from("binder_files").delete().eq("id", fileRecord.id);
     return NextResponse.json(

@@ -20,6 +20,8 @@
     "content:update-feeds": "curl -X GET http://localhost:3000/api/feeds/refresh?source=BAH,COLA,IRS_TSP_LIMITS",
     "content:report": "ts-node lib/content/report.ts",
     "import-bah": "ts-node scripts/import-bah-csv.ts",
+    "generate-bah-sql": "ts-node scripts/generate-bah-sql.ts",
+    "generate-bah-sql-chunked": "ts-node scripts/generate-bah-sql-chunked.ts",
     "pre-deploy": "npm run health-check && npm run check-icons && npm run secret-scan && npm run build",
     "prepare": "husky"
   },

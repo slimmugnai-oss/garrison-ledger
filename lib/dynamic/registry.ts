@@ -122,7 +122,6 @@ export async function resolveDataRef(params: DataRefParams): Promise<ProviderRes
     return result;
 
   } catch (error) {
-    console.error('[Registry] resolveDataRef error:', error);
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Unknown error',

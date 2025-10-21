@@ -29,13 +29,11 @@ export async function GET(req: NextRequest) {
       });
 
     if (error) {
-      console.error('Error fetching scenarios:', error);
       return NextResponse.json({ error: "Failed to fetch scenarios" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, scenarios: data || [] });
   } catch (error) {
-    console.error('Error in GET calculator-scenarios:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -100,8 +98,6 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating scenario:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
       return NextResponse.json({ 
         error: "Failed to create scenario", 
         details: error.message,
@@ -115,7 +111,6 @@ export async function POST(req: NextRequest) {
       message: "Scenario saved successfully"
     });
   } catch (error) {
-    console.error('Error in POST calculator-scenarios:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -142,7 +137,6 @@ export async function DELETE(req: NextRequest) {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('Error deleting scenario:', error);
       return NextResponse.json({ error: "Failed to delete scenario" }, { status: 500 });
     }
 
@@ -151,7 +145,6 @@ export async function DELETE(req: NextRequest) {
       message: "Scenario deleted successfully"
     });
   } catch (error) {
-    console.error('Error in DELETE calculator-scenarios:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

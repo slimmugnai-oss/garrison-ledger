@@ -59,7 +59,6 @@ export default async function IntelLibraryPage({
   try {
     allCards = getAllIntelCards();
   } catch (error) {
-    console.error('[Intel Library] Error loading MDX cards:', error);
     allCards = [];
   }
 

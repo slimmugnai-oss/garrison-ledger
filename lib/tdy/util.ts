@@ -20,14 +20,12 @@ export async function getMileageRateCents(): Promise<number> {
       .maybeSingle();
 
     if (error || !data) {
-      console.warn('[TDY Util] Using fallback mileage rate from SSOT');
       return ssot.constants?.mileageCentsPerMileFallback || 67;
     }
 
     return data.value?.cents || 67;
     
   } catch (error) {
-    console.error('[TDY Util] Error fetching mileage rate:', error);
     return 67; // Fallback
   }
 }
