@@ -445,9 +445,11 @@ Annual: $578,400/year 🚀
    - [x] Navigation entry exists
    - [x] Field mapping bugs FIXED (audit-manual/route.ts)
    - [x] Profile integration verified (rank, current_base, has_dependents)
+   - [x] **Profile has_dependents bug FIXED** - auto-derives from num_children + marital_status
+   - [x] **RLS security migration APPLIED** - 8 policies + 3 storage policies secured
+   - [x] **All existing profiles backfilled** - 4 profiles, 0 NULL values
    - [x] Diagnostic complete - see docs/active/LES_AUDITOR_DIAGNOSTIC_2025-10-21.md
-   - [x] **Comprehensive audit complete** - see docs/active/PROFILE_COMPREHENSIVE_AUDIT_2025-10-21.md
-   - [ ] End-to-end production testing (after RLS migration)
+   - [x] **Ready for production testing** - all blockers resolved
    - [ ] User acceptance testing (beta users)
 
 ### **LES Auditor Audit Findings (2025-10-21)**
