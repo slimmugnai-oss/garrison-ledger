@@ -1,6 +1,6 @@
+import { FlatCompat } from "@eslint/eslintrc";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,17 +18,16 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
-      "scripts/**", // Content ingestion scripts
-      "resource toolkits/**", // Legacy toolkit files
+      "scripts/**",
+      "resource toolkits/**",
     ],
   },
   {
     rules: {
-      // Disable deprecated rules
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-unused-vars": "warn",
     },
-  },
+  }
 ];
 
 export default eslintConfig;

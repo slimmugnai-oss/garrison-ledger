@@ -12,15 +12,9 @@ if [ $TYPE_CHECK_EXIT -ne 0 ]; then
   exit 1
 fi
 
-# 2. ESLint check (temporarily disabled - Next.js 15 deprecated options)
-# echo "🔧 Running ESLint..."
-# npm run lint
-# LINT_EXIT=$?
-# if [ $LINT_EXIT -ne 0 ]; then
-#   echo "❌ ESLint errors found! Fix them before committing."
-#   exit 1
-# fi
-echo "⚠️  ESLint check temporarily disabled (Next.js 15 config migration needed)"
+# 2. ESLint check (non-blocking - shows issues but doesn't prevent commit)
+echo "🔧 Running ESLint (info only)..."
+npm run lint || echo "⚠️  ESLint found ${PIPESTATUS[0]} issues. Review output above."
 
 # 3. Secret scan
 echo "🔒 Running secret scan..."
