@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 
@@ -12,9 +14,7 @@ export const runtime = 'nodejs';
 export async function GET() {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Get user's tier
     const { data: entitlement } = await supabaseAdmin
@@ -28,24 +28,35 @@ export async function GET() {
       : 'free';
 
     // Check quota
-    const { data: quotaCheck } = await supabaseAdmin.rpc('check_ai_quota', {
+    const { data: quotaCheck, error: quotaError } = await supabaseAdmin.rpc('check_ai_quota', {
       p_user_id: userId,
       p_feature: 'ai_explainer',
       p_tier: tier
     });
 
-    return NextResponse.json(quotaCheck || {
+    if (quotaError) {
+      logger.warn('[ExplainQuota] Failed to check quota, failing open', { userId, error: quotaError });
+    }
+
+    const result = quotaCheck || {
+      canUse: true,
+      usedToday: 0,
+      dailyLimit: tier === 'free' ? 5 : 50,
+      remaining: tier === 'free' ? 5 : 50
+    };
+
+    logger.info('[ExplainQuota] Quota checked', { userId, tier, canUse: result.canUse, remaining: result.remaining });
+    return NextResponse.json(result);
+
+  } catch (error) {
+    // Fail open - don't block user from trying
+    logger.error('[ExplainQuota] Error checking quota, failing open', error);
+    return NextResponse.json({ 
       canUse: true,
       usedToday: 0,
       dailyLimit: 5,
       remaining: 5
     });
-
-  } catch (error) {
-    return NextResponse.json({ 
-      canUse: true,  // Fail open
-      error: 'Failed to check quota'
-    }, { status: 500 });
   }
 }
 
