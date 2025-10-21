@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Icon from '../../components/ui/Icon';
 import AnimatedCard from '../../components/ui/AnimatedCard';
-import { getBaseById, badgeColors } from '../../data/bases';
-import { addToComparison, removeFromComparison } from '../../lib/base-analytics';
+import { badgeColors } from '../../data/bases';
+import { removeFromComparison } from '../../lib/base-analytics';
 
 interface BaseComparisonData {
   id: string;
