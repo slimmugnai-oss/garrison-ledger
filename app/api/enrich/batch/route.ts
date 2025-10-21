@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -34,14 +36,19 @@ Return ONLY valid JSON:
 }`;
 
 export async function GET(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Verify authorization (cron secret)
     const authHeader = req.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
     
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      logger.warn('Unauthorized batch enrichment attempt');
+      throw Errors.unauthorized();
     }
+
+    logger.info('Starting batch enrichment');
 
     // Get unprocessed feed items (status = 'new')
     const { data: feedItems, error: fetchError } = await supabaseAdmin
@@ -52,16 +59,19 @@ export async function GET(req: NextRequest) {
       .limit(50);
 
     if (fetchError) {
-      throw fetchError;
+      throw Errors.databaseError('Failed to fetch feed items', { error: fetchError.message });
     }
 
     if (!feedItems || feedItems.length === 0) {
+      logger.info('No new feed items to enrich');
       return NextResponse.json({
         success: true,
         message: "No new feed items to process",
         processed: 0,
       });
     }
+
+    logger.info(`Found ${feedItems.length} feed items to enrich`);
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
     const results = {
@@ -113,7 +123,7 @@ Return JSON:`;
         }
 
         // Update feed item with triage results
-        await supabaseAdmin
+        const { error: updateError } = await supabaseAdmin
           .from('feed_items')
           .update({
             status: newStatus,
@@ -121,30 +131,44 @@ Return JSON:`;
           })
           .eq('id', item.id);
 
+        if (updateError) {
+          logger.warn('Failed to update feed item status', { 
+            itemId: item.id,
+            error: updateError.message
+          });
+        }
+
         results.processed++;
 
         // Rate limit: 1 request per 2 seconds (Gemini free tier)
         await new Promise(resolve => setTimeout(resolve, 2000));
 
       } catch (itemError) {
-        results.errors.push(`${item.id}: ${itemError instanceof Error ? itemError.message : 'Unknown error'}`);
+        const errorMsg = itemError instanceof Error ? itemError.message : 'Unknown error';
+        results.errors.push(`${item.id}: ${errorMsg}`);
+        logger.error('Failed to enrich feed item', itemError, { itemId: item.id });
       }
     }
+
+    const duration = Date.now() - startTime;
+    logger.info('Batch enrichment complete', {
+      duration,
+      processed: results.processed,
+      approved: results.approved,
+      needsReview: results.needsReview,
+      newsOnly: results.newsOnly,
+      errors: results.errors.length
+    });
 
     return NextResponse.json({
       success: true,
       results,
+      durationMs: duration,
       timestamp: new Date().toISOString(),
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

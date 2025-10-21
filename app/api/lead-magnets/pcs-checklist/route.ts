@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { logger } from '@/lib/logger';
+import { errorResponse } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 
@@ -9,6 +11,9 @@ export const runtime = "nodejs";
  * Can be PDF, markdown, or HTML - keeping it simple with HTML for now
  */
 export async function GET() {
+  try {
+    logger.info('Serving PCS checklist lead magnet');
+  
   const html = `
 <!DOCTYPE html>
 <html>
@@ -217,11 +222,13 @@ export async function GET() {
 </html>
   `;
 
-  return new NextResponse(html, {
-    headers: {
-      'Content-Type': 'text/html',
-      'Content-Disposition': 'inline; filename="pcs-financial-checklist.html"'
-    }
-  });
+    return new NextResponse(html, {
+      headers: {
+        'Content-Type': 'text/html',
+        'Content-Disposition': 'inline; filename="pcs-financial-checklist.html"'
+      }
+    });
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
-

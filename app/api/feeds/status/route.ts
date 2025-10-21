@@ -7,12 +7,16 @@
 
 import { NextResponse } from 'next/server';
 import { getAllFeedStatuses } from '@/lib/dynamic/fetch';
+import { logger } from '@/lib/logger';
+import { errorResponse } from '@/lib/api-errors';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    logger.info('Fetching feed statuses');
+
     const feeds = await getAllFeedStatuses();
 
     // Calculate staleness for each feed
@@ -38,25 +42,23 @@ export async function GET() {
       };
     });
 
+    const summary = {
+      total: feeds.length,
+      ok: feeds.filter(f => f.status === 'ok').length,
+      stale: feedsWithStatus.filter(f => f.isStale).length,
+      error: feeds.filter(f => f.status === 'error').length
+    };
+
+    logger.info('Feed status retrieved', summary);
+
     return NextResponse.json({
       feeds: feedsWithStatus,
-      summary: {
-        total: feeds.length,
-        ok: feeds.filter(f => f.status === 'ok').length,
-        stale: feedsWithStatus.filter(f => f.isStale).length,
-        error: feeds.filter(f => f.status === 'error').length
-      },
+      summary,
       timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

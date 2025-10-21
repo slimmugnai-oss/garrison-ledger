@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 
@@ -16,22 +18,39 @@ export const runtime = "nodejs";
  * - Upcoming financial deadlines (PCS, deployment, etc.)
  */
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Verify cron secret to prevent unauthorized access
     const authHeader = req.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cronSecret = process.env.CRON_SECRET;
+    
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      logger.warn('Unauthorized weekly digest attempt', { 
+        hasAuth: !!authHeader,
+        hasCronSecret: !!cronSecret
+      });
+      throw Errors.unauthorized();
     }
 
+    logger.info('Starting weekly digest send');
+
     // Get all users subscribed to weekly digest
-    const { data: subscribers } = await supabaseAdmin
+    const { data: subscribers, error: fetchError } = await supabaseAdmin
       .from('email_preferences')
       .select('user_id, email')
       .eq('subscribed_to_weekly_digest', true);
 
-    if (!subscribers || subscribers.length === 0) {
-      return NextResponse.json({ message: "No subscribers" });
+    if (fetchError) {
+      throw Errors.databaseError('Failed to fetch subscribers', { error: fetchError.message });
     }
+
+    if (!subscribers || subscribers.length === 0) {
+      logger.info('No weekly digest subscribers found');
+      return NextResponse.json({ message: "No subscribers", sent: 0 });
+    }
+
+    logger.info(`Found ${subscribers.length} weekly digest subscribers`);
 
     let sentCount = 0;
     let failedCount = 0;
@@ -61,8 +80,8 @@ export async function POST(req: NextRequest) {
 
         sentCount++;
 
-        // Log email sent
-        await supabaseAdmin
+        // Log email sent (fire-and-forget)
+        supabaseAdmin
           .from('email_logs')
           .insert({
             user_id: subscriber.user_id,
@@ -70,22 +89,38 @@ export async function POST(req: NextRequest) {
             template: 'weekly_digest',
             status: 'sent',
             sent_at: new Date().toISOString()
+          })
+          .then(({ error }) => {
+            if (error) logger.warn('Failed to log digest email', { error: error.message });
           });
 
       } catch (error) {
         failedCount++;
+        logger.error('Failed to send digest to subscriber', error, {
+          userId: subscriber.user_id,
+          email: subscriber.email.replace(/@.*/, '@***')
+        });
       }
     }
 
-    return NextResponse.json({
-      success: true,
+    const duration = Date.now() - startTime;
+    logger.info('Weekly digest send complete', {
+      duration,
       sent: sentCount,
       failed: failedCount,
       total: subscribers.length
     });
 
+    return NextResponse.json({
+      success: true,
+      sent: sentCount,
+      failed: failedCount,
+      total: subscribers.length,
+      durationMs: duration
+    });
+
   } catch (error) {
-    return NextResponse.json({ error: "Failed to send digests" }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

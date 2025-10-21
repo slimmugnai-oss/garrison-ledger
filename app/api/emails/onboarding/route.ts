@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 
@@ -18,19 +20,32 @@ export const runtime = "nodejs";
  * - Day 7: Premium upgrade offer
  */
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     const { userId } = await auth();
     
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw Errors.unauthorized();
     }
 
     const body = await req.json();
     const { userEmail, userName, dayNumber } = body;
 
     if (!userEmail || !dayNumber) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      throw Errors.invalidInput('userEmail and dayNumber are required');
     }
+
+    // Validate day number
+    if (typeof dayNumber !== 'number' || dayNumber < 1 || dayNumber > 7) {
+      throw Errors.invalidInput('dayNumber must be between 1 and 7');
+    }
+
+    logger.info('Sending onboarding email', {
+      userId,
+      dayNumber,
+      email: userEmail.replace(/@.*/, '@***') // PII-safe logging
+    });
 
     // Get email content based on day
     const emailContent = getOnboardingEmail(dayNumber, userName);
@@ -52,11 +67,13 @@ export async function POST(req: NextRequest) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send email');
+        const errorText = await response.text();
+        logger.error('Resend API error', new Error(errorText), { statusCode: response.status });
+        throw Errors.externalApiError('Resend', 'Failed to send onboarding email');
       }
 
-      // Log email sent
-      await supabaseAdmin
+      // Log email sent (fire-and-forget)
+      supabaseAdmin
         .from('email_logs')
         .insert({
           user_id: userId,
@@ -64,13 +81,21 @@ export async function POST(req: NextRequest) {
           template: `onboarding_day_${dayNumber}`,
           status: 'sent',
           sent_at: new Date().toISOString()
+        })
+        .then(({ error }) => {
+          if (error) logger.warn('Failed to log email', { error: error.message });
         });
+    } else {
+      logger.warn('RESEND_API_KEY not configured, skipping email send');
     }
 
-    return NextResponse.json({ success: true });
+    const duration = Date.now() - startTime;
+    logger.info('Onboarding email sent successfully', { duration, dayNumber });
+
+    return NextResponse.json({ success: true, dayNumber });
 
   } catch (error) {
-    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

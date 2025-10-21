@@ -4,6 +4,8 @@ import Parser from "rss-parser";
 import * as cheerio from "cheerio";
 import { readFile } from "fs/promises";
 import path from "path";
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -297,6 +299,10 @@ async function processWebScrape(
         await new Promise(resolve => setTimeout(resolve, 2000));
         
       } catch (articleError) {
+        logger.warn('Failed to scrape article', { 
+          link,
+          error: articleError instanceof Error ? articleError.message : 'Unknown error'
+        });
         // Continue to next article
       }
     }
@@ -312,28 +318,38 @@ async function processWebScrape(
  * Main ingestion handler
  */
 export async function GET(req: NextRequest) {
-  // Verify authorization
-  const authHeader = req.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
+  const startTime = Date.now();
   
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-  
-  // Load feed sources from JSON file
-  let sources: FeedSource[] = [];
   try {
-    const sourcesPath = path.join(process.cwd(), 'public', 'feed-sources.json');
-    const sourcesData = await readFile(sourcesPath, 'utf-8');
-    sources = JSON.parse(sourcesData);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to load feed sources" }, { status: 500 });
-  }
+    // Verify authorization
+    const authHeader = req.headers.get("authorization");
+    const cronSecret = process.env.CRON_SECRET;
+    
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+      logger.warn('Unauthorized feed ingestion attempt');
+      throw Errors.unauthorized();
+    }
+
+    logger.info('Starting feed ingestion');
+    
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
+    // Load feed sources from JSON file
+    let sources: FeedSource[] = [];
+    try {
+      const sourcesPath = path.join(process.cwd(), 'public', 'feed-sources.json');
+      const sourcesData = await readFile(sourcesPath, 'utf-8');
+      sources = JSON.parse(sourcesData);
+    } catch (error) {
+      throw Errors.databaseError('Failed to load feed sources', { 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    logger.info(`Loaded ${sources.length} feed sources`);
   
   const parser = new Parser({
     timeout: 15000,
@@ -378,17 +394,32 @@ export async function GET(req: NextRequest) {
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
       
-    } catch (error) {
-      allErrors.push(`${source.id}: Fatal error`);
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Fatal error';
+        logger.error('Fatal error processing source', error, { source: source.id });
+        allErrors.push(`${source.id}: ${errorMsg}`);
+      }
     }
+
+    const duration = Date.now() - startTime;
+    logger.info('Feed ingestion complete', {
+      duration,
+      sources: sources.length,
+      processed: totalProcessed,
+      new: totalNew,
+      errors: allErrors.length
+    });
+    
+    return NextResponse.json({
+      success: true,
+      processed: totalProcessed,
+      new: totalNew,
+      sources: sources.length,
+      errors: allErrors.length > 0 ? allErrors : undefined,
+      durationMs: duration,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    return errorResponse(error);
   }
-  
-  return NextResponse.json({
-    success: true,
-    processed: totalProcessed,
-    new: totalNew,
-    sources: sources.length,
-    errors: allErrors.length > 0 ? allErrors : undefined,
-    timestamp: new Date().toISOString()
-  });
 }

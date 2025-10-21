@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -57,21 +59,26 @@ Content Preview: {content}
 Return JSON only:`;
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Auth check (admin only or cron)
     const authHeader = req.headers.get("authorization");
     const cronSecret = process.env.CRON_SECRET;
     
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      logger.warn('Unauthorized triage attempt');
+      throw Errors.unauthorized();
     }
 
     const body = await req.json();
     const { feedItemId } = body;
 
     if (!feedItemId) {
-      return NextResponse.json({ error: "feed_item_id required" }, { status: 400 });
+      throw Errors.invalidInput('feedItemId required');
     }
+
+    logger.info('Triaging feed item', { feedItemId });
 
     // Get feed item
     const { data: feedItem, error: fetchError } = await supabaseAdmin
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (fetchError || !feedItem) {
-      return NextResponse.json({ error: "Feed item not found" }, { status: 404 });
+      throw Errors.notFound('Feed item');
     }
 
     // Prepare content for Gemini (limit to 2000 chars to save tokens)
@@ -110,51 +117,60 @@ export async function POST(req: NextRequest) {
         .replace(/```\n?/g, '')
         .trim();
       triageData = JSON.parse(cleanJson);
-    } catch {
-      return NextResponse.json({ 
-        error: "Failed to parse AI response",
-        raw: responseText 
-      }, { status: 500 });
+    } catch (parseError) {
+      logger.error('Failed to parse AI triage response', parseError, { responseText });
+      throw Errors.externalApiError('Gemini', 'Failed to parse AI response');
     }
 
     // Validate score
     if (typeof triageData.score !== 'number' || triageData.score < 1 || triageData.score > 10) {
-      return NextResponse.json({ error: "Invalid score from AI" }, { status: 500 });
+      throw Errors.externalApiError('Gemini', 'Invalid score from AI');
     }
+
+    // Determine status
+    const newStatus = triageData.score >= 8 ? 'approved_for_conversion' : 
+                      triageData.score >= 6 ? 'needs_review' : 
+                      'news_only';
 
     // Store triage result
     const { error: updateError } = await supabaseAdmin
       .from('feed_items')
       .update({
-        status: triageData.score >= 8 ? 'approved_for_conversion' : 
-                triageData.score >= 6 ? 'needs_review' : 
-                'news_only',
+        status: newStatus,
         // Store enrichment data in a metadata field (you may need to add this column)
       })
       .eq('id', feedItemId);
 
     if (updateError) {
+      logger.warn('Failed to update feed item status', { 
+        feedItemId,
+        error: updateError.message
+      });
     }
+
+    const duration = Date.now() - startTime;
+    logger.info('Feed item triage complete', {
+      duration,
+      feedItemId,
+      score: triageData.score,
+      status: newStatus
+    });
 
     return NextResponse.json({
       success: true,
       feedItemId,
       score: triageData.score,
+      status: newStatus,
       recommendation: triageData.score >= 8 ? 'Convert to content block' :
                      triageData.score >= 6 ? 'Review manually' :
                      'Keep as news only',
       enrichment: triageData,
+      durationMs: duration,
       timestamp: new Date().toISOString(),
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

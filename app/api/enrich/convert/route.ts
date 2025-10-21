@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = "nodejs";
 
@@ -10,23 +12,26 @@ export const runtime = "nodejs";
  */
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     // Auth check (admin only)
     const authHeader = req.headers.get("authorization");
     const adminSecret = process.env.ADMIN_API_SECRET;
     
     if (!adminSecret || authHeader !== `Bearer ${adminSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      logger.warn('Unauthorized feed conversion attempt');
+      throw Errors.unauthorized();
     }
 
     const body = await req.json();
     const { feedItemId, enrichment } = body;
 
     if (!feedItemId || !enrichment) {
-      return NextResponse.json({ 
-        error: "feed_item_id and enrichment data required" 
-      }, { status: 400 });
+      throw Errors.invalidInput('feedItemId and enrichment data required');
     }
+
+    logger.info('Converting feed item to content block', { feedItemId });
 
     // Get feed item
     const { data: feedItem, error: fetchError } = await supabaseAdmin
@@ -36,14 +41,12 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (fetchError || !feedItem) {
-      return NextResponse.json({ error: "Feed item not found" }, { status: 404 });
+      throw Errors.notFound('Feed item');
     }
 
     // Check if already converted
     if (feedItem.status === 'converted') {
-      return NextResponse.json({ 
-        error: "Feed item already converted" 
-      }, { status: 400 });
+      throw Errors.invalidInput('Feed item already converted');
     }
 
     // Create content block from feed item + enrichment
@@ -72,14 +75,11 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (insertError) {
-      return NextResponse.json({ 
-        error: "Failed to create content block",
-        details: insertError.message 
-      }, { status: 500 });
+      throw Errors.databaseError('Failed to create content block', { error: insertError.message });
     }
 
     // Mark feed item as converted
-    await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from('feed_items')
       .update({ 
         status: 'converted',
@@ -87,22 +87,31 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', feedItemId);
 
+    if (updateError) {
+      logger.warn('Failed to mark feed item as converted', { 
+        feedItemId,
+        error: updateError.message
+      });
+    }
+
+    const duration = Date.now() - startTime;
+    logger.info('Feed item successfully converted', {
+      duration,
+      feedItemId,
+      contentBlockId: newBlock.id
+    });
+
     return NextResponse.json({
       success: true,
       feedItemId,
       contentBlockId: newBlock.id,
       message: "Feed item successfully converted to content block",
+      durationMs: duration,
       timestamp: new Date().toISOString(),
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
