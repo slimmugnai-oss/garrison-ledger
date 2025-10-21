@@ -62,12 +62,12 @@ const tools = [
     premium: true
   },
   {
-    id: 'salary-calculator',
-    name: 'Salary Calculator',
-    description: 'Compare military vs civilian compensation packages',
-    icon: 'DollarSign',
+    id: 'retirement-calculator',
+    name: 'Retirement Calculator',
+    description: 'Compare military retirement with civilian career opportunities',
+    icon: 'Calculator',
     href: '/dashboard/tools/salary-calculator',
-    category: 'Career',
+    category: 'Retirement',
     premium: true
   }
 ];
