@@ -35,7 +35,7 @@ export default function HouseHack() {
   const [bah, setBah] = useState(2400);
   const [rent, setRent] = useState(2200);
   const [propertyType, setPropertyType] = useState<PropertyType>('duplex');
-  const [numUnits, setNumUnits] = useState(2);
+  const [_numUnits, setNumUnits] = useState(2);
   const [appreciation, setAppreciation] = useState(3);
   const { isPremium } = usePremiumStatus();
   const [apiData, setApiData] = useState<ApiResponse | null>(null);

@@ -44,9 +44,9 @@ interface PCSClaimClientProps {
 
 export default function PCSClaimClient({ 
   claim, 
-  isPremium, 
-  tier,
-  userProfile 
+  isPremium: _isPremium, 
+  tier: _tier,
+  userProfile: _userProfile 
 }: PCSClaimClientProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);

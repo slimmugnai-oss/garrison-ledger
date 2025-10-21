@@ -224,9 +224,9 @@ async function computeCOLA(params: {
  * TODO: Implement when user profile has special pay flags
  */
 async function computeSpecialPays(
-  userId: string,
-  year: number,
-  month: number
+  _userId: string,
+  _year: number,
+  _month: number
 ): Promise<ExpectedSpecialPay[]> {
   // v1: Return empty array
   // v1.1: Query user profile for special pay flags (SDAP, HFP/IDP, FLPP, FSA, etc.)

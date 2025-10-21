@@ -35,7 +35,7 @@ interface PCSCopilotClientProps {
 export default function PCSCopilotClient({ 
   initialClaims, 
   isPremium, 
-  tier,
+  tier: _tier,
   userProfile 
 }: PCSCopilotClientProps) {
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
