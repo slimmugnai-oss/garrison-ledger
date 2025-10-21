@@ -208,17 +208,17 @@ if (require.main === module) {
 
     const results = await autofixAllContentBlocks();
 
-    const totalBlocks = results.length;
-    const totalFixes = results.reduce((sum, r) => sum + r.fixesApplied, 0);
+    const _totalBlocks = results.length;
+    const _totalFixes = results.reduce((sum, r) => sum + r.fixesApplied, 0);
 
 
-    if (totalBlocks === 0) {
+    if (_totalBlocks === 0) {
       return;
     }
 
 
     for (const result of results) {
-      for (const change of result.changes) {
+      for (const _change of result.changes) {
       }
     }
 

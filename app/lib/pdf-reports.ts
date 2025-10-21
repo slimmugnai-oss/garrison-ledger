@@ -38,7 +38,7 @@ function initializePDF(title: string): jsPDF {
   doc.text(title, 105, 28, { align: 'center' });
   
   // Footer
-  const pageCount = doc.getNumberOfPages();
+  const _pageCount = doc.getNumberOfPages();
   doc.setTextColor(128, 128, 128);
   doc.setFontSize(9);
   doc.text(
