@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 
@@ -32,9 +34,7 @@ interface ReportActualRequest {
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
@@ -47,26 +47,27 @@ export async function POST(req: NextRequest) {
     const isPremium = tier === 'premium' && entitlement?.status === 'active';
 
     if (!isPremium) {
-      return NextResponse.json({
-        error: 'Premium feature',
-        details: 'PCS Money Copilot is available for Premium members only.',
-        upgradeRequired: true
-      }, { status: 403 });
+      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
     }
 
     const body: ReportActualRequest = await req.json();
     const { claimId, actualAmounts, submittedDate, approvedDate, notes } = body;
 
+    if (!claimId || !actualAmounts) {
+      throw Errors.invalidInput('claimId and actualAmounts are required');
+    }
+
     // Verify claim belongs to user
-    const { data: claim } = await supabaseAdmin
+    const { data: claim, error: claimError } = await supabaseAdmin
       .from('pcs_claims')
       .select('*, entitlements')
       .eq('id', claimId)
       .eq('user_id', userId)
       .single();
 
-    if (!claim) {
-      return NextResponse.json({ error: 'Claim not found' }, { status: 404 });
+    if (claimError || !claim) {
+      logger.warn('[PCSReportActual] Claim not found', { userId, claimId });
+      throw Errors.notFound('PCS claim');
     }
 
     // Calculate total actual
@@ -120,8 +121,8 @@ export async function POST(req: NextRequest) {
       .eq('id', claimId)
       .eq('user_id', userId);
 
-    // Track in analytics
-    await supabaseAdmin
+    // Track in analytics (fire and forget)
+    supabaseAdmin
       .from('pcs_analytics')
       .insert({
         user_id: userId,
@@ -133,7 +134,18 @@ export async function POST(req: NextRequest) {
           variance_percentage: variance.total,
           accuracy_score: accuracyScore
         }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[PCSReportActual] Failed to track analytics', { userId, claimId, error: analyticsError });
       });
+
+    logger.info('[PCSReportActual] Actual reimbursement reported', { 
+      userId, 
+      claimId, 
+      totalActual,
+      totalEstimated,
+      accuracyScore
+    });
 
     return NextResponse.json({
       success: true,
@@ -149,10 +161,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Report failed', 
-      details: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
@@ -170,12 +179,18 @@ function calculateVariance(estimated?: number, actual?: number): number {
 export async function GET() {
   try {
     // Get overall accuracy statistics (anonymized)
-    const { data: claims } = await supabaseAdmin
+    const { data: claims, error } = await supabaseAdmin
       .from('pcs_claims')
       .select('actual_reimbursements, entitlements')
       .not('actual_reimbursements', 'is', null);
 
+    if (error) {
+      logger.error('[PCSReportActual] Failed to fetch accuracy stats', error);
+      throw Errors.databaseError('Failed to fetch accuracy statistics');
+    }
+
     if (!claims || claims.length === 0) {
+      logger.info('[PCSReportActual] No accuracy data yet');
       return NextResponse.json({
         sampleSize: 0,
         averageAccuracy: 0,
@@ -194,6 +209,7 @@ export async function GET() {
       ? Math.round(accuracyScores.reduce((sum, score) => sum + score, 0) / accuracyScores.length)
       : 0;
 
+    logger.info('[PCSReportActual] Accuracy stats fetched', { sampleSize: accuracyScores.length, averageAccuracy });
     return NextResponse.json({
       sampleSize: accuracyScores.length,
       averageAccuracy,
@@ -205,9 +221,7 @@ export async function GET() {
     });
 
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Failed to fetch stats' 
-    }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

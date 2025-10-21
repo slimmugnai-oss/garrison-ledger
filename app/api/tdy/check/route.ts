@@ -9,32 +9,34 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { runChecks } from '@/lib/tdy/check';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const { tripId } = await request.json();
 
     if (!tripId) {
-      return NextResponse.json({ error: 'Missing tripId' }, { status: 400 });
+      throw Errors.invalidInput('tripId is required');
     }
 
     // Verify ownership
-    const { data: trip } = await supabaseAdmin
+    const { data: trip, error: tripError } = await supabaseAdmin
       .from('tdy_trips')
       .select('user_id')
       .eq('id', tripId)
       .single();
 
-    if (!trip || trip.user_id !== userId) {
-      return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+    if (tripError || !trip || trip.user_id !== userId) {
+      logger.warn('[TDYCheck] Trip not found', { userId, tripId });
+      throw Errors.notFound('TDY trip');
     }
 
     // Run checks
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
       .eq('trip_id', tripId);
 
     if (flags.length > 0) {
-      await supabaseAdmin
+      const { error: insertError } = await supabaseAdmin
         .from('tdy_flags')
         .insert(
           flags.map(flag => ({
@@ -59,13 +61,17 @@ export async function POST(request: NextRequest) {
             ref: flag.ref
           }))
         );
+      
+      if (insertError) {
+        logger.error('[TDYCheck] Failed to insert flags', insertError, { userId, tripId });
+      }
     }
 
-    // Analytics
+    // Analytics (fire and forget)
     const redCount = flags.filter(f => f.severity === 'red').length;
     const yellowCount = flags.filter(f => f.severity === 'yellow').length;
 
-    await supabaseAdmin
+    supabaseAdmin
       .from('events')
       .insert({
         user_id: userId,
@@ -75,15 +81,25 @@ export async function POST(request: NextRequest) {
           red: redCount,
           yellow: yellowCount
         }
+      })
+      .catch((analyticsError) => {
+        logger.warn('[TDYCheck] Failed to track analytics', { userId, tripId, error: analyticsError });
       });
+
+    const duration = Date.now() - startTime;
+    logger.info('[TDYCheck] Compliance check completed', { 
+      userId, 
+      tripId, 
+      flagCount: flags.length,
+      redCount,
+      yellowCount,
+      duration
+    });
 
     return NextResponse.json({ flags });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
