@@ -8,6 +8,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -15,10 +17,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const { data: trips, error } = await supabaseAdmin
       .from('tdy_trips')
@@ -28,13 +27,15 @@ export async function GET() {
       .limit(20);
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch trips' }, { status: 500 });
+      logger.error('[TDYTrips] Failed to fetch trips', error, { userId });
+      throw Errors.databaseError('Failed to fetch trips');
     }
 
+    logger.info('[TDYTrips] Trips fetched', { userId, count: trips?.length || 0 });
     return NextResponse.json({ trips: trips || [] });
 
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return errorResponse(error);
   }
 }
 

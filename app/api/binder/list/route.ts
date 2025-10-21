@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { isPremiumServer } from "@/lib/premium";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -24,34 +26,30 @@ function getAdminClient() {
 export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const { searchParams } = new URL(req.url);
     const folder = searchParams.get("folder");
 
     const supabase = getAdminClient();
 
-  // Fetch files
-  let query = supabase
-    .from("binder_files")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    // Fetch files
+    let query = supabase
+      .from("binder_files")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
-  if (folder) {
-    query = query.eq("folder", folder);
-  }
+    if (folder) {
+      query = query.eq("folder", folder);
+    }
 
-  const { data: files, error: filesError } = await query;
+    const { data: files, error: filesError } = await query;
 
-  if (filesError) {
-    return NextResponse.json(
-      { error: "Failed to fetch files" },
-      { status: 500 }
-    );
-  }
+    if (filesError) {
+      logger.error('[BinderList] Failed to fetch files', filesError, { userId, folder });
+      throw Errors.databaseError("Failed to fetch files");
+    }
 
   // Calculate storage usage
   const totalUsage = files?.reduce((sum, f) => sum + (f.size_bytes || 0), 0) || 0;
@@ -86,6 +84,14 @@ export async function GET(req: NextRequest) {
     return acc;
   }, {} as Record<string, number>);
 
+    logger.info('[BinderList] Files fetched', { 
+      userId, 
+      count: files?.length || 0,
+      folder,
+      storageUsed: totalUsage,
+      isPremium
+    });
+
     return NextResponse.json({
       files: filesWithoutUrls,
       storage: {
@@ -96,13 +102,7 @@ export async function GET(req: NextRequest) {
       folderCounts
     });
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
