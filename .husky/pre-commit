@@ -1,22 +1,47 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run secret scan
+echo "🔍 Running pre-commit validation..."
+
+# 1. TypeScript type check
+echo "📘 Checking TypeScript..."
+npm run type-check
+TYPE_CHECK_EXIT=$?
+if [ $TYPE_CHECK_EXIT -ne 0 ]; then
+  echo "❌ TypeScript errors found! Fix them before committing."
+  exit 1
+fi
+
+# 2. ESLint check
+echo "🔧 Running ESLint..."
+npm run lint
+LINT_EXIT=$?
+if [ $LINT_EXIT -ne 0 ]; then
+  echo "❌ ESLint errors found! Fix them before committing."
+  exit 1
+fi
+
+# 3. Secret scan
 echo "🔒 Running secret scan..."
 npm run secret-scan
+SECRET_EXIT=$?
+if [ $SECRET_EXIT -ne 0 ]; then
+  echo "❌ Secret scan failed! Remove secrets before committing."
+  exit 1
+fi
 
-# Run content linter on changed content files
+# 4. Content linter (only if content files changed)
 CHANGED_CONTENT=$(git diff --cached --name-only --diff-filter=ACM | grep '^content/.*\.mdx$' || true)
 
 if [ -n "$CHANGED_CONTENT" ]; then
   echo "📝 Content files changed, running linter..."
   npm run content:lint
   
-  LINT_EXIT=$?
-  if [ $LINT_EXIT -ne 0 ]; then
+  CONTENT_LINT_EXIT=$?
+  if [ $CONTENT_LINT_EXIT -ne 0 ]; then
     echo "⚠️  Content linter found issues. Run 'npm run content:autofix' to fix automatically, or use --no-verify to skip."
     exit 1
   fi
 fi
 
-echo "✅ Pre-commit checks passed!"
+echo "✅ All pre-commit checks passed!"
