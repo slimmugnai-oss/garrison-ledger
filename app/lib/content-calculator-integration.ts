@@ -11,7 +11,7 @@ export interface CalculatorLink {
   calculatorName: string;
   calculatorPath: string;
   relevanceScore: number;
-  prefillData?: Record<string, any>;
+  prefillData?: Record<string, any>; // Dynamic calculator input data
   actionLabel: string;
   description: string;
 }
@@ -163,6 +163,7 @@ export function extractPrefillData(content: {
   html: string;
   tags: string[];
   domain: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }, calculatorId: string): Record<string, any> | undefined {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prefillData: Record<string, any> = {};
@@ -261,6 +262,7 @@ export function extractPrefillData(content: {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generateCalculatorLink(
   calculatorPath: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prefillData?: Record<string, any>,
   sourceContentId?: string
 ): string {
