@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -34,37 +36,33 @@ Guidelines:
 Return ONLY valid JSON. No markdown code blocks, no explanations outside the JSON.`;
 
 export async function POST(req: NextRequest) {
-  // Auth check
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Parse request body
-  let body;
+  const startTime = Date.now();
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+    // Auth check
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
 
-  const { title, summary, source_url } = body;
+    // Parse request body
+    let body: { title?: string; summary?: string; source_url?: string };
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      logger.warn('[Curate] Invalid JSON in request', { userId });
+      throw Errors.invalidInput("Invalid JSON body");
+    }
 
-  if (!title || !summary || !source_url) {
-    return NextResponse.json(
-      { error: "Missing required fields: title, summary, source_url" },
-      { status: 400 }
-    );
-  }
+    const { title, summary, source_url } = body;
 
-  // Initialize Gemini
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "GEMINI_API_KEY not configured" },
-      { status: 500 }
-    );
-  }
+    if (!title || !summary || !source_url) {
+      throw Errors.invalidInput("Missing required fields: title, summary, source_url");
+    }
+
+    // Initialize Gemini
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      logger.error('[Curate] GEMINI_API_KEY not configured');
+      throw Errors.externalApiError("Gemini", "API key not configured");
+    }
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
@@ -92,32 +90,44 @@ Please analyze this article and create a curated atomic content block following 
 
     // Call Gemini API
     const result = await model.generateContent(fullPrompt);
-
     const response = result.response;
     const text = response.text();
+    const duration = Date.now() - startTime;
 
     // Parse JSON response
-    let curated;
+    let curated: {
+      html?: string;
+      summary?: string;
+      tags?: string[];
+      domain?: string;
+      difficulty?: string;
+      seoKeywords?: string[];
+    };
+    
     try {
       // Try to extract JSON if wrapped in markdown code blocks
       const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/```\s*([\s\S]*?)\s*```/);
       const jsonText = jsonMatch ? jsonMatch[1] : text;
       
       curated = JSON.parse(jsonText.trim());
-    } catch {
-      return NextResponse.json(
-        { error: "Failed to parse AI response", raw: text },
-        { status: 500 }
-      );
+    } catch (parseError) {
+      logger.error('[Curate] Failed to parse AI response', parseError, { userId, title, textLength: text.length });
+      throw Errors.externalApiError("Gemini", "Failed to parse AI response");
     }
 
     // Validate response structure
     if (!curated.html || !curated.summary || !curated.tags) {
-      return NextResponse.json(
-        { error: "Invalid AI response structure", curated },
-        { status: 500 }
-      );
+      logger.error('[Curate] Invalid AI response structure', undefined, { userId, title, curated });
+      throw Errors.externalApiError("Gemini", "Invalid AI response structure");
     }
+
+    logger.info('[Curate] Content curated successfully', { 
+      userId, 
+      title, 
+      domain: curated.domain,
+      tagCount: curated.tags.length,
+      duration
+    });
 
     // Return curated content with enhanced metadata
     return NextResponse.json({
@@ -131,13 +141,7 @@ Please analyze this article and create a curated atomic content block following 
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        error: "AI curation failed", 
-        details: error instanceof Error ? error.message : 'Unknown error' 
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
