@@ -63,7 +63,7 @@ export default function ExitIntentPopup() {
       setTimeout(() => {
         setIsVisible(false);
       }, 3000);
-    } catch (error) {
+    } catch {
     } finally {
       setIsSubmitting(false);
     }

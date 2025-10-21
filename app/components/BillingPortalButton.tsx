@@ -25,7 +25,7 @@ export default function BillingPortalButton() {
         alert("Could not open billing portal. Please contact support.");
         setBusy(false);
       }
-    } catch (error) {
+    } catch {
       alert("Error opening billing portal. Please try again.");
       setBusy(false);
     }

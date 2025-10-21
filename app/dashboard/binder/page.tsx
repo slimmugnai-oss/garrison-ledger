@@ -112,7 +112,7 @@ function BinderContent() {
       setFiles(data.files || []);
       setStorage(data.storage);
       setFolderCounts(data.folderCounts || {});
-    } catch (error) {
+    } catch {
       setFiles([]);
       setStorage(null);
       setFolderCounts({});
@@ -230,7 +230,7 @@ function BinderContent() {
 
       setShowUploadModal(false);
       await loadFiles();
-    } catch (error) {
+    } catch {
       alert('Failed to upload file');
     }
   };
@@ -250,7 +250,7 @@ function BinderContent() {
         setNewName('');
         loadFiles();
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -269,7 +269,7 @@ function BinderContent() {
         setNewFolder('');
         loadFiles();
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -291,7 +291,7 @@ function BinderContent() {
         setExpiryDate('');
         loadFiles();
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -308,7 +308,7 @@ function BinderContent() {
       if (response.ok) {
         loadFiles();
       }
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -329,7 +329,7 @@ function BinderContent() {
       setSelectedFiles(new Set());
       setSelectionMode(false);
       loadFiles();
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -350,7 +350,7 @@ function BinderContent() {
       } else {
         alert(data.error || 'Failed to create share link');
       }
-    } catch (error) {
+    } catch {
     }
   };
 

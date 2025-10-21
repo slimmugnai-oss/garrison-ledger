@@ -49,7 +49,7 @@ export function getAllIntelCardSlugs(): string[] {
           slugs.push(slug);
         }
       }
-    } catch (error) {
+    } catch {
     }
   }
 

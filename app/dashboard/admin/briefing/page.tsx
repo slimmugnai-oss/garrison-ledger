@@ -168,7 +168,7 @@ export default function BriefingAdminPage() {
       await loadItems();
       setSelectedItem(null);
       
-    } catch (error) {
+    } catch {
       alert('Error during promotion');
     }
     
@@ -225,7 +225,7 @@ export default function BriefingAdminPage() {
       
       alert('✨ Content curated by AI with smart metadata! Review and edit before promoting.');
       
-    } catch (error) {
+    } catch {
       alert('Failed to curate content');
     }
     

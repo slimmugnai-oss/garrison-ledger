@@ -89,7 +89,7 @@ export async function importAuditToDatabase(auditPath: string): Promise<{
         }
       }
 
-    } catch (error) {
+    } catch {
       errors++;
     }
   }

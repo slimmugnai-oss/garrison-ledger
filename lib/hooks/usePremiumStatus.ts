@@ -22,7 +22,7 @@ export function usePremiumStatus() {
         if (!cancelled) {
           setIsPremium(!!json.isPremium);
         }
-      } catch (error) {
+      } catch {
         if (!cancelled) {
           setIsPremium(false);
         }

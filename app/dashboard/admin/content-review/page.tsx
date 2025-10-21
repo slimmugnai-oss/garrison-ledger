@@ -38,7 +38,7 @@ export default function ContentReviewPage() {
         const data = await response.json();
         setPendingItems(data.items || []);
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export default function ContentReviewPage() {
         alert(`Score: ${data.score}/10\nRecommendation: ${data.recommendation}`);
         loadPendingItems(); // Refresh list
       }
-    } catch (error) {
+    } catch {
       alert('Failed to triage item');
     } finally {
       setTriaging(null);
@@ -102,7 +102,7 @@ export default function ContentReviewPage() {
         alert('Successfully converted to content block!');
         loadPendingItems(); // Refresh list
       }
-    } catch (error) {
+    } catch {
       alert('Failed to convert item');
     } finally {
       setConverting(null);
@@ -121,7 +121,7 @@ export default function ContentReviewPage() {
         body: JSON.stringify({ feedItemId: itemId }),
       });
       loadPendingItems();
-    } catch (error) {
+    } catch {
     }
   };
 

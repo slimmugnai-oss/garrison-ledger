@@ -72,7 +72,7 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
       setDepartDate('');
       setReturnDate('');
 
-    } catch (error) {
+    } catch {
       alert('Error creating trip');
     } finally {
       setCreating(false);

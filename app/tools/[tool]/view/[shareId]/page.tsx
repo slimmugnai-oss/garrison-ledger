@@ -25,7 +25,7 @@ async function getSharedCalculation(shareId: string) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -71,10 +71,10 @@ export async function getBAHRate(params: BAHParams): Promise<ProviderResult> {
       cached: false // Cache handled by registry layer
     };
 
-  } catch (error) {
+  } catch (err) {
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: err instanceof Error ? err.message : 'Unknown error',
       cached: false
     };
   }
@@ -132,7 +132,7 @@ export async function getBAHRatesByLocation(params: {
       rateCents
     }));
 
-  } catch (error) {
+  } catch {
     return [];
   }
 }

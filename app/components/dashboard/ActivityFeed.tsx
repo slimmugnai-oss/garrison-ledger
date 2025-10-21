@@ -68,7 +68,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
       );
 
       setActivities(recentActivities.slice(0, 5));
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }

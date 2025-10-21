@@ -40,7 +40,7 @@ async function getPersonalizedContent(userId: string) {
     }
 
     return [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }

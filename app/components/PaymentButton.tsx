@@ -40,7 +40,7 @@ export default function PaymentButton({
         // Fallback to constructing the URL
         window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
     }

@@ -113,7 +113,7 @@ export default function IntelAnalyticsDashboard() {
           ratingsGrowth: 18.9
         }
       });
-    } catch (error) {
+    } catch {
     } finally {
       setLoading(false);
       setRefreshing(false);
