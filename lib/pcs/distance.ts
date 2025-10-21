@@ -52,7 +52,7 @@ export async function calculateDistance(
       if (googleDistance) {
         return { miles: googleDistance, method: 'google-maps' };
       }
-    } catch (error) {
+    } catch {
       // Fall through to Haversine
     }
   }

@@ -66,7 +66,7 @@ export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryA
     
     return result;
 
-  } catch (error) {
+  } catch {
     return getDefaultMilitaryData();
   }
 }
@@ -107,7 +107,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     await setCache(cacheKey, result, 30 * 24 * 3600);
     return result;
 
-  } catch (error) {
+  } catch {
     return { lat: 0, lon: 0 };
   }
 }

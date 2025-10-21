@@ -138,7 +138,7 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
     await setCache(cacheKey, listings, 24 * 3600); // 24h cache
     return listings;
 
-  } catch (error) {
+  } catch {
     return [];
   }
 }

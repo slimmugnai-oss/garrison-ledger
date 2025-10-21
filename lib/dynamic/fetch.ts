@@ -37,7 +37,7 @@ export async function getCached<T>(
     
     return { data: freshData, fromCache: false };
 
-  } catch (error) {
+  } catch {
     // On cache error, try to fetch fresh
     const freshData = await fetchFn();
     return { data: freshData, fromCache: false };
@@ -103,7 +103,7 @@ async function writeCache<T>(
     if (error) {
     }
 
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -116,7 +116,7 @@ export async function invalidateCache(cacheKey: string): Promise<void> {
       .from('external_cache')
       .delete()
       .eq('key', cacheKey);
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -144,7 +144,7 @@ export async function invalidateCachePattern(pattern: string): Promise<void> {
         .in('key', keys);
     }
 
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -207,14 +207,14 @@ export async function refreshSourceData(source: string): Promise<{
 
     refreshed = 1;
 
-  } catch (error) {
+  } catch (err) {
     
     // Update feed status to error
     await supabaseAdmin
       .from('dynamic_feeds')
       .update({
         status: 'error',
-        error_message: error instanceof Error ? error.message : 'Unknown error',
+        error_message: err instanceof Error ? err.message : 'Unknown error',
         updated_at: new Date().toISOString()
       })
       .eq('source_key', source);
@@ -248,7 +248,7 @@ export async function getAllFeedStatuses() {
       errorMessage: feed.error_message
     }));
 
-  } catch (error) {
+  } catch {
     return [];
   }
 }

@@ -71,7 +71,7 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     
     return result;
 
-  } catch (error) {
+  } catch {
     return getDefaultAmenitiesData();
   }
 }
@@ -112,7 +112,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     await setCache(cacheKey, result, 30 * 24 * 3600);
     return result;
 
-  } catch (error) {
+  } catch {
     return { lat: 0, lon: 0 };
   }
 }
@@ -160,7 +160,7 @@ async function fetchPlacesByType(lat: number, lon: number, type: string, apiKey:
     const count = data.places?.length || 0;
     return count;
 
-  } catch (error) {
+  } catch {
     return 0;
   }
 }

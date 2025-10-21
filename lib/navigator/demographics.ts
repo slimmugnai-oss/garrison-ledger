@@ -74,7 +74,7 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
     
     return demographicsData;
 
-  } catch (error) {
+  } catch {
     return getDefaultDemographicsData();
   }
 }
@@ -126,7 +126,7 @@ function parseDemographicsData(data: DemographicsAPIResponse, zip: string): Demo
       note
     };
 
-  } catch (error) {
+  } catch {
     return getDefaultDemographicsData();
   }
 }

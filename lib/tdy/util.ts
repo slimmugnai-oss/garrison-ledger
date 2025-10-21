@@ -25,7 +25,7 @@ export async function getMileageRateCents(): Promise<number> {
 
     return data.value?.cents || 67;
     
-  } catch (error) {
+  } catch {
     return 67; // Fallback
   }
 }

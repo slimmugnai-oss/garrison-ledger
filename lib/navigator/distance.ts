@@ -51,7 +51,7 @@ export async function commuteMinutesFromZipToGate(args: {
     await setCache(cacheKey, result, 24 * 3600); // 24h cache
     return result;
 
-  } catch (error) {
+  } catch {
     return { am: null, pm: null };
   }
 }

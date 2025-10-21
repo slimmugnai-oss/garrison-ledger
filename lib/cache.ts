@@ -39,7 +39,7 @@ export async function getCache<T>(key: string): Promise<T | null> {
     // Return the value (handle both wrapped and unwrapped formats)
     return (payload.value !== undefined ? payload.value : payload) as T;
 
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -73,7 +73,7 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
     if (error) {
     }
 
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -86,7 +86,7 @@ export async function deleteCache(key: string): Promise<void> {
       .from('base_external_data_cache')
       .delete()
       .eq('base_id', key);
-  } catch (error) {
+  } catch {
   }
 }
 
@@ -99,7 +99,7 @@ export async function deleteCachePattern(pattern: string): Promise<void> {
       .from('base_external_data_cache')
       .delete()
       .ilike('base_id', `${pattern}%`);
-  } catch (error) {
+  } catch {
   }
 }
 

@@ -64,7 +64,7 @@ export async function fetchCrimeData(zip: string): Promise<CrimeData> {
     
     return crimeData;
 
-  } catch (error) {
+  } catch {
     return getDefaultCrimeData();
   }
 }
@@ -105,7 +105,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     await setCache(cacheKey, result, 30 * 24 * 3600);
     return result;
 
-  } catch (error) {
+  } catch {
     return { lat: 0, lon: 0 };
   }
 }
@@ -148,7 +148,7 @@ function parseCrimeData(data: any): CrimeData {
       note
     };
 
-  } catch (error) {
+  } catch {
     return getDefaultCrimeData();
   }
 }

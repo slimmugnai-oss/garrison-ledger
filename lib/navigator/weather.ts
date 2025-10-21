@@ -88,7 +88,7 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     
     return result;
 
-  } catch (error) {
+  } catch {
     return {
       index10: 7,
       note: 'Weather data unavailable'
@@ -136,7 +136,7 @@ async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: nu
     
     return result;
 
-  } catch (error) {
+  } catch {
     return { lat: 0, lon: 0 };
   }
 }
@@ -206,7 +206,7 @@ function analyzeWeatherData(data: GoogleWeatherResponse): { index10: number; not
       note
     };
 
-  } catch (error) {
+  } catch {
     return {
       index10: 7,
       note: 'Unable to analyze weather data'

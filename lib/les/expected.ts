@@ -250,7 +250,7 @@ async function computeSpecialPays(
     */
     
     return [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }

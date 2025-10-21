@@ -116,7 +116,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
     await setCache(cacheKey, schools, 24 * 3600); // 24h cache
     return schools;
 
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -161,7 +161,7 @@ async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
     
     return result;
 
-  } catch (error) {
+  } catch {
     return { lat: 0, lon: 0 };
   }
 }

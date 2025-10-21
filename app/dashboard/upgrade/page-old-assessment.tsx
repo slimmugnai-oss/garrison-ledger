@@ -6,7 +6,6 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PaymentButton from '../../components/PaymentButton';
 import BillingPortalButton from '../../components/BillingPortalButton';
-import Link from 'next/link';
 import Icon from '../../components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 

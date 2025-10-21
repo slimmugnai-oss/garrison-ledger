@@ -32,7 +32,7 @@ export async function isPremiumServer(userId: string): Promise<boolean> {
     }
     
     return !!access?.is_premium;
-  } catch (error) {
+  } catch {
     // Emergency fallback for known premium users during development
     const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
     return premiumUsers.includes(userId);

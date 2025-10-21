@@ -76,7 +76,7 @@ export async function getPerDiemRate(
     
     return rate;
 
-  } catch (error) {
+  } catch {
     return getFallbackRate();
   }
 }
