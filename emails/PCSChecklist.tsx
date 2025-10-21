@@ -18,19 +18,28 @@ interface PCSChecklistProps {
 }
 
 export const PCSChecklist = ({
-  baseUrl = 'https://garrison-ledger.vercel.app',
+  baseUrl = 'https://app.familymedia.com',
 }: PCSChecklistProps) => {
+  const checklistItems = [
+    { text: 'Review orders (dates, dependents, entitlements)' },
+    { text: 'Calculate DITY/PPM profit potential' },
+    { text: 'Request advance pay (up to 1 month)' },
+    { text: 'Research new BAH rate' },
+    { text: 'Track ALL receipts (DLA, mileage, lodging, per diem)' },
+    { text: 'Update TSP address and maintain contributions' },
+  ];
+
   return (
     <Html>
       <Head />
-      <Preview>Your PCS Financial Checklist - Everything you need for a successful move</Preview>
+      <Preview>Your PCS Financial Checklist - Mission brief for a successful move</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
             <Heading style={headerTitle}>Your PCS Financial Checklist</Heading>
             <Text style={headerSubtitle}>
-              Everything you need for a financially successful move
+              Mission brief: Execute a financially successful move
             </Text>
           </Section>
 

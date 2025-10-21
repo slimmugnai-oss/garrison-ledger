@@ -4,6 +4,12 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { EMAIL_CONFIG } from '@/lib/email-config';
+import { 
+  renderOnboardingWelcome, 
+  renderOnboardingFeatures, 
+  renderOnboardingPremium,
+  getEmailSubject 
+} from '@/lib/email-templates';
 
 export const runtime = "nodejs";
 
@@ -13,12 +19,10 @@ export const runtime = "nodejs";
  * Trigger onboarding email sequence for new user
  * Called automatically after user signs up
  * 
- * 7-Day Sequence:
- * - Day 1: Welcome + profile completion value
- * - Day 2: Assessment preview + social proof
- * - Day 3: AI plan benefits + testimonial
- * - Day 5: Free tools showcase
- * - Day 7: Premium upgrade offer
+ * 3-Email Sequence (Better Cadence):
+ * - Day 0: Welcome + 6 free calculators
+ * - Day 3: Base Navigator + LES Auditor (unique features)
+ * - Day 7: Premium upgrade (soft sell)
  */
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -37,9 +41,9 @@ export async function POST(req: NextRequest) {
       throw Errors.invalidInput('userEmail and dayNumber are required');
     }
 
-    // Validate day number
-    if (typeof dayNumber !== 'number' || dayNumber < 1 || dayNumber > 7) {
-      throw Errors.invalidInput('dayNumber must be between 1 and 7');
+    // Validate day number (only 0, 3, 7 are valid in 3-email sequence)
+    if (typeof dayNumber !== 'number' || ![0, 3, 7].includes(dayNumber)) {
+      throw Errors.invalidInput('dayNumber must be 0, 3, or 7');
     }
 
     logger.info('Sending onboarding email', {
@@ -48,8 +52,8 @@ export async function POST(req: NextRequest) {
       email: userEmail.replace(/@.*/, '@***') // PII-safe logging
     });
 
-    // Get email content based on day
-    const emailContent = getOnboardingEmail(dayNumber, userName);
+    // Get email content based on day (using React Email templates)
+    const emailContent = await getOnboardingEmail(dayNumber, userName);
 
     // Send email via Resend
     if (process.env.RESEND_API_KEY) {
@@ -100,9 +104,45 @@ export async function POST(req: NextRequest) {
   }
 }
 
-function getOnboardingEmail(day: number, userName: string): { subject: string; html: string } {
+async function getOnboardingEmail(day: number, userName: string): Promise<{ subject: string; html: string }> {
   const name = userName || 'Service Member';
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://garrison-ledger.vercel.app';
+
+  // 3-email sequence using React Email templates
+  const emailMap: Record<number, { template: string; render: () => Promise<string> }> = {
+    0: {
+      template: 'onboarding_welcome',
+      render: () => renderOnboardingWelcome(name)
+    },
+    3: {
+      template: 'onboarding_features',
+      render: () => renderOnboardingFeatures(name)
+    },
+    7: {
+      template: 'onboarding_premium',
+      render: () => renderOnboardingPremium(name)
+    }
+  };
+
+  const email = emailMap[day];
+  
+  if (!email) {
+    // Fallback to welcome email
+    return {
+      subject: getEmailSubject('onboarding_welcome', name),
+      html: await renderOnboardingWelcome(name)
+    };
+  }
+
+  return {
+    subject: getEmailSubject(email.template, name),
+    html: await email.render()
+  };
+}
+
+// DEPRECATED - Old inline HTML emails (kept for reference, can be deleted)
+function getOnboardingEmailOld(day: number, userName: string): { subject: string; html: string } {
+  const name = userName || 'Service Member';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.familymedia.com';
   const unsubscribeUrl = `${baseUrl}/dashboard/settings`;
 
   const emails = {

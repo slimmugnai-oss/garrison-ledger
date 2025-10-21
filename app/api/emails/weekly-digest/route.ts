@@ -60,24 +60,17 @@ export async function POST(req: NextRequest) {
     // Send digest to each subscriber
     for (const subscriber of subscribers) {
       try {
-        // Get user's profile and plan data
+        // Get user's profile data
         const { data: profile } = await supabaseAdmin
           .from('user_profiles')
           .select('rank, branch')
           .eq('user_id', subscriber.user_id)
           .maybeSingle();
 
-        const { data: plan } = await supabaseAdmin
-          .from('user_plans')
-          .select('updated_at')
-          .eq('user_id', subscriber.user_id)
-          .maybeSingle();
-
         // Send personalized digest
         await sendWeeklyDigest(subscriber.email, {
           userName: profile?.rank || 'Service Member',
-          hasPlan: !!plan,
-          planUpdated: plan ? isRecentlyUpdated(plan.updated_at) : false
+          weeklyUpdate: '2025 TSP contribution limits updated in all calculators' // TODO: Make dynamic
         });
 
         sentCount++;
@@ -126,10 +119,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendWeeklyDigest(email: string, data: { userName: string; hasPlan: boolean; planUpdated: boolean }) {
+async function sendWeeklyDigest(email: string, data: { userName: string; weeklyUpdate?: string }) {
   if (!process.env.RESEND_API_KEY) return;
 
-  const html = await renderWeeklyDigest(data.userName, data.hasPlan, data.planUpdated);
+  const html = await renderWeeklyDigest(data.userName, data.weeklyUpdate);
   const subject = getEmailSubject('weekly_digest', data.userName);
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -149,12 +142,5 @@ async function sendWeeklyDigest(email: string, data: { userName: string; hasPlan
   if (!response.ok) {
     throw new Error('Failed to send weekly digest');
   }
-}
-
-function isRecentlyUpdated(updatedAt: string): boolean {
-  const updated = new Date(updatedAt);
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  return updated > weekAgo;
 }
 

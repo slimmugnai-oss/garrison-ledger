@@ -11,7 +11,12 @@ export const runtime = "nodejs";
  * Cron job that runs daily to send onboarding emails to users
  * Triggered by Vercel Cron at 6am UTC daily
  * 
- * Processes users in the onboarding sequence and sends next day's email
+ * 3-Email Sequence:
+ * - Day 0: Welcome (sent immediately on signup, not by cron)
+ * - Day 3: Unique Features (Base Navigator + LES Auditor)
+ * - Day 7: Premium Upgrade
+ * 
+ * Processes users ready for day 3 or day 7 emails
  */
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -32,6 +37,7 @@ export async function POST(req: NextRequest) {
     logger.info('Starting onboarding sequence processing');
 
     // Get users who are in the onboarding sequence and ready for next email
+    // Only days 0, 3, and 7 (skip 1, 2, 4, 5, 6)
     const now = new Date();
     const { data: usersToEmail, error: fetchError } = await supabaseAdmin
       .from('email_preferences')
@@ -39,8 +45,7 @@ export async function POST(req: NextRequest) {
       .eq('onboarding_sequence_started', true)
       .eq('onboarding_sequence_completed', false)
       .lte('next_onboarding_email', now.toISOString())
-      .gt('onboarding_day', 0)
-      .lt('onboarding_day', 7);
+      .in('onboarding_day', [0, 3]); // Only process users on day 0 or 3 (day 7 will be handled below)
 
     if (fetchError) {
       throw Errors.databaseError('Failed to fetch onboarding users', { error: fetchError.message });
@@ -59,7 +64,9 @@ export async function POST(req: NextRequest) {
     // Process each user
     for (const userPreference of usersToEmail) {
       try {
-        const nextDay = userPreference.onboarding_day + 1;
+        // Determine next email day (0 → 3 → 7)
+        const currentDay = userPreference.onboarding_day;
+        const nextDay = currentDay === 0 ? 3 : 7;
         
         // Get user's email and name from Clerk or user_profiles
         const { data: profile } = await supabaseAdmin
@@ -90,7 +97,8 @@ export async function POST(req: NextRequest) {
 
         // Update user's onboarding progress
         const nextEmailDate = new Date();
-        nextEmailDate.setDate(nextEmailDate.getDate() + 1); // Next email tomorrow
+        const daysToWait = currentDay === 0 ? 3 : 4; // Day 0→3 (3 days), Day 3→7 (4 days)
+        nextEmailDate.setDate(nextEmailDate.getDate() + daysToWait);
 
         const updateData: {
           onboarding_day: number;
@@ -101,8 +109,8 @@ export async function POST(req: NextRequest) {
           next_onboarding_email: nextEmailDate.toISOString()
         };
 
-        // Mark as completed if this was day 7
-        if (nextDay >= 7) {
+        // Mark as completed if this was day 7 email
+        if (nextDay === 7) {
           updateData.onboarding_sequence_completed = true;
           updateData.next_onboarding_email = null;
         }
@@ -150,8 +158,8 @@ export async function POST(req: NextRequest) {
 export async function startOnboardingSequence(userId: string, userEmail: string, userName?: string) {
   try {
     // Create or update email preferences to start sequence
-    const firstEmailDate = new Date();
-    firstEmailDate.setDate(firstEmailDate.getDate() + 1); // First email tomorrow
+    const nextEmailDate = new Date();
+    nextEmailDate.setDate(nextEmailDate.getDate() + 3); // Next email (Day 3) in 3 days
 
     await supabaseAdmin
       .from('email_preferences')
@@ -160,15 +168,15 @@ export async function startOnboardingSequence(userId: string, userEmail: string,
         onboarding_sequence_started: true,
         onboarding_sequence_completed: false,
         onboarding_day: 0, // Day 0 = welcome email sent immediately
-        next_onboarding_email: firstEmailDate.toISOString(),
+        next_onboarding_email: nextEmailDate.toISOString(), // Day 3 email scheduled
         subscribed_to_marketing: true,
         subscribed_to_product_updates: true,
         subscribed_to_weekly_digest: true
       });
 
-    // Send immediate welcome email (Day 1)
+    // Send immediate welcome email (Day 0)
     if (process.env.RESEND_API_KEY) {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://garrison-ledger.vercel.app'}/api/emails/onboarding`, {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'https://app.familymedia.com'}/api/emails/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +184,7 @@ export async function startOnboardingSequence(userId: string, userEmail: string,
         body: JSON.stringify({
           userEmail,
           userName: userName || 'Service Member',
-          dayNumber: 1
+          dayNumber: 0 // Day 0 = Welcome email
         })
       });
 

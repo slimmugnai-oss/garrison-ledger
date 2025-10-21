@@ -10,7 +10,7 @@ interface TestEmailModalProps {
 
 export default function TestEmailModal({ isOpen, onClose }: TestEmailModalProps) {
   const [testEmail, setTestEmail] = useState('');
-  const [templateType, setTemplateType] = useState('onboarding_day_1');
+  const [templateType, setTemplateType] = useState('onboarding_welcome');
   const [userName, setUserName] = useState('Service Member');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -101,8 +101,15 @@ export default function TestEmailModal({ isOpen, onClose }: TestEmailModalProps)
               onChange={(e) => setTemplateType(e.target.value)}
               className="w-full px-4 py-2 border border-subtle rounded-lg focus:ring-2 focus:ring-info focus:border-info"
             >
-              <option value="onboarding_day_1">Onboarding Day 1 - Welcome</option>
-              <option value="weekly_digest">Weekly Digest</option>
+              <optgroup label="Onboarding Sequence (3 emails)">
+                <option value="onboarding_welcome">Day 0 - Welcome (6 Free Tools)</option>
+                <option value="onboarding_features">Day 3 - Unique Features (Navigator + LES)</option>
+                <option value="onboarding_premium">Day 7 - Premium Upgrade</option>
+              </optgroup>
+              <optgroup label="Recurring & Lead Magnets">
+                <option value="weekly_digest">Weekly Digest</option>
+                <option value="pcs_checklist">PCS Checklist (Lead Magnet)</option>
+              </optgroup>
             </select>
           </div>
 

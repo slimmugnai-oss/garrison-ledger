@@ -51,8 +51,8 @@ export default function CampaignsPageClient() {
                   <div className="flex items-center gap-3">
                     <Icon name="Mail" className="h-8 w-8 text-info" />
                     <div>
-                      <h3 className="text-lg font-bold text-primary">7-Day Onboarding</h3>
-                      <p className="text-sm text-body">New user welcome sequence</p>
+                      <h3 className="text-lg font-bold text-primary">3-Email Onboarding</h3>
+                      <p className="text-sm text-body">New user welcome sequence (over 7 days)</p>
                     </div>
                   </div>
                   <div className="bg-success-subtle text-success px-3 py-1 rounded-full text-xs font-bold">
@@ -61,23 +61,15 @@ export default function CampaignsPageClient() {
                 </div>
                 <div className="space-y-2 text-sm text-body">
                   <div className="flex justify-between">
-                    <span>Day 1: Welcome + Profile CTA</span>
+                    <span>Day 0: Welcome + 6 Free Calculators</span>
                     <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
-                    <span>Day 2: Assessment Preview</span>
+                    <span>Day 3: Base Navigator + LES Auditor</span>
                     <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                   <div className="flex justify-between">
-                    <span>Day 3: Success Story</span>
-                    <Icon name="Check" className="h-4 w-4 text-success" />
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Day 5: Free Tools Showcase</span>
-                    <Icon name="Check" className="h-4 w-4 text-success" />
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Day 7: Premium Upgrade</span>
+                    <span>Day 7: Premium Upgrade (Soft Sell)</span>
                     <Icon name="Check" className="h-4 w-4 text-success" />
                   </div>
                 </div>

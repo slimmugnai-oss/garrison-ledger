@@ -2,7 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
-import { renderOnboardingDay1, renderWeeklyDigest, getEmailSubject } from '@/lib/email-templates';
+import { 
+  renderOnboardingWelcome, 
+  renderOnboardingFeatures,
+  renderOnboardingPremium,
+  renderWeeklyDigest,
+  renderPCSChecklist,
+  getEmailSubject 
+} from '@/lib/email-templates';
 import { EMAIL_CONFIG } from '@/lib/email-config';
 
 export const runtime = "nodejs";
@@ -93,26 +100,38 @@ export async function POST(req: NextRequest) {
 async function getTestEmailContent(templateType: string, data: { userName?: string; subject?: string; html?: string } = {}): Promise<{ subject: string; html: string }> {
   const userName = data.userName || 'Service Member';
 
-  // Use React Email templates
+  // Use React Email templates (3-email sequence + recurring)
   let html: string;
   let subject: string;
 
   switch (templateType) {
-    case 'onboarding_day_1':
-      html = await renderOnboardingDay1(userName);
-      subject = getEmailSubject('onboarding_day_1', userName);
+    case 'onboarding_welcome':
+      html = await renderOnboardingWelcome(userName);
+      subject = getEmailSubject('onboarding_welcome', userName);
+      break;
+    case 'onboarding_features':
+      html = await renderOnboardingFeatures(userName);
+      subject = getEmailSubject('onboarding_features', userName);
+      break;
+    case 'onboarding_premium':
+      html = await renderOnboardingPremium(userName);
+      subject = getEmailSubject('onboarding_premium', userName);
       break;
     case 'weekly_digest':
-      html = await renderWeeklyDigest(userName, true, false);
+      html = await renderWeeklyDigest(userName);
       subject = getEmailSubject('weekly_digest', userName);
+      break;
+    case 'pcs_checklist':
+      html = await renderPCSChecklist();
+      subject = getEmailSubject('pcs_checklist');
       break;
     case 'custom':
       html = data.html || '<p>This is a test email with no content provided.</p>';
       subject = data.subject || 'Test Email from Garrison Ledger';
       break;
     default:
-      html = await renderOnboardingDay1(userName);
-      subject = getEmailSubject('onboarding_day_1', userName);
+      html = await renderOnboardingWelcome(userName);
+      subject = getEmailSubject('onboarding_welcome', userName);
   }
 
   return { subject, html };
