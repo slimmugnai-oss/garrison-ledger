@@ -41,7 +41,9 @@ export default function PremiumGate({
         onClick={() => {
           try { 
             localStorage.setItem('gl:lastTool', window.location.pathname); 
-          } catch {}
+          } catch {
+            // Non-critical: localStorage save failure
+          }
         }}
         className="inline-block rounded-md bg-info px-4 py-2 text-white shadow hover:bg-info transition-colors"
       >
