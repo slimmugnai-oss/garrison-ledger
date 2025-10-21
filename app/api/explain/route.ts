@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -11,6 +12,40 @@ export const maxDuration = 30;
  * INTELLIGENT EXPLAINER - GEMINI 2.0 POWERED
  * Provides contextual, personalized explanations for tool calculations
  */
+
+// Type definitions
+type ToolType = 'tsp' | 'sdp' | 'house';
+
+interface AssessmentAnswers {
+  comprehensive?: {
+    foundation?: {
+      serviceYears?: string | number;
+      familySnapshot?: string;
+    };
+    move?: {
+      pcsSituation?: string;
+    };
+    deployment?: {
+      status?: string;
+    };
+    career?: {
+      ambitions?: string[];
+    };
+    finance?: {
+      priority?: string;
+    };
+  };
+  [key: string]: unknown;
+}
+
+interface UserContext {
+  serviceYears: string;
+  familySnapshot: string;
+  pcsSituation: string;
+  deploymentStatus: string;
+  careerAmbitions: string[];
+  financialPriority: string;
+}
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   tsp: `You are analyzing TSP results for a Garrison Ledger user. Give tactical, specific advice.
@@ -71,77 +106,86 @@ GOOD example:
 };
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
-
-  // Parse request
-  let body;
   try {
-    body = await req.json();
-  } catch {
-    return new Response("Invalid JSON", { status: 400 });
-  }
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
 
-  const { tool, inputs, outputs } = body;
-
-  if (!tool || !inputs || !outputs) {
-    return new Response("Missing required fields: tool, inputs, outputs", { status: 400 });
-  }
-
-  // Get user context from assessment (for personalization)
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-  const { data: assessment } = await supabase
-    .from("assessments")
-    .select("answers")
-    .eq("user_id", userId)
-    .maybeSingle() as { data: { answers: Record<string, any> } | null };
-
-  type AssessmentAnswers = {
-    comprehensive?: Record<string, any>;
-    [key: string]: any;
-  };
-
-  const answers = (assessment?.answers || {}) as AssessmentAnswers;
-  const comprehensive = (answers.comprehensive || {}) as Record<string, any>;
-  const foundation = (comprehensive.foundation || {}) as Record<string, any>;
-  const move = (comprehensive.move || {}) as Record<string, any>;
-  const deployment = (comprehensive.deployment || {}) as Record<string, any>;
-  const career = (comprehensive.career || {}) as Record<string, any>;
-  const finance = (comprehensive.finance || {}) as Record<string, any>;
-  
-  // Build user context
-  const userContext = {
-    serviceYears: String(foundation.serviceYears || 'unknown'),
-    familySnapshot: String(foundation.familySnapshot || 'none'),
-    pcsSituation: String(move.pcsSituation || 'none'),
-    deploymentStatus: String(deployment.status || 'none'),
-    careerAmbitions: Array.isArray(career.ambitions) ? career.ambitions : [],
-    financialPriority: String(finance.priority || 'unknown')
-  };
-
-  // Initialize Gemini
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return new Response("GEMINI_API_KEY not configured", { status: 500 });
-  }
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash-exp",
-    generationConfig: {
-      temperature: 0.8, // Slightly more creative for explanations
-      maxOutputTokens: 1000,
+    // Parse request
+    let body: { tool?: string; inputs?: Record<string, unknown>; outputs?: Record<string, unknown> };
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      logger.warn('[Explain] Invalid JSON in request', { userId });
+      throw Errors.invalidInput("Invalid JSON in request body");
     }
-  });
 
-  const systemPrompt = SYSTEM_PROMPTS[tool] || SYSTEM_PROMPTS.tsp;
+    const { tool, inputs, outputs } = body;
 
-  // Construct prompt with full context
-  const userPrompt = `USER CONTEXT:
+    if (!tool || !inputs || !outputs) {
+      throw Errors.invalidInput("Missing required fields: tool, inputs, outputs");
+    }
+
+    // Validate tool type
+    const validTools: ToolType[] = ['tsp', 'sdp', 'house'];
+    if (!validTools.includes(tool as ToolType)) {
+      throw Errors.invalidInput(`Invalid tool type. Must be one of: ${validTools.join(', ')}`);
+    }
+
+    // Get user context from assessment (for personalization)
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: assessment, error: assessmentError } = await supabase
+      .from("assessments")
+      .select("answers")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (assessmentError) {
+      logger.warn('[Explain] Failed to fetch assessment', { userId, error: assessmentError });
+      // Continue without assessment data - use defaults
+    }
+
+    const answers = (assessment?.answers || {}) as AssessmentAnswers;
+    const comprehensive = answers.comprehensive || {};
+    const foundation = comprehensive.foundation || {};
+    const move = comprehensive.move || {};
+    const deployment = comprehensive.deployment || {};
+    const career = comprehensive.career || {};
+    const finance = comprehensive.finance || {};
+    
+    // Build user context with proper type safety
+    const userContext: UserContext = {
+      serviceYears: String(foundation.serviceYears || 'unknown'),
+      familySnapshot: String(foundation.familySnapshot || 'none'),
+      pcsSituation: String(move.pcsSituation || 'none'),
+      deploymentStatus: String(deployment.status || 'none'),
+      careerAmbitions: Array.isArray(career.ambitions) ? career.ambitions : [],
+      financialPriority: String(finance.priority || 'unknown')
+    };
+
+    // Initialize Gemini
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      logger.error('[Explain] GEMINI_API_KEY not configured');
+      throw Errors.externalApiError("Gemini", "API key not configured");
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.0-flash-exp",
+      generationConfig: {
+        temperature: 0.8, // Slightly more creative for explanations
+        maxOutputTokens: 1000,
+      }
+    });
+
+    const systemPrompt = SYSTEM_PROMPTS[tool as ToolType] || SYSTEM_PROMPTS.tsp;
+
+    // Construct prompt with full context
+    const userPrompt = `USER CONTEXT:
 Service: ${userContext.serviceYears} years
 Family: ${userContext.familySnapshot}
 PCS Status: ${userContext.pcsSituation}
@@ -156,50 +200,64 @@ ${JSON.stringify(outputs, null, 2)}
 
 Please provide a personalized, actionable explanation of these ${tool.toUpperCase()} results for this specific service member. Reference their actual numbers and situation.`;
 
-  try {
-    const result = await model.generateContent(`${systemPrompt}\n\n${userPrompt}`);
-    const response = result.response;
-    const text = response.text();
+    try {
+      const startTime = Date.now();
+      const result = await model.generateContent(`${systemPrompt}\n\n${userPrompt}`);
+      const duration = Date.now() - startTime;
+      
+      const response = result.response;
+      const text = response.text();
 
-    // Stream the HTML response
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      start(controller) {
-        // Split into chunks for smooth streaming
-        const chunks = text.match(/.{1,100}/g) || [text];
-        let i = 0;
-        
-        const push = () => {
-          if (i >= chunks.length) {
-            controller.close();
-            return;
-          }
-          controller.enqueue(encoder.encode(chunks[i]));
-          i++;
-          setTimeout(push, 30); // Smooth streaming effect
-        };
-        
-        push();
-      }
-    });
+      logger.info('[Explain] AI explanation generated', { 
+        userId, 
+        tool, 
+        duration, 
+        charCount: text.length 
+      });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "no-store",
-      }
-    });
+      // Stream the HTML response
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          // Split into chunks for smooth streaming
+          const chunks = text.match(/.{1,100}/g) || [text];
+          let i = 0;
+          
+          const push = () => {
+            if (i >= chunks.length) {
+              controller.close();
+              return;
+            }
+            controller.enqueue(encoder.encode(chunks[i]));
+            i++;
+            setTimeout(push, 30); // Smooth streaming effect
+          };
+          
+          push();
+        }
+      });
 
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-store",
+        }
+      });
+
+    } catch (aiError) {
+      logger.error('[Explain] AI generation failed, using fallback', aiError, { userId, tool });
+      
+      // Fallback to deterministic if AI fails
+      const fallback = generateFallbackExplanation(tool as ToolType, inputs, outputs);
+      return new Response(fallback, {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-store",
+        }
+      });
+    }
   } catch (error) {
-    
-    // Fallback to deterministic if AI fails
-    const fallback = generateFallbackExplanation(tool, inputs, outputs);
-    return new Response(fallback, {
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "no-store",
-      }
-    });
+    return errorResponse(error);
   }
 }
 
@@ -207,7 +265,7 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
  * Fallback: Simple deterministic explanation if AI fails
  */
 function generateFallbackExplanation(
-  tool: string,
+  tool: ToolType,
   inputs: Record<string, unknown>,
   outputs: Record<string, unknown>
 ): string {
