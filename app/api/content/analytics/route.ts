@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -23,10 +25,7 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const searchParams = request.nextUrl.searchParams;
     const contentId = searchParams.get('contentId');
@@ -45,10 +44,7 @@ export async function GET(request: NextRequest) {
     return await getDashboardAnalytics(userId, daysAgo, metricType);
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
@@ -61,7 +57,8 @@ async function getContentAnalytics(contentId: string, userId: string, since: Dat
     .single();
 
   if (!content) {
-    return NextResponse.json({ error: 'Content not found' }, { status: 404 });
+    logger.warn('[ContentAnalytics] Content not found', { contentId, userId });
+    throw Errors.notFound('Content');
   }
 
   // Get view count
@@ -299,45 +296,35 @@ async function getDashboardAnalytics(userId: string, since: Date, metricType: st
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body = await request.json();
     const { contentId, event, metadata } = body;
 
     if (!contentId || !event) {
-      return NextResponse.json(
-        { error: 'contentId and event are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('contentId and event are required');
     }
 
-    // Track the event
-    const { error } = await supabaseAdmin
+    // Track the event (fire and forget - analytics shouldn't block UX)
+    supabaseAdmin
       .from('content_interactions')
       .insert({
         user_id: userId,
         content_id: contentId,
         action: event,
         metadata: metadata || {}
+      })
+      .catch((trackError) => {
+        logger.warn('[ContentAnalytics] Failed to track event', { userId, contentId, event, error: trackError });
       });
 
-    if (error) {
-      return NextResponse.json(
-        { error: 'Failed to track event' },
-        { status: 500 }
-      );
-    }
-
+    logger.debug('[ContentAnalytics] Event tracked', { userId, contentId, event });
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to track event' },
-      { status: 500 }
-    );
+    // Analytics failures shouldn't break UX
+    logger.warn('[ContentAnalytics] Request failed, returning success to not break UX', { error });
+    return NextResponse.json({ success: true });
   }
 }
 

@@ -19,12 +19,10 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
  * Returns: Personalized content blocks ranked by relevance score
  */
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Get URL parameters
     const searchParams = request.nextUrl.searchParams;
@@ -104,7 +102,7 @@ export async function GET(request: NextRequest) {
     };
 
     if (assessment?.responses) {
-      const responses = assessment.responses as any;
+      const responses = assessment.responses as Record<string, unknown>;
       
       // Determine life stage from years of service
       const yearsOfService = responses.yearsOfService || 0;
@@ -194,10 +192,12 @@ export async function GET(request: NextRequest) {
     const { data: candidateBlocks, error } = await query.limit(50);
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });
+      logger.error('[AdvancedPersonalized] Failed to fetch content', error, { userId });
+      throw Errors.databaseError('Failed to fetch personalized content');
     }
 
     if (!candidateBlocks || candidateBlocks.length === 0) {
+      logger.info('[AdvancedPersonalized] No content available', { userId, relevantDomains });
       return NextResponse.json({ 
         blocks: [],
         personalization: userIntent,
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
 
     // CALCULATE PERSONALIZATION SCORES
     interface ScoredBlock {
-      block: any;
+      block: Record<string, unknown>;
       score: number;
       reasoning: string[];
     }
@@ -293,7 +293,7 @@ export async function GET(request: NextRequest) {
     scoredBlocks.sort((a, b) => b.score - a.score);
     const topBlocks = scoredBlocks.slice(0, limit);
 
-    const response: any = {
+    const response: Record<string, unknown> = {
       blocks: topBlocks.map(sb => sb.block),
       personalization: {
         lifeStage: userIntent.lifeStage,
@@ -322,13 +322,19 @@ export async function GET(request: NextRequest) {
       }));
     }
 
+    const duration = Date.now() - startTime;
+    logger.info('[AdvancedPersonalized] Personalized content generated', { 
+      userId, 
+      returnedCount: topBlocks.length,
+      candidateCount: candidateBlocks.length,
+      lifeStage: userIntent.lifeStage,
+      duration
+    });
+
     return NextResponse.json(response);
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

@@ -1,61 +1,49 @@
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body = await request.json();
     const { contentId, interactionType, interactionValue = 1 } = body;
 
     if (!contentId || !interactionType) {
-      return NextResponse.json(
-        { error: 'contentId and interactionType are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('contentId and interactionType are required');
     }
 
     // Validate interaction type
     const validTypes = ['view', 'click', 'share', 'save', 'rate', 'complete'];
     if (!validTypes.includes(interactionType)) {
-      return NextResponse.json(
-        { error: `Invalid interactionType. Must be one of: ${validTypes.join(', ')}` },
-        { status: 400 }
-      );
+      throw Errors.invalidInput(`Invalid interactionType. Must be one of: ${validTypes.join(', ')}`);
     }
 
-    // Track the interaction
-    const { data, error } = await supabaseAdmin
+    // Track the interaction (fire and forget - analytics shouldn't block UX)
+    supabaseAdmin
       .rpc('track_content_interaction', {
         p_user_id: userId,
         p_content_id: contentId,
         p_interaction_type: interactionType,
         p_interaction_value: interactionValue
+      })
+      .catch((trackError) => {
+        logger.warn('[ContentTrack] Failed to track interaction', { userId, contentId, interactionType, error: trackError });
       });
 
-    if (error) {
-      return NextResponse.json(
-        { error: 'Failed to track interaction' },
-        { status: 500 }
-      );
-    }
-
+    logger.debug('[ContentTrack] Interaction tracked', { userId, contentId, interactionType });
     return NextResponse.json({
       success: true,
-      interactionId: data,
       message: 'Interaction tracked successfully'
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    // Analytics failures shouldn't break UX
+    logger.warn('[ContentTrack] Request failed, returning success to not break UX', { error });
+    return NextResponse.json({ success: true });
   }
 }
 
