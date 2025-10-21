@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/database.types";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -15,28 +17,26 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET(req: NextRequest) {
-  // Auth check
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
-  // Rate limiting is handled by the frontend and /api/library/can-view endpoint
-  
-  const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
-
-  // Parse query parameters
-  const searchParams = req.nextUrl.searchParams;
-  const search = searchParams.get("search") || "";
-  const source = searchParams.get("source") || ""; // Using source_page field
-  const type = searchParams.get("type") || "";
-  const topic = searchParams.get("topic") || "";
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const pageSize = 20;
-  const offset = (page - 1) * pageSize;
-
   try {
+    // Auth check
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
+    // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
+    // Rate limiting is handled by the frontend and /api/library/can-view endpoint
+  
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
+
+    // Parse query parameters
+    const searchParams = req.nextUrl.searchParams;
+    const search = searchParams.get("search") || "";
+    const source = searchParams.get("source") || ""; // Using source_page field
+    const type = searchParams.get("type") || "";
+    const topic = searchParams.get("topic") || "";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const pageSize = 20;
+    const offset = (page - 1) * pageSize;
+
     // Build query
     let query = supabase
       .from("content_blocks")
@@ -70,12 +70,11 @@ export async function GET(req: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      return NextResponse.json(
-        { error: "Failed to fetch content blocks" },
-        { status: 500 }
-      );
+      logger.error('[Library] Failed to fetch content blocks', error, { userId, search, source, type, topic });
+      throw Errors.databaseError("Failed to fetch content blocks");
     }
 
+    logger.info('[Library] Content fetched', { userId, resultCount: data?.length || 0, page, filters: { search, source, type, topic } });
     return NextResponse.json({
       success: true,
       data: data || [],
@@ -87,13 +86,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

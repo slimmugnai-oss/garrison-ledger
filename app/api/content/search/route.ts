@@ -1,5 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function GET(request: Request) {
   try {
@@ -12,10 +14,15 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '20');
 
     if (!query) {
-      return NextResponse.json(
-        { error: 'Search query is required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Search query (q) is required');
+    }
+
+    if (query.length < 2) {
+      throw Errors.invalidInput('Search query must be at least 2 characters');
+    }
+
+    if (limit < 1 || limit > 100) {
+      throw Errors.invalidInput('Limit must be between 1 and 100');
     }
 
     // Use advanced search function
@@ -30,12 +37,11 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to search content' },
-        { status: 500 }
-      );
+      logger.error('[ContentSearch] Search failed', error, { query, filters: { domain, difficulty, audience, minRating } });
+      throw Errors.databaseError('Failed to search content');
     }
 
+    logger.info('[ContentSearch] Search completed', { query, resultCount: data?.length || 0, filters: { domain, difficulty, audience } });
     return NextResponse.json({
       success: true,
       results: data,
@@ -45,10 +51,7 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
