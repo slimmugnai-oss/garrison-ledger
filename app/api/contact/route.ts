@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 
@@ -34,26 +36,17 @@ export async function POST(req: NextRequest) {
 
     // Validation
     if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Missing required fields: name, email, and message are required');
     }
 
     if (message.length < 10) {
-      return NextResponse.json(
-        { error: 'Message must be at least 10 characters' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Message must be at least 10 characters');
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email address' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Invalid email address format');
     }
 
     const supabase = getAdminClient();
@@ -74,14 +67,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (dbError) {
-      return NextResponse.json(
-        { error: 'Failed to submit contact form' },
-        { status: 500 }
-      );
+      logger.error('[Contact] Failed to save submission', dbError, { email, subject });
+      throw Errors.databaseError('Failed to submit contact form');
     }
 
-    // Send email notification to admin
-    try {
+    // Send email notification to admin (fire and forget)
+    if (process.env.RESEND_API_KEY) {
       const emailSubject = `[${ticketId}] New Contact Form Submission - ${subject}`;
       const emailBody = `
 New contact form submission received:
@@ -97,43 +88,34 @@ ${message}
 
 ---
 Reply directly to this email to respond to the user.
-View in Supabase: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/editor (contact_submissions table)
       `.trim();
 
-      // Send email using Resend (requires RESEND_API_KEY env var)
-      if (process.env.RESEND_API_KEY) {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'Garrison Ledger <noreply@familymedia.com>',
-            to: ['joemugnai@familymedia.com'],
-            reply_to: email,
-            subject: emailSubject,
-            text: emailBody,
-          }),
-        });
-      }
-    } catch (emailError) {
-      // Log but don't fail the request if email fails
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Garrison Ledger <noreply@familymedia.com>',
+          to: ['joemugnai@familymedia.com'],
+          reply_to: email,
+          subject: emailSubject,
+          text: emailBody,
+        }),
+      }).catch((emailError) => {
+        logger.warn('[Contact] Failed to send email notification', { ticketId, error: emailError });
+      });
     }
 
+    logger.info('[Contact] Submission received', { ticketId, email, subject, urgency });
     return NextResponse.json({
       success: true,
       ticketId,
       message: 'Message sent successfully',
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

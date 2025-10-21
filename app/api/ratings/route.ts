@@ -1,6 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 /**
  * GET - Fetch user's rating for content
@@ -10,19 +12,13 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const { searchParams } = new URL(request.url);
     const contentId = searchParams.get('contentId');
 
     if (!contentId) {
-      return NextResponse.json(
-        { error: 'contentId is required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('contentId is required');
     }
 
     const { data, error } = await supabaseAdmin
@@ -32,48 +28,35 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch rating' },
-        { status: 500 }
-      );
+      logger.error('[Ratings] Failed to fetch rating', error, { userId, contentId });
+      throw Errors.databaseError('Failed to fetch rating');
     }
 
+    logger.info('[Ratings] Rating fetched', { userId, contentId, hasRating: data && data.length > 0 });
     return NextResponse.json({
       success: true,
       rating: data && data.length > 0 ? data[0] : null
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const body = await request.json();
     const { contentId, rating, feedback } = body;
 
     if (!contentId || !rating) {
-      return NextResponse.json(
-        { error: 'contentId and rating are required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('contentId and rating are required');
     }
 
     if (rating < 1 || rating > 5) {
-      return NextResponse.json(
-        { error: 'Rating must be between 1 and 5' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Rating must be between 1 and 5');
     }
 
     // Upsert rating (insert or update)
@@ -92,25 +75,28 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to save rating' },
-        { status: 500 }
-      );
+      logger.error('[Ratings] Failed to save rating', error, { userId, contentId, rating });
+      throw Errors.databaseError('Failed to save rating');
     }
 
-    // Update the content block's overall rating
-    await supabaseAdmin.rpc('update_content_rating_from_users', {
+    // Update the content block's overall rating (fire and forget)
+    supabaseAdmin.rpc('update_content_rating_from_users', {
       p_content_id: contentId
+    }).catch((updateError) => {
+      logger.warn('[Ratings] Failed to update content aggregate rating', { contentId, error: updateError });
     });
 
-    // Track the rate interaction
-    await supabaseAdmin.rpc('track_content_interaction', {
+    // Track the rate interaction (fire and forget)
+    supabaseAdmin.rpc('track_content_interaction', {
       p_user_id: userId,
       p_content_id: contentId,
       p_interaction_type: 'rate',
       p_interaction_value: rating
+    }).catch((trackError) => {
+      logger.warn('[Ratings] Failed to track interaction', { userId, contentId, error: trackError });
     });
 
+    logger.info('[Ratings] Rating saved', { userId, contentId, rating });
     return NextResponse.json({
       success: true,
       rating: data,
@@ -118,10 +104,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
