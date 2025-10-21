@@ -146,6 +146,7 @@ export default function ComprehensiveFAQ() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     <Icon name={category.icon as any} className="h-6 w-6" />
                     <span className="font-bold text-lg text-gray-900">{category.title}</span>
                     <span className="text-sm text-gray-600">({category.faqs.length} questions)</span>

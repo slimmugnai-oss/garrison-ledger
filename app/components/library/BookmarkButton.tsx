@@ -21,6 +21,7 @@ export default function BookmarkButton({ contentId, onBookmarkChange }: Bookmark
       const response = await fetch('/api/bookmarks');
       if (response.ok) {
         const data = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isCurrentlyBookmarked = data.bookmarks?.some((b: any) => b.content_id === contentId);
         setIsBookmarked(isCurrentlyBookmarked || false);
       }

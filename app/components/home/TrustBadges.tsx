@@ -37,6 +37,7 @@ export default function TrustBadges() {
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
           {badges.map((badge, index) => (
             <div key={index} className="flex items-center gap-2">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <Icon name={badge.icon as any} className={`h-5 w-5 ${badge.color}`} />
               <span className="font-semibold text-body text-sm md:text-base whitespace-nowrap">
                 {badge.text}

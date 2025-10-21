@@ -170,6 +170,7 @@ export default function OnboardingTour() {
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="bg-white bg-opacity-20 p-2 rounded-lg">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <Icon name={currentStepData.icon as any} className="h-6 w-6" />
                 </div>
                 <div>

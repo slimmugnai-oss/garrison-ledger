@@ -126,6 +126,7 @@ export default function ScenarioStorytelling() {
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-body">{item.text}</span>
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                               <Icon name={item.icon as any} className={`h-5 w-5 ${item.highlight ? 'text-success' : 'text-muted'}`} />
                             </div>
                             <div className={`text-2xl font-black mt-2 ${item.highlight ? 'text-success' : 'text-primary'}`}>
