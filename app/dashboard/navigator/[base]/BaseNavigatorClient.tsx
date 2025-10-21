@@ -8,6 +8,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
@@ -158,9 +159,9 @@ export default function BaseNavigatorClient({
         {/* Header */}
         <div className="mb-8">
           <nav className="text-sm mb-4">
-            <a href="/dashboard" className="text-blue-600 hover:text-blue-700">Dashboard</a>
+            <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">Dashboard</Link>
             <span className="mx-2 text-gray-400">→</span>
-            <a href="/dashboard/navigator" className="text-blue-600 hover:text-blue-700">Base Navigator</a>
+            <Link href="/dashboard/navigator" className="text-blue-600 hover:text-blue-700">Base Navigator</Link>
             <span className="mx-2 text-gray-400">→</span>
             <span className="text-gray-600">{base.name} Navigator</span>
           </nav>

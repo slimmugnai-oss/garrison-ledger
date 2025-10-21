@@ -9,6 +9,7 @@
 
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
@@ -181,12 +182,12 @@ export default async function IntelLibraryPage({
                   );
                 })}
                 {domain && (
-                  <a
+                  <Link
                     href="/dashboard/intel"
                     className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium"
                   >
                     Clear Filter
-                  </a>
+                  </Link>
                 )}
               </div>
             </div>

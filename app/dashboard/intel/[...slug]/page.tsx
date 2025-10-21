@@ -7,6 +7,7 @@
 
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
@@ -61,12 +62,12 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
               <p className="text-gray-600 mb-6">
                 The Intel Card <code className="bg-gray-100 px-2 py-1 rounded">{slugPath}</code> does not exist.
               </p>
-              <a
+              <Link
                 href="/dashboard/intel"
                 className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 ← Back to Intel Library
-              </a>
+              </Link>
             </div>
           </div>
         </main>
@@ -112,9 +113,9 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Breadcrumb */}
           <nav className="mb-6 text-sm">
-            <a href="/dashboard" className="text-blue-600 hover:text-blue-700">Dashboard</a>
+            <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">Dashboard</Link>
             <span className="mx-2 text-gray-400">→</span>
-            <a href="/dashboard/intel" className="text-blue-600 hover:text-blue-700">Intel Library</a>
+            <Link href="/dashboard/intel" className="text-blue-600 hover:text-blue-700">Intel Library</Link>
             <span className="mx-2 text-gray-400">→</span>
             <span className="text-gray-600">{card.frontmatter.title}</span>
           </nav>
@@ -160,12 +161,12 @@ export default async function IntelCardPage({ params }: { params: Promise<{ slug
 
           {/* Footer Actions */}
           <div className="flex items-center justify-between">
-            <a
+            <Link
               href="/dashboard/intel"
               className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
             >
               ← Back to Intel Library
-            </a>
+            </Link>
             
             <div className="flex gap-3">
               <ShareButton title={card.frontmatter.title} />

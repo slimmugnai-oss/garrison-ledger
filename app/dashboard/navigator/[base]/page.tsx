@@ -7,6 +7,7 @@
 
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
@@ -57,12 +58,12 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
               <p className="text-gray-600 mb-6">
                 Base code <code className="bg-gray-100 px-2 py-1 rounded">{baseCode}</code> not found.
               </p>
-              <a
+              <Link
                 href="/dashboard/navigator"
                 className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 ← Browse All Bases
-              </a>
+              </Link>
             </div>
           </div>
         </main>
