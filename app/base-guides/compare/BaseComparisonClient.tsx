@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Icon from '../../components/ui/Icon';
 import AnimatedCard from '../../components/ui/AnimatedCard';
-import { basesData, getBaseById, badgeColors, branchColors } from '../../data/bases';
-import { getComparisonList, addToComparison, removeFromComparison } from '../../lib/base-analytics';
+import { getBaseById, badgeColors } from '../../data/bases';
+import { addToComparison, removeFromComparison } from '../../lib/base-analytics';
 
 interface BaseComparisonData {
   id: string;
@@ -62,7 +61,6 @@ const fetchComparisonData = async (baseIds: string[]): Promise<BaseComparisonDat
 };
 
 export default function BaseComparisonClient({ baseIds }: { baseIds: string[] }) {
-  const router = useRouter();
   const [comparisonBases, setComparisonBases] = useState<BaseComparisonData[]>([]);
   const [selectedBases, setSelectedBases] = useState<string[]>(baseIds);
   const [loading, setLoading] = useState(true);
@@ -82,13 +80,6 @@ export default function BaseComparisonClient({ baseIds }: { baseIds: string[] })
 
     loadComparison();
   }, [selectedBases]);
-
-  const handleAddBase = (baseId: string) => {
-    const result = addToComparison(baseId, getBaseById(baseId)?.title || '', getBaseById(baseId)?.branch || '');
-    if (result.success) {
-      setSelectedBases(prev => [...prev, baseId]);
-    }
-  };
 
   const handleRemoveBase = (baseId: string) => {
     removeFromComparison(baseId);
