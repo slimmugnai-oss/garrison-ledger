@@ -10,7 +10,7 @@ const supabaseAdmin = createClient(
 );
 
 // GET: Get user's spouse connection and shared data
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
     if (!userId) throw Errors.unauthorized();
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE: Disconnect spouses
-export async function DELETE(_request: NextRequest) {
+export async function DELETE() {
   try {
     const { userId } = await auth();
     if (!userId) throw Errors.unauthorized();

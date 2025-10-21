@@ -21,7 +21,7 @@ function getOpenAI() {
   return openai;
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
     if (!userId) throw Errors.unauthorized();

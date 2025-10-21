@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     }
 
     // DASHBOARD ANALYTICS
-    return await getDashboardAnalytics(userId, daysAgo, metricType);
+    return await getDashboardAnalytics(userId, daysAgo);
 
   } catch (error) {
     return errorResponse(error);
@@ -165,7 +165,7 @@ async function getContentAnalytics(contentId: string, userId: string, since: Dat
   });
 }
 
-async function getDashboardAnalytics(userId: string, since: Date, _metricType: string) {
+async function getDashboardAnalytics(userId: string, since: Date) {
   // Get user's content interactions
   const { data: userInteractions } = await supabaseAdmin
     .from('content_interactions')

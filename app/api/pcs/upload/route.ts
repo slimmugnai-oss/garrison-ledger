@@ -154,7 +154,10 @@ export async function POST(req: NextRequest) {
 /**
  * Process OCR with Gemini 2.0 Flash Vision
  * Runs async after upload completes
+ * 
+ * TODO: Integrate this function into the upload flow
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function processOCR(
   documentId: string,
   fileData: string,
@@ -192,10 +195,8 @@ async function processOCR(
 
     // Parse OCR response
     let ocrData: Record<string, unknown>;
-    let parseSuccess = false;
     try {
       ocrData = JSON.parse(extractedText);
-      parseSuccess = true;
     } catch {
       ocrData = { raw_text: extractedText };
     }
