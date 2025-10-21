@@ -184,11 +184,13 @@ export default function AnalyticsDashboard() {
             <div className="grid md:grid-cols-2 gap-6">
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <Pie
                     data={topFeatures as any}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     label={(props: any) => {
                       const entry = topFeatures[props.index];
                       return entry?.feature_name || '';

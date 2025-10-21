@@ -22,6 +22,7 @@ interface Props {
     currentBase?: string;
     hasDependents?: boolean | null;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialWatchlist: any;
   initialBahCents?: number | null;
   bahSource?: 'auto' | 'manual';

@@ -195,6 +195,7 @@ function FlagCard({
     green: 'border-green-300 bg-green-50'
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const severityIcons: Record<FlagSeverity, any> = {
     red: 'AlertCircle',
     yellow: 'AlertTriangle',

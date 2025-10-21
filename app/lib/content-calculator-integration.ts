@@ -11,6 +11,7 @@ export interface CalculatorLink {
   calculatorName: string;
   calculatorPath: string;
   relevanceScore: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   prefillData?: Record<string, any>; // Dynamic calculator input data
   actionLabel: string;
   description: string;

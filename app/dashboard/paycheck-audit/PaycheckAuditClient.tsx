@@ -23,6 +23,7 @@ interface Props {
     currentBase?: string;
     hasDependents?: boolean;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   history: any[];
   hasReachedFreeLimit: boolean;
   uploadsThisMonth: number;

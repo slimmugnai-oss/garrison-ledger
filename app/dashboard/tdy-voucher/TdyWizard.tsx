@@ -23,6 +23,7 @@ interface Props {
 
 export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
   const [step, setStep] = useState(1); // 1: Upload, 2: Review Items, 3: Estimate, 4: Check, 5: Voucher
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [docs, setDocs] = useState<any[]>([]);
   const [items, setItems] = useState<TdyItem[]>([]);
   const [totals, setTotals] = useState<EstimateTotals | null>(null);

@@ -114,6 +114,7 @@ export default async function ToolsPage() {
                         <Link href={tool.href} className="block p-8">
                           <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl flex items-center justify-center">
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                               <Icon name={tool.icon as any} className="h-6 w-6 text-white" />
                             </div>
                             {tool.premium && (
