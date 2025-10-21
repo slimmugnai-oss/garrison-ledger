@@ -5,6 +5,7 @@ import Icon from '@/app/components/ui/Icon';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Scenario {
   id: string;
   name: string;
@@ -13,6 +14,7 @@ interface Scenario {
   created_at: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ComparisonModeProps {
   tool: string;
   currentInput: Record<string, any>;

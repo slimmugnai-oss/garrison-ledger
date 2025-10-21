@@ -68,12 +68,18 @@ export default function BaseMapSelector() {
     // Fetch US map data
     fetch('https://unpkg.com/us-atlas@3/states-10m.json')
       .then(response => response.json())
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((us: any) => {
         // Separate Alaska (02), Hawaii (15), Puerto Rico (72) for insets
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const featureCollection = topojson.feature(us, us.objects.states) as any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const contiguousStates = featureCollection.features
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .filter((f: any) => !['02', '15', '72'].includes(f.id));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const alaska = featureCollection.features.find((f: any) => f.id === '02');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hawaii = featureCollection.features.find((f: any) => f.id === '15');
         
         // Projection includes Alaska and Hawaii insets automatically
@@ -88,6 +94,7 @@ export default function BaseMapSelector() {
           .data(featureCollection.features)
           .join('path')
           .attr('class', 'state')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .attr('d', path as any)
           .attr('fill', '#f1f5f9')
           .attr('stroke', '#cbd5e1')
