@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 
@@ -55,43 +57,62 @@ function getAdminClient() {
 }
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
 
-  const supabase = getAdminClient();
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
+    const supabase = getAdminClient();
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data || null, { headers: { "Cache-Control": "no-store" } });
+    if (error) {
+      logger.error('[UserProfile] Failed to fetch profile', error, { userId });
+      throw Errors.databaseError('Failed to fetch profile');
+    }
+
+    logger.info('[UserProfile] Profile fetched', { userId, hasProfile: !!data });
+    return NextResponse.json(data || null, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    return errorResponse(error);
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  let body: Partial<UserProfile>;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
+    let body: Partial<UserProfile>;
+    try {
+      body = await req.json();
+    } catch (jsonError) {
+      logger.warn('[UserProfile] Invalid JSON in request', { userId });
+      throw Errors.invalidInput('Invalid JSON in request body');
+    }
+
+    const supabase = getAdminClient();
+    const payload: UserProfile = { ...body, user_id: userId } as UserProfile;
+
+    // Upsert by user_id
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .upsert(payload, { onConflict: "user_id" })
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      logger.error('[UserProfile] Failed to update profile', error, { userId });
+      throw Errors.databaseError('Failed to update profile');
+    }
+
+    logger.info('[UserProfile] Profile updated', { userId, profileCompleted: data?.profile_completed });
+    return NextResponse.json(data);
+  } catch (error) {
+    return errorResponse(error);
   }
-
-  const supabase = getAdminClient();
-  const payload: UserProfile = { ...body, user_id: userId } as UserProfile;
-
-  // Upsert by user_id
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .upsert(payload, { onConflict: "user_id" })
-    .select("*")
-    .maybeSingle();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
 }
 
 

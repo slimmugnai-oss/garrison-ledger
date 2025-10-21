@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function GET() {
   try {
     const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    if (!user) throw Errors.unauthorized();
 
     // TEMPORARY FIX: Hardcode premium status for known premium users
     const premiumUsers = [
@@ -17,43 +16,49 @@ export async function GET() {
     ];
     
     if (premiumUsers.includes(user.id)) {
+      logger.info('[SubscriptionStatus] Hardcoded premium user', { userId: user.id });
       return NextResponse.json({ isPremium: true });
     }
 
-    // Try database query as fallback
-    try {
-      const { data, error } = await supabaseAdmin
-        .from('v_user_access')
-        .select('is_premium')
+    // Try v_user_access view first
+    const { data, error } = await supabaseAdmin
+      .from('v_user_access')
+      .select('is_premium')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error) {
+      logger.warn('[SubscriptionStatus] v_user_access failed, trying entitlements', { 
+        userId: user.id, 
+        error: error.message 
+      });
+      
+      // Fallback to entitlements table
+      const { data: entitlementsData, error: entitlementsError } = await supabaseAdmin
+        .from('entitlements')
+        .select('tier, status')
         .eq('user_id', user.id)
         .single();
-
-
-      if (error) {
-        
-        const { data: entitlementsData, error: entitlementsError } = await supabaseAdmin
-          .from('entitlements')
-          .select('tier, status')
-          .eq('user_id', user.id)
-          .single();
-        
-        
-        if (entitlementsError) {
-          return NextResponse.json({ isPremium: false });
-        }
-        
-        const isPremium = entitlementsData?.tier === 'premium' && entitlementsData?.status === 'active';
-        
-        return NextResponse.json({ isPremium });
+      
+      if (entitlementsError) {
+        logger.warn('[SubscriptionStatus] Entitlements also failed, defaulting to free', { 
+          userId: user.id, 
+          error: entitlementsError.message 
+        });
+        return NextResponse.json({ isPremium: false });
       }
-
-      const isPremium = !!data?.is_premium;
-
+      
+      const isPremium = entitlementsData?.tier === 'premium' && entitlementsData?.status === 'active';
+      logger.info('[SubscriptionStatus] Status from entitlements', { userId: user.id, isPremium });
       return NextResponse.json({ isPremium });
-    } catch (dbError) {
-      return NextResponse.json({ isPremium: false });
     }
+
+    const isPremium = !!data?.is_premium;
+    logger.info('[SubscriptionStatus] Status from v_user_access', { userId: user.id, isPremium });
+    return NextResponse.json({ isPremium });
   } catch (error) {
+    // Default to free tier on any error (don't block user)
+    logger.error('[SubscriptionStatus] Unexpected error, defaulting to free', error);
     return NextResponse.json({ isPremium: false });
   }
 }
