@@ -18,8 +18,9 @@ const fmt = (value: number) => {
 };
 
 // Email templates for each calculator
-const templates = {
-  tsp: (data: { inputs: any; outputs: any }) => `
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const templates: Record<string, (data: { inputs: any; outputs: any }) => string> = {
+  tsp: (data) => `
     <h2>Your TSP Allocation Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -40,7 +41,7 @@ const templates = {
     </div>
   `,
   
-  sdp: (data: { inputs: any; outputs: any }) => `
+  sdp: (data) => `
     <h2>Your SDP Strategy Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -58,7 +59,7 @@ const templates = {
     </div>
   `,
   
-  'house-hacking': (data: { inputs: any; outputs: any }) => `
+  'house-hacking': (data) => `
     <h2>Your House Hacking Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
@@ -77,7 +78,7 @@ const templates = {
     </div>
   `,
   
-  pcs: (data: any) => `
+  pcs: (data) => `
     <h2>Your PCS Financial Plan</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Income:</h3>
@@ -101,7 +102,7 @@ const templates = {
     </div>
   `,
   
-  savings: (data: any) => `
+  savings: (data) => `
     <h2>Your Annual Savings Analysis</h2>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Total Annual Savings:</h3>
@@ -118,7 +119,7 @@ const templates = {
     </div>
   `,
   
-  career: (data: any) => `
+  career: (data) => `
     <h2>Your Career Opportunity Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Comparison:</h3>
