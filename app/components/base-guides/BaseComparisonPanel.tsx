@@ -15,8 +15,9 @@ export default function BaseComparisonPanel() {
       if (saved) {
         try {
           setComparisonList(JSON.parse(saved));
-        } catch {
-        }
+    } catch {
+      // Non-critical: localStorage operation - continue without it
+    }
       }
     }
   }, []);

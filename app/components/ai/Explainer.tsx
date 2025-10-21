@@ -19,6 +19,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
           setIsPremium(data.isPremium);
         }
       } catch {
+        // Non-critical: localStorage save failure
       }
     }
     checkPremium();

@@ -7,6 +7,7 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import type { CacheEntry } from './types';
+import { logger } from '@/lib/logger';
 
 /**
  * Get cached data or fetch fresh
@@ -101,9 +102,11 @@ async function writeCache<T>(
       });
 
     if (error) {
+      logger.warn('[DynamicFetch] Failed to write cache entry', { error: error.message, cacheKey });
     }
 
-  } catch {
+  } catch (err) {
+    logger.error('[DynamicFetch] Exception while writing cache', err, { cacheKey });
   }
 }
 
@@ -116,7 +119,8 @@ export async function invalidateCache(cacheKey: string): Promise<void> {
       .from('external_cache')
       .delete()
       .eq('key', cacheKey);
-  } catch {
+  } catch (err) {
+    logger.warn('[DynamicFetch] Failed to invalidate cache', { error: err instanceof Error ? err.message : 'Unknown', cacheKey });
   }
 }
 
@@ -144,7 +148,8 @@ export async function invalidateCachePattern(pattern: string): Promise<void> {
         .in('key', keys);
     }
 
-  } catch {
+  } catch (err) {
+    logger.warn('[DynamicFetch] Failed to invalidate cache pattern', { error: err instanceof Error ? err.message : 'Unknown', pattern });
   }
 }
 

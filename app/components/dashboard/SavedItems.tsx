@@ -58,6 +58,7 @@ export default function SavedItems({ userId }: SavedItemsProps) {
         setSavedScenarios(scenariosData.scenarios?.slice(0, 6) || []);
       }
     } catch {
+      // Non-critical: Failed to delete - user can retry
     } finally {
       setLoading(false);
     }

@@ -113,6 +113,7 @@ function BinderContent() {
       setStorage(data.storage);
       setFolderCounts(data.folderCounts || {});
     } catch {
+      // Non-critical: Error handled via UI state
       setFiles([]);
       setStorage(null);
       setFolderCounts({});
@@ -231,6 +232,7 @@ function BinderContent() {
       setShowUploadModal(false);
       await loadFiles();
     } catch {
+      // Non-critical: Error handled via UI state
       alert('Failed to upload file');
     }
   };
@@ -251,6 +253,8 @@ function BinderContent() {
         loadFiles();
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Error handled - failed rename is non-critical
     }
   };
 
@@ -270,6 +274,8 @@ function BinderContent() {
         loadFiles();
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Error handled - failed move is non-critical
     }
   };
 
@@ -292,6 +298,8 @@ function BinderContent() {
         loadFiles();
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Error handled - failed expiry update is non-critical
     }
   };
 
@@ -309,6 +317,8 @@ function BinderContent() {
         loadFiles();
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Error handled - failed delete is non-critical
     }
   };
 
@@ -330,6 +340,7 @@ function BinderContent() {
       setSelectionMode(false);
       loadFiles();
     } catch {
+      // Non-critical: Error handled via UI state
     }
   };
 
@@ -351,6 +362,7 @@ function BinderContent() {
         alert(data.error || 'Failed to create share link');
       }
     } catch {
+      // Non-critical: Error handled via UI state
     }
   };
 

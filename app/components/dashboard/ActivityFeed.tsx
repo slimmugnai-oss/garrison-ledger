@@ -69,6 +69,7 @@ export default function ActivityFeed({ userId }: ActivityFeedProps) {
 
       setActivities(recentActivities.slice(0, 5));
     } catch {
+      // Non-critical: Failed to load activities - shows empty state
     } finally {
       setLoading(false);
     }

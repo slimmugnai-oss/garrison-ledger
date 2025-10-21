@@ -6,6 +6,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 // Create a client-side Supabase instance
 function getSupabaseClient() {
@@ -42,7 +43,9 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
       const updated = [newView, ...recentViews.filter((v: any) => v.baseId !== baseId)].slice(0, 5);
       localStorage.setItem('recent_base_views', JSON.stringify(updated));
     }
-  } catch {
+  } catch (err) {
+    // Non-critical: localStorage may be disabled - continue without tracking
+    logger.debug('[BaseAnalytics] Failed to save recent view', { error: err instanceof Error ? err.message : 'Unknown', baseId });
   }
 }
 
@@ -58,7 +61,9 @@ export async function trackBaseSearch(query: string, resultsCount: number, userI
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch {
+  } catch (err) {
+    // Non-critical: Analytics failure shouldn't block user flow
+    logger.debug('[BaseAnalytics] Failed to track search', { error: err instanceof Error ? err.message : 'Unknown', query });
   }
 }
 
@@ -74,7 +79,9 @@ export async function trackFilterUsage(filterType: string, filterValue: string, 
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch {
+  } catch (err) {
+    // Non-critical: Analytics failure shouldn't block user flow
+    logger.debug('[BaseAnalytics] Failed to track filter', { error: err instanceof Error ? err.message : 'Unknown', filterType });
   }
 }
 
@@ -91,7 +98,9 @@ export async function trackGuideClickthrough(baseId: string, baseName: string, u
       user_id: userId || null,
       timestamp: new Date().toISOString(),
     });
-  } catch {
+  } catch (err) {
+    // Non-critical: Analytics failure shouldn't block user flow
+    logger.debug('[BaseAnalytics] Failed to track clickthrough', { error: err instanceof Error ? err.message : 'Unknown', baseId });
   }
 }
 

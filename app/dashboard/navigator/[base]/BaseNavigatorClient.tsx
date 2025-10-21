@@ -132,6 +132,7 @@ export default function BaseNavigatorClient({
         })
       });
     } catch {
+      // Non-critical: Failed to save watchlist preferences
     }
   };
 

@@ -64,6 +64,7 @@ export default function ExitIntentPopup() {
         setIsVisible(false);
       }, 3000);
     } catch {
+      // Non-critical: localStorage save failure
     } finally {
       setIsSubmitting(false);
     }

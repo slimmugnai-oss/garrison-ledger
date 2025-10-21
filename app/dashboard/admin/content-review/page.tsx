@@ -39,6 +39,7 @@ export default function ContentReviewPage() {
         setPendingItems(data.items || []);
       }
     } catch {
+      // Failed to load pending items - shows error state
     } finally {
       setLoading(false);
     }
@@ -122,6 +123,7 @@ export default function ContentReviewPage() {
       });
       loadPendingItems();
     } catch {
+      // Error handled via UI alert
     }
   };
 

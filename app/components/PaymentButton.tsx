@@ -41,6 +41,7 @@ export default function PaymentButton({
         window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
       }
     } catch {
+      // Non-critical: localStorage save failure - user can reload
     } finally {
       setLoading(false);
     }

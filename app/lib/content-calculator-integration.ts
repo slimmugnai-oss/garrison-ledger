@@ -302,6 +302,7 @@ export async function trackCalculatorLaunch(
       })
     });
   } catch {
+    // Non-critical: Analytics failure shouldn't block calculator launch
   }
 }
 

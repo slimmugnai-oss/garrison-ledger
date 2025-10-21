@@ -114,6 +114,7 @@ export default function IntelAnalyticsDashboard() {
         }
       });
     } catch {
+      // Failed to load analytics - shows error state
     } finally {
       setLoading(false);
       setRefreshing(false);

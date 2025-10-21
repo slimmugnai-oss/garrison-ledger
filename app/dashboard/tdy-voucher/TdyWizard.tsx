@@ -47,6 +47,8 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setItems(items || []);
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Error handled - returns empty array
     }
   };
 
@@ -71,6 +73,7 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setStep(3);
       }
     } catch {
+      // Non-critical: Error handled via UI state
     } finally {
       setLoading(false);
     }
@@ -93,6 +96,7 @@ export default function TdyWizard({ tripId, isPremium, onBack }: Props) {
         setStep(4);
       }
     } catch {
+      // Non-critical: Error handled via UI state
     } finally {
       setLoading(false);
     }

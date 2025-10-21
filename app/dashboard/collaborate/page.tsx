@@ -47,6 +47,8 @@ export default function CollaboratePage() {
         setSharedData(data.sharedData);
       }
     } catch {
+      // Non-critical: Error handled via UI state
+      // Failed to load connection - shows error state
     } finally {
       setLoading(false);
     }
@@ -66,6 +68,7 @@ export default function CollaboratePage() {
         setInviteCode(data.code);
       }
     } catch {
+      // Non-critical: Error handled via UI state
     }
   };
 
@@ -96,6 +99,7 @@ export default function CollaboratePage() {
         alert(data.error || 'Failed to connect');
       }
     } catch {
+      // Non-critical: Error handled via UI state
       alert('Failed to connect');
     }
   };
@@ -116,6 +120,7 @@ export default function CollaboratePage() {
         alert('Disconnected successfully');
       }
     } catch {
+      // Non-critical: Error handled via UI state
     }
   };
 

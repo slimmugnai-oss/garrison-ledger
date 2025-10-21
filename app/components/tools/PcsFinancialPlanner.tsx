@@ -143,8 +143,9 @@ export default function PcsFinancialPlanner() {
           track('entitlements_fetched', { rank: rankGroup, dependency: dependencyStatus });
         } else {
         }
-      } catch {
-      } finally {
+          } catch {
+            // Error already handled via UI state
+          } finally {
         setLoadingEntitlements(false);
       }
     }

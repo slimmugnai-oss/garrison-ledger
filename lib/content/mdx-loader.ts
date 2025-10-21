@@ -50,6 +50,7 @@ export function getAllIntelCardSlugs(): string[] {
         }
       }
     } catch {
+      // Silent - directory may not exist or be readable, skip
     }
   }
 

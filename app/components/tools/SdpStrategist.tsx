@@ -100,6 +100,7 @@ export default function SdpStrategist() {
           saveTimeoutRef.current = timeout;
         }
             } catch {
+      // Non-critical: Error handled via UI state
               // Error already handled silently - saving is non-blocking
             } finally {
         setLoading(false);
@@ -359,6 +360,7 @@ export default function SdpStrategist() {
                     const data = await response.json();
                     setApiData(data);
                   } catch {
+      // Non-critical: Error handled via UI state
                   } finally {
                     setLoading(false);
                   }

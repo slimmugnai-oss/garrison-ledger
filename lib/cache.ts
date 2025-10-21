@@ -6,6 +6,7 @@
  */
 
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 /**
  * Get cached value
@@ -72,9 +73,11 @@ export async function setCache<T>(key: string, payload: T, ttlSeconds: number): 
       });
 
     if (error) {
+      logger.warn('[Cache] Failed to write cache entry', { error: error.message, key });
     }
 
-  } catch {
+  } catch (err) {
+    logger.error('[Cache] Exception while writing cache', err, { key });
   }
 }
 
@@ -87,7 +90,8 @@ export async function deleteCache(key: string): Promise<void> {
       .from('base_external_data_cache')
       .delete()
       .eq('base_id', key);
-  } catch {
+  } catch (err) {
+    logger.warn('[Cache] Failed to delete cache entry', { error: err instanceof Error ? err.message : 'Unknown', key });
   }
 }
 
@@ -100,7 +104,8 @@ export async function deleteCachePattern(pattern: string): Promise<void> {
       .from('base_external_data_cache')
       .delete()
       .ilike('base_id', `${pattern}%`);
-  } catch {
+  } catch (err) {
+    logger.warn('[Cache] Failed to delete cache pattern', { error: err instanceof Error ? err.message : 'Unknown', pattern });
   }
 }
 

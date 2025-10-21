@@ -458,8 +458,9 @@ export default function BaseIntelligenceElite() {
     if (saved) {
       try {
         setFavoriteBases(JSON.parse(saved));
-      } catch {
-      }
+        } catch {
+          // Non-critical: Failed to load cached data - user can retry
+        }
     }
   }, []);
 

@@ -27,6 +27,7 @@ export default function FinancialOverview() {
       const result = await response.json();
       setData(result);
     } catch {
+      // Non-critical: Failed to fetch financial data - shows placeholder
     } finally {
       setLoading(false);
     }

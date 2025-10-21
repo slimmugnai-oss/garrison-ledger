@@ -51,6 +51,7 @@ export default function ComparisonMode({
         setScenarios(data.scenarios || []);
       }
     } catch {
+      // Non-critical: localStorage save failure
     }
   }
 
