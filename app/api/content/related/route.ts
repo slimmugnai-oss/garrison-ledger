@@ -1,5 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function GET(request: Request) {
   try {
@@ -8,10 +10,12 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '5');
 
     if (!contentId) {
-      return NextResponse.json(
-        { error: 'Content ID is required' },
-        { status: 400 }
-      );
+      throw Errors.invalidInput('Content ID (id) is required');
+    }
+
+    // Validate limit
+    if (limit < 1 || limit > 20) {
+      throw Errors.invalidInput('Limit must be between 1 and 20');
     }
 
     // Get related content
@@ -22,12 +26,11 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch related content' },
-        { status: 500 }
-      );
+      logger.error('[Related] Failed to fetch related content', error, { contentId, limit });
+      throw Errors.databaseError('Failed to fetch related content');
     }
 
+    logger.info('[Related] Related content fetched', { contentId, count: data?.length || 0 });
     return NextResponse.json({
       success: true,
       related: data,
@@ -35,10 +38,7 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
+import { errorResponse, Errors } from "@/lib/api-errors";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -35,27 +37,30 @@ interface ContentBlock {
 }
 
 export async function GET(req: NextRequest) {
-  // Auth check
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Check premium status
-  // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
-  // Rate limiting is handled by the frontend and /api/library/can-view endpoint
-
-  const searchParams = req.nextUrl.searchParams;
-  const section = searchParams.get("section") || "all"; // all, personalized, trending
-  const search = searchParams.get("search") || "";
-  const domain = searchParams.get("domain") || "";
-  const difficulty = searchParams.get("difficulty") || "";
-  const audience = searchParams.get("audience") || "";
-  const minRating = parseFloat(searchParams.get("minRating") || "0");
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const pageSize = 20;
-
   try {
+    // Auth check
+    const { userId } = await auth();
+    if (!userId) throw Errors.unauthorized();
+
+    // Check premium status
+    // Intelligence Library is now available to free users (5/day limit) and premium users (unlimited)
+    // Rate limiting is handled by the frontend and /api/library/can-view endpoint
+
+    const searchParams = req.nextUrl.searchParams;
+    const section = searchParams.get("section") || "all"; // all, personalized, trending
+    const search = searchParams.get("search") || "";
+    const domain = searchParams.get("domain") || "";
+    const difficulty = searchParams.get("difficulty") || "";
+    const audience = searchParams.get("audience") || "";
+    const minRating = parseFloat(searchParams.get("minRating") || "0");
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const pageSize = 20;
+
+    // Validate section
+    const validSections = ['all', 'personalized', 'trending'];
+    if (!validSections.includes(section)) {
+      throw Errors.invalidInput(`Section must be one of: ${validSections.join(', ')}`);
+    }
     let data: ContentBlock[] = [];
     let count = 0;
 
@@ -202,6 +207,14 @@ export async function GET(req: NextRequest) {
       count = queryCount || 0;
     }
 
+    logger.info('[LibraryEnhanced] Content fetched', { 
+      userId, 
+      section, 
+      resultCount: data.length, 
+      page,
+      filters: { search, domain, difficulty, audience }
+    });
+
     return NextResponse.json({
       success: true,
       data: data,
@@ -214,13 +227,7 @@ export async function GET(req: NextRequest) {
       section,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

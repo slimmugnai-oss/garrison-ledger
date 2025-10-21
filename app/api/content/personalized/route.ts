@@ -1,17 +1,21 @@
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 export async function GET(request: Request) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
+
+    // Validate limit
+    if (limit < 1 || limit > 50) {
+      throw Errors.invalidInput('Limit must be between 1 and 50');
+    }
 
     // Get personalized content recommendations
     const { data, error } = await supabaseAdmin
@@ -21,12 +25,11 @@ export async function GET(request: Request) {
       });
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch personalized content' },
-        { status: 500 }
-      );
+      logger.error('[Personalized] Failed to fetch personalized content', error, { userId, limit });
+      throw Errors.databaseError('Failed to fetch personalized content');
     }
 
+    logger.info('[Personalized] Content fetched', { userId, count: data?.length || 0, limit });
     return NextResponse.json({
       success: true,
       recommendations: data,
@@ -34,10 +37,7 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 

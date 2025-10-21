@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { logger } from '@/lib/logger';
+import { errorResponse, Errors } from '@/lib/api-errors';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,10 +24,7 @@ function getOpenAI() {
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Get user's calculator insights
     const { data: insights } = await supabaseAdmin.rpc('get_user_insights', {
@@ -48,6 +47,7 @@ export async function GET(request: NextRequest) {
 
     // If no usage data yet, return starter recommendations
     if (!insights || insights.total_calculations === 0) {
+      logger.info('[AIRecommendations] Returning starter recommendations', { userId });
       return NextResponse.json({
         recommendations: [
           {
@@ -81,6 +81,12 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    logger.info('[AIRecommendations] Recommendations fetched', { 
+      userId, 
+      recCount: existingRecs?.length || 0,
+      totalCalculations: insights?.total_calculations 
+    });
+
     return NextResponse.json({
       recommendations: existingRecs || [],
       insights: insights,
@@ -88,20 +94,14 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch recommendations' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!userId) throw Errors.unauthorized();
 
     // Check cache first (24-hour cache)
     const { data: cached } = await supabaseAdmin
@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
 
     if (cached) {
       // Cache hit! Return cached recommendations (no AI cost)
+      logger.info('[AIRecommendations] Cache hit', { userId });
       return NextResponse.json({
         recommendations: cached.recommendations,
         cached: true,
@@ -122,6 +123,10 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { calculatorName, inputs, outputs, sessionDuration } = body;
+
+    if (!calculatorName) {
+      throw Errors.invalidInput('calculatorName is required');
+    }
 
     // Log the calculator usage
     await supabaseAdmin.from('calculator_usage_log').insert({
@@ -150,9 +155,11 @@ export async function POST(request: NextRequest) {
 
     // Generate AI recommendations if user has enough data (5+ calculations)
     if (insights && insights.total_calculations >= 5) {
+      logger.info('[AIRecommendations] Generating AI recommendations', { userId, totalCalcs: insights.total_calculations });
       await generateAIRecommendations(userId, insights, patterns, calculatorName, outputs);
     }
 
+    logger.info('[AIRecommendations] Usage tracked', { userId, calculatorName });
     return NextResponse.json({ 
       success: true, 
       insights,
@@ -160,20 +167,17 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to track usage' },
-      { status: 500 }
-    );
+    return errorResponse(error);
   }
 }
 
 // Helper function to generate AI recommendations
 async function generateAIRecommendations(
   userId: string,
-  insights: any,
-  patterns: any,
+  insights: Record<string, unknown>,
+  patterns: unknown[],
   lastCalculator: string,
-  lastOutputs: any
+  lastOutputs: Record<string, unknown>
 ) {
   try {
     // Build context for AI
@@ -216,9 +220,11 @@ Return ONLY a JSON array of recommendations in this exact format:
 
     const aiClient = getOpenAI();
     if (!aiClient) {
+      logger.warn('[AIRecommendations] OpenAI not configured, skipping AI generation');
       return;
     }
 
+    const startTime = Date.now();
     const completion = await aiClient.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
@@ -229,10 +235,19 @@ Return ONLY a JSON array of recommendations in this exact format:
       max_tokens: 500
     });
 
+    const duration = Date.now() - startTime;
     const aiResponse = completion.choices[0].message.content;
-    if (!aiResponse) return;
+    if (!aiResponse) {
+      logger.warn('[AIRecommendations] Empty AI response', { userId });
+      return;
+    }
 
     const recommendations = JSON.parse(aiResponse);
+    logger.info('[AIRecommendations] AI recommendations generated', { 
+      userId, 
+      count: recommendations.length,
+      duration 
+    });
 
     // Store recommendations in database
     for (const rec of recommendations) {
@@ -263,6 +278,7 @@ Return ONLY a JSON array of recommendations in this exact format:
 
   } catch (error) {
     // Don't throw - recommendations are nice-to-have, not critical
+    logger.error('[AIRecommendations] Failed to generate AI recommendations', error, { userId });
   }
 }
 
