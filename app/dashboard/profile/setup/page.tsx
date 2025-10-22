@@ -1283,19 +1283,24 @@ export default function ProfileSetupPage() {
                 
                 <ProfileFormField
                   label="TSP Contribution Percentage"
-                  description="Percentage of gross pay contributed to TSP (e.g., 5% = 0.05)"
+                  description="Enter as whole number (e.g., 5 for 5%, 10 for 10%)"
                   success={data.tsp_contribution_percent !== null}
                 >
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    placeholder="e.g., 0.05 for 5%"
-                    className={getInputClass(false, data.tsp_contribution_percent !== null)}
-                    value={data.tsp_contribution_percent ?? ''}
-                    onChange={e => setData(d => ({ ...d, tsp_contribution_percent: e.target.value ? parseFloat(e.target.value) : null }))}
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      max="100"
+                      placeholder="e.g., 5"
+                      className={getInputClass(false, data.tsp_contribution_percent !== null)}
+                      value={data.tsp_contribution_percent !== null ? Math.round(data.tsp_contribution_percent * 100) : ''}
+                      onChange={e => setData(d => ({ ...d, tsp_contribution_percent: e.target.value ? parseFloat(e.target.value) / 100 : null }))}
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500">%</span>
+                    </div>
+                  </div>
                 </ProfileFormField>
 
                 <ProfileFormField
