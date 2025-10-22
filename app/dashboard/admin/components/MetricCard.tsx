@@ -21,7 +21,8 @@ interface MetricCardProps {
     | "Map"
     | "AlertTriangle"
     | "XCircle"
-    | "HelpCircle";
+    | "HelpCircle"
+    | "Link";
   variant?: "default" | "success" | "warning" | "danger" | "info";
   delay?: number;
   onClick?: () => void;
