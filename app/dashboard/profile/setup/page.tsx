@@ -1303,8 +1303,8 @@ export default function ProfileSetupPage() {
                       min="0"
                       max="100"
                       placeholder="e.g., 5"
-                      className={getInputClass(false, data.tsp_contribution_percent !== null)}
-                      value={data.tsp_contribution_percent !== null ? Math.round(data.tsp_contribution_percent * 100) : ''}
+                      className={getInputClass(false, data.tsp_contribution_percent != null)}
+                      value={data.tsp_contribution_percent != null ? Math.round(data.tsp_contribution_percent * 100) : ''}
                       onChange={e => setData(d => ({ ...d, tsp_contribution_percent: e.target.value ? parseFloat(e.target.value) / 100 : null }))}
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
