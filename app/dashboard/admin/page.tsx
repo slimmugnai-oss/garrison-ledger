@@ -112,10 +112,6 @@ async function getAdminData() {
       category: 'user',
       message: `${newTickets} support ticket${newTickets > 1 ? 's' : ''} need${newTickets === 1 ? 's' : ''} response`,
       details: 'Users are waiting for support. Average response time target: < 24 hours.',
-      action: {
-        label: 'View Support Tickets',
-        onClick: () => {}, // Will be handled client-side
-      },
       dismissible: true,
     });
   }
@@ -128,10 +124,6 @@ async function getAdminData() {
       category: 'data',
       message: `${feedItems} new feed item${feedItems > 1 ? 's' : ''} ready for curation`,
       details: 'Review and promote quality content to the Listening Post.',
-      action: {
-        label: 'Review Content',
-        onClick: () => {}, // Will be handled client-side
-      },
       dismissible: true,
     });
   }
@@ -163,10 +155,6 @@ async function getAdminData() {
       category: 'data',
       message: 'BAH data may be outdated - review needed',
       details: `Latest BAH data is from ${latestBah.effective_date}. Annual updates typically occur in January.`,
-      action: {
-        label: 'Check Data Sources',
-        onClick: () => {}, // Will be handled client-side
-      },
       dismissible: false,
     });
   }
@@ -174,12 +162,12 @@ async function getAdminData() {
   return {
     metrics: {
       mrr,
-      totalUsers: totalUsers || 0,
-      premiumUsers: premiumUsers || 0,
+    totalUsers: totalUsers || 0,
+    premiumUsers: premiumUsers || 0,
       conversionRate,
-      newSignups7d: newSignups7d || 0,
+    newSignups7d: newSignups7d || 0,
       newPremium7d: newPremium7d || 0,
-      activationRate,
+    activationRate,
       supportTickets: newTickets || 0,
     },
     alerts,
@@ -210,9 +198,9 @@ export default async function AdminDashboard() {
   // Check if user is admin
   if (!ADMIN_USER_IDS.includes(user.id)) {
     // Show error page instead of redirecting - helps with debugging
-    return (
-      <>
-        <Header />
+  return (
+    <>
+      <Header />
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="max-w-md mx-auto p-8 bg-card border-2 border-danger rounded-xl text-center">
             <div className="text-6xl mb-4">🚫</div>
@@ -231,7 +219,7 @@ export default async function AdminDashboard() {
               Return to Dashboard
             </a>
           </div>
-        </div>
+                  </div>
         <Footer />
       </>
     );

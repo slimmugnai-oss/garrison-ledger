@@ -10,10 +10,6 @@ export interface Alert {
   category: 'data' | 'api' | 'user' | 'revenue' | 'system';
   message: string;
   details?: string;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
   dismissible?: boolean;
 }
 
@@ -139,15 +135,6 @@ export default function AlertPanel({ alerts, onDismiss }: AlertPanelProps) {
                   <p className="text-sm text-text-body mb-2 p-3 bg-white/50 rounded border border-border">
                     {alert.details}
                   </p>
-                )}
-
-                {alert.action && (
-                  <button
-                    onClick={alert.action.onClick}
-                    className="mt-2 text-sm font-semibold text-primary hover:text-primary-hover underline"
-                  >
-                    {alert.action.label} →
-                  </button>
                 )}
               </div>
             </div>
