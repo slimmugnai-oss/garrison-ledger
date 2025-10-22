@@ -1,8 +1,12 @@
 # 🚨 BASE COMPARISON DATA AUDIT - CRITICAL ISSUES FOUND
 
+**🗂️ SYSTEM:** BASE NAVIGATOR DATA (Not LES Auditor)  
 **Date:** 2025-01-19  
 **Status:** ❌ NOT LEGIT - MOCK DATA USED  
 **Priority:** HIGH - User requires 100% factual data
+
+**NOTE:** This document audits Base Navigator external data (schools, crime, housing).  
+For LES Auditor data sources, see: `docs/DATA_SOURCES_REFERENCE.md`
 
 ---
 

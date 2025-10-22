@@ -1,8 +1,12 @@
 # 📋 BASE DATA MANUAL RESEARCH GUIDE
 
+**🗂️ SYSTEM:** BASE NAVIGATOR DATA (Not LES Auditor)  
 **Purpose:** Step-by-step guide to gather 100% real, factual data for base comparisons  
 **User Requirement:** All data must be factual and verifiable  
 **Time Required:** 6-8 hours for top 20 bases
+
+**NOTE:** This document is for Base Navigator external data (schools, crime, weather, amenities).  
+For LES Auditor data sources, see: `docs/DATA_SOURCES_REFERENCE.md`
 
 ---
 

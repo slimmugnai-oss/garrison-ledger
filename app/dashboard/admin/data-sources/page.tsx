@@ -392,9 +392,14 @@ export default async function DataSourcesPage() {
 
           {/* LES Auditor Data Sources */}
           <div className="mb-12">
-            <h2 className="text-2xl font-serif font-black text-text-headings mb-6">
-              🛡️ LES Auditor Data Sources
-            </h2>
+            <div className="mb-6">
+              <h2 className="text-2xl font-serif font-black text-text-headings">
+                🛡️ LES Auditor Data Sources
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Military pay, allowances, deductions, and taxes. See docs: <code className="bg-gray-100 px-1 rounded">DATA_SOURCES_REFERENCE.md</code>
+              </p>
+            </div>
             <div className="space-y-4">
               {lesAuditor.map((source, index) => (
                 <DataSourceCard key={source.name} source={source} delay={index * 50} />
@@ -405,9 +410,14 @@ export default async function DataSourcesPage() {
           {/* PCS Tools Data */}
           {pcsTools.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-serif font-black text-text-headings mb-6">
-                🚚 PCS Tools Data Sources
-              </h2>
+              <div className="mb-6">
+                <h2 className="text-2xl font-serif font-black text-text-headings">
+                  🚚 PCS Tools Data Sources
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Joint Travel Regulations (JTR), entitlements (DLA, weight allowances), per diem rates
+                </p>
+              </div>
               <div className="space-y-4">
                 {pcsTools.map((source, index) => (
                   <DataSourceCard key={source.name} source={source} delay={index * 50} />
@@ -419,9 +429,16 @@ export default async function DataSourcesPage() {
           {/* Base Navigator Data */}
           {baseNav.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-serif font-black text-text-headings mb-6">
-                📍 Base Navigator Data Sources
-              </h2>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-serif font-black text-text-headings">
+                    📍 Base Navigator Data Sources
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    External API data (weather, schools, housing). See docs: <code className="bg-gray-100 px-1 rounded">REAL_DATA_COLLECTION_PLAN.md</code>
+                  </p>
+                </div>
+              </div>
               <div className="space-y-4">
                 {baseNav.map((source, index) => (
                   <DataSourceCard key={source.name} source={source} delay={index * 50} />
@@ -433,9 +450,14 @@ export default async function DataSourcesPage() {
           {/* Content Data */}
           {content.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-serif font-black text-text-headings mb-6">
-                📚 Content Data Sources
-              </h2>
+              <div className="mb-6">
+                <h2 className="text-2xl font-serif font-black text-text-headings">
+                  📚 Content Data Sources
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Hand-curated military financial content blocks, Intel library, RSS feed articles
+                </p>
+              </div>
               <div className="space-y-4">
                 {content.map((source, index) => (
                   <DataSourceCard key={source.name} source={source} delay={index * 50} />

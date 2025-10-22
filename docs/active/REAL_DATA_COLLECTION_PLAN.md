@@ -1,9 +1,13 @@
 # 📊 REAL DATA COLLECTION PLAN - BASE COMPARISON
 
+**🗂️ SYSTEM:** BASE NAVIGATOR DATA (Not LES Auditor)  
 **Created:** 2025-01-19  
 **Status:** 🔄 In Progress  
 **Priority:** HIGH - User requires 100% factual data  
 **Goal:** Replace all mock data with real, verifiable information
+
+**NOTE:** This document is for Base Navigator external data (schools, weather, housing).  
+For LES Auditor data sources, see: `docs/DATA_SOURCES_REFERENCE.md`
 
 ---
 
