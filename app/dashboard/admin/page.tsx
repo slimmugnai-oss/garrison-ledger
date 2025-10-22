@@ -194,7 +194,14 @@ async function getAdminData() {
 }
 
 export default async function AdminDashboard() {
-  const user = await currentUser();
+  let user;
+  
+  try {
+    user = await currentUser();
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    redirect('/sign-in');
+  }
   
   if (!user) {
     redirect('/sign-in');
@@ -202,10 +209,66 @@ export default async function AdminDashboard() {
 
   // Check if user is admin
   if (!ADMIN_USER_IDS.includes(user.id)) {
-    redirect('/dashboard');
+    // Show error page instead of redirecting - helps with debugging
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="max-w-md mx-auto p-8 bg-card border-2 border-danger rounded-xl text-center">
+            <div className="text-6xl mb-4">🚫</div>
+            <h1 className="text-2xl font-bold text-text-headings mb-2">Access Denied</h1>
+            <p className="text-text-muted mb-4">
+              You need admin privileges to access this page.
+            </p>
+            <div className="bg-surface-hover p-4 rounded-lg mb-4">
+              <p className="text-xs text-text-muted mb-2">Your User ID:</p>
+              <code className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">{user.id}</code>
+            </div>
+            <a
+              href="/dashboard"
+              className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-semibold"
+            >
+              Return to Dashboard
+            </a>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
   }
 
-  const adminData = await getAdminData();
+  let adminData;
+  
+  try {
+    adminData = await getAdminData();
+  } catch (error) {
+    console.error('Error loading admin data:', error);
+    // Return error page instead of crashing
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="max-w-md mx-auto p-8 bg-card border-2 border-warning rounded-xl text-center">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h1 className="text-2xl font-bold text-text-headings mb-2">Error Loading Data</h1>
+            <p className="text-text-muted mb-4">
+              There was an error loading admin dashboard data.
+            </p>
+            <p className="text-sm text-text-muted mb-4">
+              Error: {error instanceof Error ? error.message : 'Unknown error'}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-semibold"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
