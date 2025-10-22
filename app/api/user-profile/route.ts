@@ -13,6 +13,11 @@ type UserProfile = {
   gender?: string | null;
   birth_year?: number | null;
   years_of_service?: number | null;
+  // Computed fields (auto-derived, read-only for most operations)
+  paygrade?: string | null;
+  rank_category?: string | null;
+  mha_code?: string | null;
+  duty_location_type?: string | null;
   // Military Identity
   service_status?: string | null;
   rank?: string | null;
@@ -139,8 +144,14 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      logger.error('[UserProfile] Failed to update profile', error, { userId });
-      throw Errors.databaseError('Failed to update profile');
+      logger.error('[UserProfile] Failed to update profile', { 
+        error: error.message || error, 
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        userId 
+      });
+      throw Errors.databaseError(`Failed to update profile: ${error.message || 'Unknown error'}`);
     }
 
     logger.info('[UserProfile] Profile updated', { userId, profileCompleted: data?.profile_completed });
