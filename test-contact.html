@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .error { color: red; font-size: 14px; margin-top: 5px; }
+        .field-error { border-color: red !important; }
+    </style>
+</head>
+<body>
+    <h1>Contact Form Test</h1>
+    <p>This is a simplified test to verify the contact form validation and submission logic.</p>
+    
+    <form id="contactForm">
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required>
+            <div id="nameError" class="error" style="display: none;"></div>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+            <div id="emailError" class="error" style="display: none;"></div>
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+            <div id="messageError" class="error" style="display: none;"></div>
+        </div>
+        
+        <button type="submit" id="submitBtn">Send Message</button>
+    </form>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border-radius: 4px; display: none;"></div>
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const result = document.getElementById('result');
+        
+        let submitting = false;
+        
+        function showError(field, message) {
+            const errorDiv = document.getElementById(field + 'Error');
+            const input = document.getElementById(field);
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            input.classList.add('field-error');
+        }
+        
+        function clearError(field) {
+            const errorDiv = document.getElementById(field + 'Error');
+            const input = document.getElementById(field);
+            errorDiv.style.display = 'none';
+            input.classList.remove('field-error');
+        }
+        
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous errors
+            ['name', 'email', 'message'].forEach(clearError);
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!name) {
+                showError('name', 'Name is required');
+                isValid = false;
+            }
+            
+            if (!email) {
+                showError('email', 'Email is required');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            if (!message) {
+                showError('message', 'Message is required');
+                isValid = false;
+            } else if (message.length < 10) {
+                showError('message', 'Message must be at least 10 characters');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (submitting) return;
+            
+            if (!validateForm()) {
+                // This is the bug we fixed - previously setSubmitting was not reset here
+                submitting = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+                return;
+            }
+            
+            submitting = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                result.style.display = 'block';
+                result.style.backgroundColor = '#d4edda';
+                result.style.color = '#155724';
+                result.style.border = '1px solid #c3e6cb';
+                result.textContent = 'Message sent successfully! (This is a test)';
+                
+                form.reset();
+            } catch (error) {
+                result.style.display = 'block';
+                result.style.backgroundColor = '#f8d7da';
+                result.style.color = '#721c24';
+                result.style.border = '1px solid #f5c6cb';
+                result.textContent = 'Failed to send message. Please try again.';
+            } finally {
+                submitting = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+            }
+        });
+    </script>
+</body>
+</html>

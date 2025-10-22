@@ -84,6 +84,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
     setError('');
 
     if (!validateForm()) {
+      setSubmitting(false);
       return;
     }
 
