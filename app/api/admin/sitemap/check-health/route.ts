@@ -59,7 +59,12 @@ export async function POST(request: Request) {
   }
 }
 
-async function checkPageHealth(path: string, pageId: string, supabase: ReturnType<typeof createClient>) {
+async function checkPageHealth(
+  path: string,
+  pageId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any
+) {
   const startTime = Date.now();
   let status: "pass" | "fail" | "warning" = "pass";
   let healthStatus: "healthy" | "warning" | "error" = "healthy";
