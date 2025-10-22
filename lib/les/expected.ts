@@ -184,27 +184,25 @@ export async function buildExpectedSnapshot(
   if (deductions.dental_cents) expected.dental_cents = deductions.dental_cents;
 
   // =============================================================================
-  // Taxes (Federal, State, FICA, Medicare)
+  // Tax Percentage Validation (Simplified Approach)
   // =============================================================================
-  // Taxes calculated on TAXABLE gross ONLY (excludes BAH/BAS)
-  const taxes = await computeTaxes(userId, taxableGrossCents, year);
-  if (taxes.federal_tax_cents) expected.federal_tax_cents = taxes.federal_tax_cents;
-  if (taxes.state_tax_cents) expected.state_tax_cents = taxes.state_tax_cents;
-  if (taxes.fica_cents) expected.fica_cents = taxes.fica_cents;
-  if (taxes.medicare_cents) expected.medicare_cents = taxes.medicare_cents;
-
-  // =============================================================================
-  // Net Pay = Total Pay - Deductions - Taxes
-  // =============================================================================
-  const totalDeductions = (deductions.tsp_cents || 0) +
-                          (deductions.sgli_cents || 0) +
-                          (deductions.dental_cents || 0);
-  const totalTaxes = (taxes.federal_tax_cents || 0) +
-                     (taxes.state_tax_cents || 0) +
-                     (taxes.fica_cents || 0) +
-                     (taxes.medicare_cents || 0);
+  // We NO LONGER auto-fill tax amounts - users enter actual values from LES
+  // Instead, we provide expected percentages for validation:
+  // - FICA should be 6.2% of taxable gross
+  // - Medicare should be 1.45% of taxable gross
+  // - Federal/State tax user enters manually (too complex to estimate accurately)
   
-  expected.net_pay_cents = totalPayCents - totalDeductions - totalTaxes;
+  // Store expected tax PERCENTAGES for validation (not amounts)
+  expected.fica_cents = Math.round(taxableGrossCents * 0.062); // 6.2% for reference
+  expected.medicare_cents = Math.round(taxableGrossCents * 0.0145); // 1.45% for reference
+  
+  // Federal and state tax are NOT auto-calculated
+  // Users enter actual values from their LES
+  // We just validate the overall net pay math is correct
+  
+  // Note: We don't calculate expected net_pay_cents here because we don't have
+  // actual federal/state tax values yet (users will enter those manually).
+  // Net pay validation happens during comparison when we have all actual values.
 
   return {
     user_id: userId,
@@ -446,11 +444,10 @@ async function computeDeductions(
       }
     }
     
-    // Dental Insurance (typical premium $13-15/month for individual, $30-35 for family)
-    if (profile.has_dental_insurance) {
-      // Use typical rate - users will override if different
-      result.dental_cents = 1400; // $14/month typical
-    }
+    // Dental Insurance - REMOVED AUTO-FILL
+    // Dental premiums vary too much by plan type and family size
+    // Users should enter actual premium from their LES
+    // We don't auto-fill this anymore
     
     return result;
   } catch {
@@ -459,109 +456,23 @@ async function computeDeductions(
 }
 
 /**
- * Compute taxes (Federal, State, FICA, Medicare) from profile and tax tables
- * Returns object with expected tax amounts
+ * Calculate expected FICA and Medicare percentages for validation
  * 
- * IMPORTANT: taxableGrossCents should EXCLUDE BAH and BAS (non-taxable allowances)
+ * SIMPLIFIED APPROACH: We don't auto-fill tax amounts anymore.
+ * Users enter actual tax values from their LES.
+ * We just validate the PERCENTAGES are correct.
  * 
- * Note: Tax calculations are estimates - actual withholding varies by W-4 settings
+ * @param taxableGrossCents - Taxable gross (excludes BAH/BAS)
+ * @returns Expected FICA and Medicare amounts for percentage validation
  */
-async function computeTaxes(
-  userId: string,
-  taxableGrossCents: number, // EXCLUDES BAH/BAS
-  year: number
-): Promise<{
-  federal_tax_cents?: number;
-  state_tax_cents?: number;
-  fica_cents?: number;
-  medicare_cents?: number;
-}> {
-  const result: { federal_tax_cents?: number; state_tax_cents?: number; fica_cents?: number; medicare_cents?: number } = {};
-  
-  try {
-    // Get tax constants for the year
-    const { data: taxConstants } = await supabaseAdmin
-      .from('payroll_tax_constants')
-      .select('fica_rate, fica_wage_base_cents, medicare_rate')
-      .eq('effective_year', year)
-      .maybeSingle();
-    
-    if (!taxConstants) return result;
-    
-    // FICA (Social Security) - 6.2% up to annual wage base
-    // Simplified calculation: Use monthly wage base limit (annual / 12)
-    // Note: This doesn't account for YTD earnings, so may overestimate for high earners mid-year
-    // Users should override with actual LES value for accuracy
-    const ficaRate = parseFloat(taxConstants.fica_rate as string); // 0.062
-    const annualFicaWageBase = taxConstants.fica_wage_base_cents; // $176,100 for 2025
-    const monthlyFicaWageBase = Math.floor(annualFicaWageBase / 12); // ~$14,675/month
-    const ficaTaxableAmount = Math.min(taxableGrossCents, monthlyFicaWageBase);
-    result.fica_cents = Math.round(ficaTaxableAmount * ficaRate);
-    
-    // Medicare - 1.45% of all taxable wages (no wage base limit)
-    const medicareRate = parseFloat(taxConstants.medicare_rate as string); // 0.0145
-    result.medicare_cents = Math.round(taxableGrossCents * medicareRate);
-    
-    // Federal and State Tax - Get from profile
-    const { data: profile } = await supabaseAdmin
-      .from('user_profiles')
-      .select('filing_status, state_of_residence, w4_allowances')
-      .eq('user_id', userId)
-      .maybeSingle();
-    
-    if (profile) {
-      // Federal Tax - ROUGH ESTIMATE based on filing status
-      // WARNING: This is a simplified estimate. Actual withholding depends on:
-      // - W-4 allowances/withholding elections
-      // - Standard deduction
-      // - Tax bracket system (progressive, not flat)
-      // - YTD earnings
-      // Users should ALWAYS override with actual value from LES for accuracy
-      if (profile.filing_status) {
-        const annualTaxableGross = taxableGrossCents * 12; // Annualized taxable income
-        let estimatedFederalRate = 0.12; // Default 12% bracket
-        
-        // Simplified bracket estimates (2025 tax year)
-        // These don't account for standard deduction or W-4 settings
-        if (profile.filing_status === 'married_filing_jointly') {
-          if (annualTaxableGross > 9000000) estimatedFederalRate = 0.22; // $90K+
-          else if (annualTaxableGross > 6500000) estimatedFederalRate = 0.12;
-          else estimatedFederalRate = 0.10;
-        } else { // single
-          if (annualTaxableGross > 4700000) estimatedFederalRate = 0.22; // $47K+
-          else if (annualTaxableGross > 3200000) estimatedFederalRate = 0.12;
-          else estimatedFederalRate = 0.10;
-        }
-        
-        result.federal_tax_cents = Math.round(taxableGrossCents * estimatedFederalRate);
-      }
-      
-      // State Tax - Query state_tax_rates table
-      // Note: State taxes also calculated on TAXABLE income (excludes BAH/BAS)
-      if (profile.state_of_residence) {
-        const { data: stateRate } = await supabaseAdmin
-          .from('state_tax_rates')
-          .select('tax_type, flat_rate, avg_rate_mid')
-          .eq('state_code', profile.state_of_residence)
-          .eq('effective_year', year)
-          .maybeSingle();
-        
-        if (stateRate) {
-          if (stateRate.tax_type === 'none') {
-            result.state_tax_cents = 0; // No state income tax
-          } else if (stateRate.tax_type === 'flat' && stateRate.flat_rate) {
-            result.state_tax_cents = Math.round(taxableGrossCents * parseFloat(stateRate.flat_rate as string));
-          } else if (stateRate.avg_rate_mid) {
-            result.state_tax_cents = Math.round(taxableGrossCents * parseFloat(stateRate.avg_rate_mid as string));
-          }
-        }
-      }
-    }
-    
-    return result;
-  } catch {
-    return result;
-  }
+export function calculateExpectedTaxPercentages(taxableGrossCents: number): {
+  fica_cents: number;    // 6.2% of taxable gross
+  medicare_cents: number; // 1.45% of taxable gross
+} {
+  return {
+    fica_cents: Math.round(taxableGrossCents * 0.062),      // 6.2% FICA
+    medicare_cents: Math.round(taxableGrossCents * 0.0145)  // 1.45% Medicare
+  };
 }
 
 /**

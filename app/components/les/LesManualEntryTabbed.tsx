@@ -142,34 +142,14 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
           setSgli((data.sgli / 100).toFixed(2));
           newAutoFilled.sgli = true;
         }
-        if (data.dental && data.dental > 0) {
-          setDental((data.dental / 100).toFixed(2));
-          newAutoFilled.dental = true;
-        }
+        // DENTAL - NO AUTO-FILL (premiums vary too much)
+        // User enters actual premium from LES
         
-        // Taxes
-        if (data.federal_tax && data.federal_tax > 0) {
-          setFederalTax((data.federal_tax / 100).toFixed(2));
-          newAutoFilled.federalTax = true;
-        }
-        if (data.state_tax !== undefined) {
-          setStateTax((data.state_tax / 100).toFixed(2));
-          newAutoFilled.stateTax = true;
-        }
-        if (data.fica && data.fica > 0) {
-          setFica((data.fica / 100).toFixed(2));
-          newAutoFilled.fica = true;
-        }
-        if (data.medicare && data.medicare > 0) {
-          setMedicare((data.medicare / 100).toFixed(2));
-          newAutoFilled.medicare = true;
-        }
+        // TAXES - NO AUTO-FILL (user enters actual values from LES)
+        // We provide fica_expected_percent and medicare_expected_percent for validation only
+        // Users enter: federal_tax, state_tax, fica, medicare from their actual LES
         
-        // Net Pay
-        if (data.net_pay && data.net_pay > 0) {
-          setNetPay((data.net_pay / 100).toFixed(2));
-          newAutoFilled.netPay = true;
-        }
+        // NET PAY - NO AUTO-FILL (calculated during comparison with actual tax values)
         
         if (data.fallback && data.message) {
           setFallbackMessage(data.message);
@@ -555,10 +535,10 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <CurrencyInput
                 label="Dental Insurance"
                 value={dental}
-                autoFilled={autoFilled.dental}
+                autoFilled={false}
                 onChange={setDental}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, dental: false }))}
-                helpText='Found on LES as "DENTAL" or "TRICARE DENTAL"'
+                onOverride={() => {}}
+                helpText='Enter exact amount from LES "DENTAL" or "TRICARE DENTAL" line'
                 optional
               />
             </div>
@@ -590,16 +570,16 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <span className="text-sm text-gray-500">From LES "Taxes" section</span>
             </div>
 
-            {/* Tax Disclaimer Banner */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            {/* Tax Entry Instructions */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-semibold text-amber-900 mb-1">Tax Estimates Are Rough Approximations</p>
-                  <p className="text-amber-800">
-                    Federal and state tax calculations are simplified estimates. For accurate validation,
-                    enter your <strong>actual tax withholding from your LES</strong> in the fields below.
-                    Tax estimates depend on W-4 settings, YTD earnings, and state-specific rules.
+                  <p className="font-semibold text-blue-900 mb-1">Enter Actual Tax Values from Your LES</p>
+                  <p className="text-blue-800">
+                    Find the "Taxes" section on your LES and enter the exact amounts withheld. 
+                    We'll validate that <strong>FICA = 6.2%</strong> and <strong>Medicare = 1.45%</strong> of your taxable pay 
+                    (Base + COLA + Special Pays, NOT including BAH/BAS).
                   </p>
                 </div>
               </div>
@@ -609,40 +589,40 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <CurrencyInput
                 label="Federal Income Tax Withheld"
                 value={federalTax}
-                autoFilled={autoFilled.federalTax}
+                autoFilled={false}
                 onChange={setFederalTax}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, federalTax: false }))}
-                helpText='Found on LES as "FED TAX" or "FITW" (estimate - override with actual)'
+                onOverride={() => {}}
+                helpText='Enter exact amount from LES "FED TAX" or "FITW" line'
                 optional
               />
 
               <CurrencyInput
                 label="State Income Tax Withheld"
                 value={stateTax}
-                autoFilled={autoFilled.stateTax}
+                autoFilled={false}
                 onChange={setStateTax}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, stateTax: false }))}
-                helpText='Found on LES as "STATE TAX" (0 for TX, FL, WA, etc.)'
+                onOverride={() => {}}
+                helpText='Enter exact amount from LES "STATE TAX" (enter 0 for TX, FL, WA, etc.)'
                 optional
               />
 
               <CurrencyInput
                 label="FICA (Social Security Tax)"
                 value={fica}
-                autoFilled={autoFilled.fica}
+                autoFilled={false}
                 onChange={setFica}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, fica: false }))}
-                helpText='Found on LES as "FICA" or "SOC SEC" - Should be 6.2% of gross'
+                onOverride={() => {}}
+                helpText='Enter exact amount from LES "FICA" or "SOC SEC" - We'll verify it's ~6.2%'
                 optional
               />
 
               <CurrencyInput
                 label="Medicare Tax"
                 value={medicare}
-                autoFilled={autoFilled.medicare}
+                autoFilled={false}
                 onChange={setMedicare}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, medicare: false }))}
-                helpText='Found on LES as "MEDICARE" - Should be 1.45% of gross'
+                onOverride={() => {}}
+                helpText='Enter exact amount from LES "MEDICARE" - We'll verify it's ~1.45%'
                 optional
               />
             </div>
@@ -700,10 +680,10 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <CurrencyInput
                 label="Your Actual Net Pay (from LES)"
                 value={netPay}
-                autoFilled={autoFilled.netPay}
+                autoFilled={false}
                 onChange={setNetPay}
-                onOverride={() => setAutoFilled(prev => ({ ...prev, netPay: false }))}
-                helpText='Found at bottom of LES as "NET PAY" - the amount that hits your bank account'
+                onOverride={() => {}}
+                helpText='Enter exact amount from bottom of LES "NET PAY" - the amount deposited to your bank'
               />
 
               {netPay && (

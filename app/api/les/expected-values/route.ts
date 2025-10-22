@@ -93,26 +93,34 @@ export async function POST(req: NextRequest) {
     }
 
     // Return expected values in cents (will be converted to dollars in UI)
-    // Use fallback values if database lookup failed
+    // SIMPLIFIED: Only auto-fill allowances (BAH, BAS, etc.)
+    // Taxes are manual entry - we just provide FICA/Medicare for percentage validation
     const isOfficerRank = rank?.toLowerCase().includes('officer') || rank?.startsWith('O');
     
     return NextResponse.json({
+      // ALLOWANCES (100% accurate from official tables)
       bah: snapshot.expected.bah_cents || (Boolean(hasDependents) ? 180000 : 140000),
       bas: snapshot.expected.bas_cents || (isOfficerRank ? ssot.militaryPay.basMonthlyCents.officer : ssot.militaryPay.basMonthlyCents.enlisted),
       cola: snapshot.expected.cola_cents || 0,
       base_pay: snapshot.expected.base_pay_cents || 0,
+      
+      // SPECIAL PAYS (from profile)
       sdap: snapshot.expected.specials?.find(sp => sp.code === 'SDAP')?.cents || 0,
       hfp_idp: snapshot.expected.specials?.find(sp => sp.code === 'HFP_IDP')?.cents || 0,
       fsa: snapshot.expected.specials?.find(sp => sp.code === 'FSA')?.cents || 0,
       flpp: snapshot.expected.specials?.find(sp => sp.code === 'FLPP')?.cents || 0,
+      
+      // DEDUCTIONS (from profile or official tables)
       tsp: snapshot.expected.tsp_cents || 0,
       sgli: snapshot.expected.sgli_cents || 0,
-      dental: snapshot.expected.dental_cents || 0,
-      federal_tax: snapshot.expected.federal_tax_cents || 0,
-      state_tax: snapshot.expected.state_tax_cents || 0,
-      fica: snapshot.expected.fica_cents || 0,
-      medicare: snapshot.expected.medicare_cents || 0,
-      net_pay: snapshot.expected.net_pay_cents || 0,
+      // NO dental auto-fill - users enter actual premium
+      
+      // TAXES (for percentage validation only - NOT auto-filled)
+      // These are reference values for checking 6.2% and 1.45% are correct
+      fica_expected_percent: snapshot.expected.fica_cents || 0, // For validation only
+      medicare_expected_percent: snapshot.expected.medicare_cents || 0, // For validation only
+      // NO federal_tax, state_tax, or net_pay auto-fill
+      
       snapshot: {
         paygrade: snapshot.paygrade,
         location: snapshot.mha_or_zip,

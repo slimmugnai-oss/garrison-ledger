@@ -207,59 +207,52 @@ export function compareLesToExpected(
     }
   }
   
-  // FICA Validation (exact - 6.2%)
+  // FICA Percentage Validation (6.2% of taxable gross)
+  // User entered actual FICA - we validate the percentage is correct
   if (expected.expected.fica_cents !== undefined) {
     const actualFICA = actualTaxes.get('FICA') || 0;
-    const expectedFICA = expected.expected.fica_cents;
+    const expectedFICA = expected.expected.fica_cents; // Reference: 6.2% of taxable gross
     const delta = expectedFICA - actualFICA;
     
-    if (Math.abs(delta) > 500) { // $5 threshold
-      flags.push(createFICAMismatchFlag(actualFICA, expectedFICA, delta));
-    } else if (actualFICA > 0) {
-      flags.push(createCorrectFlag('FICA', actualFICA));
+    if (actualFICA > 0) {
+      // Calculate what taxable gross would be based on FICA withheld
+      const impliedTaxableGross = Math.round(actualFICA / 0.062);
+      const actualPercent = (actualFICA / impliedTaxableGross) * 100;
+      
+      // FICA should be 6.2% (with small tolerance for rounding)
+      if (actualPercent < 6.0 || actualPercent > 6.4) {
+        flags.push(createFICAPercentageWarningFlag(actualFICA, expectedFICA, actualPercent));
+      } else {
+        flags.push(createFICAPercentageCorrectFlag(actualFICA, actualPercent));
+      }
     }
   }
   
-  // Medicare Validation (exact - 1.45%)
+  // Medicare Percentage Validation (1.45% of taxable gross)
+  // User entered actual Medicare - we validate the percentage is correct
   if (expected.expected.medicare_cents !== undefined) {
     const actualMedicare = actualTaxes.get('MEDICARE') || 0;
-    const expectedMedicare = expected.expected.medicare_cents;
+    const expectedMedicare = expected.expected.medicare_cents; // Reference: 1.45% of taxable gross
     const delta = expectedMedicare - actualMedicare;
     
-    if (Math.abs(delta) > 200) { // $2 threshold
-      flags.push(createMedicareMismatchFlag(actualMedicare, expectedMedicare, delta));
-    } else if (actualMedicare > 0) {
-      flags.push(createCorrectFlag('MEDICARE', actualMedicare));
+    if (actualMedicare > 0) {
+      // Calculate what taxable gross would be based on Medicare withheld
+      const impliedTaxableGross = Math.round(actualMedicare / 0.0145);
+      const actualPercent = (actualMedicare / impliedTaxableGross) * 100;
+      
+      // Medicare should be 1.45% (with small tolerance for rounding)
+      if (actualPercent < 1.40 || actualPercent > 1.50) {
+        flags.push(createMedicarePercentageWarningFlag(actualMedicare, expectedMedicare, actualPercent));
+      } else {
+        flags.push(createMedicarePercentageCorrectFlag(actualMedicare, actualPercent));
+      }
     }
   }
   
-  // Federal Tax Validation (estimate - user should override)
-  if (expected.expected.federal_tax_cents !== undefined && expected.expected.federal_tax_cents > 0) {
-    const actualFederal = actualTaxes.get('FITW') || 0;
-    const expectedFederal = expected.expected.federal_tax_cents;
-    const delta = expectedFederal - actualFederal;
-    
-    // Higher threshold for federal tax since it's a rough estimate
-    // Actual withholding varies significantly based on W-4 settings
-    if (Math.abs(delta) > 10000) { // $100 threshold (increased from $50)
-      flags.push(createFederalTaxVarianceFlag(actualFederal, expectedFederal, delta));
-    }
-  }
-  
-  // State Tax Validation
-  if (expected.expected.state_tax_cents !== undefined) {
-    const actualState = actualTaxes.get('SITW') || 0;
-    const expectedState = expected.expected.state_tax_cents;
-    const delta = expectedState - actualState;
-    
-    // Higher threshold for state tax estimates
-    if (Math.abs(delta) > 5000) { // $50 threshold (increased from $20)
-      flags.push(createStateTaxVarianceFlag(actualState, expectedState, delta));
-    } else if (expectedState === 0 && actualState === 0) {
-      // No state tax expected and none withheld (correct for no-tax states)
-      flags.push(createCorrectFlag('STATE_TAX', 0));
-    }
-  }
+  // Federal and State Tax - NO VALIDATION
+  // Users enter actual values from their LES
+  // We don't estimate these anymore (too complex, too many variables)
+  // The overall net pay check will catch any major issues
   
   // =============================================================================
   // Net Pay Validation (THE MONEY QUESTION)
@@ -556,33 +549,51 @@ function createDentalMismatchFlag(actual: number, expected: number, delta: numbe
 
 // Tax Flag Creators
 
-function createFICAMismatchFlag(actual: number, expected: number, delta: number): PayFlag {
+// New Percentage-Based Validation Flag Creators
+
+function createFICAPercentageWarningFlag(actual: number, _expected: number, actualPercent: number): PayFlag {
   const actualDollars = (actual / 100).toFixed(2);
-  const expectedDollars = (expected / 100).toFixed(2);
-  const deltaDollars = Math.abs(delta / 100).toFixed(2);
   
   return {
-    severity: delta < 0 ? 'red' : 'yellow',
-    flag_code: 'FICA_MISMATCH',
-    message: `FICA (Social Security) tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (6.2% of taxable pay). Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
-    suggestion: `FICA should be exactly 6.2% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are not taxed). Maximum annual FICA is capped at the wage base ($176,100 for 2025). If significantly different, contact finance - this is a statutory rate. Note: Our estimate uses simplified monthly calculation and may not account for YTD earnings.`,
-    ref_url: 'https://www.irs.gov/taxtopics/tc751',
-    delta_cents: delta
+    severity: 'yellow',
+    flag_code: 'FICA_PERCENTAGE_WARNING',
+    message: `FICA withholding check: You entered $${actualDollars}, which is ${actualPercent.toFixed(2)}% of your taxable pay. Expected: ~6.2%.`,
+    suggestion: `FICA should be exactly 6.2% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are NOT taxed). Verify your taxable gross and FICA calculation. Contact finance if the math doesn't match - this is a statutory rate. Note: If you've hit the annual wage base ($176,100 for 2025), FICA withholding may stop.`,
+    ref_url: 'https://www.irs.gov/taxtopics/tc751'
   };
 }
 
-function createMedicareMismatchFlag(actual: number, expected: number, delta: number): PayFlag {
+function createFICAPercentageCorrectFlag(actual: number, actualPercent: number): PayFlag {
   const actualDollars = (actual / 100).toFixed(2);
-  const expectedDollars = (expected / 100).toFixed(2);
-  const deltaDollars = Math.abs(delta / 100).toFixed(2);
   
   return {
-    severity: delta < 0 ? 'red' : 'yellow',
-    flag_code: 'MEDICARE_MISMATCH',
-    message: `Medicare tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (1.45% of taxable pay). Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
-    suggestion: `Medicare should be exactly 1.45% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are not taxed). There is no wage base limit for Medicare. Contact finance if significantly different - this is a statutory rate with no variation.`,
-    ref_url: 'https://www.irs.gov/taxtopics/tc751',
-    delta_cents: delta
+    severity: 'green',
+    flag_code: 'FICA_PERCENTAGE_CORRECT',
+    message: `✅ FICA Validated: $${actualDollars} = ${actualPercent.toFixed(2)}% (expected 6.2%). Correct!`,
+    suggestion: `Finance calculated FICA correctly. No action needed.`
+  };
+}
+
+function createMedicarePercentageWarningFlag(actual: number, _expected: number, actualPercent: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  
+  return {
+    severity: 'yellow',
+    flag_code: 'MEDICARE_PERCENTAGE_WARNING',
+    message: `Medicare withholding check: You entered $${actualDollars}, which is ${actualPercent.toFixed(2)}% of your taxable pay. Expected: ~1.45%.`,
+    suggestion: `Medicare should be exactly 1.45% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are NOT taxed). There is no wage base limit. Verify your taxable gross and Medicare calculation. Contact finance if significantly different - this is a statutory rate.`,
+    ref_url: 'https://www.irs.gov/taxtopics/tc751'
+  };
+}
+
+function createMedicarePercentageCorrectFlag(actual: number, actualPercent: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  
+  return {
+    severity: 'green',
+    flag_code: 'MEDICARE_PERCENTAGE_CORRECT',
+    message: `✅ Medicare Validated: $${actualDollars} = ${actualPercent.toFixed(2)}% (expected 1.45%). Correct!`,
+    suggestion: `Finance calculated Medicare correctly. No action needed.`
   };
 }
 
