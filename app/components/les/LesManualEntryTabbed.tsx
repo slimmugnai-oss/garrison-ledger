@@ -612,7 +612,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={false}
                 onChange={setFica}
                 onOverride={() => {}}
-                helpText='Enter exact amount from LES "FICA" or "SOC SEC" - We'll verify it's ~6.2%'
+                helpText="Enter exact amount from LES &quot;FICA&quot; or &quot;SOC SEC&quot; - We'll verify it's ~6.2%"
                 optional
               />
 
@@ -622,7 +622,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={false}
                 onChange={setMedicare}
                 onOverride={() => {}}
-                helpText='Enter exact amount from LES "MEDICARE" - We'll verify it's ~1.45%'
+                helpText="Enter exact amount from LES &quot;MEDICARE&quot; - We'll verify it's ~1.45%"
                 optional
               />
             </div>
