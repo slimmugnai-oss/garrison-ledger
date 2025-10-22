@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+coverage
+dist
+public
+*.md
+*.mdx
+*.sql
+supabase-migrations
+scripts
+resource toolkits
+newsletter-workspace
+toolkit-integration
+
