@@ -61,6 +61,24 @@ type UserProfile = {
   urgency_level?: string | null;
   communication_pref?: string | null;
   timezone?: string | null;
+  // Special Pays & Allowances (Section 7 - for LES Auditor)
+  mha_code_override?: string | null;
+  receives_sdap?: boolean | null;
+  sdap_monthly_cents?: number | null;
+  receives_hfp_idp?: boolean | null;
+  hfp_idp_monthly_cents?: number | null;
+  receives_fsa?: boolean | null;
+  fsa_monthly_cents?: number | null;
+  receives_flpp?: boolean | null;
+  flpp_monthly_cents?: number | null;
+  // Deductions & Taxes (Section 8 - for LES Auditor)
+  tsp_contribution_percent?: number | null;
+  tsp_contribution_type?: string | null;
+  sgli_coverage_amount?: number | null;
+  has_dental_insurance?: boolean | null;
+  filing_status?: string | null;
+  state_of_residence?: string | null;
+  w4_allowances?: number | null;
   // System
   profile_completed?: boolean | null;
   profile_completed_at?: string | null;
