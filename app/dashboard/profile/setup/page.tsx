@@ -121,6 +121,10 @@ export default function ProfileSetupPage() {
   const [saved, setSaved] = useState(false);
   const [data, setData] = useState<ProfilePayload>({});
   const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([1]));
+  
+  // Tab navigation state
+  type TabId = 'personal' | 'military' | 'financial' | 'les';
+  const [activeTab, setActiveTab] = useState<TabId>('personal');
 
   useEffect(() => {
     let mounted = true;
@@ -354,6 +358,26 @@ export default function ProfileSetupPage() {
     }
     return { complete: totalComplete, total: totalFields, percentage: (totalComplete / totalFields) * 100 };
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  
+  // Tab definitions with completion tracking
+  const tabs: Array<{ id: TabId; label: string; icon: 'User' | 'Shield' | 'DollarSign' | 'File'; sections: number[] }> = [
+    { id: 'personal', label: 'Personal', icon: 'User', sections: [1, 4] },
+    { id: 'military', label: 'Military', icon: 'Shield', sections: [2, 3] },
+    { id: 'financial', label: 'Financial', icon: 'DollarSign', sections: [5, 6] },
+    { id: 'les', label: 'LES Setup', icon: 'File', sections: [7, 8] }
+  ];
+  
+  // Calculate tab completion
+  const getTabCompletion = (sections: number[]) => {
+    let totalComplete = 0;
+    let totalFields = 0;
+    sections.forEach(section => {
+      const completion = getSectionCompletion(section);
+      totalComplete += completion.complete;
+      totalFields += completion.total;
+    });
+    return { complete: totalComplete, total: totalFields, percentage: totalFields > 0 ? (totalComplete / totalFields) * 100 : 100 };
+  };
 
   // Toggle section expansion
   function toggleSection(section: number) {
@@ -491,9 +515,47 @@ export default function ProfileSetupPage() {
           </div>
         )}
 
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 mb-8">
+          <div className="flex space-x-8">
+            {tabs.map(tab => {
+              const tabProgress = getTabCompletion(tab.sections);
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2 ${
+                    activeTab === tab.id
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon 
+                    name={tab.icon} 
+                    className={`w-5 h-5 ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'}`} 
+                  />
+                  <span>{tab.label}</span>
+                  {tabProgress.total > 0 && (
+                    <span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
+                      tabProgress.percentage === 100 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {tabProgress.complete}/{tabProgress.total}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Form Sections */}
         <div className="space-y-4">
-          {/* Section 1: Basic Info */}
+          {/* Personal Tab (Sections 1 + 4) */}
+          {activeTab === 'personal' && (
+            <>
+              {/* Section 1: Basic Info */}
           <ProfileSection
             number={1}
             title="About You"
@@ -559,6 +621,12 @@ export default function ProfileSetupPage() {
             </div>
           </ProfileSection>
 
+            </>
+          )}
+          
+          {/* Military Tab (Sections 2 + 3) */}
+          {activeTab === 'military' && (
+            <>
           {/* Section 2: Military Identity */}
           <ProfileSection
             number={2}
@@ -765,7 +833,12 @@ export default function ProfileSetupPage() {
               {/* deployment_count, deployment_status, last_deployment_date all removed - not used by any tool */}
             </div>
           </ProfileSection>
-
+            </>
+          )}
+          
+          {/* Personal Tab continued (Section 4) */}
+          {activeTab === 'personal' && (
+            <>
           {/* Section 4: Family */}
           <ProfileSection
             number={4}
@@ -825,7 +898,12 @@ export default function ProfileSetupPage() {
 
             {/* Children ages section removed - Base Navigator uses count only, not individual ages */}
           </ProfileSection>
-
+            </>
+          )}
+          
+          {/* Financial Tab (Sections 5 + 6) */}
+          {activeTab === 'financial' && (
+            <>
           {/* Section 5: Financial Snapshot */}
           <ProfileSection
             number={5}
@@ -926,7 +1004,12 @@ export default function ProfileSetupPage() {
               </div>
             </div>
           </ProfileSection>
-
+            </>
+          )}
+          
+          {/* LES Setup Tab (Sections 7 + 8) */}
+          {activeTab === 'les' && (
+            <>
           {/* Section 7: Special Pays & Allowances (Optional - For LES Auditor Accuracy) */}
           <ProfileSection
             number={7}
@@ -1343,6 +1426,8 @@ export default function ProfileSetupPage() {
               </div>
             </div>
           </ProfileSection>
+            </>
+          )}
         </div>
 
         {/* Mobile Sticky Save Button */}

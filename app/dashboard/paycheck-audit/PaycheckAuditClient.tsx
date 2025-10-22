@@ -43,12 +43,12 @@ export default function PaycheckAuditClient({
   const [auditResult, setAuditResult] = useState<LesAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
-  const [entryMode, setEntryMode] = useState<'upload' | 'manual'>('upload');
+  const [entryMode, setEntryMode] = useState<'upload' | 'manual'>('manual');
 
   /**
-   * Handle file upload
+   * Handle file upload (currently disabled - PDF upload coming soon)
    */
-  const handleUpload = async (file: File) => {
+  const _handleUpload = async (file: File) => {
     if (hasReachedFreeLimit) {
       alert('Free tier limit: 1 LES audit per month. Upgrade for unlimited audits.');
       return;
@@ -139,17 +139,6 @@ export default function PaycheckAuditClient({
         <div className="mb-8">
           <div className="flex gap-2 border-b border-gray-200">
             <button
-              onClick={() => setEntryMode('upload')}
-              className={`px-6 py-3 font-medium transition-colors relative ${
-                entryMode === 'upload'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Icon name="Upload" className="inline-block w-4 h-4 mr-2" />
-              Upload PDF
-            </button>
-            <button
               onClick={() => setEntryMode('manual')}
               className={`px-6 py-3 font-medium transition-colors relative ${
                 entryMode === 'manual'
@@ -159,6 +148,17 @@ export default function PaycheckAuditClient({
             >
               <Icon name="Edit" className="inline-block w-4 h-4 mr-2" />
               Manual Entry
+            </button>
+            <button
+              onClick={() => setEntryMode('upload')}
+              className={`px-6 py-3 font-medium transition-colors relative ${
+                entryMode === 'upload'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Icon name="Upload" className="inline-block w-4 h-4 mr-2" />
+              Upload PDF
             </button>
           </div>
         </div>
@@ -203,58 +203,28 @@ export default function PaycheckAuditClient({
           </div>
         </div>
 
-        {/* Upload Section */}
+        {/* Upload Section - Coming Soon */}
         {entryMode === 'upload' && !auditResult && !parsing && (
           <AnimatedCard>
-            <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-12">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-12">
               <div className="text-center">
-                <Icon name="Upload" className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Upload Your LES
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  PDF format, 5MB max. We'll verify your BAH, BAS, COLA, and special pays.
-                </p>
-
-                <label className="inline-block">
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleUpload(file);
-                    }}
-                    className="hidden"
-                    disabled={hasReachedFreeLimit || uploading}
-                  />
-                  <span className={`px-8 py-4 rounded-lg font-semibold text-lg cursor-pointer inline-flex items-center gap-2 ${
-                    hasReachedFreeLimit
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}>
-                    <Icon name="Upload" className="w-5 h-5" />
-                    {hasReachedFreeLimit ? 'Free Limit Reached' : 'Choose LES PDF'}
-                  </span>
-                </label>
-
-                {hasReachedFreeLimit && (
-                  <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800 mb-3">
-                      You've used your free audit for this month. Upgrade for unlimited audits.
-                    </p>
-                    <a
-                      href="/dashboard/upgrade?feature=les-auditor"
-                      className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                    >
-                      Upgrade to Premium →
-                    </a>
-                  </div>
-                )}
-
-                <div className="mt-6 text-sm text-gray-500">
-                  <p className="mb-2"><strong>Privacy:</strong> Your LES is parsed server-side and never exposed.</p>
-                  <p><strong>Data used:</strong> Pay month, paygrade, BAH, BAS, COLA, special pays only.</p>
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                  <Icon name="Upload" className="h-8 w-8 text-blue-600" />
                 </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  PDF Upload Coming Soon
+                </h3>
+                <p className="text-gray-600 max-w-md mx-auto mb-4">
+                  We're enhancing our PDF parsing system to ensure 100% accuracy. 
+                  In the meantime, please use Manual Entry for reliable LES validation.
+                </p>
+                <button
+                  onClick={() => setEntryMode('manual')}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Icon name="Edit" className="w-4 h-4 mr-2" />
+                  Use Manual Entry
+                </button>
               </div>
             </div>
           </AnimatedCard>

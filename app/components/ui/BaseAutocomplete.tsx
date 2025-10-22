@@ -77,7 +77,9 @@ export default function BaseAutocomplete({
 
   // Handle base selection
   const selectBase = (base: MilitaryBase) => {
-    onChange(base.name);
+    // Always include state to ensure MHA code detection works
+    const fullName = `${base.name}, ${base.state}`;
+    onChange(fullName);
     setIsOpen(false);
     setHighlightedIndex(-1);
     inputRef.current?.blur();

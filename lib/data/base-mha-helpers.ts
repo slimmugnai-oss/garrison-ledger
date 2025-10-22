@@ -27,6 +27,21 @@ export function getBaseMHA(baseName: string): string | null {
     }
   }
   
+  // NEW: Try fuzzy match (strip state, match base name only)
+  // "Fort Bliss" should match "Fort Bliss, TX"
+  const cleanInput = baseName.replace(/,.*$/, '').trim().toLowerCase();
+  const matches = Object.entries(baseMHAMap.baseToMHA).filter(([base]) => {
+    const cleanBase = base.replace(/,.*$/, '').trim().toLowerCase();
+    return cleanBase === cleanInput;
+  });
+  
+  // If exactly one match, use it
+  if (matches.length === 1) {
+    return matches[0][1];
+  }
+  
+  // If multiple matches (e.g., "Fort Campbell" in KY and TN), don't guess
+  
   // Try state extraction as fallback
   const stateMatch = baseName.match(/,\s*([A-Z]{2})\s*$/);
   if (stateMatch) {
