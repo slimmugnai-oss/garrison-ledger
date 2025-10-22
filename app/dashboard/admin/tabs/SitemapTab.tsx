@@ -387,6 +387,7 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
 // Health Sub-Tab: Health check system
 function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => void }) {
   const [checking, setChecking] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const runHealthCheck = async () => {
     setChecking(true);
@@ -398,7 +399,8 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
       });
 
       if (res.ok) {
-        alert("✅ Health check complete! Refreshing data...");
+        const result = await res.json();
+        alert(`✅ Health check complete!\n\nChecked: ${result.checked} pages\nRefreshing data...`);
         onReload();
       } else {
         alert("❌ Health check failed");
@@ -407,6 +409,27 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
       alert("❌ Error running health check");
     } finally {
       setChecking(false);
+    }
+  };
+
+  const syncAnalytics = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/admin/sitemap/sync-analytics", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        alert(`✅ Analytics synced!\n\nUpdated: ${result.updated}/${result.total} pages`);
+        onReload();
+      } else {
+        alert("❌ Failed to sync analytics");
+      }
+    } catch (error) {
+      alert("❌ Error syncing analytics");
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -422,17 +445,30 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           <h3 className="text-text-headings text-xl font-bold">Health Monitoring</h3>
           <p className="text-text-muted text-sm">Automated availability and performance checks</p>
         </div>
-        <button
-          onClick={runHealthCheck}
-          disabled={checking}
-          className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
-        >
-          <Icon
-            name={checking ? "RefreshCw" : "Activity"}
-            className={`h-4 w-4 ${checking ? "animate-spin" : ""}`}
-          />
-          {checking ? "Checking..." : "Run Health Check"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={syncAnalytics}
+            disabled={syncing}
+            className="hover:bg-success-hover flex items-center gap-2 rounded-lg bg-success px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
+          >
+            <Icon
+              name={syncing ? "RefreshCw" : "TrendingUp"}
+              className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`}
+            />
+            {syncing ? "Syncing..." : "Sync Analytics"}
+          </button>
+          <button
+            onClick={runHealthCheck}
+            disabled={checking}
+            className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
+          >
+            <Icon
+              name={checking ? "RefreshCw" : "Activity"}
+              className={`h-4 w-4 ${checking ? "animate-spin" : ""}`}
+            />
+            {checking ? "Checking..." : "Run Health Check"}
+          </button>
+        </div>
       </div>
 
       {/* Health Stats */}
@@ -529,8 +565,24 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
 
 // Analytics Sub-Tab
 function AnalyticsSubTab() {
-  const [analyticsData, setAnalyticsData] = useState<unknown>(null);
+  const [analyticsData, setAnalyticsData] = useState<{
+    topPages: SitePage[];
+    bottomPages: SitePage[];
+    slowPages: SitePage[];
+    highBouncePages: SitePage[];
+    outdatedPages: SitePage[];
+    needsAttention: SitePage[];
+    categoryStats: Record<string, { count: number; views: number; avgResponse: number }>;
+    summary: {
+      totalPages: number;
+      totalViews30d: number;
+      avgResponseTime: number;
+      outdatedCount: number;
+      needsAttentionCount: number;
+    };
+  } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -550,6 +602,27 @@ function AnalyticsSubTab() {
     }
   };
 
+  const syncAnalytics = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/admin/sitemap/sync-analytics", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        alert(`✅ Analytics synced!\n\nUpdated: ${result.updated}/${result.total} pages`);
+        loadAnalytics();
+      } else {
+        alert("❌ Failed to sync analytics");
+      }
+    } catch (error) {
+      alert("❌ Error syncing analytics");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-12 text-center">
@@ -559,16 +632,212 @@ function AnalyticsSubTab() {
     );
   }
 
-  // TODO: Build detailed analytics views
+  if (!analyticsData) return null;
+
   return (
-    <AnimatedCard className="border border-border bg-card p-12 text-center">
-      <Icon name="TrendingUp" className="mx-auto mb-4 h-16 w-16 text-primary opacity-50" />
-      <h3 className="text-text-headings mb-2 text-2xl font-bold">Page Analytics Coming Soon</h3>
-      <p className="text-text-muted mx-auto max-w-md">
-        Top pages, low traffic pages, high bounce rates, and user flow analysis will be available
-        here.
-      </p>
-    </AnimatedCard>
+    <div className="space-y-6">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <MetricCard
+          title="Total Views"
+          value={analyticsData.summary.totalViews30d.toLocaleString()}
+          subtitle="Last 30 days"
+          icon="TrendingUp"
+          variant="success"
+        />
+        <MetricCard
+          title="Avg Response"
+          value={`${analyticsData.summary.avgResponseTime}ms`}
+          subtitle="Platform-wide"
+          icon="Zap"
+          variant="info"
+        />
+        <MetricCard
+          title="Needs Attention"
+          value={analyticsData.summary.needsAttentionCount}
+          subtitle="Pages requiring review"
+          icon="AlertTriangle"
+          variant="warning"
+        />
+        <MetricCard
+          title="Outdated"
+          value={analyticsData.summary.outdatedCount}
+          subtitle="> 90 days old"
+          icon="XCircle"
+          variant="danger"
+        />
+      </div>
+
+      {/* Sync Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={syncAnalytics}
+          disabled={syncing}
+          className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
+        >
+          <Icon name={syncing ? "RefreshCw" : "Activity"} className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
+          {syncing ? "Syncing..." : "Sync Analytics from Events"}
+        </button>
+      </div>
+
+      {/* Top Pages */}
+      <AnimatedCard delay={50} className="border border-border bg-card p-6">
+        <h3 className="text-text-headings mb-4 text-lg font-bold">🏆 Top 10 Pages (30d Views)</h3>
+        {analyticsData.topPages.length === 0 ? (
+          <p className="text-text-muted py-4 text-center">No view data yet. Click "Sync Analytics" above.</p>
+        ) : (
+          <div className="space-y-2">
+            {analyticsData.topPages.map((page, idx) => (
+              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-border p-3">
+                <div className="flex items-center gap-3">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-black ${
+                    idx === 0 ? "bg-gradient-to-br from-yellow-400 to-amber-500 text-white" :
+                    idx === 1 ? "bg-gradient-to-br from-gray-300 to-gray-400 text-white" :
+                    idx === 2 ? "bg-gradient-to-br from-amber-400 to-amber-500 text-white" :
+                    "bg-gray-200 text-gray-700"
+                  }`}>
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <code className="text-text-body font-mono text-sm">{page.path}</code>
+                    <p className="text-text-muted text-xs">{page.title}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-text-headings text-2xl font-black">{page.view_count_30d?.toLocaleString()}</div>
+                  <div className="text-text-muted text-xs">views</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </AnimatedCard>
+
+      {/* Low Traffic Pages */}
+      {analyticsData.bottomPages.length > 0 && (
+        <AnimatedCard delay={100} className="border border-border bg-card p-6">
+          <h3 className="text-text-headings mb-4 text-lg font-bold">📉 Low Traffic Pages (30d)</h3>
+          <div className="space-y-2">
+            {analyticsData.bottomPages.map((page) => (
+              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-amber-200 p-3">
+                <div>
+                  <code className="text-text-body font-mono text-sm">{page.path}</code>
+                  <p className="text-text-muted text-xs">{page.title}</p>
+                </div>
+                <Badge variant="warning">{page.view_count_30d || 0} views</Badge>
+              </div>
+            ))}
+          </div>
+        </AnimatedCard>
+      )}
+
+      {/* Slow Pages */}
+      {analyticsData.slowPages.length > 0 && (
+        <AnimatedCard delay={150} className="border border-border bg-card p-6">
+          <h3 className="text-text-headings mb-4 text-lg font-bold">🐌 Slow Pages (> 2s)</h3>
+          <div className="space-y-2">
+            {analyticsData.slowPages.map((page) => (
+              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-red-200 p-3">
+                <div>
+                  <code className="text-text-body font-mono text-sm">{page.path}</code>
+                  <p className="text-text-muted text-xs">{page.title}</p>
+                </div>
+                <Badge variant="danger">{page.response_time_ms}ms</Badge>
+              </div>
+            ))}
+          </div>
+        </AnimatedCard>
+      )}
+
+      {/* Outdated Content */}
+      {analyticsData.outdatedPages.length > 0 && (
+        <AnimatedCard delay={200} className="border border-border bg-card p-6">
+          <h3 className="text-text-headings mb-4 text-lg font-bold">📅 Outdated Content (> 90 days)</h3>
+          <div className="space-y-2">
+            {analyticsData.outdatedPages.map((page) => (
+              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-border p-3">
+                <div>
+                  <code className="text-text-body font-mono text-sm">{page.path}</code>
+                  <p className="text-text-muted text-xs">{page.title}</p>
+                </div>
+                <div className="text-right text-xs text-text-muted">
+                  {page.last_updated ? `Updated ${Math.floor((Date.now() - new Date(page.last_updated).getTime()) / (1000 * 60 * 60 * 24))} days ago` : "Never updated"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </AnimatedCard>
+      )}
+
+      {/* Pages Needing Attention */}
+      {analyticsData.needsAttention.length > 0 && (
+        <AnimatedCard delay={250} className="border-2 border-primary bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+          <h3 className="text-text-headings mb-4 text-lg font-bold">⚠️ Pages Needing Attention</h3>
+          <p className="text-text-muted mb-4 text-sm">
+            Pages with multiple issues: old content, low traffic, high bounce rate, or slow performance
+          </p>
+          <div className="space-y-2">
+            {analyticsData.needsAttention.map((page) => {
+              const issues = [];
+              if (page.last_updated && new Date(page.last_updated) < new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)) {
+                issues.push("Old");
+              }
+              if ((page.view_count_30d || 0) < 10) {
+                issues.push("Low Traffic");
+              }
+              if ((page.bounce_rate || 0) > 70) {
+                issues.push("High Bounce");
+              }
+              if ((page.response_time_ms || 0) > 3000) {
+                issues.push("Slow");
+              }
+
+              return (
+                <div key={page.id} className="flex items-center justify-between rounded-lg border border-primary bg-white p-3">
+                  <div>
+                    <code className="text-text-body font-mono text-sm font-semibold">{page.path}</code>
+                    <p className="text-text-muted mt-1 text-xs">{issues.join(" • ")}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    {issues.map((issue) => (
+                      <Badge key={issue} variant="warning" size="sm">
+                        {issue}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </AnimatedCard>
+      )}
+
+      {/* Category Performance */}
+      <AnimatedCard delay={300} className="border border-border bg-card p-6">
+        <h3 className="text-text-headings mb-4 text-lg font-bold">📊 Performance by Category</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {Object.entries(analyticsData.categoryStats).map(([category, stats]) => (
+            <div key={category} className="bg-surface-hover rounded-lg border border-border p-4">
+              <h4 className="text-text-headings mb-2 font-bold">{category}</h4>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-text-body text-xl font-black">{stats.count}</div>
+                  <div className="text-text-muted text-xs">Pages</div>
+                </div>
+                <div>
+                  <div className="text-text-body text-xl font-black">{stats.views.toLocaleString()}</div>
+                  <div className="text-text-muted text-xs">Views</div>
+                </div>
+                <div>
+                  <div className="text-text-body text-xl font-black">{stats.avgResponse}ms</div>
+                  <div className="text-text-muted text-xs">Avg Speed</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </AnimatedCard>
+    </div>
   );
 }
 
