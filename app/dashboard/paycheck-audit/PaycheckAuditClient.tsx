@@ -85,7 +85,7 @@ export default function PaycheckAuditClient({
         }
       }
 
-      const { uploadId, parsedOk } = await uploadRes.json();
+      const { auditId, parsedOk } = await uploadRes.json();
 
       setUploading(false);
 
@@ -98,7 +98,7 @@ export default function PaycheckAuditClient({
       const auditRes = await fetch('/api/les/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uploadId })
+        body: JSON.stringify({ auditId })
       });
 
       if (!auditRes.ok) {
@@ -620,8 +620,8 @@ export default function PaycheckAuditClient({
                         try {
                           const res = await fetch(`/api/les/audit/${audit.id}/clone`, { method: 'POST' });
                           const data = await res.json();
-                          if (data.uploadId) {
-                            window.location.href = `/dashboard/paycheck-audit?edit=${data.uploadId}`;
+                          if (data.auditId) {
+                            window.location.href = `/dashboard/paycheck-audit?edit=${data.auditId}`;
                           }
                         } catch (err) {
                           alert('Failed to clone audit');

@@ -407,7 +407,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={autoFilled.basePay}
                 onChange={setBasePay}
                 onOverride={() => setAutoFilled(prev => ({ ...prev, basePay: false }))}
-                helpText='Found on LES as "BASE PAY" or "BASIC PAY"'
+                helpText='Auto-filled from official 2025 DFAS pay tables (effective 2025-04-01)'
               />
 
               <CurrencyInput
@@ -416,7 +416,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={autoFilled.bah}
                 onChange={setBah}
                 onOverride={() => setAutoFilled(prev => ({ ...prev, bah: false }))}
-                helpText='Found on LES as "BAH W/DEP" or "BAH W/O DEP"'
+                helpText='Auto-filled from official 2025 DFAS BAH tables (effective 2025-01-01)'
               />
 
               <CurrencyInput
@@ -425,7 +425,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={autoFilled.bas}
                 onChange={setBas}
                 onOverride={() => setAutoFilled(prev => ({ ...prev, bas: false }))}
-                helpText='Found on LES as "BAS"'
+                helpText='Auto-filled from official 2025 DFAS BAS rates (effective 2025-01-01)'
               />
 
               <CurrencyInput
@@ -568,6 +568,22 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Tax Withholding</h3>
               <span className="text-sm text-gray-500">From LES "Taxes" section</span>
+            </div>
+
+            {/* Important Notice: Manual Tax Entry Required */}
+            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-amber-900 font-semibold mb-1">
+                    Enter exactly what appears on your LES
+                  </p>
+                  <p className="text-sm text-amber-800">
+                    We do <strong>NOT</strong> estimate federal/state taxes in v1. 
+                    You provide the actual values, we validate the percentages.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Tax Entry Instructions */}

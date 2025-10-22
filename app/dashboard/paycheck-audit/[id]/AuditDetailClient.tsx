@@ -106,8 +106,8 @@ export default function AuditDetailClient({ upload, linesBySection, flagsBySever
       });
       const data = await response.json();
       
-      if (data.uploadId) {
-        router.push(`/dashboard/paycheck-audit?edit=${data.uploadId}`);
+      if (data.auditId) {
+        router.push(`/dashboard/paycheck-audit?edit=${data.auditId}`);
       } else {
         alert('Failed to clone audit');
       }

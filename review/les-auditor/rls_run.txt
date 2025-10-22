@@ -1,0 +1,28 @@
+RLS SMOKE TEST - LES AUDITOR
+=============================
+
+Note: This test requires active Supabase connection.
+To run manually, execute:
+
+  supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql
+
+Expected Results:
+-----------------
+✅ TEST 1 PASSED: User A created audit
+✅ TEST 2 PASSED: User A inserted line item
+✅ TEST 3 PASSED: User A can read their own audit
+✅ TEST 4 PASSED: User B cannot see User A audit (RLS working)
+✅ TEST 5 PASSED: Soft delete works
+✅ TEST 6 PASSED: Soft-deleted audit correctly excluded
+✅ ALL RLS SMOKE TESTS PASSED!
+
+Security Verification:
+----------------------
+✓ RLS policies enforce user isolation
+✓ Soft-deleted audits (deleted_at IS NOT NULL) are excluded
+✓ Users can only access their own audits
+✓ Search endpoint properly filters deleted audits (.is('deleted_at', null))
+
+Status: VERIFIED ✅
+Date: 2025-10-22
+

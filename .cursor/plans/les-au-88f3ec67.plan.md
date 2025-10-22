@@ -1,808 +1,437 @@
-<!-- 88f3ec67-6b10-45cb-be65-9946951e1ffe b0e51da6-a39b-4ea0-94db-34354445c200 -->
-# LES Auditor - Complete Enhancement Plan
+<!-- 88f3ec67-6b10-45cb-be65-9946951e1ffe 85f149ed-d72a-4fca-bbda-313bddc9f52f -->
+# LES Auditor - Final Production Lockdown
 
 ## Overview
 
-Transform LES Auditor into a production-grade audit management system with proper library structure, enhanced manual entry, history features, and accurate tax validation. Maintains backward compatibility with existing les_uploads/pay_flags tables.
+Eight critical tasks to lock down the LES Auditor for production: consistent naming, schema validation, rate limiting, comprehensive testing, UI polish, and security verification.
 
 ---
 
-## PHASE 1: Database Schema Enhancement
+## Task 1: Rename uploadId → auditId (Consistency)
 
-### Migration 1: Enhance Existing Tables
+**Files to Update:**
 
-**File:** `supabase-migrations/20251023_les_auditor_enhancements.sql`
+- `app/api/les/audit-manual/route.ts` - Response returns `auditId` not `uploadId`
+- `app/api/les/audit/[id]/clone/route.ts` - Response returns `auditId` 
+- `app/types/les.ts` - Type definitions
+- `review/les-auditor/api.openapi.yaml` - Schema property name
+- `review/les-auditor/fixtures/*.response.json` - Update both response files
+- Any client code referencing `uploadId`
 
-```sql
--- PART 1: Add soft delete and audit metadata (backward compatible)
-ALTER TABLE les_uploads 
-  ADD COLUMN IF NOT EXISTS deleted_at timestamptz,
-  ADD COLUMN IF NOT EXISTS audit_completed_at timestamptz,
-  ADD COLUMN IF NOT EXISTS audit_status text DEFAULT 'completed' 
-    CHECK (audit_status IN ('draft', 'completed', 'archived')),
-  ADD COLUMN IF NOT EXISTS profile_snapshot jsonb DEFAULT '{}'::jsonb;
+**Search Pattern:** `grep -r "uploadId" --include="*.ts" --include="*.tsx" --include="*.yaml" --include="*.json"`
 
--- PART 2: Add denormalized flag counts for performance
-ALTER TABLE les_uploads
-  ADD COLUMN IF NOT EXISTS red_flags_count integer DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS yellow_flags_count integer DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS green_flags_count integer DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS total_delta_cents integer DEFAULT 0;
+---
 
--- PART 3: Enhance les_lines with taxability tracking
-ALTER TABLE les_lines
-  ADD COLUMN IF NOT EXISTS section text DEFAULT 'ALLOWANCE'
-    CHECK (section IN ('ALLOWANCE','DEDUCTION','ALLOTMENT','TAX','DEBT','ADJUSTMENT')),
-  ADD COLUMN IF NOT EXISTS taxability jsonb DEFAULT '{"fed":false,"state":false,"oasdi":false,"medicare":false}'::jsonb;
+## Task 2: Line Code Enum Validation
 
--- Backfill section based on line_code patterns
-UPDATE les_lines SET section = 
-  CASE 
-    WHEN line_code IN ('BASEPAY', 'BAH', 'BAS', 'COLA', 'SDAP', 'HFP', 'FSA', 'FLPP') THEN 'ALLOWANCE'
-    WHEN line_code IN ('TAX_FED', 'TAX_STATE', 'FICA', 'MEDICARE') THEN 'TAX'
-    WHEN line_code IN ('SGLI', 'DENTAL', 'TSP') THEN 'DEDUCTION'
-    WHEN line_code LIKE 'ALLOTMENT_%' THEN 'ALLOTMENT'
-    WHEN line_code = 'DEBT' THEN 'DEBT'
-    WHEN line_code = 'ADJUSTMENT' THEN 'ADJUSTMENT'
-    ELSE 'ALLOWANCE'
-  END
-WHERE section IS NULL;
+### OpenAPI Schema Update
 
--- PART 4: Enhance expected_pay_snapshot with taxable bases
-ALTER TABLE expected_pay_snapshot
-  ADD COLUMN IF NOT EXISTS taxable_bases jsonb DEFAULT '{"fed":0,"state":0,"oasdi":0,"medicare":0}'::jsonb;
+**File:** `review/les-auditor/api.openapi.yaml`
 
--- PART 5: Add indexes for filtering and performance
-CREATE INDEX IF NOT EXISTS idx_les_uploads_deleted 
-  ON les_uploads (user_id, deleted_at) WHERE deleted_at IS NULL;
-CREATE INDEX IF NOT EXISTS idx_les_uploads_status 
-  ON les_uploads (user_id, audit_status);
-CREATE INDEX IF NOT EXISTS idx_les_lines_section 
-  ON les_lines (upload_id, section);
+Change LineItem.code to enum:
 
--- PART 6: Update RLS to exclude soft-deleted
-DROP POLICY IF EXISTS "Users can view their own uploads" ON les_uploads;
-CREATE POLICY "Users can view their own uploads"
-  ON les_uploads FOR SELECT
-  USING (auth.role() = 'authenticated' AND (deleted_at IS NULL OR deleted_at > now()));
-
--- PART 7: Create trigger to auto-update flag counts
-CREATE OR REPLACE FUNCTION update_audit_flag_counts()
-RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE les_uploads
-  SET 
-    red_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = NEW.upload_id AND severity = 'red'),
-    yellow_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = NEW.upload_id AND severity = 'yellow'),
-    green_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = NEW.upload_id AND severity = 'green'),
-    total_delta_cents = (SELECT COALESCE(SUM(delta_cents), 0) FROM pay_flags WHERE upload_id = NEW.upload_id),
-    audit_completed_at = CASE 
-      WHEN (SELECT COUNT(*) FROM pay_flags WHERE upload_id = NEW.upload_id) > 0 
-      THEN now() 
-      ELSE audit_completed_at 
-    END,
-    audit_status = 'completed'
-  WHERE id = NEW.upload_id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS update_flag_counts_trigger ON pay_flags;
-CREATE TRIGGER update_flag_counts_trigger
-  AFTER INSERT OR UPDATE OR DELETE ON pay_flags
-  FOR EACH ROW
-  EXECUTE FUNCTION update_audit_flag_counts();
-
--- PART 8: Backfill flag counts for existing audits
-UPDATE les_uploads u
-SET 
-  red_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = u.id AND severity = 'red'),
-  yellow_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = u.id AND severity = 'yellow'),
-  green_flags_count = (SELECT COUNT(*) FROM pay_flags WHERE upload_id = u.id AND severity = 'green'),
-  total_delta_cents = (SELECT COALESCE(SUM(delta_cents), 0) FROM pay_flags WHERE upload_id = u.id)
-WHERE red_flags_count IS NULL;
-
-COMMENT ON COLUMN les_uploads.profile_snapshot IS 'Snapshot of user profile at audit time: {paygrade, yos, mha, withDependents, specials}';
-COMMENT ON COLUMN les_lines.section IS 'Line item category: ALLOWANCE, DEDUCTION, ALLOTMENT, TAX, DEBT, ADJUSTMENT';
-COMMENT ON COLUMN les_lines.taxability IS 'Taxability flags: {fed, state, oasdi, medicare}';
-COMMENT ON COLUMN expected_pay_snapshot.taxable_bases IS 'Computed taxable income bases: {fed, state, oasdi, medicare} in cents';
+```yaml
+code:
+  type: string
+  enum:
+    - BASEPAY
+    - BAH
+    - BAS
+    - COLA
+    - SDAP
+    - HFP
+    - FSA
+    - FLPP
+    - TAX_FED
+    - TAX_STATE
+    - FICA
+    - MEDICARE
+    - SGLI
+    - DENTAL
+    - TSP
+    - ALLOTMENT
+    - DEBT
+    - ADJUSTMENT
+    - OTHER
 ```
 
----
+### Server Validation
 
-## PHASE 2: Library Structure (Server-Side)
+**File:** `lib/les/codes.ts`
 
-### 2.1 Line Item Codes Registry
-
-**File:** `lib/les/codes.ts` (NEW)
+Add validation function:
 
 ```typescript
-/**
- * LES LINE ITEM CODES
- * Canonical registry of known LES line codes with metadata
- */
-
-export interface LineCodeDefinition {
-  section: 'ALLOWANCE' | 'DEDUCTION' | 'ALLOTMENT' | 'TAX' | 'DEBT' | 'ADJUSTMENT';
-  description: string;
-  taxability: {
-    fed: boolean;      // Federal income tax
-    state: boolean;    // State income tax
-    oasdi: boolean;    // FICA/Social Security (6.2%)
-    medicare: boolean; // Medicare (1.45%)
-  };
-}
-
-export const LINE_CODES: Record<string, LineCodeDefinition> = {
-  // ALLOWANCES (Income)
-  BASEPAY: {
-    section: 'ALLOWANCE',
-    description: 'Base Pay',
-    taxability: { fed: true, state: true, oasdi: true, medicare: true }
-  },
-  BAH: {
-    section: 'ALLOWANCE',
-    description: 'Basic Allowance for Housing',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  BAS: {
-    section: 'ALLOWANCE',
-    description: 'Basic Allowance for Subsistence',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  COLA: {
-    section: 'ALLOWANCE',
-    description: 'Cost of Living Allowance',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  SDAP: {
-    section: 'ALLOWANCE',
-    description: 'Special Duty Assignment Pay',
-    taxability: { fed: true, state: true, oasdi: true, medicare: true }
-  },
-  HFP: {
-    section: 'ALLOWANCE',
-    description: 'Hostile Fire Pay / Imminent Danger Pay',
-    taxability: { fed: false, state: false, oasdi: true, medicare: true }
-  },
-  FSA: {
-    section: 'ALLOWANCE',
-    description: 'Family Separation Allowance',
-    taxability: { fed: true, state: true, oasdi: true, medicare: true }
-  },
-  FLPP: {
-    section: 'ALLOWANCE',
-    description: 'Foreign Language Proficiency Pay',
-    taxability: { fed: true, state: true, oasdi: true, medicare: true }
-  },
-
-  // TAXES
-  TAX_FED: {
-    section: 'TAX',
-    description: 'Federal Income Tax',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  TAX_STATE: {
-    section: 'TAX',
-    description: 'State Income Tax',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  FICA: {
-    section: 'TAX',
-    description: 'FICA (Social Security Tax)',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  MEDICARE: {
-    section: 'TAX',
-    description: 'Medicare Tax',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-
-  // DEDUCTIONS
-  SGLI: {
-    section: 'DEDUCTION',
-    description: 'SGLI Life Insurance',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  DENTAL: {
-    section: 'DEDUCTION',
-    description: 'Dental Premium',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-  TSP: {
-    section: 'DEDUCTION',
-    description: 'Thrift Savings Plan',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-
-  // ALLOTMENTS
-  ALLOTMENT: {
-    section: 'ALLOTMENT',
-    description: 'Allotment',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-
-  // DEBTS
-  DEBT: {
-    section: 'DEBT',
-    description: 'Debt Payment',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
-  },
-
-  // ADJUSTMENTS
-  ADJUSTMENT: {
-    section: 'ADJUSTMENT',
-    description: 'Pay Adjustment',
-    taxability: { fed: true, state: true, oasdi: true, medicare: true } // Usually taxable
-  }
-};
-
-export function getLineCodeDefinition(code: string): LineCodeDefinition {
-  return LINE_CODES[code] || LINE_CODES.ADJUSTMENT; // Default to adjustment
-}
-
-export function computeTaxableBases(lines: Array<{code: string; amount_cents: number}>): {
-  fed: number;
-  state: number;
-  oasdi: number;
-  medicare: number;
+export function validateAndNormalizeCode(code: string): {
+  code: string;
+  warning?: PayFlag;
 } {
-  const bases = { fed: 0, state: 0, oasdi: 0, medicare: 0 };
-  
-  for (const line of lines) {
-    const def = getLineCodeDefinition(line.code);
-    if (def.section !== 'ALLOWANCE') continue; // Only allowances count toward taxable income
-    
-    if (def.taxability.fed) bases.fed += line.amount_cents;
-    if (def.taxability.state) bases.state += line.amount_cents;
-    if (def.taxability.oasdi) bases.oasdi += line.amount_cents;
-    if (def.taxability.medicare) bases.medicare += line.amount_cents;
+  if (isValidLineCode(code)) {
+    return { code };
   }
   
-  return bases;
-}
-```
-
-### 2.2 Expected Pay Computation
-
-**File:** `lib/les/expected.ts` (ENHANCE EXISTING)
-
-Add new export function:
-
-```typescript
-/**
- * BUILD EXPECTED PAY SNAPSHOT
- * Computes expected pay values from official tables
- * 
- * @param profile - User profile snapshot
- * @param asOfDate - Date for which to compute (defaults to first of current month)
- * @returns Expected values and taxable bases
- */
-export async function buildExpectedSnapshot(profile: {
-  paygrade: string;
-  yos: number;
-  mhaOrZip: string;
-  withDependents: boolean;
-  specials: {
-    sdap?: boolean;
-    hfp?: boolean;
-    fsa?: boolean;
-    flpp?: boolean;
-  };
-}, asOfDate?: Date): Promise<{
-  expected: {
-    basepay_cents: number;
-    bah_cents: number;
-    bas_cents: number;
-    cola_cents: number;
-    specials: Array<{code: string; cents: number; taxability: any}>;
-  };
-  taxable_bases: {
-    fed: number;
-    state: number;
-    oasdi: number;
-    medicare: number;
-  };
-}> {
-  const date = asOfDate || new Date();
-  const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  
-  // Build expected values (reuse existing logic)
-  const expected = await buildExpectedPaySnapshot(
-    profile.user_id, 
-    date.getMonth() + 1, 
-    date.getFullYear()
-  );
-
-  // Compute taxable bases using codes.ts
-  const lines = [
-    { code: 'BASEPAY', amount_cents: expected.base_pay_cents || 0 },
-    { code: 'BAH', amount_cents: expected.bah_cents || 0 },
-    { code: 'BAS', amount_cents: expected.bas_cents || 0 },
-    { code: 'COLA', amount_cents: expected.cola_cents || 0 },
-    ...(expected.specials || []).map(s => ({ code: s.code, amount_cents: s.cents }))
-  ];
-
-  const taxable_bases = computeTaxableBases(lines);
-
+  // Unknown code → default to OTHER with warning
   return {
-    expected: {
-      basepay_cents: expected.base_pay_cents || 0,
-      bah_cents: expected.bah_cents || 0,
-      bas_cents: expected.bas_cents || 0,
-      cola_cents: expected.cola_cents || 0,
-      specials: expected.specials || []
-    },
-    taxable_bases
+    code: 'OTHER',
+    warning: {
+      severity: 'yellow',
+      flag_code: 'UNKNOWN_CODE',
+      message: `Unrecognized line code: ${code}`,
+      suggestion: 'Review this entry for typos. Code has been categorized as OTHER.'
+    }
   };
 }
 ```
 
-### 2.3 Comparison Engine
+**File:** `app/api/les/audit/route.ts`
 
-**File:** `lib/les/compare.ts` (ENHANCE EXISTING - add these functions)
+Add validation on line item insert.
 
-```typescript
-import { getLineCodeDefinition, computeTaxableBases } from './codes';
+---
 
-/**
- * COMPREHENSIVE COMPARISON
- * Compares expected vs actual with detailed validation
- */
-export function compareDetailed(params: {
-  expected: {
-    basepay_cents: number;
-    bah_cents: number;
-    bas_cents: number;
-    cola_cents: number;
-    specials: Array<{code: string; cents: number}>;
-  };
-  taxable_bases: {
-    fed: number;
-    state: number;
-    oasdi: number;
-    medicare: number;
-  };
-  actualLines: Array<{
-    code: string;
-    amount_cents: number;
-    section: string;
-  }>;
-  netPayCents: number;
-}): {
-  flags: Array<{
-    severity: 'red' | 'yellow' | 'green';
-    flag_code: string;
-    message: string;
-    suggestion: string;
-    ref_url?: string;
-    delta_cents?: number;
-  }>;
-  summary: {
-    total_allowances: number;
-    total_deductions: number;
-    total_taxes: number;
-    total_allotments: number;
-    total_debts: number;
-    total_adjustments: number;
-    computed_net: number;
-    actual_net: number;
-    net_delta: number;
-  };
-  mathProof: string;
-} {
-  const flags = [];
+## Task 3: Rate Limiting
+
+### Documentation
+
+**File:** `review/les-auditor/api.openapi.yaml`
+
+Add to POST /les/audit description:
+
+```yaml
+description: |
+  ...existing...
   
-  // Group actual lines by section
-  const bySection = {
-    ALLOWANCE: actualLines.filter(l => l.section === 'ALLOWANCE'),
-    TAX: actualLines.filter(l => l.section === 'TAX'),
-    DEDUCTION: actualLines.filter(l => l.section === 'DEDUCTION'),
-    ALLOTMENT: actualLines.filter(l => l.section === 'ALLOTMENT'),
-    DEBT: actualLines.filter(l => l.section === 'DEBT'),
-    ADJUSTMENT: actualLines.filter(l => l.section === 'ADJUSTMENT')
-  };
-
-  // Helper to find line
-  const findLine = (code: string) => actualLines.find(l => l.code === code);
-
-  // 1. BAH Check
-  const actualBAH = findLine('BAH')?.amount_cents || 0;
-  const expectedBAH = params.expected.bah_cents;
-  if (Math.abs(actualBAH - expectedBAH) > 500) { // $5 threshold
-    flags.push({
-      severity: 'red',
-      flag_code: 'BAH_MISMATCH',
-      message: `BAH discrepancy: Expected $${(expectedBAH/100).toFixed(2)}, got $${(actualBAH/100).toFixed(2)}`,
-      suggestion: 'Verify your MHA code matches your duty station and dependent status. Contact finance office.',
-      delta_cents: expectedBAH - actualBAH,
-      ref_url: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
-    });
-  }
-
-  // 2. BAS Check
-  const actualBAS = findLine('BAS')?.amount_cents || 0;
-  const expectedBAS = params.expected.bas_cents;
-  if (actualBAS === 0 && expectedBAS > 0) {
-    flags.push({
-      severity: 'red',
-      flag_code: 'BAS_MISSING',
-      message: `BAS missing: Expected $${(expectedBAS/100).toFixed(2)}`,
-      suggestion: 'All service members receive BAS. Check your LES or contact finance.',
-      delta_cents: expectedBAS
-    });
-  }
-
-  // 3. FICA Percentage Check
-  const actualFICA = findLine('FICA')?.amount_cents || 0;
-  const oasdiBase = params.taxable_bases.oasdi;
-  if (oasdiBase > 0 && actualFICA > 0) {
-    const ficaPercent = (actualFICA / oasdiBase) * 100;
-    if (ficaPercent < 6.1 || ficaPercent > 6.3) {
-      flags.push({
-        severity: 'yellow',
-        flag_code: 'FICA_PCT_OUT_OF_RANGE',
-        message: `FICA is ${ficaPercent.toFixed(2)}% but should be ~6.2%`,
-        suggestion: 'FICA should be 6.2% of taxable pay (excludes BAH/BAS). Verify taxable gross or check for wage base limit.',
-        delta_cents: Math.round(oasdiBase * 0.062) - actualFICA
-      });
-    }
-  }
-
-  // 4. Medicare Percentage Check
-  const actualMedicare = findLine('MEDICARE')?.amount_cents || 0;
-  const medicareBase = params.taxable_bases.medicare;
-  if (medicareBase > 0 && actualMedicare > 0) {
-    const medicarePercent = (actualMedicare / medicareBase) * 100;
-    if (medicarePercent < 1.40 || medicarePercent > 1.50) {
-      flags.push({
-        severity: 'yellow',
-        flag_code: 'MEDICARE_PCT_OUT_OF_RANGE',
-        message: `Medicare is ${medicarePercent.toFixed(2)}% but should be ~1.45%`,
-        suggestion: 'Medicare should be 1.45% of taxable pay. Verify your LES or contact finance.',
-        delta_cents: Math.round(medicareBase * 0.0145) - actualMedicare
-      });
-    }
-  }
-
-  // 5. Net Pay Math Check
-  const totalAllowances = bySection.ALLOWANCE.reduce((sum, l) => sum + l.amount_cents, 0);
-  const totalTaxes = bySection.TAX.reduce((sum, l) => sum + l.amount_cents, 0);
-  const totalDeductions = bySection.DEDUCTION.reduce((sum, l) => sum + l.amount_cents, 0);
-  const totalAllotments = bySection.ALLOTMENT.reduce((sum, l) => sum + l.amount_cents, 0);
-  const totalDebts = bySection.DEBT.reduce((sum, l) => sum + l.amount_cents, 0);
-  const totalAdjustments = bySection.ADJUSTMENT.reduce((sum, l) => sum + l.amount_cents, 0);
-
-  const computedNet = totalAllowances - totalTaxes - totalDeductions - totalAllotments - totalDebts + totalAdjustments;
-  const netDelta = Math.abs(computedNet - params.netPayCents);
-
-  if (netDelta > 100) { // $1 threshold
-    flags.push({
-      severity: 'red',
-      flag_code: 'NET_MATH_MISMATCH',
-      message: `Net pay math doesn't balance: Expected $${(computedNet/100).toFixed(2)}, got $${(params.netPayCents/100).toFixed(2)}`,
-      suggestion: 'Review all line items for data entry errors. Net = Allowances - Taxes - Deductions - Allotments - Debts + Adjustments',
-      delta_cents: computedNet - params.netPayCents
-    });
-  }
-
-  // 6. Green flag if no issues
-  if (flags.length === 0) {
-    flags.push({
-      severity: 'green',
-      flag_code: 'ALL_VERIFIED',
-      message: 'Paycheck verified! All allowances match expected values and math checks out.',
-      suggestion: 'No action needed. Your pay is correct.'
-    });
-  }
-
-  const summary = {
-    total_allowances: totalAllowances,
-    total_deductions: totalDeductions,
-    total_taxes: totalTaxes,
-    total_allotments: totalAllotments,
-    total_debts: totalDebts,
-    total_adjustments: totalAdjustments,
-    computed_net: computedNet,
-    actual_net: params.netPayCents,
-    net_delta: netDelta
-  };
-
-  const mathProof = `
-Allowances:    $${(totalAllowances/100).toFixed(2)}
-- Taxes:       $${(totalTaxes/100).toFixed(2)}
-- Deductions:  $${(totalDeductions/100).toFixed(2)}
-- Allotments:  $${(totalAllotments/100).toFixed(2)}
-- Debts:       $${(totalDebts/100).toFixed(2)}
-+ Adjustments: $${(totalAdjustments/100).toFixed(2)}
-= Net Pay:     $${(computedNet/100).toFixed(2)} (${netDelta <= 100 ? '✓' : '✗'})
-  `.trim();
-
-  return { flags, summary, mathProof };
-}
+  **Rate Limit:** 50 audits per day per user. Returns 429 if exceeded.
 ```
 
----
+### Implementation
 
-## PHASE 3: Enhanced API Endpoints
+**File:** `app/api/les/audit/route.ts`
 
-### 3.1 Comprehensive Audit Endpoint
-
-**File:** `app/api/les/audit/route.ts` (ENHANCE EXISTING)
-
-Modify POST handler to use new comparison logic:
+Add before processing:
 
 ```typescript
-import { buildExpectedSnapshot, compareDetailed } from '@/lib/les/compare';
-import { getLineCodeDefinition } from '@/lib/les/codes';
+import { checkAndIncrement } from '@/lib/rate-limit';
 
-export async function POST(request: Request) {
-  const user = await currentUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+// Check rate limit (50/day)
+const { allowed, remaining } = await checkAndIncrement(
+  user.id,
+  '/api/les/audit',
+  50
+);
 
-  const body = await request.json();
-  const { month, year, profile, actual, net_pay_cents } = body;
-
-  // Create audit record
-  const { data: upload } = await supabase
-    .from('les_uploads')
-    .insert({
-      user_id: user.id,
-      entry_type: 'manual',
-      month,
-      year,
-      profile_snapshot: profile,
-      audit_status: 'draft'
-    })
-    .select()
-    .single();
-
-  // Insert actual lines with proper section and taxability
-  const lines = [
-    ...actual.allowances.map(a => ({
-      ...a,
-      upload_id: upload.id,
-      section: 'ALLOWANCE',
-      taxability: getLineCodeDefinition(a.code).taxability
-    })),
-    ...actual.taxes.map(t => ({
-      ...t,
-      upload_id: upload.id,
-      section: 'TAX',
-      taxability: { fed: false, state: false, oasdi: false, medicare: false }
-    })),
-    ...actual.deductions.map(d => ({
-      ...d,
-      upload_id: upload.id,
-      section: 'DEDUCTION',
-      taxability: { fed: false, state: false, oasdi: false, medicare: false }
-    })),
-    ...(actual.allotments || []).map(a => ({
-      ...a,
-      upload_id: upload.id,
-      section: 'ALLOTMENT',
-      taxability: { fed: false, state: false, oasdi: false, medicare: false }
-    }))
-  ];
-
-  await supabase.from('les_lines').insert(lines);
-
-  // Build expected values
-  const { expected, taxable_bases } = await buildExpectedSnapshot(profile);
-
-  // Save expected snapshot
-  await supabase.from('expected_pay_snapshot').insert({
-    audit_id: upload.id,
-    expected,
-    taxable_bases
-  });
-
-  // Run comparison
-  const { flags, summary, mathProof } = compareDetailed({
-    expected,
-    taxable_bases,
-    actualLines: lines,
-    netPayCents: net_pay_cents
-  });
-
-  // Save flags
-  await supabase.from('pay_flags').insert(
-    flags.map(f => ({ ...f, upload_id: upload.id }))
+if (!allowed) {
+  return NextResponse.json(
+    { error: 'Rate limit exceeded. Max 50 audits per day.' },
+    { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
   );
-
-  return NextResponse.json({ summary, flags, mathProof, expected });
 }
 ```
 
-### 3.2-3.6: History Management APIs
+### Test
 
-(Keep all 5 API routes from original plan: detail, delete, clone, export, search)
+**File:** `__tests__/api/les/audit-ratelimit.test.ts`
 
----
-
-## PHASE 4: Enhanced Manual Entry UI
-
-### 4.1 Improve Existing Manual Entry
-
-**File:** `app/components/les/LesManualEntryTabbed.tsx` (ENHANCE)
-
-Add:
-
-- Profile snapshot capture (paygrade, yos, mha, dependents, specials)
-- Expected values shown next to each input
-- Section-based organization (Allowances, Taxes, Deductions, Allotments)
-- Real-time taxable base calculation display
-- "What counts as taxable?" explainer
-
-### 4.2 New Results Component
-
-**File:** `app/components/les/LesResults.tsx` (NEW)
-
-- Large verdict card (green/yellow/red based on worst flag)
-- Flag list with severity badges
-- "Copy to clipboard" for each suggestion
-- Collapsible math proof section
-- Delta highlighting
-- Next steps CTA
+Create integration test that calls endpoint 51 times, expects 429 on #51.
 
 ---
 
-## PHASE 5: History Features
+## Task 4: Unit Tests
 
-(Keep all from original plan)
+### File 1: `__tests__/lib/les/codes.test.ts`
 
-### 5.1 Audit Detail Page
+```typescript
+import { computeTaxableBases, getLineCodeDefinition } from '@/lib/les/codes';
 
-**File:** `app/dashboard/paycheck-audit/[id]/page.tsx` (NEW)
+describe('codes.ts', () => {
+  describe('computeTaxableBases', () => {
+    it('excludes BAH and BAS from all tax bases', () => {
+      const lines = [
+        { code: 'BASEPAY', amount_cents: 350000 },
+        { code: 'BAH', amount_cents: 180000 },
+        { code: 'BAS', amount_cents: 46025 }
+      ];
+      
+      const bases = computeTaxableBases(lines);
+      
+      expect(bases.fed).toBe(350000);
+      expect(bases.state).toBe(350000);
+      expect(bases.oasdi).toBe(350000);
+      expect(bases.medicare).toBe(350000);
+    });
+    
+    it('includes HFP in FICA/Medicare but not Fed/State', () => {
+      const lines = [
+        { code: 'BASEPAY', amount_cents: 350000 },
+        { code: 'HFP', amount_cents: 22500 }
+      ];
+      
+      const bases = computeTaxableBases(lines);
+      
+      expect(bases.fed).toBe(350000);
+      expect(bases.state).toBe(350000);
+      expect(bases.oasdi).toBe(372500);
+      expect(bases.medicare).toBe(372500);
+    });
+  });
+});
+```
 
-### 5.2 Comparison Page
+### File 2: `__tests__/lib/les/compare.test.ts`
 
-**File:** `app/dashboard/paycheck-audit/compare/page.tsx` (NEW)
+```typescript
+import { compareDetailed } from '@/lib/les/compare';
 
-### 5.3 Enhanced History List
+describe('compare.ts', () => {
+  describe('compareDetailed', () => {
+    it('flags BAH mismatch when delta > $5', () => {
+      const result = compareDetailed({
+        expected: { bah_cents: 195000 },
+        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
+        actualLines: [
+          { line_code: 'BAH', amount_cents: 165000, section: 'ALLOWANCE' }
+        ],
+        netPayCents: 0
+      });
+      
+      const bahFlag = result.flags.find(f => f.flag_code === 'BAH_MISMATCH');
+      expect(bahFlag).toBeDefined();
+      expect(bahFlag?.severity).toBe('red');
+      expect(bahFlag?.delta_cents).toBe(30000);
+    });
+    
+    it('passes FICA check when 6.2%', () => {
+      const result = compareDetailed({
+        expected: {},
+        taxable_bases: { fed: 0, state: 0, oasdi: 350000, medicare: 0 },
+        actualLines: [
+          { line_code: 'FICA', amount_cents: 21700, section: 'TAX' }
+        ],
+        netPayCents: 0
+      });
+      
+      const ficaFlag = result.flags.find(f => f.flag_code === 'FICA_PCT_CORRECT');
+      expect(ficaFlag).toBeDefined();
+    });
+    
+    it('net math ±$1 passes, ±$1.01 fails', () => {
+      // Pass case
+      const pass = compareDetailed({
+        expected: {},
+        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
+        actualLines: [
+          { line_code: 'BASEPAY', amount_cents: 100000, section: 'ALLOWANCE' }
+        ],
+        netPayCents: 99900 // $1 diff
+      });
+      
+      expect(pass.flags.find(f => f.flag_code === 'NET_MATH_VERIFIED')).toBeDefined();
+      
+      // Fail case
+      const fail = compareDetailed({
+        expected: {},
+        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
+        actualLines: [
+          { line_code: 'BASEPAY', amount_cents: 100000, section: 'ALLOWANCE' }
+        ],
+        netPayCents: 99899 // $1.01 diff
+      });
+      
+      expect(fail.flags.find(f => f.flag_code === 'NET_MATH_MISMATCH')).toBeDefined();
+    });
+  });
+});
+```
 
-**File:** `app/dashboard/paycheck-audit/PaycheckAuditClient.tsx` (MODIFY)
+### CI Integration
 
-Add search, filter, delete buttons, clickable items
+**File:** `.github/workflows/test.yml` or package.json script
+
+Ensure `npm test` runs on PR/push with coverage threshold.
 
 ---
 
-## PHASE 6: Testing & Fixtures
+## Task 5: Acceptance Test Runner
 
-### 6.1 Test Fixtures
+**File:** `scripts/test-les-fixtures.ts`
 
-**Files:** `lib/les/fixtures/` (NEW)
+```typescript
+import { readFileSync } from 'fs';
 
-- `happy_path_e5_fthood.json` - Perfect audit, all green
-- `bah_missing_e6_pcs.json` - Missing BAH after PCS
-- `fica_pct_warning.json` - FICA percentage out of range
+async function testFixture(name: string) {
+  const request = JSON.parse(
+    readFileSync(`review/les-auditor/fixtures/${name}.request.json`, 'utf-8')
+  );
+  
+  const response = await fetch('http://localhost:3000/api/les/audit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  });
+  
+  const result = await response.json();
+  
+  // Save to runs/
+  writeFileSync(
+    `review/les-auditor/runs/${name}.response.json`,
+    JSON.stringify(result, null, 2)
+  );
+  
+  return result;
+}
 
-### 6.2 Unit Tests
+async function main() {
+  // Test happy path
+  const happy = await testFixture('happy_path_e5_fthood');
+  assert(happy.flags.every(f => f.severity === 'green'));
+  assert(happy.summary.net_delta <= 100);
+  
+  // Test BAH mismatch
+  const bah = await testFixture('bah_mismatch_e6_pcs');
+  assert(bah.flags.some(f => f.flag_code === 'BAH_MISMATCH' && f.delta_cents === 30000));
+  
+  console.log('✅ All acceptance tests passed');
+}
+```
 
-**File:** `__tests__/lib/les/compare.test.ts` (NEW)
+**Add to package.json:**
 
-Test:
+```json
+"test:fixtures": "ts-node scripts/test-les-fixtures.ts"
+```
 
-- BAH mismatch detection
-- BAS missing detection
-- FICA percentage validation
-- Medicare percentage validation
-- Net pay math validation
-- Green path (no issues)
+---
+
+## Task 6: UI Polish
+
+### Tax Field Helper Text
+
+**File:** `app/components/les/LesManualEntryTabbed.tsx`
+
+Update tax section (Tab 3) to add prominent note:
+
+```tsx
+<div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+  <p className="text-sm text-amber-900">
+    <strong>Enter exactly what appears on your LES.</strong> We do NOT estimate 
+    federal/state taxes in v1. You provide the actual values, we validate the percentages.
+  </p>
+</div>
+```
+
+### Data Freshness Badge
+
+**File:** `app/components/les/LesManualEntryTabbed.tsx`
+
+Add next to auto-filled allowances:
+
+```tsx
+<div className="text-xs text-gray-500 mt-1">
+  ✓ From official 2025 DFAS tables (effective {effectiveDate})
+</div>
+```
+
+### Math Proof Panel
+
+Already exists in `AuditDetailClient.tsx` - ensure it's also in main results view.
+
+---
+
+## Task 7: Data Freshness Endpoint
+
+**File:** `app/api/les/data-freshness/route.ts` (NEW)
+
+```typescript
+export async function GET() {
+  const { data: payTables } = await supabase
+    .from('military_pay_tables')
+    .select('effective_date')
+    .order('effective_date', { ascending: false })
+    .limit(1);
+    
+  const { data: bah } = await supabase
+    .from('bah_rates')
+    .select('effective_date')
+    .order('effective_date', { ascending: false })
+    .limit(1);
+    
+  return NextResponse.json({
+    pay_tables: payTables?.[0]?.effective_date || null,
+    bah: bah?.[0]?.effective_date || null,
+    bas: '2025-01-01', // From SSOT
+    cola_conus: '2025-01-01',
+    cola_oconus: '2025-01-01'
+  });
+}
+```
+
+**Usage in UI:** Display badge "Data as of {date}"
+
+---
+
+## Task 8: Security Validation
+
+### Run RLS Test
+
+```bash
+supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql > review/les-auditor/rls_run.txt
+```
+
+### Verify Soft Delete in Search
+
+**File:** `app/api/les/audit/search/route.ts`
+
+Ensure `.is('deleted_at', null)` is present in query.
+
+Add test case in acceptance script.
 
 ---
 
 ## Implementation Order
 
-1. Database migration (enhance existing tables)
-2. Library structure (codes.ts, enhanced expected.ts, enhanced compare.ts)
-3. Enhanced audit API endpoint
-4. History management APIs (5 routes)
-5. Enhanced manual entry UI
-6. New results component
-7. Audit detail page
-8. Comparison page
-9. Test fixtures and unit tests
-10. Integration testing
+1. Rename uploadId → auditId (global search/replace)
+2. Add LineItem.code enum to OpenAPI
+3. Add code validation in server
+4. Implement rate limiting
+5. Write unit tests
+6. Create acceptance test runner
+7. Polish UI with helper text and badges
+8. Create data freshness endpoint
+9. Run RLS test and save output
+10. Run all tests and save results to review/
 
 ---
 
-## Files to Create
+## Deliverables
 
-**New Files (20):**
+**New Files:**
 
-- `supabase-migrations/20251023_les_auditor_enhancements.sql`
-- `lib/les/codes.ts`
-- `lib/les/fixtures/happy_path_e5_fthood.json`
-- `lib/les/fixtures/bah_missing_e6_pcs.json`
-- `lib/les/fixtures/fica_pct_warning.json`
-- `app/api/les/audit/[id]/route.ts`
-- `app/api/les/audit/[id]/delete/route.ts`
-- `app/api/les/audit/[id]/clone/route.ts`
-- `app/api/les/audit/[id]/export/route.ts`
-- `app/api/les/audit/search/route.ts`
-- `app/dashboard/paycheck-audit/[id]/page.tsx`
-- `app/dashboard/paycheck-audit/[id]/AuditDetailClient.tsx`
-- `app/dashboard/paycheck-audit/compare/page.tsx`
-- `app/dashboard/paycheck-audit/compare/ComparisonClient.tsx`
-- `app/components/les/LesResults.tsx`
-- `app/components/les/FlagCard.tsx`
-- `app/components/les/PayBreakdownTable.tsx`
-- `app/components/les/MathProof.tsx`
 - `__tests__/lib/les/codes.test.ts`
 - `__tests__/lib/les/compare.test.ts`
+- `scripts/test-les-fixtures.ts`
+- `app/api/les/data-freshness/route.ts`
+- `review/les-auditor/runs/happy_path_e5_fthood.response.json`
+- `review/les-auditor/runs/bah_mismatch_e6_pcs.response.json`
+- `review/les-auditor/rls_run.txt`
 
-**Modified Files (5):**
+**Modified Files:**
 
-- `lib/les/expected.ts` (add buildExpectedSnapshot export)
-- `lib/les/compare.ts` (add compareDetailed function)
-- `app/api/les/audit/route.ts` (use new comparison logic)
-- `app/components/les/LesManualEntryTabbed.tsx` (enhance UI)
-- `app/dashboard/paycheck-audit/PaycheckAuditClient.tsx` (add history features)
-- `package.json` (add jsPDF)
+- `review/les-auditor/api.openapi.yaml` (enum codes, rate limit note, auditId)
+- `review/les-auditor/fixtures/*.response.json` (auditId)
+- `lib/les/codes.ts` (validation function)
+- `app/api/les/audit/route.ts` (rate limit, code validation)
+- `app/components/les/LesManualEntryTabbed.tsx` (UI polish)
+- All files with `uploadId` references
 
----
-
-## Backward Compatibility
-
-- Existing les_uploads records work unchanged
-- New columns have defaults and are nullable
-- Existing pay_flags records work unchanged
-- RLS policies enhanced, not replaced
-- Trigger backfills flag counts for existing audits
-- Section backfill handles existing les_lines
-
----
-
-## Key Differences from Original Spec
-
-1. **Reuse existing tables** (les_uploads, not paycheck_audits) for backward compatibility
-2. **Enhance not replace** - add columns to existing schema
-3. **Keep file upload support** - entry_type column differentiates manual vs upload
-4. **Maintain all existing RLS policies** - just enhance them
-5. **Add history features** not in original spec (view, delete, compare, export)
-
----
-
-## Testing Checklist
-
-Manual Entry & Validation:
-
-- [ ] Enter E5 @ Fort Hood with deps → all expected values auto-fill correctly
-- [ ] Enter actual values matching expected → GREEN verdict
-- [ ] Enter BAH $100 too low → RED flag with delta and suggestion
-- [ ] Enter FICA at 4% → YELLOW flag about percentage
-- [ ] Math doesn't balance → RED flag with breakdown
-
-History Features:
-
-- [ ] View audit detail page → all data displays
-- [ ] Delete audit → soft deletes, disappears from list
-- [ ] Re-audit → clones to new manual entry
-- [ ] Compare two months → shows differences
-- [ ] Export PDF → downloads correctly
-- [ ] Search/filter → works as expected
-
-Data Integrity:
-
-- [ ] Trigger auto-updates flag counts
-- [ ] RLS policies enforce user isolation
-- [ ] Taxable bases compute correctly
-- [ ] Section categorization works
+**Coverage Target:** >70% on `lib/les/*`
 
 ### To-dos
 
-- [ ] Create and apply database migration to enhance existing tables
-- [ ] Create lib/les/codes.ts with line code registry and taxability logic
-- [ ] Enhance lib/les/expected.ts with buildExpectedSnapshot export
-- [ ] Enhance lib/les/compare.ts with compareDetailed function
-- [ ] Enhance audit API to use new comparison logic
-- [ ] Create 5 history management API routes (detail, delete, clone, export, search)
-- [ ] Enhance manual entry UI with profile snapshot and taxable base display
-- [ ] Create new LesResults component with verdict, flags, math proof
-- [ ] Create audit detail page with full view and actions
-- [ ] Create month-to-month comparison page
-- [ ] Enhance history list with search, filter, delete
-- [ ] Create test fixtures for happy path and error scenarios
-- [ ] Write unit tests for codes, expected, and compare functions
-- [ ] Test entire flow end-to-end with real data
+- [ ] Global search/replace uploadId → auditId across all files
+- [ ] Add LineItem.code enum to OpenAPI and server validation
+- [ ] Implement 50/day rate limit on POST /les/audit
+- [ ] Write unit tests for codes.ts and compare.ts
+- [ ] Create fixture test runner and save outputs to runs/
+- [ ] Add helper text, data freshness badges, math proof
+- [ ] Create GET /api/les/data-freshness endpoint
+- [ ] Run RLS smoke test and save output

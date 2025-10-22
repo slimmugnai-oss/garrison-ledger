@@ -4,16 +4,16 @@ info:
   version: 1.0.0
   description: |
     Manual-entry LES (Leave and Earnings Statement) audit API for military paycheck validation.
-    
+
     **V1 Scope:** Manual entry only (no PDF uploads/OCR).
-    
+
     **Key Features:**
     - Auto-fills allowances from official DFAS tables (BAH, BAS, Base Pay, COLA)
     - Users enter actual taxes, deductions, and net pay from their LES
     - Validates FICA = 6.2%, Medicare = 1.45% of taxable gross
     - Validates net pay math (±$1 tolerance)
     - Returns actionable flags (red/yellow/green) with suggestions
-    
+
   contact:
     name: Garrison Ledger Support
     email: support@garrisonledger.com
@@ -33,7 +33,7 @@ paths:
       summary: Run LES Audit
       description: |
         Validates a service member's paycheck by comparing actual LES values against expected values from official tables.
-        
+
         **Process:**
         1. Create audit record in database
         2. Insert normalized line items with section and taxability
@@ -44,6 +44,7 @@ paths:
         7. Validate net pay math
         8. Return flags, summary, and math proof
         
+        **Rate Limit:** 50 audits per day per user. Returns 429 if exceeded.
       tags:
         - LES Auditor
       requestBody:
@@ -51,34 +52,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuditRequest'
+              $ref: "#/components/schemas/AuditRequest"
             examples:
               happy_path:
                 summary: E05 @ Fort Hood - All Correct
-                externalValue: './fixtures/happy_path_e5_fthood.request.json'
+                externalValue: "./fixtures/happy_path_e5_fthood.request.json"
               bah_mismatch:
                 summary: E06 @ Fort Bragg - BAH Incorrect
-                externalValue: './fixtures/bah_mismatch_e6_pcs.request.json'
-                
+                externalValue: "./fixtures/bah_mismatch_e6_pcs.request.json"
+
       responses:
-        '200':
+        "200":
           description: Audit completed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuditResponse'
+                $ref: "#/components/schemas/AuditResponse"
               examples:
                 happy_path:
                   summary: All green flags
-                  externalValue: './fixtures/happy_path_e5_fthood.response.json'
+                  externalValue: "./fixtures/happy_path_e5_fthood.response.json"
                 bah_mismatch:
                   summary: Red flags for BAH and net pay
-                  externalValue: './fixtures/bah_mismatch_e6_pcs.response.json'
-        '401':
+                  externalValue: "./fixtures/bah_mismatch_e6_pcs.response.json"
+        "401":
           description: Unauthorized - missing or invalid authentication
-        '429':
+        "429":
           description: Rate limit exceeded
-        '500':
+        "500":
           description: Server error
 
   /les/audit/{id}:
@@ -95,13 +96,13 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Audit details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuditDetail'
-        '404':
+                $ref: "#/components/schemas/AuditDetail"
+        "404":
           description: Audit not found
 
   /les/audit/{id}/delete:
@@ -118,7 +119,7 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Audit deleted successfully
           content:
             application/json:
@@ -129,7 +130,7 @@ paths:
                     type: boolean
                   message:
                     type: string
-        '404':
+        "404":
           description: Audit not found
 
   /les/audit/{id}/clone:
@@ -146,7 +147,7 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Audit cloned successfully
           content:
             application/json:
@@ -155,9 +156,10 @@ paths:
                 properties:
                   success:
                     type: boolean
-                  uploadId:
+                  auditId:
                     type: string
                     format: uuid
+                    description: ID of the newly cloned audit
                   message:
                     type: string
 
@@ -175,7 +177,7 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Audit export file
           content:
             application/json:
@@ -212,7 +214,7 @@ paths:
                   type: integer
                   default: 50
       responses:
-        '200':
+        "200":
           description: Filtered audits
           content:
             application/json:
@@ -222,7 +224,7 @@ paths:
                   audits:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AuditSummary'
+                      $ref: "#/components/schemas/AuditSummary"
                   count:
                     type: integer
 
@@ -255,8 +257,8 @@ components:
           properties:
             paygrade:
               type: string
-              pattern: '^(E0[1-9]|E[1-9][0-9]|O0[1-9]|O10|W0[1-5])$'
-              example: 'E05'
+              pattern: "^(E0[1-9]|E[1-9][0-9]|O0[1-9]|O10|W0[1-5])$"
+              example: "E05"
             yos:
               type: integer
               minimum: 0
@@ -265,7 +267,7 @@ components:
             mhaOrZip:
               type: string
               description: MHA code (e.g., TX191) or ZIP code
-              example: 'TX191'
+              example: "TX191"
             withDependents:
               type: boolean
               description: True if service member has dependents
@@ -287,27 +289,27 @@ components:
             allowances:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             taxes:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             deductions:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             allotments:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             debts:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             adjustments:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
         net_pay_cents:
           type: integer
           description: Actual net pay from LES in cents
@@ -319,12 +321,32 @@ components:
       properties:
         code:
           type: string
-          description: Canonical line code (BASEPAY, BAH, FICA, etc.)
-          example: 'BASEPAY'
+          description: Canonical line code
+          enum:
+            - BASEPAY
+            - BAH
+            - BAS
+            - COLA
+            - SDAP
+            - HFP
+            - FSA
+            - FLPP
+            - TAX_FED
+            - TAX_STATE
+            - FICA
+            - MEDICARE
+            - SGLI
+            - DENTAL
+            - TSP
+            - ALLOTMENT
+            - DEBT
+            - ADJUSTMENT
+            - OTHER
+          example: "BASEPAY"
         description:
           type: string
           description: Human-readable description
-          example: 'Base Pay'
+          example: "Base Pay"
         amount_cents:
           type: integer
           minimum: 0
@@ -358,7 +380,7 @@ components:
         flags:
           type: array
           items:
-            $ref: '#/components/schemas/PayFlag'
+            $ref: "#/components/schemas/PayFlag"
         mathProof:
           type: string
           description: Formatted equation showing net pay calculation
@@ -397,9 +419,10 @@ components:
             medicare:
               type: integer
               description: Medicare base in cents
-        uploadId:
+        auditId:
           type: string
           format: uuid
+          description: ID of the created audit record
 
     PayFlag:
       type: object
@@ -432,11 +455,11 @@ components:
         message:
           type: string
           description: Human-readable message (BLUF style)
-          example: 'BAH discrepancy: Expected $1,950.00, got $1,650.00'
+          example: "BAH discrepancy: Expected $1,950.00, got $1,650.00"
         suggestion:
           type: string
           description: Concrete next step for service member
-          example: 'Contact finance office to correct BAH rate'
+          example: "Contact finance office to correct BAH rate"
         delta_cents:
           type: integer
           description: Expected - Actual in cents (positive = underpaid)
@@ -445,7 +468,7 @@ components:
           type: string
           format: uri
           description: Link to official source or help article
-          example: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+          example: "https://www.defensetravel.dod.mil/site/bahCalc.cfm"
 
     AuditDetail:
       type: object
@@ -459,30 +482,30 @@ components:
             ALLOWANCE:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             TAX:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
             DEDUCTION:
               type: array
               items:
-                $ref: '#/components/schemas/LineItem'
+                $ref: "#/components/schemas/LineItem"
         flagsBySeverity:
           type: object
           properties:
             red:
               type: array
               items:
-                $ref: '#/components/schemas/PayFlag'
+                $ref: "#/components/schemas/PayFlag"
             yellow:
               type: array
               items:
-                $ref: '#/components/schemas/PayFlag'
+                $ref: "#/components/schemas/PayFlag"
             green:
               type: array
               items:
-                $ref: '#/components/schemas/PayFlag'
+                $ref: "#/components/schemas/PayFlag"
         totals:
           type: object
 
@@ -513,4 +536,3 @@ components:
         created_at:
           type: string
           format: date-time
-

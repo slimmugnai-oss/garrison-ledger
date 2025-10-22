@@ -24,6 +24,7 @@ import type { LesLine } from '@/app/types/les';
 import { ssot } from '@/lib/ssot';
 import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { checkAndIncrement } from '@/lib/limits';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -63,6 +64,24 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     const { userId } = await auth();
     if (!userId) throw Errors.unauthorized();
+
+    // ==========================================================================
+    // 1.5. RATE LIMITING (50 audits/day/user)
+    // ==========================================================================
+    const { allowed, count } = await checkAndIncrement(userId, '/api/les/audit-manual', 50);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Maximum 50 audits per day.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '50',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': new Date().toISOString().slice(0, 10)
+          }
+        }
+      );
+    }
 
     // ==========================================================================
     // 2. TIER GATING & QUOTA CHECK

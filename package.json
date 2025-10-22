@@ -40,6 +40,7 @@
     "pre-deploy": "npm run health-check && npm run check-icons && npm run secret-scan && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:fixtures": "ts-node scripts/test-les-fixtures.ts",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "prepare": "husky"

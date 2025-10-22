@@ -121,7 +121,7 @@ export async function POST(
 
   return NextResponse.json({
     success: true,
-    uploadId: newUpload.id,
+    auditId: newUpload.id,
     message: 'Audit cloned successfully. You can now edit and re-run.'
   });
 }

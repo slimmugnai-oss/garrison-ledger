@@ -266,3 +266,35 @@ export function canonicalizeCode(rawCode: string): string {
 export function getSection(code: string): LineCodeDefinition['section'] {
   return getLineCodeDefinition(code).section;
 }
+
+/**
+ * Validate and normalize a line code
+ * Returns the code if valid, or 'OTHER' with a warning flag if invalid
+ * 
+ * @param code - Line code to validate
+ * @returns Validated code and optional warning flag
+ */
+export function validateAndNormalizeCode(code: string): {
+  code: string;
+  warning?: {
+    severity: 'yellow';
+    flag_code: 'UNKNOWN_CODE';
+    message: string;
+    suggestion: string;
+  };
+} {
+  if (isValidLineCode(code)) {
+    return { code };
+  }
+  
+  // Unknown code → default to OTHER with warning
+  return {
+    code: 'OTHER',
+    warning: {
+      severity: 'yellow',
+      flag_code: 'UNKNOWN_CODE',
+      message: `Unrecognized line code: ${code}`,
+      suggestion: 'Review this entry for typos. Code has been categorized as OTHER.'
+    }
+  };
+}
