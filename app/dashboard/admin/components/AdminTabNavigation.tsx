@@ -7,7 +7,7 @@ import Badge from '@/app/components/ui/Badge';
 interface TabConfig {
   id: string;
   label: string;
-  icon: 'Shield' | 'TrendingUp' | 'Users' | 'BookOpen' | 'Database';
+  icon: 'Shield' | 'TrendingUp' | 'Users' | 'BookOpen' | 'Database' | 'Map';
   shortcut: string;
   badge?: number;
 }
@@ -21,6 +21,7 @@ interface AdminTabNavigationProps {
     users?: number;
     content?: number;
     system?: number;
+    sitemap?: number;
   };
 }
 
@@ -30,6 +31,7 @@ const tabs: TabConfig[] = [
   { id: 'users', label: 'Personnel', icon: 'Users', shortcut: '3' },
   { id: 'content', label: 'Assets', icon: 'BookOpen', shortcut: '4' },
   { id: 'system', label: 'Ops Status', icon: 'Database', shortcut: '5' },
+  { id: 'sitemap', label: 'Sitemap', icon: 'Map', shortcut: '6' },
 ];
 
 export default function AdminTabNavigation({ activeTab, onChange, badges = {} }: AdminTabNavigationProps) {
@@ -42,7 +44,7 @@ export default function AdminTabNavigation({ activeTab, onChange, badges = {} }:
       }
 
       const num = parseInt(e.key);
-      if (num >= 1 && num <= 5) {
+      if (num >= 1 && num <= 6) {
         const tab = tabs[num - 1];
         if (tab) {
           onChange(tab.id);

@@ -8,6 +8,7 @@ import AnalyticsTab from './tabs/AnalyticsTab';
 import UsersTab from './tabs/UsersTab';
 import ContentTab from './tabs/ContentTab';
 import SystemTab from './tabs/SystemTab';
+import SitemapTab from './tabs/SitemapTab';
 import { Alert } from './components/AlertPanel';
 
 interface ActivityItem {
@@ -52,7 +53,7 @@ export default function AdminDashboardClient({
   // Sync with URL
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl && ['overview', 'analytics', 'users', 'content', 'system'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['overview', 'analytics', 'users', 'content', 'system', 'sitemap'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
@@ -83,6 +84,8 @@ export default function AdminDashboardClient({
         return <ContentTab />;
       case 'system':
         return <SystemTab />;
+      case 'sitemap':
+        return <SitemapTab />;
       default:
         return <OverviewTab initialMetrics={metrics} initialAlerts={alerts} initialActivity={recentActivity} />;
     }

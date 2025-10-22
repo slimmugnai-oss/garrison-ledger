@@ -99,6 +99,7 @@ import {
   FolderOpen,
   Library,
   MapPin,
+  Map,
   
   // General
   Zap,
@@ -251,6 +252,7 @@ export const iconRegistry = {
   FolderOpen,
   Library,
   MapPin,
+  Map,
   
   // General
   Zap,
