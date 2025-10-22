@@ -529,6 +529,22 @@ export default async function AdminDashboard() {
                 </p>
               </Link>
             </AnimatedCard>
+
+            {/* Data Sources - NEW */}
+            <AnimatedCard className="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 hover:shadow-xl transition-all" delay={500}>
+              <Link href="/dashboard/admin/data-sources" className="block p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center">
+                    <Icon name="Database" className="h-6 w-6 text-white" />
+                  </div>
+                  <Badge variant="success">NEW</Badge>
+                </div>
+                <h3 className="text-xl font-bold text-text-headings mb-2">Data Sources</h3>
+                <p className="text-text-body">
+                  Monitor and maintain military pay, BAH, tax data
+                </p>
+              </Link>
+            </AnimatedCard>
             </div>
           </div>
 
