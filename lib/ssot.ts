@@ -245,9 +245,10 @@ export const ssot = {
     // Basic Allowance for Subsistence (BAS) - Monthly rates in cents
     // Source: DFAS - https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/
     // As of: 2025-01-01
+    // Updated: 2025-10-22 to official 2025 rates
     basMonthlyCents: {
-      officer: 31164, // $311.64/month
-      enlisted: 46066  // $460.66/month
+      officer: 31698, // $316.98/month (2025 rate)
+      enlisted: 46025  // $460.25/month (2025 rate)
     },
     // LES comparison thresholds
     comparisonThresholds: {
