@@ -62,7 +62,7 @@
       {
         "code": "TSP",
         "description": "Thrift Savings Plan (5%)",
-        "amount_cents": 28800
+        "amount_cents": 17500
       },
       {
         "code": "SGLI",
@@ -78,7 +78,7 @@
     "allotments": [],
     "debts": [],
     "adjustments": [],
-    "net_pay_cents": 481325
+    "net_pay_cents": 492650
   }
 }
 

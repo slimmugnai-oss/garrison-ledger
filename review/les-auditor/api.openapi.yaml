@@ -43,7 +43,7 @@ paths:
         6. Validate FICA/Medicare percentages
         7. Validate net pay math
         8. Return flags, summary, and math proof
-        
+
         **Rate Limit:** 50 audits per day per user. Returns 429 if exceeded.
       tags:
         - LES Auditor

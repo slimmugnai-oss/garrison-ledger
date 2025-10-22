@@ -1,429 +1,405 @@
 <!-- 88f3ec67-6b10-45cb-be65-9946951e1ffe 85f149ed-d72a-4fca-bbda-313bddc9f52f -->
-# LES Auditor - Final Production Lockdown
+# LES Auditor V1 Hardening (Manual-Entry)
 
 ## Overview
 
-Eight critical tasks to lock down the LES Auditor for production: consistent naming, schema validation, rate limiting, comprehensive testing, UI polish, and security verification.
+Seven critical hardening tasks to fix TSP prefill logic, expand flag coverage, improve user input handling, ensure example consistency, and enhance testing infrastructure.
 
 ---
 
-## Task 1: Rename uploadId → auditId (Consistency)
+## Task 1: Fix TSP Calculation & Update Examples
 
-**Files to Update:**
+### Problem
 
-- `app/api/les/audit-manual/route.ts` - Response returns `auditId` not `uploadId`
-- `app/api/les/audit/[id]/clone/route.ts` - Response returns `auditId` 
-- `app/types/les.ts` - Type definitions
-- `review/les-auditor/api.openapi.yaml` - Schema property name
-- `review/les-auditor/fixtures/*.response.json` - Update both response files
-- Any client code referencing `uploadId`
+Currently computing TSP from total pay (includes BAH/BAS). Should use BASIC PAY only by default.
 
-**Search Pattern:** `grep -r "uploadId" --include="*.ts" --include="*.tsx" --include="*.yaml" --include="*.json"`
+### Changes Required
+
+**File: `lib/les/expected.ts`**
+
+- Locate TSP computation in `computeDeductions()` or prefill logic
+- Change from: `totalPayCents * tspPercent`
+- Change to: `basePayCents * tspPercent`
+- Add optional toggles for special/incentive pay sources (default: false)
+- Add JSDoc: "TSP prefill assumes % of BASIC PAY only; user can override"
+
+**File: `app/components/les/LesManualEntryTabbed.tsx`**
+
+- Update TSP help text to:
+  ```tsx
+  helpText="TSP prefill assumes % of BASIC PAY; edit if you elected other sources"
+  ```
+
+
+**File: `review/les-auditor/fixtures/happy_path_e5_fthood.request.json`**
+
+- Change TSP from current value to: `17500` (cents = $175)
+- Add DENTAL line: `{"code": "DENTAL", "description": "TRICARE Dental", "amount_cents": 1400}`
+
+**File: `review/les-auditor/fixtures/happy_path_e5_fthood.response.json`**
+
+- Recalculate `total_deductions`: TSP $175 + SGLI $27 + Dental $14 = $216
+- Recalculate `computed_net` and `net_delta`
+- Update `mathProof` string to reflect new totals
+
+**File: `review/les-auditor/api.openapi.yaml`**
+
+- Update embedded example in `AuditRequest` schema to include DENTAL line
+- Update `AuditResponse` example with recomputed totals
+- Ensure mathProof string matches new calculations
+
+**File: `review/les-auditor/LES_Auditor_Review_Packet.md`**
+
+- Find references to "TSP (5%) = $288.00"
+- Replace with "$175.00" (5% of $3,500 base pay)
+- Update all downstream sums in examples
 
 ---
 
-## Task 2: Line Code Enum Validation
+## Task 2: Implement New Flag Types
 
-### OpenAPI Schema Update
+### New Flags to Add
 
-**File:** `review/les-auditor/api.openapi.yaml`
-
-Change LineItem.code to enum:
-
-```yaml
-code:
-  type: string
-  enum:
-    - BASEPAY
-    - BAH
-    - BAS
-    - COLA
-    - SDAP
-    - HFP
-    - FSA
-    - FLPP
-    - TAX_FED
-    - TAX_STATE
-    - FICA
-    - MEDICARE
-    - SGLI
-    - DENTAL
-    - TSP
-    - ALLOTMENT
-    - DEBT
-    - ADJUSTMENT
-    - OTHER
-```
-
-### Server Validation
-
-**File:** `lib/les/codes.ts`
-
-Add validation function:
+**File: `app/types/les.ts` (or flag type definition)**
 
 ```typescript
-export function validateAndNormalizeCode(code: string): {
-  code: string;
-  warning?: PayFlag;
-} {
-  if (isValidLineCode(code)) {
-    return { code };
-  }
-  
-  // Unknown code → default to OTHER with warning
+| 'PROMO_NOT_REFLECTED'    // Red: Promotion not reflected in base pay
+| 'BAH_PARTIAL_OR_DIFF'    // Yellow: Partial BAH or mid-month change
+| 'CZTE_INFO'              // Green: Combat zone tax exclusion detected
+```
+
+**File: `lib/les/compare.ts`**
+
+Add flag creators:
+
+```typescript
+function createPromoNotReflectedFlag(promoDate: Date, auditPeriod: Date): PayFlag {
   return {
-    code: 'OTHER',
-    warning: {
-      severity: 'yellow',
-      flag_code: 'UNKNOWN_CODE',
-      message: `Unrecognized line code: ${code}`,
-      suggestion: 'Review this entry for typos. Code has been categorized as OTHER.'
-    }
+    severity: 'red',
+    flag_code: 'PROMO_NOT_REFLECTED',
+    message: `Promotion to [rank] effective ${promoDate} not reflected in base pay`,
+    suggestion: 'Contact finance office immediately. Promotion pay should retroactively adjust.',
+    ref_url: 'https://www.dfas.mil/militarymembers/payentitlements/Pay-Computations/'
+  };
+}
+
+function createBAHPartialOrDiffFlag(expected: number, actual: number, pcsMonth: boolean): PayFlag {
+  return {
+    severity: 'yellow',
+    flag_code: 'BAH_PARTIAL_OR_DIFF',
+    message: `BAH shows ${actual/100} (expected ${expected/100}). ${pcsMonth ? 'Mid-month PCS may cause prorated amount.' : 'Small variance detected.'}`,
+    suggestion: pcsMonth 
+      ? 'Verify prorated BAH for PCS month is correct. Next month should show full new rate.'
+      : 'Verify duty station and dependent status match profile.',
+    delta_cents: expected - actual
+  };
+}
+
+function createCZTEInfoFlag(fedTax: number): PayFlag {
+  return {
+    severity: 'green',
+    flag_code: 'CZTE_INFO',
+    message: `Combat Zone Tax Exclusion detected (Fed tax: $${fedTax/100})`,
+    suggestion: 'No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.',
+    ref_url: 'https://www.irs.gov/publications/p3'
   };
 }
 ```
 
-**File:** `app/api/les/audit/route.ts`
+Add logic in `compareDetailed()`:
 
-Add validation on line item insert.
+```typescript
+// Check for promotion not reflected
+if (profile.promoDate && profile.promoDate < auditDate) {
+  if (actualBasePay === expectedBasePayBeforePromo) {
+    flags.push(createPromoNotReflectedFlag(profile.promoDate, auditDate));
+  }
+}
+
+// Check for partial/different BAH (PCS month)
+if (expectedBAH > 0 && actualBAH > 0) {
+  const delta = Math.abs(expectedBAH - actualBAH);
+  if (delta > 500 && delta < 10000 && profile.pcsMonth) {
+    flags.push(createBAHPartialOrDiffFlag(expectedBAH, actualBAH, true));
+  }
+}
+
+// Check for CZTE
+if (actualFedTax < 1000 && (actualFICA > 0 || actualMedicare > 0)) {
+  flags.push(createCZTEInfoFlag(actualFedTax));
+}
+```
 
 ---
 
-## Task 3: Rate Limiting
+## Task 3: Request Canonicalization
 
-### Documentation
+### Problem
 
-**File:** `review/les-auditor/api.openapi.yaml`
+Users enter "MEDICARE HI", "FED TAX", "SOC SEC" instead of canonical codes.
 
-Add to POST /les/audit description:
+**File: `app/api/les/audit/route.ts` (or audit-manual/route.ts)**
+
+Add normalization before validation:
+
+```typescript
+const CODE_ALIASES: Record<string, string> = {
+  'MEDICARE HI': 'MEDICARE',
+  'FED TAX': 'TAX_FED',
+  'FITW': 'TAX_FED',
+  'STATE TAX': 'TAX_STATE',
+  'SITW': 'TAX_STATE',
+  'SOC SEC': 'FICA',
+  'OASDI': 'FICA',
+  'SOCIAL SECURITY': 'FICA',
+  'BASIC PAY': 'BASEPAY',
+  'BASE PAY': 'BASEPAY',
+  'BAH W/DEP': 'BAH',
+  'BAH W/O DEP': 'BAH',
+  // Add more as discovered
+};
+
+function normalizeLineCode(userCode: string): string {
+  const upper = userCode.toUpperCase().trim();
+  return CODE_ALIASES[upper] || userCode;
+}
+
+// Apply before validation
+requestBody.actual.allowances = requestBody.actual.allowances.map(line => ({
+  ...line,
+  code: normalizeLineCode(line.code)
+}));
+// Repeat for taxes, deductions, etc.
+```
+
+---
+
+## Task 4: Example Consistency
+
+### Update All Examples
+
+**New Fixtures to Create:**
+
+1. `review/les-auditor/fixtures/fica_wage_base.request.json`
+
+   - High earner (O-6, 20 YOS)
+   - Base pay: $11,000
+   - YTD earnings exceed $176,100
+   - FICA should stop
+
+2. `review/les-auditor/fixtures/fica_wage_base.response.json`
+
+   - Yellow flag: FICA_WAGEBASE_HIT
+   - Medicare continues
+
+3. `review/les-auditor/fixtures/promo_not_reflected.request.json`
+
+   - E-4 promoted to E-5 last month
+   - Base pay still showing E-4 rate
+
+4. `review/les-auditor/fixtures/promo_not_reflected.response.json`
+
+   - Red flag: PROMO_NOT_REFLECTED
+
+5. `review/les-auditor/fixtures/medicare_hi_only.request.json`
+
+   - User entered "MEDICARE HI" instead of "MEDICARE"
+
+6. `review/les-auditor/fixtures/medicare_hi_only.response.json`
+
+   - Code normalized to MEDICARE
+   - Green flag: MEDICARE_PCT_CORRECT
+
+**File: `review/les-auditor/api.openapi.yaml`**
+
+- Add `externalValue` references for new fixtures
+- Update existing examples to match recalculated totals
+
+---
+
+## Task 5: Expand Unit Tests
+
+**File: `__tests__/lib/les/expected.test.ts` (NEW)**
+
+```typescript
+describe('expected.ts - TSP calculation', () => {
+  it('computes TSP from basic pay only (not total pay)', () => {
+    const result = computeDeductions({
+      basePayCents: 350000,  // $3,500
+      bahCents: 180000,      // $1,800
+      basCents: 46025,       // $460.25
+      tspPercent: 0.05       // 5%
+    });
+    
+    expect(result.tsp_cents).toBe(17500); // 5% of $3,500 = $175
+  });
+});
+```
+
+**File: `__tests__/lib/les/compare.test.ts`**
+
+Add tests:
+
+```typescript
+it('flags PROMO_NOT_REFLECTED when promotion date passed but pay unchanged', () => {
+  const result = compareDetailed({
+    profile: {
+      promoDate: new Date('2025-09-01'),
+      expectedNewBasePay: 425000
+    },
+    auditDate: new Date('2025-10-01'),
+    actualLines: [
+      { code: 'BASEPAY', amount_cents: 350000 } // Still old pay
+    ]
+  });
+  
+  const flag = result.flags.find(f => f.flag_code === 'PROMO_NOT_REFLECTED');
+  expect(flag).toBeDefined();
+  expect(flag.severity).toBe('red');
+});
+
+it('flags BAH_PARTIAL_OR_DIFF yellow when PCS month detected', () => {
+  const result = compareDetailed({
+    expected: { bah_cents: 200000 },
+    profile: { pcsMonth: true },
+    actualLines: [
+      { code: 'BAH', amount_cents: 185000 } // $150 short (partial month)
+    ]
+  });
+  
+  const flag = result.flags.find(f => f.flag_code === 'BAH_PARTIAL_OR_DIFF');
+  expect(flag).toBeDefined();
+  expect(flag.severity).toBe('yellow');
+});
+
+it('shows CZTE_INFO when fed tax near zero but FICA/Medicare present', () => {
+  const result = compareDetailed({
+    actualLines: [
+      { code: 'TAX_FED', amount_cents: 0 },
+      { code: 'FICA', amount_cents: 21700 },
+      { code: 'MEDICARE', amount_cents: 5075 }
+    ]
+  });
+  
+  const flag = result.flags.find(f => f.flag_code === 'CZTE_INFO');
+  expect(flag).toBeDefined();
+  expect(flag.severity).toBe('green');
+});
+
+it('generates correct mathProof format (snapshot test)', () => {
+  const result = compareDetailed({ /* ... */ });
+  
+  expect(result.mathProof).toMatchSnapshot();
+  // Ensures no formatting regressions
+});
+```
+
+---
+
+## Task 6: RLS Smoke Test in CI
+
+**File: `.github/workflows/test.yml` (or create if missing)**
+
+Add step:
 
 ```yaml
-description: |
-  ...existing...
-  
-  **Rate Limit:** 50 audits per day per user. Returns 429 if exceeded.
+- name: RLS Smoke Test
+  run: |
+    supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql
+  env:
+    SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 ```
 
-### Implementation
-
-**File:** `app/api/les/audit/route.ts`
-
-Add before processing:
-
-```typescript
-import { checkAndIncrement } from '@/lib/rate-limit';
-
-// Check rate limit (50/day)
-const { allowed, remaining } = await checkAndIncrement(
-  user.id,
-  '/api/les/audit',
-  50
-);
-
-if (!allowed) {
-  return NextResponse.json(
-    { error: 'Rate limit exceeded. Max 50 audits per day.' },
-    { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
-  );
-}
-```
-
-### Test
-
-**File:** `__tests__/api/les/audit-ratelimit.test.ts`
-
-Create integration test that calls endpoint 51 times, expects 429 on #51.
+If test fails (contains ❌), CI should fail.
 
 ---
 
-## Task 4: Unit Tests
+## Task 7: Documentation & UX Clarity
 
-### File 1: `__tests__/lib/les/codes.test.ts`
+**File: `review/les-auditor/LES_Auditor_Review_Packet.md`**
 
-```typescript
-import { computeTaxableBases, getLineCodeDefinition } from '@/lib/les/codes';
+Add clarity section:
 
-describe('codes.ts', () => {
-  describe('computeTaxableBases', () => {
-    it('excludes BAH and BAS from all tax bases', () => {
-      const lines = [
-        { code: 'BASEPAY', amount_cents: 350000 },
-        { code: 'BAH', amount_cents: 180000 },
-        { code: 'BAS', amount_cents: 46025 }
-      ];
-      
-      const bases = computeTaxableBases(lines);
-      
-      expect(bases.fed).toBe(350000);
-      expect(bases.state).toBe(350000);
-      expect(bases.oasdi).toBe(350000);
-      expect(bases.medicare).toBe(350000);
-    });
-    
-    it('includes HFP in FICA/Medicare but not Fed/State', () => {
-      const lines = [
-        { code: 'BASEPAY', amount_cents: 350000 },
-        { code: 'HFP', amount_cents: 22500 }
-      ];
-      
-      const bases = computeTaxableBases(lines);
-      
-      expect(bases.fed).toBe(350000);
-      expect(bases.state).toBe(350000);
-      expect(bases.oasdi).toBe(372500);
-      expect(bases.medicare).toBe(372500);
-    });
-  });
-});
+```markdown
+### What We Prefill vs What You Enter
+
+**Auto-Filled (from official DFAS tables):**
+- Base Pay (by rank + YOS)
+- BAH (by location + dependents)
+- BAS (by officer/enlisted)
+- COLA (by location)
+
+**You Must Enter (from YOUR LES):**
+- Federal Tax (varies by W-4, YTD, exemptions)
+- State Tax (51 different state systems)
+- FICA (we validate ~6.2%)
+- Medicare (we validate ~1.45%)
+- TSP (default prefill = % of BASIC PAY; override if you elected other sources)
+- Dental (varies by plan)
+- Net Pay (we validate math)
 ```
 
-### File 2: `__tests__/lib/les/compare.test.ts`
+**File: `app/components/les/LesManualEntryTabbed.tsx`**
 
-```typescript
-import { compareDetailed } from '@/lib/les/compare';
-
-describe('compare.ts', () => {
-  describe('compareDetailed', () => {
-    it('flags BAH mismatch when delta > $5', () => {
-      const result = compareDetailed({
-        expected: { bah_cents: 195000 },
-        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
-        actualLines: [
-          { line_code: 'BAH', amount_cents: 165000, section: 'ALLOWANCE' }
-        ],
-        netPayCents: 0
-      });
-      
-      const bahFlag = result.flags.find(f => f.flag_code === 'BAH_MISMATCH');
-      expect(bahFlag).toBeDefined();
-      expect(bahFlag?.severity).toBe('red');
-      expect(bahFlag?.delta_cents).toBe(30000);
-    });
-    
-    it('passes FICA check when 6.2%', () => {
-      const result = compareDetailed({
-        expected: {},
-        taxable_bases: { fed: 0, state: 0, oasdi: 350000, medicare: 0 },
-        actualLines: [
-          { line_code: 'FICA', amount_cents: 21700, section: 'TAX' }
-        ],
-        netPayCents: 0
-      });
-      
-      const ficaFlag = result.flags.find(f => f.flag_code === 'FICA_PCT_CORRECT');
-      expect(ficaFlag).toBeDefined();
-    });
-    
-    it('net math ±$1 passes, ±$1.01 fails', () => {
-      // Pass case
-      const pass = compareDetailed({
-        expected: {},
-        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
-        actualLines: [
-          { line_code: 'BASEPAY', amount_cents: 100000, section: 'ALLOWANCE' }
-        ],
-        netPayCents: 99900 // $1 diff
-      });
-      
-      expect(pass.flags.find(f => f.flag_code === 'NET_MATH_VERIFIED')).toBeDefined();
-      
-      // Fail case
-      const fail = compareDetailed({
-        expected: {},
-        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
-        actualLines: [
-          { line_code: 'BASEPAY', amount_cents: 100000, section: 'ALLOWANCE' }
-        ],
-        netPayCents: 99899 // $1.01 diff
-      });
-      
-      expect(fail.flags.find(f => f.flag_code === 'NET_MATH_MISMATCH')).toBeDefined();
-    });
-  });
-});
-```
-
-### CI Integration
-
-**File:** `.github/workflows/test.yml` or package.json script
-
-Ensure `npm test` runs on PR/push with coverage threshold.
-
----
-
-## Task 5: Acceptance Test Runner
-
-**File:** `scripts/test-les-fixtures.ts`
-
-```typescript
-import { readFileSync } from 'fs';
-
-async function testFixture(name: string) {
-  const request = JSON.parse(
-    readFileSync(`review/les-auditor/fixtures/${name}.request.json`, 'utf-8')
-  );
-  
-  const response = await fetch('http://localhost:3000/api/les/audit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  });
-  
-  const result = await response.json();
-  
-  // Save to runs/
-  writeFileSync(
-    `review/les-auditor/runs/${name}.response.json`,
-    JSON.stringify(result, null, 2)
-  );
-  
-  return result;
-}
-
-async function main() {
-  // Test happy path
-  const happy = await testFixture('happy_path_e5_fthood');
-  assert(happy.flags.every(f => f.severity === 'green'));
-  assert(happy.summary.net_delta <= 100);
-  
-  // Test BAH mismatch
-  const bah = await testFixture('bah_mismatch_e6_pcs');
-  assert(bah.flags.some(f => f.flag_code === 'BAH_MISMATCH' && f.delta_cents === 30000));
-  
-  console.log('✅ All acceptance tests passed');
-}
-```
-
-**Add to package.json:**
-
-```json
-"test:fixtures": "ts-node scripts/test-les-fixtures.ts"
-```
-
----
-
-## Task 6: UI Polish
-
-### Tax Field Helper Text
-
-**File:** `app/components/les/LesManualEntryTabbed.tsx`
-
-Update tax section (Tab 3) to add prominent note:
+Update help text:
 
 ```tsx
-<div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
-  <p className="text-sm text-amber-900">
-    <strong>Enter exactly what appears on your LES.</strong> We do NOT estimate 
-    federal/state taxes in v1. You provide the actual values, we validate the percentages.
+<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+  <Icon name="Info" className="h-5 w-5 text-blue-600" />
+  <p className="text-sm text-blue-900">
+    <strong>What we prefill:</strong> Only authoritative values (Base Pay, BAH, BAS, COLA).
+  </p>
+  <p className="text-sm text-blue-800">
+    <strong>What you enter:</strong> Taxes, TSP, Dental from YOUR LES. 
+    TSP default = % of BASIC PAY; override if you elected contributions from other pays.
   </p>
 </div>
 ```
-
-### Data Freshness Badge
-
-**File:** `app/components/les/LesManualEntryTabbed.tsx`
-
-Add next to auto-filled allowances:
-
-```tsx
-<div className="text-xs text-gray-500 mt-1">
-  ✓ From official 2025 DFAS tables (effective {effectiveDate})
-</div>
-```
-
-### Math Proof Panel
-
-Already exists in `AuditDetailClient.tsx` - ensure it's also in main results view.
-
----
-
-## Task 7: Data Freshness Endpoint
-
-**File:** `app/api/les/data-freshness/route.ts` (NEW)
-
-```typescript
-export async function GET() {
-  const { data: payTables } = await supabase
-    .from('military_pay_tables')
-    .select('effective_date')
-    .order('effective_date', { ascending: false })
-    .limit(1);
-    
-  const { data: bah } = await supabase
-    .from('bah_rates')
-    .select('effective_date')
-    .order('effective_date', { ascending: false })
-    .limit(1);
-    
-  return NextResponse.json({
-    pay_tables: payTables?.[0]?.effective_date || null,
-    bah: bah?.[0]?.effective_date || null,
-    bas: '2025-01-01', // From SSOT
-    cola_conus: '2025-01-01',
-    cola_oconus: '2025-01-01'
-  });
-}
-```
-
-**Usage in UI:** Display badge "Data as of {date}"
-
----
-
-## Task 8: Security Validation
-
-### Run RLS Test
-
-```bash
-supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql > review/les-auditor/rls_run.txt
-```
-
-### Verify Soft Delete in Search
-
-**File:** `app/api/les/audit/search/route.ts`
-
-Ensure `.is('deleted_at', null)` is present in query.
-
-Add test case in acceptance script.
 
 ---
 
 ## Implementation Order
 
-1. Rename uploadId → auditId (global search/replace)
-2. Add LineItem.code enum to OpenAPI
-3. Add code validation in server
-4. Implement rate limiting
-5. Write unit tests
-6. Create acceptance test runner
-7. Polish UI with helper text and badges
-8. Create data freshness endpoint
-9. Run RLS test and save output
-10. Run all tests and save results to review/
+1. Fix TSP calculation logic in `lib/les/expected.ts`
+2. Update fixtures with corrected TSP ($175) and add DENTAL
+3. Recalculate all example totals (fixtures, OpenAPI, review packet)
+4. Add new flag types to types and `lib/les/compare.ts`
+5. Implement canonicalization in API route
+6. Create new fixtures (fica_wage_base, promo, medicare_hi)
+7. Write unit tests for new features
+8. Add RLS test to CI
+9. Update documentation and UI help text
 
 ---
 
-## Deliverables
+## Acceptance Criteria
 
-**New Files:**
+**Existing Fixture (Updated):**
 
-- `__tests__/lib/les/codes.test.ts`
-- `__tests__/lib/les/compare.test.ts`
-- `scripts/test-les-fixtures.ts`
-- `app/api/les/data-freshness/route.ts`
-- `review/les-auditor/runs/happy_path_e5_fthood.response.json`
-- `review/les-auditor/runs/bah_mismatch_e6_pcs.response.json`
-- `review/les-auditor/rls_run.txt`
+- `happy_path_e5_fthood` passes with:
+  - TSP = $175 (5% of $3,500 base pay)
+  - Dental = $14
+  - Total deductions = $216
+  - Recomputed net pay
+  - mathProof string matches
 
-**Modified Files:**
+**New Fixtures:**
 
-- `review/les-auditor/api.openapi.yaml` (enum codes, rate limit note, auditId)
-- `review/les-auditor/fixtures/*.response.json` (auditId)
-- `lib/les/codes.ts` (validation function)
-- `app/api/les/audit/route.ts` (rate limit, code validation)
-- `app/components/les/LesManualEntryTabbed.tsx` (UI polish)
-- All files with `uploadId` references
+- `promo_not_reflected` shows RED flag with suggestion
+- `fica_wage_base` shows YELLOW advisory, Medicare continues
+- `medicare_hi_only` canonicalizes to MEDICARE, passes
 
-**Coverage Target:** >70% on `lib/les/*`
+**Tests:**
+
+- All unit tests pass (`npm test`)
+- Acceptance tests pass (`npm run test:fixtures`)
+- CI RLS smoke test passes
+
+**Documentation:**
+
+- Review packet clarifies prefill vs manual entry
+- UI help text explains TSP = % of BASIC PAY
+- OpenAPI examples validate and match fixtures
 
 ### To-dos
 

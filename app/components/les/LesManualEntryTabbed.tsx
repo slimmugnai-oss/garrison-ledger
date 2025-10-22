@@ -518,7 +518,7 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
                 autoFilled={autoFilled.tsp}
                 onChange={setTsp}
                 onOverride={() => setAutoFilled(prev => ({ ...prev, tsp: false }))}
-                helpText='Found on LES as "TSP" or "THRIFT SAVINGS PLAN"'
+                helpText="TSP prefill assumes % of BASIC PAY; edit if you elected other sources"
                 optional
               />
 

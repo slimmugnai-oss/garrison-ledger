@@ -177,8 +177,9 @@ export async function buildExpectedSnapshot(
   // =============================================================================
   // Deductions (TSP, SGLI, Dental)
   // =============================================================================
-  // TSP contribution is calculated on TOTAL pay (includes BAH/BAS)
-  const deductions = await computeDeductions(userId, totalPayCents);
+  // TSP contribution is calculated on BASIC PAY ONLY (not BAH/BAS)
+  // User can override if they elected contributions from other pay sources
+  const deductions = await computeDeductions(userId, expected.base_pay_cents || 0);
   if (deductions.tsp_cents) expected.tsp_cents = deductions.tsp_cents;
   if (deductions.sgli_cents) expected.sgli_cents = deductions.sgli_cents;
   if (deductions.dental_cents) expected.dental_cents = deductions.dental_cents;
@@ -404,12 +405,15 @@ async function computeBasePay(
  * Compute deductions (TSP, SGLI, Dental) from profile
  * Returns object with expected deduction amounts
  * 
- * IMPORTANT: totalPayCents should INCLUDE BAH and BAS for TSP calculation
- * TSP contributions are based on total pay (all entitlements)
+ * TSP PREFILL ASSUMES % OF BASIC PAY ONLY
+ * User can override if they elected contributions from special pays, incentive pays, or other sources.
+ * 
+ * @param userId - User ID to fetch profile
+ * @param basePayCents - BASIC PAY amount in cents (excludes BAH/BAS/special pays)
  */
 async function computeDeductions(
   userId: string,
-  totalPayCents: number // INCLUDES BAH/BAS for TSP purposes
+  basePayCents: number // BASIC PAY ONLY (not BAH/BAS)
 ): Promise<{
   tsp_cents?: number;
   sgli_cents?: number;
@@ -426,9 +430,10 @@ async function computeDeductions(
     
     if (!profile) return result;
     
-    // TSP Contribution (calculated on TOTAL pay including BAH/BAS)
+    // TSP Contribution (calculated on BASIC PAY ONLY)
+    // User can override in UI if they elected contributions from other pay sources
     if (profile.tsp_contribution_percent && profile.tsp_contribution_percent > 0) {
-      result.tsp_cents = Math.round(totalPayCents * profile.tsp_contribution_percent);
+      result.tsp_cents = Math.round(basePayCents * profile.tsp_contribution_percent);
     }
     
     // SGLI Premium (query from sgli_rates table)

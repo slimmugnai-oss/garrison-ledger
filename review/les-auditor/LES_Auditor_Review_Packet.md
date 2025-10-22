@@ -222,14 +222,14 @@ Tolerance: ±$1.00 (100 cents)
 Example:
   Allowances:   $5,760.25
   - Taxes:      -$617.75
-  - Deductions: -$329.00
+  - Deductions: -$216.00
   - Allotments: -$0.00
   - Debts:      -$0.00
   + Adjustments: +$0.00
   ────────────────────────
-  Computed Net: $4,813.50
-  Actual Net:   $4,813.25
-  Delta:        $0.25 ✓ (within $1 tolerance)
+  Computed Net: $4,926.50
+  Actual Net:   $4,926.50
+  Delta:        $0.00 ✓ (within $1 tolerance)
   
 If delta > $1 → RED flag "NET_MATH_MISMATCH"
 ```
@@ -332,13 +332,14 @@ If delta > $1 → RED flag "NET_MATH_MISMATCH"
       {"code": "MEDICARE", "description": "Medicare", "amount_cents": 5075}
     ],
     "deductions": [
-      {"code": "TSP", "description": "TSP 5%", "amount_cents": 28800},
-      {"code": "SGLI", "description": "SGLI", "amount_cents": 2700}
+      {"code": "TSP", "description": "TSP 5%", "amount_cents": 17500},
+      {"code": "SGLI", "description": "SGLI", "amount_cents": 2700},
+      {"code": "DENTAL", "description": "TRICARE Dental", "amount_cents": 1400}
     ],
     "allotments": [],
     "debts": [],
     "adjustments": [],
-    "net_pay_cents": 481325
+    "net_pay_cents": 492650
   }
 }
 ```
@@ -348,14 +349,14 @@ If delta > $1 → RED flag "NET_MATH_MISMATCH"
 {
   "summary": {
     "total_allowances": 576025,
-    "total_deductions": 32900,
+    "total_deductions": 21600,
     "total_taxes": 61775,
     "total_allotments": 0,
     "total_debts": 0,
     "total_adjustments": 0,
-    "computed_net": 481350,
-    "actual_net": 481325,
-    "net_delta": 25
+    "computed_net": 492650,
+    "actual_net": 492650,
+    "net_delta": 0
   },
   "flags": [
     {
@@ -517,14 +518,14 @@ supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql
 - BAH: $1,800.00 (TX191 with dependents)
 - BAS: $460.25 (enlisted)
 - COLA: $0 (Fort Hood doesn't get COLA)
-- TSP: $288.00 (5% contribution)
+- TSP: $175.00 (5% of base pay)
 - SGLI: $27.00 ($400K coverage)
 - Dental: $14.00
 - Federal Tax: $350.00
 - State Tax: $0 (Texas)
 - FICA: $217.00 (6.2% of $3,500)
 - Medicare: $50.75 (1.45% of $3,500)
-- Net Pay: $4,813.25
+- Net Pay: $4,926.50
 
 **Expected Result:** See `fixtures/happy_path_e5_fthood.response.json`
 

@@ -1,14 +1,14 @@
 {
   "summary": {
     "total_allowances": 576025,
-    "total_deductions": 32900,
+    "total_deductions": 21600,
     "total_taxes": 61775,
     "total_allotments": 0,
     "total_debts": 0,
     "total_adjustments": 0,
-    "computed_net": 481350,
-    "actual_net": 481325,
-    "net_delta": 25
+    "computed_net": 492650,
+    "actual_net": 492650,
+    "net_delta": 0
   },
   "flags": [
     {
@@ -26,11 +26,11 @@
     {
       "severity": "green",
       "flag_code": "NET_MATH_VERIFIED",
-      "message": "Net pay math verified: $4,813.25 ✓",
+      "message": "Net pay math verified: $4,926.50 ✓",
       "suggestion": "No action needed. Math checks out!"
     }
   ],
-  "mathProof": "Allowances:    $  5,760.25\n- Taxes:       $    617.75\n- Deductions:  $    329.00\n- Allotments:  $      0.00\n- Debts:       $      0.00\n+ Adjustments: $      0.00\n========================================\n= Net Pay:     $  4,813.50 ✓",
+  "mathProof": "Allowances:    $  5,760.25\n- Taxes:       $    617.75\n- Deductions:  $    216.00\n- Allotments:  $      0.00\n- Debts:       $      0.00\n+ Adjustments: $      0.00\n========================================\n= Net Pay:     $  4,926.50 ✓",
   "expected": {
     "base_pay_cents": 350000,
     "bah_cents": 180000,
