@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import ChartWrapper from '../components/ChartWrapper';
 import MetricCard from '../components/MetricCard';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 
@@ -23,8 +21,6 @@ interface UserData {
   growthData: Array<{ month: string; signups: number; total: number }>;
   totalUsers: number;
 }
-
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 export default function AnalyticsTab() {
   const [activeSubTab, setActiveSubTab] = useState('revenue');
@@ -179,39 +175,38 @@ function RevenueSubTab({ data }: { data: RevenueData | null }) {
         />
       </div>
 
-      {/* MRR Trend */}
-      <ChartWrapper title="MRR Trend" subtitle="Last 12 months">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data.chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="month" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="mrr" stroke="#10b981" strokeWidth={2} name="MRR ($)" />
-          </LineChart>
-        </ResponsiveContainer>
-      </ChartWrapper>
-
-      {/* User Growth & Premium Conversions */}
-      <ChartWrapper title="User Growth & Premium Conversions" subtitle="Monthly signups and premium conversions">
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data.chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="month" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="signups" fill="#3b82f6" name="Signups" />
-            <Bar dataKey="premium" fill="#10b981" name="Premium" />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartWrapper>
+      {/* MRR Trend - Table Format */}
+      <AnimatedCard delay={50} className="bg-card border border-border p-6">
+        <h3 className="text-lg font-bold text-text-headings mb-4">📈 MRR Trend (Last 12 Months)</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-hover border-b border-border">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold text-text-muted">Month</th>
+                <th className="px-4 py-3 text-right font-semibold text-text-muted">Signups</th>
+                <th className="px-4 py-3 text-right font-semibold text-text-muted">Premium</th>
+                <th className="px-4 py-3 text-right font-semibold text-text-muted">MRR</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {data.chartData.map((row, index) => (
+                <tr key={index} className="hover:bg-surface-hover">
+                  <td className="px-4 py-3 text-left font-semibold">{row.month}</td>
+                  <td className="px-4 py-3 text-right text-blue-600 font-semibold">+{row.signups}</td>
+                  <td className="px-4 py-3 text-right text-green-600 font-semibold">+{row.premium}</td>
+                  <td className="px-4 py-3 text-right text-primary font-bold">${row.mrr.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </AnimatedCard>
 
       {/* Conversion Funnel */}
-      <ChartWrapper title="Conversion Funnel" subtitle="User journey from signup to premium">
+      <AnimatedCard delay={100} className="bg-card border border-border p-6">
+        <h3 className="text-lg font-bold text-text-headings mb-4">🎯 Conversion Funnel</h3>
         <div className="space-y-4">
-          {data.funnelData.map((stage, index) => (
+          {data.funnelData.map((stage) => (
             <div key={stage.stage}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-text-body">{stage.stage}</span>
@@ -219,9 +214,7 @@ function RevenueSubTab({ data }: { data: RevenueData | null }) {
               </div>
               <div className="w-full bg-surface-hover rounded-full h-8">
                 <div
-                  className={`h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold transition-all ${
-                    index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-purple-500' : 'bg-green-500'
-                  }`}
+                  className="h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold transition-all bg-gradient-to-r from-blue-500 to-green-500"
                   style={{ width: `${stage.percentage}%` }}
                 >
                   {stage.percentage.toFixed(1)}%
@@ -230,7 +223,13 @@ function RevenueSubTab({ data }: { data: RevenueData | null }) {
             </div>
           ))}
         </div>
-      </ChartWrapper>
+      </AnimatedCard>
+
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6">
+        <p className="text-sm text-blue-800">
+          📊 <strong>Charts coming in Phase 4:</strong> We'll add interactive line and bar charts with recharts for better visualization once the chart library is fully integrated.
+        </p>
+      </div>
     </div>
   );
 }
@@ -240,66 +239,62 @@ function UsersSubTab({ data }: { data: UserData | null }) {
 
   return (
     <div className="space-y-6">
-      {/* User Growth Chart */}
-      <ChartWrapper title="User Growth" subtitle="Total users over time">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data.growthData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="month" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={2} name="Total Users" />
-            <Line type="monotone" dataKey="signups" stroke="#10b981" strokeWidth={2} name="Monthly Signups" />
-          </LineChart>
-        </ResponsiveContainer>
-      </ChartWrapper>
-
-      {/* Demographics */}
+      {/* Demographics Tables */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ChartWrapper title="Users by Branch" subtitle="Distribution across military branches">
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={data.branchData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={(entry: {name: string; value: number}) => `${entry.name}: ${entry.value}`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {data.branchData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
+        <AnimatedCard className="bg-card border border-border p-6">
+          <h3 className="text-lg font-bold text-text-headings mb-4">Users by Branch</h3>
+          <div className="space-y-2">
+            {data.branchData.map((item) => (
+              <div key={item.name} className="flex items-center justify-between p-3 bg-surface-hover rounded-lg">
+                <span className="font-semibold text-text-body">{item.name}</span>
+                <span className="text-2xl font-black text-primary">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedCard>
 
-        <ChartWrapper title="Users by Rank Category" subtitle="Officer vs Enlisted vs Warrant">
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={data.rankData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={(entry: {name: string; value: number}) => `${entry.name}: ${entry.value}`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {data.rankData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
+        <AnimatedCard className="bg-card border border-border p-6" delay={50}>
+          <h3 className="text-lg font-bold text-text-headings mb-4">Users by Rank Category</h3>
+          <div className="space-y-2">
+            {data.rankData.map((item) => (
+              <div key={item.name} className="flex items-center justify-between p-3 bg-surface-hover rounded-lg">
+                <span className="font-semibold text-text-body">{item.name}</span>
+                <span className="text-2xl font-black text-primary">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </AnimatedCard>
+      </div>
+
+      {/* Growth Data Table */}
+      <AnimatedCard delay={100} className="bg-card border border-border p-6">
+        <h3 className="text-lg font-bold text-text-headings mb-4">📈 User Growth (Last 12 Months)</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-hover border-b border-border">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold text-text-muted">Month</th>
+                <th className="px-4 py-3 text-right font-semibold text-text-muted">New Signups</th>
+                <th className="px-4 py-3 text-right font-semibold text-text-muted">Total Users</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {data.growthData.map((row, index) => (
+                <tr key={index} className="hover:bg-surface-hover">
+                  <td className="px-4 py-3 text-left font-semibold">{row.month}</td>
+                  <td className="px-4 py-3 text-right text-green-600 font-semibold">+{row.signups}</td>
+                  <td className="px-4 py-3 text-right text-primary font-bold">{row.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </AnimatedCard>
+
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6">
+        <p className="text-sm text-blue-800">
+          📊 <strong>Charts coming in Phase 4:</strong> Pie charts for branch/rank distribution and line charts for growth trends.
+        </p>
       </div>
     </div>
   );
@@ -311,7 +306,7 @@ function EngagementSubTab() {
       <div className="text-6xl mb-4">🎯</div>
       <h3 className="text-2xl font-bold text-text-headings mb-2">Engagement Analytics Coming Soon</h3>
       <p className="text-text-muted max-w-md mx-auto">
-        Streak analytics, DAU/MAU charts, feature usage heatmaps, and session duration metrics will be available here.
+        Streak analytics, DAU/MAU charts, feature usage heatmaps, and session duration metrics will be available in Phase 4.
       </p>
     </AnimatedCard>
   );
@@ -323,7 +318,7 @@ function ToolsSubTab() {
       <div className="text-6xl mb-4">🛠️</div>
       <h3 className="text-2xl font-bold text-text-headings mb-2">Tools Analytics Coming Soon</h3>
       <p className="text-text-muted max-w-md mx-auto">
-        Tool usage statistics, success rates, error tracking, and completion time analytics will be available here.
+        Tool usage statistics, success rates, error tracking, and completion time analytics will be available in Phase 4.
       </p>
     </AnimatedCard>
   );
