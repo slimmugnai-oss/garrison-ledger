@@ -216,3 +216,53 @@ export function getCodesBySection(
 export function isValidLineCode(code: string): boolean {
   return code in LINE_CODES;
 }
+
+/**
+ * Canonicalize a raw LES code to our standard format
+ * Used by PDF parser to normalize different LES formats
+ * 
+ * @param rawCode - Raw code from LES (e.g., "BAS", "BAH W/DEP", "FED TAX")
+ * @returns Canonical code (e.g., "BAS", "BAH", "TAX_FED")
+ */
+export function canonicalizeCode(rawCode: string): string {
+  const normalized = rawCode.toUpperCase().trim();
+  
+  // Direct matches
+  if (normalized === 'BASEPAY' || normalized === 'BASE PAY' || normalized === 'BASIC PAY') return 'BASEPAY';
+  if (normalized === 'BAH' || normalized.includes('BAH')) return 'BAH';
+  if (normalized === 'BAS') return 'BAS';
+  if (normalized === 'COLA' || normalized.includes('COLA')) return 'COLA';
+  if (normalized === 'SDAP') return 'SDAP';
+  if (normalized === 'HFP' || normalized === 'IDP' || normalized.includes('HOSTILE') || normalized.includes('IMMINENT')) return 'HFP';
+  if (normalized === 'FSA' || normalized.includes('FAMILY SEP')) return 'FSA';
+  if (normalized === 'FLPP' || normalized.includes('LANGUAGE')) return 'FLPP';
+  
+  // Taxes
+  if (normalized.includes('FED') && normalized.includes('TAX')) return 'TAX_FED';
+  if (normalized.includes('STATE') && normalized.includes('TAX')) return 'TAX_STATE';
+  if (normalized === 'FICA' || normalized.includes('SOC SEC') || normalized.includes('SOCIAL SECURITY')) return 'FICA';
+  if (normalized === 'MEDICARE' || normalized.includes('MEDICARE')) return 'MEDICARE';
+  
+  // Deductions
+  if (normalized === 'SGLI' || normalized.includes('SGLI')) return 'SGLI';
+  if (normalized.includes('DENTAL')) return 'DENTAL';
+  if (normalized === 'TSP' || normalized.includes('THRIFT')) return 'TSP';
+  
+  // Allotments
+  if (normalized.includes('ALLOTMENT')) return 'ALLOTMENT';
+  
+  // Debts
+  if (normalized.includes('DEBT')) return 'DEBT';
+  
+  // Default
+  return 'ADJUSTMENT';
+}
+
+/**
+ * Get section for a line code
+ * @param code - Line code
+ * @returns Section name
+ */
+export function getSection(code: string): LineCodeDefinition['section'] {
+  return getLineCodeDefinition(code).section;
+}

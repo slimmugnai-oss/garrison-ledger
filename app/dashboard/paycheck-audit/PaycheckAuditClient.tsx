@@ -560,7 +560,7 @@ export default function PaycheckAuditClient({
                           })}
                         </p>
                         {audit.entry_type === 'manual' && (
-                          <Badge variant="default" size="sm">Manual</Badge>
+                          <Badge variant="neutral" size="sm">Manual</Badge>
                         )}
                       </div>
                       <div className="flex items-center gap-2">

@@ -127,7 +127,7 @@ export default function ComparisonClient({ audit1, audit2 }: Props) {
                 {audit1.month}/{audit1.year}
               </h2>
               <Link href={`/dashboard/paycheck-audit/${audit1.id}`}>
-                <Badge variant="default">View Details</Badge>
+                <Badge variant="neutral">View Details</Badge>
               </Link>
             </div>
             
@@ -171,7 +171,7 @@ export default function ComparisonClient({ audit1, audit2 }: Props) {
                 {audit2.month}/{audit2.year}
               </h2>
               <Link href={`/dashboard/paycheck-audit/${audit2.id}`}>
-                <Badge variant="default">View Details</Badge>
+                <Badge variant="neutral">View Details</Badge>
               </Link>
             </div>
             
