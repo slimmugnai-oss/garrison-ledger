@@ -224,7 +224,7 @@ export default function TspModeler() {
               stroke="#6b7280"
             />
             <YAxis 
-              tickFormatter={(val) => `$${(val / 1000).toFixed(0)}K`}
+              tickFormatter={(val: number) => `$${(val / 1000).toFixed(0)}K`}
               stroke="#6b7280"
             />
             <Tooltip 
@@ -412,7 +412,7 @@ export default function TspModeler() {
                 <BarChart data={tspHistoricalReturns.cFund}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis dataKey="year" />
-                  <YAxis tickFormatter={(value) => `${value}%`} />
+                  <YAxis tickFormatter={(value: number) => `${value}%`} />
                   <Tooltip 
                     formatter={(value: number) => `${value.toFixed(2)}%`}
                     contentStyle={{ backgroundColor: '#fff', border: '2px solid #e5e7eb', borderRadius: '8px' }}

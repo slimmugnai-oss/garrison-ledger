@@ -589,3 +589,22 @@ button, a, [role="button"] {
   @apply px-4 py-3 text-sm text-gray-700;
 }
 
+/* ============================================
+   ADMIN DASHBOARD TAB TRANSITIONS
+   ============================================ */
+
+.tab-content {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

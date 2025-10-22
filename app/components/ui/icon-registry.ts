@@ -144,6 +144,10 @@ import {
   Archive,
   Save,
   
+  // Additional Icons
+  Eye,
+  Ban,
+  
   type LucideIcon,
 } from 'lucide-react';
 
@@ -283,6 +287,8 @@ export const iconRegistry = {
   Loader,
   Archive,
   Save,
+  Eye,
+  Ban,
 } as const;
 
 // Export the type of valid icon names
