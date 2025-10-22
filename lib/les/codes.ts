@@ -1,299 +1,218 @@
 /**
- * LES CODE MAPPINGS
+ * LES LINE ITEM CODES
+ * Canonical registry of known LES line codes with metadata
  * 
- * Canonical mapping of LES line codes to sections and aliases.
- * Used by parser to normalize various LES formats into standard codes.
- * 
- * Source: DFAS LES documentation and common military pay systems
+ * Each code defines:
+ * - section: Category for grouping (ALLOWANCE, TAX, DEDUCTION, etc.)
+ * - description: Human-readable label
+ * - taxability: Which tax bases this income counts toward
  */
 
-import type { LesSection } from '@/app/types/les';
-
-export interface LesCodeMeta {
-  section: LesSection;
-  aliases?: string[];
-  description?: string;
+export interface LineCodeDefinition {
+  section: 'ALLOWANCE' | 'DEDUCTION' | 'ALLOTMENT' | 'TAX' | 'DEBT' | 'ADJUSTMENT';
+  description: string;
+  taxability: {
+    fed: boolean;      // Federal income tax base
+    state: boolean;    // State income tax base
+    oasdi: boolean;    // FICA/Social Security (6.2%) base
+    medicare: boolean; // Medicare (1.45%) base
+  };
 }
 
-/**
- * Canonical LES code mapping
- * Key = standard code (e.g., "BAH")
- * Value = section + known aliases
- */
-export const LES_CODE_MAP: Record<string, LesCodeMeta> = {
+export const LINE_CODES: Record<string, LineCodeDefinition> = {
   // =============================================================================
-  // ALLOWANCES
+  // ALLOWANCES (Income)
   // =============================================================================
   
-  BASE_PAY: {
+  BASEPAY: {
     section: 'ALLOWANCE',
-    aliases: [
-      'BASE PAY',
-      'BASIC PAY',
-      'BASE COMPENSATION',
-      'MONTHLY BASE PAY'
-    ],
-    description: 'Base Pay'
+    description: 'Base Pay',
+    taxability: { fed: true, state: true, oasdi: true, medicare: true }
   },
   
   BAH: {
     section: 'ALLOWANCE',
-    aliases: [
-      'BASIC ALLOW HOUS',
-      'BASIC ALLOWANCE FOR HOUSING',
-      'BAH W/DEP',
-      'BAH W/O DEP',
-      'BAH WITHOUT DEPENDENTS',
-      'BAH WITH DEPENDENTS',
-      'BASIC ALLOW FOR HOUSING'
-    ],
-    description: 'Basic Allowance for Housing'
+    description: 'Basic Allowance for Housing',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
   BAS: {
     section: 'ALLOWANCE',
-    aliases: [
-      'BASIC ALLOW SUBSISTENCE',
-      'BASIC ALLOWANCE FOR SUBSISTENCE',
-      'BASIC ALLOW FOR SUBSISTENCE'
-    ],
-    description: 'Basic Allowance for Subsistence'
+    description: 'Basic Allowance for Subsistence',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
   COLA: {
     section: 'ALLOWANCE',
-    aliases: [
-      'COST OF LIVING',
-      'COST OF LIVING ALLOWANCE',
-      'COST LIVING ALLOW',
-      'COL ALLOWANCE'
-    ],
-    description: 'Cost of Living Allowance'
+    description: 'Cost of Living Allowance',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
   SDAP: {
     section: 'ALLOWANCE',
-    aliases: [
-      'SPECIAL DUTY ASSIGNMENT PAY',
-      'SPECIAL DUTY ASSGN PAY',
-      'SPEC DUTY PAY'
-    ],
-    description: 'Special Duty Assignment Pay'
+    description: 'Special Duty Assignment Pay',
+    taxability: { fed: true, state: true, oasdi: true, medicare: true }
   },
   
-  HFP_IDP: {
+  HFP: {
     section: 'ALLOWANCE',
-    aliases: [
-      'HOSTILE FIRE PAY',
-      'HOSTILE FIRE/IMMINENT DANGER PAY',
-      'HFP/IDP',
-      'HFP',
-      'IDP',
-      'IMMINENT DANGER PAY',
-      'IDP/HFP'
-    ],
-    description: 'Hostile Fire Pay / Imminent Danger Pay'
+    description: 'Hostile Fire Pay / Imminent Danger Pay',
+    taxability: { fed: false, state: false, oasdi: true, medicare: true }
   },
   
   FSA: {
     section: 'ALLOWANCE',
-    aliases: [
-      'FAMILY SEPARATION ALLOWANCE',
-      'FAMILY SEP ALLOW',
-      'FAM SEP ALLOWANCE'
-    ],
-    description: 'Family Separation Allowance'
+    description: 'Family Separation Allowance',
+    taxability: { fed: true, state: true, oasdi: true, medicare: true }
   },
   
   FLPP: {
     section: 'ALLOWANCE',
-    aliases: [
-      'FOREIGN LANGUAGE PROFICIENCY PAY',
-      'FOREIGN LANG PROF PAY',
-      'FOREIGN LANGUAGE PAY'
-    ],
-    description: 'Foreign Language Proficiency Pay'
+    description: 'Foreign Language Proficiency Pay',
+    taxability: { fed: true, state: true, oasdi: true, medicare: true }
+  },
+
+  // =============================================================================
+  // TAXES
+  // =============================================================================
+  
+  TAX_FED: {
+    section: 'TAX',
+    description: 'Federal Income Tax Withheld',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
+  TAX_STATE: {
+    section: 'TAX',
+    description: 'State Income Tax Withheld',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+  },
+  
+  FICA: {
+    section: 'TAX',
+    description: 'FICA (Social Security Tax)',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+  },
+  
+  MEDICARE: {
+    section: 'TAX',
+    description: 'Medicare Tax',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+  },
+
   // =============================================================================
   // DEDUCTIONS
   // =============================================================================
   
   SGLI: {
     section: 'DEDUCTION',
-    aliases: [
-      'SERVICEMEMBERS GROUP LIFE INSURANCE',
-      'SGLI PREMIUM',
-      'SGLI INS'
-    ],
-    description: 'Servicemembers Group Life Insurance'
-  },
-  
-  TSP: {
-    section: 'DEDUCTION',
-    aliases: [
-      'THRIFT SAVINGS PLAN',
-      'TSP CONTRIBUTION',
-      'TSP CONTR'
-    ],
-    description: 'Thrift Savings Plan Contribution'
+    description: 'SGLI Life Insurance Premium',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
   DENTAL: {
     section: 'DEDUCTION',
-    aliases: [
-      'TRICARE DENTAL',
-      'DENTAL INSURANCE',
-      'DENTAL PREM'
-    ],
-    description: 'Dental Insurance Premium'
+    description: 'Dental Insurance Premium',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
   
-  SBP: {
+  TSP: {
     section: 'DEDUCTION',
-    aliases: [
-      'SURVIVOR BENEFIT PLAN',
-      'SBP PREMIUM',
-      'SBP COST'
-    ],
-    description: 'Survivor Benefit Plan'
+    description: 'Thrift Savings Plan Contribution',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
   },
-  
-  // =============================================================================
-  // TAXES
-  // =============================================================================
-  
-  FITW: {
-    section: 'TAX',
-    aliases: [
-      'FEDERAL INCOME TAX WITHHELD',
-      'FED TAX WITHHELD',
-      'FEDERAL TAX',
-      'FED INC TAX'
-    ],
-    description: 'Federal Income Tax Withheld'
-  },
-  
-  FICA: {
-    section: 'TAX',
-    aliases: [
-      'FICA TAX',
-      'SOCIAL SECURITY',
-      'SOC SEC TAX'
-    ],
-    description: 'Federal Insurance Contributions Act (Social Security)'
-  },
-  
-  MEDICARE: {
-    section: 'TAX',
-    aliases: [
-      'MEDICARE TAX',
-      'MED TAX',
-      'MEDICARE'
-    ],
-    description: 'Medicare Tax'
-  },
-  
-  SITW: {
-    section: 'TAX',
-    aliases: [
-      'STATE INCOME TAX WITHHELD',
-      'STATE TAX',
-      'ST INC TAX'
-    ],
-    description: 'State Income Tax Withheld'
-  },
-  
+
   // =============================================================================
   // ALLOTMENTS
   // =============================================================================
   
-  ALLOT: {
+  ALLOTMENT: {
     section: 'ALLOTMENT',
-    aliases: [
-      'ALLOTMENT',
-      'DISCRETIONARY ALLOTMENT',
-      'VOLUNTARY ALLOTMENT'
-    ],
-    description: 'Voluntary Allotment'
+    description: 'Discretionary Allotment',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+  },
+
+  // =============================================================================
+  // DEBTS
+  // =============================================================================
+  
+  DEBT: {
+    section: 'DEBT',
+    description: 'Debt Repayment',
+    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+  },
+
+  // =============================================================================
+  // ADJUSTMENTS
+  // =============================================================================
+  
+  ADJUSTMENT: {
+    section: 'ADJUSTMENT',
+    description: 'Pay Adjustment',
+    taxability: { fed: true, state: true, oasdi: true, medicare: true } // Usually taxable
   }
 };
 
 /**
- * Canonicalize a raw LES code string to standard code
- * @param raw Raw code from LES (e.g., "BASIC ALLOW HOUS W/DEP")
- * @returns Standard code (e.g., "BAH") or null if not recognized
+ * Get line code definition
+ * @param code - Line code (e.g., BASEPAY, BAH, FICA)
+ * @returns Line code definition with section and taxability
  */
-export function canonicalizeCode(raw: string): string | null {
-  const normalized = raw.trim().toUpperCase();
+export function getLineCodeDefinition(code: string): LineCodeDefinition {
+  return LINE_CODES[code] || LINE_CODES.ADJUSTMENT; // Default to adjustment if unknown
+}
+
+/**
+ * Compute taxable income bases from line items
+ * Only ALLOWANCE section items contribute to taxable income
+ * 
+ * @param lines - Array of line items with code and amount
+ * @returns Taxable bases for each tax type in cents
+ */
+export function computeTaxableBases(lines: Array<{
+  code: string; 
+  amount_cents: number;
+}>): {
+  fed: number;      // Federal income tax base
+  state: number;    // State income tax base
+  oasdi: number;    // FICA/Social Security base
+  medicare: number; // Medicare base
+} {
+  const bases = { fed: 0, state: 0, oasdi: 0, medicare: 0 };
   
-  // Check exact match first
-  if (LES_CODE_MAP[normalized]) {
-    return normalized;
-  }
-  
-  // Check aliases
-  for (const [code, meta] of Object.entries(LES_CODE_MAP)) {
-    if (meta.aliases?.some(alias => alias.toUpperCase() === normalized)) {
-      return code;
-    }
+  for (const line of lines) {
+    const def = getLineCodeDefinition(line.code);
     
-    // Partial match for common variations
-    if (meta.aliases?.some(alias => normalized.includes(alias.toUpperCase()))) {
-      return code;
-    }
+    // Only allowances (income) count toward taxable bases
+    if (def.section !== 'ALLOWANCE') continue;
+    
+    if (def.taxability.fed) bases.fed += line.amount_cents;
+    if (def.taxability.state) bases.state += line.amount_cents;
+    if (def.taxability.oasdi) bases.oasdi += line.amount_cents;
+    if (def.taxability.medicare) bases.medicare += line.amount_cents;
   }
   
-  return null;
+  return bases;
 }
 
 /**
- * Get section for a given code
- * @param code Standard code (e.g., "BAH")
- * @returns Section or 'OTHER' if not found
+ * Get all codes by section
+ * @param section - Section to filter by
+ * @returns Array of codes in that section
  */
-export function getSection(code: string): LesSection {
-  const meta = LES_CODE_MAP[code.toUpperCase()];
-  return meta?.section || 'OTHER';
+export function getCodesBySection(
+  section: LineCodeDefinition['section']
+): string[] {
+  return Object.keys(LINE_CODES).filter(
+    code => LINE_CODES[code].section === section
+  );
 }
 
 /**
- * Get all codes for a given section
- * @param section Section to filter by
- * @returns Array of standard codes
+ * Validate a line code exists
+ * @param code - Line code to validate
+ * @returns True if code is recognized
  */
-export function getCodesForSection(section: LesSection): string[] {
-  return Object.entries(LES_CODE_MAP)
-    .filter(([_, meta]) => meta.section === section)
-    .map(([code, _]) => code);
+export function isValidLineCode(code: string): boolean {
+  return code in LINE_CODES;
 }
-
-/**
- * Check if a code is an allowance
- */
-export function isAllowance(code: string): boolean {
-  return getSection(code) === 'ALLOWANCE';
-}
-
-/**
- * Check if a code is a deduction
- */
-export function isDeduction(code: string): boolean {
-  return getSection(code) === 'DEDUCTION';
-}
-
-/**
- * Check if a code is a tax
- */
-export function isTax(code: string): boolean {
-  return getSection(code) === 'TAX';
-}
-
-/**
- * Get human-readable description
- */
-export function getDescription(code: string): string {
-  const meta = LES_CODE_MAP[code.toUpperCase()];
-  return meta?.description || code;
-}
-

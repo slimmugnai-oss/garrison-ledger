@@ -1,0 +1,101 @@
+{
+  "name": "FICA Percentage Warning - O03 Mid-Year",
+  "description": "Officer who hit FICA wage base mid-year - FICA withholding stopped",
+  "profile": {
+    "paygrade": "O03",
+    "yos": 6,
+    "mhaOrZip": "CA949",
+    "withDependents": false,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "audit": {
+    "month": 11,
+    "year": 2025,
+    "net_pay_cents": 610000
+  },
+  "actual_lines": [
+    {
+      "code": "BASEPAY",
+      "description": "Base Pay",
+      "amount_cents": 685000,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAH",
+      "description": "BAH Without Dependents",
+      "amount_cents": 280000,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAS",
+      "description": "Basic Allowance for Subsistence",
+      "amount_cents": 31698,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "TSP",
+      "description": "Thrift Savings Plan",
+      "amount_cents": 70000,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "SGLI",
+      "description": "SGLI Life Insurance",
+      "amount_cents": 2900,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "TAX_FED",
+      "description": "Federal Income Tax",
+      "amount_cents": 120000,
+      "section": "TAX"
+    },
+    {
+      "code": "TAX_STATE",
+      "description": "California State Tax",
+      "amount_cents": 45000,
+      "section": "TAX"
+    },
+    {
+      "code": "FICA",
+      "description": "FICA (Social Security)",
+      "amount_cents": 0,
+      "section": "TAX"
+    },
+    {
+      "code": "MEDICARE",
+      "description": "Medicare Tax",
+      "amount_cents": 9933,
+      "section": "TAX"
+    }
+  ],
+  "expected_result": {
+    "flags": [
+      {
+        "severity": "yellow",
+        "flag_code": "FICA_PCT_OUT_OF_RANGE",
+        "message": "FICA is 0.00% of taxable gross, but should be ~6.2%",
+        "suggestion": "FICA should be 6.2% of taxable pay. This may be correct if you hit the annual wage base limit ($176,100 for 2025).",
+        "delta_cents": 42470
+      },
+      {
+        "severity": "green",
+        "flag_code": "MEDICARE_PCT_CORRECT",
+        "message": "Medicare verified: 1.45% (within normal range)"
+      }
+    ]
+  },
+  "taxable_bases": {
+    "fed": 685000,
+    "state": 685000,
+    "oasdi": 685000,
+    "medicare": 685000
+  },
+  "notes": "O03 making $82,200/year ($6,850/month base) will hit $176,100 FICA wage base around November. FICA withholding stops but Medicare continues. This should trigger a yellow warning, not red, since it's expected behavior for high earners."
+}
+

@@ -8,6 +8,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
@@ -516,27 +517,145 @@ export default function PaycheckAuditClient({
         {/* History */}
         {showHistory && history.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Audit History</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900">Audit History</h2>
+              <div className="flex gap-3">
+                <select 
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  defaultValue="all"
+                >
+                  <option value="all">All Audits</option>
+                  <option value="red">Has Red Flags</option>
+                  <option value="yellow">Has Yellow Flags</option>
+                  <option value="issues">Any Issues</option>
+                  <option value="clean">All Clear</option>
+                </select>
+                <select 
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  defaultValue="date-desc"
+                >
+                  <option value="date-desc">Newest First</option>
+                  <option value="date-asc">Oldest First</option>
+                  <option value="amount-desc">Highest Impact</option>
+                </select>
+              </div>
+            </div>
+            
             <div className="space-y-3">
               {history.map((audit, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      {new Date(audit.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long'
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Flags: {audit.red_flags || 0} red, {audit.yellow_flags || 0} yellow, {audit.green_flags || 0} green
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    {audit.total_delta_cents > 0 && (
-                      <p className="text-green-600 font-semibold">
-                        +${(audit.total_delta_cents / 100).toFixed(2)} recovered
-                      </p>
-                    )}
+                <div key={audit.id || index} className="bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all">
+                  <Link 
+                    href={`/dashboard/paycheck-audit/${audit.id}`}
+                    className="p-4 flex items-center justify-between group cursor-pointer"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                          {audit.month}/{audit.year}
+                          {' • '}
+                          {new Date(audit.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                        {audit.entry_type === 'manual' && (
+                          <Badge variant="default" size="sm">Manual</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {(audit.red_flags_count || 0) > 0 && (
+                          <Badge variant="danger" size="sm">
+                            {audit.red_flags_count} red
+                          </Badge>
+                        )}
+                        {(audit.yellow_flags_count || 0) > 0 && (
+                          <Badge variant="warning" size="sm">
+                            {audit.yellow_flags_count} yellow
+                          </Badge>
+                        )}
+                        {(audit.green_flags_count || 0) > 0 && (
+                          <Badge variant="success" size="sm">
+                            {audit.green_flags_count} green
+                          </Badge>
+                        )}
+                        {audit.total_delta_cents !== 0 && (
+                          <span className={`text-sm font-semibold ${
+                            audit.total_delta_cents > 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {audit.total_delta_cents > 0 ? '+' : ''}${(audit.total_delta_cents / 100).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon name="ChevronRight" className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                    </div>
+                  </Link>
+                  
+                  <div className="px-4 pb-4 flex gap-2 border-t border-gray-100 pt-3">
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!confirm('Delete this audit? This cannot be undone.')) return;
+                        try {
+                          const res = await fetch(`/api/les/audit/${audit.id}/delete`, { method: 'POST' });
+                          if (res.ok) {
+                            window.location.reload();
+                          }
+                        } catch (err) {
+                          alert('Failed to delete audit');
+                        }
+                      }}
+                      className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
+                    >
+                      <Icon name="Trash2" className="h-4 w-4" />
+                      Delete
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        try {
+                          const res = await fetch(`/api/les/audit/${audit.id}/clone`, { method: 'POST' });
+                          const data = await res.json();
+                          if (data.uploadId) {
+                            window.location.href = `/dashboard/paycheck-audit?edit=${data.uploadId}`;
+                          }
+                        } catch (err) {
+                          alert('Failed to clone audit');
+                        }
+                      }}
+                      className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    >
+                      <Icon name="RefreshCw" className="h-4 w-4" />
+                      Re-Audit
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        try {
+                          const res = await fetch(`/api/les/audit/${audit.id}/export`);
+                          const blob = await res.blob();
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `audit-${audit.month}-${audit.year}.json`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          window.URL.revokeObjectURL(url);
+                        } catch (err) {
+                          alert('Failed to export audit');
+                        }
+                      }}
+                      className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50 rounded transition-colors"
+                    >
+                      <Icon name="Download" className="h-4 w-4" />
+                      Export
+                    </button>
                   </div>
                 </div>
               ))}

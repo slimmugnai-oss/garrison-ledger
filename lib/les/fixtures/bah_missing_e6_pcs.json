@@ -1,0 +1,97 @@
+{
+  "name": "BAH Missing - E06 After PCS",
+  "description": "Common issue: BAH not updated after PCS move. Should trigger red flag.",
+  "profile": {
+    "paygrade": "E06",
+    "yos": 12,
+    "mhaOrZip": "NC107",
+    "withDependents": true,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "audit": {
+    "month": 9,
+    "year": 2025,
+    "net_pay_cents": 295000
+  },
+  "actual_lines": [
+    {
+      "code": "BASEPAY",
+      "description": "Base Pay",
+      "amount_cents": 425000,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAH",
+      "description": "BAH With Dependents",
+      "amount_cents": 0,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAS",
+      "description": "Basic Allowance for Subsistence",
+      "amount_cents": 46025,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "TSP",
+      "description": "Thrift Savings Plan",
+      "amount_cents": 35000,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "SGLI",
+      "description": "SGLI Life Insurance",
+      "amount_cents": 2900,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "TAX_FED",
+      "description": "Federal Income Tax",
+      "amount_cents": 55000,
+      "section": "TAX"
+    },
+    {
+      "code": "TAX_STATE",
+      "description": "North Carolina State Tax",
+      "amount_cents": 22000,
+      "section": "TAX"
+    },
+    {
+      "code": "FICA",
+      "description": "FICA (Social Security)",
+      "amount_cents": 26350,
+      "section": "TAX"
+    },
+    {
+      "code": "MEDICARE",
+      "description": "Medicare Tax",
+      "amount_cents": 6163,
+      "section": "TAX"
+    }
+  ],
+  "expected_result": {
+    "flags": [
+      {
+        "severity": "red",
+        "flag_code": "BAH_MISSING",
+        "message": "BAH missing: Expected $1,950 for E06 with dependents at Fort Bragg",
+        "suggestion": "Contact finance office immediately. BAH should be on every LES unless living in government quarters.",
+        "delta_cents": 195000
+      }
+    ],
+    "total_delta_cents": 195000
+  },
+  "taxable_bases": {
+    "fed": 425000,
+    "state": 425000,
+    "oasdi": 425000,
+    "medicare": 425000
+  },
+  "notes": "Realistic PCS scenario: Service member PCSed to Fort Bragg (NC107) in August, but BAH not started yet on September LES. Should show $19,500 underpayment (10 months back pay potential if caught early)."
+}
+

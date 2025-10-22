@@ -678,3 +678,264 @@ function createNetPayTooHighWarning(actual: number): PayFlag {
   };
 }
 
+/**
+ * COMPREHENSIVE DETAILED COMPARISON
+ * Enhanced comparison function with detailed validation and math proof
+ * 
+ * @param params Expected values, taxable bases, actual lines, and net pay
+ * @returns Flags, summary, and math proof
+ */
+export function compareDetailed(params: {
+  expected: {
+    base_pay_cents?: number;
+    bah_cents?: number;
+    bas_cents?: number;
+    cola_cents?: number;
+    specials?: Array<{code: string; cents: number}>;
+  };
+  taxable_bases: {
+    fed: number;
+    state: number;
+    oasdi: number;
+    medicare: number;
+  };
+  actualLines: Array<{
+    line_code: string;
+    amount_cents: number;
+    section: string;
+  }>;
+  netPayCents: number;
+}): {
+  flags: PayFlag[];
+  summary: {
+    total_allowances: number;
+    total_deductions: number;
+    total_taxes: number;
+    total_allotments: number;
+    total_debts: number;
+    total_adjustments: number;
+    computed_net: number;
+    actual_net: number;
+    net_delta: number;
+  };
+  mathProof: string;
+} {
+  const flags: PayFlag[] = [];
+  
+  // Group actual lines by section
+  const bySection = {
+    ALLOWANCE: params.actualLines.filter(l => l.section === 'ALLOWANCE'),
+    TAX: params.actualLines.filter(l => l.section === 'TAX'),
+    DEDUCTION: params.actualLines.filter(l => l.section === 'DEDUCTION'),
+    ALLOTMENT: params.actualLines.filter(l => l.section === 'ALLOTMENT'),
+    DEBT: params.actualLines.filter(l => l.section === 'DEBT'),
+    ADJUSTMENT: params.actualLines.filter(l => l.section === 'ADJUSTMENT')
+  };
+
+  // Helper to find specific line
+  const findLine = (code: string) => params.actualLines.find(l => l.line_code === code);
+
+  // ============================================================================
+  // ALLOWANCE VALIDATIONS
+  // ============================================================================
+
+  // 1. Base Pay Check
+  const actualBasePay = findLine('BASEPAY')?.amount_cents || 0;
+  const expectedBasePay = params.expected.base_pay_cents || 0;
+  if (expectedBasePay > 0) {
+    const delta = Math.abs(actualBasePay - expectedBasePay);
+    if (delta > 1000) { // $10 threshold
+      flags.push({
+        severity: 'red',
+        flag_code: 'BASEPAY_MISMATCH',
+        message: `Base Pay discrepancy: Expected $${(expectedBasePay/100).toFixed(2)}, got $${(actualBasePay/100).toFixed(2)}`,
+        suggestion: 'Verify your rank and years of service are correct. Contact your finance office if discrepancy persists.',
+        delta_cents: expectedBasePay - actualBasePay,
+        ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/'
+      });
+    }
+  }
+
+  // 2. BAH Check
+  const actualBAH = findLine('BAH')?.amount_cents || 0;
+  const expectedBAH = params.expected.bah_cents || 0;
+  if (expectedBAH > 0) {
+    const delta = Math.abs(actualBAH - expectedBAH);
+    if (delta > 500) { // $5 threshold
+      flags.push({
+        severity: 'red',
+        flag_code: 'BAH_MISMATCH',
+        message: `BAH discrepancy: Expected $${(expectedBAH/100).toFixed(2)}, got $${(actualBAH/100).toFixed(2)}`,
+        suggestion: 'Verify your MHA code matches your duty station and dependent status. Contact finance office if BAH is incorrect.',
+        delta_cents: expectedBAH - actualBAH,
+        ref_url: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+      });
+    } else if (actualBAH === 0) {
+      flags.push({
+        severity: 'red',
+        flag_code: 'BAH_MISSING',
+        message: `BAH missing: Expected $${(expectedBAH/100).toFixed(2)} for your rank and location`,
+        suggestion: 'Contact finance office immediately. BAH should be on every LES unless living in government quarters.',
+        delta_cents: expectedBAH,
+        ref_url: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+      });
+    }
+  }
+
+  // 3. BAS Check
+  const actualBAS = findLine('BAS')?.amount_cents || 0;
+  const expectedBAS = params.expected.bas_cents || 0;
+  if (expectedBAS > 0 && actualBAS === 0) {
+    flags.push({
+      severity: 'red',
+      flag_code: 'BAS_MISSING',
+      message: `BAS missing: Expected $${(expectedBAS/100).toFixed(2)}`,
+      suggestion: 'All service members receive BAS (Basic Allowance for Subsistence). Check your LES or contact finance office.',
+      delta_cents: expectedBAS,
+      ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/BAS/'
+    });
+  } else if (expectedBAS > 0 && Math.abs(actualBAS - expectedBAS) > 50) {
+    flags.push({
+      severity: 'yellow',
+      flag_code: 'BAS_MISMATCH',
+      message: `BAS discrepancy: Expected $${(expectedBAS/100).toFixed(2)}, got $${(actualBAS/100).toFixed(2)}`,
+      suggestion: 'BAS rates are standard (Officer vs Enlisted). Verify your rank category is correct.',
+      delta_cents: expectedBAS - actualBAS
+    });
+  }
+
+  // 4. COLA Check
+  const actualCOLA = findLine('COLA')?.amount_cents || 0;
+  const expectedCOLA = params.expected.cola_cents || 0;
+  if (expectedCOLA > 0 && actualCOLA === 0) {
+    flags.push({
+      severity: 'yellow',
+      flag_code: 'COLA_MISSING',
+      message: `COLA missing or stopped: Expected $${(expectedCOLA/100).toFixed(2)}`,
+      suggestion: 'COLA can change quarterly. Verify your duty location still qualifies for COLA.',
+      delta_cents: expectedCOLA,
+      ref_url: 'https://www.dtmo.mil/allowances'
+    });
+  } else if (expectedCOLA === 0 && actualCOLA > 0) {
+    flags.push({
+      severity: 'yellow',
+      flag_code: 'COLA_UNEXPECTED',
+      message: `Unexpected COLA: $${(actualCOLA/100).toFixed(2)} received but not expected for your location`,
+      suggestion: 'Verify your duty location. Most CONUS locations do not receive COLA.',
+      delta_cents: expectedCOLA - actualCOLA
+    });
+  }
+
+  // ============================================================================
+  // TAX PERCENTAGE VALIDATIONS
+  // ============================================================================
+
+  // 5. FICA Percentage Check
+  const actualFICA = findLine('FICA')?.amount_cents || 0;
+  const oasdiBase = params.taxable_bases.oasdi;
+  if (oasdiBase > 0 && actualFICA > 0) {
+    const ficaPercent = (actualFICA / oasdiBase) * 100;
+    if (ficaPercent < 6.1 || ficaPercent > 6.3) {
+      flags.push({
+        severity: 'yellow',
+        flag_code: 'FICA_PCT_OUT_OF_RANGE',
+        message: `FICA is ${ficaPercent.toFixed(2)}% of taxable gross, but should be ~6.2%`,
+        suggestion: 'FICA should be 6.2% of taxable pay (Base + COLA + taxable specials, EXCLUDES BAH/BAS). Verify your LES or check if you hit the annual wage base limit ($176,100 for 2025).',
+        delta_cents: Math.round(oasdiBase * 0.062) - actualFICA
+      });
+    } else {
+      flags.push({
+        severity: 'green',
+        flag_code: 'FICA_PCT_CORRECT',
+        message: `FICA verified: ${ficaPercent.toFixed(2)}% (within normal 6.1%-6.3% range)`,
+        suggestion: 'No action needed. FICA withholding is correct.'
+      });
+    }
+  }
+
+  // 6. Medicare Percentage Check
+  const actualMedicare = findLine('MEDICARE')?.amount_cents || 0;
+  const medicareBase = params.taxable_bases.medicare;
+  if (medicareBase > 0 && actualMedicare > 0) {
+    const medicarePercent = (actualMedicare / medicareBase) * 100;
+    if (medicarePercent < 1.40 || medicarePercent > 1.50) {
+      flags.push({
+        severity: 'yellow',
+        flag_code: 'MEDICARE_PCT_OUT_OF_RANGE',
+        message: `Medicare is ${medicarePercent.toFixed(2)}% of taxable gross, but should be ~1.45%`,
+        suggestion: 'Medicare should be 1.45% of taxable pay. Verify your LES or contact finance office.',
+        delta_cents: Math.round(medicareBase * 0.0145) - actualMedicare
+      });
+    } else {
+      flags.push({
+        severity: 'green',
+        flag_code: 'MEDICARE_PCT_CORRECT',
+        message: `Medicare verified: ${medicarePercent.toFixed(2)}% (within normal 1.40%-1.50% range)`,
+        suggestion: 'No action needed. Medicare withholding is correct.'
+      });
+    }
+  }
+
+  // ============================================================================
+  // NET PAY MATH CHECK
+  // ============================================================================
+
+  // 7. Net Pay Math Validation
+  const totalAllowances = bySection.ALLOWANCE.reduce((sum, l) => sum + l.amount_cents, 0);
+  const totalTaxes = bySection.TAX.reduce((sum, l) => sum + l.amount_cents, 0);
+  const totalDeductions = bySection.DEDUCTION.reduce((sum, l) => sum + l.amount_cents, 0);
+  const totalAllotments = bySection.ALLOTMENT.reduce((sum, l) => sum + l.amount_cents, 0);
+  const totalDebts = bySection.DEBT.reduce((sum, l) => sum + l.amount_cents, 0);
+  const totalAdjustments = bySection.ADJUSTMENT.reduce((sum, l) => sum + l.amount_cents, 0);
+
+  const computedNet = totalAllowances - totalTaxes - totalDeductions - totalAllotments - totalDebts + totalAdjustments;
+  const netDelta = Math.abs(computedNet - params.netPayCents);
+
+  if (netDelta > 100) { // $1 threshold
+    flags.push({
+      severity: 'red',
+      flag_code: 'NET_MATH_MISMATCH',
+      message: `Net pay math doesn't balance: Expected $${(computedNet/100).toFixed(2)}, got $${(params.netPayCents/100).toFixed(2)} (Δ $${(netDelta/100).toFixed(2)})`,
+      suggestion: 'Review all line items for data entry errors. Formula: Net = Allowances - Taxes - Deductions - Allotments - Debts + Adjustments',
+      delta_cents: computedNet - params.netPayCents
+    });
+  } else {
+    flags.push({
+      severity: 'green',
+      flag_code: 'NET_MATH_VERIFIED',
+      message: `Net pay math verified: $${(params.netPayCents/100).toFixed(2)} ✓`,
+      suggestion: 'No action needed. Math checks out!'
+    });
+  }
+
+  // ============================================================================
+  // SUMMARY
+  // ============================================================================
+
+  const summary = {
+    total_allowances: totalAllowances,
+    total_deductions: totalDeductions,
+    total_taxes: totalTaxes,
+    total_allotments: totalAllotments,
+    total_debts: totalDebts,
+    total_adjustments: totalAdjustments,
+    computed_net: computedNet,
+    actual_net: params.netPayCents,
+    net_delta: netDelta
+  };
+
+  // Build math proof string
+  const mathProof = `
+Allowances:    $${(totalAllowances/100).toFixed(2).padStart(10)}
+- Taxes:       $${(totalTaxes/100).toFixed(2).padStart(10)}
+- Deductions:  $${(totalDeductions/100).toFixed(2).padStart(10)}
+- Allotments:  $${(totalAllotments/100).toFixed(2).padStart(10)}
+- Debts:       $${(totalDebts/100).toFixed(2).padStart(10)}
++ Adjustments: $${(totalAdjustments/100).toFixed(2).padStart(10)}
+${'='.repeat(40)}
+= Net Pay:     $${(computedNet/100).toFixed(2).padStart(10)} ${netDelta <= 100 ? '✓' : '✗'}
+  `.trim();
+
+  return { flags, summary, mathProof };
+}
+

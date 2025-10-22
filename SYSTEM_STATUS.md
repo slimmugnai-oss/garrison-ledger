@@ -654,6 +654,9 @@ See: `CODE_QUALITY_IMPLEMENTATION_SUMMARY.md` and `IMPLEMENTATION_SESSION_COMPLE
 ### **Quick Links**
 
 **Core Documentation:**
+- **⚡ Quick Reference:** [`docs/QUICK_REFERENCE.md`](docs/QUICK_REFERENCE.md) - One-page cheat sheet (32 pages, 32 tables, 6 tabs)
+- **🤖 AI Agent Onboarding:** [`docs/AI_AGENT_ONBOARDING_GUIDE.md`](docs/AI_AGENT_ONBOARDING_GUIDE.md) - Complete platform reference for new AI assistants
+- **🏗️ Platform Architecture:** [`docs/PLATFORM_ARCHITECTURE.md`](docs/PLATFORM_ARCHITECTURE.md) - Visual diagrams of all systems and data flows
 - **SSOT Module:** [`lib/ssot.ts`](lib/ssot.ts) - Single source of truth
 - **Development Workflow:** [`docs/DEVELOPMENT_WORKFLOW.md`](docs/DEVELOPMENT_WORKFLOW.md)
 - **Icon Usage Guide:** [`docs/ICON_USAGE_GUIDE.md`](docs/ICON_USAGE_GUIDE.md)

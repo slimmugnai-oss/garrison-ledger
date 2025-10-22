@@ -489,3 +489,83 @@ export function formatEffectiveDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
 
+/**
+ * BUILD EXPECTED PAY SNAPSHOT WITH TAXABLE BASES
+ * Wrapper around buildExpectedSnapshot that also computes taxable income bases
+ * 
+ * @param profile - User profile snapshot
+ * @param asOfDate - Date for which to compute (defaults to current month)
+ * @returns Expected values and taxable bases
+ */
+export async function buildExpectedSnapshotWithBases(profile: {
+  userId: string;
+  paygrade: string;
+  yos: number;
+  mhaOrZip: string;
+  withDependents: boolean;
+  specials?: {
+    sdap?: boolean;
+    hfp?: boolean;
+    fsa?: boolean;
+    flpp?: boolean;
+  };
+}, asOfDate?: Date): Promise<{
+  expected: {
+    base_pay_cents: number;
+    bah_cents: number;
+    bas_cents: number;
+    cola_cents: number;
+    specials: ExpectedSpecialPay[];
+  };
+  taxable_bases: {
+    fed: number;
+    state: number;
+    oasdi: number;
+    medicare: number;
+  };
+}> {
+  const date = asOfDate || new Date();
+  const month = date.getMonth() + 1; // 1-12
+  const year = date.getFullYear();
+  
+  // Build expected values using existing function
+  const snapshot = await buildExpectedSnapshot({
+    userId: profile.userId,
+    month,
+    year,
+    paygrade: profile.paygrade,
+    mha_or_zip: profile.mhaOrZip,
+    with_dependents: profile.withDependents,
+    yos: profile.yos
+  });
+
+  // Import codes module for taxable base computation
+  const { computeTaxableBases } = await import('./codes');
+
+  // Build line items for taxable base calculation
+  const lines = [
+    { code: 'BASEPAY', amount_cents: snapshot.expected.base_pay_cents || 0 },
+    { code: 'BAH', amount_cents: snapshot.expected.bah_cents || 0 },
+    { code: 'BAS', amount_cents: snapshot.expected.bas_cents || 0 },
+    { code: 'COLA', amount_cents: snapshot.expected.cola_cents || 0 },
+    ...(snapshot.expected.specials || []).map(s => ({ 
+      code: s.code, 
+      amount_cents: s.cents 
+    }))
+  ];
+
+  // Compute taxable bases using codes.ts logic
+  const taxable_bases = computeTaxableBases(lines);
+
+  return {
+    expected: {
+      base_pay_cents: snapshot.expected.base_pay_cents || 0,
+      bah_cents: snapshot.expected.bah_cents || 0,
+      bas_cents: snapshot.expected.bas_cents || 0,
+      cola_cents: snapshot.expected.cola_cents || 0,
+      specials: snapshot.expected.specials || []
+    },
+    taxable_bases
+  };
+}
+

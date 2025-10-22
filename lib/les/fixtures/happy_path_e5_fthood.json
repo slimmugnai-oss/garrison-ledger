@@ -1,0 +1,125 @@
+{
+  "name": "Happy Path - E05 @ Fort Hood with Dependents",
+  "description": "Perfect audit - all values match expected, FICA/Medicare percentages correct, net pay balances",
+  "profile": {
+    "paygrade": "E05",
+    "yos": 8,
+    "mhaOrZip": "TX191",
+    "withDependents": true,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "audit": {
+    "month": 10,
+    "year": 2025,
+    "net_pay_cents": 481325
+  },
+  "actual_lines": [
+    {
+      "code": "BASEPAY",
+      "description": "Base Pay",
+      "amount_cents": 350000,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAH",
+      "description": "BAH With Dependents",
+      "amount_cents": 180000,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "BAS",
+      "description": "Basic Allowance for Subsistence",
+      "amount_cents": 46025,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "COLA",
+      "description": "Cost of Living Allowance",
+      "amount_cents": 0,
+      "section": "ALLOWANCE"
+    },
+    {
+      "code": "TSP",
+      "description": "Thrift Savings Plan",
+      "amount_cents": 28800,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "SGLI",
+      "description": "SGLI Life Insurance",
+      "amount_cents": 2700,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "DENTAL",
+      "description": "TRICARE Dental",
+      "amount_cents": 1400,
+      "section": "DEDUCTION"
+    },
+    {
+      "code": "TAX_FED",
+      "description": "Federal Income Tax",
+      "amount_cents": 35000,
+      "section": "TAX"
+    },
+    {
+      "code": "TAX_STATE",
+      "description": "State Income Tax",
+      "amount_cents": 0,
+      "section": "TAX"
+    },
+    {
+      "code": "FICA",
+      "description": "FICA (Social Security)",
+      "amount_cents": 21700,
+      "section": "TAX"
+    },
+    {
+      "code": "MEDICARE",
+      "description": "Medicare Tax",
+      "amount_cents": 5075,
+      "section": "TAX"
+    }
+  ],
+  "expected_result": {
+    "total_allowances": 576025,
+    "total_deductions": 32900,
+    "total_taxes": 61775,
+    "total_allotments": 0,
+    "total_debts": 0,
+    "total_adjustments": 0,
+    "computed_net": 481350,
+    "actual_net": 481325,
+    "net_delta": 25,
+    "flags": [
+      {
+        "severity": "green",
+        "flag_code": "FICA_PCT_CORRECT",
+        "message": "FICA verified: 6.20% (within normal range)"
+      },
+      {
+        "severity": "green",
+        "flag_code": "MEDICARE_PCT_CORRECT",
+        "message": "Medicare verified: 1.45% (within normal range)"
+      },
+      {
+        "severity": "green",
+        "flag_code": "NET_MATH_VERIFIED",
+        "message": "Net pay math verified"
+      }
+    ]
+  },
+  "taxable_bases": {
+    "fed": 350000,
+    "state": 350000,
+    "oasdi": 350000,
+    "medicare": 350000
+  },
+  "notes": "Texas has no state income tax. Net pay delta of $0.25 is within $1 threshold (rounding)."
+}
+
