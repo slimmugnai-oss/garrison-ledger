@@ -1,34 +1,34 @@
 /**
  * ADMIN - DATA FRESHNESS CHECK API
- * 
+ *
  * GET /api/admin/check-freshness
  * Returns HTML page with freshness check results
  * Runs the same logic as scripts/check-data-freshness.ts
- * 
+ *
  * Security: Admin only
  */
 
-import { currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 // Admin user IDs
 const ADMIN_USER_IDS = [
-  'user_343xVqjkdILtBkaYAJfE5H8Wq0q', // slimmugnai@gmail.com
+  "user_343xVqjkdILtBkaYAJfE5H8Wq0q", // slimmugnai@gmail.com
 ];
 
 // Expected 2025 values (update annually)
 const EXPECTED_2025_VALUES = {
-  basOfficerCents: 31698,    // $316.98
-  basEnlistedCents: 46025,   // $460.25
+  basOfficerCents: 31698, // $316.98
+  basEnlistedCents: 46025, // $460.25
   ficaWageBaseCents: 17610000, // $176,100
-  ficaRate: '0.062',         // 6.2%
-  medicareRate: '0.0145'     // 1.45%
+  ficaRate: "0.062", // 6.2%
+  medicareRate: "0.0145", // 1.45%
 };
 
 interface FreshnessCheck {
   source: string;
-  status: 'current' | 'stale' | 'critical';
+  status: "current" | "stale" | "critical";
   message: string;
   action?: string;
   officialSource?: string;
@@ -36,9 +36,9 @@ interface FreshnessCheck {
 
 export async function GET() {
   const user = await currentUser();
-  
+
   if (!user || !ADMIN_USER_IDS.includes(user.id)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const supabase = createClient(
@@ -49,121 +49,125 @@ export async function GET() {
   const checks: FreshnessCheck[] = [];
   const today = new Date();
   const currentYear = today.getFullYear();
-  
+
   // Check 1: BAH Rates
   const { data: bahCheck, count: bahCount } = await supabase
-    .from('bah_rates')
-    .select('effective_date', { count: 'exact' })
-    .order('effective_date', { ascending: false })
+    .from("bah_rates")
+    .select("effective_date", { count: "exact" })
+    .order("effective_date", { ascending: false })
     .limit(1);
-  
-  const bahDate = bahCheck?.[0]?.effective_date || '';
-  const bahYear = parseInt(bahDate.split('-')[0] || '0');
-  
+
+  const bahDate = bahCheck?.[0]?.effective_date || "";
+  const bahYear = parseInt(bahDate.split("-")[0] || "0");
+
   checks.push({
-    source: 'BAH Rates',
-    status: bahYear === currentYear ? 'current' : 'critical',
-    message: bahYear === currentYear 
-      ? `✅ Current - ${bahDate} (${bahCount?.toLocaleString()} rates loaded)`
-      : `🚨 STALE - Last updated ${bahDate}. Need ${currentYear} rates!`,
-    action: bahYear !== currentYear 
-      ? `Download ${currentYear} BAH CSV from DFAS and run: npm run import-bah`
-      : undefined,
-    officialSource: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+    source: "BAH Rates",
+    status: bahYear === currentYear ? "current" : "critical",
+    message:
+      bahYear === currentYear
+        ? `✅ Current - ${bahDate} (${bahCount?.toLocaleString()} rates loaded)`
+        : `🚨 STALE - Last updated ${bahDate}. Need ${currentYear} rates!`,
+    action:
+      bahYear !== currentYear
+        ? `Download ${currentYear} BAH CSV from DFAS and run: npm run import-bah`
+        : undefined,
+    officialSource: "https://www.defensetravel.dod.mil/site/bahCalc.cfm",
   });
-  
+
   // Check 2: Military Pay Tables
   const { data: payCheck, count: payCount } = await supabase
-    .from('military_pay_tables')
-    .select('effective_date', { count: 'exact' })
-    .order('effective_date', { ascending: false })
+    .from("military_pay_tables")
+    .select("effective_date", { count: "exact" })
+    .order("effective_date", { ascending: false })
     .limit(1);
-  
-  const payDate = payCheck?.[0]?.effective_date || '';
-  const payYear = parseInt(payDate.split('-')[0] || '0');
-  
+
+  const payDate = payCheck?.[0]?.effective_date || "";
+  const payYear = parseInt(payDate.split("-")[0] || "0");
+
   checks.push({
-    source: 'Military Pay Tables',
-    status: payYear === currentYear ? 'current' : 'critical',
-    message: payYear === currentYear
-      ? `✅ Current - ${payDate} (${payCount} rates loaded)`
-      : `🚨 STALE - Last updated ${payDate}. Need ${currentYear} rates!`,
-    action: payYear !== currentYear
-      ? `Download ${currentYear} pay tables from DFAS and run: npm run import-pay-tables`
-      : undefined,
-    officialSource: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/'
+    source: "Military Pay Tables",
+    status: payYear === currentYear ? "current" : "critical",
+    message:
+      payYear === currentYear
+        ? `✅ Current - ${payDate} (${payCount} rates loaded)`
+        : `🚨 STALE - Last updated ${payDate}. Need ${currentYear} rates!`,
+    action:
+      payYear !== currentYear
+        ? `Download ${currentYear} pay tables from DFAS and run: npm run import-pay-tables`
+        : undefined,
+    officialSource: "https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/",
   });
-  
+
   // Check 3: BAS Rates (in SSOT)
   const basYear = 2025;
-  
+
   checks.push({
-    source: 'BAS Rates (lib/ssot.ts)',
-    status: basYear === currentYear ? 'current' : 'critical',
-    message: basYear === currentYear
-      ? `✅ Current - Officer $${(EXPECTED_2025_VALUES.basOfficerCents/100).toFixed(2)}, Enlisted $${(EXPECTED_2025_VALUES.basEnlistedCents/100).toFixed(2)}`
-      : `🚨 MANUAL CHECK REQUIRED - Verify lib/ssot.ts has ${currentYear} BAS rates`,
-    action: basYear !== currentYear
-      ? `Check DFAS and update lib/ssot.ts lines 249-251`
-      : `Verify: Officer $316.98, Enlisted $460.25`,
-    officialSource: 'https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/BAS/'
+    source: "BAS Rates (lib/ssot.ts)",
+    status: basYear === currentYear ? "current" : "critical",
+    message:
+      basYear === currentYear
+        ? `✅ Current - Officer $${(EXPECTED_2025_VALUES.basOfficerCents / 100).toFixed(2)}, Enlisted $${(EXPECTED_2025_VALUES.basEnlistedCents / 100).toFixed(2)}`
+        : `🚨 MANUAL CHECK REQUIRED - Verify lib/ssot.ts has ${currentYear} BAS rates`,
+    action:
+      basYear !== currentYear
+        ? `Check DFAS and update lib/ssot.ts lines 249-251`
+        : `Verify: Officer $316.98, Enlisted $460.25`,
+    officialSource: "https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/BAS/",
   });
-  
+
   // Check 4: Tax Constants
   const { data: taxCheck } = await supabase
-    .from('payroll_tax_constants')
-    .select('*')
-    .eq('effective_year', currentYear)
+    .from("payroll_tax_constants")
+    .select("*")
+    .eq("effective_year", currentYear)
     .maybeSingle();
-  
+
   checks.push({
-    source: 'Tax Constants (FICA/Medicare)',
-    status: taxCheck ? 'current' : 'critical',
+    source: "Tax Constants (FICA/Medicare)",
+    status: taxCheck ? "current" : "critical",
     message: taxCheck
-      ? `✅ Current - ${currentYear} FICA wage base: $${(taxCheck.fica_wage_base_cents/100).toLocaleString()}`
+      ? `✅ Current - ${currentYear} FICA wage base: $${(taxCheck.fica_wage_base_cents / 100).toLocaleString()}`
       : `🚨 MISSING - No ${currentYear} tax constants!`,
-    action: !taxCheck
-      ? `Create migration for ${currentYear} tax constants`
-      : undefined,
-    officialSource: 'https://www.irs.gov/newsroom/social-security-and-medicare-tax-rates'
+    action: !taxCheck ? `Create migration for ${currentYear} tax constants` : undefined,
+    officialSource: "https://www.irs.gov/newsroom/social-security-and-medicare-tax-rates",
   });
-  
+
   // Check 5: SGLI Rates
   const { count: sgliCount } = await supabase
-    .from('sgli_rates')
-    .select('*', { count: 'exact', head: true });
-  
+    .from("sgli_rates")
+    .select("*", { count: "exact", head: true });
+
   checks.push({
-    source: 'SGLI Premiums',
-    status: (sgliCount || 0) >= 8 ? 'current' : 'stale',
-    message: (sgliCount || 0) >= 8
-      ? `✅ Current - ${sgliCount} coverage tiers`
-      : `⚠️ Check VA.gov for updates`,
-    officialSource: 'https://www.benefits.va.gov/insurance/sgli.asp'
+    source: "SGLI Premiums",
+    status: (sgliCount || 0) >= 8 ? "current" : "stale",
+    message:
+      (sgliCount || 0) >= 8
+        ? `✅ Current - ${sgliCount} coverage tiers`
+        : `⚠️ Check VA.gov for updates`,
+    officialSource: "https://www.benefits.va.gov/insurance/sgli.asp",
   });
-  
+
   // Check 6: State Tax Rates
   const { count: stateCount } = await supabase
-    .from('state_tax_rates')
-    .select('*', { count: 'exact', head: true })
-    .eq('effective_year', currentYear);
-  
+    .from("state_tax_rates")
+    .select("*", { count: "exact", head: true })
+    .eq("effective_year", currentYear);
+
   checks.push({
-    source: 'State Tax Rates',
-    status: (stateCount || 0) >= 51 ? 'current' : 'stale',
-    message: (stateCount || 0) >= 51
-      ? `✅ Current - ${stateCount} states for ${currentYear}`
-      : `⚠️ Only ${stateCount} states found`,
-    action: (stateCount || 0) < 51
-      ? `Review state tax rates for ${currentYear}`
-      : undefined
+    source: "State Tax Rates",
+    status: (stateCount || 0) >= 51 ? "current" : "stale",
+    message:
+      (stateCount || 0) >= 51
+        ? `✅ Current - ${stateCount} states for ${currentYear}`
+        : `⚠️ Only ${stateCount} states found`,
+    action: (stateCount || 0) < 51 ? `Review state tax rates for ${currentYear}` : undefined,
   });
-  
+
   // Build HTML response
-  const criticalCount = checks.filter(c => c.status === 'critical').length;
-  const staleCount = checks.filter(c => c.status === 'stale').length;
-  const currentCount = checks.filter(c => c.status === 'current').length;
-  
+  const criticalCount = checks.filter((c) => c.status === "critical").length;
+  const staleCount = checks.filter((c) => c.status === "stale").length;
+  const currentCount = checks.filter((c) => c.status === "current").length;
+
   const html = `
 <!DOCTYPE html>
 <html>
@@ -217,41 +221,63 @@ export async function GET() {
       <p class="number">${currentCount}</p>
       <p class="label">Up to date sources</p>
     </div>
-    ${staleCount > 0 ? `
+    ${
+      staleCount > 0
+        ? `
     <div class="summary-card stale">
       <h3>Stale</h3>
       <p class="number">${staleCount}</p>
       <p class="label">Need review</p>
     </div>
-    ` : ''}
-    ${criticalCount > 0 ? `
+    `
+        : ""
+    }
+    ${
+      criticalCount > 0
+        ? `
     <div class="summary-card critical">
       <h3>Critical</h3>
       <p class="number">${criticalCount}</p>
       <p class="label">Require immediate update</p>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
   
-  ${checks.map(check => `
+  ${checks
+    .map(
+      (check) => `
     <div class="check-item ${check.status}">
       <div class="check-header">
         <div class="check-title">${check.source}</div>
         <span class="status-badge ${check.status}">${check.status}</span>
       </div>
       <p class="message">${check.message}</p>
-      ${check.action ? `
+      ${
+        check.action
+          ? `
         <div class="action">
           <p class="action-text"><strong>ACTION REQUIRED:</strong> ${check.action}</p>
         </div>
-      ` : ''}
-      ${check.officialSource ? `
+      `
+          : ""
+      }
+      ${
+        check.officialSource
+          ? `
         <p><a href="${check.officialSource}" target="_blank" class="source-link">🔗 Official Source →</a></p>
-      ` : ''}
+      `
+          : ""
+      }
     </div>
-  `).join('')}
+  `
+    )
+    .join("")}
   
-  ${criticalCount > 0 ? `
+  ${
+    criticalCount > 0
+      ? `
     <div class="check-item critical">
       <div class="check-header">
         <div class="check-title">⚠️ DEPLOYMENT WARNING</div>
@@ -261,14 +287,16 @@ export async function GET() {
         <p class="action-text"><strong>DO NOT DEPLOY</strong> LES Auditor until critical data is updated.</p>
       </div>
     </div>
-  ` : `
+  `
+      : `
     <div class="check-item current">
       <div class="check-header">
         <div class="check-title">✅ ALL SYSTEMS GO</div>
       </div>
       <p class="message">All data sources are current for ${currentYear}. LES Auditor is using the latest official rates.</p>
     </div>
-  `}
+  `
+  }
   
   <div class="terminal">
     <div>💡 <strong>Terminal Command:</strong></div>
@@ -284,7 +312,6 @@ export async function GET() {
   `;
 
   return new NextResponse(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { "Content-Type": "text/html" },
   });
 }
-
