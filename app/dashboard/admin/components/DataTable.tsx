@@ -249,7 +249,7 @@ export default function DataTable<T>({
                               className="p-2 text-text-muted hover:text-text-body hover:bg-surface-hover rounded transition-colors"
                               title={action.label}
                             >
-                              {action.icon && <Icon name={action.icon} className="h-4 w-4" />}
+                              {action.icon && <Icon name={action.icon as never} className="h-4 w-4" />}
                             </button>
                           ))}
                         </div>

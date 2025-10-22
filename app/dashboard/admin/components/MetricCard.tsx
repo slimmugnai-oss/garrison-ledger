@@ -9,7 +9,7 @@ interface MetricCardProps {
     direction: 'up' | 'down' | 'neutral';
     value: string;
   };
-  icon?: 'DollarSign' | 'Users' | 'TrendingUp' | 'Target' | 'CheckCircle' | 'Activity' | 'Zap';
+  icon?: 'DollarSign' | 'Users' | 'TrendingUp' | 'Target' | 'CheckCircle' | 'Activity' | 'Zap' | 'Crown';
   variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
   delay?: number;
   onClick?: () => void;
