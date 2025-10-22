@@ -1108,7 +1108,7 @@ export default function ProfileSetupPage() {
                 {data.receives_sdap === true && (
                   <ProfileFormField
                     label="SDAP Monthly Amount"
-                    description="Enter the exact amount from your LES"
+                    description="Enter the exact amount from your LES (e.g., 450 or 450.50)"
                     success={!!data.sdap_monthly_cents}
                   >
                     <div className="relative">
@@ -1116,16 +1116,19 @@ export default function ProfileSetupPage() {
                         <span className="text-gray-500">$</span>
                       </div>
                       <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="e.g., 450.00"
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="e.g., 450"
                         className={getInputClass(false, !!data.sdap_monthly_cents)}
-                        value={data.sdap_monthly_cents ? (data.sdap_monthly_cents / 100).toFixed(2) : ''}
-                        onChange={e => setData(d => ({ 
-                          ...d, 
-                          sdap_monthly_cents: e.target.value ? Math.round(parseFloat(e.target.value) * 100) : null 
-                        }))}
+                        value={data.sdap_monthly_cents ? (data.sdap_monthly_cents / 100).toString() : ''}
+                        onChange={e => {
+                          const value = e.target.value.replace(/[^0-9.]/g, '');
+                          const num = parseFloat(value);
+                          setData(d => ({ 
+                            ...d, 
+                            sdap_monthly_cents: value && !isNaN(num) ? Math.round(num * 100) : null 
+                          }));
+                        }}
                         style={{ paddingLeft: '2rem' }}
                       />
                     </div>
@@ -1225,7 +1228,7 @@ export default function ProfileSetupPage() {
                 {data.receives_flpp === true && (
                   <ProfileFormField
                     label="FLPP Monthly Amount"
-                    description="Enter the exact amount from your LES (varies by language and proficiency level)"
+                    description="Enter the exact amount from your LES (e.g., 300 or 300.50)"
                     success={!!data.flpp_monthly_cents}
                   >
                     <div className="relative">
@@ -1233,16 +1236,19 @@ export default function ProfileSetupPage() {
                         <span className="text-gray-500">$</span>
                       </div>
                       <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="e.g., 300.00"
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="e.g., 300"
                         className={getInputClass(false, !!data.flpp_monthly_cents)}
-                        value={data.flpp_monthly_cents ? (data.flpp_monthly_cents / 100).toFixed(2) : ''}
-                        onChange={e => setData(d => ({ 
-                          ...d, 
-                          flpp_monthly_cents: e.target.value ? Math.round(parseFloat(e.target.value) * 100) : null 
-                        }))}
+                        value={data.flpp_monthly_cents ? (data.flpp_monthly_cents / 100).toString() : ''}
+                        onChange={e => {
+                          const value = e.target.value.replace(/[^0-9.]/g, '');
+                          const num = parseFloat(value);
+                          setData(d => ({ 
+                            ...d, 
+                            flpp_monthly_cents: value && !isNaN(num) ? Math.round(num * 100) : null 
+                          }));
+                        }}
                         style={{ paddingLeft: '2rem' }}
                       />
                     </div>
