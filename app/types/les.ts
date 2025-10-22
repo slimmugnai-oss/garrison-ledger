@@ -20,7 +20,9 @@ export type LesSection =
   | 'DEDUCTION'   // SGLI, TSP, garnishments
   | 'ALLOTMENT'   // Voluntary allotments
   | 'TAX'         // Federal, state, FICA
-  | 'OTHER';      // Misc items
+  | 'DEBT'        // Debt repayments
+  | 'ADJUSTMENT'  // Pay adjustments (positive or negative)
+  | 'OTHER';      // Misc items (backward compatibility)
 
 /**
  * Parsed LES line item
