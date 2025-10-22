@@ -47,19 +47,27 @@ export default function ProfileSection({
             <p className="text-xs sm:text-sm text-body mt-0.5">{description}</p>
             
             {/* Progress bar */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="w-24 sm:w-32 bg-surface-hover h-1.5 rounded-full overflow-hidden">
-                <div 
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    isComplete ? 'bg-green-500' : 'bg-blue-500'
-                  }`}
-                  style={{ width: `${completion.percentage}%` }}
-                />
+            {completion.total > 0 ? (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-24 sm:w-32 bg-surface-hover h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      isComplete ? 'bg-green-500' : 'bg-blue-500'
+                    }`}
+                    style={{ width: `${completion.percentage}%` }}
+                  />
+                </div>
+                <span className="text-xs text-muted font-medium whitespace-nowrap">
+                  {completion.complete}/{completion.total}
+                </span>
               </div>
-              <span className="text-xs text-muted font-medium whitespace-nowrap">
-                {completion.complete}/{completion.total}
-              </span>
-            </div>
+            ) : (
+              <div className="mt-2">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
+                  Optional
+                </span>
+              </div>
+            )}
           </div>
         </div>
         
