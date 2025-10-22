@@ -79,7 +79,7 @@ export default function ErrorLogsViewer() {
     }
   };
 
-  const columns: Column<ErrorLog> = [
+  const columns: Column<ErrorLog>[] = [
     {
       key: "created_at",
       header: "Time",
