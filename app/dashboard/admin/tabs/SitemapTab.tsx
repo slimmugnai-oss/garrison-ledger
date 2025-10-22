@@ -24,6 +24,14 @@ interface SitePage {
   last_updated: string;
   last_audit: string | null;
   dependencies: Record<string, unknown>;
+  file_path: string | null;
+  file_hash: string | null;
+  component_name: string | null;
+  api_endpoints: string[];
+  database_tables: string[];
+  external_services: string[];
+  git_last_commit: string | null;
+  git_last_commit_date: string | null;
 }
 
 interface SitemapData {
@@ -126,6 +134,28 @@ export default function SitemapTab() {
 // Overview Sub-Tab: Visual sitemap with health status
 function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () => void }) {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [extracting, setExtracting] = useState(false);
+
+  const extractMetadata = async () => {
+    setExtracting(true);
+    try {
+      const res = await fetch("/api/admin/sitemap/extract-metadata", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        alert(`✅ Metadata extracted!\n\nUpdated: ${result.updated}/${result.total} pages\nSkipped: ${result.skipped}`);
+        onReload();
+      } else {
+        alert("❌ Failed to extract metadata");
+      }
+    } catch (error) {
+      alert("❌ Error extracting metadata");
+    } finally {
+      setExtracting(false);
+    }
+  };
 
   const toggleCategory = (category: string) => {
     const newExpanded = new Set(expandedCategories);
@@ -188,13 +218,23 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
       <AnimatedCard delay={50} className="border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-text-headings text-xl font-bold">Platform Sitemap</h3>
-          <button
-            onClick={onReload}
-            className="hover:bg-primary-hover rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition-colors"
-          >
-            <Icon name="RefreshCw" className="mr-1 inline h-3 w-3" />
-            Reload
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={extractMetadata}
+              disabled={extracting}
+              className="hover:bg-success-hover flex items-center gap-1 rounded-lg bg-success px-3 py-1.5 text-sm font-semibold text-white transition-colors disabled:opacity-50"
+            >
+              <Icon name={extracting ? "RefreshCw" : "Brain"} className={`mr-1 inline h-3 w-3 ${extracting ? "animate-spin" : ""}`} />
+              {extracting ? "Extracting..." : "Extract Metadata"}
+            </button>
+            <button
+              onClick={onReload}
+              className="hover:bg-primary-hover rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition-colors"
+            >
+              <Icon name="RefreshCw" className="mr-1 inline h-3 w-3" />
+              Reload
+            </button>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -275,6 +315,8 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
 
 // Pages Sub-Tab: Detailed table of all pages
 function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => void }) {
+  const [selectedPage, setSelectedPage] = useState<SitePage | null>(null);
+
   const getHealthBadge = (status: string) => {
     switch (status) {
       case "healthy":
@@ -381,7 +423,192 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
         keyExtractor={(page) => page.id}
         pageSize={25}
         emptyMessage="No pages found"
+        rowActions={[
+          {
+            label: "View Details",
+            onClick: (page) => setSelectedPage(page),
+          },
+        ]}
       />
+
+      {/* Page Detail Modal */}
+      {selectedPage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-card shadow-2xl">
+            <div className="sticky top-0 flex items-start justify-between border-b border-border bg-card p-6">
+              <div>
+                <h3 className="text-text-headings text-xl font-bold">{selectedPage.title}</h3>
+                <code className="text-text-muted text-sm">{selectedPage.path}</code>
+              </div>
+              <button onClick={() => setSelectedPage(null)} className="text-text-muted hover:text-text-body">
+                <Icon name="X" className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="space-y-6 p-6">
+              {/* Basic Info */}
+              <div>
+                <h4 className="text-text-headings mb-3 text-lg font-bold">Basic Information</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Category</p>
+                    <p className="text-text-body font-semibold">{selectedPage.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Tier Required</p>
+                    <div>
+                      {selectedPage.tier_required ? (
+                        <Badge variant="info">{selectedPage.tier_required}</Badge>
+                      ) : (
+                        <span className="text-text-muted text-sm">Public</span>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Health Status</p>
+                    <div>{getHealthBadge(selectedPage.health_status)}</div>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Response Time</p>
+                    <p className="text-text-body font-semibold">
+                      {selectedPage.response_time_ms ? `${selectedPage.response_time_ms}ms` : "Not checked"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* File Info */}
+              {selectedPage.file_path && (
+                <div>
+                  <h4 className="text-text-headings mb-3 text-lg font-bold">File Information</h4>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-text-muted mb-1 text-sm">File Path</p>
+                      <code className="bg-surface-hover rounded px-2 py-1 text-xs">{selectedPage.file_path}</code>
+                    </div>
+                    {selectedPage.component_name && (
+                      <div>
+                        <p className="text-text-muted mb-1 text-sm">Component Name</p>
+                        <code className="bg-surface-hover rounded px-2 py-1 text-sm">{selectedPage.component_name}</code>
+                      </div>
+                    )}
+                    {selectedPage.file_hash && (
+                      <div>
+                        <p className="text-text-muted mb-1 text-sm">File Hash (for change detection)</p>
+                        <code className="bg-surface-hover text-text-muted rounded px-2 py-1 font-mono text-xs">
+                          {selectedPage.file_hash.substring(0, 16)}...
+                        </code>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Dependencies */}
+              <div>
+                <h4 className="text-text-headings mb-3 text-lg font-bold">Dependencies</h4>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {/* API Endpoints */}
+                  <div>
+                    <p className="text-text-muted mb-2 text-sm font-semibold">API Endpoints</p>
+                    {selectedPage.api_endpoints && selectedPage.api_endpoints.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedPage.api_endpoints.map((api) => (
+                          <code key={api} className="bg-surface-hover text-text-body block rounded px-2 py-1 text-xs">
+                            {api}
+                          </code>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-text-muted text-xs">None detected</p>
+                    )}
+                  </div>
+
+                  {/* Database Tables */}
+                  <div>
+                    <p className="text-text-muted mb-2 text-sm font-semibold">Database Tables</p>
+                    {selectedPage.database_tables && selectedPage.database_tables.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedPage.database_tables.map((table) => (
+                          <code key={table} className="bg-surface-hover text-text-body block rounded px-2 py-1 text-xs">
+                            {table}
+                          </code>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-text-muted text-xs">None detected</p>
+                    )}
+                  </div>
+
+                  {/* External Services */}
+                  <div>
+                    <p className="text-text-muted mb-2 text-sm font-semibold">External Services</p>
+                    {selectedPage.external_services && selectedPage.external_services.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedPage.external_services.map((service) => (
+                          <Badge key={service} variant="info" size="sm">
+                            {service}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-text-muted text-xs">None detected</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Analytics */}
+              <div>
+                <h4 className="text-text-headings mb-3 text-lg font-bold">Analytics</h4>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Views (30d)</p>
+                    <p className="text-text-headings text-2xl font-black">{selectedPage.view_count_30d || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Views (7d)</p>
+                    <p className="text-text-headings text-2xl font-black">{selectedPage.view_count_7d || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Bounce Rate</p>
+                    <p className="text-text-headings text-2xl font-black">
+                      {selectedPage.bounce_rate ? `${selectedPage.bounce_rate}%` : "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-text-muted mb-1 text-sm">Avg Time</p>
+                    <p className="text-text-headings text-2xl font-black">
+                      {selectedPage.avg_time_on_page_seconds ? `${selectedPage.avg_time_on_page_seconds}s` : "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Git Info */}
+              {selectedPage.git_last_commit && (
+                <div>
+                  <h4 className="text-text-headings mb-3 text-lg font-bold">Git Information</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-text-muted mb-1 text-sm">Last Commit</p>
+                      <code className="bg-surface-hover rounded px-2 py-1 font-mono text-xs">
+                        {selectedPage.git_last_commit.substring(0, 7)}
+                      </code>
+                    </div>
+                    <div>
+                      <p className="text-text-muted mb-1 text-sm">Commit Date</p>
+                      <p className="text-text-body text-sm">
+                        {selectedPage.git_last_commit_date ? new Date(selectedPage.git_last_commit_date).toLocaleString() : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
