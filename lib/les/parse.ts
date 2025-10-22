@@ -307,6 +307,8 @@ function buildSummary(lines: LesLine[]): ParsedSummary {
     DEDUCTION: 0,
     ALLOTMENT: 0,
     TAX: 0,
+    DEBT: 0,
+    ADJUSTMENT: 0,
     OTHER: 0
   };
   
