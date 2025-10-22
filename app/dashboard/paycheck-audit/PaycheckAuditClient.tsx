@@ -21,6 +21,7 @@ interface Props {
   isPremium: boolean;
   userProfile: {
     rank?: string;
+    paygrade?: string;
     currentBase?: string;
     hasDependents?: boolean;
   };

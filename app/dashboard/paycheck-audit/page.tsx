@@ -90,6 +90,7 @@ export default async function PaycheckAuditPage() {
           isPremium={isPremium}
           userProfile={{
             rank: profile?.rank,
+            paygrade: profile?.paygrade,
             currentBase: profile?.current_base,
             hasDependents: profile?.has_dependents
           }}

@@ -13,6 +13,7 @@ interface Props {
   monthlyEntriesCount: number;
   userProfile?: {
     rank?: string;
+    paygrade?: string;
     currentBase?: string;
     hasDependents?: boolean;
   };
@@ -89,7 +90,7 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
         body: JSON.stringify({
           month,
           year,
-          rank: userProfile.rank,
+          rank: userProfile.paygrade || userProfile.rank, // Use paygrade (E01) not rank name (Private PV1)
           location: userProfile.currentBase,
           hasDependents: userProfile.hasDependents
         })
