@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "total_allowances": 636025,
+    "total_deductions": 36100,
+    "total_taxes": 104513,
+    "total_allotments": 0,
+    "total_debts": 0,
+    "total_adjustments": 0,
+    "computed_net": 495412,
+    "actual_net": 530512,
+    "net_delta": 35100
+  },
+  "flags": [
+    {
+      "severity": "red",
+      "flag_code": "BAH_MISMATCH",
+      "message": "BAH discrepancy: Expected $1,950.00, got $1,650.00",
+      "suggestion": "Verify your MHA code matches your duty station and dependent status. Contact finance office if BAH is incorrect.",
+      "delta_cents": 30000,
+      "ref_url": "https://www.defensetravel.dod.mil/site/bahCalc.cfm"
+    },
+    {
+      "severity": "green",
+      "flag_code": "FICA_PCT_CORRECT",
+      "message": "FICA verified: 6.20% (within normal 6.1%-6.3% range)",
+      "suggestion": "No action needed. FICA withholding is correct."
+    },
+    {
+      "severity": "green",
+      "flag_code": "MEDICARE_PCT_CORRECT",
+      "message": "Medicare verified: 1.45% (within normal 1.40%-1.50% range)",
+      "suggestion": "No action needed. Medicare withholding is correct."
+    },
+    {
+      "severity": "red",
+      "flag_code": "NET_MATH_MISMATCH",
+      "message": "Net pay math doesn't balance: Expected $4,954.12, got $5,305.12 (Δ $351.00)",
+      "suggestion": "Review all line items for data entry errors. Formula: Net = Allowances - Taxes - Deductions - Allotments - Debts + Adjustments",
+      "delta_cents": -35100
+    }
+  ],
+  "mathProof": "Allowances:    $  6,360.25\n- Taxes:       $  1,045.13\n- Deductions:  $    361.00\n- Allotments:  $      0.00\n- Debts:       $      0.00\n+ Adjustments: $      0.00\n========================================\n= Net Pay:     $  4,954.12 ✗",
+  "expected": {
+    "base_pay_cents": 425000,
+    "bah_cents": 195000,
+    "bas_cents": 46025,
+    "cola_cents": 0,
+    "specials": []
+  },
+  "taxable_bases": {
+    "fed": 425000,
+    "state": 425000,
+    "oasdi": 425000,
+    "medicare": 425000
+  },
+  "uploadId": "550e8400-e29b-41d4-a716-446655440001"
+}
+

@@ -1,0 +1,49 @@
+{
+  "summary": {
+    "total_allowances": 576025,
+    "total_deductions": 32900,
+    "total_taxes": 61775,
+    "total_allotments": 0,
+    "total_debts": 0,
+    "total_adjustments": 0,
+    "computed_net": 481350,
+    "actual_net": 481325,
+    "net_delta": 25
+  },
+  "flags": [
+    {
+      "severity": "green",
+      "flag_code": "FICA_PCT_CORRECT",
+      "message": "FICA verified: 6.20% (within normal 6.1%-6.3% range)",
+      "suggestion": "No action needed. FICA withholding is correct."
+    },
+    {
+      "severity": "green",
+      "flag_code": "MEDICARE_PCT_CORRECT",
+      "message": "Medicare verified: 1.45% (within normal 1.40%-1.50% range)",
+      "suggestion": "No action needed. Medicare withholding is correct."
+    },
+    {
+      "severity": "green",
+      "flag_code": "NET_MATH_VERIFIED",
+      "message": "Net pay math verified: $4,813.25 ✓",
+      "suggestion": "No action needed. Math checks out!"
+    }
+  ],
+  "mathProof": "Allowances:    $  5,760.25\n- Taxes:       $    617.75\n- Deductions:  $    329.00\n- Allotments:  $      0.00\n- Debts:       $      0.00\n+ Adjustments: $      0.00\n========================================\n= Net Pay:     $  4,813.50 ✓",
+  "expected": {
+    "base_pay_cents": 350000,
+    "bah_cents": 180000,
+    "bas_cents": 46025,
+    "cola_cents": 0,
+    "specials": []
+  },
+  "taxable_bases": {
+    "fed": 350000,
+    "state": 350000,
+    "oasdi": 350000,
+    "medicare": 350000
+  },
+  "uploadId": "550e8400-e29b-41d4-a716-446655440000"
+}
+

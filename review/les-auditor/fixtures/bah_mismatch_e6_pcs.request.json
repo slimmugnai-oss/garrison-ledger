@@ -1,0 +1,84 @@
+{
+  "month": 9,
+  "year": 2025,
+  "profile": {
+    "paygrade": "E06",
+    "yos": 12,
+    "mhaOrZip": "NC107",
+    "withDependents": true,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "actual": {
+    "allowances": [
+      {
+        "code": "BASEPAY",
+        "description": "Base Pay",
+        "amount_cents": 425000
+      },
+      {
+        "code": "BAH",
+        "description": "BAH With Dependents",
+        "amount_cents": 165000
+      },
+      {
+        "code": "BAS",
+        "description": "Basic Allowance for Subsistence",
+        "amount_cents": 46025
+      },
+      {
+        "code": "COLA",
+        "description": "Cost of Living Allowance",
+        "amount_cents": 0
+      }
+    ],
+    "taxes": [
+      {
+        "code": "TAX_FED",
+        "description": "Federal Income Tax",
+        "amount_cents": 50000
+      },
+      {
+        "code": "TAX_STATE",
+        "description": "North Carolina State Tax",
+        "amount_cents": 22000
+      },
+      {
+        "code": "FICA",
+        "description": "FICA (Social Security)",
+        "amount_cents": 26350
+      },
+      {
+        "code": "MEDICARE",
+        "description": "Medicare Tax",
+        "amount_cents": 6163
+      }
+    ],
+    "deductions": [
+      {
+        "code": "TSP",
+        "description": "Thrift Savings Plan (5%)",
+        "amount_cents": 31800
+      },
+      {
+        "code": "SGLI",
+        "description": "SGLI Life Insurance",
+        "amount_cents": 2900
+      },
+      {
+        "code": "DENTAL",
+        "description": "TRICARE Dental",
+        "amount_cents": 1400
+      }
+    ],
+    "allotments": [],
+    "debts": [],
+    "adjustments": [],
+    "net_pay_cents": 530512
+  }
+}
+

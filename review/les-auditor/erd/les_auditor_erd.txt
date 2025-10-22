@@ -1,0 +1,132 @@
+LES AUDITOR - ENTITY RELATIONSHIP DIAGRAM
+==========================================
+
+┌──────────────────────────────────────┐
+│         les_uploads                  │  Primary audit record
+├──────────────────────────────────────┤
+│ PK  id (uuid)                        │
+│     user_id (text)                   │  → Links to Clerk user
+│     month (int 1-12)                 │
+│     year (int 2020-2099)             │
+│     entry_type (pdf|manual)          │
+│     audit_status (draft|completed)   │
+│     profile_snapshot (jsonb)         │  Snapshot of user data
+│     deleted_at (timestamptz)         │  Soft delete
+│     audit_completed_at (timestamptz) │
+│     red_flags_count (int)            │  Denormalized
+│     yellow_flags_count (int)         │  Denormalized
+│     green_flags_count (int)          │  Denormalized
+│     total_delta_cents (int)          │  Denormalized
+│     created_at, updated_at           │
+└──────────────────────────────────────┘
+         │
+         │ 1:N
+         ├─────────────────────────────────┐
+         │                                 │
+         ▼                                 ▼
+┌─────────────────────────────┐   ┌──────────────────────────────┐
+│      les_lines              │   │  expected_pay_snapshot       │
+├─────────────────────────────┤   ├──────────────────────────────┤
+│ PK  id (uuid)               │   │ PK  id (uuid)                │
+│ FK  upload_id → les_uploads │   │     user_id (text)           │
+│     line_code (text)        │   │ FK  upload_id → les_uploads  │
+│     description (text)      │   │     month, year              │
+│     amount_cents (int)      │   │     paygrade (text)          │
+│     section (enum)          │   │     mha_or_zip (text)        │
+│       - ALLOWANCE           │   │     with_dependents (bool)   │
+│       - TAX                 │   │     yos (int)                │
+│       - DEDUCTION           │   │                              │
+│       - ALLOTMENT           │   │  EXPECTED VALUES (cents):   │
+│       - DEBT                │   │     expected_bah_cents       │
+│       - ADJUSTMENT          │   │     expected_bas_cents       │
+│     taxability (jsonb)      │   │     expected_base_pay_cents  │
+│       {fed, state,          │   │     expected_cola_cents      │
+│        oasdi, medicare}     │   │     expected_specials (jsonb)│
+│     created_at              │   │                              │
+└─────────────────────────────┘   │  TAXABLE BASES (jsonb):     │
+         │                         │     {fed, state,             │
+         │                         │      oasdi, medicare}        │
+         │                         │     created_at               │
+         │                         └──────────────────────────────┘
+         │ 1:N
+         ▼
+┌─────────────────────────────┐
+│      pay_flags              │  Validation results
+├─────────────────────────────┤
+│ PK  id (uuid)               │
+│ FK  upload_id → les_uploads │
+│     severity (enum)         │
+│       - red (critical)      │
+│       - yellow (warning)    │
+│       - green (verified)    │
+│     flag_code (text)        │
+│       BAH_MISMATCH          │
+│       BAS_MISSING           │
+│       FICA_PCT_OUT_OF_RANGE │
+│       NET_MATH_MISMATCH     │
+│       etc.                  │
+│     message (text)          │  BLUF explanation
+│     suggestion (text)       │  Next step guidance
+│     ref_url (text)          │  Official source link
+│     delta_cents (int)       │  $ variance
+│     created_at              │
+└─────────────────────────────┘
+
+REFERENCED TABLES (not shown in detail):
+-----------------------------------------
+▪ user_profiles - Profile data (rank, base, dependents, TSP%, SGLI, etc.)
+▪ military_pay_tables - Official DFAS base pay by paygrade & YOS
+▪ bah_rates - 16,368 official BAH rates by MHA, paygrade, dependents
+▪ sgli_rates - 8 SGLI premium tiers ($50K-$400K coverage)
+▪ payroll_tax_constants - FICA wage base, Medicare rates
+▪ conus_cola_rates - CONUS Cost of Living Allowance
+▪ oconus_cola_rates - OCONUS Cost of Living Allowance
+
+KEY RELATIONSHIPS:
+------------------
+1. les_uploads → les_lines (1:N)
+   Each audit has multiple line items (allowances, taxes, deductions)
+
+2. les_uploads → expected_pay_snapshot (1:1)
+   Each audit has one expected pay calculation
+
+3. les_uploads → pay_flags (1:N)
+   Each audit generates multiple validation flags
+
+4. les_uploads.user_id → user_profiles.user_id (N:1)
+   Each audit belongs to one user
+
+5. expected_pay_snapshot queries multiple reference tables:
+   - military_pay_tables (for base pay lookup)
+   - bah_rates (for housing allowance lookup)
+   - conus_cola_rates / oconus_cola_rates (for COLA lookup)
+   - user_profiles (for SGLI coverage, TSP %, special pays)
+
+TRIGGER:
+--------
+pay_flags INSERT/UPDATE/DELETE → update_audit_flag_counts()
+  ↓
+Automatically updates denormalized counts on les_uploads:
+  - red_flags_count
+  - yellow_flags_count
+  - green_flags_count
+  - total_delta_cents
+  - audit_completed_at
+  - audit_status
+
+RLS POLICIES:
+-------------
+All tables have RLS enabled with user_id isolation:
+✓ Users can only SELECT their own audits
+✓ Users can only INSERT audits with their own user_id
+✓ Users can only UPDATE/DELETE their own audits
+✓ Soft-deleted audits (deleted_at IS NOT NULL) excluded from queries
+
+INDEXES FOR PERFORMANCE:
+------------------------
+✓ idx_les_uploads_deleted (user_id, deleted_at) WHERE deleted_at IS NULL
+✓ idx_les_uploads_status (user_id, audit_status)
+✓ idx_les_lines_section (upload_id, section)
+✓ (user_id, year DESC, month DESC) on les_uploads
+✓ (upload_id) on les_lines, pay_flags
+

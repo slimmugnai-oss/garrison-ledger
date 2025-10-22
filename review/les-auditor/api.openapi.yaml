@@ -1,0 +1,516 @@
+openapi: 3.0.3
+info:
+  title: LES Auditor API
+  version: 1.0.0
+  description: |
+    Manual-entry LES (Leave and Earnings Statement) audit API for military paycheck validation.
+    
+    **V1 Scope:** Manual entry only (no PDF uploads/OCR).
+    
+    **Key Features:**
+    - Auto-fills allowances from official DFAS tables (BAH, BAS, Base Pay, COLA)
+    - Users enter actual taxes, deductions, and net pay from their LES
+    - Validates FICA = 6.2%, Medicare = 1.45% of taxable gross
+    - Validates net pay math (±$1 tolerance)
+    - Returns actionable flags (red/yellow/green) with suggestions
+    
+  contact:
+    name: Garrison Ledger Support
+    email: support@garrisonledger.com
+
+servers:
+  - url: https://garrisonledger.com/api
+    description: Production
+  - url: http://localhost:3000/api
+    description: Local development
+
+security:
+  - ClerkAuth: []
+
+paths:
+  /les/audit:
+    post:
+      summary: Run LES Audit
+      description: |
+        Validates a service member's paycheck by comparing actual LES values against expected values from official tables.
+        
+        **Process:**
+        1. Create audit record in database
+        2. Insert normalized line items with section and taxability
+        3. Compute expected values from official tables (BAH, BAS, Base Pay, COLA)
+        4. Calculate taxable income bases (excludes BAH/BAS)
+        5. Compare actual vs expected
+        6. Validate FICA/Medicare percentages
+        7. Validate net pay math
+        8. Return flags, summary, and math proof
+        
+      tags:
+        - LES Auditor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditRequest'
+            examples:
+              happy_path:
+                summary: E05 @ Fort Hood - All Correct
+                externalValue: './fixtures/happy_path_e5_fthood.request.json'
+              bah_mismatch:
+                summary: E06 @ Fort Bragg - BAH Incorrect
+                externalValue: './fixtures/bah_mismatch_e6_pcs.request.json'
+                
+      responses:
+        '200':
+          description: Audit completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditResponse'
+              examples:
+                happy_path:
+                  summary: All green flags
+                  externalValue: './fixtures/happy_path_e5_fthood.response.json'
+                bah_mismatch:
+                  summary: Red flags for BAH and net pay
+                  externalValue: './fixtures/bah_mismatch_e6_pcs.response.json'
+        '401':
+          description: Unauthorized - missing or invalid authentication
+        '429':
+          description: Rate limit exceeded
+        '500':
+          description: Server error
+
+  /les/audit/{id}:
+    get:
+      summary: Get Audit Details
+      description: Retrieve full details of a specific audit including flags, line items, and expected values
+      tags:
+        - LES Auditor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Audit details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditDetail'
+        '404':
+          description: Audit not found
+
+  /les/audit/{id}/delete:
+    post:
+      summary: Delete Audit
+      description: Soft deletes an audit (sets deleted_at timestamp). Audit will no longer appear in queries.
+      tags:
+        - LES Auditor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Audit deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '404':
+          description: Audit not found
+
+  /les/audit/{id}/clone:
+    post:
+      summary: Clone Audit for Re-Auditing
+      description: Creates a new draft audit with the same data from a previous audit, allowing users to edit and re-run.
+      tags:
+        - LES Auditor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Audit cloned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  uploadId:
+                    type: string
+                    format: uuid
+                  message:
+                    type: string
+
+  /les/audit/{id}/export:
+    get:
+      summary: Export Audit
+      description: Downloads audit results as JSON (PDF planned for future)
+      tags:
+        - LES Auditor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Audit export file
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /les/audit/search:
+    post:
+      summary: Search/Filter Audits
+      description: Returns filtered and sorted list of user's audits
+      tags:
+        - LES Auditor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date-time
+                endDate:
+                  type: string
+                  format: date-time
+                flagType:
+                  type: string
+                  enum: [red, yellow, green, any-issues]
+                sortBy:
+                  type: string
+                  enum: [date-desc, date-asc, amount-desc, amount-asc]
+                  default: date-desc
+                limit:
+                  type: integer
+                  default: 50
+      responses:
+        '200':
+          description: Filtered audits
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditSummary'
+                  count:
+                    type: integer
+
+components:
+  securitySchemes:
+    ClerkAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk session JWT token
+
+  schemas:
+    AuditRequest:
+      type: object
+      required: [month, year, profile, actual, net_pay_cents]
+      properties:
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: Month of LES (1-12)
+        year:
+          type: integer
+          minimum: 2020
+          maximum: 2099
+          description: Year of LES
+        profile:
+          type: object
+          required: [paygrade, yos, mhaOrZip, withDependents]
+          properties:
+            paygrade:
+              type: string
+              pattern: '^(E0[1-9]|E[1-9][0-9]|O0[1-9]|O10|W0[1-5])$'
+              example: 'E05'
+            yos:
+              type: integer
+              minimum: 0
+              maximum: 40
+              description: Years of service
+            mhaOrZip:
+              type: string
+              description: MHA code (e.g., TX191) or ZIP code
+              example: 'TX191'
+            withDependents:
+              type: boolean
+              description: True if service member has dependents
+            specials:
+              type: object
+              properties:
+                sdap:
+                  type: boolean
+                hfp:
+                  type: boolean
+                fsa:
+                  type: boolean
+                flpp:
+                  type: boolean
+        actual:
+          type: object
+          required: [allowances, taxes, deductions]
+          properties:
+            allowances:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            taxes:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            deductions:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            allotments:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            debts:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            adjustments:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+        net_pay_cents:
+          type: integer
+          description: Actual net pay from LES in cents
+          example: 481325
+
+    LineItem:
+      type: object
+      required: [code, description, amount_cents]
+      properties:
+        code:
+          type: string
+          description: Canonical line code (BASEPAY, BAH, FICA, etc.)
+          example: 'BASEPAY'
+        description:
+          type: string
+          description: Human-readable description
+          example: 'Base Pay'
+        amount_cents:
+          type: integer
+          minimum: 0
+          description: Amount in cents (always positive)
+          example: 350000
+
+    AuditResponse:
+      type: object
+      properties:
+        summary:
+          type: object
+          properties:
+            total_allowances:
+              type: integer
+            total_deductions:
+              type: integer
+            total_taxes:
+              type: integer
+            total_allotments:
+              type: integer
+            total_debts:
+              type: integer
+            total_adjustments:
+              type: integer
+            computed_net:
+              type: integer
+            actual_net:
+              type: integer
+            net_delta:
+              type: integer
+        flags:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayFlag'
+        mathProof:
+          type: string
+          description: Formatted equation showing net pay calculation
+          example: |
+            Allowances:    $  5,760.25
+            - Taxes:       $    617.75
+            - Deductions:  $    329.00
+            = Net Pay:     $  4,813.50 ✓
+        expected:
+          type: object
+          properties:
+            base_pay_cents:
+              type: integer
+            bah_cents:
+              type: integer
+            bas_cents:
+              type: integer
+            cola_cents:
+              type: integer
+            specials:
+              type: array
+              items:
+                type: object
+        taxable_bases:
+          type: object
+          properties:
+            fed:
+              type: integer
+              description: Federal income tax base in cents
+            state:
+              type: integer
+              description: State income tax base in cents
+            oasdi:
+              type: integer
+              description: FICA/Social Security base in cents
+            medicare:
+              type: integer
+              description: Medicare base in cents
+        uploadId:
+          type: string
+          format: uuid
+
+    PayFlag:
+      type: object
+      required: [severity, flag_code, message, suggestion]
+      properties:
+        severity:
+          type: string
+          enum: [red, yellow, green]
+          description: |
+            - red: Critical issue requiring immediate action
+            - yellow: Warning or recommendation
+            - green: Verification that something is correct
+        flag_code:
+          type: string
+          description: Machine-readable flag identifier
+          enum:
+            - BAH_MISMATCH
+            - BAH_MISSING
+            - BAS_MISMATCH
+            - BAS_MISSING
+            - BASEPAY_MISMATCH
+            - COLA_MISSING
+            - COLA_UNEXPECTED
+            - FICA_PCT_OUT_OF_RANGE
+            - FICA_PCT_CORRECT
+            - MEDICARE_PCT_OUT_OF_RANGE
+            - MEDICARE_PCT_CORRECT
+            - NET_MATH_MISMATCH
+            - NET_MATH_VERIFIED
+        message:
+          type: string
+          description: Human-readable message (BLUF style)
+          example: 'BAH discrepancy: Expected $1,950.00, got $1,650.00'
+        suggestion:
+          type: string
+          description: Concrete next step for service member
+          example: 'Contact finance office to correct BAH rate'
+        delta_cents:
+          type: integer
+          description: Expected - Actual in cents (positive = underpaid)
+          example: 30000
+        ref_url:
+          type: string
+          format: uri
+          description: Link to official source or help article
+          example: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+
+    AuditDetail:
+      type: object
+      properties:
+        upload:
+          type: object
+          description: Full audit record with metadata
+        linesBySection:
+          type: object
+          properties:
+            ALLOWANCE:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            TAX:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            DEDUCTION:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+        flagsBySeverity:
+          type: object
+          properties:
+            red:
+              type: array
+              items:
+                $ref: '#/components/schemas/PayFlag'
+            yellow:
+              type: array
+              items:
+                $ref: '#/components/schemas/PayFlag'
+            green:
+              type: array
+              items:
+                $ref: '#/components/schemas/PayFlag'
+        totals:
+          type: object
+
+    AuditSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        month:
+          type: integer
+        year:
+          type: integer
+        entry_type:
+          type: string
+          enum: [manual, pdf]
+        audit_status:
+          type: string
+          enum: [draft, completed, archived]
+        red_flags_count:
+          type: integer
+        yellow_flags_count:
+          type: integer
+        green_flags_count:
+          type: integer
+        total_delta_cents:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+

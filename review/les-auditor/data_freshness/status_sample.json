@@ -1,0 +1,92 @@
+{
+  "checkedAt": "2025-10-22T18:30:00.000Z",
+  "currentYear": 2025,
+  "sources": [
+    {
+      "name": "Military Pay Tables",
+      "table": "military_pay_tables",
+      "status": "current",
+      "rowCount": 282,
+      "latestEffectiveDate": "2025-04-01",
+      "nextReviewDue": "2026-01-01",
+      "officialSource": "https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/",
+      "updateFrequency": "Annual (January, sometimes April for junior enlisted)"
+    },
+    {
+      "name": "BAH Rates",
+      "table": "bah_rates",
+      "status": "current",
+      "rowCount": 16368,
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "2026-01-01",
+      "officialSource": "https://www.defensetravel.dod.mil/site/bahCalc.cfm",
+      "updateFrequency": "Annual (January)"
+    },
+    {
+      "name": "BAS Rates",
+      "file": "lib/ssot.ts",
+      "status": "current",
+      "values": {
+        "officer_cents": 31698,
+        "enlisted_cents": 46025
+      },
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "2026-01-01",
+      "officialSource": "https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/BAS/",
+      "updateFrequency": "Annual (January)"
+    },
+    {
+      "name": "SGLI Premiums",
+      "table": "sgli_rates",
+      "status": "current",
+      "rowCount": 8,
+      "coverageTiers": [50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000],
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "As needed (rarely changes)",
+      "officialSource": "https://www.benefits.va.gov/insurance/sgli.asp",
+      "updateFrequency": "Rarely (check annually)"
+    },
+    {
+      "name": "Tax Constants (FICA/Medicare)",
+      "table": "payroll_tax_constants",
+      "status": "current",
+      "values": {
+        "fica_rate": 0.062,
+        "fica_wage_base_cents": 17610000,
+        "medicare_rate": 0.0145
+      },
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "2026-01-01",
+      "officialSource": "https://www.irs.gov/newsroom/social-security-and-medicare-tax-rates",
+      "updateFrequency": "Annual (January - wage base changes)"
+    },
+    {
+      "name": "CONUS COLA Rates",
+      "table": "conus_cola_rates",
+      "status": "current",
+      "rowCount": 6,
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "2026-01-01 (or quarterly if rates change)",
+      "officialSource": "https://www.dtmo.mil/allowances",
+      "updateFrequency": "Quarterly (Jan, Apr, Jul, Oct)"
+    },
+    {
+      "name": "OCONUS COLA Rates",
+      "table": "oconus_cola_rates",
+      "status": "current",
+      "rowCount": 18,
+      "latestEffectiveDate": "2025-01-01",
+      "nextReviewDue": "2026-01-01 (or quarterly if rates change)",
+      "officialSource": "https://www.dtmo.mil/allowances",
+      "updateFrequency": "Quarterly (Jan, Apr, Jul, Oct)"
+    }
+  ],
+  "summary": {
+    "totalSources": 7,
+    "current": 7,
+    "stale": 0,
+    "critical": 0
+  },
+  "recommendation": "All data sources are current for 2025. LES Auditor is using the latest official rates."
+}
+

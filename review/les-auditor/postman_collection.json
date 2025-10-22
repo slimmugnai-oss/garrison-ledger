@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "LES Auditor API",
+    "description": "Manual-entry LES audit endpoints for testing and review",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{clerk_jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://garrisonledger.com/api",
+      "type": "string"
+    },
+    {
+      "key": "clerk_jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Run Audit - Happy Path (E05 Fort Hood)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"month\": 10,\n  \"year\": 2025,\n  \"profile\": {\n    \"paygrade\": \"E05\",\n    \"yos\": 8,\n    \"mhaOrZip\": \"TX191\",\n    \"withDependents\": true,\n    \"specials\": {\n      \"sdap\": false,\n      \"hfp\": false,\n      \"fsa\": false,\n      \"flpp\": false\n    }\n  },\n  \"actual\": {\n    \"allowances\": [\n      {\"code\":\"BASEPAY\",\"description\":\"Base Pay\",\"amount_cents\":350000},\n      {\"code\":\"BAH\",\"description\":\"BAH With Dependents\",\"amount_cents\":180000},\n      {\"code\":\"BAS\",\"description\":\"Basic Allowance for Subsistence\",\"amount_cents\":46025},\n      {\"code\":\"COLA\",\"description\":\"Cost of Living Allowance\",\"amount_cents\":0}\n    ],\n    \"taxes\": [\n      {\"code\":\"TAX_FED\",\"description\":\"Federal Income Tax\",\"amount_cents\":35000},\n      {\"code\":\"TAX_STATE\",\"description\":\"State Income Tax\",\"amount_cents\":0},\n      {\"code\":\"FICA\",\"description\":\"FICA (Social Security)\",\"amount_cents\":21700},\n      {\"code\":\"MEDICARE\",\"description\":\"Medicare Tax\",\"amount_cents\":5075}\n    ],\n    \"deductions\": [\n      {\"code\":\"TSP\",\"description\":\"Thrift Savings Plan (5%)\",\"amount_cents\":28800},\n      {\"code\":\"SGLI\",\"description\":\"SGLI Life Insurance\",\"amount_cents\":2700},\n      {\"code\":\"DENTAL\",\"description\":\"TRICARE Dental\",\"amount_cents\":1400}\n    ],\n    \"allotments\": [],\n    \"debts\": [],\n    \"adjustments\": [],\n    \"net_pay_cents\": 481325\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/les/audit",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit"]
+        },
+        "description": "Expected: All green flags (FICA 6.2%, Medicare 1.45%, net math ✓)"
+      },
+      "response": []
+    },
+    {
+      "name": "Run Audit - BAH Mismatch (E06 PCS)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"month\": 9,\n  \"year\": 2025,\n  \"profile\": {\n    \"paygrade\": \"E06\",\n    \"yos\": 12,\n    \"mhaOrZip\": \"NC107\",\n    \"withDependents\": true,\n    \"specials\": {\n      \"sdap\": false,\n      \"hfp\": false,\n      \"fsa\": false,\n      \"flpp\": false\n    }\n  },\n  \"actual\": {\n    \"allowances\": [\n      {\"code\":\"BASEPAY\",\"description\":\"Base Pay\",\"amount_cents\":425000},\n      {\"code\":\"BAH\",\"description\":\"BAH With Dependents\",\"amount_cents\":165000},\n      {\"code\":\"BAS\",\"description\":\"Basic Allowance for Subsistence\",\"amount_cents\":46025},\n      {\"code\":\"COLA\",\"description\":\"Cost of Living Allowance\",\"amount_cents\":0}\n    ],\n    \"taxes\": [\n      {\"code\":\"TAX_FED\",\"description\":\"Federal Income Tax\",\"amount_cents\":50000},\n      {\"code\":\"TAX_STATE\",\"description\":\"North Carolina State Tax\",\"amount_cents\":22000},\n      {\"code\":\"FICA\",\"description\":\"FICA (Social Security)\",\"amount_cents\":26350},\n      {\"code\":\"MEDICARE\",\"description\":\"Medicare Tax\",\"amount_cents\":6163}\n    ],\n    \"deductions\": [\n      {\"code\":\"TSP\",\"description\":\"Thrift Savings Plan (5%)\",\"amount_cents\":31800},\n      {\"code\":\"SGLI\",\"description\":\"SGLI Life Insurance\",\"amount_cents\":2900},\n      {\"code\":\"DENTAL\",\"description\":\"TRICARE Dental\",\"amount_cents\":1400}\n    ],\n    \"allotments\": [],\n    \"debts\": [],\n    \"adjustments\": [],\n    \"net_pay_cents\": 530512\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/les/audit",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit"]
+        },
+        "description": "Expected: RED flags for BAH_MISMATCH (delta $300) and NET_MATH_MISMATCH"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Audit Details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/les/audit/:id",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{audit_id}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Audit",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/les/audit/:id/delete",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit", ":id", "delete"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{audit_id}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Clone Audit for Re-Auditing",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/les/audit/:id/clone",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit", ":id", "clone"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{audit_id}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Export Audit",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/les/audit/:id/export",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit", ":id", "export"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{audit_id}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Audits - Has Red Flags",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"flagType\": \"red\",\n  \"sortBy\": \"date-desc\",\n  \"limit\": 50\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/les/audit/search",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit", "search"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+
