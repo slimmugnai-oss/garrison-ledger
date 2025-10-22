@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
+import { useState } from "react";
+import Icon from "@/app/components/ui/Icon";
+import Badge from "@/app/components/ui/Badge";
 
 export interface Alert {
   id: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  category: 'data' | 'api' | 'user' | 'revenue' | 'system';
+  severity: "critical" | "high" | "medium" | "low";
+  category: "data" | "api" | "user" | "revenue" | "system";
   message: string;
   details?: string;
   dismissible?: boolean;
@@ -20,36 +20,36 @@ interface AlertPanelProps {
 
 const severityConfig = {
   critical: {
-    icon: 'AlertTriangle' as const,
-    bgColor: 'bg-gradient-to-r from-red-50 to-rose-50',
-    borderColor: 'border-red-200',
-    textColor: 'text-red-900',
-    iconColor: 'text-red-600',
-    badge: 'danger' as const,
+    icon: "AlertTriangle" as const,
+    bgColor: "bg-gradient-to-r from-red-50 to-rose-50",
+    borderColor: "border-red-200",
+    textColor: "text-red-900",
+    iconColor: "text-red-600",
+    badge: "danger" as const,
   },
   high: {
-    icon: 'AlertCircle' as const,
-    bgColor: 'bg-gradient-to-r from-orange-50 to-amber-50',
-    borderColor: 'border-orange-200',
-    textColor: 'text-orange-900',
-    iconColor: 'text-orange-600',
-    badge: 'warning' as const,
+    icon: "AlertCircle" as const,
+    bgColor: "bg-gradient-to-r from-orange-50 to-amber-50",
+    borderColor: "border-orange-200",
+    textColor: "text-orange-900",
+    iconColor: "text-orange-600",
+    badge: "warning" as const,
   },
   medium: {
-    icon: 'Info' as const,
-    bgColor: 'bg-gradient-to-r from-yellow-50 to-amber-50',
-    borderColor: 'border-yellow-200',
-    textColor: 'text-yellow-900',
-    iconColor: 'text-yellow-600',
-    badge: 'warning' as const,
+    icon: "Info" as const,
+    bgColor: "bg-gradient-to-r from-yellow-50 to-amber-50",
+    borderColor: "border-yellow-200",
+    textColor: "text-yellow-900",
+    iconColor: "text-yellow-600",
+    badge: "warning" as const,
   },
   low: {
-    icon: 'Info' as const,
-    bgColor: 'bg-gradient-to-r from-blue-50 to-indigo-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-900',
-    iconColor: 'text-blue-600',
-    badge: 'info' as const,
+    icon: "Info" as const,
+    bgColor: "bg-gradient-to-r from-blue-50 to-indigo-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-900",
+    iconColor: "text-blue-600",
+    badge: "info" as const,
   },
 };
 
@@ -87,32 +87,32 @@ export default function AlertPanel({ alerts, onDismiss }: AlertPanelProps) {
         return (
           <div
             key={alert.id}
-            className={`
-              ${config.bgColor} border-2 ${config.borderColor} rounded-lg p-4
-              transition-all duration-200
-            `}
+            className={` ${config.bgColor} border-2 ${config.borderColor} rounded-lg p-4 transition-all duration-200`}
           >
             <div className="flex items-start gap-3">
-              <Icon name={config.icon} className={`h-5 w-5 ${config.iconColor} flex-shrink-0 mt-0.5`} />
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2 flex-wrap">
+              <Icon
+                name={config.icon}
+                className={`h-5 w-5 ${config.iconColor} mt-0.5 flex-shrink-0`}
+              />
+
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={config.badge} size="sm">
                       {alert.severity.toUpperCase()}
                     </Badge>
-                    <span className="text-xs font-semibold text-text-muted uppercase">
+                    <span className="text-text-muted text-xs font-semibold uppercase">
                       {alert.category}
                     </span>
                   </div>
-                  
-                  <div className="flex items-center gap-2 flex-shrink-0">
+
+                  <div className="flex flex-shrink-0 items-center gap-2">
                     {alert.details && (
                       <button
                         onClick={() => toggleExpand(alert.id)}
-                        className="text-xs font-semibold text-text-muted hover:text-text-body"
+                        className="text-text-muted hover:text-text-body text-xs font-semibold"
                       >
-                        {isExpanded ? 'Less' : 'More'}
+                        {isExpanded ? "Less" : "More"}
                       </button>
                     )}
                     {alert.dismissible && onDismiss && (
@@ -127,12 +127,10 @@ export default function AlertPanel({ alerts, onDismiss }: AlertPanelProps) {
                   </div>
                 </div>
 
-                <p className={`${config.textColor} font-medium mb-2`}>
-                  {alert.message}
-                </p>
+                <p className={`${config.textColor} mb-2 font-medium`}>{alert.message}</p>
 
                 {isExpanded && alert.details && (
-                  <p className="text-sm text-text-body mb-2 p-3 bg-white/50 rounded border border-border">
+                  <p className="text-text-body mb-2 rounded border border-border bg-white/50 p-3 text-sm">
                     {alert.details}
                   </p>
                 )}
@@ -144,4 +142,3 @@ export default function AlertPanel({ alerts, onDismiss }: AlertPanelProps) {
     </div>
   );
 }
-
