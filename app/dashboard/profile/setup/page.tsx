@@ -434,24 +434,35 @@ export default function ProfileSetupPage() {
       // Ensure has_dependents is derived before saving
       const hasDependents = (data.num_children ?? 0) > 0 || data.marital_status === 'married';
       
+      // Log payload for debugging
+      const payload = { 
+        ...data, 
+        has_dependents: hasDependents,
+        profile_completed: true 
+      };
+      console.log('[ProfileSave] Sending payload:', JSON.stringify(payload, null, 2));
+      
       const res = await fetch('/api/user-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          ...data, 
-          has_dependents: hasDependents,
-          profile_completed: true 
-        }),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error('Save failed');
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('[ProfileSave] API error response:', errorData);
+        throw new Error(errorData.error || errorData.message || 'Save failed');
+      }
+      
       setSaved(true);
       
       // Auto-redirect to dashboard after 1.5 seconds
       setTimeout(() => {
         router.push('/dashboard');
       }, 1500);
-    } catch {
-      setError('Could not save profile. Please try again.');
+    } catch (err) {
+      console.error('[ProfileSave] Caught error:', err);
+      setError(err instanceof Error ? err.message : 'Could not save profile. Please try again.');
     } finally {
       setSaving(false);
     }
