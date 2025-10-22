@@ -734,7 +734,7 @@ function AnalyticsSubTab() {
       {/* Slow Pages */}
       {analyticsData.slowPages.length > 0 && (
         <AnimatedCard delay={150} className="border border-border bg-card p-6">
-          <h3 className="text-text-headings mb-4 text-lg font-bold">🐌 Slow Pages (> 2s)</h3>
+          <h3 className="text-text-headings mb-4 text-lg font-bold">🐌 Slow Pages ({">"}2s)</h3>
           <div className="space-y-2">
             {analyticsData.slowPages.map((page) => (
               <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-red-200 p-3">
@@ -752,7 +752,7 @@ function AnalyticsSubTab() {
       {/* Outdated Content */}
       {analyticsData.outdatedPages.length > 0 && (
         <AnimatedCard delay={200} className="border border-border bg-card p-6">
-          <h3 className="text-text-headings mb-4 text-lg font-bold">📅 Outdated Content (> 90 days)</h3>
+          <h3 className="text-text-headings mb-4 text-lg font-bold">📅 Outdated Content ({">"} 90 days)</h3>
           <div className="space-y-2">
             {analyticsData.outdatedPages.map((page) => (
               <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-border p-3">
