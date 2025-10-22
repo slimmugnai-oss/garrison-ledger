@@ -1072,15 +1072,174 @@ function AnalyticsSubTab() {
 
 // Broken Links Sub-Tab
 function BrokenLinksSubTab() {
+  const [scanning, setScanning] = useState(false);
+  const [brokenLinks, setBrokenLinks] = useState<Array<{
+    sourcePage: string;
+    sourceTitle: string;
+    brokenLink: string;
+    linkText: string;
+    statusCode: number | null;
+    errorMessage: string;
+  }>>([]);
+  const [scanStats, setScanStats] = useState<{
+    scanned: number;
+    totalLinks: number;
+    brokenCount: number;
+  } | null>(null);
+
+  const scanForBrokenLinks = async () => {
+    setScanning(true);
+    try {
+      const res = await fetch("/api/admin/sitemap/broken-links", {
+        method: "POST",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBrokenLinks(data.brokenLinks);
+        setScanStats({
+          scanned: data.scanned,
+          totalLinks: data.totalLinks,
+          brokenCount: data.brokenCount,
+        });
+        
+        if (data.brokenCount === 0) {
+          alert(`✅ Scan complete!\n\nScanned: ${data.scanned} pages\nChecked: ${data.totalLinks} links\nBroken: 0\n\nAll links are healthy! 🎉`);
+        } else {
+          alert(`⚠️ Scan complete!\n\nScanned: ${data.scanned} pages\nChecked: ${data.totalLinks} links\nBroken: ${data.brokenCount}\n\nSee results below.`);
+        }
+      } else {
+        alert("❌ Failed to scan for broken links");
+      }
+    } catch (error) {
+      alert("❌ Error scanning for broken links");
+    } finally {
+      setScanning(false);
+    }
+  };
+
   return (
-    <AnimatedCard className="border border-border bg-card p-12 text-center">
-      <Icon name="Link" className="mx-auto mb-4 h-16 w-16 text-primary opacity-50" />
-      <h3 className="text-text-headings mb-2 text-2xl font-bold">
-        Broken Link Detection Coming Soon
-      </h3>
-      <p className="text-text-muted mx-auto max-w-md">
-        Automated broken link scanning, source tracking, and fix suggestions will be available here.
-      </p>
-    </AnimatedCard>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-text-headings text-xl font-bold">Broken Link Scanner</h3>
+          <p className="text-text-muted text-sm">Scan all pages for broken internal links</p>
+        </div>
+        <button
+          onClick={scanForBrokenLinks}
+          disabled={scanning}
+          className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
+        >
+          <Icon name={scanning ? "RefreshCw" : "Link"} className={`h-4 w-4 ${scanning ? "animate-spin" : ""}`} />
+          {scanning ? "Scanning..." : "Scan for Broken Links"}
+        </button>
+      </div>
+
+      {/* Stats */}
+      {scanStats && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <MetricCard
+            title="Pages Scanned"
+            value={scanStats.scanned}
+            subtitle="All platform pages"
+            icon="CheckCircle"
+            variant="info"
+          />
+          <MetricCard
+            title="Links Checked"
+            value={scanStats.totalLinks}
+            subtitle="Internal links found"
+            icon="Link"
+            variant="default"
+          />
+          <MetricCard
+            title="Broken Links"
+            value={scanStats.brokenCount}
+            subtitle={scanStats.brokenCount === 0 ? "All healthy!" : "Need fixing"}
+            icon={scanStats.brokenCount === 0 ? "CheckCircle" : "XCircle"}
+            variant={scanStats.brokenCount === 0 ? "success" : "danger"}
+          />
+        </div>
+      )}
+
+      {/* Results */}
+      {brokenLinks.length === 0 && scanStats ? (
+        <AnimatedCard className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-12 text-center">
+          <Icon name="CheckCircle" className="mx-auto mb-4 h-16 w-16 text-green-600" />
+          <h3 className="text-text-headings mb-2 text-2xl font-bold">No Broken Links Found!</h3>
+          <p className="text-text-muted mx-auto max-w-md">
+            All {scanStats.totalLinks} internal links are working correctly. Site navigation is healthy! 🎉
+          </p>
+        </AnimatedCard>
+      ) : brokenLinks.length > 0 ? (
+        <AnimatedCard delay={50} className="border border-border bg-card p-6">
+          <h3 className="text-text-headings mb-4 text-lg font-bold">🔴 Broken Links Found</h3>
+          <div className="space-y-3">
+            {brokenLinks.map((link, idx) => (
+              <div key={idx} className="flex items-start justify-between gap-4 rounded-lg border border-red-200 bg-red-50/30 p-4">
+                <div className="flex-1">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Icon name="XCircle" className="h-4 w-4 flex-shrink-0 text-red-600" />
+                    <code className="text-text-headings font-mono text-sm font-semibold">{link.brokenLink}</code>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="text-text-muted">
+                      <span className="font-semibold">Source:</span> {link.sourcePage} ({link.sourceTitle})
+                    </p>
+                    <p className="text-text-muted">
+                      <span className="font-semibold">Link Text:</span> "{link.linkText}"
+                    </p>
+                    <p className="text-text-muted">
+                      <span className="font-semibold">Error:</span> {link.errorMessage || "Link not found"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  {link.statusCode ? (
+                    <Badge variant="danger">{link.statusCode}</Badge>
+                  ) : (
+                    <Badge variant="secondary">Error</Badge>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recommendations */}
+          <div className="bg-surface-hover mt-6 rounded-lg border border-border p-4">
+            <h4 className="text-text-headings mb-2 font-bold">💡 Recommended Actions</h4>
+            <ul className="text-text-body space-y-1 text-sm">
+              <li className="flex items-start gap-2">
+                <Icon name="CheckCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                <span>Fix broken links in source pages</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Icon name="CheckCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                <span>Create redirect rules for moved pages</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Icon name="CheckCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                <span>Update navigation menus</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Icon name="CheckCircle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                <span>Remove obsolete links</span>
+              </li>
+            </ul>
+          </div>
+        </AnimatedCard>
+      ) : (
+        <AnimatedCard className="border border-border bg-card p-12 text-center">
+          <Icon name="Link" className="mx-auto mb-4 h-16 w-16 text-primary opacity-50" />
+          <h3 className="text-text-headings mb-2 text-2xl font-bold">Ready to Scan</h3>
+          <p className="text-text-muted mx-auto max-w-md">
+            Click "Scan for Broken Links" above to check all internal links across all 32 pages.
+          </p>
+          <p className="text-text-muted mx-auto mt-4 max-w-md text-sm">
+            <strong>Note:</strong> This scans the actual HTML of each page and checks all internal links. The scan takes ~1-2 minutes for all pages.
+          </p>
+        </AnimatedCard>
+      )}
+    </div>
   );
 }
