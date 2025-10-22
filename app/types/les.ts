@@ -301,6 +301,12 @@ export interface ComparisonResult {
     actualAllowancesCents: number;
     expectedAllowancesCents: number;
     deltaCents: number;
+    actualDeductionsCents: number;
+    expectedDeductionsCents: number;
+    actualTaxesCents: number;
+    expectedTaxesCents: number;
+    actualNetPayCents: number;
+    expectedNetPayCents: number;
   };
 }
 

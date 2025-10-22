@@ -14,7 +14,7 @@ import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import IntelCardLink from '@/app/components/les/IntelCardLink';
 import AuditProvenancePopover from '@/app/components/les/AuditProvenancePopover';
 import ExportAuditPDF from '@/app/components/les/ExportAuditPDF';
-import LesManualEntry from '@/app/components/les/LesManualEntry';
+import LesManualEntryTabbed from '@/app/components/les/LesManualEntryTabbed';
 import type { LesAuditResponse, PayFlag } from '@/app/types/les';
 
 interface Props {
@@ -262,7 +262,7 @@ export default function PaycheckAuditClient({
 
         {/* Manual Entry Section */}
         {entryMode === 'manual' && !auditResult && !parsing && (
-          <LesManualEntry
+          <LesManualEntryTabbed
             tier={isPremium ? 'premium' : 'free'}
             isPremium={isPremium}
             hasProfile={!!(userProfile.rank && userProfile.currentBase && userProfile.hasDependents !== null && userProfile.hasDependents !== undefined)}
