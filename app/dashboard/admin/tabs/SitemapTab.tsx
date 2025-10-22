@@ -19,6 +19,8 @@ interface SitePage {
   response_time_ms: number | null;
   view_count_7d: number;
   view_count_30d: number;
+  bounce_rate: number | null;
+  avg_time_on_page_seconds: number | null;
   last_updated: string;
   last_audit: string | null;
   dependencies: Record<string, unknown>;
