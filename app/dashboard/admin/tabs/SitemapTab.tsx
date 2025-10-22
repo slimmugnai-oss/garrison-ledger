@@ -106,9 +106,15 @@ export default function SitemapTab() {
       </div>
 
       {/* Sub-tab Content */}
-      {activeSubTab === "overview" && <OverviewSubTab data={sitemapData} onReload={loadSitemapData} />}
-      {activeSubTab === "pages" && <PagesSubTab pages={sitemapData.pages} onReload={loadSitemapData} />}
-      {activeSubTab === "health" && <HealthSubTab pages={sitemapData.pages} onReload={loadSitemapData} />}
+      {activeSubTab === "overview" && (
+        <OverviewSubTab data={sitemapData} onReload={loadSitemapData} />
+      )}
+      {activeSubTab === "pages" && (
+        <PagesSubTab pages={sitemapData.pages} onReload={loadSitemapData} />
+      )}
+      {activeSubTab === "health" && (
+        <HealthSubTab pages={sitemapData.pages} onReload={loadSitemapData} />
+      )}
       {activeSubTab === "analytics" && <AnalyticsSubTab />}
       {activeSubTab === "links" && <BrokenLinksSubTab />}
     </div>
@@ -200,7 +206,7 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
             };
 
             return (
-              <div key={category} className="border-border rounded-lg border">
+              <div key={category} className="rounded-lg border border-border">
                 <button
                   onClick={() => toggleCategory(category)}
                   className="hover:bg-surface-hover flex w-full items-center justify-between p-4 text-left transition-colors"
@@ -219,7 +225,9 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
                     {categoryHealth.warning > 0 && (
                       <span className="text-sm">🟡 {categoryHealth.warning}</span>
                     )}
-                    {categoryHealth.error > 0 && <span className="text-sm">🔴 {categoryHealth.error}</span>}
+                    {categoryHealth.error > 0 && (
+                      <span className="text-sm">🔴 {categoryHealth.error}</span>
+                    )}
                     {categoryHealth.unknown > 0 && (
                       <span className="text-sm">⚫ {categoryHealth.unknown}</span>
                     )}
@@ -227,7 +235,7 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
                 </button>
 
                 {isExpanded && (
-                  <div className="border-border space-y-1 border-t bg-surface-hover/30 p-2">
+                  <div className="bg-surface-hover/30 space-y-1 border-t border-border p-2">
                     {pages.map((page) => (
                       <div
                         key={page.id}
@@ -235,7 +243,7 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
                       >
                         <div className="flex items-center gap-2">
                           <span>{getHealthIcon(page.health_status)}</span>
-                          <code className="text-text-body text-sm font-mono">{page.path}</code>
+                          <code className="text-text-body font-mono text-sm">{page.path}</code>
                           <span className="text-text-muted text-sm">- {page.title}</span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -245,7 +253,9 @@ function OverviewSubTab({ data, onReload }: { data: SitemapData; onReload: () =>
                             </Badge>
                           )}
                           {page.response_time_ms && (
-                            <span className="text-text-muted text-xs">{page.response_time_ms}ms</span>
+                            <span className="text-text-muted text-xs">
+                              {page.response_time_ms}ms
+                            </span>
                           )}
                         </div>
                       </div>
@@ -281,7 +291,11 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
       key: "path",
       header: "Path",
       sortable: true,
-      render: (page) => <code className="text-text-body rounded bg-surface-hover px-2 py-1 text-xs">{page.path}</code>,
+      render: (page) => (
+        <code className="text-text-body bg-surface-hover rounded px-2 py-1 text-xs">
+          {page.path}
+        </code>
+      ),
     },
     {
       key: "title",
@@ -323,7 +337,9 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
       sortable: true,
       width: "w-24",
       render: (page) => (
-        <span className={`text-sm ${page.response_time_ms && page.response_time_ms > 2000 ? "text-danger" : "text-text-muted"}`}>
+        <span
+          className={`text-sm ${page.response_time_ms && page.response_time_ms > 2000 ? "text-danger" : "text-text-muted"}`}
+        >
           {page.response_time_ms ? `${page.response_time_ms}ms` : "-"}
         </span>
       ),
@@ -333,7 +349,9 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
       header: "Views (30d)",
       sortable: true,
       width: "w-28",
-      render: (page) => <span className="text-text-body font-semibold">{page.view_count_30d || 0}</span>,
+      render: (page) => (
+        <span className="text-text-body font-semibold">{page.view_count_30d || 0}</span>
+      ),
     },
   ];
 
@@ -342,7 +360,9 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-text-headings text-xl font-bold">All Pages</h3>
-          <p className="text-text-muted text-sm">Complete list of platform pages with health status</p>
+          <p className="text-text-muted text-sm">
+            Complete list of platform pages with health status
+          </p>
         </div>
         <button
           onClick={onReload}
@@ -353,7 +373,13 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
         </button>
       </div>
 
-      <DataTable data={pages} columns={columns} keyExtractor={(page) => page.id} pageSize={25} emptyMessage="No pages found" />
+      <DataTable
+        data={pages}
+        columns={columns}
+        keyExtractor={(page) => page.id}
+        pageSize={25}
+        emptyMessage="No pages found"
+      />
     </div>
   );
 }
@@ -401,7 +427,10 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           disabled={checking}
           className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors disabled:opacity-50"
         >
-          <Icon name={checking ? "RefreshCw" : "Activity"} className={`h-4 w-4 ${checking ? "animate-spin" : ""}`} />
+          <Icon
+            name={checking ? "RefreshCw" : "Activity"}
+            className={`h-4 w-4 ${checking ? "animate-spin" : ""}`}
+          />
           {checking ? "Checking..." : "Run Health Check"}
         </button>
       </div>
@@ -418,7 +447,10 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           </div>
         </AnimatedCard>
 
-        <AnimatedCard className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4" delay={50}>
+        <AnimatedCard
+          className="border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4"
+          delay={50}
+        >
           <div className="flex items-center justify-between">
             <div>
               <div className="mb-1 text-sm font-semibold text-amber-700">Warning</div>
@@ -428,7 +460,10 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           </div>
         </AnimatedCard>
 
-        <AnimatedCard className="border-2 border-red-200 bg-gradient-to-br from-red-50 to-rose-50 p-4" delay={100}>
+        <AnimatedCard
+          className="border-2 border-red-200 bg-gradient-to-br from-red-50 to-rose-50 p-4"
+          delay={100}
+        >
           <div className="flex items-center justify-between">
             <div>
               <div className="mb-1 text-sm font-semibold text-red-700">Error</div>
@@ -438,7 +473,10 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           </div>
         </AnimatedCard>
 
-        <AnimatedCard className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-4" delay={150}>
+        <AnimatedCard
+          className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-4"
+          delay={150}
+        >
           <div className="flex items-center justify-between">
             <div>
               <div className="mb-1 text-sm font-semibold text-gray-700">Unknown</div>
@@ -455,9 +493,12 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
           <h3 className="text-text-headings mb-4 text-lg font-bold">Pages Needing Attention</h3>
           <div className="space-y-3">
             {errorPages.map((page) => (
-              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-red-200 p-3">
+              <div
+                key={page.id}
+                className="bg-surface-hover flex items-center justify-between rounded-lg border border-red-200 p-3"
+              >
                 <div>
-                  <code className="text-text-body text-sm font-mono">{page.path}</code>
+                  <code className="text-text-body font-mono text-sm">{page.path}</code>
                   <p className="text-text-muted mt-1 text-xs">
                     {page.response_time_ms ? `${page.response_time_ms}ms` : "No response"}
                   </p>
@@ -466,9 +507,12 @@ function HealthSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => 
               </div>
             ))}
             {warningPages.map((page) => (
-              <div key={page.id} className="bg-surface-hover flex items-center justify-between rounded-lg border border-amber-200 p-3">
+              <div
+                key={page.id}
+                className="bg-surface-hover flex items-center justify-between rounded-lg border border-amber-200 p-3"
+              >
                 <div>
-                  <code className="text-text-body text-sm font-mono">{page.path}</code>
+                  <code className="text-text-body font-mono text-sm">{page.path}</code>
                   <p className="text-text-muted mt-1 text-xs">
                     {page.response_time_ms ? `${page.response_time_ms}ms (slow)` : "-"}
                   </p>
@@ -521,7 +565,8 @@ function AnalyticsSubTab() {
       <Icon name="TrendingUp" className="mx-auto mb-4 h-16 w-16 text-primary opacity-50" />
       <h3 className="text-text-headings mb-2 text-2xl font-bold">Page Analytics Coming Soon</h3>
       <p className="text-text-muted mx-auto max-w-md">
-        Top pages, low traffic pages, high bounce rates, and user flow analysis will be available here.
+        Top pages, low traffic pages, high bounce rates, and user flow analysis will be available
+        here.
       </p>
     </AnimatedCard>
   );
@@ -532,11 +577,12 @@ function BrokenLinksSubTab() {
   return (
     <AnimatedCard className="border border-border bg-card p-12 text-center">
       <Icon name="Link" className="mx-auto mb-4 h-16 w-16 text-primary opacity-50" />
-      <h3 className="text-text-headings mb-2 text-2xl font-bold">Broken Link Detection Coming Soon</h3>
+      <h3 className="text-text-headings mb-2 text-2xl font-bold">
+        Broken Link Detection Coming Soon
+      </h3>
       <p className="text-text-muted mx-auto max-w-md">
         Automated broken link scanning, source tracking, and fix suggestions will be available here.
       </p>
     </AnimatedCard>
   );
 }
-
