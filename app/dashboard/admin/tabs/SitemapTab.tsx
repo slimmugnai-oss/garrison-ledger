@@ -276,7 +276,7 @@ function PagesSubTab({ pages, onReload }: { pages: SitePage[]; onReload: () => v
     }
   };
 
-  const columns: Column<SitePage> = [
+  const columns: Column<SitePage>[] = [
     {
       key: "path",
       header: "Path",
