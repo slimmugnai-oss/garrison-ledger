@@ -590,6 +590,21 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <span className="text-sm text-gray-500">From LES "Taxes" section</span>
             </div>
 
+            {/* Tax Disclaimer Banner */}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-semibold text-amber-900 mb-1">Tax Estimates Are Rough Approximations</p>
+                  <p className="text-amber-800">
+                    Federal and state tax calculations are simplified estimates. For accurate validation,
+                    enter your <strong>actual tax withholding from your LES</strong> in the fields below.
+                    Tax estimates depend on W-4 settings, YTD earnings, and state-specific rules.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <CurrencyInput
                 label="Federal Income Tax Withheld"

@@ -18,7 +18,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { buildExpectedSnapshot } from '@/lib/les/expected';
+import { buildExpectedSnapshot, validateRankYOS } from '@/lib/les/expected';
 import { compareLesToExpected } from '@/lib/les/compare';
 import type { LesLine } from '@/app/types/les';
 import { ssot } from '@/lib/ssot';
@@ -344,7 +344,24 @@ export async function POST(req: NextRequest) {
     }
 
     // ==========================================================================
-    // 7. BUILD EXPECTED SNAPSHOT
+    // 7. VALIDATE RANK VS YOS
+    // ==========================================================================
+    if (profile.yos !== undefined) {
+      const validation = validateRankYOS(profile.paygrade, profile.yos);
+      if (!validation.valid) {
+        logger.warn('[LESManual] Rank vs YOS validation failed', { 
+          userId: userId.substring(0, 8) + '...', 
+          paygrade: profile.paygrade, 
+          yos: profile.yos,
+          error: validation.error 
+        });
+        // Log warning but proceed (user might have unusual circumstances)
+        // Don't block audit - just log for admin review
+      }
+    }
+
+    // ==========================================================================
+    // 8. BUILD EXPECTED SNAPSHOT
     // ==========================================================================
     const snapshot = await buildExpectedSnapshot({
       userId,
@@ -375,7 +392,7 @@ export async function POST(req: NextRequest) {
       });
 
     // ==========================================================================
-    // 8. COMPARE ACTUAL VS EXPECTED
+    // 9. COMPARE ACTUAL VS EXPECTED
     // ==========================================================================
     const comparison = compareLesToExpected(lines, snapshot);
 
@@ -403,7 +420,7 @@ export async function POST(req: NextRequest) {
       .eq('id', uploadRecord.id);
 
     // ==========================================================================
-    // 9. ANALYTICS
+    // 10. ANALYTICS
     // ==========================================================================
     const duration = Date.now() - startTime;
 
@@ -428,7 +445,7 @@ export async function POST(req: NextRequest) {
     });
 
     // ==========================================================================
-    // 10. RETURN RESPONSE
+    // 11. RETURN RESPONSE
     // ==========================================================================
     return NextResponse.json({
       snapshot,

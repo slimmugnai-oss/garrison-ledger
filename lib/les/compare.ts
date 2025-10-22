@@ -239,8 +239,9 @@ export function compareLesToExpected(
     const expectedFederal = expected.expected.federal_tax_cents;
     const delta = expectedFederal - actualFederal;
     
-    // Higher threshold for federal tax (it's an estimate)
-    if (Math.abs(delta) > 5000) { // $50 threshold
+    // Higher threshold for federal tax since it's a rough estimate
+    // Actual withholding varies significantly based on W-4 settings
+    if (Math.abs(delta) > 10000) { // $100 threshold (increased from $50)
       flags.push(createFederalTaxVarianceFlag(actualFederal, expectedFederal, delta));
     }
   }
@@ -251,7 +252,8 @@ export function compareLesToExpected(
     const expectedState = expected.expected.state_tax_cents;
     const delta = expectedState - actualState;
     
-    if (Math.abs(delta) > 2000) { // $20 threshold
+    // Higher threshold for state tax estimates
+    if (Math.abs(delta) > 5000) { // $50 threshold (increased from $20)
       flags.push(createStateTaxVarianceFlag(actualState, expectedState, delta));
     } else if (expectedState === 0 && actualState === 0) {
       // No state tax expected and none withheld (correct for no-tax states)
@@ -270,11 +272,18 @@ export function compareLesToExpected(
     if (actualNetPay === 0) {
       // Net pay not entered (user skipped it)
       flags.push(createVerificationNeededFlag('NET_PAY', 'Net pay not entered - unable to verify take-home amount'));
-    } else if (Math.abs(delta) > 5000) { // $50 threshold for net pay
-      flags.push(createNetPayMismatchFlag(actualNetPay, expectedNetPay, delta));
     } else {
-      // Net pay verified correct - THE BIG WIN
-      flags.push(createNetPayCorrectFlag(actualNetPay));
+      // Sanity check: Net pay should be reasonable ($1,500-$12,000/month for most service members)
+      if (actualNetPay < 150000) { // Less than $1,500/month
+        flags.push(createNetPayTooLowWarning(actualNetPay));
+      } else if (actualNetPay > 1200000) { // More than $12,000/month
+        flags.push(createNetPayTooHighWarning(actualNetPay));
+      } else if (Math.abs(delta) > 5000) { // $50 threshold for net pay
+        flags.push(createNetPayMismatchFlag(actualNetPay, expectedNetPay, delta));
+      } else {
+        // Net pay verified correct - THE BIG WIN
+        flags.push(createNetPayCorrectFlag(actualNetPay));
+      }
     }
   }
   
@@ -555,8 +564,8 @@ function createFICAMismatchFlag(actual: number, expected: number, delta: number)
   return {
     severity: delta < 0 ? 'red' : 'yellow',
     flag_code: 'FICA_MISMATCH',
-    message: `FICA (Social Security) tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (6.2% of gross). Delta: ${delta > 0 ? '+' : '-'}$${deltaDollars}.`,
-    suggestion: `FICA should be exactly 6.2% of your gross pay (up to the annual wage base). Contact finance if significantly different - this is a statutory rate with no variation.`,
+    message: `FICA (Social Security) tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (6.2% of taxable pay). Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
+    suggestion: `FICA should be exactly 6.2% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are not taxed). Maximum annual FICA is capped at the wage base ($176,100 for 2025). If significantly different, contact finance - this is a statutory rate. Note: Our estimate uses simplified monthly calculation and may not account for YTD earnings.`,
     ref_url: 'https://www.irs.gov/taxtopics/tc751',
     delta_cents: delta
   };
@@ -570,8 +579,8 @@ function createMedicareMismatchFlag(actual: number, expected: number, delta: num
   return {
     severity: delta < 0 ? 'red' : 'yellow',
     flag_code: 'MEDICARE_MISMATCH',
-    message: `Medicare tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (1.45% of gross). Delta: ${delta > 0 ? '+' : '-'}$${deltaDollars}.`,
-    suggestion: `Medicare should be exactly 1.45% of your gross pay with no exceptions. Contact finance if different - this is a statutory rate.`,
+    message: `Medicare tax variance: Withheld $${actualDollars}, expected $${expectedDollars} (1.45% of taxable pay). Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
+    suggestion: `Medicare should be exactly 1.45% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are not taxed). There is no wage base limit for Medicare. Contact finance if significantly different - this is a statutory rate with no variation.`,
     ref_url: 'https://www.irs.gov/taxtopics/tc751',
     delta_cents: delta
   };
@@ -585,8 +594,8 @@ function createFederalTaxVarianceFlag(actual: number, expected: number, delta: n
   return {
     severity: 'yellow',
     flag_code: 'FEDERAL_TAX_VARIANCE',
-    message: `Federal tax withholding variance: Withheld $${actualDollars}, estimated $${expectedDollars}. Delta: ${delta > 0 ? '+' : '-'}$${deltaDollars}.`,
-    suggestion: `Federal tax withholding depends on your W-4 settings and year-to-date earnings. This is an estimate - verify your W-4 elections in myPay match your intentions. Adjust if needed.`,
+    message: `Federal tax withholding variance: Withheld $${actualDollars}, estimated $${expectedDollars}. Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
+    suggestion: `⚠️ This is a rough estimate only. Federal tax withholding depends on your W-4 settings, YTD earnings, and tax bracket. For accuracy, use the IRS Tax Withholding Estimator to verify your W-4 is correct. This flag is informational - your actual withholding may be correct.`,
     ref_url: 'https://www.irs.gov/individuals/tax-withholding-estimator',
     delta_cents: delta
   };
@@ -600,8 +609,8 @@ function createStateTaxVarianceFlag(actual: number, expected: number, delta: num
   return {
     severity: 'yellow',
     flag_code: 'STATE_TAX_VARIANCE',
-    message: `State tax withholding variance: Withheld $${actualDollars}, expected $${expectedDollars}. Delta: ${delta > 0 ? '+' : '-'}$${deltaDollars}.`,
-    suggestion: `State tax depends on your state of legal residence (home of record) and state-specific rules. Verify your residence in myPay matches your actual home of record.`,
+    message: `State tax withholding variance: Withheld $${actualDollars}, estimated $${expectedDollars}. Delta: ${delta > 0 ? 'UNDER-withheld' : 'OVER-withheld'} by $${deltaDollars}.`,
+    suggestion: `⚠️ This is an estimate based on your state of legal residence. State tax depends on your home of record, state-specific brackets, and deductions. Verify your legal residence in myPay. Some states have no income tax (TX, FL, WA, etc.). This flag is informational - your actual withholding may be correct.`,
     delta_cents: delta
   };
 }
@@ -631,6 +640,30 @@ function createNetPayCorrectFlag(actual: number): PayFlag {
     flag_code: 'NET_PAY_CORRECT',
     message: `✅ NET PAY VERIFIED: $${actualDollars} - Your paycheck is correct!`,
     suggestion: `Your net pay matches expectations. All entitlements, deductions, and taxes have been validated. No action needed.`
+  };
+}
+
+function createNetPayTooLowWarning(actual: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  
+  return {
+    severity: 'yellow',
+    flag_code: 'NET_PAY_TOO_LOW',
+    message: `Net pay unusually low: $${actualDollars}/month. Typical military net pay ranges from $1,500-$12,000/month.`,
+    suggestion: `Review all deductions and taxes on your LES. Verify you're not over-contributing to TSP or other deductions. Check for garnishments or debt repayment. Contact finance if you can't identify the cause.`,
+    ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/'
+  };
+}
+
+function createNetPayTooHighWarning(actual: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  
+  return {
+    severity: 'yellow',
+    flag_code: 'NET_PAY_TOO_HIGH',
+    message: `Net pay unusually high: $${actualDollars}/month. Typical military net pay ranges from $1,500-$12,000/month.`,
+    suggestion: `Verify this is your regular monthly pay and not a lump sum payment (retroactive pay, bonus, separation pay, etc.). If this is regular monthly pay, double-check all entitlements are entered correctly.`,
+    ref_url: 'https://www.dfas.mil/MilitaryMembers/payentitlements/'
   };
 }
 

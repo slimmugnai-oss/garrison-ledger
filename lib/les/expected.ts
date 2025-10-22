@@ -27,6 +27,56 @@ export interface ExpectedPayParams {
 }
 
 /**
+ * Validate rank vs years of service for sanity checks
+ * Prevents obviously wrong combinations (E01 with 20 YOS, O10 with 2 YOS, etc.)
+ */
+export function validateRankYOS(paygrade: string, yos: number): { valid: boolean; error?: string } {
+  // Junior enlisted (E01-E04) rarely exceed 6 years before promotion
+  if (['E01', 'E02', 'E03', 'E04'].includes(paygrade)) {
+    if (yos > 8) {
+      return { 
+        valid: false, 
+        error: `${paygrade} with ${yos} years of service is highly unusual. Junior enlisted typically promote to E05 within 4-6 years. Verify rank and time in service.` 
+      };
+    }
+  }
+  
+  // Senior enlisted (E08-E09) require minimum years
+  if (paygrade === 'E09' && yos < 15) {
+    return { 
+      valid: false, 
+      error: `E09 (Master Chief/Sergeant Major) requires minimum ~15 years of service. Verify rank and YOS.` 
+    };
+  }
+  
+  if (paygrade === 'E08' && yos < 12) {
+    return { 
+      valid: false, 
+      error: `E08 (Senior/Master Sergeant) requires minimum ~12 years of service. Verify rank and YOS.` 
+    };
+  }
+  
+  // General/Flag Officers (O07-O10) require minimum years
+  if (['O10', 'O09', 'O08', 'O07'].includes(paygrade) && yos < 18) {
+    return { 
+      valid: false, 
+      error: `${paygrade} (General/Flag Officer) requires minimum ~18+ years of service. Verify rank and YOS.` 
+    };
+  }
+  
+  // Junior officers (O01-O02) rarely exceed 4 years before promotion
+  if (['O01', 'O02'].includes(paygrade) && yos > 6) {
+    return { 
+      valid: false, 
+      error: `${paygrade} with ${yos} years is unusual. Most promote to O03 within 4 years. Verify rank and YOS.` 
+    };
+  }
+  
+  // All validations passed
+  return { valid: true };
+}
+
+/**
  * Build expected pay snapshot for a given month/year
  * 
  * @param params User profile and period
@@ -110,18 +160,25 @@ export async function buildExpectedSnapshot(
   }
 
   // =============================================================================
-  // Calculate Gross Pay (for deduction/tax calculations)
+  // Calculate Pay Totals
   // =============================================================================
-  const grossPayCents = (expected.base_pay_cents || 0) +
+  // CRITICAL: BAH and BAS are NOT taxable income!
+  // Taxable gross = Base Pay + COLA + Special Pays only
+  // Total pay = Taxable gross + BAH + BAS
+  
+  const taxableGrossCents = (expected.base_pay_cents || 0) +
+                            (expected.cola_cents || 0) +
+                            (expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
+
+  const totalPayCents = taxableGrossCents +
                         (expected.bah_cents || 0) +
-                        (expected.bas_cents || 0) +
-                        (expected.cola_cents || 0) +
-                        (expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
+                        (expected.bas_cents || 0);
 
   // =============================================================================
   // Deductions (TSP, SGLI, Dental)
   // =============================================================================
-  const deductions = await computeDeductions(userId, grossPayCents);
+  // TSP contribution is calculated on TOTAL pay (includes BAH/BAS)
+  const deductions = await computeDeductions(userId, totalPayCents);
   if (deductions.tsp_cents) expected.tsp_cents = deductions.tsp_cents;
   if (deductions.sgli_cents) expected.sgli_cents = deductions.sgli_cents;
   if (deductions.dental_cents) expected.dental_cents = deductions.dental_cents;
@@ -129,14 +186,15 @@ export async function buildExpectedSnapshot(
   // =============================================================================
   // Taxes (Federal, State, FICA, Medicare)
   // =============================================================================
-  const taxes = await computeTaxes(userId, grossPayCents, year);
+  // Taxes calculated on TAXABLE gross ONLY (excludes BAH/BAS)
+  const taxes = await computeTaxes(userId, taxableGrossCents, year);
   if (taxes.federal_tax_cents) expected.federal_tax_cents = taxes.federal_tax_cents;
   if (taxes.state_tax_cents) expected.state_tax_cents = taxes.state_tax_cents;
   if (taxes.fica_cents) expected.fica_cents = taxes.fica_cents;
   if (taxes.medicare_cents) expected.medicare_cents = taxes.medicare_cents;
 
   // =============================================================================
-  // Net Pay = Gross - Deductions - Taxes
+  // Net Pay = Total Pay - Deductions - Taxes
   // =============================================================================
   const totalDeductions = (deductions.tsp_cents || 0) +
                           (deductions.sgli_cents || 0) +
@@ -146,7 +204,7 @@ export async function buildExpectedSnapshot(
                      (taxes.fica_cents || 0) +
                      (taxes.medicare_cents || 0);
   
-  expected.net_pay_cents = grossPayCents - totalDeductions - totalTaxes;
+  expected.net_pay_cents = totalPayCents - totalDeductions - totalTaxes;
 
   return {
     user_id: userId,
@@ -347,10 +405,13 @@ async function computeBasePay(
 /**
  * Compute deductions (TSP, SGLI, Dental) from profile
  * Returns object with expected deduction amounts
+ * 
+ * IMPORTANT: totalPayCents should INCLUDE BAH and BAS for TSP calculation
+ * TSP contributions are based on total pay (all entitlements)
  */
 async function computeDeductions(
   userId: string,
-  grossPayCents: number
+  totalPayCents: number // INCLUDES BAH/BAS for TSP purposes
 ): Promise<{
   tsp_cents?: number;
   sgli_cents?: number;
@@ -367,9 +428,9 @@ async function computeDeductions(
     
     if (!profile) return result;
     
-    // TSP Contribution
+    // TSP Contribution (calculated on TOTAL pay including BAH/BAS)
     if (profile.tsp_contribution_percent && profile.tsp_contribution_percent > 0) {
-      result.tsp_cents = Math.round(grossPayCents * profile.tsp_contribution_percent);
+      result.tsp_cents = Math.round(totalPayCents * profile.tsp_contribution_percent);
     }
     
     // SGLI Premium (query from sgli_rates table)
@@ -400,11 +461,14 @@ async function computeDeductions(
 /**
  * Compute taxes (Federal, State, FICA, Medicare) from profile and tax tables
  * Returns object with expected tax amounts
+ * 
+ * IMPORTANT: taxableGrossCents should EXCLUDE BAH and BAS (non-taxable allowances)
+ * 
  * Note: Tax calculations are estimates - actual withholding varies by W-4 settings
  */
 async function computeTaxes(
   userId: string,
-  grossPayCents: number,
+  taxableGrossCents: number, // EXCLUDES BAH/BAS
   year: number
 ): Promise<{
   federal_tax_cents?: number;
@@ -424,14 +488,19 @@ async function computeTaxes(
     
     if (!taxConstants) return result;
     
-    // FICA (Social Security) - 6.2% up to wage base
-    const ficaRate = parseFloat(taxConstants.fica_rate as string);
-    const ficaWageBase = taxConstants.fica_wage_base_cents;
-    result.fica_cents = Math.round(Math.min(grossPayCents, ficaWageBase) * ficaRate);
+    // FICA (Social Security) - 6.2% up to annual wage base
+    // Simplified calculation: Use monthly wage base limit (annual / 12)
+    // Note: This doesn't account for YTD earnings, so may overestimate for high earners mid-year
+    // Users should override with actual LES value for accuracy
+    const ficaRate = parseFloat(taxConstants.fica_rate as string); // 0.062
+    const annualFicaWageBase = taxConstants.fica_wage_base_cents; // $176,100 for 2025
+    const monthlyFicaWageBase = Math.floor(annualFicaWageBase / 12); // ~$14,675/month
+    const ficaTaxableAmount = Math.min(taxableGrossCents, monthlyFicaWageBase);
+    result.fica_cents = Math.round(ficaTaxableAmount * ficaRate);
     
-    // Medicare - 1.45% of all wages
-    const medicareRate = parseFloat(taxConstants.medicare_rate as string);
-    result.medicare_cents = Math.round(grossPayCents * medicareRate);
+    // Medicare - 1.45% of all taxable wages (no wage base limit)
+    const medicareRate = parseFloat(taxConstants.medicare_rate as string); // 0.0145
+    result.medicare_cents = Math.round(taxableGrossCents * medicareRate);
     
     // Federal and State Tax - Get from profile
     const { data: profile } = await supabaseAdmin
@@ -441,28 +510,34 @@ async function computeTaxes(
       .maybeSingle();
     
     if (profile) {
-      // Federal Tax - Rough estimate based on filing status
-      // This is a simplification - actual tax is complex with brackets
-      // Users should override with actual value from LES
+      // Federal Tax - ROUGH ESTIMATE based on filing status
+      // WARNING: This is a simplified estimate. Actual withholding depends on:
+      // - W-4 allowances/withholding elections
+      // - Standard deduction
+      // - Tax bracket system (progressive, not flat)
+      // - YTD earnings
+      // Users should ALWAYS override with actual value from LES for accuracy
       if (profile.filing_status) {
-        const annualGross = grossPayCents * 12;
+        const annualTaxableGross = taxableGrossCents * 12; // Annualized taxable income
         let estimatedFederalRate = 0.12; // Default 12% bracket
         
-        // Adjust for filing status and income level
+        // Simplified bracket estimates (2025 tax year)
+        // These don't account for standard deduction or W-4 settings
         if (profile.filing_status === 'married_filing_jointly') {
-          if (annualGross > 9000000) estimatedFederalRate = 0.22; // $90K+
-          else if (annualGross > 6500000) estimatedFederalRate = 0.12;
+          if (annualTaxableGross > 9000000) estimatedFederalRate = 0.22; // $90K+
+          else if (annualTaxableGross > 6500000) estimatedFederalRate = 0.12;
           else estimatedFederalRate = 0.10;
         } else { // single
-          if (annualGross > 4700000) estimatedFederalRate = 0.22; // $47K+
-          else if (annualGross > 3200000) estimatedFederalRate = 0.12;
+          if (annualTaxableGross > 4700000) estimatedFederalRate = 0.22; // $47K+
+          else if (annualTaxableGross > 3200000) estimatedFederalRate = 0.12;
           else estimatedFederalRate = 0.10;
         }
         
-        result.federal_tax_cents = Math.round(grossPayCents * estimatedFederalRate);
+        result.federal_tax_cents = Math.round(taxableGrossCents * estimatedFederalRate);
       }
       
       // State Tax - Query state_tax_rates table
+      // Note: State taxes also calculated on TAXABLE income (excludes BAH/BAS)
       if (profile.state_of_residence) {
         const { data: stateRate } = await supabaseAdmin
           .from('state_tax_rates')
@@ -475,9 +550,9 @@ async function computeTaxes(
           if (stateRate.tax_type === 'none') {
             result.state_tax_cents = 0; // No state income tax
           } else if (stateRate.tax_type === 'flat' && stateRate.flat_rate) {
-            result.state_tax_cents = Math.round(grossPayCents * parseFloat(stateRate.flat_rate as string));
+            result.state_tax_cents = Math.round(taxableGrossCents * parseFloat(stateRate.flat_rate as string));
           } else if (stateRate.avg_rate_mid) {
-            result.state_tax_cents = Math.round(grossPayCents * parseFloat(stateRate.avg_rate_mid as string));
+            result.state_tax_cents = Math.round(taxableGrossCents * parseFloat(stateRate.avg_rate_mid as string));
           }
         }
       }

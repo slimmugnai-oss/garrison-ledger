@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-10-22  
 **Status:** 🟢 PRODUCTION  
-**Version:** 5.4.0 - Admin Dashboard + Sitemap System  
+**Version:** 5.5.0 - LES Auditor Tax Calculation Fixes (Critical)  
 **Deployment:** ✅ Live on Vercel  
 **SSOT Module:** ✅ `lib/ssot.ts` (Single Source of Truth)  
 **Code Quality:** ✅ TypeScript strict + ESLint clean (0 errors, 21 non-critical warnings)
@@ -36,18 +36,23 @@
 
 ### **Premium Tools (Tier-Gated)**
 
-1. **LES Auditor** ✅ *Production Ready - All Critical Fixes Complete*
-   - Status: **100% complete - Deployed 2025-10-21**
-   - ✅ Data: Pay tables, SGLI, tax constants 100% accurate vs DFAS/IRS
+1. **LES Auditor** ✅ *Production Ready - Critical Tax Fixes Applied 2025-10-22*
+   - Status: **100% complete - Tax calculations fixed and verified**
+   - ✅ **CRITICAL FIX:** Tax base now correctly excludes BAH/BAS (non-taxable allowances)
+   - ✅ **CRITICAL FIX:** FICA calculation uses proper monthly wage base logic
+   - ✅ **ENHANCEMENT:** Tax disclaimers added - clear that Federal/State are estimates
+   - ✅ **VALIDATION:** Rank vs YOS sanity checks (E01 can't have 20 YOS)
+   - ✅ **VALIDATION:** Net pay reasonableness checks ($1.5K-$12K range)
+   - ✅ Data: All 2025 rates verified - BAH, pay tables, SGLI, tax constants (see DATA_SOURCES_REFERENCE.md)
    - ✅ Security: 8 RLS policies + 3 storage policies enforced
    - ✅ Code Quality: Zero TypeScript/ESLint errors
    - ✅ PDF Parser: Expanded 2→7 patterns (myPay, DFAS, tabs, negatives, etc.)
    - ✅ Audit Workflow: Triggers after parse + manual entry
-   - ✅ Expected Pay: Generating snapshots correctly
-   - ✅ Flags: Comparison engine operational
+   - ✅ Expected Pay: Generating snapshots with correct taxable gross
+   - ✅ Flags: Comparison engine operational with improved messages
    - ✅ Profile Integration: Uses paygrade, mha_code (with override), time_in_service_months
-   - ✅ MHA Override: Manual override field added for edge cases
    - Free: 1/month | Premium: Unlimited
+   - **See:** `LES_AUDITOR_CRITICAL_FIXES_COMPLETE.md` for full audit report
    - Database: 4 tables + storage bucket with RLS
    - Components: 9 specialized UI components
    - **Status:** ✅ **PRODUCTION READY - All workflows functional**
