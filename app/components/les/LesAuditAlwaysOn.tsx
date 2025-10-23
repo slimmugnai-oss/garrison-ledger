@@ -923,7 +923,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
               {/* Action Bar */}
               <div className="flex items-center gap-4 border-t pt-6">
-                {tier === "premium" ? (
+                {tier === "premium" || tier === "staff" ? (
                   <button
                     onClick={handleSavePDF}
                     disabled={saving}
