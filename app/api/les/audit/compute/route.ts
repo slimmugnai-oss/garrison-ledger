@@ -22,7 +22,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserTier, getLesAuditPolicy } from '@/lib/auth/subscription';
 import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
 import { compareDetailed } from '@/lib/les/compare';
-import { applyAuditMasking, buildVarianceWaterfall } from '@/lib/les/paywall';
+import { applyAuditMasking, buildVarianceWaterfall, type AuditResult } from '@/lib/les/paywall';
 import { normalizeLineCode } from '@/lib/les/codes';
 import { supabaseAdmin } from '@/lib/supabase';
 
