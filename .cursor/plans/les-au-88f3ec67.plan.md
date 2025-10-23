@@ -1,405 +1,378 @@
 <!-- 88f3ec67-6b10-45cb-be65-9946951e1ffe 85f149ed-d72a-4fca-bbda-313bddc9f52f -->
-# LES Auditor V1 Hardening (Manual-Entry)
+# LES Auditor - Always-On Audit with Server-Side Paywall
 
 ## Overview
 
-Seven critical hardening tasks to fix TSP prefill logic, expand flag coverage, improve user input handling, ensure example consistency, and enhance testing infrastructure.
+Major UX/Architecture refactor: Remove "Run Audit" button, implement real-time always-on audit with split-panel UI, add proper server-side paywall with masking for free users.
 
 ---
 
-## Task 1: Fix TSP Calculation & Update Examples
+## Phase 1: Subscription & Tier Infrastructure
 
-### Problem
+### Create Tier System
 
-Currently computing TSP from total pay (includes BAH/BAS). Should use BASIC PAY only by default.
-
-### Changes Required
-
-**File: `lib/les/expected.ts`**
-
-- Locate TSP computation in `computeDeductions()` or prefill logic
-- Change from: `totalPayCents * tspPercent`
-- Change to: `basePayCents * tspPercent`
-- Add optional toggles for special/incentive pay sources (default: false)
-- Add JSDoc: "TSP prefill assumes % of BASIC PAY only; user can override"
-
-**File: `app/components/les/LesManualEntryTabbed.tsx`**
-
-- Update TSP help text to:
-  ```tsx
-  helpText="TSP prefill assumes % of BASIC PAY; edit if you elected other sources"
-  ```
-
-
-**File: `review/les-auditor/fixtures/happy_path_e5_fthood.request.json`**
-
-- Change TSP from current value to: `17500` (cents = $175)
-- Add DENTAL line: `{"code": "DENTAL", "description": "TRICARE Dental", "amount_cents": 1400}`
-
-**File: `review/les-auditor/fixtures/happy_path_e5_fthood.response.json`**
-
-- Recalculate `total_deductions`: TSP $175 + SGLI $27 + Dental $14 = $216
-- Recalculate `computed_net` and `net_delta`
-- Update `mathProof` string to reflect new totals
-
-**File: `review/les-auditor/api.openapi.yaml`**
-
-- Update embedded example in `AuditRequest` schema to include DENTAL line
-- Update `AuditResponse` example with recomputed totals
-- Ensure mathProof string matches new calculations
-
-**File: `review/les-auditor/LES_Auditor_Review_Packet.md`**
-
-- Find references to "TSP (5%) = $288.00"
-- Replace with "$175.00" (5% of $3,500 base pay)
-- Update all downstream sums in examples
-
----
-
-## Task 2: Implement New Flag Types
-
-### New Flags to Add
-
-**File: `app/types/les.ts` (or flag type definition)**
+**File: `lib/auth/subscription.ts` (NEW)**
 
 ```typescript
-| 'PROMO_NOT_REFLECTED'    // Red: Promotion not reflected in base pay
-| 'BAH_PARTIAL_OR_DIFF'    // Yellow: Partial BAH or mid-month change
-| 'CZTE_INFO'              // Green: Combat zone tax exclusion detected
-```
+export type Tier = 'free' | 'premium' | 'staff';
 
-**File: `lib/les/compare.ts`**
-
-Add flag creators:
-
-```typescript
-function createPromoNotReflectedFlag(promoDate: Date, auditPeriod: Date): PayFlag {
-  return {
-    severity: 'red',
-    flag_code: 'PROMO_NOT_REFLECTED',
-    message: `Promotion to [rank] effective ${promoDate} not reflected in base pay`,
-    suggestion: 'Contact finance office immediately. Promotion pay should retroactively adjust.',
-    ref_url: 'https://www.dfas.mil/militarymembers/payentitlements/Pay-Computations/'
-  };
+export async function getUserTier(userId: string): Promise<Tier> {
+  // Check user_profiles or stripe_subscriptions table
+  const { data } = await supabase
+    .from('user_profiles')
+    .select('subscription_tier')
+    .eq('user_id', userId)
+    .single();
+  
+  return data?.subscription_tier || 'free';
 }
 
-function createBAHPartialOrDiffFlag(expected: number, actual: number, pcsMonth: boolean): PayFlag {
+export function getLesAuditPolicy(tier: Tier) {
   return {
-    severity: 'yellow',
-    flag_code: 'BAH_PARTIAL_OR_DIFF',
-    message: `BAH shows ${actual/100} (expected ${expected/100}). ${pcsMonth ? 'Mid-month PCS may cause prorated amount.' : 'Small variance detected.'}`,
-    suggestion: pcsMonth 
-      ? 'Verify prorated BAH for PCS month is correct. Next month should show full new rate.'
-      : 'Verify duty station and dependent status match profile.',
-    delta_cents: expected - actual
-  };
-}
-
-function createCZTEInfoFlag(fedTax: number): PayFlag {
-  return {
-    severity: 'green',
-    flag_code: 'CZTE_INFO',
-    message: `Combat Zone Tax Exclusion detected (Fed tax: $${fedTax/100})`,
-    suggestion: 'No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.',
-    ref_url: 'https://www.irs.gov/publications/p3'
+    monthlyQuota: tier === 'premium' ? Infinity : 1,
+    maxVisibleFlags: tier === 'premium' ? Infinity : 2,
+    showExactVariance: tier !== 'free',
+    showWaterfall: tier === 'premium',
+    allowPdf: tier === 'premium',
+    allowHistory: tier === 'premium',
+    allowCopyTemplates: tier === 'premium'
   };
 }
 ```
 
-Add logic in `compareDetailed()`:
+### Update Database Schema
 
-```typescript
-// Check for promotion not reflected
-if (profile.promoDate && profile.promoDate < auditDate) {
-  if (actualBasePay === expectedBasePayBeforePromo) {
-    flags.push(createPromoNotReflectedFlag(profile.promoDate, auditDate));
-  }
-}
+**Migration:** Add `subscription_tier` to `user_profiles` if not exists
 
-// Check for partial/different BAH (PCS month)
-if (expectedBAH > 0 && actualBAH > 0) {
-  const delta = Math.abs(expectedBAH - actualBAH);
-  if (delta > 500 && delta < 10000 && profile.pcsMonth) {
-    flags.push(createBAHPartialOrDiffFlag(expectedBAH, actualBAH, true));
-  }
-}
-
-// Check for CZTE
-if (actualFedTax < 1000 && (actualFICA > 0 || actualMedicare > 0)) {
-  flags.push(createCZTEInfoFlag(actualFedTax));
-}
-```
+**Migration:** Update `api_quota` to support monthly scopes
 
 ---
 
-## Task 3: Request Canonicalization
+## Phase 2: Pure Business Logic (Client + Server Reusable)
 
-### Problem
+### Make Comparison Pure
 
-Users enter "MEDICARE HI", "FED TAX", "SOC SEC" instead of canonical codes.
-
-**File: `app/api/les/audit/route.ts` (or audit-manual/route.ts)**
-
-Add normalization before validation:
+**File: `lib/les/compute.ts` (NEW - extracted from compare.ts)**
 
 ```typescript
-const CODE_ALIASES: Record<string, string> = {
-  'MEDICARE HI': 'MEDICARE',
-  'FED TAX': 'TAX_FED',
-  'FITW': 'TAX_FED',
-  'STATE TAX': 'TAX_STATE',
-  'SITW': 'TAX_STATE',
-  'SOC SEC': 'FICA',
-  'OASDI': 'FICA',
-  'SOCIAL SECURITY': 'FICA',
-  'BASIC PAY': 'BASEPAY',
-  'BASE PAY': 'BASEPAY',
-  'BAH W/DEP': 'BAH',
-  'BAH W/O DEP': 'BAH',
-  // Add more as discovered
-};
-
-function normalizeLineCode(userCode: string): string {
-  const upper = userCode.toUpperCase().trim();
-  return CODE_ALIASES[upper] || userCode;
+/**
+ * Pure computation - no I/O, can run client-side or server-side
+ */
+export function computeLesAudit(params: {
+  expected: ExpectedSnapshot;
+  actual: ActualEntry;
+}): {
+  flags: PayFlag[];
+  totals: {
+    expected_net: number;
+    actual_net: number;
+    variance: number;
+    varianceBucket: '0-5' | '5-50' | '>50';
+  };
+  waterfall: WaterfallRow[];
+  confidence: 'high' | 'medium' | 'low';
+} {
+  // Move compareDetailed logic here
+  // Make it pure (no database calls)
+  // Return structured result
 }
-
-// Apply before validation
-requestBody.actual.allowances = requestBody.actual.allowances.map(line => ({
-  ...line,
-  code: normalizeLineCode(line.code)
-}));
-// Repeat for taxes, deductions, etc.
 ```
 
----
+### Policy Masking
 
-## Task 4: Example Consistency
-
-### Update All Examples
-
-**New Fixtures to Create:**
-
-1. `review/les-auditor/fixtures/fica_wage_base.request.json`
-
-   - High earner (O-6, 20 YOS)
-   - Base pay: $11,000
-   - YTD earnings exceed $176,100
-   - FICA should stop
-
-2. `review/les-auditor/fixtures/fica_wage_base.response.json`
-
-   - Yellow flag: FICA_WAGEBASE_HIT
-   - Medicare continues
-
-3. `review/les-auditor/fixtures/promo_not_reflected.request.json`
-
-   - E-4 promoted to E-5 last month
-   - Base pay still showing E-4 rate
-
-4. `review/les-auditor/fixtures/promo_not_reflected.response.json`
-
-   - Red flag: PROMO_NOT_REFLECTED
-
-5. `review/les-auditor/fixtures/medicare_hi_only.request.json`
-
-   - User entered "MEDICARE HI" instead of "MEDICARE"
-
-6. `review/les-auditor/fixtures/medicare_hi_only.response.json`
-
-   - Code normalized to MEDICARE
-   - Green flag: MEDICARE_PCT_CORRECT
-
-**File: `review/les-auditor/api.openapi.yaml`**
-
-- Add `externalValue` references for new fixtures
-- Update existing examples to match recalculated totals
-
----
-
-## Task 5: Expand Unit Tests
-
-**File: `__tests__/lib/les/expected.test.ts` (NEW)**
+**File: `lib/les/paywall.ts` (NEW)**
 
 ```typescript
-describe('expected.ts - TSP calculation', () => {
-  it('computes TSP from basic pay only (not total pay)', () => {
-    const result = computeDeductions({
-      basePayCents: 350000,  // $3,500
-      bahCents: 180000,      // $1,800
-      basCents: 46025,       // $460.25
-      tspPercent: 0.05       // 5%
-    });
-    
-    expect(result.tsp_cents).toBe(17500); // 5% of $3,500 = $175
-  });
-});
-```
-
-**File: `__tests__/lib/les/compare.test.ts`**
-
-Add tests:
-
-```typescript
-it('flags PROMO_NOT_REFLECTED when promotion date passed but pay unchanged', () => {
-  const result = compareDetailed({
-    profile: {
-      promoDate: new Date('2025-09-01'),
-      expectedNewBasePay: 425000
+export function applyAuditMasking(
+  fullResult: AuditResult,
+  policy: ReturnType<typeof getLesAuditPolicy>
+): MaskedAuditResult {
+  return {
+    flags: fullResult.flags.slice(0, policy.maxVisibleFlags),
+    hiddenFlagCount: Math.max(0, fullResult.flags.length - policy.maxVisibleFlags),
+    totals: {
+      expected_net: policy.showExactVariance ? fullResult.totals.expected_net : null,
+      actual_net: fullResult.totals.actual_net,
+      variance: policy.showExactVariance ? fullResult.totals.variance : null,
+      varianceBucket: fullResult.totals.varianceBucket // Always show bucket
     },
-    auditDate: new Date('2025-10-01'),
-    actualLines: [
-      { code: 'BASEPAY', amount_cents: 350000 } // Still old pay
-    ]
-  });
-  
-  const flag = result.flags.find(f => f.flag_code === 'PROMO_NOT_REFLECTED');
-  expect(flag).toBeDefined();
-  expect(flag.severity).toBe('red');
-});
-
-it('flags BAH_PARTIAL_OR_DIFF yellow when PCS month detected', () => {
-  const result = compareDetailed({
-    expected: { bah_cents: 200000 },
-    profile: { pcsMonth: true },
-    actualLines: [
-      { code: 'BAH', amount_cents: 185000 } // $150 short (partial month)
-    ]
-  });
-  
-  const flag = result.flags.find(f => f.flag_code === 'BAH_PARTIAL_OR_DIFF');
-  expect(flag).toBeDefined();
-  expect(flag.severity).toBe('yellow');
-});
-
-it('shows CZTE_INFO when fed tax near zero but FICA/Medicare present', () => {
-  const result = compareDetailed({
-    actualLines: [
-      { code: 'TAX_FED', amount_cents: 0 },
-      { code: 'FICA', amount_cents: 21700 },
-      { code: 'MEDICARE', amount_cents: 5075 }
-    ]
-  });
-  
-  const flag = result.flags.find(f => f.flag_code === 'CZTE_INFO');
-  expect(flag).toBeDefined();
-  expect(flag.severity).toBe('green');
-});
-
-it('generates correct mathProof format (snapshot test)', () => {
-  const result = compareDetailed({ /* ... */ });
-  
-  expect(result.mathProof).toMatchSnapshot();
-  // Ensures no formatting regressions
-});
+    waterfall: policy.showWaterfall ? fullResult.waterfall : [],
+    confidence: fullResult.confidence,
+    pdfUrl: null, // Never in compute response
+    requiresUpgrade: !policy.showExactVariance
+  };
+}
 ```
 
 ---
 
-## Task 6: RLS Smoke Test in CI
+## Phase 3: New API Routes
 
-**File: `.github/workflows/test.yml` (or create if missing)**
+### Compute Endpoint (Real-Time)
 
-Add step:
+**File: `app/api/les/audit/compute/route.ts` (NEW)**
 
-```yaml
-- name: RLS Smoke Test
-  run: |
-    supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql
-  env:
-    SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+```typescript
+export async function POST(req: NextRequest) {
+  // 1. Auth
+  const { userId } = await auth();
+  if (!userId) return 401;
+  
+  // 2. Get tier
+  const tier = await getUserTier(userId);
+  const policy = getLesAuditPolicy(tier);
+  
+  // 3. Parse request
+  const { month, year, profile, actual } = await req.json();
+  
+  // 4. Build expected (server-only - uses DFAS tables)
+  const expected = await buildExpectedSnapshot(profile, { month, year });
+  
+  // 5. Compute comparison (pure function)
+  const fullResult = computeLesAudit({ expected, actual });
+  
+  // 6. Apply masking based on tier
+  const masked = applyAuditMasking(fullResult, policy);
+  
+  // 7. Analytics (sampled for free users)
+  if (tier === 'premium' || Math.random() < 0.1) {
+    await analytics.track('les_auto_audit_compute', { tier, flagCount: fullResult.flags.length });
+  }
+  
+  return NextResponse.json(masked);
+}
 ```
 
-If test fails (contains ❌), CI should fail.
+### Save & PDF Endpoint (Premium Only)
+
+**File: `app/api/les/audit/save/route.ts` (NEW)**
+
+```typescript
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) return 401;
+  
+  const tier = await getUserTier(userId);
+  const policy = getLesAuditPolicy(tier);
+  
+  // Check quota (monthly for free, unlimited for premium)
+  const { allowed } = await checkMonthlyQuota(userId, 'les_audit', policy.monthlyQuota);
+  if (!allowed) {
+    return NextResponse.json(
+      { 
+        error: 'PAYWALL',
+        requiresUpgrade: true,
+        feature: 'les_audit',
+        quota: { period: 'month', limit: policy.monthlyQuota, used: policy.monthlyQuota }
+      },
+      { status: 402 }
+    );
+  }
+  
+  // Premium-only features
+  if (!policy.allowPdf) {
+    return NextResponse.json(
+      { error: 'PAYWALL', requiresUpgrade: true, feature: 'pdf_export' },
+      { status: 402 }
+    );
+  }
+  
+  // Persist audit
+  const auditId = await persistAudit({ userId, month, year, expected, actual, flags });
+  
+  // Generate PDF
+  const pdfUrl = await generateAuditPDF(auditId);
+  
+  return NextResponse.json({ auditId, pdfUrl, saved: true });
+}
+```
 
 ---
 
-## Task 7: Documentation & UX Clarity
+## Phase 4: UI Component Refactor
+
+### New Component Structure
+
+```
+LesAuditPage (container)
+├── LesInputPanel (left - collapsible groups)
+│   ├── MonthYearPicker
+│   ├── EntitlementsGroup (4/4 complete)
+│   ├── DeductionsGroup (3/3 complete)
+│   └── TaxesGroup (4/4 complete)
+└── LesReportPanel (right - always visible)
+    ├── SummaryHeader (Expected, Actual, Variance)
+    ├── ConfidenceBadge (High/Medium/Low)
+    ├── FlagList (prioritized, with premium curtain)
+    ├── VarianceWaterfall (premium only, blurred for free)
+    └── ActionBar (Save PDF, Start New Month)
+```
+
+### Real-Time Computation Hook
+
+**File: `app/hooks/useLesAudit.ts` (NEW)**
+
+```typescript
+export function useLesAudit(inputs: AuditInputs) {
+  const [result, setResult] = useState<MaskedAuditResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  
+  // Debounced computation
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!inputs.month || !inputs.year) return;
+      
+      setLoading(true);
+      const response = await fetch('/api/les/audit/compute', {
+        method: 'POST',
+        body: JSON.stringify(inputs)
+      });
+      
+      const data = await response.json();
+      setResult(data);
+      setLoading(false);
+    }, 400); // 400ms debounce
+    
+    return () => clearTimeout(timer);
+  }, [inputs]);
+  
+  return { result, loading };
+}
+```
+
+### Premium Curtain Component
+
+**File: `app/components/paywall/PremiumCurtain.tsx` (NEW)**
+
+```typescript
+export function PremiumCurtain({ 
+  children, 
+  feature, 
+  tier,
+  hiddenCount 
+}: Props) {
+  if (tier === 'premium') return children;
+  
+  return (
+    <div className="relative">
+      <div className="blur-sm pointer-events-none">
+        {children}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center bg-white/90">
+        <div className="text-center p-6 max-w-md">
+          <Lock className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+          <h3 className="font-bold text-lg mb-2">
+            {hiddenCount} More Findings Locked
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Upgrade to see exact amounts, all flags, and export to PDF
+          </p>
+          <button className="btn-primary">
+            Upgrade to Premium
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Phase 5: Remove Old Flow
+
+### Files to Refactor/Delete
+
+- **Refactor:** `app/dashboard/paycheck-audit/PaycheckAuditClient.tsx`
+        - Remove tabs, replace with split panel
+        - Remove "Run Complete Audit" button
+        - Add debounced auto-computation
+
+- **Delete:** Old audit trigger logic
+- **Keep:** History panel (but gate behind premium)
+
+---
+
+## Phase 6: Analytics & Monitoring
+
+### New Events
+
+```typescript
+// Real-time computation
+'les_auto_audit_compute' - { tier, flagCount, hiddenCount, duration_ms }
+
+// Paywall interactions
+'paywall_impression' - { feature: 'les_audit', tier, where }
+'paywall_cta_click' - { feature, tier, hiddenCount }
+'paywall_block_402' - { feature, tier, quota }
+
+// Conversions
+'les_audit_save_pdf' - { tier, flagCount, variance }
+'upgrade_from_les_audit' - { tier: 'free', hiddenCount }
+```
+
+---
+
+## Phase 7: Documentation Updates
+
+### Update Review Packet
 
 **File: `review/les-auditor/LES_Auditor_Review_Packet.md`**
 
-Add clarity section:
+- Add "Always-On Audit" section
+- Document tier policies
+- Update API contract for `/compute` and `/save` endpoints
+- Add paywall enforcement details
 
-```markdown
-### What We Prefill vs What You Enter
+### Update OpenAPI Spec
 
-**Auto-Filled (from official DFAS tables):**
-- Base Pay (by rank + YOS)
-- BAH (by location + dependents)
-- BAS (by officer/enlisted)
-- COLA (by location)
-
-**You Must Enter (from YOUR LES):**
-- Federal Tax (varies by W-4, YTD, exemptions)
-- State Tax (51 different state systems)
-- FICA (we validate ~6.2%)
-- Medicare (we validate ~1.45%)
-- TSP (default prefill = % of BASIC PAY; override if you elected other sources)
-- Dental (varies by plan)
-- Net Pay (we validate math)
-```
-
-**File: `app/components/les/LesManualEntryTabbed.tsx`**
-
-Update help text:
-
-```tsx
-<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-  <Icon name="Info" className="h-5 w-5 text-blue-600" />
-  <p className="text-sm text-blue-900">
-    <strong>What we prefill:</strong> Only authoritative values (Base Pay, BAH, BAS, COLA).
-  </p>
-  <p className="text-sm text-blue-800">
-    <strong>What you enter:</strong> Taxes, TSP, Dental from YOUR LES. 
-    TSP default = % of BASIC PAY; override if you elected contributions from other pays.
-  </p>
-</div>
-```
+- Add `POST /api/les/audit/compute` endpoint
+- Add `POST /api/les/audit/save` endpoint
+- Document 402 PAYWALL response
+- Add tier policy schemas
 
 ---
 
 ## Implementation Order
 
-1. Fix TSP calculation logic in `lib/les/expected.ts`
-2. Update fixtures with corrected TSP ($175) and add DENTAL
-3. Recalculate all example totals (fixtures, OpenAPI, review packet)
-4. Add new flag types to types and `lib/les/compare.ts`
-5. Implement canonicalization in API route
-6. Create new fixtures (fica_wage_base, promo, medicare_hi)
-7. Write unit tests for new features
-8. Add RLS test to CI
-9. Update documentation and UI help text
+1. Create `lib/auth/subscription.ts` (tier checking)
+2. Create `lib/les/compute.ts` (pure business logic)
+3. Create `lib/les/paywall.ts` (masking logic)
+4. Create `POST /api/les/audit/compute` (real-time endpoint)
+5. Create `POST /api/les/audit/save` (PDF generation)
+6. Create `useLesAudit` hook (debounced computation)
+7. Create `PremiumCurtain` component
+8. Refactor `PaycheckAuditClient` (split panel UI)
+9. Update analytics events
+10. Update documentation
 
 ---
 
 ## Acceptance Criteria
 
-**Existing Fixture (Updated):**
+**Free User Experience:**
 
-- `happy_path_e5_fthood` passes with:
-  - TSP = $175 (5% of $3,500 base pay)
-  - Dental = $14
-  - Total deductions = $216
-  - Recomputed net pay
-  - mathProof string matches
+- ✅ Can enter data and see audit compute in real-time
+- ✅ Sees variance bucket (">$50 red") but not exact amount
+- ✅ Sees top 2 flags only, "+5 more locked" chip
+- ✅ Waterfall blurred with upgrade CTA
+- ✅ Cannot save PDF or view history
+- ✅ Receives 402 PAYWALL when quota exceeded
 
-**New Fixtures:**
+**Premium User Experience:**
 
-- `promo_not_reflected` shows RED flag with suggestion
-- `fica_wage_base` shows YELLOW advisory, Medicare continues
-- `medicare_hi_only` canonicalizes to MEDICARE, passes
+- ✅ Sees exact variance dollar amounts
+- ✅ Sees all flags with full details
+- ✅ Can save audit and generate PDF
+- ✅ Can view full history
+- ✅ Unlimited audits per month
 
-**Tests:**
+**Technical:**
 
-- All unit tests pass (`npm test`)
-- Acceptance tests pass (`npm run test:fixtures`)
-- CI RLS smoke test passes
-
-**Documentation:**
-
-- Review packet clarifies prefill vs manual entry
-- UI help text explains TSP = % of BASIC PAY
-- OpenAPI examples validate and match fixtures
+- ✅ No exact values leaked to free users (server-side masking)
+- ✅ Pure computation functions (testable, reusable)
+- ✅ Debounced real-time updates (400ms)
+- ✅ Analytics tracking paywall interactions
 
 ### To-dos
 
