@@ -232,20 +232,62 @@ function ContentBlocksSubTab() {
 }
 
 function ListeningPostSubTab() {
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<string | null>(null);
+  const [refreshResult, setRefreshResult] = useState<{ processed: number; new: number } | null>(null);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch('/api/admin/listening-post/refresh', {
+        method: 'POST',
+      });
+
+      if (!res.ok) throw new Error('Failed to refresh feeds');
+
+      const data = await res.json();
+      setLastRefresh(new Date().toLocaleString());
+      setRefreshResult({ processed: data.processed || 0, new: data.new || 0 });
+    } catch (error) {
+      console.error('Error refreshing feeds:', error);
+      alert('Failed to refresh feeds. Check console for details.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <AnimatedCard className="bg-card border border-border p-8">
-      <div className="flex items-start gap-4 mb-6">
-        <Icon name="Radio" className="h-12 w-12 text-primary" />
-        <div>
-          <h3 className="text-2xl font-bold text-text-headings mb-2">Listening Post Integration</h3>
-          <p className="text-text-muted">
-            The existing Listening Post curation system is available at{' '}
-            <a href="/dashboard/admin/briefing" className="text-primary hover:underline font-semibold">
-              /dashboard/admin/briefing
-            </a>
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <div className="flex items-start gap-4">
+          <Icon name="Radio" className="h-12 w-12 text-primary" />
+          <div>
+            <h3 className="text-2xl font-bold text-text-headings mb-2">Feed Items (RSS Articles)</h3>
+            <p className="text-text-muted">
+              RSS articles from military news sources. For content block curation, visit{' '}
+              <a href="/dashboard/admin/briefing" className="text-primary hover:underline font-semibold">
+                Intelligence Briefing Pipeline
+              </a>
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          <Icon name="RefreshCw" className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Refreshing...' : 'Refresh Feeds'}
+        </button>
+      </div>
+
+      {lastRefresh && refreshResult && (
+        <div className="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+          <p className="text-sm font-semibold text-green-900">
+            ✅ Last refresh: {lastRefresh} - Processed {refreshResult.processed} items, {refreshResult.new} new
           </p>
         </div>
-      </div>
+      )}
 
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6">
         <h4 className="font-semibold text-blue-900 mb-3">Current Listening Post Features:</h4>
