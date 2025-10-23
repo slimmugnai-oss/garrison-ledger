@@ -14,7 +14,7 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@/app/components/ui/icon-registry";
+import Icon from "@/app/components/ui/Icon";
 import { Badge } from "@/app/components/ui/Badge";
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
 import { useLesAudit } from "@/app/hooks/useLesAudit";

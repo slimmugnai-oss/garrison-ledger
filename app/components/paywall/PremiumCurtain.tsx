@@ -18,7 +18,7 @@
 
 'use client';
 
-import { Icon } from '@/app/components/ui/icon-registry';
+import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
 
 export interface PremiumCurtainProps {
