@@ -44,8 +44,13 @@ export const LINE_CODES: Record<string, LineCodeDefinition> = {
   
   COLA: {
     section: 'ALLOWANCE',
-    description: 'Cost of Living Allowance',
-    taxability: { fed: false, state: false, oasdi: false, medicare: false }
+    description: 'Cost of Living Allowance (OCONUS)',
+    taxability: { 
+      fed: false,      // OCONUS COLA NOT taxable for federal income tax
+      state: false,    // OCONUS COLA NOT taxable for state income tax
+      oasdi: true,     // OCONUS COLA IS subject to FICA (6.2%)
+      medicare: true   // OCONUS COLA IS subject to Medicare (1.45%)
+    }
   },
   
   SDAP: {

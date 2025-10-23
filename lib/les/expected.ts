@@ -162,15 +162,19 @@ export async function buildExpectedSnapshot(
   // =============================================================================
   // Calculate Pay Totals
   // =============================================================================
-  // CRITICAL: BAH and BAS are NOT taxable income!
-  // Taxable gross = Base Pay + COLA + Special Pays only
-  // Total pay = Taxable gross + BAH + BAS
+  // CRITICAL TAX TREATMENT (OCONUS COLA):
+  // - BAH: NOT taxable (fed/state/FICA/Medicare)
+  // - BAS: NOT taxable (fed/state/FICA/Medicare)
+  // - OCONUS COLA: NOT taxable for fed/state, BUT taxable for FICA/Medicare
+  // - Base Pay: Fully taxable
+  // - Special Pays: Varies by type (see codes.ts for each)
   
-  const taxableGrossCents = (expected.base_pay_cents || 0) +
-                            (expected.cola_cents || 0) +
-                            (expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
+  // For FICA/Medicare calculations: includes OCONUS COLA
+  const ficaMedicareGrossCents = (expected.base_pay_cents || 0) +
+                                  (expected.cola_cents || 0) +  // OCONUS COLA subject to FICA/Medicare
+                                  (expected.specials?.reduce((sum, sp) => sum + sp.cents, 0) || 0);
 
-  const totalPayCents = taxableGrossCents +
+  const totalPayCents = ficaMedicareGrossCents +
                         (expected.bah_cents || 0) +
                         (expected.bas_cents || 0);
 
@@ -189,13 +193,14 @@ export async function buildExpectedSnapshot(
   // =============================================================================
   // We NO LONGER auto-fill tax amounts - users enter actual values from LES
   // Instead, we provide expected percentages for validation:
-  // - FICA should be 6.2% of taxable gross
-  // - Medicare should be 1.45% of taxable gross
+  // - FICA should be 6.2% of FICA/Medicare gross (Base + OCONUS COLA + taxable specials)
+  // - Medicare should be 1.45% of FICA/Medicare gross
   // - Federal/State tax user enters manually (too complex to estimate accurately)
   
   // Store expected tax PERCENTAGES for validation (not amounts)
-  expected.fica_cents = Math.round(taxableGrossCents * 0.062); // 6.2% for reference
-  expected.medicare_cents = Math.round(taxableGrossCents * 0.0145); // 1.45% for reference
+  // IMPORTANT: Use ficaMedicareGrossCents which INCLUDES OCONUS COLA
+  expected.fica_cents = Math.round(ficaMedicareGrossCents * 0.062); // 6.2% for reference
+  expected.medicare_cents = Math.round(ficaMedicareGrossCents * 0.0145); // 1.45% for reference
   
   // Federal and state tax are NOT auto-calculated
   // Users enter actual values from their LES

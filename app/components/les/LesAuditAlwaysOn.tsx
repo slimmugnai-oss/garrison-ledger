@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
@@ -139,15 +139,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         if (response.ok) {
           const data = await response.json();
 
-          // Auto-fill allowances (official DFAS data)
-          if (data.base_pay) setBasePay(data.base_pay);
-          if (data.bah) setBah(data.bah);
-          if (data.bas) setBas(data.bas);
-          if (data.cola) setCola(data.cola);
+          // Auto-fill allowances (official DFAS data) - only if field is empty
+          if (data.base_pay && basePay === 0) setBasePay(data.base_pay);
+          if (data.bah && bah === 0) setBah(data.bah);
+          if (data.bas && bas === 0) setBas(data.bas);
+          if (data.cola && cola === 0) setCola(data.cola);
 
-          // Auto-fill deductions (from profile)
-          if (data.tsp) setTsp(data.tsp);
-          if (data.sgli) setSgli(data.sgli);
+          // Auto-fill deductions (from profile) - only if field is empty
+          if (data.tsp && tsp === 0) setTsp(data.tsp);
+          if (data.sgli && sgli === 0) setSgli(data.sgli);
         }
       } catch (error) {
         console.error("Failed to fetch expected values:", error);
@@ -163,41 +163,62 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   // BUILD AUDIT INPUTS (MEMOIZED TO PREVENT RE-RENDER LOOP)
   // ============================================================================
 
-  const inputs: AuditInputs = useMemo(() => ({
-    month,
-    year,
-    profile:
-      paygrade && yos && mhaOrZip
-        ? {
-            paygrade,
-            yos,
-            mhaOrZip,
-            withDependents,
-            specials: {},
-          }
-        : null,
-    actual: {
-      allowances: [
-        basePay > 0 && { code: "BASEPAY", amount_cents: basePay },
-        bah > 0 && { code: "BAH", amount_cents: bah },
-        bas > 0 && { code: "BAS", amount_cents: bas },
-        cola > 0 && { code: "COLA", amount_cents: cola },
-      ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
-      taxes: [
-        federalTax > 0 && { code: "TAX_FED", amount_cents: federalTax },
-        stateTax > 0 && { code: "TAX_STATE", amount_cents: stateTax },
-        fica > 0 && { code: "FICA", amount_cents: fica },
-        medicare > 0 && { code: "MEDICARE", amount_cents: medicare },
-      ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
-      deductions: [
-        tsp > 0 && { code: "TSP", amount_cents: tsp },
-        sgli > 0 && { code: "SGLI", amount_cents: sgli },
-        dental > 0 && { code: "DENTAL", amount_cents: dental },
-      ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
-    },
-    net_pay_cents: netPay,
-  }), [month, year, paygrade, yos, mhaOrZip, withDependents, basePay, bah, bas, cola, 
-      federalTax, stateTax, fica, medicare, tsp, sgli, dental, netPay]);
+  const inputs: AuditInputs = useMemo(
+    () => ({
+      month,
+      year,
+      profile:
+        paygrade && mhaOrZip && yos >= 0
+          ? {
+              paygrade,
+              yos,
+              mhaOrZip,
+              withDependents,
+              specials: {},
+            }
+          : null,
+      actual: {
+        allowances: [
+          basePay > 0 && { code: "BASEPAY", amount_cents: basePay },
+          bah > 0 && { code: "BAH", amount_cents: bah },
+          bas > 0 && { code: "BAS", amount_cents: bas },
+          cola > 0 && { code: "COLA", amount_cents: cola },
+        ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
+        taxes: [
+          federalTax > 0 && { code: "TAX_FED", amount_cents: federalTax },
+          stateTax > 0 && { code: "TAX_STATE", amount_cents: stateTax },
+          fica > 0 && { code: "FICA", amount_cents: fica },
+          medicare > 0 && { code: "MEDICARE", amount_cents: medicare },
+        ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
+        deductions: [
+          tsp > 0 && { code: "TSP", amount_cents: tsp },
+          sgli > 0 && { code: "SGLI", amount_cents: sgli },
+          dental > 0 && { code: "DENTAL", amount_cents: dental },
+        ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
+      },
+      net_pay_cents: netPay,
+    }),
+    [
+      month,
+      year,
+      paygrade,
+      yos,
+      mhaOrZip,
+      withDependents,
+      basePay,
+      bah,
+      bas,
+      cola,
+      federalTax,
+      stateTax,
+      fica,
+      medicare,
+      tsp,
+      sgli,
+      dental,
+      netPay,
+    ]
+  );
 
   // ============================================================================
   // REAL-TIME AUDIT COMPUTATION
@@ -206,10 +227,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const { result, loading, error } = useLesAudit(inputs, true);
 
   // ============================================================================
-  // SAVE & PDF HANDLER
+  // SAVE & PDF HANDLER (useCallback to prevent event listener churn)
   // ============================================================================
 
-  const handleSavePDF = async () => {
+  const handleSavePDF = useCallback(async () => {
     if (!result) return;
 
     setSaving(true);
@@ -247,7 +268,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
     } finally {
       setSaving(false);
     }
-  };
+  }, [result, month, year, inputs]);
 
   // ============================================================================
   // KEYBOARD SHORTCUTS
@@ -793,9 +814,16 @@ function CurrencyField({
   onChange: (val: number) => void;
   helpText?: string;
 }) {
-  // Convert cents to dollars for display
-  const displayValue = value > 0 ? (value / 100).toFixed(2) : "";
+  const [displayValue, setDisplayValue] = React.useState("");
+  const [isFocused, setIsFocused] = React.useState(false);
 
+  // Sync external value to display when not focused
+  React.useEffect(() => {
+    if (!isFocused) {
+      setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
+    }
+  }, [value, isFocused]);
+  
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
@@ -804,20 +832,30 @@ function CurrencyField({
           <span className="text-gray-500 sm:text-sm">$</span>
         </div>
         <input
-          type="number"
-          value={displayValue}
+          type="text"
+          inputMode="decimal"
+          value={isFocused ? displayValue : (value > 0 ? (value / 100).toFixed(2) : "")}
+          onFocus={(e) => {
+            setIsFocused(true);
+            setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
+            // Select all on focus for easy overwrite
+            e.target.select();
+          }}
           onChange={(e) => {
-            const dollars = parseFloat(e.target.value) || 0;
+            // Just update local display while typing - no conversion yet
+            setDisplayValue(e.target.value);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+            // NOW convert to cents (only on blur)
+            const dollars = parseFloat(displayValue) || 0;
             const cents = Math.round(dollars * 100);
             // Validate: no negatives, max $999,999
             const validated = Math.max(0, Math.min(99999900, cents));
             onChange(validated);
           }}
-          min="0"
-          max="999999"
           className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="0.00"
-          step="0.01"
         />
       </div>
       {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}

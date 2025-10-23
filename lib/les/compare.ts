@@ -606,7 +606,7 @@ function createFICAPercentageWarningFlag(
     severity: "yellow",
     flag_code: "FICA_PERCENTAGE_WARNING",
     message: `FICA withholding check: You entered $${actualDollars}, which is ${actualPercent.toFixed(2)}% of your taxable pay. Expected: ~6.2%.`,
-    suggestion: `FICA should be exactly 6.2% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are NOT taxed). Verify your taxable gross and FICA calculation. Contact finance if the math doesn't match - this is a statutory rate. Note: If you've hit the annual wage base ($176,100 for 2025), FICA withholding may stop.`,
+    suggestion: `FICA should be exactly 6.2% of your FICA-taxable gross (Base Pay + OCONUS COLA + most Special Pays - BAH/BAS are NOT taxed). Verify your calculation. Contact finance if the math doesn't match - this is a statutory rate. Note: If you've hit the annual wage base ($176,100 for 2025), FICA withholding stops.`,
     ref_url: "https://www.irs.gov/taxtopics/tc751",
   };
 }
@@ -633,7 +633,7 @@ function createMedicarePercentageWarningFlag(
     severity: "yellow",
     flag_code: "MEDICARE_PERCENTAGE_WARNING",
     message: `Medicare withholding check: You entered $${actualDollars}, which is ${actualPercent.toFixed(2)}% of your taxable pay. Expected: ~1.45%.`,
-    suggestion: `Medicare should be exactly 1.45% of your taxable gross pay (Base Pay + COLA + Special Pays only - BAH/BAS are NOT taxed). There is no wage base limit. Verify your taxable gross and Medicare calculation. Contact finance if significantly different - this is a statutory rate.`,
+    suggestion: `Medicare should be exactly 1.45% of your Medicare-taxable gross (Base Pay + OCONUS COLA + most Special Pays - BAH/BAS are NOT taxed). There is no wage base limit. Verify your calculation. Contact finance if significantly different - this is a statutory rate.`,
     ref_url: "https://www.irs.gov/taxtopics/tc751",
   };
 }
