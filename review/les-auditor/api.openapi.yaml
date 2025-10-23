@@ -28,6 +28,98 @@ security:
   - ClerkAuth: []
 
 paths:
+  /les/audit/compute:
+    post:
+      summary: Compute LES Audit (Real-Time)
+      description: |
+        Real-time audit computation endpoint. Called automatically on input changes (400ms debounce).
+        
+        **Always-On Audit:**
+        - No "Run Audit" button - computes automatically as user types
+        - Server-side computation using official DFAS tables
+        - Tier-aware masking (free users see top 2 flags only)
+        - No persistence (use /save endpoint to persist)
+        
+        **Tier Policies:**
+        - Free: Top 2 flags, variance bucket only, no exact amounts
+        - Premium: All flags, exact variance, full waterfall
+        
+        **No Rate Limit:** This endpoint is called frequently for real-time UX
+        
+      tags:
+        - LES Auditor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditRequest"
+      responses:
+        "200":
+          description: Masked audit result based on user tier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MaskedAuditResponse"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Server error
+
+  /les/audit/save:
+    post:
+      summary: Save Audit & Generate PDF (Premium Only)
+      description: |
+        Persists audit to database and generates PDF export.
+        
+        **Premium Feature:** Returns 402 PAYWALL for free tier
+        
+        **Quota:**
+        - Free: 1 save per month (enforced)
+        - Premium: Unlimited
+        
+        **Process:**
+        1. Validate tier & quota
+        2. Persist audit record
+        3. Insert line items and flags
+        4. Generate PDF
+        5. Return audit ID and PDF URL
+        
+      tags:
+        - LES Auditor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveAuditRequest"
+      responses:
+        "200":
+          description: Audit saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  auditId:
+                    type: string
+                    format: uuid
+                  pdfUrl:
+                    type: string
+                    nullable: true
+                  quota:
+                    type: object
+        "402":
+          description: Payment Required (Paywall)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaywallResponse"
+        "500":
+          description: Server error
+
   /les/audit:
     post:
       summary: Run LES Audit
@@ -548,3 +640,103 @@ components:
         created_at:
           type: string
           format: date-time
+
+    MaskedAuditResponse:
+      type: object
+      description: Tier-aware masked audit response (free users see limited data)
+      properties:
+        flags:
+          type: array
+          items:
+            $ref: "#/components/schemas/PayFlag"
+        hiddenFlagCount:
+          type: integer
+          description: Number of flags hidden due to tier restrictions
+        totals:
+          type: object
+          properties:
+            computed_net:
+              type: integer
+              nullable: true
+              description: Null for free tier
+            actual_net:
+              type: integer
+            variance:
+              type: integer
+              nullable: true
+              description: Null for free tier
+            varianceBucket:
+              type: string
+              enum: ["0-5", "5-50", ">50", ">100"]
+              description: Always shown for free tier
+        waterfall:
+          type: array
+          nullable: true
+          description: Null for free tier
+        mathProof:
+          type: string
+          nullable: true
+          description: Null for free tier
+        confidence:
+          type: string
+          enum: [high, medium, low]
+        requiresUpgrade:
+          type: boolean
+        tier:
+          type: string
+          enum: [free, premium, staff]
+        policy:
+          type: object
+
+    SaveAuditRequest:
+      type: object
+      required: [month, year, profile, actual, flags, summary]
+      properties:
+        month:
+          type: integer
+        year:
+          type: integer
+        profile:
+          type: object
+        expected:
+          type: object
+        taxable_bases:
+          type: object
+        actual:
+          $ref: "#/components/schemas/AuditRequest/properties/actual"
+        flags:
+          type: array
+          items:
+            $ref: "#/components/schemas/PayFlag"
+        summary:
+          type: object
+
+    PaywallResponse:
+      type: object
+      description: 402 Payment Required response
+      properties:
+        error:
+          type: string
+          enum: [PAYWALL]
+        requiresUpgrade:
+          type: boolean
+        feature:
+          type: string
+          enum: [pdf_export, les_audit_quota, history, copy_templates]
+        message:
+          type: string
+          description: Human-readable explanation
+        quota:
+          type: object
+          nullable: true
+          properties:
+            period:
+              type: string
+              enum: [month]
+            limit:
+              type: integer
+            used:
+              type: integer
+            resetsAt:
+              type: string
+              format: date-time
