@@ -34,10 +34,6 @@ export async function getUserTier(userId: string): Promise<Tier> {
     
     console.log('[getUserTier] Entitlement data:', entitlement);
     
-    if (!entitlement) {
-      console.log('[getUserTier] No entitlement found, checking staff bypass...');
-    }
-    
     // Check for staff bypass via profiles table
     const { data: profile } = await supabaseAdmin
       .from('profiles')
@@ -53,12 +49,20 @@ export async function getUserTier(userId: string): Promise<Tier> {
       return 'staff';
     }
     
+    // If no entitlement found, return free tier
+    if (!entitlement) {
+      console.log('[getUserTier] No entitlement found, returning free tier');
+      return 'free';
+    }
+    
     // Check subscription status and tier
     if (entitlement.status === 'active' && 
         (entitlement.tier === 'premium' || entitlement.tier === 'pro')) {
+      console.log('[getUserTier] Active subscription found, returning premium');
       return 'premium';
     }
     
+    console.log('[getUserTier] No active subscription, returning free tier');
     return 'free';
     
   } catch (error) {
