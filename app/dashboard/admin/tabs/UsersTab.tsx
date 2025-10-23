@@ -8,6 +8,9 @@ import MetricCard from '../components/MetricCard';
 
 interface User {
   user_id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
   rank: string | null;
   branch: string | null;
   created_at: string;
@@ -68,9 +71,9 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const handleBulkExport = async (selectedIds: string[]) => {
     const selectedUsers = users.filter(u => selectedIds.includes(u.user_id));
     const csv = [
-      'User ID,Rank,Branch,Tier,Status,Joined',
+      'User ID,Email,First Name,Last Name,Rank,Branch,Tier,Status,Joined',
       ...selectedUsers.map(u =>
-        `${u.user_id},${u.rank || ''},${u.branch || ''},${u.tier},${u.subscription_status},${u.created_at}`
+        `${u.user_id},${u.email || ''},${u.firstName || ''},${u.lastName || ''},${u.rank || ''},${u.branch || ''},${u.tier},${u.subscription_status},${u.created_at}`
       ),
     ].join('\n');
 
@@ -85,11 +88,23 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
 
   const columns: Column<User>[] = [
     {
-      key: 'user_id',
-      header: 'User ID',
+      key: 'email',
+      header: 'Email',
       sortable: true,
       render: (user) => (
-        <span className="font-mono text-xs">{user.user_id.substring(0, 16)}...</span>
+        <span className="text-sm">{user.email || '-'}</span>
+      ),
+    },
+    {
+      key: 'firstName',
+      header: 'Name',
+      sortable: true,
+      render: (user) => (
+        <span className="font-semibold text-sm">
+          {user.firstName || user.lastName
+            ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+            : '-'}
+        </span>
       ),
     },
     {

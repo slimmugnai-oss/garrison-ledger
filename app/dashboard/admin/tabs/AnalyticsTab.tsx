@@ -227,13 +227,6 @@ function RevenueSubTab({ data }: { data: RevenueData | null }) {
           ))}
         </div>
       </AnimatedCard>
-
-      <div className="rounded-lg border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
-        <p className="text-sm text-blue-800">
-          📊 <strong>Charts coming in Phase 4:</strong> We'll add interactive line and bar charts
-          with recharts for better visualization once the chart library is fully integrated.
-        </p>
-      </div>
     </div>
   );
 }
@@ -304,13 +297,6 @@ function UsersSubTab({ data }: { data: UserData | null }) {
           </table>
         </div>
       </AnimatedCard>
-
-      <div className="rounded-lg border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
-        <p className="text-sm text-blue-800">
-          📊 <strong>Charts coming in Phase 4:</strong> Pie charts for branch/rank distribution and
-          line charts for growth trends.
-        </p>
-      </div>
     </div>
   );
 }

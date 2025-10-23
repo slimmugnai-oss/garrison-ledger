@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
@@ -71,11 +71,38 @@ export async function GET(request: Request) {
       .select('user_id, tier, status, current_period_end, stripe_subscription_id')
       .in('user_id', userIds);
 
+    // Fetch Clerk user data for email and names
+    const clerk = await clerkClient();
+    const clerkUsersPromises = userIds.map(async (id) => {
+      try {
+        const user = await clerk.users.getUser(id);
+        return {
+          userId: id,
+          email: user.emailAddresses[0]?.emailAddress || null,
+          firstName: user.firstName || null,
+          lastName: user.lastName || null,
+        };
+      } catch (error) {
+        console.error(`Failed to fetch Clerk user ${id}:`, error);
+        return {
+          userId: id,
+          email: null,
+          firstName: null,
+          lastName: null,
+        };
+      }
+    });
+    const clerkUsers = await Promise.all(clerkUsersPromises);
+
     // Merge data
     const enrichedUsers = users?.map(user => {
       const entitlement = entitlements?.find(e => e.user_id === user.user_id);
+      const clerkData = clerkUsers.find(c => c.userId === user.user_id);
       return {
         ...user,
+        email: clerkData?.email || null,
+        firstName: clerkData?.firstName || null,
+        lastName: clerkData?.lastName || null,
         tier: entitlement?.tier || 'free',
         subscription_status: entitlement?.status || 'none',
         has_active_subscription: !!entitlement?.stripe_subscription_id,

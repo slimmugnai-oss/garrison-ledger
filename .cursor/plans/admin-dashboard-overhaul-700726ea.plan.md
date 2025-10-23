@@ -1,520 +1,313 @@
-<!-- 700726ea-b07c-40ad-8677-1f9b5dfe7b81 75ba50b8-ff63-4027-9b3f-9ceefc2aeddc -->
-# Admin Dashboard - Sitemap & Site Health Audit System
+<!-- 700726ea-b07c-40ad-8677-1f9b5dfe7b81 1eb2f803-e4b6-4c61-999a-51020fba1099 -->
+# Admin Dashboard Audit & Critical Fixes
 
-## 🎯 Overview
+## Overview
 
-Create a **comprehensive sitemap and site monitoring system** in the admin dashboard that provides complete visibility into all 30+ pages, their health status, analytics, and interconnections.
-
----
-
-## 📊 Current Site Inventory (30+ Pages)
-
-### Home & Core (2)
-
-- `/` - Home page
-- `/dashboard` - Main dashboard
-
-### Dashboard Pages (2)
-
-- `/dashboard/binder` - Document Binder
-- `/dashboard/settings` - Settings
-
-### Profile (1)
-
-- `/dashboard/profile/setup` - Profile Setup
-
-### Premium Tools (5)
-
-- `/dashboard/paycheck-audit` - LES Auditor
-- `/dashboard/pcs-copilot` - PCS Copilot
-- `/dashboard/navigator` - Base Navigator
-- `/dashboard/tdy-voucher` - TDY Copilot
-- `/dashboard/intel` - Intel Library
-
-### Calculators (6)
-
-- `/dashboard/tools/tsp-modeler` - TSP Calculator
-- `/dashboard/tools/sdp-strategist` - SDP Strategist
-- `/dashboard/tools/house-hacking` - House Hacking
-- `/dashboard/tools/pcs-planner` - PCS Planner
-- `/dashboard/tools/on-base-savings` - On-Base Savings
-- `/dashboard/tools/salary-calculator` - Salary Calculator
-
-### Resources (3)
-
-- `/dashboard/listening-post` - Listening Post
-- `/dashboard/directory` - Directory
-- `/dashboard/referrals` - Referrals
-
-### Toolkits (4)
-
-- `/pcs-hub` - PCS Hub
-- `/career-hub` - Career Hub
-- `/deployment` - Deployment
-- `/on-base-shopping` - On-Base Shopping
-
-### Upgrade & Contact (3)
-
-- `/dashboard/upgrade` - Upgrade
-- `/contact` - Contact
-- `/dashboard/support` - Support
-
-### Legal (4)
-
-- `/disclosures` - Disclosures
-- `/privacy` - Privacy Policy
-- `/privacy/cookies` - Cookies Policy
-- `/privacy/do-not-sell` - Do Not Sell
-
-### Admin (2)
-
-- `/dashboard/admin` - Admin Dashboard
-- `/dashboard/admin/briefing` - Admin Briefing
+Complete audit and fixes for admin dashboard to ensure all features work correctly, remove legacy features, add missing functionality, and clarify Listening Post vs Intelligence Briefing systems.
 
 ---
 
-## 🗄️ Database Schema
+## 1. Users Tab - Add Email & Names
 
-### New Table: `site_pages`
+**Issue:** Users table only shows user_id, rank, branch - missing email and names
 
-```sql
-CREATE TABLE site_pages (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  path TEXT NOT NULL UNIQUE,
-  title TEXT NOT NULL,
-  category TEXT NOT NULL,
-  tier_required TEXT, -- 'free', 'premium', or null for public
-  description TEXT,
-  status TEXT DEFAULT 'active', -- 'active', 'deprecated', 'beta'
-  last_updated TIMESTAMP,
-  last_audit TIMESTAMP,
-  health_status TEXT, -- 'healthy', 'warning', 'error', 'unknown'
-  response_time_ms INTEGER,
-  error_count_7d INTEGER DEFAULT 0,
-  view_count_7d INTEGER DEFAULT 0,
-  view_count_30d INTEGER DEFAULT 0,
-  avg_time_on_page_seconds INTEGER,
-  bounce_rate DECIMAL(5,2),
-  conversion_rate DECIMAL(5,2),
-  dependencies JSONB, -- Related pages, APIs, external services
-  meta_tags JSONB, -- SEO metadata
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+**Fix:**
 
-CREATE INDEX idx_site_pages_category ON site_pages(category);
-CREATE INDEX idx_site_pages_status ON site_pages(status);
-CREATE INDEX idx_site_pages_tier ON site_pages(tier_required);
-CREATE INDEX idx_site_pages_health ON site_pages(health_status);
-```
+- Modify `app/api/admin/users/search/route.ts` to join with Clerk user data or fetch emails
+- Update `app/dashboard/admin/tabs/UsersTab.tsx` to add columns:
+- Email address (from Clerk or user_profiles if stored)
+- First name (from Clerk)
+- Last name (from Clerk)
+- Update CSV export to include email and names
 
-### New Table: `page_health_checks`
+**Files to modify:**
 
-```sql
-CREATE TABLE page_health_checks (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  page_id UUID REFERENCES site_pages(id) ON DELETE CASCADE,
-  check_type TEXT NOT NULL, -- 'availability', 'performance', 'seo', 'links'
-  status TEXT NOT NULL, -- 'pass', 'fail', 'warning'
-  response_time_ms INTEGER,
-  error_message TEXT,
-  details JSONB,
-  checked_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX idx_health_checks_page ON page_health_checks(page_id);
-CREATE INDEX idx_health_checks_status ON page_health_checks(status);
-```
+- `app/api/admin/users/search/route.ts`
+- `app/dashboard/admin/tabs/UsersTab.tsx`
 
 ---
 
-## 🎨 Admin Dashboard Integration
+## 2. Feature Flags - Remove Legacy Features
 
-### New Tab: "Sitemap" (6th main tab)
+**Issue:** Feature flags showing removed/legacy features:
 
-**Location:** `/dashboard/admin?tab=sitemap`
+- AI Plan Generation (legacy, phased out with assessments)
+- Natural Search (removed Jan 2025)
+- Spouse Collaboration (not fully functional)
 
-**Sub-tabs:**
+**Fix:**
 
-1. **Overview** - Visual sitemap with health status
-2. **Pages** - Detailed table of all pages
-3. **Health Checks** - Automated health monitoring
-4. **Analytics** - Page performance metrics
-5. **Broken Links** - 404 detector
+### 2.1 Database Cleanup
 
----
+- Create migration to DELETE these 3 flags from `feature_flags` table
+- Keep only active features: LES Auditor, PCS Copilot, Base Navigator, TDY Copilot, Document Binder, Streak Gamification, Email Campaigns
 
-## 📋 Phase 1: Sitemap Database & Seed
+### 2.2 Code Cleanup
 
-### 1.1 Create Database Tables
+- Remove any code references to these features
+- Clean up spouse collaboration page `/dashboard/collaborate/page.tsx` (archive or delete)
+- Verify no broken links to removed features
 
-- Migration: `20251022_sitemap_tables.sql`
-- Tables: `site_pages`, `page_health_checks`
-- RLS policies for admin access
+**Files affected:**
 
-### 1.2 Seed Site Pages
-
-- Script: `scripts/seed-sitemap.ts`
-- Populate all 30+ pages from the list
-- Categories: Home, Dashboard, Premium, Calculators, Resources, Toolkits, Upgrade, Contact, Legal, Admin
-- Add tier requirements (free/premium)
-- Initial descriptions
-
-### 1.3 Page Metadata Extraction
-
-- Script to scan `app/` directory
-- Extract page titles from metadata
-- Extract descriptions from page headers
-- Auto-detect tier requirements from middleware
+- `supabase-migrations/20251023_remove_legacy_flags.sql` (new)
+- `app/dashboard/collaborate/page.tsx` (delete or archive)
+- Search codebase for references
 
 ---
 
-## 📋 Phase 2: Health Check System
+## 3. Revenue Tab - Fix $0 Display
 
-### 2.1 Availability Checker
+**Issue:** Revenue showing when no sales have been made
 
-- API: `POST /api/admin/sitemap/check-health`
-- Ping all pages (internal fetch)
-- Record response times
-- Detect 404s, 500s
-- Update `health_status` field
+**Investigation:**
 
-### 2.2 Performance Monitoring
+- Check `app/api/admin/analytics/revenue/route.ts` line 85-92
+- Verify query against `entitlements` table with `tier='premium'` and `status='active'`
+- Ensure $0 MRR is displayed when premiumUsers = 0 (not placeholder data)
 
-- Check Core Web Vitals per page
-- Lighthouse scores (via API or manual)
-- Bundle size analysis
-- Time to First Byte (TTFB)
+**Fix:**
 
-### 2.3 Broken Link Detector
+- Add validation to ensure only REAL data is shown
+- If premiumUsers = 0, display "$0.00 MRR" clearly
+- Add disclaimer if in testing/dev mode
 
-- Scan each page for internal links
-- Validate all hrefs
-- Flag broken links
-- Suggest fixes (e.g., redirects)
+**Files to modify:**
 
-### 2.4 SEO Health Checks
-
-- Meta title present & length
-- Meta description present & length
-- Open Graph tags
-- Canonical URLs
-- Structured data (schema.org)
+- `app/api/admin/analytics/revenue/route.ts` (verify logic)
+- `app/dashboard/admin/tabs/AnalyticsTab.tsx` (add dev disclaimer if needed)
 
 ---
 
-## 📋 Phase 3: Analytics Integration
+## 4. Remove "Charts Coming in Phase 4" Placeholders
 
-### 3.1 Page View Tracking
+**Issue:** AnalyticsTab.tsx lines 233 and 310 show "Charts coming in Phase 4" messages
 
-- Query `analytics_events` for page views
-- Aggregate by path
-- Calculate 7d and 30d view counts
-- Store in `site_pages.view_count_*`
+**Fix:**
 
-### 3.2 Engagement Metrics
+- DELETE these placeholder messages (all 6 phases are complete!)
+- Revenue and Users sub-tabs are fully functional with charts
+- Remove the blue info boxes at lines 231-236 and 308-313
 
-- Average time on page
-- Bounce rate per page
-- Conversion rate (e.g., profile setup → premium)
-- Exit pages
+**Files to modify:**
 
-### 3.3 User Flow Analysis
-
-- Track common navigation paths
-- Entry pages → Exit pages
-- Identify drop-off points
-- Suggest navigation improvements
+- `app/dashboard/admin/tabs/AnalyticsTab.tsx`
 
 ---
 
-## 📋 Phase 4: Admin UI Components
+## 5. Content Blocks API - Display 410 Content Blocks
 
-### 4.1 Sitemap Overview Component
+**Issue:** Content tab shows empty table with TODO comment at line 71-74
 
-**Visual tree structure:**
+**Fix:**
 
-- Hierarchical display (Home → Dashboard → Tools)
-- Color-coded health status (🟢 Healthy, 🟡 Warning, 🔴 Error)
-- Click to expand categories
-- Quick stats per category
+### 5.1 Create API Endpoint
 
-### 4.2 Pages Table Component
+- New file: `app/api/admin/content-blocks/route.ts`
+- Query `content_blocks` table from Supabase
+- Support filters: status (active/deprecated), domain (finance/pcs/deployment/etc)
+- Return: id, title, domain, status, content_rating, last_reviewed_at, view_count, created_at
 
-**Detailed table with:**
+### 5.2 Update Content Tab UI
 
-- Path, Title, Category, Tier
-- Health Status badge
-- Response time
-- 7d views
-- Last updated date
-- Actions (Edit, View, Health Check)
+- Remove TODO comment
+- Fetch from new API endpoint
+- Display all 410 blocks in DataTable
+- Add filters for domain and status
+- Show content rating, last review date
 
-**Filters:**
+**Files to create:**
 
-- By category
-- By tier (free/premium)
-- By health status
-- By view count (sort)
+- `app/api/admin/content-blocks/route.ts`
 
-### 4.3 Health Dashboard Component
+**Files to modify:**
 
-**Real-time health overview:**
-
-- Total pages by health status
-- Average response time
-- Error count (7d)
-- Recent health checks
-- "Run Full Health Check" button
-
-### 4.4 Analytics Dashboard Component
-
-**Page performance:**
-
-- Top 10 pages by views
-- Bottom 10 pages (low traffic)
-- Pages with high bounce rate
-- Pages with slow load times
-- Conversion funnels
-
-### 4.5 Broken Links Component
-
-**Link health:**
-
-- List of broken internal links
-- Source page → Broken link
-- Suggested fixes
-- Auto-fix options (redirects)
+- `app/dashboard/admin/tabs/ContentTab.tsx`
 
 ---
 
-## 📋 Phase 5: Intelligent Insights
+## 6. Support Tickets - Add Prominent Link
 
-### 5.1 Outdated Content Detection
+**Issue:** Support tickets exist at `/dashboard/admin/support` but not discoverable in admin dashboard
 
-**Flag pages as outdated if:**
+**Fix:**
 
-- No updates in 90+ days
-- Low view count (< 10 views/30d)
-- High bounce rate (> 70%)
-- Slow load time (> 3s)
+- Add "View Support Tickets" button in Overview tab Alerts section
+- Add link in header or navigation area of admin dashboard
+- Option: Add MetricCard in Overview showing "New Tickets" count with click-through
 
-**Action items:**
+**Files to modify:**
 
-- List of pages needing review
-- Suggested improvements
-- Archive vs Update decision
-
-### 5.2 Navigation Optimization
-
-**Analyze user flows:**
-
-- Identify orphaned pages (no incoming links)
-- Suggest cross-linking opportunities
-- Recommend navigation menu updates
-- Highlight high-exit pages
-
-### 5.3 Content Gap Analysis
-
-**Identify missing pages:**
-
-- Compare sitemap to competitor sites
-- Check for common military finance topics
-- Suggest new calculator ideas
-- Recommend new toolkit pages
-
-### 5.4 Performance Recommendations
-
-**Automated suggestions:**
-
-- Pages needing code splitting
-- Images needing optimization
-- Slow API calls to cache
-- Bundle size reductions
+- `app/dashboard/admin/tabs/OverviewTab.tsx` (add support link/button)
+- Consider adding to `app/dashboard/admin/page.tsx` header area
 
 ---
 
-## 📋 Phase 6: Automation & Monitoring
+## 7. Listening Post vs Intelligence Briefing - Clarify Systems
 
-### 6.1 Scheduled Health Checks
+**Current Confusion:**
 
-**Cron jobs:**
+- Listening Post: User-facing page at `/dashboard/listening-post` (RSS feed reader)
+- Intelligence Briefing Pipeline: Admin tool at `/dashboard/admin/briefing` (content curation)
+- Content tab has "Listening Post" sub-tab that's confusing
 
-- Daily: Availability checks (all pages)
-- Weekly: Performance audits (Lighthouse)
-- Monthly: Broken link detection
-- Real-time: Error log monitoring
+**Fix:**
 
-### 6.2 Alert System
+### 7.1 Rename Admin Sub-Tab
 
-**Notify admins when:**
+- Change Content tab sub-tab from "📡 Listening Post" to "📰 Feed Items" or "📰 RSS Articles"
+- This sub-tab should show aggregated RSS articles from the Listening Post feed
 
-- Page returns 404 or 500
-- Response time > 5 seconds
-- Error count spikes (10+ in 1 hour)
-- Page views drop 50%+ week-over-week
+### 7.2 Clarify Intelligence Briefing
 
-### 6.3 Auto-Healing
+- Keep `/dashboard/admin/briefing` as separate dedicated page (already exists)
+- This curates new **content blocks** (410 hand-curated expert blocks)
+- Different from Listening Post which aggregates external RSS feeds
 
-**Automatic fixes:**
+### 7.3 Add Listening Post Refresh
 
-- Broken link redirects (suggest & apply)
-- Cached responses for slow pages
-- Image optimization triggers
-- Dead code elimination
+- Listening Post currently fetches RSS feeds on page load
+- Add admin capability to manually refresh/fetch new stories
+- Option: Cron job to auto-fetch daily (requires Vercel Cron or similar)
 
----
+**Investigation needed:**
 
-## 🎨 UI/UX Design
+- How does Listening Post currently fetch stories? (Check `/dashboard/listening-post/page.tsx`)
+- Is there a `feed_items` table or is it real-time fetch?
+- Create API endpoint to trigger refresh if needed
 
-### Sitemap Tab Layout
+**Files to check:**
 
-```
-┌─────────────────────────────────────────────────────┐
-│  SITEMAP - Garrison Ledger Platform                │
-│  ┌──────┬──────┬──────────┬──────────┬───────────┐ │
-│  │ Over │Pages │  Health  │Analytics │   Links   │ │
-│  │ view │      │  Checks  │          │           │ │
-│  └──────┴──────┴──────────┴──────────┴───────────┘ │
-├─────────────────────────────────────────────────────┤
-│                                                     │
-│  📊 Platform Overview                               │
-│  ┌─────────────────────────────────────────────┐  │
-│  │ 30 Total Pages | 🟢 28 Healthy | 🟡 2 Warning │  │
-│  └─────────────────────────────────────────────┘  │
-│                                                     │
-│  🏠 Home & Core (2)                                 │
-│    🟢 / - Home                                      │
-│    🟢 /dashboard - Dashboard                        │
-│                                                     │
-│  🛠️ Premium Tools (5)                              │
-│    🟢 /dashboard/paycheck-audit - LES Auditor       │
-│    🟡 /dashboard/pcs-copilot - PCS Copilot (slow)   │
-│    🟢 /dashboard/navigator - Base Navigator         │
-│    ...                                              │
-│                                                     │
-│  [Expand all categories...]                         │
-└─────────────────────────────────────────────────────┘
-```
-
-### Health Status Colors
-
-- 🟢 **Healthy**: Response < 2s, no errors, updated < 90d
-- 🟡 **Warning**: Response 2-5s, minor issues, updated 90-180d
-- 🔴 **Error**: Response > 5s, 404/500, or updated > 180d
-- ⚫ **Unknown**: Not yet checked
+- `app/dashboard/listening-post/page.tsx`
+- `app/dashboard/admin/tabs/ContentTab.tsx` (rename sub-tab)
+- `app/dashboard/admin/briefing/page.tsx` (verify separate system)
 
 ---
 
-## 📊 API Endpoints
+## 8. Page Visit Analytics - Verification
 
-### Sitemap Management
+**Question:** Is page visit analytics working?
 
-- `GET /api/admin/sitemap` - Get all pages
-- `GET /api/admin/sitemap/[id]` - Get page details
-- `PUT /api/admin/sitemap/[id]` - Update page metadata
-- `POST /api/admin/sitemap/check-all` - Run full health check
+**Audit:**
 
-### Health Checks
+- Check if `analytics_events` table is being populated
+- Verify `app/api/admin/sitemap/sync-analytics/route.ts` works
+- Test: Visit some pages, then check if sitemap analytics updates
+- Check if Google Analytics is sending events to our database
 
-- `POST /api/admin/sitemap/check-health` - Check specific page
-- `GET /api/admin/sitemap/health-history` - Get check history
-- `GET /api/admin/sitemap/broken-links` - Get broken links
+**Files to audit:**
 
-### Analytics
-
-- `GET /api/admin/sitemap/analytics` - Page analytics summary
-- `GET /api/admin/sitemap/user-flows` - Navigation paths
-- `GET /api/admin/sitemap/insights` - AI-generated insights
+- `app/api/admin/sitemap/sync-analytics/route.ts`
+- `app/api/admin/sitemap/analytics/route.ts`
+- Verify analytics_events table has recent data
 
 ---
 
-## 🎯 Success Metrics
+## 9. Comprehensive System Audit
 
-**Upon completion:**
+### 9.1 All 6 Admin Tabs Functional?
 
-- ✅ All 30+ pages tracked in database
-- ✅ Health status for every page
-- ✅ Analytics integration working
-- ✅ Automated daily health checks
-- ✅ Visual sitemap in admin dashboard
-- ✅ Outdated content flagged
-- ✅ Broken link detection working
-- ✅ Performance recommendations generated
+- ✅ Overview
+- ✅ Analytics (Revenue, Users, Engagement, Tools)
+- ✅ Users
+- ✅ Content (verify after content blocks API added)
+- ✅ System
+- ✅ Sitemap
 
-**Business Impact:**
+### 9.2 All API Endpoints Working?
 
-- 100% visibility into platform health
-- Proactive error detection (before users report)
-- Data-driven content strategy
-- Optimized navigation based on user flows
-- Faster time to identify and fix issues
+- Test each admin API route
+- Verify authentication (admin user ID check)
+- Check error handling
 
----
+### 9.3 Database Tables Healthy?
 
-## 📚 Documentation
+- `site_pages` - 32 pages with metadata
+- `page_health_checks` - health check history
+- `feature_flags` - cleaned up legacy flags
+- `content_blocks` - 410 blocks accessible
+- `analytics_events` - tracking page views
 
-**Create:**
+### 9.4 Pre-Build Automation Working?
 
-- `docs/admin/SITEMAP_SYSTEM.md` - Complete sitemap guide
-- `docs/admin/HEALTH_CHECKS.md` - Health check documentation
-- Update `SYSTEM_STATUS.md` with sitemap feature
+- Verify metadata extraction runs on deploy
+- Check Vercel build logs for "Updated: 32/32"
 
----
+### 9.5 Mobile Responsiveness?
 
-## 🚀 Implementation Order
-
-1. **Week 1**: Database schema + seed script
-2. **Week 2**: Health check system + API endpoints
-3. **Week 3**: Admin UI components (Sitemap tab)
-4. **Week 4**: Analytics integration + insights
-5. **Week 5**: Automation + alerts + polish
-
-**Total Effort:** ~3-4 weeks for complete implementation
+- Test all tabs on mobile viewport
+- Verify tables are scrollable
+- Check all buttons are tap-friendly
 
 ---
 
-## 💡 Future Enhancements
+## Success Criteria
 
-- **A/B Testing Tracker**: Which pages are being tested
-- **Canary Deployments**: Gradual page rollouts
-- **Version History**: Track page changes over time
-- **Content Calendar**: Schedule page updates
-- **SEO Optimizer**: Automated SEO recommendations
-- **Mobile vs Desktop**: Split health checks by device
-- **Geographic Performance**: Page speed by region
+After completion:
+
+✅ Users tab shows email addresses and names
+✅ Legacy feature flags removed (AI Plan Generation, Natural Search, Spouse Collaboration)
+✅ Revenue displays accurate $0 when no sales exist
+✅ No "Charts coming in Phase 4" placeholders
+✅ Content Blocks API working, displaying 410 blocks
+✅ Support tickets link prominent in admin dashboard
+✅ Listening Post vs Intelligence Briefing clearly separated
+✅ Page analytics verified working
+✅ All 6 tabs fully functional
+✅ All 22+ API endpoints tested and working
+✅ Mobile responsive
+✅ Zero TypeScript errors
+✅ Documentation updated
 
 ---
 
-## 🎖️ Summary
+## Implementation Order
 
-This sitemap system transforms the admin dashboard into a **mission control center** for the entire platform. You'll have:
+1. **Quick Wins** (30 min)
 
-✅ **Complete Visibility** - Every page tracked and monitored
+- Remove "Charts coming" placeholders
+- Add support tickets link
 
-✅ **Health Intelligence** - Proactive error detection
+2. **Database Cleanup** (30 min)
 
-✅ **Analytics Integration** - Data-driven decisions
+- Remove 3 legacy feature flags
+- Verify revenue data accuracy
 
-✅ **Automation** - Daily checks, alerts, auto-healing
+3. **Content Blocks API** (1 hour)
 
-✅ **Insights** - Outdated content, navigation optimization
+- Create API endpoint
+- Update Content tab UI
 
-✅ **Professional** - Enterprise-grade site management
+4. **Users Enhancement** (1 hour)
 
-**Ready to build?** This is a comprehensive, production-grade sitemap and health monitoring system worthy of Garrison Ledger's standards.
+- Add email/name columns
+- Update CSV export
+
+5. **Listening Post Clarification** (1 hour)
+
+- Rename admin sub-tab
+- Investigate feed refresh mechanism
+- Add manual refresh capability if needed
+
+6. **Comprehensive Audit** (2 hours)
+
+- Test all tabs, APIs, features
+- Mobile testing
+- Analytics verification
+
+**Total Time:** ~6 hours for complete audit and fixes
 
 ### To-dos
 
-- [ ] Create database migration for site_pages and page_health_checks tables with RLS policies
-- [ ] Build seed script to populate all 30+ pages with metadata (categories, tiers, descriptions)
-- [ ] Create page metadata extraction script (scan app/ directory for titles, descriptions)
-- [ ] Build health check system: availability, performance, SEO, broken links
-- [ ] Create API endpoints: sitemap CRUD, health checks, analytics, user flows
-- [ ] Build SitemapTab component with 5 sub-tabs (Overview, Pages, Health, Analytics, Links)
-- [ ] Create visual sitemap tree with hierarchical structure and health status colors
-- [ ] Build pages table with filters (category, tier, health, views) and search
-- [ ] Integrate analytics: query analytics_events for page views, bounce rate, time on page
-- [ ] Build intelligent insights: outdated content detection, navigation optimization, performance recommendations
-- [ ] Create automation: scheduled health checks (daily/weekly/monthly), alert system, auto-healing
-- [ ] Write comprehensive documentation: SITEMAP_SYSTEM.md, HEALTH_CHECKS.md, update SYSTEM_STATUS.md
+- [ ] Add email addresses and first/last names to Users tab table and CSV export
+- [ ] Create migration to remove AI Plan Generation, Natural Search, Spouse Collaboration from feature_flags table
+- [ ] Archive or delete /dashboard/collaborate page and clean up code references
+- [ ] Audit revenue API to ensure $0 MRR displays correctly when no premium users exist
+- [ ] Delete 'Charts coming in Phase 4' placeholder messages from AnalyticsTab.tsx
+- [ ] Create /api/admin/content-blocks endpoint to fetch 410 content blocks from database
+- [ ] Update Content tab to display content blocks with filters for domain and status
+- [ ] Add prominent Support Tickets link/button in admin dashboard Overview tab
+- [ ] Rename Content tab 'Listening Post' sub-tab to 'Feed Items' or 'RSS Articles' for clarity
+- [ ] Investigate how Listening Post fetches RSS feeds and add manual refresh capability
+- [ ] Audit page visit analytics to ensure analytics_events table is populating correctly
+- [ ] Test all 6 tabs, 22+ API endpoints, mobile responsiveness, and verify zero errors

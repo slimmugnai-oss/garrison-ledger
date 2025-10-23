@@ -127,6 +127,36 @@ export default function OverviewTab({ initialMetrics, initialAlerts, initialActi
         </div>
       </div>
 
+      {/* Support Tickets Call-Out */}
+      <AnimatedCard delay={175} className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="bg-amber-100 p-3 rounded-lg">
+              <Icon name="MessageSquare" className="h-6 w-6 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Support Tickets</h3>
+              <p className="text-sm text-gray-600">
+                {metrics.supportTickets > 0 ? (
+                  <>
+                    <span className="font-bold text-amber-600">{metrics.supportTickets}</span> new {metrics.supportTickets === 1 ? 'ticket' : 'tickets'} requiring attention
+                  </>
+                ) : (
+                  'No pending support tickets'
+                )}
+              </p>
+            </div>
+          </div>
+          <a
+            href="/dashboard/admin/support"
+            className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+          >
+            View All Tickets
+            <Icon name="ArrowRight" className="h-4 w-4" />
+          </a>
+        </div>
+      </AnimatedCard>
+
       {/* System Health & Activity Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Live Activity Feed */}

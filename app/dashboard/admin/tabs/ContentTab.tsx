@@ -27,7 +27,7 @@ export default function ContentTab() {
         <nav className="flex space-x-1 overflow-x-auto">
           {[
             { id: 'blocks', label: '📚 Content Blocks' },
-            { id: 'listening-post', label: '📡 Listening Post' },
+            { id: 'listening-post', label: '📰 Feed Items' },
             { id: 'submissions', label: '✍️ User Submissions' },
           ].map((tab) => (
             <button
@@ -60,6 +60,11 @@ function ContentBlocksSubTab() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [domainFilter, setDomainFilter] = useState('all');
+  const [stats, setStats] = useState<{
+    total: number;
+    byStatus: Record<string, number>;
+    byDomain: Record<string, number>;
+  } | null>(null);
 
   useEffect(() => {
     loadContentBlocks();
@@ -68,9 +73,17 @@ function ContentBlocksSubTab() {
   const loadContentBlocks = async () => {
     setLoading(true);
     try {
-      // TODO: Create API endpoint for content blocks
-      // For now, simulate with empty data
-      setContentBlocks([]);
+      const params = new URLSearchParams({
+        status: statusFilter,
+        domain: domainFilter,
+      });
+
+      const res = await fetch(`/api/admin/content-blocks?${params}`);
+      if (!res.ok) throw new Error('Failed to load content blocks');
+
+      const data = await res.json();
+      setContentBlocks(data.blocks);
+      setStats(data.stats);
     } catch (error) {
       console.error('Error loading content blocks:', error);
     } finally {
@@ -144,6 +157,28 @@ function ContentBlocksSubTab() {
 
   return (
     <div className="space-y-4">
+      {/* Summary Stats */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg p-4">
+            <div className="text-sm text-blue-700 font-semibold">Total Blocks</div>
+            <div className="text-3xl font-black text-blue-900">{stats.total}</div>
+          </div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-lg p-4">
+            <div className="text-sm text-green-700 font-semibold">Active</div>
+            <div className="text-3xl font-black text-green-900">{stats.byStatus.active || 0}</div>
+          </div>
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-4">
+            <div className="text-sm text-amber-700 font-semibold">Draft</div>
+            <div className="text-3xl font-black text-amber-900">{stats.byStatus.draft || 0}</div>
+          </div>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-lg p-4">
+            <div className="text-sm text-gray-700 font-semibold">Deprecated</div>
+            <div className="text-3xl font-black text-gray-900">{stats.byStatus.deprecated || 0}</div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-4">
         <select
           value={statusFilter}
