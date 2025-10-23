@@ -71,8 +71,8 @@ export function useLesAudit(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Compute function
-  const compute = useCallback(async () => {
+  // Compute function with retry logic
+  const compute = useCallback(async (retryCount = 0) => {
     // Check if we have minimum required data
     if (!inputs.month || !inputs.year || !inputs.profile) {
       setResult(null);
@@ -96,11 +96,18 @@ export function useLesAudit(
       });
 
       if (!response.ok) {
+        // Retry on 500 errors (up to 2 times)
+        if (response.status >= 500 && retryCount < 2) {
+          console.log(`[useLesAudit] Retrying (attempt ${retryCount + 1})...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+          return compute(retryCount + 1);
+        }
+        
         if (response.status === 402) {
           const data = await response.json();
           setError(data.message || 'Upgrade required');
         } else {
-          setError('Failed to compute audit');
+          setError(`Audit failed (${response.status}). Please try again.`);
         }
         setResult(null);
         return;
@@ -110,8 +117,15 @@ export function useLesAudit(
       setResult(data);
       
     } catch (err) {
+      // Network errors - retry once
+      if (retryCount < 1) {
+        console.log('[useLesAudit] Network error, retrying...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return compute(retryCount + 1);
+      }
+      
       console.error('[useLesAudit] Computation error:', err);
-      setError('Network error. Please try again.');
+      setError('Network error. Please check your connection and try again.');
       setResult(null);
     } finally {
       setLoading(false);
