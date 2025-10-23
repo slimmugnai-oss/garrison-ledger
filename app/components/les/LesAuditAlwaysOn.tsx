@@ -160,10 +160,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   }, [month, year, paygrade, mhaOrZip, withDependents]);
 
   // ============================================================================
-  // BUILD AUDIT INPUTS
+  // BUILD AUDIT INPUTS (MEMOIZED TO PREVENT RE-RENDER LOOP)
   // ============================================================================
 
-  const inputs: AuditInputs = {
+  const inputs: AuditInputs = useMemo(() => ({
     month,
     year,
     profile:
@@ -196,7 +196,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       ].filter(Boolean) as Array<{ code: string; amount_cents: number }>,
     },
     net_pay_cents: netPay,
-  };
+  }), [month, year, paygrade, yos, mhaOrZip, withDependents, basePay, bah, bas, cola, 
+      federalTax, stateTax, fica, medicare, tsp, sgli, dental, netPay]);
 
   // ============================================================================
   // REAL-TIME AUDIT COMPUTATION
