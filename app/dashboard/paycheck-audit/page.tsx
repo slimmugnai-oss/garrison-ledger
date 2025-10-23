@@ -10,8 +10,9 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import PaycheckAuditClient from './PaycheckAuditClient';
+import { LesAuditAlwaysOn } from '@/app/components/les/LesAuditAlwaysOn';
 import ProfileIncompletePrompt from '@/app/components/les/ProfileIncompletePrompt';
+import { getUserTier } from '@/lib/auth/subscription';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -28,44 +29,16 @@ export default async function PaycheckAuditPage() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Check premium status
-  const { data: entitlement } = await supabase
-    .from('entitlements')
-    .select('tier, status')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+  // Get subscription tier
+  const tier = await getUserTier(user.id);
 
   // Get user profile (for BAH/grade context)
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('rank, current_base, has_dependents, paygrade, mha_code, mha_code_override')
+    .select('rank, current_base, has_dependents, paygrade, mha_code, mha_code_override, years_of_service')
     .eq('user_id', user.id)
     .maybeSingle();
 
-  // Get audit history (last 12 months, exclude deleted)
-  const { data: history } = await supabase
-    .from('les_uploads')
-    .select('*')
-    .eq('user_id', user.id)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .limit(12);
-
-  // Check usage this month (exclude deleted)
-  const firstDayOfMonth = new Date();
-  firstDayOfMonth.setDate(1);
-  firstDayOfMonth.setHours(0, 0, 0, 0);
-
-  const { count: uploadsThisMonth } = await supabase
-    .from('les_uploads')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .is('deleted_at', null)
-    .gte('created_at', firstDayOfMonth.toISOString());
-
-  const hasReachedFreeLimit = !isPremium && (uploadsThisMonth || 0) >= 1;
 
   // Check profile completeness (need computed fields for audit)
   const missingFields: string[] = [];
@@ -88,17 +61,14 @@ export default async function PaycheckAuditPage() {
       {!profileComplete ? (
         <ProfileIncompletePrompt missingFields={missingFields} />
       ) : (
-        <PaycheckAuditClient
-          isPremium={isPremium}
+        <LesAuditAlwaysOn
+          tier={tier}
           userProfile={{
-            rank: profile?.rank,
             paygrade: profile?.paygrade,
+            yos: profile?.years_of_service,
             currentBase: profile?.current_base,
             hasDependents: profile?.has_dependents
           }}
-          history={history || []}
-          hasReachedFreeLimit={hasReachedFreeLimit}
-          uploadsThisMonth={uploadsThisMonth || 0}
         />
       )}
       <Footer />
