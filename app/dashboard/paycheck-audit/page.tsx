@@ -33,6 +33,14 @@ export default async function PaycheckAuditPage() {
   // Get subscription tier
   const tier = await getUserTier(user.id);
   console.log('[PaycheckAuditPage] User ID:', user.id, 'Tier:', tier);
+  
+  // Debug: Check if user email matches staff bypass
+  const { data: staffProfile } = await supabase
+    .from("profiles")
+    .select("email")
+    .eq("id", user.id)
+    .maybeSingle();
+  console.log('[PaycheckAuditPage] Staff profile email:', staffProfile?.email);
 
   // Get user profile (for BAH/grade context)
   const { data: profile } = await supabase
