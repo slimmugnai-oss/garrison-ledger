@@ -400,6 +400,23 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <span className="text-sm text-gray-500">From LES "Entitlements" section</span>
             </div>
 
+            {/* Clarification: What We Prefill */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="flex items-start gap-3">
+                <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-semibold text-blue-900 mb-1">What We Prefill vs What You Enter</p>
+                  <p className="text-blue-800 mb-2">
+                    <strong>We prefill:</strong> Only authoritative values from official DFAS tables (Base Pay, BAH, BAS, COLA).
+                  </p>
+                  <p className="text-blue-800">
+                    <strong>You enter:</strong> Taxes, TSP, Dental from YOUR LES. 
+                    TSP default = % of BASIC PAY; override if you elected contributions from other pays.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <CurrencyInput
                 label="Base Pay (Monthly)"

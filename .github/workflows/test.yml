@@ -1,0 +1,90 @@
+name: LES Auditor Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/les/**'
+      - 'app/api/les/**'
+      - '__tests__/**'
+      - 'review/les-auditor/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/les/**'
+      - 'app/api/les/**'
+      - '__tests__/**'
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run unit tests
+        run: npm test -- --coverage
+      
+      - name: Check coverage threshold
+        run: |
+          # Ensure >70% coverage on lib/les/*
+          echo "Checking test coverage..."
+          npm test -- --coverage --coverageThreshold='{"global":{"branches":70,"functions":70,"lines":70,"statements":70}}'
+  
+  rls-security:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Link to Supabase project
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Run RLS Smoke Test
+        run: |
+          echo "Running RLS security smoke test..."
+          supabase db execute --file review/les-auditor/sql/rls_smoke_test.sql > rls_output.txt 2>&1
+          cat rls_output.txt
+          
+          # Check for failures (❌ in output)
+          if grep -q "FAILED" rls_output.txt || grep -q "❌" rls_output.txt; then
+            echo "::error::RLS smoke test FAILED - security vulnerability detected!"
+            exit 1
+          fi
+          
+          # Check for success message
+          if grep -q "ALL RLS SMOKE TESTS PASSED" rls_output.txt; then
+            echo "✅ RLS security verified"
+            exit 0
+          else
+            echo "::warning::RLS test output inconclusive"
+            exit 1
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      
+      - name: Upload RLS test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rls-test-results
+          path: rls_output.txt
+

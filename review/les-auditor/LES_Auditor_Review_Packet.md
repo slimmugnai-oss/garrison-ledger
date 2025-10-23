@@ -28,25 +28,26 @@
 
 ### Auto-Fill Strategy (What We Compute)
 
-**Server-Side Lookups (100% Accurate):**
+**What We Prefill (from official DFAS tables):**
 - **Base Pay:** Looked up from `military_pay_tables` by paygrade + years of service
 - **BAH:** Looked up from `bah_rates` (16,368 rates) by MHA code + paygrade + dependents
 - **BAS:** Constant from `lib/ssot.ts` (Officer $316.98, Enlisted $460.25)
 - **COLA:** Looked up from `conus_cola_rates` / `oconus_cola_rates` by location
-- **TSP:** Calculated from user's contribution % (from profile)
+- **TSP:** Calculated as % of BASIC PAY ONLY (user can override if elected other sources)
 - **SGLI:** Looked up from `sgli_rates` table by coverage amount
 - **Special Pays:** Conditional on profile toggles (SDAP, HFP/IDP, FSA, FLPP)
 
-**User Must Enter (From Actual LES):**
-- **Federal Tax** - Varies by W-4, YTD, exemptions (too complex to estimate)
-- **State Tax** - 51 different state systems (manual entry required)
-- **FICA** - User enters actual, we validate ~6.2%
-- **Medicare** - User enters actual, we validate ~1.45%
-- **Dental Premium** - Varies by plan
-- **Allotments** - User-specific
-- **Debts** - User-specific
+**What You Must Enter (from YOUR LES):**
+- **Federal Tax** - Varies by W-4, YTD, exemptions (we don't estimate this)
+- **State Tax** - 51 different state systems (we don't estimate this)
+- **FICA** - You enter actual, we validate ~6.2%
+- **Medicare** - You enter actual, we validate ~1.45%
+- **TSP** - Prefilled as % of BASIC PAY; override if you elected contributions from special pays
+- **Dental Premium** - Varies by plan (no prefill)
+- **Allotments** - User-specific (savings, charities, etc.)
+- **Debts** - User-specific (advance pay, AAFES, etc.)
 - **Adjustments** - Retroactive pay, bonuses, corrections
-- **Net Pay** - Final amount (we validate math)
+- **Net Pay** - Final amount (we validate the math)
 
 ### Data Refresh Strategy
 
