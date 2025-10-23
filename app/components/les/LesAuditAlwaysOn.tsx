@@ -15,7 +15,7 @@
 
 import { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
-import { Badge } from "@/app/components/ui/Badge";
+import Badge from "@/app/components/ui/Badge";
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
 import { useLesAudit } from "@/app/hooks/useLesAudit";
 import type { AuditInputs } from "@/app/hooks/useLesAudit";
