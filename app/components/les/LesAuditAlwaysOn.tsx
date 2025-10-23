@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
@@ -67,11 +67,59 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
   // UI State
   const [saving, setSaving] = useState(false);
+  const [loadingExpected, setLoadingExpected] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState({
     entitlements: false,
     deductions: false,
     taxes: false,
   });
+
+  // ============================================================================
+  // AUTO-POPULATE EXPECTED VALUES
+  // ============================================================================
+
+  useEffect(() => {
+    const fetchExpectedValues = async () => {
+      // Only fetch if we have complete profile data
+      if (!month || !year || !paygrade || !userProfile.currentBase) return;
+
+      setLoadingExpected(true);
+
+      try {
+        const response = await fetch("/api/les/expected-values", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            month,
+            year,
+            rank: paygrade,
+            location: userProfile.currentBase,
+            hasDependents: withDependents,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Auto-fill allowances (official DFAS data)
+          if (data.base_pay) setBasePay(data.base_pay);
+          if (data.bah) setBah(data.bah);
+          if (data.bas) setBas(data.bas);
+          if (data.cola) setCola(data.cola);
+
+          // Auto-fill deductions (from profile)
+          if (data.tsp) setTsp(data.tsp);
+          if (data.sgli) setSgli(data.sgli);
+        }
+      } catch (error) {
+        console.error("Failed to fetch expected values:", error);
+      } finally {
+        setLoadingExpected(false);
+      }
+    };
+
+    fetchExpectedValues();
+  }, [month, year, paygrade, userProfile.currentBase, withDependents]);
 
   // ============================================================================
   // BUILD AUDIT INPUTS
@@ -229,6 +277,12 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
             {!collapsedSections.entitlements && (
               <div className="space-y-3 px-4 pb-4">
+                {loadingExpected && (
+                  <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+                    <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
+                    <span>Loading official DFAS rates...</span>
+                  </div>
+                )}
                 {/* Base Pay, BAH, BAS, COLA inputs */}
                 <CurrencyField label="Base Pay" value={basePay} onChange={setBasePay} />
                 <CurrencyField label="BAH" value={bah} onChange={setBah} />
