@@ -6,7 +6,7 @@
  * Visual progress bar showing remaining credits with purchase options
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import { ssot } from "@/lib/ssot";
@@ -22,14 +22,14 @@ interface CreditMeterProps {
   _onPurchaseClick?: () => void;
 }
 
-export default function CreditMeter({ _onPurchaseClick }: CreditMeterProps) {
+export interface CreditMeterRef {
+  refresh: () => Promise<void>;
+}
+
+const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(({ _onPurchaseClick }, ref) => {
   const [credits, setCredits] = useState<CreditData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-
-  useEffect(() => {
-    fetchCredits();
-  }, []);
 
   const fetchCredits = async () => {
     try {
@@ -45,6 +45,15 @@ export default function CreditMeter({ _onPurchaseClick }: CreditMeterProps) {
       setLoading(false);
     }
   };
+
+  // Expose refresh method to parent via ref
+  useImperativeHandle(ref, () => ({
+    refresh: fetchCredits,
+  }));
+
+  useEffect(() => {
+    fetchCredits();
+  }, []);
 
   const handlePurchase = async (packSize: number) => {
     try {
@@ -226,4 +235,8 @@ export default function CreditMeter({ _onPurchaseClick }: CreditMeterProps) {
       )}
     </div>
   );
-}
+});
+
+CreditMeter.displayName = "CreditMeter";
+
+export default CreditMeter;

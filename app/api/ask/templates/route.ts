@@ -30,7 +30,9 @@ export async function GET() {
     // Get user profile for personalization
     const { data: profile } = await supabase
       .from("user_profiles")
-      .select("rank, base, dependents, years_of_service")
+      .select(
+        "rank, current_base, years_of_service, has_dependents, dependents_count, marital_status"
+      )
       .eq("user_id", userId)
       .single();
 
@@ -71,10 +73,10 @@ export async function GET() {
     // Personalized questions based on user profile
     const personalizedTemplates: TemplateQuestion[] = [];
 
-    if (profile?.rank && profile?.base) {
+    if (profile?.rank && profile?.current_base) {
       personalizedTemplates.push({
         id: "personal_bah",
-        text: `What's my BAH as ${profile.rank} at ${profile.base}?`,
+        text: `What's my BAH as ${profile.rank} at ${profile.current_base}?`,
         category: "BAH",
         personalized: true,
       });
@@ -89,10 +91,10 @@ export async function GET() {
       });
     }
 
-    if (profile?.dependents && profile.dependents > 0) {
+    if (profile?.has_dependents && profile.dependents_count > 0) {
       personalizedTemplates.push({
         id: "family_benefits",
-        text: "What benefits are available for my family?",
+        text: `What benefits are available for my family with ${profile.dependents_count} ${profile.dependents_count === 1 ? "child" : "children"}?`,
         category: "Benefits",
         personalized: true,
       });
@@ -101,7 +103,7 @@ export async function GET() {
     if (profile?.years_of_service && profile.years_of_service >= 10) {
       personalizedTemplates.push({
         id: "retirement_timeline",
-        text: "How close am I to military retirement?",
+        text: `How close am I to retirement with ${profile.years_of_service} years of service?`,
         category: "Career",
         personalized: true,
       });

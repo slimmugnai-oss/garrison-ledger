@@ -6,7 +6,7 @@
  * Textarea for question input with character limit and submit functionality
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 
@@ -14,67 +14,44 @@ interface QuestionComposerProps {
   onQuestionSubmit?: (question: string, templateId?: string) => void;
   isLoading?: boolean;
   maxLength?: number;
+  initialQuestion?: string;
+  initialTemplateId?: string;
 }
 
 export default function QuestionComposer({
   onQuestionSubmit,
   isLoading = false,
   maxLength = 500,
+  initialQuestion = "",
+  initialTemplateId,
 }: QuestionComposerProps) {
-  const [question, setQuestion] = useState("");
-  const [templateId, setTemplateId] = useState<string | undefined>();
+  const [question, setQuestion] = useState(initialQuestion);
+  const [templateId, setTemplateId] = useState<string | undefined>(initialTemplateId);
+
+  // Update question when initialQuestion changes (from template click)
+  useEffect(() => {
+    if (initialQuestion) {
+      setQuestion(initialQuestion);
+    }
+  }, [initialQuestion]);
+
+  // Update templateId when initialTemplateId changes
+  useEffect(() => {
+    if (initialTemplateId) {
+      setTemplateId(initialTemplateId);
+    }
+  }, [initialTemplateId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim() || isLoading) return;
 
-    // Track analytics
-    try {
-      await fetch("/api/analytics/track", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event: "ask_submit",
-          properties: {
-            question_length: question.trim().length,
-            template_id: templateId,
-            has_template: !!templateId,
-          },
-          timestamp: new Date().toISOString(),
-        }),
-      });
-    } catch (error) {
-      console.debug("Analytics tracking failed:", error);
-    }
+    // Delegate to parent for full API handling
+    await onQuestionSubmit?.(question.trim(), templateId);
 
-    try {
-      const response = await fetch("/api/ask/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: question.trim(),
-          templateId,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        onQuestionSubmit?.(question.trim(), templateId);
-        setQuestion("");
-        setTemplateId(undefined);
-      } else {
-        console.error("Submit error:", result.error);
-        // Handle error (show toast, etc.)
-      }
-    } catch (error) {
-      console.error("Submit error:", error);
-    }
-  };
-
-  const _handleTemplateClick = (templateText: string, id: string) => {
-    setQuestion(templateText);
-    setTemplateId(id);
+    // Clear form on successful submit
+    setQuestion("");
+    setTemplateId(undefined);
   };
 
   return (

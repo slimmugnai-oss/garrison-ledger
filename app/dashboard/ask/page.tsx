@@ -9,10 +9,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import QuestionComposer from "@/app/components/ask/QuestionComposer";
-import AnswerDisplay from "@/app/components/ask/AnswerDisplay";
-import CreditMeter from "@/app/components/ask/CreditMeter";
-import TemplateQuestions from "@/app/components/ask/TemplateQuestions";
+import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -38,38 +35,8 @@ export default async function AskAssistantPage() {
             </p>
           </div>
 
-          {/* Credit Meter */}
-          <div className="mb-6">
-            <CreditMeter />
-          </div>
-
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-            {/* Left Column - Question Composer (40%) */}
-            <div className="lg:col-span-2">
-              <div className="rounded-lg border border-gray-200 bg-white p-6">
-                <h2 className="mb-4 text-xl font-semibold text-gray-900">Ask Your Question</h2>
-
-                {/* Template Questions */}
-                <div className="mb-6">
-                  <TemplateQuestions />
-                </div>
-
-                {/* Question Composer */}
-                <QuestionComposer />
-              </div>
-            </div>
-
-            {/* Right Column - Answer Pane (60%) */}
-            <div className="lg:col-span-3">
-              <div className="rounded-lg border border-gray-200 bg-white p-6">
-                <h2 className="mb-4 text-xl font-semibold text-gray-900">Answer</h2>
-
-                {/* Answer Display */}
-                <AnswerDisplay />
-              </div>
-            </div>
-          </div>
+          {/* Client Component - Manages State */}
+          <AskAssistantClient />
 
           {/* Features Info */}
           <div className="mt-12 rounded-lg border border-blue-200 bg-blue-50 p-6">
