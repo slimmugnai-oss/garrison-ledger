@@ -5,7 +5,7 @@
 -- - Spouse Collaboration (not fully functional, removed)
 
 DELETE FROM feature_flags 
-WHERE key IN ('ai_plan_generation', 'natural_search', 'spouse_collaboration');
+WHERE flag_key IN ('ai_plan_generation', 'natural_search', 'spouse_collaboration');
 
 -- Verify remaining feature flags (should keep only active features)
 -- Expected to remain:

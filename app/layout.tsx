@@ -5,6 +5,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import { DEFAULT_META, softwareAppSchema, organizationSchema } from "@/lib/seo-config";
 import ReferralCapture from "./components/auth/ReferralCapture";
 import KeyboardShortcuts from "./components/ui/KeyboardShortcuts";
+import PageViewTracker from "./components/analytics/PageViewTracker";
 import "./globals.css";
 
 const inter = Inter({
@@ -58,6 +59,7 @@ export default function RootLayout({
         >
           <ReferralCapture />
           <KeyboardShortcuts />
+          <PageViewTracker />
           {children}
           <GoogleAnalytics gaId="G-TCPN1EGMD8" />
         </body>

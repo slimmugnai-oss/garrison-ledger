@@ -22,8 +22,10 @@ export async function POST(request: NextRequest) {
     // Store event in database for admin analytics (fire and forget)
     supabaseAdmin.from('analytics_events').insert({
       user_id: userId || 'anonymous',
-      event_name: event,
-      properties: properties || {},
+      event_type: event, // For sitemap analytics compatibility
+      event_name: event, // Keep for backward compatibility
+      event_data: properties || {}, // Store properties in event_data for sitemap
+      properties: properties || {}, // Keep for backward compatibility
       created_at: timestamp || new Date().toISOString()
     }).then(({ error: trackError }) => {
       if (trackError) {
