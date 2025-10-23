@@ -481,7 +481,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           {/* Empty State */}
           {!result && !loading && (
             <div className="py-12 text-center">
-              <Icon name="FileText" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+              <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
               <p className="text-gray-600">
                 Enter your LES data on the left to see your audit report
               </p>
