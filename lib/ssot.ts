@@ -1,9 +1,9 @@
 /**
  * SINGLE SOURCE OF TRUTH (SSOT)
- * 
+ *
  * All user-facing facts, counts, and model/cost truths must reference this module.
  * DO NOT hardcode values in UI, docs, or admin panels.
- * 
+ *
  * Last Updated: 2025-01-19
  */
 
@@ -26,12 +26,12 @@ export const ssot = {
       success: "green-600",
       warn: "amber-600",
       danger: "red-600",
-      info: "blue-600"
+      info: "blue-600",
     },
     typography: {
       headings: "Lora",
-      body: "Inter"
-    }
+      body: "Inter",
+    },
   },
 
   /**
@@ -43,22 +43,22 @@ export const ssot = {
       model: "Gemini-2.0-Flash",
       approxCostPerPlanUSD: 0.02,
       maxTokens: 8192,
-      temperature: 0.7
+      temperature: 0.7,
     },
     explainers: {
       provider: "Google",
-      model: "Gemini-2.0-Flash"
+      model: "Gemini-2.0-Flash",
     },
     assessment: {
       provider: "Google",
-      model: "Gemini-2.0-Flash"
+      model: "Gemini-2.0-Flash",
     },
     // Legacy reference (for documentation only)
     legacy: {
       provider: "OpenAI",
       model: "GPT-4o",
-      approxCostPerPlanUSD: 0.25
-    }
+      approxCostPerPlanUSD: 0.25,
+    },
   },
 
   /**
@@ -70,25 +70,25 @@ export const ssot = {
       status: "removed",
       reason: "factual-only policy",
       removedDate: "2025-01-19",
-      replacement: "Individual base guides with official data"
+      replacement: "Individual base guides with official data",
     },
     naturalSearch: {
       status: "removed",
       reason: "cost optimization",
-      removedDate: "2025-01-18"
+      removedDate: "2025-01-18",
     },
     baseGuides: {
       status: "active",
       version: "elite",
-      totalBases: 203
+      totalBases: 203,
     },
     pcsMoneyCopilot: {
       status: "active",
-      tier: "premium-exclusive"
+      tier: "premium-exclusive",
     },
     aiPlanGeneration: {
       status: "active",
-      tier: "all-tiers"
+      tier: "all-tiers",
     },
     lesAuditor: {
       status: "beta",
@@ -97,8 +97,28 @@ export const ssot = {
       premiumUploadsPerMonth: null, // unlimited
       maxFileSizeMB: 5,
       supportedFormats: ["PDF"],
-      futureFormats: ["image-ocr", "manual-entry"]
-    }
+      futureFormats: ["image-ocr", "manual-entry"],
+    },
+    askAssistant: {
+      status: "active",
+      tier: "all-tiers",
+      model: "Gemini-2.5-Flash",
+      rateLimits: {
+        free: { questionsPerMonth: 5, maxTokens: 350, fileAnalysis: false },
+        premium: { questionsPerMonth: 50, maxTokens: 800, fileAnalysis: false },
+      },
+      creditPacks: [
+        { credits: 25, priceCents: 199 },
+        { credits: 100, priceCents: 599 },
+        { credits: 250, priceCents: 999 },
+      ],
+    },
+    intelLibrary: {
+      status: "deprecated",
+      reason: "Transformed into Ask Assistant",
+      deprecatedDate: "2025-01-23",
+      replacement: "/dashboard/ask",
+    },
   },
 
   /**
@@ -110,20 +130,20 @@ export const ssot = {
     // Build-time generated (TODO: CI script)
     pages: 130, // From build output
     apiRoutes: 98, // After natural-search removal
-    
+
     // Base counts (from bases-clean.ts)
     bases: {
       conus: 163,
       oconus: 40,
-      total: 203
+      total: 203,
     },
 
     // User metrics (should come from analytics)
     users: {
       total: null, // Populated from database
       premium: null,
-      free: null
-    }
+      free: null,
+    },
   },
 
   /**
@@ -137,7 +157,7 @@ export const ssot = {
       cacheHours: 24,
       attribution: "Google",
       licenseDoc: "docs/vendors/weather.md",
-      apiUrl: "https://weather.googleapis.com/v1/currentConditions:lookup"
+      apiUrl: "https://weather.googleapis.com/v1/currentConditions:lookup",
     },
     housing: {
       name: "Zillow Market Data",
@@ -145,7 +165,7 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Zillow",
       licenseDoc: "docs/vendors/housing.md",
-      apiUrl: "https://zillow-com1.p.rapidapi.com"
+      apiUrl: "https://zillow-com1.p.rapidapi.com",
     },
     schools: {
       name: "GreatSchools",
@@ -154,7 +174,7 @@ export const ssot = {
       cacheDays: 30,
       attribution: "GreatSchools",
       licenseDoc: "docs/vendors/greatschools.md",
-      tier: "premium"
+      tier: "premium",
     },
     crime: {
       name: "Crime Data API",
@@ -162,7 +182,7 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Crime Data Provider",
       licenseDoc: "docs/vendors/crime.md",
-      apiUrl: "https://api.crime-data.com/v1/crime"
+      apiUrl: "https://api.crime-data.com/v1/crime",
     },
     amenities: {
       name: "Google Places API",
@@ -170,7 +190,7 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Google",
       licenseDoc: "docs/vendors/amenities.md",
-      apiUrl: "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+      apiUrl: "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
     },
     demographics: {
       name: "RapidAPI Demographics",
@@ -178,7 +198,7 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Demographics Provider",
       licenseDoc: "docs/vendors/demographics.md",
-      apiUrl: "https://demographics-api.p.rapidapi.com/demographics"
+      apiUrl: "https://demographics-api.p.rapidapi.com/demographics",
     },
     military: {
       name: "Google Places API",
@@ -186,8 +206,8 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Google",
       licenseDoc: "docs/vendors/military.md",
-      apiUrl: "https://maps.googleapis.com/maps/api/place/textsearch/json"
-    }
+      apiUrl: "https://maps.googleapis.com/maps/api/place/textsearch/json",
+    },
   },
 
   /**
@@ -200,7 +220,7 @@ export const ssot = {
     noSyntheticData: true,
     noEstimates: true,
     noRandomization: true,
-    requireAttribution: true
+    requireAttribution: true,
   },
 
   /**
@@ -210,7 +230,7 @@ export const ssot = {
     free: {
       name: "Starter",
       priceMonthly: 0,
-      features: ["Basic assessment", "2 AI-generated blocks", "Limited calculators"]
+      features: ["Basic assessment", "2 AI-generated blocks", "Limited calculators"],
     },
     premium: {
       name: "Premium",
@@ -223,9 +243,9 @@ export const ssot = {
         "PCS Money Copilot",
         "All calculators",
         "Base intelligence (weather/housing/schools)",
-        "Unlimited assessments"
-      ]
-    }
+        "Unlimited assessments",
+      ],
+    },
   },
 
   /**
@@ -234,7 +254,7 @@ export const ssot = {
    */
   constants: {
     mileageCentsPerMileFallback: 67, // $0.67/mile (2025 DFAS rate)
-    travelDayMieFactor: 0.75,         // 75% M&IE on travel days (GSA rule)
+    travelDayMieFactor: 0.75, // 75% M&IE on travel days (GSA rule)
   },
 
   /**
@@ -248,15 +268,15 @@ export const ssot = {
     // Updated: 2025-10-22 to official 2025 rates
     basMonthlyCents: {
       officer: 31698, // $316.98/month (2025 rate)
-      enlisted: 46025  // $460.25/month (2025 rate)
+      enlisted: 46025, // $460.25/month (2025 rate)
     },
     // LES comparison thresholds
     comparisonThresholds: {
-      bahDeltaCents: 500,      // $5.00 variance threshold for BAH mismatch
-      basDeltaCents: 100,      // $1.00 variance threshold for BAS
-      colaDeltaCents: 500,     // $5.00 variance threshold for COLA
-      specialPayDeltaCents: 500 // $5.00 variance threshold for special pays
-    }
+      bahDeltaCents: 500, // $5.00 variance threshold for BAH mismatch
+      basDeltaCents: 100, // $1.00 variance threshold for BAS
+      colaDeltaCents: 500, // $5.00 variance threshold for COLA
+      specialPayDeltaCents: 500, // $5.00 variance threshold for special pays
+    },
   },
 
   /**
@@ -266,9 +286,9 @@ export const ssot = {
     perUserMonthly: 0.35, // AI + API costs
     margin: 0.965, // 96.5% margin
     aiCostPerPlan: 0.02,
-    weatherApiCostPer1000: 0.10,
-    housingApiCostPer1000: 0.50,
-    schoolsApiCostPer1000: 0.25
+    weatherApiCostPer1000: 0.1,
+    housingApiCostPer1000: 0.5,
+    schoolsApiCostPer1000: 0.25,
   },
 
   /**
@@ -279,16 +299,16 @@ export const ssot = {
     coreWebVitals: {
       LCP: 2.5, // Largest Contentful Paint
       FID: 0.1, // First Input Delay
-      CLS: 0.1  // Cumulative Layout Shift
+      CLS: 0.1, // Cumulative Layout Shift
     },
     bundleSize: {
       firstLoad: 200, // KB
-      maxRoute: 50    // KB per route
+      maxRoute: 50, // KB per route
     },
     mobile: {
       minTouchTarget: 44, // pixels (WCAG AAA)
-      maxLoadTime3G: 5    // seconds
-    }
+      maxLoadTime3G: 5, // seconds
+    },
   },
 
   /**
@@ -299,7 +319,7 @@ export const ssot = {
     authProvider: "Clerk",
     rateLimiting: true,
     wcagLevel: "AA",
-    encryptionAtRest: true
+    encryptionAtRest: true,
   },
 
   /**
@@ -312,14 +332,14 @@ export const ssot = {
       systemStatus: "SYSTEM_STATUS.md",
       changelog: "CHANGELOG.md",
       development: "docs/DEVELOPMENT_WORKFLOW.md",
-      iconUsage: "docs/ICON_USAGE_GUIDE.md"
+      iconUsage: "docs/ICON_USAGE_GUIDE.md",
     },
     external: {
       dfas: "https://www.dfas.mil",
       dodea: "https://www.dodea.edu",
       tsp: "https://www.tsp.gov",
-      va: "https://www.va.gov"
-    }
+      va: "https://www.va.gov",
+    },
   },
 
   /**
@@ -329,8 +349,8 @@ export const ssot = {
     supportEmail: "support@garrisonledger.com",
     founderEmail: "hello@garrisonledger.com",
     veteranFounded: true,
-    militarySpouseTeam: true
-  }
+    militarySpouseTeam: true,
+  },
 } as const;
 
 /**
@@ -378,11 +398,11 @@ export function getVendorCacheTTL(vendor: keyof typeof ssot.vendors): number {
  * Format cost as USD currency
  */
 export function formatCost(cost: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(cost);
 }
 
@@ -398,22 +418,22 @@ export function getPricing(tier: PricingTier) {
  */
 export function validateEnvironment(): { valid: boolean; missing: string[] } {
   const required = [
-    'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
-    'CLERK_SECRET_KEY',
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'GOOGLE_API_KEY',
-    'RAPIDAPI_KEY',
-    'STRIPE_SECRET_KEY',
-    'STRIPE_WEBHOOK_SECRET'
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "GOOGLE_API_KEY",
+    "RAPIDAPI_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
   ];
 
-  const missing = required.filter(key => !process.env[key]);
+  const missing = required.filter((key) => !process.env[key]);
 
   return {
     valid: missing.length === 0,
-    missing
+    missing,
   };
 }
 
@@ -421,4 +441,3 @@ export function validateEnvironment(): { valid: boolean; missing: string[] } {
  * Export default for easy import
  */
 export default ssot;
-

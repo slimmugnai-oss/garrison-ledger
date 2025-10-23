@@ -1,8 +1,8 @@
 # 🎯 GARRISON LEDGER - SYSTEM STATUS
 
-**Last Updated:** 2025-10-22  
+**Last Updated:** 2025-01-23  
 **Status:** 🟢 PRODUCTION  
-**Version:** 5.5.0 - LES Auditor Tax Calculation Fixes (Critical)  
+**Version:** 6.0.0 - Ask Assistant Launch (Intel Library Transformation)  
 **Deployment:** ✅ Live on Vercel  
 **SSOT Module:** ✅ `lib/ssot.ts` (Single Source of Truth)  
 **Code Quality:** ✅ TypeScript strict + ESLint clean (0 errors, 21 non-critical warnings)
@@ -18,10 +18,10 @@
 | **Build** | ✅ Successful | 130+ pages generated |
 | **Deployment** | ✅ Live | Vercel production |
 | **Database** | ✅ Operational | 28 tables, RLS enabled |
-| **API Endpoints** | ✅ Working | 117 routes |
+| **API Endpoints** | ✅ Working | 122 routes |
 | **Premium Tools** | ✅ Live | 5 elite tools |
 | **Calculators** | ✅ Live | 6 world-class tools |
-| **Intel Cards** | ✅ Live | 12 production cards with real data |
+| **Ask Assistant** | ✅ Live | Q&A virtual assistant with official data |
 | **Base Guides** | ✅ Live | 203 bases worldwide (163 CONUS, 40 OCONUS) |
 | **AI System** | ✅ Optimized | Gemini 2.0 Flash for content generation |
 | **Cost per User** | ✅ Profitable | $0.35/month (96.5% margin) |
@@ -105,13 +105,14 @@
    - Travel reimbursement estimates
    - JTR compliance
 
-5. **Intel Library** 🟢 *Active - v5.0*
-   - Status: Fully operational with auto-updating data
-   - 12 production intel cards
-   - Zero hard-coded rates (all dynamic)
-   - Auto-updating BAH/BAS/COLA/IRS data
-   - Content governance system
-   - Provenance tracking
+5. **Ask Assistant** 🟢 *Active - v6.0*
+   - Status: Q&A virtual assistant with official data sources
+   - Credit system: Free (5/month), Premium (50/month), Credit packs
+   - Official data first: DFAS, DTMO, VA, TSP.gov
+   - Strict sourcing: All answers cite source + effective date
+   - Advisory mode: Clear warnings when no official data
+   - Tool handoffs: Suggests LES Auditor, PCS Copilot, etc.
+   - AI model: Gemini 2.5 Flash with structured responses
 
 ### **Calculators (Free + Premium) - AUTO-POPULATION ENABLED**
 

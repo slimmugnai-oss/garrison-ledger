@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import Icon from './ui/Icon';
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import Icon from "./ui/Icon";
 
 export default function Header() {
   const [dashboardOpen, setDashboardOpen] = useState(false);
@@ -13,12 +13,12 @@ export default function Header() {
   const [intelligenceOpen, setIntelligenceOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const pathname = usePathname();
 
   // Dropdown close timers
-  const [closeTimers, setCloseTimers] = useState<{[key: string]: NodeJS.Timeout}>({});
+  const [closeTimers, setCloseTimers] = useState<{ [key: string]: NodeJS.Timeout }>({});
 
   const handleDropdownMouseEnter = (dropdown: string, setter: (val: boolean) => void) => {
     if (closeTimers[dropdown]) {
@@ -29,7 +29,7 @@ export default function Header() {
 
   const handleDropdownMouseLeave = (dropdown: string, setter: (val: boolean) => void) => {
     const timer = setTimeout(() => setter(false), 300);
-    setCloseTimers(prev => ({ ...prev, [dropdown]: timer }));
+    setCloseTimers((prev) => ({ ...prev, [dropdown]: timer }));
   };
 
   // Close mobile menu when route changes
@@ -40,12 +40,12 @@ export default function Header() {
   // Keyboard navigation support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '/' && !showSearch) {
+      if (e.key === "/" && !showSearch) {
         e.preventDefault();
         setShowSearch(true);
-        const searchInput = document.getElementById('nav-search');
+        const searchInput = document.getElementById("nav-search");
         if (searchInput) searchInput.focus();
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         setShowSearch(false);
         setDashboardOpen(false);
         setPremiumToolsOpen(false);
@@ -55,26 +55,26 @@ export default function Header() {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showSearch]);
 
   const isActivePath = (path: string) => {
-    if (path === '/dashboard') return pathname === '/dashboard';
+    if (path === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(path);
   };
-  
+
   return (
     <>
       {/* Premium Search Modal - Enhanced */}
       {showSearch && (
-        <div className="fixed inset-0 bg-gradient-to-br from-black/60 via-slate-900/40 to-black/60 backdrop-blur-md z-50 flex items-start justify-center pt-24 px-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-gradient-to-br from-black/60 via-slate-900/40 to-black/60 px-4 pt-24 backdrop-blur-md">
+          <div className="animate-in fade-in slide-in-from-top-4 w-full max-w-3xl overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800">
             {/* Search Header */}
-            <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-slate-700 px-6 py-4 border-b border-slate-200 dark:border-slate-600">
+            <div className="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 dark:border-slate-600 dark:from-slate-800 dark:to-slate-700">
               <div className="flex items-center gap-4">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <Icon name="Search" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
+                  <Icon name="Search" className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <input
                   id="nav-search"
@@ -82,47 +82,49 @@ export default function Header() {
                   placeholder="Search calculators, intel, resources..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-lg font-semibold placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-slate-900 dark:text-white"
+                  className="flex-1 bg-transparent text-lg font-semibold text-slate-900 placeholder-gray-400 focus:outline-none dark:text-white dark:placeholder-gray-500"
                   autoFocus
                 />
                 <button
                   onClick={() => setShowSearch(false)}
-                  className="p-2 hover:bg-white/50 dark:hover:bg-slate-600/50 rounded-lg transition-colors"
+                  className="rounded-lg p-2 transition-colors hover:bg-white/50 dark:hover:bg-slate-600/50"
                 >
-                  <Icon name="X" className="w-5 h-5 text-gray-500" />
+                  <Icon name="X" className="h-5 w-5 text-gray-500" />
                 </button>
               </div>
             </div>
 
             {/* Search Shortcuts */}
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quick Access:</span>
-                <Link 
-                  href="/dashboard/library" 
+            <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Quick Access:
+                </span>
+                <Link
+                  href="/dashboard/library"
                   onClick={() => setShowSearch(false)}
-                  className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-semibold hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                  className="rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
                 >
-                  Intel Library
+                  Ask Assistant
                 </Link>
-                <Link 
-                  href="/dashboard/tools/tsp-modeler" 
+                <Link
+                  href="/dashboard/tools/tsp-modeler"
                   onClick={() => setShowSearch(false)}
-                  className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+                  className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
                 >
                   TSP Calculator
                 </Link>
-                <Link 
-                  href="/dashboard/pcs-copilot" 
+                <Link
+                  href="/dashboard/pcs-copilot"
                   onClick={() => setShowSearch(false)}
-                  className="px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
+                  className="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-700 transition-colors hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-300 dark:hover:bg-orange-900/30"
                 >
                   PCS Copilot
                 </Link>
-                <Link 
-                  href="/base-guides" 
+                <Link
+                  href="/base-guides"
                   onClick={() => setShowSearch(false)}
-                  className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                  className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
                 >
                   Base Guides
                 </Link>
@@ -130,19 +132,23 @@ export default function Header() {
             </div>
 
             {/* Search Footer */}
-            <div className="px-6 py-3 bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+            <div className="flex items-center justify-between bg-slate-50 px-6 py-3 dark:bg-slate-900">
               <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded text-xs font-mono">↵</kbd>
+                  <kbd className="rounded border border-gray-200 bg-white px-2 py-1 font-mono text-xs dark:border-slate-600 dark:bg-slate-800">
+                    ↵
+                  </kbd>
                   <span>to select</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <kbd className="px-2 py-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded text-xs font-mono">ESC</kbd>
+                  <kbd className="rounded border border-gray-200 bg-white px-2 py-1 font-mono text-xs dark:border-slate-600 dark:bg-slate-800">
+                    ESC
+                  </kbd>
                   <span>to close</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-400">
-                <Icon name="Sparkles" className="w-3 h-3" />
+                <Icon name="Sparkles" className="h-3 w-3" />
                 <span>Powered by AI</span>
               </div>
             </div>
@@ -151,455 +157,715 @@ export default function Header() {
       )}
 
       {/* Header - Premium Design */}
-      <header className="sticky top-0 z-[100] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-b-2 border-slate-200/50 dark:border-slate-700/50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="bg-white/98 dark:bg-slate-900/98 sticky top-0 z-[100] border-b-2 border-slate-200/50 shadow-sm backdrop-blur-xl dark:border-slate-700/50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             {/* Logo - Premium Brand */}
-            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <Link href="/" className="group flex items-center gap-2 sm:gap-3">
               <div className="relative">
-                <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-md sm:shadow-lg group-hover:shadow-xl">
-                  <Icon name="Shield" className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-md" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl sm:h-11 sm:w-11 sm:rounded-xl sm:shadow-lg">
+                  <Icon name="Shield" className="h-5 w-5 text-white drop-shadow-md sm:h-6 sm:w-6" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl blur-md opacity-0 group-hover:opacity-30 transition-all duration-300" />
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 blur-md transition-all duration-300 group-hover:opacity-30 sm:rounded-xl" />
               </div>
               <div className="hidden sm:block">
-                <div className="font-bold text-lg sm:text-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
+                <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-lg font-bold text-transparent dark:from-white dark:via-slate-100 dark:to-white sm:text-xl">
                   Garrison Ledger
                 </div>
-                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 -mt-1 tracking-wide">
+                <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400">
                   Military Financial Intelligence
                 </div>
-                <div className="text-xs text-gray-400 dark:text-gray-500 -mt-0.5">
+                <div className="-mt-0.5 text-xs text-gray-400 dark:text-gray-500">
                   A FamilyMedia Company
                 </div>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-            <SignedIn>
+            <nav className="hidden items-center gap-1 lg:flex">
+              <SignedIn>
                 {/* Dashboard Dropdown */}
-              <div 
-                className="relative"
-                onMouseEnter={() => handleDropdownMouseEnter('dashboard', setDashboardOpen)}
-                onMouseLeave={() => handleDropdownMouseLeave('dashboard', setDashboardOpen)}
-              >
-                  <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/dashboard') 
-                      ? 'text-slate-900 dark:text-white' 
-                      : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}>
+                <div
+                  className="relative"
+                  onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
+                >
+                  <button
+                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                      isActivePath("/dashboard")
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                    }`}
+                  >
                     Dashboard
-                    <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${dashboardOpen ? 'rotate-180' : ''}`} />
-                    {isActivePath('/dashboard') && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
+                    <Icon
+                      name="ChevronDown"
+                      className={`ml-1 h-4 w-4 transition-transform ${dashboardOpen ? "rotate-180" : ""}`}
+                    />
+                    {isActivePath("/dashboard") && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
                     )}
-                </button>
-                {dashboardOpen && (
-                  <div 
-                      className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => handleDropdownMouseEnter('dashboard', setDashboardOpen)}
-                      onMouseLeave={() => handleDropdownMouseLeave('dashboard', setDashboardOpen)}
+                  </button>
+                  {dashboardOpen && (
+                    <div
+                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                      onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
                     >
                       <div className="p-3">
-                        <Link href="/dashboard" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          pathname === '/dashboard' ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="LayoutDashboard" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <Link
+                          href="/dashboard"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            pathname === "/dashboard"
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="LayoutDashboard"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                          />
                           <div>
-                            <div className={`font-semibold text-sm ${pathname === '/dashboard' ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                            <div
+                              className={`text-sm font-semibold ${pathname === "/dashboard" ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                            >
                               Dashboard Home
                             </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                               Your mission overview
                             </div>
-                    </div>
+                          </div>
                         </Link>
-                        <Link href="/dashboard/binder" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/binder') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="FolderOpen" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                        <Link
+                          href="/dashboard/binder"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/binder")
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="FolderOpen"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/binder') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/binder") ? "text-blue-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
                               Binder
                             </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                               Secure documents
                             </div>
                           </div>
-                    </Link>
-                        <Link href="/dashboard/settings" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/settings') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="Settings" className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                        </Link>
+                        <Link
+                          href="/dashboard/settings"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/settings")
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Settings"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-600"
+                          />
                           <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/settings') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-gray-600'}`}>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/settings") ? "text-blue-600" : "text-slate-900 group-hover:text-gray-600 dark:text-white"}`}
+                            >
                               Settings
                             </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                               Profile & preferences
                             </div>
                           </div>
-                    </Link>
-                      </div>
-                  </div>
-                )}
-              </div>
-              
-              {/* Premium Tools Dropdown */}
-              <div 
-                className="relative"
-                onMouseEnter={() => handleDropdownMouseEnter('premium', setPremiumToolsOpen)}
-                onMouseLeave={() => handleDropdownMouseLeave('premium', setPremiumToolsOpen)}
-              >
-                <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel')
-                    ? 'text-slate-900 dark:text-white' 
-                    : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                }`}>
-                  Premium Tools
-                  <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${premiumToolsOpen ? 'rotate-180' : ''}`} />
-                  {(isActivePath('/dashboard/les-auditor') || isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/pcs-copilot') || isActivePath('/dashboard/navigator') || isActivePath('/dashboard/tdy-copilot') || isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/intel')) && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
-                  )}
-                </button>
-                {premiumToolsOpen && (
-                  <div 
-                    className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => handleDropdownMouseEnter('premium', setPremiumToolsOpen)}
-                    onMouseLeave={() => handleDropdownMouseLeave('premium', setPremiumToolsOpen)}
-                  >
-                    <div className="p-3">
-                      {/* LES Auditor */}
-                      <Link href="/dashboard/paycheck-audit" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/les-auditor') ? 'bg-green-50 dark:bg-green-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="DollarSign" className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/paycheck-audit') || isActivePath('/dashboard/les-auditor') ? 'text-green-600' : 'text-slate-900 dark:text-white group-hover:text-green-600'}`}>
-                            LES Auditor
-                            <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">New</span>
-                          </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Catch pay errors automatically
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* PCS Copilot */}
-                      <Link href="/dashboard/pcs-copilot" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/pcs-copilot') ? 'bg-orange-50 dark:bg-orange-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Truck" className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/pcs-copilot') ? 'text-orange-600' : 'text-slate-900 dark:text-white group-hover:text-orange-600'}`}>
-                            PCS Copilot
-                          </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Maximize DITY move profit
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* Base Navigator */}
-                      <Link href="/dashboard/navigator" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/navigator') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="MapPin" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/navigator') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
-                            Base Navigator
-                            <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">New</span>
-                          </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Find perfect neighborhoods
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* TDY Copilot */}
-                      <Link href="/dashboard/tdy-voucher" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/tdy-copilot') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="File" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/tdy-voucher') || isActivePath('/dashboard/tdy-copilot') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
-                            TDY Copilot
-                            <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">New</span>
-                          </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Build travel vouchers fast
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* Intel Library */}
-                      <Link href="/dashboard/intel" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'bg-indigo-50 dark:bg-indigo-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="BookOpen" className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/intel') || isActivePath('/dashboard/library') ? 'text-indigo-600' : 'text-slate-900 dark:text-white group-hover:text-indigo-600'}`}>
-                            Intel Library
-                          </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Live BAH/BAS/TSP data
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-                {/* Calculators Dropdown */}
-              <div 
-                className="relative"
-                  onMouseEnter={() => handleDropdownMouseEnter('calculators', setCoreToolsOpen)}
-                  onMouseLeave={() => handleDropdownMouseLeave('calculators', setCoreToolsOpen)}
-              >
-                  <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/dashboard/tools') 
-                      ? 'text-slate-900 dark:text-white' 
-                      : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}>
-                    Calculators
-                    <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${coreToolsOpen ? 'rotate-180' : ''}`} />
-                    {isActivePath('/dashboard/tools') && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
-                    )}
-                </button>
-                  {coreToolsOpen && (
-                    <div 
-                      className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => handleDropdownMouseEnter('calculators', setCoreToolsOpen)}
-                      onMouseLeave={() => handleDropdownMouseLeave('calculators', setCoreToolsOpen)}
-                    >
-                      <div className="p-3">
-                        <Link href="/dashboard/tools/tsp-modeler" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/tsp-modeler') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="TrendingUp" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/tsp-modeler') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              TSP Calculator
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Optimize your retirement
-                            </div>
-                    </div>
-                    </Link>
-                        <Link href="/dashboard/tools/sdp-strategist" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/sdp-strategist') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="PiggyBank" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/sdp-strategist') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              SDP Calculator
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Deployment savings
-                            </div>
-                          </div>
-                    </Link>
-                        <Link href="/dashboard/tools/house-hacking" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/house-hacking') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="Home" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/house-hacking') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                      House Hacking
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Multi-unit investments
-                            </div>
-                          </div>
                         </Link>
-                        <Link href="/dashboard/tools/pcs-planner" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/pcs-planner') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="Truck" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/pcs-planner') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              PCS Planner
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Move planning & costs
-                            </div>
-                          </div>
-                        </Link>
-                        <Link href="/dashboard/tools/on-base-savings" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/on-base-savings') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="ShoppingCart" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/on-base-savings') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              On-Base Savings
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Commissary & exchange
-                            </div>
-                          </div>
-                        </Link>
-                        <Link href="/dashboard/tools/salary-calculator" className={`group flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                          isActivePath('/dashboard/tools/salary-calculator') ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                        }`}>
-                          <Icon name="Calculator" className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-                          <div>
-                            <div className={`font-semibold text-sm ${isActivePath('/dashboard/tools/salary-calculator') ? 'text-emerald-600' : 'text-slate-900 dark:text-white group-hover:text-emerald-600'}`}>
-                              Retirement Calculator
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                              Career transition planning
-                            </div>
-                          </div>
-                    </Link>
                       </div>
                     </div>
                   )}
                 </div>
 
-              {/* Resources Dropdown */}
-              <div 
-                className="relative"
-                onMouseEnter={() => handleDropdownMouseEnter('resources', setIntelligenceOpen)}
-                onMouseLeave={() => handleDropdownMouseLeave('resources', setIntelligenceOpen)}
-              >
-                <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')
-                    ? 'text-slate-900 dark:text-white' 
-                    : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                }`}>
-                  Resources
-                  <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${intelligenceOpen ? 'rotate-180' : ''}`} />
-                  {(isActivePath('/dashboard/listening-post') || isActivePath('/dashboard/directory') || isActivePath('/dashboard/refer-earn')) && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
-                  )}
-                </button>
-                {intelligenceOpen && (
-                  <div 
-                    className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => handleDropdownMouseEnter('resources', setIntelligenceOpen)}
-                    onMouseLeave={() => handleDropdownMouseLeave('resources', setIntelligenceOpen)}
+                {/* Premium Tools Dropdown */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => handleDropdownMouseEnter("premium", setPremiumToolsOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave("premium", setPremiumToolsOpen)}
+                >
+                  <button
+                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                      isActivePath("/dashboard/les-auditor") ||
+                      isActivePath("/dashboard/paycheck-audit") ||
+                      isActivePath("/dashboard/pcs-copilot") ||
+                      isActivePath("/dashboard/navigator") ||
+                      isActivePath("/dashboard/tdy-copilot") ||
+                      isActivePath("/dashboard/tdy-voucher") ||
+                      isActivePath("/dashboard/intel")
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                    }`}
                   >
-                    <div className="p-3">
-                      <Link href="/dashboard/listening-post" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/listening-post') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Radio" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/listening-post') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
-                            Listening Post
+                    Premium Tools
+                    <Icon
+                      name="ChevronDown"
+                      className={`ml-1 h-4 w-4 transition-transform ${premiumToolsOpen ? "rotate-180" : ""}`}
+                    />
+                    {(isActivePath("/dashboard/les-auditor") ||
+                      isActivePath("/dashboard/paycheck-audit") ||
+                      isActivePath("/dashboard/pcs-copilot") ||
+                      isActivePath("/dashboard/navigator") ||
+                      isActivePath("/dashboard/tdy-copilot") ||
+                      isActivePath("/dashboard/tdy-voucher") ||
+                      isActivePath("/dashboard/intel")) && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
+                    )}
+                  </button>
+                  {premiumToolsOpen && (
+                    <div
+                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                      onMouseEnter={() => handleDropdownMouseEnter("premium", setPremiumToolsOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave("premium", setPremiumToolsOpen)}
+                    >
+                      <div className="p-3">
+                        {/* LES Auditor */}
+                        <Link
+                          href="/dashboard/paycheck-audit"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/paycheck-audit") ||
+                            isActivePath("/dashboard/les-auditor")
+                              ? "bg-green-50 dark:bg-green-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="DollarSign"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/paycheck-audit") || isActivePath("/dashboard/les-auditor") ? "text-green-600" : "text-slate-900 group-hover:text-green-600 dark:text-white"}`}
+                            >
+                              LES Auditor
+                              <span className="ml-2 rounded bg-green-100 px-1.5 py-0.5 text-xs text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                New
+                              </span>
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Catch pay errors automatically
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Real-time military news
+                        </Link>
+
+                        {/* PCS Copilot */}
+                        <Link
+                          href="/dashboard/pcs-copilot"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/pcs-copilot")
+                              ? "bg-orange-50 dark:bg-orange-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Truck"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/pcs-copilot") ? "text-orange-600" : "text-slate-900 group-hover:text-orange-600 dark:text-white"}`}
+                            >
+                              PCS Copilot
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Maximize DITY move profit
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                      <Link href="/dashboard/directory" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/directory') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Users" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/directory') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
-                            Directory
+                        </Link>
+
+                        {/* Base Navigator */}
+                        <Link
+                          href="/dashboard/navigator"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/navigator")
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="MapPin"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/navigator") ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                            >
+                              Base Navigator
+                              <span className="ml-2 rounded bg-blue-100 px-1.5 py-0.5 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                New
+                              </span>
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Find perfect neighborhoods
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Military community
+                        </Link>
+
+                        {/* TDY Copilot */}
+                        <Link
+                          href="/dashboard/tdy-voucher"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tdy-voucher") ||
+                            isActivePath("/dashboard/tdy-copilot")
+                              ? "bg-purple-50 dark:bg-purple-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="File"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tdy-voucher") || isActivePath("/dashboard/tdy-copilot") ? "text-purple-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
+                              TDY Copilot
+                              <span className="ml-2 rounded bg-purple-100 px-1.5 py-0.5 text-xs text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                New
+                              </span>
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Build travel vouchers fast
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                      <Link href="/dashboard/referrals" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/dashboard/referrals') ? 'bg-purple-50 dark:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Gift" className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/dashboard/referrals') ? 'text-purple-600' : 'text-slate-900 dark:text-white group-hover:text-purple-600'}`}>
-                            Refer & Earn
+                        </Link>
+
+                        {/* Ask Assistant */}
+                        <Link
+                          href="/dashboard/intel"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/intel") || isActivePath("/dashboard/library")
+                              ? "bg-indigo-50 dark:bg-indigo-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="BookOpen"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-indigo-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/intel") || isActivePath("/dashboard/library") ? "text-indigo-600" : "text-slate-900 group-hover:text-indigo-600 dark:text-white"}`}
+                            >
+                              Ask Assistant
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Live BAH/BAS/TSP data
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                            Share with your unit
-                          </div>
-                        </div>
-                      </Link>
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+
+                {/* Calculators Dropdown */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => handleDropdownMouseEnter("calculators", setCoreToolsOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave("calculators", setCoreToolsOpen)}
+                >
+                  <button
+                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                      isActivePath("/dashboard/tools")
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                    }`}
+                  >
+                    Calculators
+                    <Icon
+                      name="ChevronDown"
+                      className={`ml-1 h-4 w-4 transition-transform ${coreToolsOpen ? "rotate-180" : ""}`}
+                    />
+                    {isActivePath("/dashboard/tools") && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
+                    )}
+                  </button>
+                  {coreToolsOpen && (
+                    <div
+                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                      onMouseEnter={() => handleDropdownMouseEnter("calculators", setCoreToolsOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave("calculators", setCoreToolsOpen)}
+                    >
+                      <div className="p-3">
+                        <Link
+                          href="/dashboard/tools/tsp-modeler"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/tsp-modeler")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="TrendingUp"
+                            className="h-5 w-5 flex-shrink-0 text-emerald-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/tsp-modeler") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              TSP Calculator
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Optimize your retirement
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/tools/sdp-strategist"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/sdp-strategist")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="PiggyBank"
+                            className="h-5 w-5 flex-shrink-0 text-emerald-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/sdp-strategist") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              SDP Calculator
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Deployment savings
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/tools/house-hacking"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/house-hacking")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon name="Home" className="h-5 w-5 flex-shrink-0 text-emerald-600" />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/house-hacking") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              House Hacking
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Multi-unit investments
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/tools/pcs-planner"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/pcs-planner")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon name="Truck" className="h-5 w-5 flex-shrink-0 text-emerald-600" />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/pcs-planner") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              PCS Planner
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Move planning & costs
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/tools/on-base-savings"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/on-base-savings")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="ShoppingCart"
+                            className="h-5 w-5 flex-shrink-0 text-emerald-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/on-base-savings") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              On-Base Savings
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Commissary & exchange
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/tools/salary-calculator"
+                          className={`group flex items-center gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/tools/salary-calculator")
+                              ? "bg-emerald-50 dark:bg-emerald-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Calculator"
+                            className="h-5 w-5 flex-shrink-0 text-emerald-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/tools/salary-calculator") ? "text-emerald-600" : "text-slate-900 group-hover:text-emerald-600 dark:text-white"}`}
+                            >
+                              Retirement Calculator
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Career transition planning
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Resources Dropdown */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => handleDropdownMouseEnter("resources", setIntelligenceOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave("resources", setIntelligenceOpen)}
+                >
+                  <button
+                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                      isActivePath("/dashboard/listening-post") ||
+                      isActivePath("/dashboard/directory") ||
+                      isActivePath("/dashboard/refer-earn")
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                    }`}
+                  >
+                    Resources
+                    <Icon
+                      name="ChevronDown"
+                      className={`ml-1 h-4 w-4 transition-transform ${intelligenceOpen ? "rotate-180" : ""}`}
+                    />
+                    {(isActivePath("/dashboard/listening-post") ||
+                      isActivePath("/dashboard/directory") ||
+                      isActivePath("/dashboard/refer-earn")) && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
+                    )}
+                  </button>
+                  {intelligenceOpen && (
+                    <div
+                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                      onMouseEnter={() =>
+                        handleDropdownMouseEnter("resources", setIntelligenceOpen)
+                      }
+                      onMouseLeave={() =>
+                        handleDropdownMouseLeave("resources", setIntelligenceOpen)
+                      }
+                    >
+                      <div className="p-3">
+                        <Link
+                          href="/dashboard/listening-post"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/listening-post")
+                              ? "bg-purple-50 dark:bg-purple-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Radio"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/listening-post") ? "text-purple-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
+                              Listening Post
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Real-time military news
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/directory"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/directory")
+                              ? "bg-purple-50 dark:bg-purple-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Users"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/directory") ? "text-purple-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
+                              Directory
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Military community
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/referrals"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/referrals")
+                              ? "bg-purple-50 dark:bg-purple-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Gift"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/referrals") ? "text-purple-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
+                              Refer & Earn
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Share with your unit
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </SignedIn>
 
               {/* Toolkits Dropdown */}
-              <div 
+              <div
                 className="relative"
-                onMouseEnter={() => handleDropdownMouseEnter('toolkits', setResourcesOpen)}
-                onMouseLeave={() => handleDropdownMouseLeave('toolkits', setResourcesOpen)}
+                onMouseEnter={() => handleDropdownMouseEnter("toolkits", setResourcesOpen)}
+                onMouseLeave={() => handleDropdownMouseLeave("toolkits", setResourcesOpen)}
               >
-                <button className={`px-4 py-2 rounded-lg transition-all flex items-center font-semibold relative group ${
-                  isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping')
-                    ? 'text-slate-900 dark:text-white' 
-                    : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white'
-                }`}>
+                <button
+                  className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                    isActivePath("/pcs-hub") ||
+                    isActivePath("/career-hub") ||
+                    isActivePath("/deployment") ||
+                    isActivePath("/on-base-shopping")
+                      ? "text-slate-900 dark:text-white"
+                      : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                  }`}
+                >
                   Toolkits
-                  <Icon name="ChevronDown" className={`w-4 h-4 ml-1 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
-                  {(isActivePath('/pcs-hub') || isActivePath('/career-hub') || isActivePath('/deployment') || isActivePath('/on-base-shopping')) && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-700 to-slate-900 rounded-full" />
+                  <Icon
+                    name="ChevronDown"
+                    className={`ml-1 h-4 w-4 transition-transform ${resourcesOpen ? "rotate-180" : ""}`}
+                  />
+                  {(isActivePath("/pcs-hub") ||
+                    isActivePath("/career-hub") ||
+                    isActivePath("/deployment") ||
+                    isActivePath("/on-base-shopping")) && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
                   )}
                 </button>
                 {resourcesOpen && (
-                  <div 
-                    className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                    onMouseEnter={() => handleDropdownMouseEnter('toolkits', setResourcesOpen)}
-                    onMouseLeave={() => handleDropdownMouseLeave('toolkits', setResourcesOpen)}
+                  <div
+                    className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                    onMouseEnter={() => handleDropdownMouseEnter("toolkits", setResourcesOpen)}
+                    onMouseLeave={() => handleDropdownMouseLeave("toolkits", setResourcesOpen)}
                   >
                     <div className="p-3">
-                      <Link href="/pcs-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/pcs-hub') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Truck" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Link
+                        href="/pcs-hub"
+                        className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                          isActivePath("/pcs-hub")
+                            ? "bg-blue-50 dark:bg-blue-900/20"
+                            : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                        }`}
+                      >
+                        <Icon name="Truck" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
                         <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/pcs-hub') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                          <div
+                            className={`text-sm font-semibold ${isActivePath("/pcs-hub") ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                          >
                             PCS Hub
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                          <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                             Permanent change of station
                           </div>
                         </div>
                       </Link>
-                      <Link href="/career-hub" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/career-hub') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Briefcase" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Link
+                        href="/career-hub"
+                        className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                          isActivePath("/career-hub")
+                            ? "bg-blue-50 dark:bg-blue-900/20"
+                            : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                        }`}
+                      >
+                        <Icon
+                          name="Briefcase"
+                          className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                        />
                         <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/career-hub') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                          <div
+                            className={`text-sm font-semibold ${isActivePath("/career-hub") ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                          >
                             Career Hub
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                          <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                             Military career planning
                           </div>
                         </div>
                       </Link>
-                      <Link href="/deployment" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/deployment') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="Shield" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Link
+                        href="/deployment"
+                        className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                          isActivePath("/deployment")
+                            ? "bg-blue-50 dark:bg-blue-900/20"
+                            : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                        }`}
+                      >
+                        <Icon
+                          name="Shield"
+                          className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                        />
                         <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/deployment') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                          <div
+                            className={`text-sm font-semibold ${isActivePath("/deployment") ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                          >
                             Deployment
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                          <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                             Deployment preparation
                           </div>
                         </div>
                       </Link>
-                      <Link href="/on-base-shopping" className={`group flex items-start gap-3 px-3 py-3 rounded-lg transition-all ${
-                        isActivePath('/on-base-shopping') ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                      }`}>
-                        <Icon name="ShoppingCart" className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <Link
+                        href="/on-base-shopping"
+                        className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                          isActivePath("/on-base-shopping")
+                            ? "bg-blue-50 dark:bg-blue-900/20"
+                            : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                        }`}
+                      >
+                        <Icon
+                          name="ShoppingCart"
+                          className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                        />
                         <div>
-                          <div className={`font-semibold text-sm ${isActivePath('/on-base-shopping') ? 'text-blue-600' : 'text-slate-900 dark:text-white group-hover:text-blue-600'}`}>
+                          <div
+                            className={`text-sm font-semibold ${isActivePath("/on-base-shopping") ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                          >
                             On-Base Shopping
                           </div>
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                          <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                             Commissary & exchange
                           </div>
                         </div>
@@ -608,48 +874,49 @@ export default function Header() {
                   </div>
                 )}
               </div>
-          </nav>
+            </nav>
 
             {/* Right Side - Enhanced */}
             <div className="flex items-center gap-3">
-            <SignedOut>
+              <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="px-4 py-2 text-gray-600 hover:text-slate-900 font-semibold transition-colors">
+                  <button className="px-4 py-2 font-semibold text-gray-600 transition-colors hover:text-slate-900">
                     Sign In
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-lg font-semibold hover:from-slate-700 hover:to-slate-800 transition-all shadow-md hover:shadow-lg text-sm">
+                  <button className="rounded-lg bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg">
                     Get Started Free
                   </button>
                 </SignUpButton>
-            </SignedOut>
-            
-            <SignedIn>
+              </SignedOut>
+
+              <SignedIn>
                 {/* Search Button - Simple Icon */}
-                <button 
+                <button
                   onClick={() => setShowSearch(!showSearch)}
-                  className="hidden lg:flex p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                  className="hidden p-2 text-gray-600 transition-colors hover:text-blue-600 lg:flex"
                   title="Search (Press /)"
                 >
-                  <Icon name="Search" className="w-5 h-5" />
+                  <Icon name="Search" className="h-5 w-5" />
                 </button>
 
                 {/* Upgrade Button - Premium CTA */}
                 <Link
                   href="/dashboard/upgrade"
-                  className="hidden lg:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="hidden transform items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 px-5 py-2.5 font-bold text-white shadow-lg transition-all hover:scale-105 hover:from-emerald-700 hover:to-emerald-800 hover:shadow-xl lg:flex"
                 >
-                  <Icon name="Zap" className="w-4 h-4" />
+                  <Icon name="Zap" className="h-4 w-4" />
                   <span>Upgrade</span>
                 </Link>
 
                 {/* User Menu */}
-                  <UserButton 
+                <UserButton
                   appearance={{
                     elements: {
-                      avatarBox: "w-9 h-9 ring-2 ring-slate-200 dark:ring-slate-700 hover:ring-blue-500 transition-all"
-                    }
+                      avatarBox:
+                        "w-9 h-9 ring-2 ring-slate-200 dark:ring-slate-700 hover:ring-blue-500 transition-all",
+                    },
                   }}
                 />
               </SignedIn>
@@ -657,188 +924,274 @@ export default function Header() {
               {/* Mobile Menu Button - Enhanced */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-all"
+                className="rounded-lg p-2 text-gray-600 transition-all hover:bg-gray-100 hover:text-slate-900 dark:hover:bg-slate-800 lg:hidden"
               >
-                <Icon name={mobileMenuOpen ? "X" : "Menu"} className="w-5 h-5" />
+                <Icon name={mobileMenuOpen ? "X" : "Menu"} className="h-5 w-5" />
               </button>
-              </div>
+            </div>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-            <div className="px-4 py-6 space-y-4">
+          <div className="border-t border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900 lg:hidden">
+            <div className="space-y-4 px-4 py-6">
               <SignedIn>
                 {/* Mobile Dashboard Section */}
                 <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Dashboard
-              </div>
+                  </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="LayoutDashboard" className="w-5 h-5 text-blue-600" />
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="LayoutDashboard" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Dashboard</span>
-                </Link>
-                    <Link href="/dashboard/binder" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="FolderOpen" className="w-5 h-5 text-purple-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/binder"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="FolderOpen" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Binder</span>
-                      </Link>
-                    <Link href="/dashboard/pcs-copilot" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Truck" className="w-5 h-5 text-orange-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/pcs-copilot"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
-                      </Link>
-                    </div>
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Mobile Premium Tools Section */}
                 <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Premium Tools
                   </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard/paycheck-audit" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="DollarSign" className="w-5 h-5 text-green-600" />
+                    <Link
+                      href="/dashboard/paycheck-audit"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
                       <span className="font-medium">LES Auditor</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">New</span>
+                      <span className="ml-auto rounded bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                        New
+                      </span>
                     </Link>
-                    <Link href="/dashboard/pcs-copilot" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Truck" className="w-5 h-5 text-orange-600" />
+                    <Link
+                      href="/dashboard/pcs-copilot"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
                     </Link>
-                    <Link href="/dashboard/navigator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="MapPin" className="w-5 h-5 text-blue-600" />
+                    <Link
+                      href="/dashboard/navigator"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Navigator</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">New</span>
+                      <span className="ml-auto rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                        New
+                      </span>
                     </Link>
-                    <Link href="/dashboard/tdy-voucher" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="File" className="w-5 h-5 text-purple-600" />
+                    <Link
+                      href="/dashboard/tdy-voucher"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="File" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">TDY Copilot</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded bg-purple-100 text-purple-700">New</span>
+                      <span className="ml-auto rounded bg-purple-100 px-2 py-0.5 text-xs text-purple-700">
+                        New
+                      </span>
                     </Link>
-                    <Link href="/dashboard/intel" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="BookOpen" className="w-5 h-5 text-indigo-600" />
-                      <span className="font-medium">Intel Library</span>
-                      </Link>
-                    </div>
+                    <Link
+                      href="/dashboard/intel"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="BookOpen" className="h-5 w-5 text-indigo-600" />
+                      <span className="font-medium">Ask Assistant</span>
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Mobile Core Tools Section */}
                 <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Calculators
                   </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard/tools/tsp-modeler" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="TrendingUp" className="w-5 h-5 text-emerald-600" />
+                    <Link
+                      href="/dashboard/tools/tsp-modeler"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="TrendingUp" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">TSP Calculator</span>
                     </Link>
-                    <Link href="/dashboard/tools/sdp-strategist" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="PiggyBank" className="w-5 h-5 text-emerald-600" />
+                    <Link
+                      href="/dashboard/tools/sdp-strategist"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="PiggyBank" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">SDP Calculator</span>
                     </Link>
-                    <Link href="/dashboard/tools/house-hacking" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Home" className="w-5 h-5 text-emerald-600" />
+                    <Link
+                      href="/dashboard/tools/house-hacking"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Home" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">House Hacking</span>
                     </Link>
-                    <Link href="/dashboard/tools/pcs-planner" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Truck" className="w-5 h-5 text-emerald-600" />
+                    <Link
+                      href="/dashboard/tools/pcs-planner"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Truck" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">PCS Planner</span>
-                      </Link>
-                    <Link href="/dashboard/paycheck-audit" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Shield" className="w-5 h-5 text-blue-600" />
-                      <span className="font-medium">Paycheck Audit <span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-700">Beta</span></span>
-                      </Link>
-                    <Link href="/dashboard/tools/on-base-savings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="ShoppingCart" className="w-5 h-5 text-emerald-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/paycheck-audit"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Shield" className="h-5 w-5 text-blue-600" />
+                      <span className="font-medium">
+                        Paycheck Audit{" "}
+                        <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                          Beta
+                        </span>
+                      </span>
+                    </Link>
+                    <Link
+                      href="/dashboard/tools/on-base-savings"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="ShoppingCart" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">On-Base Savings</span>
-                      </Link>
-                    <Link href="/dashboard/tools/salary-calculator" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Calculator" className="w-5 h-5 text-emerald-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/tools/salary-calculator"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Calculator" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">Retirement Calculator</span>
-                      </Link>
-                    </div>
+                    </Link>
                   </div>
+                </div>
 
                 {/* Mobile Intelligence Section */}
                 <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Intelligence
                   </div>
                   <div className="space-y-2">
-                    <Link href="/dashboard/library" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="BookOpen" className="w-5 h-5 text-purple-600" />
-                      <span className="font-medium">Intel Library</span>
+                    <Link
+                      href="/dashboard/library"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="BookOpen" className="h-5 w-5 text-purple-600" />
+                      <span className="font-medium">Ask Assistant</span>
                     </Link>
-                    <Link href="/dashboard/listening-post" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Radio" className="w-5 h-5 text-purple-600" />
+                    <Link
+                      href="/dashboard/listening-post"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Radio" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Listening Post</span>
-                      </Link>
-                    <Link href="/dashboard/directory" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Users" className="w-5 h-5 text-purple-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/directory"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Users" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Directory</span>
-                      </Link>
-                    <Link href="/dashboard/refer-earn" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Gift" className="w-5 h-5 text-purple-600" />
+                    </Link>
+                    <Link
+                      href="/dashboard/refer-earn"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Gift" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Refer & Earn</span>
-                      </Link>
-                    </div>
+                    </Link>
                   </div>
+                </div>
 
                 {/* Mobile Resources Section */}
                 <div>
-                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Resources
                   </div>
                   <div className="space-y-2">
-                    <Link href="/pcs-hub" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Truck" className="w-5 h-5 text-blue-600" />
+                    <Link
+                      href="/pcs-hub"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Truck" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">PCS Hub</span>
-                  </Link>
-                    <Link href="/career-hub" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Briefcase" className="w-5 h-5 text-blue-600" />
+                    </Link>
+                    <Link
+                      href="/career-hub"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Briefcase" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Career Hub</span>
-                  </Link>
-                    <Link href="/deployment" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="Shield" className="w-5 h-5 text-blue-600" />
+                    </Link>
+                    <Link
+                      href="/deployment"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="Shield" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Deployment</span>
-                  </Link>
-                    <Link href="/base-guides" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="MapPin" className="w-5 h-5 text-blue-600" />
+                    </Link>
+                    <Link
+                      href="/base-guides"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Guides</span>
-                  </Link>
-                    <Link href="/on-base-shopping" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                      <Icon name="ShoppingCart" className="w-5 h-5 text-blue-600" />
+                    </Link>
+                    <Link
+                      href="/on-base-shopping"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                    >
+                      <Icon name="ShoppingCart" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">On-Base Shopping</span>
                     </Link>
                   </div>
-              </div>
-              
+                </div>
+
                 {/* Mobile Upgrade CTA */}
-                <div className="pt-4 border-t border-gray-200 dark:border-slate-700">
-                  <Link href="/dashboard/upgrade" className="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center py-2.5 px-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all text-sm">
+                <div className="border-t border-gray-200 pt-4 dark:border-slate-700">
+                  <Link
+                    href="/dashboard/upgrade"
+                    className="block w-full rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white transition-all hover:from-emerald-700 hover:to-emerald-800"
+                  >
                     Upgrade to Premium
                   </Link>
                 </div>
               </SignedIn>
-                <SignedOut>
+              <SignedOut>
                 <div className="space-y-2.5">
-                    <SignInButton mode="modal">
-                    <button className="w-full px-4 py-2.5 text-gray-600 hover:text-slate-900 font-semibold transition-colors text-left text-sm">
-                        Sign In
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                    <button className="w-full px-4 py-2.5 bg-slate-900 text-white rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm">
+                  <SignInButton mode="modal">
+                    <button className="w-full px-4 py-2.5 text-left text-sm font-semibold text-gray-600 transition-colors hover:text-slate-900">
+                      Sign In
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800">
                       Get Started Free
-                      </button>
-                    </SignUpButton>
-                  </div>
-                </SignedOut>
-              </div>
+                    </button>
+                  </SignUpButton>
+                </div>
+              </SignedOut>
+            </div>
           </div>
         )}
-    </header>
+      </header>
     </>
   );
 }

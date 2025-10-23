@@ -60,14 +60,16 @@ See [`docs/README.md`](./docs/README.md) for complete documentation index.
 
 ## 🏗️ ARCHITECTURE
 
-### **Core Innovation: AI Master Curator**
+### **Core Innovation: Ask Assistant + Premium Tools**
 
-Garrison Ledger uses a two-phase AI system to generate personalized financial plans:
+Garrison Ledger provides comprehensive military financial planning through:
 
-1. **AI Master Curator** - GPT-4o analyzes user profile and selects 8-10 most relevant content blocks from 410+ expert-curated articles
-2. **AI Narrative Weaver** - GPT-4o creates personalized introductions, transitions, and action items
+1. **Ask Assistant** - Q&A virtual assistant with official DFAS/VA/TSP data sources
+2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator, TDY Copilot
+3. **Intel Library** - Live BAH/BAS/COLA data with 203 base guides worldwide
+4. **Calculator Suite** - 6 military-specific financial calculators
 
-**Cost:** ~$0.25 per plan | **Time:** ~30 seconds
+**AI Cost:** ~$0.02 per interaction | **Data Sources:** 100% official military sources
 
 ### **Technology Stack**
 
@@ -75,29 +77,31 @@ Garrison Ledger uses a two-phase AI system to generate personalized financial pl
 - **Backend:** Next.js API Routes, Supabase (PostgreSQL + Storage)
 - **Authentication:** Clerk
 - **Payments:** Stripe
-- **AI:** OpenAI GPT-4o
+- **AI:** Google Gemini 2.0 Flash
 - **Hosting:** Vercel
 - **Database:** Supabase (PostgreSQL with RLS)
 
 ### **Key Systems**
 
-1. **AI Plan Generation** - Personalized financial plans
-2. **Content Intelligence** - 410 hand-curated content blocks
-3. **Calculator Tools** - 6 military-specific financial calculators
-4. **Binder** - Document management with expiration tracking
-5. **Premium Subscription** - Stripe-powered monetization
+1. **Ask Assistant** - Q&A virtual assistant with official military data
+2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator, TDY Copilot
+3. **Intel Library** - Live BAH/BAS/COLA data with 203 base guides
+4. **Calculator Suite** - 6 military-specific financial calculators
+5. **Admin Dashboard** - Complete 6-tab administrative interface
+6. **Premium Subscription** - Stripe-powered monetization
 
 ---
 
 ## 🎯 FEATURES
 
 ### **For Users**
-- ✅ AI-generated personalized financial plans
+- ✅ Ask Assistant Q&A virtual assistant with official data
+- ✅ LES Auditor pay verification and error detection
+- ✅ PCS Copilot complete relocation planning
+- ✅ Base Navigator with 203 bases worldwide
+- ✅ TDY Copilot travel planning and reimbursement
 - ✅ 6 financial calculator tools (TSP, SDP, House Hacking, etc.)
-- ✅ 410+ expert-curated content blocks
-- ✅ AI-powered content discovery
-- ✅ Document management (Binder)
-- ✅ 5 resource hub pages
+- ✅ Intel Library with live BAH/BAS/COLA data
 - ✅ Premium subscription tiers
 
 ### **For Developers**
@@ -118,7 +122,7 @@ Garrison Ledger uses a two-phase AI system to generate personalized financial pl
 - Supabase account
 - Clerk account
 - Stripe account (for payments)
-- OpenAI API key
+- Google API key (for Gemini)
 
 ### **Environment Variables**
 See [`docs/guides/ENV_SETUP.md`](./docs/guides/ENV_SETUP.md) for setup instructions.
@@ -131,7 +135,7 @@ CLERK_SECRET_KEY=
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 STRIPE_SECRET_KEY=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-OPENAI_API_KEY=
+GOOGLE_API_KEY=
 ```
 
 ### **Development Workflow**
@@ -169,16 +173,18 @@ OPENAI_API_KEY=
 
 ## 📊 PROJECT STATUS
 
-**Version:** 2.0.0 (AI-Powered)  
+**Version:** 6.0.0 (Ask Assistant Launch)  
 **Status:** 🟢 Production Ready  
-**Last Updated:** 2025-01-15
+**Last Updated:** 2025-01-23
 
 ### **Recent Updates**
-- ✅ AI Master Curator System (v2.0.0)
-- ✅ Personalized Plan Generation
-- ✅ Content Metadata Complete (100%)
-- ✅ Navigation Enhanced
-- ✅ Homepage AI Positioning
+- ✅ Ask Assistant Q&A Virtual Assistant (v6.0.0)
+- ✅ LES Auditor Pay Verification Tool
+- ✅ PCS Copilot Complete Planning System
+- ✅ Base Navigator with 203 Bases Worldwide
+- ✅ TDY Copilot Travel Planning
+- ✅ Admin Dashboard Complete (6 tabs)
+- ✅ Gemini 2.0 Flash Integration (97% cost reduction)
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for full version history.
 
@@ -197,7 +203,7 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for full version history.
 ## 📈 PERFORMANCE
 
 - **Page Load:** < 3 seconds
-- **AI Plan Generation:** ~30 seconds
+- **AI Response Time:** < 5 seconds
 - **Database Queries:** Optimized with indexes
 - **Content Blocks:** 410 with complete metadata
 - **Content Rating:** 3.30/5.0 average
@@ -207,15 +213,16 @@ See [`CHANGELOG.md`](./CHANGELOG.md) for full version history.
 ## 🎯 ROADMAP
 
 ### **Short-term**
-- [ ] Plan regeneration feature
-- [ ] Enhanced user ratings
-- [ ] Behavioral learning from engagement
+- [ ] Ask Assistant mobile optimization
+- [ ] Enhanced LES Auditor PDF parsing
+- [ ] PCS Copilot integration improvements
+- [ ] Base Navigator API cost optimization
 
 ### **Long-term**
-- [ ] Advanced AI features (what-if scenarios)
-- [ ] Custom model training
 - [ ] MyPay/TSP API integration
-- [ ] Mobile app
+- [ ] Advanced AI features (what-if scenarios)
+- [ ] Mobile app (PWA ready)
+- [ ] Custom model training
 
 See `SYSTEM_STATUS.md` for detailed priorities.
 
