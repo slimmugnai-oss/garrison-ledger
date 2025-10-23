@@ -722,7 +722,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   {/* Actual Net */}
                   <div>
                     <p className="mb-1 text-sm font-medium text-gray-700">Your LES Net Pay</p>
-                    {result.totals.actual_net > 0 ? (
+                    {tier === 'free' ? (
+                      <p className="text-lg text-blue-600">Premium feature</p>
+                    ) : result.totals.actual_net > 0 ? (
                       <p className="text-2xl font-bold text-gray-900">
                         ${(result.totals.actual_net / 100).toFixed(2)}
                       </p>
@@ -734,7 +736,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   {/* Variance */}
                   <div>
                     <p className="mb-1 text-sm font-medium text-gray-700">Variance</p>
-                    {result.totals.variance !== null ? (
+                    {tier === 'free' ? (
+                      <p className="text-lg text-blue-600">Premium feature</p>
+                    ) : result.totals.variance !== null ? (
                       <p
                         className={`text-2xl font-bold ${
                           Math.abs(result.totals.variance) <= 500
@@ -785,47 +789,71 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900">Findings</h3>
 
-                {/* Visible Flags */}
-                <div className="space-y-3">
-                  {result.flags.map((flag, idx) => (
-                    <div
-                      key={idx}
-                      className={`rounded-lg border-l-4 p-4 ${
-                        flag.severity === "red"
-                          ? "border-red-500 bg-red-50"
-                          : flag.severity === "yellow"
-                            ? "border-yellow-500 bg-yellow-50"
-                            : "border-green-500 bg-green-50"
-                      }`}
+                {/* Complete paywall for free users */}
+                {tier === 'free' ? (
+                  <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
+                    <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+                    <h3 className="mb-3 text-xl font-semibold text-blue-900">
+                      Premium Feature: Complete LES Audit
+                    </h3>
+                    <p className="mb-2 text-sm text-blue-800">
+                      Your audit is complete, but full results are for Premium members only.
+                    </p>
+                    <p className="mb-6 text-sm text-blue-700">
+                      Premium unlocks: all flags, variance analysis, email templates, unlimited audits
+                    </p>
+                    <a
+                      href="/dashboard/upgrade?feature=paycheck-audit"
+                      className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
                     >
-                      <div className="flex items-start gap-3">
-                        {/* Severity Icon - NEW */}
-                        <div className="flex-shrink-0">
-                          {flag.severity === "red" ? (
-                            <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
-                          ) : flag.severity === "yellow" ? (
-                            <Icon name="AlertTriangle" className="h-6 w-6 text-yellow-600" />
-                          ) : (
-                            <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
-                          )}
-                        </div>
+                      Upgrade to Premium
+                    </a>
+                  </div>
+                ) : (
+                  <>
+                    {/* Visible Flags */}
+                    <div className="space-y-3">
+                      {result.flags.map((flag, idx) => (
+                        <div
+                          key={idx}
+                          className={`rounded-lg border-l-4 p-4 ${
+                            flag.severity === "red"
+                              ? "border-red-500 bg-red-50"
+                              : flag.severity === "yellow"
+                                ? "border-yellow-500 bg-yellow-50"
+                                : "border-green-500 bg-green-50"
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            {/* Severity Icon - NEW */}
+                            <div className="flex-shrink-0">
+                              {flag.severity === "red" ? (
+                                <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
+                              ) : flag.severity === "yellow" ? (
+                                <Icon name="AlertTriangle" className="h-6 w-6 text-yellow-600" />
+                              ) : (
+                                <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+                              )}
+                            </div>
 
-                        <div className="flex-1">
-                          <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
-                          <p className="text-sm text-gray-700">{flag.suggestion}</p>
+                            <div className="flex-1">
+                              <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
+                              <p className="text-sm text-gray-700">{flag.suggestion}</p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Hidden Flags (Free Tier) */}
-                {result.hiddenFlagCount > 0 && (
-                  <PremiumCurtain tier={tier} feature="flags" hiddenCount={result.hiddenFlagCount}>
-                    <div className="rounded-lg bg-gray-100 p-4 text-center text-gray-500">
-                      {result.hiddenFlagCount} more findings hidden
-                    </div>
-                  </PremiumCurtain>
+                    {/* Hidden Flags (Free Tier) */}
+                    {result.hiddenFlagCount > 0 && (
+                      <PremiumCurtain tier={tier} feature="flags" hiddenCount={result.hiddenFlagCount}>
+                        <div className="rounded-lg bg-gray-100 p-4 text-center text-gray-500">
+                          {result.hiddenFlagCount} more findings hidden
+                        </div>
+                      </PremiumCurtain>
+                    )}
+                  </>
                 )}
               </div>
 
