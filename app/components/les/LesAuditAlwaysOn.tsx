@@ -32,6 +32,9 @@ interface Props {
 }
 
 export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
+  // Debug tier value
+  console.log('[LesAuditAlwaysOn] Tier:', tier, 'User:', userProfile);
+  
   // ============================================================================
   // STATE
   // ============================================================================
@@ -174,7 +177,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sortBy: "date-desc",
-          limit: 12
+          limit: 12,
         }),
       });
 
@@ -215,11 +218,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         allowances: [
           basePay > 0 && { code: "BASEPAY", description: "Base Pay", amount_cents: basePay },
           bah > 0 && { code: "BAH", description: "Basic Allowance for Housing", amount_cents: bah },
-          bas > 0 && { code: "BAS", description: "Basic Allowance for Subsistence", amount_cents: bas },
+          bas > 0 && {
+            code: "BAS",
+            description: "Basic Allowance for Subsistence",
+            amount_cents: bas,
+          },
           cola > 0 && { code: "COLA", description: "Cost of Living Allowance", amount_cents: cola },
         ].filter(Boolean) as Array<{ code: string; description: string; amount_cents: number }>,
         taxes: [
-          federalTax > 0 && { code: "TAX_FED", description: "Federal Tax", amount_cents: federalTax },
+          federalTax > 0 && {
+            code: "TAX_FED",
+            description: "Federal Tax",
+            amount_cents: federalTax,
+          },
           stateTax > 0 && { code: "TAX_STATE", description: "State Tax", amount_cents: stateTax },
           fica > 0 && { code: "FICA", description: "FICA (Social Security)", amount_cents: fica },
           medicare > 0 && { code: "MEDICARE", description: "Medicare", amount_cents: medicare },
@@ -316,19 +327,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       if (!response.ok) throw new Error("Failed to load audit");
 
       const data = await response.json();
-      
+
       // Validate response has required structure
       if (!data.metadata || !data.linesBySection) {
         throw new Error("Invalid audit data structure");
       }
-      
+
       // Helper to find line amount from linesBySection structure
       const findAmount = (section: string, code: string) => {
         const sectionLines = data.linesBySection[section] || [];
         const line = sectionLines.find((l: any) => l.line_code === code);
         return line?.amount_cents || 0;
       };
-      
+
       // Load line items into form fields
       setBasePay(findAmount("ALLOWANCE", "BASEPAY"));
       setBah(findAmount("ALLOWANCE", "BAH"));
@@ -341,13 +352,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       setStateTax(findAmount("TAX", "TAX_STATE"));
       setFica(findAmount("TAX", "FICA"));
       setMedicare(findAmount("TAX", "MEDICARE"));
-      
+
       // Set month/year LAST to avoid triggering auto-populate before fields are set
       setMonth(data.metadata.month);
       setYear(data.metadata.year);
-      
+
       // Format month name correctly
-      const monthName = new Date(2000, data.metadata.month - 1).toLocaleString("default", { month: "long" });
+      const monthName = new Date(2000, data.metadata.month - 1).toLocaleString("default", {
+        month: "long",
+      });
       alert(`Loaded audit from ${monthName} ${data.metadata.year}. Edit and re-run as needed.`);
     } catch (error) {
       console.error("[Load Audit] Error:", error);
@@ -359,25 +372,28 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   // DELETE AUDIT
   // ============================================================================
 
-  const handleDeleteAudit = useCallback(async (auditId: string, auditDate: string) => {
-    if (!confirm(`Delete audit for ${auditDate}? This cannot be undone.`)) return;
+  const handleDeleteAudit = useCallback(
+    async (auditId: string, auditDate: string) => {
+      if (!confirm(`Delete audit for ${auditDate}? This cannot be undone.`)) return;
 
-    try {
-      const response = await fetch(`/api/les/audit/${auditId}/delete`, {
-        method: "POST",
-      });
+      try {
+        const response = await fetch(`/api/les/audit/${auditId}/delete`, {
+          method: "POST",
+        });
 
-      if (response.ok) {
-        alert("Audit deleted successfully");
-        fetchHistory(); // Refresh list
-      } else {
-        throw new Error("Failed to delete");
+        if (response.ok) {
+          alert("Audit deleted successfully");
+          fetchHistory(); // Refresh list
+        } else {
+          throw new Error("Failed to delete");
+        }
+      } catch (error) {
+        console.error("[Delete Audit] Error:", error);
+        alert("Failed to delete audit.");
       }
-    } catch (error) {
-      console.error("[Delete Audit] Error:", error);
-      alert("Failed to delete audit.");
-    }
-  }, [fetchHistory]);
+    },
+    [fetchHistory]
+  );
 
   // ============================================================================
   // KEYBOARD SHORTCUTS
@@ -635,15 +651,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   onChange={setStateTax}
                   helpText="State income tax withheld (if applicable)"
                 />
-                <CurrencyField 
-                  label="FICA / Social Security" 
-                  value={fica} 
+                <CurrencyField
+                  label="FICA / Social Security"
+                  value={fica}
                   onChange={setFica}
                   helpText="Enter the dollar amount withheld (not the percentage). Example: $217.00"
                 />
-                <CurrencyField 
-                  label="Medicare" 
-                  value={medicare} 
+                <CurrencyField
+                  label="Medicare"
+                  value={medicare}
                   onChange={setMedicare}
                   helpText="Enter the dollar amount withheld (not the percentage). Example: $50.75"
                 />
@@ -722,7 +738,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   {/* Actual Net */}
                   <div>
                     <p className="mb-1 text-sm font-medium text-gray-700">Your LES Net Pay</p>
-                    {tier === 'free' ? (
+                    {tier !== "premium" && tier !== "staff" ? (
                       <p className="text-lg text-blue-600">Premium feature</p>
                     ) : result.totals.actual_net > 0 ? (
                       <p className="text-2xl font-bold text-gray-900">
@@ -736,7 +752,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   {/* Variance */}
                   <div>
                     <p className="mb-1 text-sm font-medium text-gray-700">Variance</p>
-                    {tier === 'free' ? (
+                    {tier !== "premium" && tier !== "staff" ? (
                       <p className="text-lg text-blue-600">Premium feature</p>
                     ) : result.totals.variance !== null ? (
                       <p
@@ -790,7 +806,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 <h3 className="mb-3 text-lg font-semibold text-gray-900">Findings</h3>
 
                 {/* Complete paywall for free users */}
-                {tier === 'free' ? (
+                {tier !== "premium" && tier !== "staff" ? (
                   <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
                     <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
                     <h3 className="mb-3 text-xl font-semibold text-blue-900">
@@ -800,7 +816,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       Your audit is complete, but full results are for Premium members only.
                     </p>
                     <p className="mb-6 text-sm text-blue-700">
-                      Premium unlocks: all flags, variance analysis, email templates, unlimited audits
+                      Premium unlocks: all flags, variance analysis, email templates, unlimited
+                      audits
                     </p>
                     <a
                       href="/dashboard/upgrade?feature=paycheck-audit"
@@ -847,7 +864,11 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
                     {/* Hidden Flags (Free Tier) */}
                     {result.hiddenFlagCount > 0 && (
-                      <PremiumCurtain tier={tier} feature="flags" hiddenCount={result.hiddenFlagCount}>
+                      <PremiumCurtain
+                        tier={tier}
+                        feature="flags"
+                        hiddenCount={result.hiddenFlagCount}
+                      >
                         <div className="rounded-lg bg-gray-100 p-4 text-center text-gray-500">
                           {result.hiddenFlagCount} more findings hidden
                         </div>
@@ -858,7 +879,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               </div>
 
               {/* Waterfall (Premium Only) */}
-              {tier === 'free' ? (
+              {tier !== "premium" && tier !== "staff" ? (
                 <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
                   <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
                   <h3 className="mb-3 text-xl font-semibold text-blue-900">
@@ -868,7 +889,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     Line-by-line variance breakdown is for Premium members only.
                   </p>
                   <p className="mb-6 text-sm text-blue-700">
-                    Premium unlocks: detailed reconciliation, all flags, variance analysis, unlimited audits
+                    Premium unlocks: detailed reconciliation, all flags, variance analysis,
+                    unlimited audits
                   </p>
                   <a
                     href="/dashboard/upgrade?feature=paycheck-audit"
@@ -966,11 +988,14 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   {history.map((audit) => (
                     <div
                       key={audit.id}
-                      className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 transition-colors hover:bg-gray-100"
                     >
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">
-                          {new Date(2000, audit.month - 1).toLocaleString("default", { month: "long" })} {audit.year}
+                          {new Date(2000, audit.month - 1).toLocaleString("default", {
+                            month: "long",
+                          })}{" "}
+                          {audit.year}
                         </p>
                         <p className="text-xs text-gray-600">
                           {new Date(audit.created_at).toLocaleDateString()}
@@ -979,14 +1004,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleLoadAudit(audit.id)}
-                          className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                          className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
                         >
                           <Icon name="Upload" className="h-4 w-4" />
                           Load
                         </button>
                         <button
-                          onClick={() => handleDeleteAudit(audit.id, `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`)}
-                          className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
+                          onClick={() =>
+                            handleDeleteAudit(
+                              audit.id,
+                              `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`
+                            )
+                          }
+                          className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
                         >
                           <Icon name="Trash2" className="h-4 w-4" />
                           Delete
