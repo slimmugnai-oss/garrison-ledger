@@ -44,15 +44,16 @@ export default async function PaycheckAuditPage() {
     .eq('user_id', user.id)
     .maybeSingle();
 
-  // Get audit history (last 12 months)
+  // Get audit history (last 12 months, exclude deleted)
   const { data: history } = await supabase
     .from('les_uploads')
     .select('*')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(12);
 
-  // Check usage this month
+  // Check usage this month (exclude deleted)
   const firstDayOfMonth = new Date();
   firstDayOfMonth.setDate(1);
   firstDayOfMonth.setHours(0, 0, 0, 0);
@@ -61,6 +62,7 @@ export default async function PaycheckAuditPage() {
     .from('les_uploads')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .gte('created_at', firstDayOfMonth.toISOString());
 
   const hasReachedFreeLimit = !isPremium && (uploadsThisMonth || 0) >= 1;
