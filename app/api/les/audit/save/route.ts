@@ -186,13 +186,18 @@ export async function POST(req: NextRequest) {
     const lineInserts = allLines.map(item => ({
       upload_id: uploadRecord.id,
       line_code: item.code,
-      description: item.description,
+      description: item.description || item.code, // Use code as fallback if description missing
       amount_cents: item.amount_cents,
       section: item.section,
       taxability: {}
     }));
 
-    await supabaseAdmin.from('les_lines').insert(lineInserts);
+    const { error: linesError } = await supabaseAdmin.from('les_lines').insert(lineInserts);
+    
+    if (linesError) {
+      logger.error('[LES Save] Failed to insert line items', { userId, error: linesError });
+      // Continue anyway - audit record is saved, just missing line details
+    }
 
     // ===========================================================================
     // 6. INSERT FLAGS

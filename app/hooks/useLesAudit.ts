@@ -37,12 +37,12 @@ export interface AuditInputs {
     };
   } | null;
   actual: {
-    allowances: Array<{ code: string; amount_cents: number }>;
-    taxes: Array<{ code: string; amount_cents: number }>;
-    deductions: Array<{ code: string; amount_cents: number }>;
-    allotments?: Array<{ code: string; amount_cents: number }>;
-    debts?: Array<{ code: string; amount_cents: number }>;
-    adjustments?: Array<{ code: string; amount_cents: number }>;
+    allowances: Array<{ code: string; description: string; amount_cents: number }>;
+    taxes: Array<{ code: string; description: string; amount_cents: number }>;
+    deductions: Array<{ code: string; description: string; amount_cents: number }>;
+    allotments?: Array<{ code: string; description: string; amount_cents: number }>;
+    debts?: Array<{ code: string; description: string; amount_cents: number }>;
+    adjustments?: Array<{ code: string; description: string; amount_cents: number }>;
   };
   net_pay_cents?: number;
 }
