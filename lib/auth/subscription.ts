@@ -23,6 +23,8 @@ export type Tier = 'free' | 'premium' | 'staff';
  */
 export async function getUserTier(userId: string): Promise<Tier> {
   try {
+    console.log('[getUserTier] Checking tier for user:', userId);
+    
     // Query entitlements table for tier
     const { data: entitlement } = await supabaseAdmin
       .from('entitlements')
@@ -30,7 +32,11 @@ export async function getUserTier(userId: string): Promise<Tier> {
       .eq('user_id', userId)
       .maybeSingle();
     
-    if (!entitlement) return 'free';
+    console.log('[getUserTier] Entitlement data:', entitlement);
+    
+    if (!entitlement) {
+      console.log('[getUserTier] No entitlement found, checking staff bypass...');
+    }
     
     // Check for staff bypass via profiles table
     const { data: profile } = await supabaseAdmin
@@ -39,8 +45,11 @@ export async function getUserTier(userId: string): Promise<Tier> {
       .eq('id', userId)
       .maybeSingle();
     
+    console.log('[getUserTier] Profile data:', profile);
+    
     if (profile?.email?.endsWith('@garrisonledger.com') || 
         profile?.email?.endsWith('@slimmugnai.com')) {
+      console.log('[getUserTier] Staff bypass detected for email:', profile.email);
       return 'staff';
     }
     

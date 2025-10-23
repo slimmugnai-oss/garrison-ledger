@@ -32,6 +32,7 @@ export default async function PaycheckAuditPage() {
 
   // Get subscription tier
   const tier = await getUserTier(user.id);
+  console.log('[PaycheckAuditPage] User ID:', user.id, 'Tier:', tier);
 
   // Get user profile (for BAH/grade context)
   const { data: profile } = await supabase
