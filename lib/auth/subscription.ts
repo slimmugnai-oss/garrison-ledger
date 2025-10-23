@@ -23,23 +23,30 @@ export type Tier = 'free' | 'premium' | 'staff';
  */
 export async function getUserTier(userId: string): Promise<Tier> {
   try {
-    // Query user_profiles for subscription_tier
-    const { data: profile } = await supabaseAdmin
-      .from('user_profiles')
-      .select('subscription_tier, email')
+    // Query entitlements table for tier
+    const { data: entitlement } = await supabaseAdmin
+      .from('entitlements')
+      .select('tier, status')
       .eq('user_id', userId)
       .maybeSingle();
     
-    if (!profile) return 'free';
+    if (!entitlement) return 'free';
     
-    // Staff bypass (internal email domains)
-    if (profile.email?.endsWith('@garrisonledger.com') || 
-        profile.email?.endsWith('@slimmugnai.com')) {
+    // Check for staff bypass via profiles table
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('email')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (profile?.email?.endsWith('@garrisonledger.com') || 
+        profile?.email?.endsWith('@slimmugnai.com')) {
       return 'staff';
     }
     
-    // Check subscription tier column
-    if (profile.subscription_tier === 'premium' || profile.subscription_tier === 'pro') {
+    // Check subscription status and tier
+    if (entitlement.status === 'active' && 
+        (entitlement.tier === 'premium' || entitlement.tier === 'pro')) {
       return 'premium';
     }
     

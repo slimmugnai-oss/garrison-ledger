@@ -33,19 +33,19 @@ paths:
       summary: Compute LES Audit (Real-Time)
       description: |
         Real-time audit computation endpoint. Called automatically on input changes (400ms debounce).
-        
+
         **Always-On Audit:**
         - No "Run Audit" button - computes automatically as user types
         - Server-side computation using official DFAS tables
         - Tier-aware masking (free users see top 2 flags only)
         - No persistence (use /save endpoint to persist)
-        
+
         **Tier Policies:**
         - Free: Top 2 flags, variance bucket only, no exact amounts
         - Premium: All flags, exact variance, full waterfall
-        
+
         **No Rate Limit:** This endpoint is called frequently for real-time UX
-        
+
       tags:
         - LES Auditor
       requestBody:
@@ -71,20 +71,20 @@ paths:
       summary: Save Audit & Generate PDF (Premium Only)
       description: |
         Persists audit to database and generates PDF export.
-        
+
         **Premium Feature:** Returns 402 PAYWALL for free tier
-        
+
         **Quota:**
         - Free: 1 save per month (enforced)
         - Premium: Unlimited
-        
+
         **Process:**
         1. Validate tier & quota
         2. Persist audit record
         3. Insert line items and flags
         4. Generate PDF
         5. Return audit ID and PDF URL
-        
+
       tags:
         - LES Auditor
       requestBody:
