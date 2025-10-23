@@ -33,8 +33,8 @@ interface Props {
 
 export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   // Debug tier value
-  console.log('[LesAuditAlwaysOn] Tier:', tier, 'User:', userProfile);
-  
+  console.log("[LesAuditAlwaysOn] Tier:", tier, "User:", userProfile);
+
   // ============================================================================
   // STATE
   // ============================================================================
@@ -938,7 +938,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
                   >
                     <Icon name="Zap" className="h-5 w-5" />
-                    Upgrade to Save & Export
+                    Upgrade to Save Audit
                   </button>
                 )}
               </div>
