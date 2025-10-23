@@ -64,19 +64,33 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // Insert the new user into the user_profiles table
-      const { error: profileError } = await supabaseAdmin
-        .from('user_profiles')
+      // Insert into profiles table (used for auth/staff bypass)
+      const { error: profilesError } = await supabaseAdmin
+        .from('profiles')
         .insert([
           {
-            clerk_user_id: id,
+            id: id,
             email: email,
           },
         ]);
 
-      if (profileError) {
-        logger.error('[ClerkWebhook] Failed to create profile', profileError, { userId: id, email: email.split('@')[1] });
+      if (profilesError) {
+        logger.error('[ClerkWebhook] Failed to create profiles record', profilesError, { userId: id, email: email.split('@')[1] });
         return new Response('Database error', { status: 500 });
+      }
+
+      // Insert the new user into the user_profiles table
+      const { error: userProfileError } = await supabaseAdmin
+        .from('user_profiles')
+        .insert([
+          {
+            user_id: id,
+          },
+        ]);
+
+      if (userProfileError) {
+        logger.error('[ClerkWebhook] Failed to create user_profiles record', userProfileError, { userId: id, email: email.split('@')[1] });
+        // Don't fail the webhook - profiles record is created
       }
 
       // Create free tier entitlement for new user
