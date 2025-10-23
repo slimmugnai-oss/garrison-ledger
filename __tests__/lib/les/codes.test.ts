@@ -3,7 +3,7 @@
  * Tests taxable base computation and line code definitions
  */
 
-import { computeTaxableBases, getLineCodeDefinition, isValidLineCode, validateAndNormalizeCode } from '@/lib/les/codes';
+import { computeTaxableBases, getLineCodeDefinition, isValidLineCode, validateAndNormalizeCode, normalizeLineCode } from '@/lib/les/codes';
 
 describe('codes.ts', () => {
   describe('computeTaxableBases', () => {
@@ -121,6 +121,43 @@ describe('codes.ts', () => {
       expect(result.warning?.severity).toBe('yellow');
       expect(result.warning?.flag_code).toBe('UNKNOWN_CODE');
       expect(result.warning?.message).toContain('UNKNOWN_PAY');
+    });
+  });
+  
+  describe('normalizeLineCode', () => {
+    it('normalizes Medicare variations', () => {
+      expect(normalizeLineCode('MEDICARE HI')).toBe('MEDICARE');
+      expect(normalizeLineCode('MED')).toBe('MEDICARE');
+      expect(normalizeLineCode('MCARE')).toBe('MEDICARE');
+    });
+    
+    it('normalizes tax variations', () => {
+      expect(normalizeLineCode('FED TAX')).toBe('TAX_FED');
+      expect(normalizeLineCode('FITW')).toBe('TAX_FED');
+      expect(normalizeLineCode('STATE TAX')).toBe('TAX_STATE');
+      expect(normalizeLineCode('SITW')).toBe('TAX_STATE');
+    });
+    
+    it('normalizes FICA variations', () => {
+      expect(normalizeLineCode('SOC SEC')).toBe('FICA');
+      expect(normalizeLineCode('OASDI')).toBe('FICA');
+      expect(normalizeLineCode('SOCIAL SECURITY')).toBe('FICA');
+    });
+    
+    it('normalizes BAH variations', () => {
+      expect(normalizeLineCode('BAH W/DEP')).toBe('BAH');
+      expect(normalizeLineCode('BAH W/O DEP')).toBe('BAH');
+      expect(normalizeLineCode('BAH WITH DEP')).toBe('BAH');
+    });
+    
+    it('handles case-insensitive matching', () => {
+      expect(normalizeLineCode('medicare hi')).toBe('MEDICARE');
+      expect(normalizeLineCode('MeDiCaRe Hi')).toBe('MEDICARE');
+      expect(normalizeLineCode('MEDICARE HI')).toBe('MEDICARE');
+    });
+    
+    it('returns original code if no mapping exists', () => {
+      expect(normalizeLineCode('CUSTOM_CODE')).toBe('CUSTOM_CODE');
     });
   });
 });

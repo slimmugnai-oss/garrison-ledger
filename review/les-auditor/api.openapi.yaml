@@ -60,6 +60,12 @@ paths:
               bah_mismatch:
                 summary: E06 @ Fort Bragg - BAH Incorrect
                 externalValue: "./fixtures/bah_mismatch_e6_pcs.request.json"
+              fica_wage_base:
+                summary: O06 - FICA Wage Base Hit (YTD > $176,100)
+                externalValue: "./fixtures/fica_wage_base.request.json"
+              medicare_hi_code:
+                summary: E04 - Code Normalization Test (MEDICARE HI → MEDICARE)
+                externalValue: "./fixtures/medicare_hi_only.request.json"
 
       responses:
         "200":
@@ -75,6 +81,12 @@ paths:
                 bah_mismatch:
                   summary: Red flags for BAH and net pay
                   externalValue: "./fixtures/bah_mismatch_e6_pcs.response.json"
+                fica_wage_base:
+                  summary: Yellow flag - FICA wage base limit hit
+                  externalValue: "./fixtures/fica_wage_base.response.json"
+                medicare_hi_code:
+                  summary: All green - codes normalized successfully
+                  externalValue: "./fixtures/medicare_hi_only.response.json"
         "401":
           description: Unauthorized - missing or invalid authentication
         "429":

@@ -48,8 +48,8 @@ async function testFixture(name: string): Promise<AuditResponse> {
   const authToken = process.env.CLERK_JWT || 'test-token';
   
   // Call API
-  console.log(`   → Calling POST /api/les/audit-manual`);
-  const response = await fetch('http://localhost:3000/api/les/audit-manual', {
+  console.log(`   → Calling POST /api/les/audit`);
+  const response = await fetch('http://localhost:3000/api/les/audit', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -157,6 +157,63 @@ async function main() {
     
   } catch (error) {
     console.error(red(`\n   ❌ TEST 2 FAILED: ${error}`));
+    failed++;
+  }
+  
+  try {
+    // =========================================================================
+    // TEST 3: FICA Wage Base (O06 High Earner)
+    // =========================================================================
+    console.log(yellow('\n🧪 TEST 3: FICA Wage Base - Yellow Flag Expected'));
+    const ficaWageBase = await testFixture('fica_wage_base');
+    
+    console.log(`   → Validating response...`);
+    
+    // Should have FICA_PCT_OUT_OF_RANGE yellow flag
+    const ficaFlag = ficaWageBase.flags.find(f => f.flag_code === 'FICA_PCT_OUT_OF_RANGE');
+    assert(ficaFlag !== undefined, 'Should have FICA_PCT_OUT_OF_RANGE flag');
+    assert(ficaFlag?.severity === 'yellow', 'FICA_PCT_OUT_OF_RANGE should be yellow');
+    console.log(green(`   ✓ FICA wage base flag detected`));
+    
+    // Medicare should still be correct
+    const medicareGreen = ficaWageBase.flags.some(f => f.flag_code === 'MEDICARE_PCT_CORRECT');
+    assert(medicareGreen, 'Medicare should still be correct');
+    console.log(green(`   ✓ Medicare continues (correct)`));
+    
+    console.log(green('\n   ✅ TEST 3 PASSED'));
+    passed++;
+    
+  } catch (error) {
+    console.error(red(`\n   ❌ TEST 3 FAILED: ${error}`));
+    failed++;
+  }
+  
+  try {
+    // =========================================================================
+    // TEST 4: Code Normalization (E04)
+    // =========================================================================
+    console.log(yellow('\n🧪 TEST 4: Code Normalization - All Green Expected'));
+    const normalized = await testFixture('medicare_hi_only');
+    
+    console.log(`   → Validating response...`);
+    
+    // All flags should be green (codes normalized successfully)
+    const allGreen = normalized.flags.every(f => f.severity === 'green');
+    assert(allGreen, 'All flags should be green after normalization');
+    console.log(green(`   ✓ All ${normalized.flags.length} flags are green`));
+    
+    // Should have FICA and Medicare green flags
+    const ficaGreen = normalized.flags.some(f => f.flag_code === 'FICA_PCT_CORRECT');
+    const medicareGreen = normalized.flags.some(f => f.flag_code === 'MEDICARE_PCT_CORRECT');
+    assert(ficaGreen, 'FICA should be validated');
+    assert(medicareGreen, 'MEDICARE HI should normalize to MEDICARE and validate');
+    console.log(green(`   ✓ Code normalization successful`));
+    
+    console.log(green('\n   ✅ TEST 4 PASSED'));
+    passed++;
+    
+  } catch (error) {
+    console.error(red(`\n   ❌ TEST 4 FAILED: ${error}`));
     failed++;
   }
   

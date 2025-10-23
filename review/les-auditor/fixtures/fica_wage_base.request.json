@@ -1,0 +1,79 @@
+{
+  "month": 12,
+  "year": 2025,
+  "profile": {
+    "paygrade": "O06",
+    "yos": 22,
+    "mhaOrZip": "DC001",
+    "withDependents": true,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "actual": {
+    "allowances": [
+      {
+        "code": "BASEPAY",
+        "description": "Base Pay",
+        "amount_cents": 1156300
+      },
+      {
+        "code": "BAH",
+        "description": "BAH With Dependents",
+        "amount_cents": 362100
+      },
+      {
+        "code": "BAS",
+        "description": "Basic Allowance for Subsistence",
+        "amount_cents": 31698
+      },
+      {
+        "code": "COLA",
+        "description": "Cost of Living Allowance",
+        "amount_cents": 0
+      }
+    ],
+    "taxes": [
+      {
+        "code": "TAX_FED",
+        "description": "Federal Income Tax",
+        "amount_cents": 180000
+      },
+      {
+        "code": "TAX_STATE",
+        "description": "State Income Tax",
+        "amount_cents": 0
+      },
+      {
+        "code": "FICA",
+        "description": "FICA (Social Security)",
+        "amount_cents": 0
+      },
+      {
+        "code": "MEDICARE",
+        "description": "Medicare Tax",
+        "amount_cents": 16766
+      }
+    ],
+    "deductions": [
+      {
+        "code": "TSP",
+        "description": "Thrift Savings Plan (15%)",
+        "amount_cents": 173445
+      },
+      {
+        "code": "SGLI",
+        "description": "SGLI Life Insurance",
+        "amount_cents": 2900
+      }
+    ],
+    "allotments": [],
+    "debts": [],
+    "adjustments": [],
+    "net_pay_cents": 1176987
+  }
+}
+

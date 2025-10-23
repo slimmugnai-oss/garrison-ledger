@@ -74,6 +74,56 @@
       "response": []
     },
     {
+      "name": "Run Audit - FICA Wage Base (O06 High Earner)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "file",
+          "file": {
+            "src": "./fixtures/fica_wage_base.request.json"
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/les/audit",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit"]
+        },
+        "description": "Expected: YELLOW flag FICA_PCT_OUT_OF_RANGE (wage base limit hit), Medicare continues"
+      },
+      "response": []
+    },
+    {
+      "name": "Run Audit - Code Normalization (E04)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "file",
+          "file": {
+            "src": "./fixtures/medicare_hi_only.request.json"
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/les/audit",
+          "host": ["{{base_url}}"],
+          "path": ["les", "audit"]
+        },
+        "description": "Expected: All green flags. Tests code normalization (MEDICARE HI → MEDICARE, SOC SEC → FICA, etc.)"
+      },
+      "response": []
+    },
+    {
       "name": "Get Audit Details",
       "request": {
         "method": "GET",

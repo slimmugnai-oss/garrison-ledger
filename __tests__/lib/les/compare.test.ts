@@ -156,6 +156,39 @@ describe('compare.ts', () => {
       const redFlags = result.flags.filter(f => f.severity === 'red');
       expect(redFlags.length).toBe(0);
     });
+    
+    it('flags BAH_PARTIAL_OR_DIFF yellow for small variance', () => {
+      const result = compareDetailed({
+        expected: { bah_cents: 200000 },  // $2,000 expected
+        taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
+        actualLines: [
+          { line_code: 'BAH', amount_cents: 185000, section: 'ALLOWANCE' }  // $1,850 (small $150 variance)
+        ],
+        netPayCents: 0
+      });
+      
+      const bahFlag = result.flags.find(f => f.flag_code === 'BAH_PARTIAL_OR_DIFF');
+      expect(bahFlag).toBeDefined();
+      expect(bahFlag?.severity).toBe('yellow');
+      expect(bahFlag?.delta_cents).toBe(15000);  // $150
+    });
+    
+    it('shows CZTE_INFO when fed tax near zero but FICA/Medicare present', () => {
+      const result = compareDetailed({
+        expected: {},
+        taxable_bases: { fed: 0, state: 0, oasdi: 350000, medicare: 350000 },
+        actualLines: [
+          { line_code: 'TAX_FED', amount_cents: 0, section: 'TAX' },
+          { line_code: 'FICA', amount_cents: 21700, section: 'TAX' },
+          { line_code: 'MEDICARE', amount_cents: 5075, section: 'TAX' }
+        ],
+        netPayCents: 0
+      });
+      
+      const czteFlag = result.flags.find(f => f.flag_code === 'CZTE_INFO');
+      expect(czteFlag).toBeDefined();
+      expect(czteFlag?.severity).toBe('green');
+    });
   });
 });
 

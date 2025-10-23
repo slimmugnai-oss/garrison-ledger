@@ -1,0 +1,74 @@
+{
+  "month": 10,
+  "year": 2025,
+  "profile": {
+    "paygrade": "E04",
+    "yos": 4,
+    "mhaOrZip": "CA041",
+    "withDependents": false,
+    "specials": {
+      "sdap": false,
+      "hfp": false,
+      "fsa": false,
+      "flpp": false
+    }
+  },
+  "actual": {
+    "allowances": [
+      {
+        "code": "BASIC PAY",
+        "description": "Base Pay",
+        "amount_cents": 295000
+      },
+      {
+        "code": "BAH W/O DEP",
+        "description": "BAH Without Dependents",
+        "amount_cents": 198000
+      },
+      {
+        "code": "BAS",
+        "description": "Basic Allowance for Subsistence",
+        "amount_cents": 46025
+      }
+    ],
+    "taxes": [
+      {
+        "code": "FED TAX",
+        "description": "Federal Income Tax",
+        "amount_cents": 30000
+      },
+      {
+        "code": "STATE TAX",
+        "description": "California State Tax",
+        "amount_cents": 15000
+      },
+      {
+        "code": "SOC SEC",
+        "description": "Social Security",
+        "amount_cents": 18290
+      },
+      {
+        "code": "MEDICARE HI",
+        "description": "Medicare Health Insurance",
+        "amount_cents": 4278
+      }
+    ],
+    "deductions": [
+      {
+        "code": "TSP",
+        "description": "Thrift Savings Plan (5%)",
+        "amount_cents": 14750
+      },
+      {
+        "code": "LIFE INSURANCE",
+        "description": "SGLI",
+        "amount_cents": 2700
+      }
+    ],
+    "allotments": [],
+    "debts": [],
+    "adjustments": [],
+    "net_pay_cents": 454007
+  }
+}
+

@@ -1,0 +1,49 @@
+{
+  "summary": {
+    "total_allowances": 1550098,
+    "total_deductions": 176345,
+    "total_taxes": 196766,
+    "total_allotments": 0,
+    "total_debts": 0,
+    "total_adjustments": 0,
+    "computed_net": 1176987,
+    "actual_net": 1176987,
+    "net_delta": 0
+  },
+  "flags": [
+    {
+      "severity": "yellow",
+      "flag_code": "FICA_PCT_OUT_OF_RANGE",
+      "message": "FICA is 0.00% of taxable gross (expected ~6.2%). You may have hit the $176,100 wage base limit.",
+      "suggestion": "If your YTD earnings exceed $176,100, FICA withholding stops (correct behavior). Medicare continues. No action needed unless this is your first high-earning month."
+    },
+    {
+      "severity": "green",
+      "flag_code": "MEDICARE_PCT_CORRECT",
+      "message": "Medicare verified: 1.45% (within normal 1.40%-1.50% range)",
+      "suggestion": "No action needed. Medicare withholding is correct."
+    },
+    {
+      "severity": "green",
+      "flag_code": "NET_MATH_VERIFIED",
+      "message": "Net pay math verified: $11,769.87 ✓",
+      "suggestion": "No action needed. Math checks out!"
+    }
+  ],
+  "mathProof": "Allowances:    $ 15,500.98\n- Taxes:       $  1,967.66\n- Deductions:  $  1,763.45\n- Allotments:  $      0.00\n- Debts:       $      0.00\n+ Adjustments: $      0.00\n========================================\n= Net Pay:     $ 11,769.87 ✓",
+  "expected": {
+    "base_pay_cents": 1156300,
+    "bah_cents": 362100,
+    "bas_cents": 31698,
+    "cola_cents": 0,
+    "specials": []
+  },
+  "taxable_bases": {
+    "fed": 1156300,
+    "state": 1156300,
+    "oasdi": 1156300,
+    "medicare": 1156300
+  },
+  "auditId": "550e8400-e29b-41d4-a716-446655440002"
+}
+
