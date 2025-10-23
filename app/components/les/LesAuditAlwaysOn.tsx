@@ -315,32 +315,42 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       const response = await fetch(`/api/les/audit/${auditId}`);
       if (!response.ok) throw new Error("Failed to load audit");
 
-      const audit = await response.json();
+      const data = await response.json();
       
-      // Pre-fill form with data from saved audit
-      setMonth(audit.month);
-      setYear(audit.year);
+      // Validate response has required structure
+      if (!data.metadata || !data.linesBySection) {
+        throw new Error("Invalid audit data structure");
+      }
+      
+      // Pre-fill form with metadata
+      setMonth(data.metadata.month);
+      setYear(data.metadata.year);
+      
+      // Helper to find line amount from linesBySection structure
+      const findAmount = (section: string, code: string) => {
+        const sectionLines = data.linesBySection[section] || [];
+        return sectionLines.find((l: any) => l.line_code === code)?.amount_cents || 0;
+      };
       
       // Load line items into form fields
-      const lines = audit.lines || [];
-      const findAmount = (code: string) => lines.find((l: any) => l.line_code === code)?.amount_cents || 0;
+      setBasePay(findAmount("ALLOWANCE", "BASEPAY"));
+      setBah(findAmount("ALLOWANCE", "BAH"));
+      setBas(findAmount("ALLOWANCE", "BAS"));
+      setCola(findAmount("ALLOWANCE", "COLA"));
+      setTsp(findAmount("DEDUCTION", "TSP"));
+      setSgli(findAmount("DEDUCTION", "SGLI"));
+      setDental(findAmount("DEDUCTION", "DENTAL"));
+      setFederalTax(findAmount("TAX", "TAX_FED"));
+      setStateTax(findAmount("TAX", "TAX_STATE"));
+      setFica(findAmount("TAX", "FICA"));
+      setMedicare(findAmount("TAX", "MEDICARE"));
       
-      setBasePay(findAmount("BASEPAY"));
-      setBah(findAmount("BAH"));
-      setBas(findAmount("BAS"));
-      setCola(findAmount("COLA"));
-      setTsp(findAmount("TSP"));
-      setSgli(findAmount("SGLI"));
-      setDental(findAmount("DENTAL"));
-      setFederalTax(findAmount("TAX_FED"));
-      setStateTax(findAmount("TAX_STATE"));
-      setFica(findAmount("FICA"));
-      setMedicare(findAmount("MEDICARE"));
-      
-      alert(`Loaded audit from ${new Date(audit.month, 0).toLocaleString("default", { month: "long" })} ${audit.year}. Edit and re-run as needed.`);
+      // Format month name correctly
+      const monthName = new Date(2000, data.metadata.month - 1).toLocaleString("default", { month: "long" });
+      alert(`Loaded audit from ${monthName} ${data.metadata.year}. Edit and re-run as needed.`);
     } catch (error) {
       console.error("[Load Audit] Error:", error);
-      alert("Failed to load audit.");
+      alert("Failed to load audit. Please try again.");
     }
   }, []);
 
@@ -624,17 +634,17 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   onChange={setStateTax}
                   helpText="State income tax withheld (if applicable)"
                 />
-                <CurrencyField
-                  label="FICA"
-                  value={fica}
+                <CurrencyField 
+                  label="FICA / Social Security" 
+                  value={fica} 
                   onChange={setFica}
-                  helpText="Social Security tax - should be ~6.2% of taxable pay"
+                  helpText="Enter the dollar amount withheld (not the percentage). Example: $217.00"
                 />
-                <CurrencyField
-                  label="Medicare"
-                  value={medicare}
+                <CurrencyField 
+                  label="Medicare" 
+                  value={medicare} 
                   onChange={setMedicare}
-                  helpText="Medicare tax - should be ~1.45% of taxable pay"
+                  helpText="Enter the dollar amount withheld (not the percentage). Example: $50.75"
                 />
               </div>
             )}
@@ -803,12 +813,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                           <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
                           <p className="text-sm text-gray-700">{flag.suggestion}</p>
                         </div>
-
-                        {tier === "premium" && (
-                          <button className="flex-shrink-0 text-sm text-blue-600 hover:text-blue-700">
-                            Copy
-                          </button>
-                        )}
                       </div>
                     </div>
                   ))}

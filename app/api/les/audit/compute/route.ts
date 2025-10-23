@@ -129,9 +129,16 @@ export async function POST(req: NextRequest) {
       ...normalizedActual.adjustments.map(item => ({ ...item, line_code: item.code, section: 'ADJUSTMENT' as const }))
     ];
 
+    // CRITICAL FIX: Compute taxable_bases from ACTUAL values user entered, not expected
+    // This ensures FICA/Medicare percentage calculations use the correct denominator
+    const { computeTaxableBases } = await import('@/lib/les/codes');
+    const actualTaxableBases = computeTaxableBases(
+      normalizedActual.allowances.map(item => ({ code: item.code, amount_cents: item.amount_cents }))
+    );
+
     const comparisonResult = compareDetailed({
       expected,
-      taxable_bases,
+      taxable_bases: actualTaxableBases, // Use ACTUAL values, not expected
       actualLines: allLines,
       netPayCents: net_pay_cents || 0
     });

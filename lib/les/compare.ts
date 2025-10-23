@@ -1024,7 +1024,7 @@ export function compareDetailed(params: {
     flags.push({
       severity: "red",
       flag_code: "NET_MATH_MISMATCH",
-      message: `Net pay math doesn't balance: Expected $${(computedNet / 100).toFixed(2)}, got $${(params.netPayCents / 100).toFixed(2)} (Δ $${(netDelta / 100).toFixed(2)})`,
+      message: `Net pay math doesn't balance: Expected $${(computedNet / 100).toFixed(2)}, got $${(params.netPayCents / 100).toFixed(2)} (difference: $${(netDelta / 100).toFixed(2)})`,
       suggestion:
         "Review all line items for data entry errors. Formula: Net = Allowances - Taxes - Deductions - Allotments - Debts + Adjustments",
       delta_cents: computedNet - params.netPayCents,
