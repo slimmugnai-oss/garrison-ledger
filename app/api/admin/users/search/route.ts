@@ -26,8 +26,34 @@ export async function GET(request: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // Build query
-    let userQuery = supabase
+    const clerk = await clerkClient();
+
+    // FETCH ALL CLERK USERS FIRST (not just those with profiles)
+    const clerkUsersResponse = await clerk.users.getUserList({
+      limit: 500, // Fetch up to 500 users (adjust if needed)
+    });
+
+    const allClerkUsers = clerkUsersResponse.data;
+
+    // Filter by search query if provided
+    let filteredClerkUsers = allClerkUsers;
+    if (query) {
+      const queryLower = query.toLowerCase();
+      filteredClerkUsers = allClerkUsers.filter(user => {
+        const email = user.emailAddresses[0]?.emailAddress?.toLowerCase() || '';
+        const firstName = user.firstName?.toLowerCase() || '';
+        const lastName = user.lastName?.toLowerCase() || '';
+        const userId = user.id.toLowerCase();
+        return email.includes(queryLower) || 
+               firstName.includes(queryLower) || 
+               lastName.includes(queryLower) ||
+               userId.includes(queryLower);
+      });
+    }
+
+    // Get user_profiles for all Clerk users
+    const clerkUserIds = filteredClerkUsers.map(u => u.id);
+    const { data: profiles } = await supabase
       .from('user_profiles')
       .select(`
         user_id,
@@ -39,93 +65,70 @@ export async function GET(request: Request) {
         current_base,
         paygrade,
         rank_category
-      `, { count: 'exact' });
+      `)
+      .in('user_id', clerkUserIds);
 
-    // Apply search filter
-    if (query) {
-      userQuery = userQuery.or(`user_id.ilike.%${query}%`);
-    }
-
-    // Apply filters
-    if (branch !== 'all') {
-      userQuery = userQuery.eq('branch', branch);
-    }
-
-    if (rank !== 'all') {
-      userQuery = userQuery.eq('rank', rank);
-    }
-
-    // Get users
-    const { data: users, count, error: userError } = await userQuery
-      .order('created_at', { ascending: false })
-      .range((page - 1) * pageSize, page * pageSize - 1);
-
-    if (userError) {
-      throw userError;
-    }
-
-    // Get entitlements for each user
-    const userIds = users?.map(u => u.user_id) || [];
+    // Get entitlements for all Clerk users
     const { data: entitlements } = await supabase
       .from('entitlements')
       .select('user_id, tier, status, current_period_end, stripe_subscription_id')
-      .in('user_id', userIds);
+      .in('user_id', clerkUserIds);
 
-    // Fetch Clerk user data for email and names
-    const clerk = await clerkClient();
-    const clerkUsersPromises = userIds.map(async (id) => {
-      try {
-        const user = await clerk.users.getUser(id);
-        return {
-          userId: id,
-          email: user.emailAddresses[0]?.emailAddress || null,
-          firstName: user.firstName || null,
-          lastName: user.lastName || null,
-        };
-      } catch (error) {
-        console.error(`Failed to fetch Clerk user ${id}:`, error);
-        return {
-          userId: id,
-          email: null,
-          firstName: null,
-          lastName: null,
-        };
-      }
-    });
-    const clerkUsers = await Promise.all(clerkUsersPromises);
-
-    // Merge data
-    const enrichedUsers = users?.map(user => {
-      const entitlement = entitlements?.find(e => e.user_id === user.user_id);
-      const clerkData = clerkUsers.find(c => c.userId === user.user_id);
+    // Merge Clerk + Profiles + Entitlements
+    let enrichedUsers = filteredClerkUsers.map(clerkUser => {
+      const profile = profiles?.find(p => p.user_id === clerkUser.id);
+      const entitlement = entitlements?.find(e => e.user_id === clerkUser.id);
+      
       return {
-        ...user,
-        email: clerkData?.email || null,
-        firstName: clerkData?.firstName || null,
-        lastName: clerkData?.lastName || null,
+        user_id: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        firstName: clerkUser.firstName || null,
+        lastName: clerkUser.lastName || null,
+        rank: profile?.rank || null,
+        branch: profile?.branch || null,
+        created_at: clerkUser.createdAt ? new Date(clerkUser.createdAt).toISOString() : new Date().toISOString(),
+        profile_completed: profile?.profile_completed || false,
+        marital_status: profile?.marital_status || null,
+        current_base: profile?.current_base || null,
+        paygrade: profile?.paygrade || null,
+        rank_category: profile?.rank_category || null,
         tier: entitlement?.tier || 'free',
         subscription_status: entitlement?.status || 'none',
         has_active_subscription: !!entitlement?.stripe_subscription_id,
         current_period_end: entitlement?.current_period_end,
       };
-    }) || [];
+    });
 
-    // Apply tier filter
-    let filteredUsers = enrichedUsers;
+    // Apply filters
     if (tier !== 'all') {
-      filteredUsers = enrichedUsers.filter(u => u.tier === tier);
+      enrichedUsers = enrichedUsers.filter(u => u.tier === tier);
     }
 
     if (status !== 'all') {
-      filteredUsers = enrichedUsers.filter(u => u.subscription_status === status);
+      enrichedUsers = enrichedUsers.filter(u => u.subscription_status === status);
     }
 
+    if (branch !== 'all') {
+      enrichedUsers = enrichedUsers.filter(u => u.branch === branch);
+    }
+
+    if (rank !== 'all') {
+      enrichedUsers = enrichedUsers.filter(u => u.rank === rank);
+    }
+
+    // Paginate
+    const totalCount = enrichedUsers.length;
+    const paginatedUsers = enrichedUsers.slice(
+      (page - 1) * pageSize,
+      page * pageSize
+    );
+
     return NextResponse.json({
-      users: filteredUsers,
-      total: count || 0,
+      users: paginatedUsers,
+      total: totalCount,
       page,
       pageSize,
-      totalPages: Math.ceil((count || 0) / pageSize),
+      totalPages: Math.ceil(totalCount / pageSize),
     });
   } catch (error) {
     console.error('Error searching users:', error);

@@ -33,11 +33,12 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState('all');
   const [branchFilter, setBranchFilter] = useState('all');
+  const [profileFilter, setProfileFilter] = useState('all');
   const [total, setTotal] = useState(initialTotal);
 
   useEffect(() => {
     loadUsers();
-  }, [searchQuery, tierFilter, branchFilter]);
+  }, [searchQuery, tierFilter, branchFilter, profileFilter]);
 
   const loadUsers = async () => {
     setLoading(true);
@@ -54,8 +55,17 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
       if (!res.ok) throw new Error('Failed to load users');
 
       const data = await res.json();
-      setUsers(data.users);
-      setTotal(data.total);
+      
+      // Apply profile filter client-side
+      let filteredUsers = data.users;
+      if (profileFilter === 'complete') {
+        filteredUsers = data.users.filter((u: User) => u.profile_completed);
+      } else if (profileFilter === 'incomplete') {
+        filteredUsers = data.users.filter((u: User) => !u.profile_completed);
+      }
+      
+      setUsers(filteredUsers);
+      setTotal(filteredUsers.length);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
@@ -71,9 +81,9 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const handleBulkExport = async (selectedIds: string[]) => {
     const selectedUsers = users.filter(u => selectedIds.includes(u.user_id));
     const csv = [
-      'User ID,Email,First Name,Last Name,Rank,Branch,Tier,Status,Joined',
+      'User ID,Email,First Name,Last Name,Profile Status,Rank,Branch,Tier,Subscription Status,Joined',
       ...selectedUsers.map(u =>
-        `${u.user_id},${u.email || ''},${u.firstName || ''},${u.lastName || ''},${u.rank || ''},${u.branch || ''},${u.tier},${u.subscription_status},${u.created_at}`
+        `${u.user_id},${u.email || ''},${u.firstName || ''},${u.lastName || ''},${u.profile_completed ? 'Complete' : 'Incomplete'},${u.rank || ''},${u.branch || ''},${u.tier},${u.subscription_status},${u.created_at}`
       ),
     ].join('\n');
 
@@ -105,6 +115,26 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
             ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
             : '-'}
         </span>
+      ),
+    },
+    {
+      key: 'user_id',
+      header: 'User ID',
+      sortable: true,
+      render: (user) => (
+        <span className="font-mono text-xs text-text-muted">{user.user_id.substring(0, 20)}...</span>
+      ),
+    },
+    {
+      key: 'profile_completed',
+      header: 'Profile',
+      sortable: true,
+      render: (user) => (
+        user.profile_completed ? (
+          <Badge variant="success">Complete</Badge>
+        ) : (
+          <Badge variant="warning">Incomplete</Badge>
+        )
       ),
     },
     {
@@ -216,7 +246,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by User ID..."
+            placeholder="Search by email, name, or User ID..."
             className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
@@ -244,6 +274,16 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
           <option value="Marine Corps">Marine Corps</option>
           <option value="Coast Guard">Coast Guard</option>
           <option value="Space Force">Space Force</option>
+        </select>
+
+        <select
+          value={profileFilter}
+          onChange={(e) => setProfileFilter(e.target.value)}
+          className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="all">All Profiles</option>
+          <option value="complete">Complete</option>
+          <option value="incomplete">Incomplete</option>
         </select>
 
         <button
