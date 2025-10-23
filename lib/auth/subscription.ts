@@ -43,8 +43,12 @@ export async function getUserTier(userId: string): Promise<Tier> {
     
     console.log('[getUserTier] Profile data:', profile);
     
-    if (profile?.email?.endsWith('@garrisonledger.com') || 
-        profile?.email?.endsWith('@slimmugnai.com')) {
+    // Staff bypass: Check for @garrisonledger.com or @slimmugnai.com OR slimmugnai@gmail.com
+    const isStaffEmail = profile?.email?.endsWith('@garrisonledger.com') || 
+                         profile?.email?.endsWith('@slimmugnai.com') ||
+                         profile?.email === 'slimmugnai@gmail.com';
+    
+    if (isStaffEmail) {
       console.log('[getUserTier] Staff bypass detected for email:', profile.email);
       return 'staff';
     }
