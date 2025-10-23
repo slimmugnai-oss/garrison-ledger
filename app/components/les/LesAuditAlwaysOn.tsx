@@ -317,33 +317,56 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
       const data = await response.json();
       
+      console.log("[Load Audit] API response:", data);
+      console.log("[Load Audit] linesBySection:", data.linesBySection);
+      
       // Validate response has required structure
       if (!data.metadata || !data.linesBySection) {
+        console.error("[Load Audit] Missing metadata or linesBySection", data);
         throw new Error("Invalid audit data structure");
       }
-      
-      // Pre-fill form with metadata
-      setMonth(data.metadata.month);
-      setYear(data.metadata.year);
       
       // Helper to find line amount from linesBySection structure
       const findAmount = (section: string, code: string) => {
         const sectionLines = data.linesBySection[section] || [];
-        return sectionLines.find((l: any) => l.line_code === code)?.amount_cents || 0;
+        const line = sectionLines.find((l: any) => l.line_code === code);
+        console.log(`[Load Audit] Finding ${section}/${code}:`, line);
+        return line?.amount_cents || 0;
       };
       
       // Load line items into form fields
-      setBasePay(findAmount("ALLOWANCE", "BASEPAY"));
-      setBah(findAmount("ALLOWANCE", "BAH"));
-      setBas(findAmount("ALLOWANCE", "BAS"));
-      setCola(findAmount("ALLOWANCE", "COLA"));
-      setTsp(findAmount("DEDUCTION", "TSP"));
-      setSgli(findAmount("DEDUCTION", "SGLI"));
-      setDental(findAmount("DEDUCTION", "DENTAL"));
-      setFederalTax(findAmount("TAX", "TAX_FED"));
-      setStateTax(findAmount("TAX", "TAX_STATE"));
-      setFica(findAmount("TAX", "FICA"));
-      setMedicare(findAmount("TAX", "MEDICARE"));
+      const loadedValues = {
+        basePay: findAmount("ALLOWANCE", "BASEPAY"),
+        bah: findAmount("ALLOWANCE", "BAH"),
+        bas: findAmount("ALLOWANCE", "BAS"),
+        cola: findAmount("ALLOWANCE", "COLA"),
+        tsp: findAmount("DEDUCTION", "TSP"),
+        sgli: findAmount("DEDUCTION", "SGLI"),
+        dental: findAmount("DEDUCTION", "DENTAL"),
+        federalTax: findAmount("TAX", "TAX_FED"),
+        stateTax: findAmount("TAX", "TAX_STATE"),
+        fica: findAmount("TAX", "FICA"),
+        medicare: findAmount("TAX", "MEDICARE"),
+      };
+      
+      console.log("[Load Audit] Loaded values:", loadedValues);
+      
+      // Set all fields
+      setBasePay(loadedValues.basePay);
+      setBah(loadedValues.bah);
+      setBas(loadedValues.bas);
+      setCola(loadedValues.cola);
+      setTsp(loadedValues.tsp);
+      setSgli(loadedValues.sgli);
+      setDental(loadedValues.dental);
+      setFederalTax(loadedValues.federalTax);
+      setStateTax(loadedValues.stateTax);
+      setFica(loadedValues.fica);
+      setMedicare(loadedValues.medicare);
+      
+      // Set month/year LAST to avoid triggering auto-populate before fields are set
+      setMonth(data.metadata.month);
+      setYear(data.metadata.year);
       
       // Format month name correctly
       const monthName = new Date(2000, data.metadata.month - 1).toLocaleString("default", { month: "long" });
