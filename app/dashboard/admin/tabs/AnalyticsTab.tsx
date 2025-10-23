@@ -679,21 +679,21 @@ function AskAssistantSubTab() {
           title="Total Questions"
           value={data.totalQuestions.toString()}
           subtitle={`${data.questionsToday} today, ${data.questions7d} last 7d`}
-          icon="MessageCircle"
+          icon="Activity"
           variant="info"
         />
         <MetricCard
           title="Avg Confidence"
           value={`${(data.avgConfidence * 100).toFixed(0)}%`}
           subtitle={`${data.strictModePercent.toFixed(0)}% with official data`}
-          icon="Shield"
+          icon="CheckCircle"
           variant="success"
         />
         <MetricCard
           title="Avg Response Time"
           value={`${(data.avgResponseTimeMs / 1000).toFixed(1)}s`}
           subtitle="Time to generate answer"
-          icon="Timer"
+          icon="Zap"
           variant="warning"
         />
         <MetricCard

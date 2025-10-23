@@ -89,7 +89,7 @@ export default function QuestionHistory({ onViewAnswer }: QuestionHistoryProps) 
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon name="History" className="h-5 w-5 text-gray-600" />
+          <Icon name="ClipboardList" className="h-5 w-5 text-gray-600" />
           <h2 className="text-xl font-semibold text-gray-900">Question History</h2>
           {questions.length > 0 && (
             <Badge variant="info">{questions.length} total</Badge>

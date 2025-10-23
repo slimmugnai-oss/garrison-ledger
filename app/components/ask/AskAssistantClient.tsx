@@ -12,6 +12,7 @@ import QuestionComposer from "./QuestionComposer";
 import AnswerDisplay from "./AnswerDisplay";
 import CreditMeter from "./CreditMeter";
 import TemplateQuestions from "./TemplateQuestions";
+import Icon from "@/app/components/ui/Icon";
 
 interface AnswerData {
   bottomLine: string[];
@@ -216,7 +217,7 @@ export default function AskAssistantClient() {
 
             {/* Answer Display */}
             <AnswerDisplay
-              answer={answer}
+              answer={answer || undefined}
               isLoading={isLoading}
               onToolHandoff={handleToolHandoff}
             />
