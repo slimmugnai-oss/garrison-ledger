@@ -80,23 +80,37 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
   const completeness = useMemo(() => {
     const total = 12; // Base, BAH, BAS, COLA, TSP, SGLI, Dental, 4 taxes, Net
-    const filled = [basePay, bah, bas, cola, tsp, sgli, dental, 
-                   federalTax, stateTax, fica, medicare, netPay]
-                   .filter(v => (v || 0) > 0).length;
-    return { filled, total, percentage: (filled / total * 100) };
+    const filled = [
+      basePay,
+      bah,
+      bas,
+      cola,
+      tsp,
+      sgli,
+      dental,
+      federalTax,
+      stateTax,
+      fica,
+      medicare,
+      netPay,
+    ].filter((v) => (v || 0) > 0).length;
+    return { filled, total, percentage: (filled / total) * 100 };
   }, [basePay, bah, bas, cola, tsp, sgli, dental, federalTax, stateTax, fica, medicare, netPay]);
 
-  const entitlementCount = useMemo(() => 
-    [basePay, bah, bas, cola].filter((v) => v > 0).length
-  , [basePay, bah, bas, cola]);
+  const entitlementCount = useMemo(
+    () => [basePay, bah, bas, cola].filter((v) => v > 0).length,
+    [basePay, bah, bas, cola]
+  );
 
-  const deductionCount = useMemo(() =>
-    [tsp, sgli, dental].filter((v) => v > 0).length
-  , [tsp, sgli, dental]);
+  const deductionCount = useMemo(
+    () => [tsp, sgli, dental].filter((v) => v > 0).length,
+    [tsp, sgli, dental]
+  );
 
-  const taxCount = useMemo(() =>
-    [federalTax, stateTax, fica, medicare].filter((v) => v > 0).length
-  , [federalTax, stateTax, fica, medicare]);
+  const taxCount = useMemo(
+    () => [federalTax, stateTax, fica, medicare].filter((v) => v > 0).length,
+    [federalTax, stateTax, fica, medicare]
+  );
 
   // ============================================================================
   // AUTO-POPULATE EXPECTED VALUES
@@ -144,34 +158,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
     fetchExpectedValues();
   }, [month, year, paygrade, mhaOrZip, withDependents]);
-
-  // ============================================================================
-  // KEYBOARD SHORTCUTS
-  // ============================================================================
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + K: Focus month selector
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        document.querySelector('select')?.focus();
-      }
-      
-      // Ctrl/Cmd + S: Save (if premium)
-      if ((e.metaKey || e.ctrlKey) && e.key === 's' && tier === 'premium') {
-        e.preventDefault();
-        handleSavePDF();
-      }
-      
-      // Escape: Collapse all sections
-      if (e.key === 'Escape') {
-        setCollapsedSections({ entitlements: true, deductions: true, taxes: true });
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [tier, handleSavePDF]);
 
   // ============================================================================
   // BUILD AUDIT INPUTS
@@ -263,23 +249,51 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   };
 
   // ============================================================================
+  // KEYBOARD SHORTCUTS
+  // ============================================================================
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K: Focus month selector
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        document.querySelector("select")?.focus();
+      }
+
+      // Ctrl/Cmd + S: Save (if premium)
+      if ((e.metaKey || e.ctrlKey) && e.key === "s" && tier === "premium") {
+        e.preventDefault();
+        handleSavePDF();
+      }
+
+      // Escape: Collapse all sections
+      if (e.key === "Escape") {
+        setCollapsedSections({ entitlements: true, deductions: true, taxes: true });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tier, handleSavePDF]);
+
+  // ============================================================================
   // RENDER: SPLIT-PANEL DESIGN
   // ============================================================================
 
   return (
-    <div className="min-h-screen grid grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
+    <div className="grid min-h-screen grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
       {/* LEFT PANEL: INPUTS */}
-      <div className="bg-gray-50 p-4 lg:p-6 lg:overflow-y-auto lg:sticky lg:top-0 lg:h-screen">
-        <form 
+      <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
+        <form
           onSubmit={(e) => e.preventDefault()}
           aria-label="LES data entry form"
           className="mx-auto max-w-2xl space-y-6"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
             <button
               onClick={() => {
-                if (confirm('Clear all entered data and start over?')) {
+                if (confirm("Clear all entered data and start over?")) {
                   setBasePay(0);
                   setBah(0);
                   setBas(0);
@@ -294,7 +308,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   setNetPay(undefined);
                 }
               }}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
             >
               <Icon name="RefreshCw" className="h-4 w-4" />
               <span className="hidden sm:inline">Reset Form</span>
@@ -302,15 +316,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           </div>
 
           {/* Completeness Indicator - NEW */}
-          <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
-            <div className="flex items-center justify-between mb-2">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-medium text-blue-900">Data Completeness</span>
               <span className="text-sm font-semibold text-blue-900">
                 {completeness.filled}/{completeness.total}
               </span>
             </div>
-            <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
-              <div 
+            <div className="h-2 overflow-hidden rounded-full bg-blue-100">
+              <div
                 className="h-full bg-blue-600 transition-all duration-300"
                 style={{ width: `${completeness.percentage}%` }}
               />
@@ -366,9 +380,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               <div className="flex items-center gap-3">
                 <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
                 <span className="font-semibold text-gray-900">Entitlements</span>
-                <Badge variant="info">
-                  {entitlementCount}/4
-                </Badge>
+                <Badge variant="info">{entitlementCount}/4</Badge>
               </div>
               <Icon
                 name={collapsedSections.entitlements ? "ChevronDown" : "ChevronUp"}
@@ -377,7 +389,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             </button>
 
             {!collapsedSections.entitlements && (
-              <div 
+              <div
                 className="space-y-3 px-4 pb-4"
                 id="entitlements-section"
                 role="region"
@@ -390,27 +402,27 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   </div>
                 )}
                 {/* Base Pay, BAH, BAS, COLA inputs */}
-                <CurrencyField 
-                  label="Base Pay" 
-                  value={basePay} 
+                <CurrencyField
+                  label="Base Pay"
+                  value={basePay}
                   onChange={setBasePay}
                   helpText="Monthly basic pay (Entitlements section, top of LES)"
                 />
-                <CurrencyField 
-                  label="BAH" 
-                  value={bah} 
+                <CurrencyField
+                  label="BAH"
+                  value={bah}
                   onChange={setBah}
                   helpText="Basic Allowance for Housing (location-based)"
                 />
-                <CurrencyField 
-                  label="BAS" 
-                  value={bas} 
+                <CurrencyField
+                  label="BAS"
+                  value={bas}
                   onChange={setBas}
                   helpText="Basic Allowance for Subsistence (meals)"
                 />
-                <CurrencyField 
-                  label="COLA" 
-                  value={cola} 
+                <CurrencyField
+                  label="COLA"
+                  value={cola}
                   onChange={setCola}
                   helpText="Cost of Living Allowance (if applicable)"
                 />
@@ -439,21 +451,21 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
             {!collapsedSections.deductions && (
               <div className="space-y-3 px-4 pb-4">
-                <CurrencyField 
-                  label="TSP" 
-                  value={tsp} 
+                <CurrencyField
+                  label="TSP"
+                  value={tsp}
                   onChange={setTsp}
                   helpText="Thrift Savings Plan contribution"
                 />
-                <CurrencyField 
-                  label="SGLI" 
-                  value={sgli} 
+                <CurrencyField
+                  label="SGLI"
+                  value={sgli}
                   onChange={setSgli}
                   helpText="Servicemembers' Group Life Insurance premium"
                 />
-                <CurrencyField 
-                  label="Dental" 
-                  value={dental} 
+                <CurrencyField
+                  label="Dental"
+                  value={dental}
                   onChange={setDental}
                   helpText="Dental insurance premium (if enrolled)"
                 />
@@ -470,9 +482,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               <div className="flex items-center gap-3">
                 <Icon name="Landmark" className="h-5 w-5 text-red-600" />
                 <span className="font-semibold text-gray-900">Taxes</span>
-                <Badge variant="info">
-                  {taxCount}/4
-                </Badge>
+                <Badge variant="info">{taxCount}/4</Badge>
               </div>
               <Icon
                 name={collapsedSections.taxes ? "ChevronDown" : "ChevronUp"}
@@ -482,27 +492,27 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
             {!collapsedSections.taxes && (
               <div className="space-y-3 px-4 pb-4">
-                <CurrencyField 
-                  label="Federal Tax" 
-                  value={federalTax} 
+                <CurrencyField
+                  label="Federal Tax"
+                  value={federalTax}
                   onChange={setFederalTax}
                   helpText="Federal income tax withheld"
                 />
-                <CurrencyField 
-                  label="State Tax" 
-                  value={stateTax} 
+                <CurrencyField
+                  label="State Tax"
+                  value={stateTax}
                   onChange={setStateTax}
                   helpText="State income tax withheld (if applicable)"
                 />
-                <CurrencyField 
-                  label="FICA" 
-                  value={fica} 
+                <CurrencyField
+                  label="FICA"
+                  value={fica}
                   onChange={setFica}
                   helpText="Social Security tax - should be ~6.2% of taxable pay"
                 />
-                <CurrencyField 
-                  label="Medicare" 
-                  value={medicare} 
+                <CurrencyField
+                  label="Medicare"
+                  value={medicare}
                   onChange={setMedicare}
                   helpText="Medicare tax - should be ~1.45% of taxable pay"
                 />
@@ -513,9 +523,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           {/* Net Pay Section - NEW */}
           <div className="rounded-lg border bg-white p-4">
             <h3 className="mb-3 font-semibold text-gray-900">Net Pay (Bottom Line)</h3>
-            <CurrencyField 
-              label="Actual Net Pay from LES" 
-              value={netPay || 0} 
+            <CurrencyField
+              label="Actual Net Pay from LES"
+              value={netPay || 0}
               onChange={setNetPay}
               helpText="This is your final take-home amount at the bottom of your LES"
             />
@@ -524,7 +534,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       </div>
 
       {/* RIGHT PANEL: AUDIT REPORT (ALWAYS VISIBLE) */}
-      <div className="bg-white p-4 lg:p-6 lg:border-l lg:overflow-y-auto">
+      <div className="bg-white p-4 lg:overflow-y-auto lg:border-l lg:p-6">
         <div className="mx-auto max-w-3xl space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Audit Report</h2>
 
@@ -537,23 +547,23 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
           {/* Loading State */}
           {loading && (
-            <div className="space-y-4 animate-pulse">
+            <div className="animate-pulse space-y-4">
               {/* Summary skeleton */}
-              <div className="rounded-lg bg-gray-100 p-6 h-32" />
-              
+              <div className="h-32 rounded-lg bg-gray-100 p-6" />
+
               {/* Flags skeleton */}
               <div className="space-y-3">
-                <div className="rounded-lg bg-gray-100 p-4 h-24" />
-                <div className="rounded-lg bg-gray-100 p-4 h-24" />
-                <div className="rounded-lg bg-gray-100 p-4 h-24" />
+                <div className="h-24 rounded-lg bg-gray-100 p-4" />
+                <div className="h-24 rounded-lg bg-gray-100 p-4" />
+                <div className="h-24 rounded-lg bg-gray-100 p-4" />
               </div>
             </div>
           )}
 
           {/* Error State - NEW */}
           {error && (
-            <div className="flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 p-4">
-              <Icon name="AlertCircle" className="h-5 w-5 flex-shrink-0 text-red-600 mt-0.5" />
+            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+              <Icon name="AlertCircle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
               <div className="flex-1">
                 <p className="font-semibold text-red-900">Audit Failed</p>
                 <p className="text-sm text-red-700">{error}</p>
@@ -668,14 +678,14 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                             <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
                           )}
                         </div>
-                        
+
                         <div className="flex-1">
                           <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
                           <p className="text-sm text-gray-700">{flag.suggestion}</p>
                         </div>
-                        
+
                         {tier === "premium" && (
-                          <button className="text-sm text-blue-600 hover:text-blue-700 flex-shrink-0">
+                          <button className="flex-shrink-0 text-sm text-blue-600 hover:text-blue-700">
                             Copy
                           </button>
                         )}
@@ -746,14 +756,12 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             <div className="py-12 text-center">
               <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
               <h3 className="mb-2 text-lg font-semibold text-gray-900">Ready to Audit Your LES</h3>
-              <p className="text-gray-600 mb-4">
-                Enter your pay period and LES values on the left
-              </p>
-              <div className="inline-flex items-start gap-2 text-left bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md">
-                <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <p className="mb-4 text-gray-600">Enter your pay period and LES values on the left</p>
+              <div className="inline-flex max-w-md items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left">
+                <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
                 <div className="text-sm text-blue-900">
-                  <p className="font-semibold mb-1">Quick Start:</p>
-                  <ol className="list-decimal list-inside space-y-1 text-blue-800">
+                  <p className="mb-1 font-semibold">Quick Start:</p>
+                  <ol className="list-inside list-decimal space-y-1 text-blue-800">
                     <li>Select month/year from your LES</li>
                     <li>Auto-filled values will load</li>
                     <li>Enter taxes and net pay from your LES</li>
@@ -786,7 +794,7 @@ function CurrencyField({
 }) {
   // Convert cents to dollars for display
   const displayValue = value > 0 ? (value / 100).toFixed(2) : "";
-  
+
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
@@ -811,9 +819,7 @@ function CurrencyField({
           step="0.01"
         />
       </div>
-      {helpText && (
-        <p className="mt-1 text-xs text-gray-500">{helpText}</p>
-      )}
+      {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
     </div>
   );
 }
