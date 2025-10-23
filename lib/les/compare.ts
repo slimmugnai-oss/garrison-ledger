@@ -926,9 +926,8 @@ export function compareDetailed(params: {
   }
 
   // 7. Combat Zone Tax Exclusion (CZTE) Detection
+  // Reuse actualFICA and actualMedicare already declared above
   const actualFedTax = findLine('TAX_FED')?.amount_cents || 0;
-  const actualFICA = findLine('FICA')?.amount_cents || 0;
-  const actualMedicare = findLine('MEDICARE')?.amount_cents || 0;
   
   // If federal tax is very low/zero but FICA and Medicare are present, likely CZTE
   if (actualFedTax < 1000 && (actualFICA > 0 || actualMedicare > 0)) {
