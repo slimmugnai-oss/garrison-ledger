@@ -73,6 +73,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
     deductions: false,
     taxes: false,
   });
+  const [history, setHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
 
   // ============================================================================
   // MEMOIZED COMPUTATIONS
@@ -158,6 +161,37 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
     fetchExpectedValues();
   }, [month, year, paygrade, mhaOrZip, withDependents]);
+
+  // ============================================================================
+  // FETCH AUDIT HISTORY
+  // ============================================================================
+
+  const fetchHistory = useCallback(async () => {
+    setLoadingHistory(true);
+    try {
+      const response = await fetch("/api/les/audit/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sortBy: "date-desc",
+          limit: 12
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHistory(data.audits || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch history:", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   // ============================================================================
   // BUILD AUDIT INPUTS (MEMOIZED TO PREVENT RE-RENDER LOOP)
@@ -261,14 +295,78 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       }
 
       const data = await response.json();
-      alert(`Audit saved! ${data.pdfUrl ? "PDF ready for download." : ""}`);
+      alert("Audit saved successfully!");
+      // Refresh history to show newly saved audit
+      fetchHistory();
     } catch (error) {
-      console.error("[Save PDF] Error:", error);
+      console.error("[Save] Error:", error);
       alert("Failed to save audit. Please try again.");
     } finally {
       setSaving(false);
     }
-  }, [result, month, year, inputs]);
+  }, [result, month, year, inputs, fetchHistory]);
+
+  // ============================================================================
+  // LOAD PREVIOUS AUDIT (Reuse)
+  // ============================================================================
+
+  const handleLoadAudit = useCallback(async (auditId: string) => {
+    try {
+      const response = await fetch(`/api/les/audit/${auditId}`);
+      if (!response.ok) throw new Error("Failed to load audit");
+
+      const audit = await response.json();
+      
+      // Pre-fill form with data from saved audit
+      setMonth(audit.month);
+      setYear(audit.year);
+      
+      // Load line items into form fields
+      const lines = audit.lines || [];
+      const findAmount = (code: string) => lines.find((l: any) => l.line_code === code)?.amount_cents || 0;
+      
+      setBasePay(findAmount("BASEPAY"));
+      setBah(findAmount("BAH"));
+      setBas(findAmount("BAS"));
+      setCola(findAmount("COLA"));
+      setTsp(findAmount("TSP"));
+      setSgli(findAmount("SGLI"));
+      setDental(findAmount("DENTAL"));
+      setFederalTax(findAmount("TAX_FED"));
+      setStateTax(findAmount("TAX_STATE"));
+      setFica(findAmount("FICA"));
+      setMedicare(findAmount("MEDICARE"));
+      
+      alert(`Loaded audit from ${new Date(audit.month, 0).toLocaleString("default", { month: "long" })} ${audit.year}. Edit and re-run as needed.`);
+    } catch (error) {
+      console.error("[Load Audit] Error:", error);
+      alert("Failed to load audit.");
+    }
+  }, []);
+
+  // ============================================================================
+  // DELETE AUDIT
+  // ============================================================================
+
+  const handleDeleteAudit = useCallback(async (auditId: string, auditDate: string) => {
+    if (!confirm(`Delete audit for ${auditDate}? This cannot be undone.`)) return;
+
+    try {
+      const response = await fetch(`/api/les/audit/${auditId}/delete`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        alert("Audit deleted successfully");
+        fetchHistory(); // Refresh list
+      } else {
+        throw new Error("Failed to delete");
+      }
+    } catch (error) {
+      console.error("[Delete Audit] Error:", error);
+      alert("Failed to delete audit.");
+    }
+  }, [fetchHistory]);
 
   // ============================================================================
   // KEYBOARD SHORTCUTS
@@ -758,7 +856,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
                   >
                     <Icon name="Download" className="h-5 w-5" />
-                    {saving ? "Saving..." : "Save Audit & Generate PDF"}
+                    {saving ? "Saving..." : "Save Audit"}
                   </button>
                 ) : (
                   <button
@@ -793,6 +891,61 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               </div>
             </div>
           )}
+
+          {/* Audit History (Premium Only) */}
+          {tier === "premium" && history.length > 0 && (
+            <div className="mt-8 border-t pt-6">
+              <button
+                onClick={() => setHistoryExpanded(!historyExpanded)}
+                className="flex w-full items-center justify-between text-left"
+              >
+                <h3 className="text-lg font-semibold text-gray-900">Saved Audits</h3>
+                <div className="flex items-center gap-2">
+                  <Badge variant="info">{history.length}</Badge>
+                  <Icon
+                    name={historyExpanded ? "ChevronUp" : "ChevronDown"}
+                    className="h-5 w-5 text-gray-400"
+                  />
+                </div>
+              </button>
+
+              {historyExpanded && (
+                <div className="mt-4 space-y-2">
+                  {history.map((audit) => (
+                    <div
+                      key={audit.id}
+                      className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">
+                          {new Date(2000, audit.month - 1).toLocaleString("default", { month: "long" })} {audit.year}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {new Date(audit.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleLoadAudit(audit.id)}
+                          className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                        >
+                          <Icon name="Upload" className="h-4 w-4" />
+                          Load
+                        </button>
+                        <button
+                          onClick={() => handleDeleteAudit(audit.id, `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`)}
+                          className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
+                        >
+                          <Icon name="Trash2" className="h-4 w-4" />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -823,7 +976,7 @@ function CurrencyField({
       setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
     }
   }, [value, isFocused]);
-  
+
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
@@ -834,7 +987,7 @@ function CurrencyField({
         <input
           type="text"
           inputMode="decimal"
-          value={isFocused ? displayValue : (value > 0 ? (value / 100).toFixed(2) : "")}
+          value={isFocused ? displayValue : value > 0 ? (value / 100).toFixed(2) : ""}
           onFocus={(e) => {
             setIsFocused(true);
             setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
