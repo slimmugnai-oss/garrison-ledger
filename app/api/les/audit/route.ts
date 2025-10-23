@@ -1,17 +1,17 @@
 /**
- * LES AUDIT ENDPOINT
+ * LES MANUAL AUDIT ENDPOINT (V2 - Structured Format)
  * 
  * POST /api/les/audit
- * - Loads uploaded LES and user profile
- * - Computes expected pay values (BAH, BAS, COLA, specials)
+ * - Accepts structured manual LES entry with sections (allowances, taxes, deductions)
+ * - Validates and normalizes line codes
+ * - Computes expected values from DFAS tables
  * - Compares actual vs expected
  * - Generates actionable flags
- * - Stores snapshot and flags
  * 
  * Security:
  * - Clerk authentication required
- * - User ownership validation
- * - RLS enforced
+ * - Rate limiting: 50 audits/day/user
+ * - RLS enforced on database
  * 
  * Runtime: Node.js
  */
@@ -19,265 +19,246 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { buildExpectedSnapshot } from '@/lib/les/expected';
-import { compareLesToExpected } from '@/lib/les/compare';
+import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
+import { compareDetailed } from '@/lib/les/compare';
+import { normalizeLineCode } from '@/lib/les/codes';
+import { checkAndIncrement } from '@/lib/limits';
 import { logger } from '@/lib/logger';
-
-/**
- * Record server-side analytics event
- */
-async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, unknown>) {
-  try {
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event,
-        properties: { ...properties, user_id: userId },
-        timestamp: new Date().toISOString()
-      })
-    });
-  } catch (error) {
-    logger.error('Failed to record analytics event', error, { event, userId });
-  }
-}
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+interface LineItem {
+  code: string;
+  description: string;
+  amount_cents: number;
+}
+
+interface AuditRequest {
+  month: number;  // 1-12
+  year: number;   // 2020-2099
+  profile: {
+    paygrade: string;     // E01-E09, O01-O10, W01-W05
+    yos: number;          // Years of service
+    mhaOrZip: string;     // MHA code or ZIP
+    withDependents: boolean;
+    specials?: {
+      sdap?: boolean;
+      hfp?: boolean;
+      fsa?: boolean;
+      flpp?: boolean;
+    };
+  };
+  actual: {
+    allowances: LineItem[];
+    taxes: LineItem[];
+    deductions: LineItem[];
+    allotments?: LineItem[];
+    debts?: LineItem[];
+    adjustments?: LineItem[];
+  };
+  net_pay_cents: number;
+}
+
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+  
   try {
-    // ==========================================================================
+    // ===========================================================================
     // 1. AUTHENTICATION
-    // ==========================================================================
+    // ===========================================================================
     const { userId } = await auth();
     if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ===========================================================================
+    // 2. RATE LIMITING (50 audits/day/user)
+    // ===========================================================================
+    const { allowed } = await checkAndIncrement(userId, '/api/les/audit', 50);
+    if (!allowed) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Rate limit exceeded. Maximum 50 audits per day.' },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '50',
+            'X-RateLimit-Remaining': '0'
+          }
+        }
       );
     }
 
-    // ==========================================================================
-    // 2. PARSE REQUEST
-    // ==========================================================================
-    const body = await req.json();
-    const { uploadId } = body;
+    // ===========================================================================
+    // 3. PARSE & VALIDATE REQUEST
+    // ===========================================================================
+    const body: AuditRequest = await req.json();
+    const { month, year, profile, actual, net_pay_cents } = body;
 
-    if (!uploadId) {
+    if (!month || !year || !profile || !actual || net_pay_cents === undefined) {
       return NextResponse.json(
-        { error: 'uploadId is required' },
+        { error: 'Missing required fields: month, year, profile, actual, net_pay_cents' },
         { status: 400 }
       );
     }
 
-    // ==========================================================================
-    // 3. LOAD UPLOAD & VALIDATE OWNERSHIP
-    // ==========================================================================
-    const { data: upload, error: uploadError } = await supabaseAdmin
+    // ===========================================================================
+    // 4. NORMALIZE LINE CODES (handle user variations)
+    // ===========================================================================
+    const normalizeSection = (items: LineItem[] = []) => items.map(item => ({
+      ...item,
+      code: normalizeLineCode(item.code)
+    }));
+
+    const normalizedActual = {
+      allowances: normalizeSection(actual.allowances),
+      taxes: normalizeSection(actual.taxes),
+      deductions: normalizeSection(actual.deductions),
+      allotments: normalizeSection(actual.allotments),
+      debts: normalizeSection(actual.debts),
+      adjustments: normalizeSection(actual.adjustments)
+    };
+
+    // ===========================================================================
+    // 5. CREATE AUDIT RECORD
+    // ===========================================================================
+    const { data: uploadRecord, error: uploadError } = await supabaseAdmin
       .from('les_uploads')
-      .select('*')
-      .eq('id', uploadId)
-      .single();
-
-    if (uploadError || !upload) {
-      return NextResponse.json(
-        { error: 'Upload not found' },
-        { status: 404 }
-      );
-    }
-
-    // Verify ownership
-    if (upload.user_id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized - not your upload' },
-        { status: 403 }
-      );
-    }
-
-    // Verify parse succeeded
-    if (!upload.parsed_ok) {
-      return NextResponse.json(
-        {
-          error: 'LES not parsed successfully',
-          suggestion: 'Try re-uploading the file or use a different PDF export'
-        },
-        { status: 400 }
-      );
-    }
-
-    // ==========================================================================
-    // 4. LOAD PARSED LINES
-    // ==========================================================================
-    const { data: lines, error: linesError } = await supabaseAdmin
-      .from('les_lines')
-      .select('line_code, description, amount_cents, section, raw')
-      .eq('upload_id', uploadId);
-
-    if (linesError) {
-      return NextResponse.json(
-        { error: 'Failed to load parsed lines' },
-        { status: 500 }
-      );
-    }
-
-    if (!lines || lines.length === 0) {
-      return NextResponse.json(
-        { error: 'No parsed lines found' },
-        { status: 400 }
-      );
-    }
-
-    // ==========================================================================
-    // 5. LOAD USER PROFILE
-    // ==========================================================================
-    const profile = await getUserProfile(userId);
-    
-    if (!profile) {
-      return NextResponse.json(
-        {
-          error: 'Profile not found',
-          suggestion: 'Please complete your profile (paygrade, location, dependents) before running audit'
-        },
-        { status: 400 }
-      );
-    }
-
-    // ==========================================================================
-    // 6. BUILD EXPECTED SNAPSHOT
-    // ==========================================================================
-    const snapshot = await buildExpectedSnapshot({
-      userId,
-      month: upload.month,
-      year: upload.year,
-      paygrade: profile.paygrade,
-      mha_or_zip: profile.mha_or_zip,
-      with_dependents: profile.with_dependents,
-      yos: profile.yos
-    });
-
-    // Store snapshot in database
-    const { error: snapshotError } = await supabaseAdmin
-      .from('expected_pay_snapshot')
       .insert({
         user_id: userId,
-        upload_id: uploadId,
-        month: upload.month,
-        year: upload.year,
-        paygrade: profile.paygrade,
-        mha_or_zip: profile.mha_or_zip,
-        with_dependents: profile.with_dependents,
-        yos: profile.yos,
-        expected_bah_cents: snapshot.expected.bah_cents,
-        expected_bas_cents: snapshot.expected.bas_cents,
-        expected_cola_cents: snapshot.expected.cola_cents,
-        expected_specials: snapshot.expected.specials
+        entry_type: 'manual',
+        month,
+        year,
+        audit_status: 'draft',
+        profile_snapshot: profile,
+        original_filename: `manual-${year}-${String(month).padStart(2, '0')}`,
+        storage_path: '',
+        size_bytes: 0
       })
-      .select('*')
+      .select()
       .single();
 
-    if (snapshotError) {
-      // Continue anyway - not critical
+    if (uploadError || !uploadRecord) {
+      logger.error('[LES Audit] Failed to create audit record', { userId, error: uploadError });
+      return NextResponse.json({ error: 'Failed to create audit' }, { status: 500 });
     }
 
-    // ==========================================================================
-    // 7. COMPARE ACTUAL VS EXPECTED
-    // ==========================================================================
-    const comparison = compareLesToExpected(lines, snapshot);
+    // ===========================================================================
+    // 6. INSERT LINE ITEMS
+    // ===========================================================================
+    const allLines = [
+      ...normalizedActual.allowances.map(item => ({ ...item, section: 'ALLOWANCE' as const })),
+      ...normalizedActual.taxes.map(item => ({ ...item, section: 'TAX' as const })),
+      ...normalizedActual.deductions.map(item => ({ ...item, section: 'DEDUCTION' as const })),
+      ...normalizedActual.allotments.map(item => ({ ...item, section: 'ALLOTMENT' as const })),
+      ...normalizedActual.debts.map(item => ({ ...item, section: 'DEBT' as const })),
+      ...normalizedActual.adjustments.map(item => ({ ...item, section: 'ADJUSTMENT' as const }))
+    ];
 
-    // Store flags in database
-    if (comparison.flags.length > 0) {
-      const flagRows = comparison.flags.map(flag => ({
-        upload_id: uploadId,
-        severity: flag.severity,
-        flag_code: flag.flag_code,
-        message: flag.message,
-        suggestion: flag.suggestion,
-        ref_url: flag.ref_url,
-        delta_cents: flag.delta_cents
-      }));
+    const lineInserts = allLines.map(item => ({
+      upload_id: uploadRecord.id,
+      line_code: item.code,
+      description: item.description,
+      amount_cents: item.amount_cents,
+      section: item.section,
+      taxability: {} // Will be computed from codes.ts definitions
+    }));
 
-      const { error: flagsError } = await supabaseAdmin
-        .from('pay_flags')
-        .insert(flagRows);
+    await supabaseAdmin.from('les_lines').insert(lineInserts);
 
-      if (flagsError) {
-        // Continue anyway - flags are in response
+    // ===========================================================================
+    // 7. COMPUTE EXPECTED VALUES
+    // ===========================================================================
+    const { expected, taxable_bases } = await buildExpectedSnapshotWithBases({
+      userId,
+      paygrade: profile.paygrade,
+      yos: profile.yos,
+      mhaOrZip: profile.mhaOrZip,
+      withDependents: profile.withDependents,
+      specials: profile.specials
+    });
+
+    // ===========================================================================
+    // 8. RUN COMPARISON
+    // ===========================================================================
+    const comparisonResult = compareDetailed({
+      expected,
+      taxable_bases,
+      actualLines: allLines.map(l => ({
+        line_code: l.code,
+        amount_cents: l.amount_cents,
+        section: l.section
+      })),
+      netPayCents: net_pay_cents
+    });
+
+    // ===========================================================================
+    // 9. STORE FLAGS
+    // ===========================================================================
+    const flagInserts = comparisonResult.flags.map(flag => ({
+      upload_id: uploadRecord.id,
+      severity: flag.severity,
+      flag_code: flag.flag_code,
+      message: flag.message,
+      suggestion: flag.suggestion,
+      delta_cents: flag.delta_cents,
+      ref_url: flag.ref_url
+    }));
+
+    await supabaseAdmin.from('pay_flags').insert(flagInserts);
+
+    // ===========================================================================
+    // 10. UPDATE AUDIT STATUS
+    // ===========================================================================
+    await supabaseAdmin
+      .from('les_uploads')
+      .update({
+        audit_status: 'completed',
+        audit_completed_at: new Date().toISOString()
+      })
+      .eq('id', uploadRecord.id);
+
+    // ===========================================================================
+    // 11. EMIT ANALYTICS
+    // ===========================================================================
+    await supabaseAdmin.from('analytics_events').insert({
+      user_id: userId,
+      event_name: 'les_audit_run',
+      properties: {
+        entry_type: 'manual',
+        month,
+        year,
+        red_flags: comparisonResult.flags.filter(f => f.severity === 'red').length,
+        yellow_flags: comparisonResult.flags.filter(f => f.severity === 'yellow').length,
+        green_flags: comparisonResult.flags.filter(f => f.severity === 'green').length,
+        duration_ms: Date.now() - startTime
       }
-    }
-
-    // ==========================================================================
-    // 8. ANALYTICS
-    // ==========================================================================
-    const redCount = comparison.flags.filter(f => f.severity === 'red').length;
-    await recordAnalyticsEvent(userId, 'les_audit_run', {
-      upload_id: uploadId,
-      month: upload.month,
-      year: upload.year,
-      num_flags: comparison.flags.length,
-      red_count: redCount
     });
 
-    // ==========================================================================
-    // 9. RETURN RESPONSE
-    // ==========================================================================
+    logger.info('[LES Audit] Audit completed', {
+      userId,
+      uploadId: uploadRecord.id,
+      flags: comparisonResult.flags.length,
+      durationMs: Date.now() - startTime
+    });
+
+    // ===========================================================================
+    // 12. RETURN RESULTS
+    // ===========================================================================
     return NextResponse.json({
-      snapshot,
-      flags: comparison.flags,
-      summary: comparison.totals
+      summary: comparisonResult.summary,
+      flags: comparisonResult.flags,
+      mathProof: comparisonResult.mathProof,
+      expected,
+      taxable_bases,
+      auditId: uploadRecord.id
     });
 
-  } catch {
+  } catch (error) {
+    logger.error('[LES Audit] Error processing audit', { error });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to process audit. Please try again.' },
       { status: 500 }
     );
   }
 }
-
-/**
- * Get user profile with required fields for audit
- */
-async function getUserProfile(userId: string): Promise<{
-  paygrade: string;
-  mha_or_zip?: string;
-  with_dependents: boolean;
-  yos?: number;
-} | null> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('user_profiles')
-      .select('rank, current_base, has_dependents, time_in_service')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error || !data) {
-      return null;
-    }
-
-    // Validate required fields
-    if (!data.rank || !data.current_base || data.has_dependents === null) {
-      logger.warn('LES Audit: Profile incomplete', {
-        userId: userId.substring(0, 8) + '...',
-        missingFields: {
-          rank: !data.rank,
-          current_base: !data.current_base,
-          has_dependents: data.has_dependents === null
-        }
-      });
-      return null;
-    }
-
-    // Map profile fields to expected format
-    return {
-      paygrade: data.rank,
-      mha_or_zip: data.current_base,
-      with_dependents: Boolean(data.has_dependents),
-      yos: data.time_in_service || undefined
-    };
-  } catch (error) {
-    logger.error('LES Audit: Failed to get user profile', error);
-    return null;
-  }
-}
-

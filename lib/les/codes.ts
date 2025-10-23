@@ -268,6 +268,72 @@ export function getSection(code: string): LineCodeDefinition['section'] {
 }
 
 /**
+ * Common user-entered code variations to canonical codes
+ */
+const CODE_ALIASES: Record<string, string> = {
+  // Medicare variations
+  'MEDICARE HI': 'MEDICARE',
+  'MED': 'MEDICARE',
+  'MCARE': 'MEDICARE',
+  
+  // Federal tax variations
+  'FED TAX': 'TAX_FED',
+  'FITW': 'TAX_FED',
+  'FEDERAL': 'TAX_FED',
+  'FED INCOME TAX': 'TAX_FED',
+  
+  // State tax variations
+  'STATE TAX': 'TAX_STATE',
+  'SITW': 'TAX_STATE',
+  'STATE': 'TAX_STATE',
+  'STATE INCOME TAX': 'TAX_STATE',
+  
+  // FICA variations
+  'SOC SEC': 'FICA',
+  'OASDI': 'FICA',
+  'SOCIAL SECURITY': 'FICA',
+  'SS': 'FICA',
+  
+  // Base pay variations
+  'BASIC PAY': 'BASEPAY',
+  'BASE PAY': 'BASEPAY',
+  'BASE': 'BASEPAY',
+  
+  // BAH variations
+  'BAH W/DEP': 'BAH',
+  'BAH W/O DEP': 'BAH',
+  'BAH WITH DEP': 'BAH',
+  'BAH WITHOUT DEP': 'BAH',
+  
+  // BAS variations
+  'SUBSISTENCE': 'BAS',
+  
+  // TSP variations
+  'THRIFT': 'TSP',
+  'THRIFT SAVINGS': 'TSP',
+  'TSP CONTRIBUTION': 'TSP',
+  
+  // SGLI variations
+  'LIFE INSURANCE': 'SGLI',
+  'SGLI PREMIUM': 'SGLI',
+  
+  // Dental variations
+  'TRICARE DENTAL': 'DENTAL',
+  'DENTAL PREMIUM': 'DENTAL'
+};
+
+/**
+ * Normalize user-entered code to canonical form
+ * 
+ * @param code - User-entered code (may include spaces, mixed case, abbreviations)
+ * @returns Canonical code or original if no mapping exists
+ */
+export function normalizeLineCode(code: string): string {
+  const upper = code.toUpperCase().trim();
+  return CODE_ALIASES[upper] || code;
+}
+
+/**
  * Validate and normalize a line code
  * Returns the code if valid, or 'OTHER' with a warning flag if invalid
  * 
@@ -283,8 +349,11 @@ export function validateAndNormalizeCode(code: string): {
     suggestion: string;
   };
 } {
-  if (isValidLineCode(code)) {
-    return { code };
+  // First try to normalize common variations
+  const normalized = normalizeLineCode(code);
+  
+  if (isValidLineCode(normalized)) {
+    return { code: normalized };
   }
   
   // Unknown code → default to OTHER with warning

@@ -597,6 +597,51 @@ function createMedicarePercentageCorrectFlag(actual: number, actualPercent: numb
   };
 }
 
+/**
+ * NEW FLAG CREATORS (V1 Hardening)
+ */
+
+function createBAHPartialOrDiffFlag(expected: number, actual: number, pcsMonth: boolean): PayFlag {
+  const expectedDollars = (expected / 100).toFixed(2);
+  const actualDollars = (actual / 100).toFixed(2);
+  const deltaDollars = Math.abs((expected - actual) / 100).toFixed(2);
+  
+  return {
+    severity: 'yellow',
+    flag_code: 'BAH_PARTIAL_OR_DIFF',
+    message: pcsMonth
+      ? `BAH shows $${actualDollars} (expected $${expectedDollars}). Mid-month PCS may cause prorated amount.`
+      : `BAH shows $${actualDollars} (expected $${expectedDollars}). Small variance detected ($${deltaDollars}).`,
+    suggestion: pcsMonth
+      ? 'Verify prorated BAH for PCS month is correct. Next month should show full new rate.'
+      : 'Verify duty station and dependent status match profile. Small variances may be due to mid-month changes.',
+    delta_cents: expected - actual,
+    ref_url: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
+  };
+}
+
+function createCZTEInfoFlag(fedTax: number): PayFlag {
+  const fedDollars = (fedTax / 100).toFixed(2);
+  
+  return {
+    severity: 'green',
+    flag_code: 'CZTE_INFO',
+    message: `Combat Zone Tax Exclusion detected (Federal tax: $${fedDollars})`,
+    suggestion: 'No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.',
+    ref_url: 'https://www.irs.gov/publications/p3'
+  };
+}
+
+function createPromoNotReflectedFlag(promoRank: string, promoDate: string): PayFlag {
+  return {
+    severity: 'red',
+    flag_code: 'PROMO_NOT_REFLECTED',
+    message: `Promotion to ${promoRank} effective ${promoDate} not reflected in base pay`,
+    suggestion: 'Contact finance office immediately. Promotion pay should be retroactively adjusted with back pay.',
+    ref_url: 'https://www.dfas.mil/militarymembers/payentitlements/Pay-Computations/'
+  };
+}
+
 function createFederalTaxVarianceFlag(actual: number, expected: number, delta: number): PayFlag {
   const actualDollars = (actual / 100).toFixed(2);
   const expectedDollars = (expected / 100).toFixed(2);
@@ -761,7 +806,7 @@ export function compareDetailed(params: {
   const expectedBAH = params.expected.bah_cents || 0;
   if (expectedBAH > 0) {
     const delta = Math.abs(actualBAH - expectedBAH);
-    if (delta > 500) { // $5 threshold
+    if (delta > 10000) { // Major mismatch ($100+)
       flags.push({
         severity: 'red',
         flag_code: 'BAH_MISMATCH',
@@ -770,6 +815,10 @@ export function compareDetailed(params: {
         delta_cents: expectedBAH - actualBAH,
         ref_url: 'https://www.defensetravel.dod.mil/site/bahCalc.cfm'
       });
+    } else if (delta > 500 && delta <= 10000) { // Small variance ($5-$100) - possible PCS proration
+      // Check if this might be a PCS month (partial BAH)
+      // Note: We don't have pcsMonth in params yet, but flag it anyway for investigation
+      flags.push(createBAHPartialOrDiffFlag(expectedBAH, actualBAH, false));
     } else if (actualBAH === 0) {
       flags.push({
         severity: 'red',
@@ -876,11 +925,21 @@ export function compareDetailed(params: {
     }
   }
 
+  // 7. Combat Zone Tax Exclusion (CZTE) Detection
+  const actualFedTax = findLine('TAX_FED')?.amount_cents || 0;
+  const actualFICA = findLine('FICA')?.amount_cents || 0;
+  const actualMedicare = findLine('MEDICARE')?.amount_cents || 0;
+  
+  // If federal tax is very low/zero but FICA and Medicare are present, likely CZTE
+  if (actualFedTax < 1000 && (actualFICA > 0 || actualMedicare > 0)) {
+    flags.push(createCZTEInfoFlag(actualFedTax));
+  }
+
   // ============================================================================
   // NET PAY MATH CHECK
   // ============================================================================
 
-  // 7. Net Pay Math Validation
+  // 8. Net Pay Math Validation
   const totalAllowances = bySection.ALLOWANCE.reduce((sum, l) => sum + l.amount_cents, 0);
   const totalTaxes = bySection.TAX.reduce((sum, l) => sum + l.amount_cents, 0);
   const totalDeductions = bySection.DEDUCTION.reduce((sum, l) => sum + l.amount_cents, 0);
