@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Icon from '@/app/components/ui/Icon';
-import Link from 'next/link';
-import type { PayFlag, FlagSeverity } from '@/app/types/les';
-import { centsToDoollars } from '@/app/types/les';
+import { useState } from "react";
+import Icon from "@/app/components/ui/Icon";
+import Link from "next/link";
+import type { PayFlag, FlagSeverity } from "@/app/types/les";
+import { centsToDoollars } from "@/app/types/les";
 
 interface Props {
   flags: PayFlag[];
@@ -20,33 +20,55 @@ export default function LesFlags({ flags, tier, summary }: Props) {
   const [copiedFlagId, setCopiedFlagId] = useState<string | null>(null);
 
   // Sort flags by severity
-  const redFlags = flags.filter(f => f.severity === 'red');
-  const yellowFlags = flags.filter(f => f.severity === 'yellow');
-  const greenFlags = flags.filter(f => f.severity === 'green');
+  const redFlags = flags.filter((f) => f.severity === "red");
+  const yellowFlags = flags.filter((f) => f.severity === "yellow");
+  const greenFlags = flags.filter((f) => f.severity === "green");
 
-  // Free tier: show max 2 flags
-  const isFree = tier === 'free';
-  const _visibleFlags = isFree ? flags.slice(0, 2) : flags;
-  const hiddenCount = isFree && flags.length > 2 ? flags.length - 2 : 0;
+  // Free tier: complete paywall (no partial info)
+  const isFree = tier === "free";
+
+  // Complete paywall for free users - no partial info shown
+  if (isFree) {
+    return (
+      <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
+        <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+        <h3 className="mb-3 text-xl font-semibold text-blue-900">
+          Premium Feature: Complete LES Audit
+        </h3>
+        <p className="mb-2 text-sm text-blue-800">
+          Your audit is complete, but full results are for Premium members only.
+        </p>
+        <p className="mb-6 text-sm text-blue-700">
+          Premium unlocks: all flags, variance analysis, email templates, unlimited audits
+        </p>
+        <Link
+          href="/dashboard/upgrade?feature=paycheck-audit"
+          className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+        >
+          Upgrade to Premium
+        </Link>
+      </div>
+    );
+  }
 
   const handleCopyTemplate = async (flag: PayFlag, index: number) => {
     const template = generateEmailTemplate(flag, summary);
-    
+
     try {
       await navigator.clipboard.writeText(template);
       setCopiedFlagId(`${index}`);
       setTimeout(() => setCopiedFlagId(null), 2000);
-      
+
       // Track analytics
-      if (typeof window !== 'undefined') {
-        fetch('/api/analytics/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+      if (typeof window !== "undefined") {
+        fetch("/api/analytics/track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            event: 'les_copy_template',
+            event: "les_copy_template",
             properties: { flag_code: flag.flag_code },
-            timestamp: new Date().toISOString()
-          })
+            timestamp: new Date().toISOString(),
+          }),
         });
       }
     } catch {
@@ -54,41 +76,39 @@ export default function LesFlags({ flags, tier, summary }: Props) {
     }
   };
 
+  // Premium users: show full audit results
   return (
     <div className="space-y-6">
       {/* Summary Card */}
       <div className="rounded-lg border bg-white p-6">
-        <h3 className="font-semibold mb-4 flex items-center gap-2">
+        <h3 className="mb-4 flex items-center gap-2 font-semibold">
           <Icon name="BarChart" className="h-5 w-5 text-blue-600" />
           Audit Summary
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <div className="text-2xl font-bold text-gray-900">
-              {redFlags.length}
-            </div>
-            <div className="text-sm text-red-600 font-medium">Critical</div>
+            <div className="text-2xl font-bold text-gray-900">{redFlags.length}</div>
+            <div className="text-sm font-medium text-red-600">Critical</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">
-              {yellowFlags.length}
-            </div>
-            <div className="text-sm text-amber-600 font-medium">Warnings</div>
+            <div className="text-2xl font-bold text-gray-900">{yellowFlags.length}</div>
+            <div className="text-sm font-medium text-amber-600">Warnings</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">
-              {greenFlags.length}
-            </div>
-            <div className="text-sm text-green-600 font-medium">Verified</div>
+            <div className="text-2xl font-bold text-gray-900">{greenFlags.length}</div>
+            <div className="text-sm font-medium text-green-600">Verified</div>
           </div>
         </div>
         {summary.deltaCents !== 0 && (
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 border-t pt-4">
             <div className="text-sm text-gray-600">Total Variance</div>
-            <div className={`text-xl font-bold ${summary.deltaCents > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {summary.deltaCents > 0 ? '+' : ''}{centsToDoollars(summary.deltaCents)}
-              <span className="text-sm font-normal text-gray-600 ml-2">
-                {summary.deltaCents > 0 ? '(underpaid)' : '(overpaid)'}
+            <div
+              className={`text-xl font-bold ${summary.deltaCents > 0 ? "text-red-600" : "text-green-600"}`}
+            >
+              {summary.deltaCents > 0 ? "+" : ""}
+              {centsToDoollars(summary.deltaCents)}
+              <span className="ml-2 text-sm font-normal text-gray-600">
+                {summary.deltaCents > 0 ? "(underpaid)" : "(overpaid)"}
               </span>
             </div>
           </div>
@@ -98,11 +118,11 @@ export default function LesFlags({ flags, tier, summary }: Props) {
       {/* Red Flags (Critical) */}
       {redFlags.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-red-900 flex items-center gap-2">
+          <h3 className="flex items-center gap-2 font-semibold text-red-900">
             <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
             Critical Issues ({redFlags.length})
           </h3>
-          {redFlags.slice(0, isFree ? Math.min(2, redFlags.length) : undefined).map((flag, idx) => (
+          {redFlags.map((flag, idx) => (
             <FlagCard
               key={idx}
               flag={flag}
@@ -115,9 +135,9 @@ export default function LesFlags({ flags, tier, summary }: Props) {
       )}
 
       {/* Yellow Flags (Warnings) */}
-      {yellowFlags.length > 0 && !isFree && (
+      {yellowFlags.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-amber-900 flex items-center gap-2">
+          <h3 className="flex items-center gap-2 font-semibold text-amber-900">
             <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600" />
             Warnings ({yellowFlags.length})
           </h3>
@@ -134,9 +154,9 @@ export default function LesFlags({ flags, tier, summary }: Props) {
       )}
 
       {/* Green Flags (All Clear) */}
-      {greenFlags.length > 0 && !isFree && (
+      {greenFlags.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-green-900 flex items-center gap-2">
+          <h3 className="flex items-center gap-2 font-semibold text-green-900">
             <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
             Verified Correct ({greenFlags.length})
           </h3>
@@ -152,25 +172,6 @@ export default function LesFlags({ flags, tier, summary }: Props) {
           ))}
         </div>
       )}
-
-      {/* Premium Upsell (Free Tier) */}
-      {hiddenCount > 0 && (
-        <div className="rounded-lg border border-blue-300 bg-blue-50 p-6 text-center">
-          <Icon name="Lock" className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-          <h3 className="font-semibold text-blue-900 mb-2">
-            {hiddenCount} More Finding{hiddenCount > 1 ? 's' : ''} Available
-          </h3>
-          <p className="text-sm text-blue-800 mb-4">
-            Upgrade to Premium to view all audit findings and get unlimited LES uploads.
-          </p>
-          <Link
-            href="/dashboard/upgrade?feature=paycheck-audit"
-            className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white font-medium hover:bg-blue-700 transition-colors"
-          >
-            Unlock All Findings
-          </Link>
-        </div>
-      )}
     </div>
   );
 }
@@ -181,7 +182,7 @@ function FlagCard({
   index: _index,
   onCopy,
   copied,
-  showCopy = true
+  showCopy = true,
 }: {
   flag: PayFlag;
   index: number;
@@ -190,22 +191,22 @@ function FlagCard({
   showCopy?: boolean;
 }) {
   const severityColors = {
-    red: 'border-red-300 bg-red-50',
-    yellow: 'border-amber-300 bg-amber-50',
-    green: 'border-green-300 bg-green-50'
+    red: "border-red-300 bg-red-50",
+    yellow: "border-amber-300 bg-amber-50",
+    green: "border-green-300 bg-green-50",
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const severityIcons: Record<FlagSeverity, any> = {
-    red: 'AlertCircle',
-    yellow: 'AlertTriangle',
-    green: 'CheckCircle'
+    red: "AlertCircle",
+    yellow: "AlertTriangle",
+    green: "CheckCircle",
   };
 
   const severityIconColors = {
-    red: 'text-red-600',
-    yellow: 'text-amber-600',
-    green: 'text-green-600'
+    red: "text-red-600",
+    yellow: "text-amber-600",
+    green: "text-green-600",
   };
 
   return (
@@ -215,21 +216,21 @@ function FlagCard({
           name={severityIcons[flag.severity]}
           className={`h-6 w-6 ${severityIconColors[flag.severity]} flex-shrink-0`}
         />
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {/* Message (BLUF) */}
-          <h4 className="font-semibold mb-2">{flag.message}</h4>
-          
+          <h4 className="mb-2 font-semibold">{flag.message}</h4>
+
           {/* Suggestion */}
-          <p className="text-sm mb-4 text-gray-700">
+          <p className="mb-4 text-sm text-gray-700">
             <strong>What to do:</strong> {flag.suggestion}
           </p>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 flex-wrap">
-            {showCopy && flag.severity !== 'green' && (
+          <div className="flex flex-wrap items-center gap-3">
+            {showCopy && flag.severity !== "green" && (
               <button
                 onClick={onCopy}
-                className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium border hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50"
               >
                 {copied ? (
                   <>
@@ -266,16 +267,16 @@ function FlagCard({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateEmailTemplate(flag: PayFlag, _summary: any): string {
   const now = new Date();
-  const monthYear = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+  const monthYear = `${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
 
-  return `Subject: Pay Discrepancy – ${flag.flag_code.replace(/_/g, ' ')} (${monthYear})
+  return `Subject: Pay Discrepancy – ${flag.flag_code.replace(/_/g, " ")} (${monthYear})
 
 BLUF: ${flag.message}
 
 What to do next:
 ${flag.suggestion}
 
-${flag.ref_url ? `Reference: ${flag.ref_url}` : ''}
+${flag.ref_url ? `Reference: ${flag.ref_url}` : ""}
 
 Respectfully,
 [Your Name]
@@ -287,4 +288,3 @@ Generated by Garrison Ledger Paycheck Audit
 This is an unofficial audit. Verify all information with your finance office.
 `;
 }
-
