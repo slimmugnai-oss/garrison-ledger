@@ -858,7 +858,26 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               </div>
 
               {/* Waterfall (Premium Only) */}
-              <PremiumCurtain tier={tier} feature="waterfall">
+              {tier === 'free' ? (
+                <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
+                  <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+                  <h3 className="mb-3 text-xl font-semibold text-blue-900">
+                    Premium Feature: Detailed Reconciliation
+                  </h3>
+                  <p className="mb-2 text-sm text-blue-800">
+                    Line-by-line variance breakdown is for Premium members only.
+                  </p>
+                  <p className="mb-6 text-sm text-blue-700">
+                    Premium unlocks: detailed reconciliation, all flags, variance analysis, unlimited audits
+                  </p>
+                  <a
+                    href="/dashboard/upgrade?feature=paycheck-audit"
+                    className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                  >
+                    Upgrade to Premium
+                  </a>
+                </div>
+              ) : (
                 <div>
                   <h3 className="mb-3 text-lg font-semibold text-gray-900">
                     Detailed Reconciliation
@@ -878,7 +897,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     </div>
                   )}
                 </div>
-              </PremiumCurtain>
+              )}
 
               {/* Action Bar */}
               <div className="flex items-center gap-4 border-t pt-6">
