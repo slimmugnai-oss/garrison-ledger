@@ -32,6 +32,7 @@ export default function AskAssistantClient() {
   const [answer, setAnswer] = useState<AnswerData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentTemplateId, setCurrentTemplateId] = useState<string | undefined>();
@@ -92,17 +93,21 @@ export default function AskAssistantClient() {
         return;
       }
 
-      if (result.success && result.answer) {
-        setAnswer(result.answer);
-        setCreditsRemaining(result.credits_remaining);
+        if (result.success && result.answer) {
+          setAnswer(result.answer);
+          setCreditsRemaining(result.credits_remaining);
+          
+          // Show success notification
+          setShowSuccess(true);
+          setTimeout(() => setShowSuccess(false), 3000);
 
-        // Refresh credit meter
-        if (creditMeterRef.current?.refresh) {
-          await creditMeterRef.current.refresh();
+          // Refresh credit meter
+          if (creditMeterRef.current?.refresh) {
+            await creditMeterRef.current.refresh();
+          }
+        } else {
+          setError("Received invalid response from server. Please try again.");
         }
-      } else {
-        setError("Received invalid response from server. Please try again.");
-      }
     } catch (err) {
       console.error("Question submit error:", err);
       setError("Network error. Please check your connection and try again.");
@@ -124,6 +129,21 @@ export default function AskAssistantClient() {
 
   return (
     <>
+      {/* Success Toast */}
+      {showSuccess && (
+        <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-bottom-2 fade-in rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg duration-200">
+          <div className="flex items-center gap-2">
+            <Icon name="CheckCircle" className="h-5 w-5" />
+            <div>
+              <p className="font-medium">Answer generated successfully!</p>
+              {creditsRemaining !== null && (
+                <p className="text-xs text-green-100">{creditsRemaining} questions remaining</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Credit Meter */}
       <div className="mb-6">
         <CreditMeter ref={creditMeterRef} />

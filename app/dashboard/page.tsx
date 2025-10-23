@@ -197,7 +197,7 @@ export default async function Dashboard() {
                 </Link>
               </AnimatedCard>
 
-              {/* Intel Library */}
+              {/* Ask Assistant */}
               <AnimatedCard delay={0.3}>
                 <Link
                   href="/dashboard/ask"
@@ -206,16 +206,18 @@ export default async function Dashboard() {
                   <div className="flex h-full flex-col">
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
-                        <Icon name="BookOpen" className="h-6 w-6 text-indigo-600" />
+                        <Icon name="MessageCircle" className="h-6 w-6 text-indigo-600" />
                       </div>
                     </div>
 
                     <h3 className="mb-2 text-lg font-semibold text-gray-900">Ask Assistant</h3>
                     <p className="mb-4 flex-grow text-sm text-gray-600">
-                      Reference cards with live BAH/BAS/TSP data. Always current.
+                      Get instant answers to military financial questions with official data sources.
                     </p>
 
-                    <div className="text-sm text-gray-500">12 cards • Auto-updating data</div>
+                    <div className="text-sm text-gray-500">
+                      {isPremium ? "50 questions/month" : "5 questions/month"}
+                    </div>
                   </div>
                 </Link>
               </AnimatedCard>

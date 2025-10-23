@@ -60,6 +60,16 @@ export default function TemplateQuestions({ onTemplateClick }: TemplateQuestions
       label: "Career",
       count: templates.filter((t) => t.category === "Career").length,
     },
+    {
+      id: "Insurance",
+      label: "Insurance",
+      count: templates.filter((t) => t.category === "Insurance").length,
+    },
+    {
+      id: "Taxes",
+      label: "Taxes",
+      count: templates.filter((t) => t.category === "Taxes").length,
+    },
   ];
 
   const filteredTemplates =
@@ -79,6 +89,14 @@ export default function TemplateQuestions({ onTemplateClick }: TemplateQuestions
         return "bg-red-100 text-red-800 border-red-200";
       case "Career":
         return "bg-orange-100 text-orange-800 border-orange-200";
+      case "Insurance":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Taxes":
+        return "bg-indigo-100 text-indigo-800 border-indigo-200";
+      case "Pay":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Benefits":
+        return "bg-pink-100 text-pink-800 border-pink-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }

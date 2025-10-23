@@ -96,6 +96,8 @@ export default function AnalyticsTab() {
         return <EngagementSubTab />;
       case "tools":
         return <ToolsSubTab />;
+      case "ask":
+        return <AskAssistantSubTab />;
       default:
         return <RevenueSubTab data={revenueData} />;
     }
@@ -111,6 +113,7 @@ export default function AnalyticsTab() {
             { id: "users", label: "👥 Users" },
             { id: "engagement", label: "🎯 Engagement" },
             { id: "tools", label: "🛠️ Tools" },
+            { id: "ask", label: "💬 Ask Assistant" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -610,6 +613,154 @@ function ToolsSubTab() {
               </div>
             </div>
           ))}
+        </div>
+      </AnimatedCard>
+    </div>
+  );
+}
+
+// Ask Assistant Analytics Sub-Tab
+function AskAssistantSubTab() {
+  const [data, setData] = useState<{
+    totalQuestions: number;
+    questionsToday: number;
+    questions7d: number;
+    avgConfidence: number;
+    strictModePercent: number;
+    creditUsage: { tier: string; used: number; remaining: number; total: number }[];
+    topTemplates: { id: string; text: string; count: number }[];
+    coverageRequests: { pending: number; completed: number; total: number };
+    avgResponseTimeMs: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadAskAnalytics();
+  }, []);
+
+  const loadAskAnalytics = async () => {
+    try {
+      const response = await fetch("/api/admin/analytics/ask-assistant");
+      const result = await response.json();
+      if (result.success) {
+        setData(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to load Ask Assistant analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-text-muted">Loading Ask Assistant analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-text-muted">No data available</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <MetricCard
+          title="Total Questions"
+          value={data.totalQuestions.toString()}
+          subtitle={`${data.questionsToday} today, ${data.questions7d} last 7d`}
+          icon="MessageCircle"
+          variant="info"
+        />
+        <MetricCard
+          title="Avg Confidence"
+          value={`${(data.avgConfidence * 100).toFixed(0)}%`}
+          subtitle={`${data.strictModePercent.toFixed(0)}% with official data`}
+          icon="Shield"
+          variant="success"
+        />
+        <MetricCard
+          title="Avg Response Time"
+          value={`${(data.avgResponseTimeMs / 1000).toFixed(1)}s`}
+          subtitle="Time to generate answer"
+          icon="Timer"
+          variant="warning"
+        />
+        <MetricCard
+          title="Coverage Requests"
+          value={data.coverageRequests.pending.toString()}
+          subtitle={`${data.coverageRequests.completed} completed`}
+          icon="AlertTriangle"
+          variant="danger"
+        />
+      </div>
+
+      {/* Credit Usage by Tier */}
+      <AnimatedCard delay={0.1}>
+        <h3 className="text-text-headings mb-4 text-lg font-bold">Credit Usage by Tier</h3>
+        <div className="space-y-3">
+          {data.creditUsage.map((tier) => {
+            const usagePercent = (tier.used / tier.total) * 100;
+            return (
+              <div
+                key={tier.tier}
+                className="rounded-lg border border-border bg-surface p-4"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <div>
+                    <p className="text-text-headings font-semibold capitalize">{tier.tier}</p>
+                    <p className="text-text-muted text-sm">
+                      {tier.used} used of {tier.total} ({usagePercent.toFixed(0)}%)
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-text-headings text-2xl font-bold">{tier.remaining}</p>
+                    <p className="text-text-muted text-xs">remaining</p>
+                  </div>
+                </div>
+                <div className="h-2 w-full rounded-full bg-gray-200">
+                  <div
+                    className={`h-2 rounded-full transition-all ${usagePercent > 80 ? "bg-red-500" : usagePercent > 50 ? "bg-yellow-500" : "bg-green-500"}`}
+                    style={{ width: `${Math.min(usagePercent, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </AnimatedCard>
+
+      {/* Top Templates */}
+      <AnimatedCard delay={0.2}>
+        <h3 className="text-text-headings mb-4 text-lg font-bold">Most Popular Templates</h3>
+        <div className="space-y-2">
+          {data.topTemplates.slice(0, 10).map((template, index) => (
+            <div
+              key={template.id}
+              className="flex items-center justify-between rounded-lg border border-border bg-surface p-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                  <span className="text-sm font-bold text-blue-600">{index + 1}</span>
+                </div>
+                <p className="text-text-body text-sm">{template.text}</p>
+              </div>
+              <div className="text-text-muted text-sm font-medium">{template.count} uses</div>
+            </div>
+          ))}
+          {data.topTemplates.length === 0 && (
+            <p className="text-text-muted py-4 text-center text-sm">No template usage data yet</p>
+          )}
         </div>
       </AnimatedCard>
     </div>

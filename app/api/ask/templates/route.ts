@@ -38,6 +38,7 @@ export async function GET() {
 
     // Base template questions
     const baseTemplates: TemplateQuestion[] = [
+      // BAH & Housing
       {
         id: "bah_lookup",
         text: "What's my BAH rate?",
@@ -45,17 +46,44 @@ export async function GET() {
         personalized: false,
       },
       {
+        id: "bah_pcs_move",
+        text: "How does BAH work during a PCS move?",
+        category: "BAH",
+        personalized: false,
+      },
+      // TSP & Retirement
+      {
         id: "tsp_contribution",
         text: "How much should I contribute to TSP?",
         category: "TSP",
         personalized: false,
       },
       {
+        id: "tsp_vs_debt",
+        text: "Should I max out my TSP or pay off debt first?",
+        category: "TSP",
+        personalized: false,
+      },
+      {
+        id: "tsp_rollover",
+        text: "Can I roll my TSP into a civilian 401k?",
+        category: "TSP",
+        personalized: false,
+      },
+      {
+        id: "brs_vs_high3",
+        text: "What's the difference between BRS and High-3?",
+        category: "TSP",
+        personalized: false,
+      },
+      // PCS
+      {
         id: "pcs_entitlements",
         text: "What am I entitled to for PCS?",
         category: "PCS",
         personalized: false,
       },
+      // Deployment
       {
         id: "deployment_pay",
         text: "What special pays do I get on deployment?",
@@ -63,9 +91,48 @@ export async function GET() {
         personalized: false,
       },
       {
+        id: "sdp_rate",
+        text: "What's the SDP interest rate?",
+        category: "Deployment",
+        personalized: false,
+      },
+      {
+        id: "combat_zone_tax",
+        text: "How does combat zone tax exclusion work?",
+        category: "Deployment",
+        personalized: false,
+      },
+      // Career & Benefits
+      {
         id: "retirement_planning",
         text: "How do I plan for military retirement?",
         category: "Career",
+        personalized: false,
+      },
+      {
+        id: "retirement_pension",
+        text: "How do I calculate my retirement pension?",
+        category: "Career",
+        personalized: false,
+      },
+      {
+        id: "retirement_benefits",
+        text: "What happens to my benefits when I retire?",
+        category: "Career",
+        personalized: false,
+      },
+      // Insurance
+      {
+        id: "sgli_coverage",
+        text: "Should I have SGLI and civilian life insurance?",
+        category: "Insurance",
+        personalized: false,
+      },
+      // Taxes
+      {
+        id: "state_residence",
+        text: "What state should I claim as my home of record?",
+        category: "Taxes",
         personalized: false,
       },
     ];

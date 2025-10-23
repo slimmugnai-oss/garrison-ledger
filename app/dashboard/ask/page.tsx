@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
+import QuestionHistory from "@/app/components/ask/QuestionHistory";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -37,6 +38,11 @@ export default async function AskAssistantPage() {
 
           {/* Client Component - Manages State */}
           <AskAssistantClient />
+
+          {/* Question History */}
+          <div className="mt-8">
+            <QuestionHistory />
+          </div>
 
           {/* Features Info */}
           <div className="mt-12 rounded-lg border border-blue-200 bg-blue-50 p-6">

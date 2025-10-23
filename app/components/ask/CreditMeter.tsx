@@ -92,9 +92,19 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(({ _onPurchaseC
           <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
           <span className="font-semibold text-red-800">Credits Not Available</span>
         </div>
-        <p className="text-sm text-red-700">
-          Unable to load your credit balance. Please try refreshing the page.
+        <p className="mb-3 text-sm text-red-700">
+          Unable to load your credit balance. This might be a temporary network issue.
         </p>
+        <button
+          onClick={() => {
+            setLoading(true);
+            fetchCredits();
+          }}
+          className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+        >
+          <Icon name="RefreshCw" className="h-4 w-4" />
+          Try Again
+        </button>
       </div>
     );
   }
