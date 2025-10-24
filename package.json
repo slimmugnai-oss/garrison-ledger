@@ -45,6 +45,7 @@
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "prepare": "husky",
     "rag:embed-content": "node scripts/embed-content-blocks.mjs",
+    "rag:embed-official": "node scripts/embed-official-data.mjs",
     "rag:test-search": "node --loader ts-node/esm scripts/test-rag-search.ts",
     "rag:check-embeddings": "node --loader ts-node/esm scripts/check-embeddings-status.ts"
   },
