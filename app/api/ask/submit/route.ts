@@ -8,6 +8,8 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { ssot } from "@/lib/ssot";
+import { queryOfficialSources } from "@/lib/ask/data-query-engine";
+import type { DataSource } from "@/lib/ask/data-query-engine";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,14 +19,6 @@ const supabase = createClient(
 interface SubmitRequest {
   question: string;
   templateId?: string;
-}
-
-interface DataSource {
-  table: string;
-  source_name: string;
-  url: string;
-  effective_date: string;
-  data: Record<string, unknown>;
 }
 
 interface AnswerResponse {
@@ -140,102 +134,6 @@ export async function POST(request: NextRequest) {
     console.error("Ask submit error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
-
-/**
- * Query official data sources based on question keywords
- */
-async function queryOfficialSources(question: string, userId: string): Promise<DataSource[]> {
-  const sources: DataSource[] = [];
-  const questionLower = question.toLowerCase();
-
-  try {
-    // BAH queries - Use user's location or extract from question
-    if (questionLower.includes("bah") || questionLower.includes("housing allowance")) {
-      // Try to get user's MHA from profile first
-      const { data: profile } = await supabase
-        .from("user_profiles")
-        .select("mha_or_zip")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      let bahQuery = supabase.from("bah_rates").select("*");
-
-      // If user has MHA in profile, use it
-      if (profile?.mha_or_zip) {
-        bahQuery = bahQuery.or(`mha.eq.${profile.mha_or_zip},zip_code.eq.${profile.mha_or_zip}`);
-      }
-      
-      // Extract location from question (e.g., "Fort Bliss", "San Diego", "CA")
-      // Common base names and cities
-      const locationMatch = question.match(
-        /(Fort|Camp|Naval|Marine|Air Force Base|AFB|Bragg|Bliss|Hood|Campbell|Lewis|Pendleton|San Diego|Norfolk|Pearl Harbor|Okinawa)/i
-      );
-      
-      if (locationMatch) {
-        const location = locationMatch[0];
-        // Search in MHA names and ZIP codes
-        bahQuery = bahQuery.or(`mha.ilike.%${location}%,zip_code.ilike.%${location}%`);
-      }
-
-      const { data: bahData } = await bahQuery.limit(10); // Increased from 5 to 10
-
-      if (bahData && bahData.length > 0) {
-        sources.push({
-          table: "bah_rates",
-          source_name: "DFAS BAH Calculator",
-          url: "https://www.dfas.mil/militarymembers/payentitlements/bah/",
-          effective_date: "2025-01-01",
-          data: bahData as unknown as Record<string, unknown>,
-        });
-      }
-    }
-
-    // Base pay queries
-    if (questionLower.includes("base pay") || questionLower.includes("salary")) {
-      const { data: payData } = await supabase.from("military_pay_tables").select("*").limit(5);
-
-      if (payData && payData.length > 0) {
-        sources.push({
-          table: "military_pay_tables",
-          source_name: "DFAS Pay Tables",
-          url: "https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/",
-          effective_date: "2025-01-01",
-          data: payData as unknown as Record<string, unknown>,
-        });
-      }
-    }
-
-    // TSP queries
-    if (questionLower.includes("tsp") || questionLower.includes("thrift savings")) {
-      sources.push({
-        table: "tsp_constants",
-        source_name: "TSP.gov",
-        url: "https://www.tsp.gov/",
-        effective_date: "2025-01-01",
-        data: { max_contribution: 23000, matching: "BRS only" },
-      });
-    }
-
-    // SGLI queries
-    if (questionLower.includes("sgli") || questionLower.includes("life insurance")) {
-      const { data: sgliData } = await supabase.from("sgli_rates").select("*").limit(3);
-
-      if (sgliData && sgliData.length > 0) {
-        sources.push({
-          table: "sgli_rates",
-          source_name: "VA SGLI",
-          url: "https://www.va.gov/life-insurance/options-eligibility/sgli/",
-          effective_date: "2025-01-01",
-          data: sgliData as unknown as Record<string, unknown>,
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error querying data sources:", error);
-  }
-
-  return sources;
 }
 
 /**
