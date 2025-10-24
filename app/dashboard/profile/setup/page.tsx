@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -128,7 +129,7 @@ const yesNo = [
   { label: "No", value: false },
 ];
 
-export default function ProfileSetupPage() {
+function ProfileSetupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -1885,5 +1886,13 @@ export default function ProfileSetupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProfileSetupPage() {
+  return (
+    <Suspense fallback={<ProfileLoadingSkeleton />}>
+      <ProfileSetupContent />
+    </Suspense>
   );
 }
