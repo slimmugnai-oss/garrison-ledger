@@ -15,6 +15,7 @@ import { createClient } from "@supabase/supabase-js";
 import AnimatedCard from "../components/ui/AnimatedCard";
 import Icon from "../components/ui/Icon";
 import Badge from "../components/ui/Badge";
+import { ensureUserExists } from "@/lib/ensure-user-exists";
 
 export const metadata: Metadata = {
   title: "Dashboard - Garrison Ledger",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Dashboard() {
-  const user = await currentUser();
+  const user = await ensureUserExists();
   if (!user) redirect("/sign-in");
 
   const supabase = createClient(

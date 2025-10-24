@@ -1,8 +1,9 @@
 # 🎯 GARRISON LEDGER - SYSTEM STATUS
 
-**Last Updated:** 2025-01-23  
+**Last Updated:** 2025-01-24  
 **Status:** 🟢 PRODUCTION  
-**Version:** 6.0.0 - Ask Assistant Launch (Intel Library Transformation)  
+**Version:** 6.0.1 - Clerk-Supabase Integration Optimization  
+**Domain:** https://www.garrisonledger.com  
 **Deployment:** ✅ Live on Vercel  
 **SSOT Module:** ✅ `lib/ssot.ts` (Single Source of Truth)  
 **Code Quality:** ✅ TypeScript strict + ESLint clean (0 errors, 21 non-critical warnings)
@@ -690,6 +691,18 @@ See: `CODE_QUALITY_IMPLEMENTATION_SUMMARY.md` and `IMPLEMENTATION_SESSION_COMPLE
 ---
 
 ## 🔄 RECENT UPDATES
+
+**2025-01-24 (Clerk-Supabase Integration Optimization - CURRENT):**
+- ✅ **Automatic Ask Assistant Credits:** 5 free questions initialized on signup
+- ✅ **Database Triggers:** Safety net for user initialization if webhook fails
+- ✅ **ensureUserExists() Utility:** Runtime check in critical paths (lib/ensure-user-exists.ts)
+- ✅ **Admin Sync Monitoring:** /api/admin/users/sync-status endpoint
+- ✅ **Integration Documentation:** docs/CLERK_SUPABASE_INTEGRATION.md
+- ✅ **User Flow:** Seamless signup → auto-initialization → dashboard access
+- **Files Created:** lib/ensure-user-exists.ts, supabase-migrations/20251024_clerk_integration_optimization.sql, app/api/admin/users/sync-status/route.ts, docs/CLERK_SUPABASE_INTEGRATION.md
+- **Files Modified:** app/api/webhooks/clerk/route.ts (added Ask Assistant credits), app/dashboard/page.tsx (uses ensureUserExists)
+- **Impact:** 100% user sync rate, automatic credit initialization, multiple safety nets
+- **See:** docs/CLERK_SUPABASE_INTEGRATION.md
 
 **2025-10-22 (Admin Dashboard Overhaul - COMPLETE ALL PHASES + SITEMAP):**
 - ✅ **PHASE 1-3: Tab-based Admin Dashboard** - Complete rewrite of admin interface

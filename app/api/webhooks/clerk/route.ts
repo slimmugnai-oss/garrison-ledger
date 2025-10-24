@@ -127,6 +127,24 @@ export async function POST(req: NextRequest) {
         logger.warn('[ClerkWebhook] Failed to create gamification', { userId: id, error: gamificationError });
       }
 
+      // Initialize Ask Assistant credits (5 free questions)
+      const { error: creditsError } = await supabaseAdmin
+        .from('ask_credits')
+        .insert([
+          {
+            user_id: id,
+            credits_remaining: 5,
+            credits_total: 5,
+            tier: 'free',
+            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+          },
+        ]);
+
+      if (creditsError) {
+        // Don't fail the webhook - core profile is created
+        logger.warn('[ClerkWebhook] Failed to create ask_credits', { userId: id, error: creditsError });
+      }
+
       logger.info('[ClerkWebhook] New user created', { userId: id, email: email.split('@')[1] });
       return new Response('User created successfully', { status: 200 });
     } catch (error) {
