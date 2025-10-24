@@ -155,7 +155,7 @@
 - **Profile-Dashboard Integration** ✅ *NEW 2025-10-24* - Profile summary widget, tool recommendations, context-aware navigation
 - **Spouse Collaboration** - Plan sharing
 - **Document Binder** - File storage (Premium)
-- **Admin Dashboard** - ✅ **COMPLETE: Full-featured command center with 6 tabs, sitemap system, error logs, feature flags, and real-time analytics**
+- **Admin Dashboard** - ✅ **COMPLETE: Full-featured command center with 6 tabs, sitemap system, error logs, feature flags, real-time analytics, and email campaign management**
 
 ---
 
@@ -714,6 +714,19 @@ See: `CODE_QUALITY_IMPLEMENTATION_SUMMARY.md` and `IMPLEMENTATION_SESSION_COMPLE
 ---
 
 ## 🔄 RECENT UPDATES
+
+**2025-10-24 (Email Campaigns Admin Integration - CURRENT):**
+- ✅ **Email Campaign Manager Integration:** Added to Admin Dashboard System tab for quick access
+- ✅ **Custom Domain Configuration:** Updated Resend to use verified garrisonledger.com domain
+- ✅ **System Tab Enhancement:** New "Email Campaigns" sub-tab with status overview and quick actions
+- ✅ **Email Configuration Update:** Changed from onboarding@resend.dev to noreply@garrisonledger.com
+- ✅ **Admin Dashboard Access:** Email campaigns now accessible via System tab → Email Campaigns
+- ✅ **Status Monitoring:** Real-time email system status with automated sequence monitoring
+- **Files Modified:** app/dashboard/admin/tabs/SystemTab.tsx (added EmailCampaignsSubTab), lib/email-config.ts (updated domain)
+- **Environment Variables:** RESEND_FROM_EMAIL=Garrison Ledger <noreply@garrisonledger.com> (set in Vercel)
+- **Impact:** Centralized email management, professional sender domain, improved admin workflow
+- **Email System:** All automated sequences (onboarding, weekly digest, lead magnets) now use custom domain
+- **See:** Email campaigns accessible at /dashboard/admin → System tab → Email Campaigns
 
 **2025-10-24 (Profile-Dashboard Integration - CURRENT):**
 - ✅ **ProfileSummaryWidget:** Profile stats, completion %, and tool recommendations on Dashboard

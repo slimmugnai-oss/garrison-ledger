@@ -84,6 +84,7 @@ export default function SystemTab() {
             { id: "api-health", label: "🔌 API Health" },
             { id: "error-logs", label: "📝 Error Logs" },
             { id: "configuration", label: "⚙️ Configuration" },
+            { id: "email-campaigns", label: "📧 Email Campaigns" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -113,6 +114,7 @@ export default function SystemTab() {
       {activeSubTab === "api-health" && <APIHealthSubTab />}
       {activeSubTab === "error-logs" && <ErrorLogsViewer />}
       {activeSubTab === "configuration" && <ConfigurationManager />}
+      {activeSubTab === "email-campaigns" && <EmailCampaignsSubTab />}
     </div>
   );
 }
@@ -545,3 +547,120 @@ function APIHealthSubTab() {
 }
 
 // ConfigurationSubTab removed - now using ConfigurationManager component
+
+function EmailCampaignsSubTab() {
+  return (
+    <div className="space-y-6">
+      {/* Email Campaign Manager Card */}
+      <AnimatedCard className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+              <Icon name="Mail" className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-primary">Email Campaign Manager</h3>
+              <p className="text-body text-sm">
+                Manage automated sequences and send manual campaigns
+              </p>
+            </div>
+          </div>
+          <a
+            href="/dashboard/admin/campaigns"
+            className="hover:bg-primary-hover flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors"
+          >
+            <Icon name="ExternalLink" className="h-4 w-4" />
+            Open Campaign Manager
+          </a>
+        </div>
+      </AnimatedCard>
+
+      {/* Email System Status */}
+      <AnimatedCard
+        delay={100}
+        className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-100 p-6"
+      >
+        <div className="mb-4 flex items-center gap-3">
+          <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+          <h3 className="text-lg font-bold text-primary">Email System Status: OPERATIONAL</h3>
+        </div>
+        <div className="text-body space-y-4 text-sm">
+          <div>
+            <h4 className="mb-2 font-semibold text-primary">Automated Sequences:</h4>
+            <ul className="ml-4 space-y-1">
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>
+                  <strong>Weekly Digest:</strong> Configured in vercel.json (Sundays at 7pm UTC)
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>
+                  <strong>Onboarding Sequence:</strong> Automated via cron (daily at 6am UTC)
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>
+                  <strong>Lead Magnets:</strong> PCS Checklist now sends automatically
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-2 font-semibold text-primary">Manual Campaign Options:</h4>
+            <ul className="ml-4 space-y-1">
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>Test Email: Preview templates before sending</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>Bulk Announcement: Email all subscribers</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success">✓</span>
+                <span>Targeted Campaigns: Segment by premium status, plan status</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </AnimatedCard>
+
+      {/* Quick Actions */}
+      <AnimatedCard
+        delay={200}
+        className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-100 p-6"
+      >
+        <h3 className="mb-4 text-lg font-bold text-primary">Quick Actions</h3>
+        <div className="grid gap-4 md:grid-cols-3">
+          <a
+            href="/dashboard/admin/campaigns"
+            className="bg-surface border-info rounded-xl border-2 p-4 text-left transition-all hover:shadow-lg"
+          >
+            <Icon name="Send" className="text-info mb-2 h-6 w-6" />
+            <h4 className="mb-1 font-semibold text-primary">Send Test Email</h4>
+            <p className="text-body text-xs">Preview email templates</p>
+          </a>
+          <a
+            href="/dashboard/admin/campaigns"
+            className="bg-surface rounded-xl border-2 border-success p-4 text-left transition-all hover:shadow-lg"
+          >
+            <Icon name="Users" className="mb-2 h-6 w-6 text-success" />
+            <h4 className="mb-1 font-semibold text-primary">Bulk Announcement</h4>
+            <p className="text-body text-xs">Email all subscribers</p>
+          </a>
+          <a
+            href="/dashboard/admin/campaigns"
+            className="bg-surface rounded-xl border-2 border-purple-200 p-4 text-left transition-all hover:shadow-lg"
+          >
+            <Icon name="Target" className="mb-2 h-6 w-6 text-purple-600" />
+            <h4 className="mb-1 font-semibold text-primary">Targeted Campaign</h4>
+            <p className="text-body text-xs">Segment and send</p>
+          </a>
+        </div>
+      </AnimatedCard>
+    </div>
+  );
+}
