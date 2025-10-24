@@ -238,6 +238,23 @@ async function generateAnswer(
 
   const prompt = buildPrompt(question, contextData, mode, maxTokens);
 
+  // Use GEMINI_API_KEY (consistent with explainer and other AI features)
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey) {
+    console.error("[Ask Assistant] No API key found (checked GEMINI_API_KEY and GOOGLE_API_KEY)");
+    return {
+      bottomLine: ["API configuration error. Please contact support."],
+      nextSteps: [],
+      numbersUsed: [],
+      citations: [],
+      verificationChecklist: [],
+      confidence: 0,
+      mode: "advisory",
+      sources: dataSources,
+      toolHandoffs: [],
+    };
+  }
+
   try {
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
@@ -245,7 +262,7 @@ async function generateAnswer(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GOOGLE_API_KEY!,
+          "X-Goog-Api-Key": apiKey,
         },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
@@ -264,19 +281,22 @@ async function generateAnswer(
     }
 
     const result = await response.json();
-    
+
     // Enhanced logging
     console.log("[Gemini API] Response status:", response.status);
     console.log("[Gemini API] Candidates count:", result.candidates?.length || 0);
-    console.log("[Gemini API] First candidate:", JSON.stringify(result.candidates?.[0], null, 2).substring(0, 500));
-    
+    console.log(
+      "[Gemini API] First candidate:",
+      JSON.stringify(result.candidates?.[0], null, 2).substring(0, 500)
+    );
+
     const answerText = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    
+
     if (!answerText) {
       console.error("[Gemini API] No answer text in response:", JSON.stringify(result));
       throw new Error("Gemini returned empty response");
     }
-    
+
     console.log("[Gemini API] Answer text length:", answerText.length, "chars");
     console.log("[Gemini API] Answer preview:", answerText.substring(0, 200));
 
@@ -392,7 +412,10 @@ function parseStructuredAnswer(
     console.error("[ParseAnswer] Failed to parse structured answer:", error);
     console.error("[ParseAnswer] Raw AI response length:", text.length);
     console.error("[ParseAnswer] Raw AI response preview:", text.substring(0, 500));
-    console.error("[ParseAnswer] Raw AI response end:", text.substring(Math.max(0, text.length - 200)));
+    console.error(
+      "[ParseAnswer] Raw AI response end:",
+      text.substring(Math.max(0, text.length - 200))
+    );
   }
 
   // Fallback - try to extract useful info from text
