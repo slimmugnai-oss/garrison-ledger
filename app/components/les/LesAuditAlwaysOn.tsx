@@ -26,7 +26,7 @@ interface Props {
   userProfile: {
     paygrade?: string;
     yos?: number;
-    currentBase?: string;
+    mhaCode?: string;
     hasDependents?: boolean;
   };
 }
@@ -45,7 +45,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   // Profile
   const [paygrade, setPaygrade] = useState(userProfile.paygrade || "");
   const [yos, setYos] = useState(userProfile.yos || 0);
-  const [mhaOrZip, setMhaOrZip] = useState(userProfile.currentBase || "");
+  const [mhaOrZip, setMhaOrZip] = useState(userProfile.mhaCode || "");
   const [withDependents, setWithDependents] = useState(userProfile.hasDependents || false);
 
   // Allowances
@@ -171,7 +171,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
     // Federal tax reasonableness checks
     const federalPercent = (federalTax / taxableGross) * 100;
-    
+
     // Only check if federal tax is > 0 (CZTE check is handled in API findings)
     if (federalTax > 0 && federalPercent < 5) {
       advisories.push(

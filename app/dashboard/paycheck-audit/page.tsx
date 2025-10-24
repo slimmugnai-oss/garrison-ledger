@@ -77,7 +77,7 @@ export default async function PaycheckAuditPage() {
           userProfile={{
             paygrade: profile?.paygrade,
             yos: profile?.years_of_service,
-            currentBase: profile?.current_base,
+            mhaCode: mhaCode,
             hasDependents: profile?.has_dependents,
           }}
         />
