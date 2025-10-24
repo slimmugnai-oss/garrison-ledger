@@ -102,8 +102,8 @@ export const ssot = {
     askAssistant: {
       status: "active",
       tier: "all-tiers",
-      model: "Gemini-2.0-Flash-Exp",
-      modelNote: "Using experimental during free preview, will transition to stable pricing",
+      model: "Gemini-2.5-Flash",
+      modelNote: "GA since June 2025, production-stable",
       rateLimits: {
         free: { questionsPerMonth: 5, maxTokens: 2048, fileAnalysis: false },
         premium: { questionsPerMonth: 50, maxTokens: 4096, fileAnalysis: false },
