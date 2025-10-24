@@ -320,9 +320,8 @@ export async function processAndStoreEmbeddings(
 export async function deleteEmbeddingsByType(contentType: string): Promise<number> {
   const { error, count } = await supabase
     .from("knowledge_embeddings")
-    .delete()
-    .eq("content_type", contentType)
-    .select("*", { count: "exact", head: true });
+    .delete({ count: "exact" })
+    .eq("content_type", contentType);
 
   if (error) {
     console.error("[Embeddings] Failed to delete embeddings:", error);
