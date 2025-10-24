@@ -306,21 +306,24 @@ STRICT REQUIREMENTS:
 1. Use ONLY the provided data sources
 2. Cite every number with source + effective date
 3. If no official data, clearly mark as "ADVISORY" 
-4. Keep answers under ${maxTokens} tokens
+4. You have ${maxTokens} tokens to generate a comprehensive answer
 5. Use bullet points and clear structure
 6. Suggest relevant tools when appropriate
+7. CRITICAL: Return ONLY valid JSON, no markdown formatting, no explanatory text
 
-RESPONSE FORMAT (JSON):
+RESPONSE FORMAT - Return this EXACT JSON structure (no markdown, no code blocks):
 {
-  "bottomLine": ["Key point 1", "Key point 2"],
-  "nextSteps": [{"text": "Action", "action": "button_text", "url": "optional_url"}],
-  "numbersUsed": [{"value": "Amount", "source": "Source Name", "effective_date": "Date"}],
+  "bottomLine": ["Key point 1", "Key point 2", "Key point 3"],
+  "nextSteps": [{"text": "Action to take", "action": "Button text", "url": "optional_url"}],
+  "numbersUsed": [{"value": "Specific amount or rate", "source": "Source Name", "effective_date": "YYYY-MM-DD"}],
   "citations": [{"title": "Source Title", "url": "Source URL"}],
-  "verificationChecklist": ["Check item 1", "Check item 2"],
+  "verificationChecklist": ["Verification step 1", "Verification step 2"],
   "toolHandoffs": [{"tool": "Tool Name", "url": "/dashboard/tool", "description": "Why use this tool"}]
 }
 
-${mode === "advisory" ? "IMPORTANT: This is ADVISORY mode. No official data available. Mark clearly as advisory and suggest requesting coverage." : ""}`;
+${mode === "advisory" ? "IMPORTANT: This is ADVISORY mode. No official data available. Mark clearly as advisory and suggest requesting coverage." : ""}
+
+REMINDER: Return ONLY the JSON object above. Do not wrap it in markdown code blocks or add any explanatory text.`;
 
   return basePrompt;
 }
@@ -334,12 +337,31 @@ function parseStructuredAnswer(
   mode: "strict" | "advisory"
 ): AnswerResponse {
   try {
-    // Try to extract JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
+    // Remove markdown code blocks if present
+    let cleanedText = text.trim();
+    
+    // Remove ```json or ``` wrapping
+    cleanedText = cleanedText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    
+    // Try to extract JSON from response - find first { to last }
+    const firstBrace = cleanedText.indexOf("{");
+    const lastBrace = cleanedText.lastIndexOf("}");
+    
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      const jsonString = cleanedText.substring(firstBrace, lastBrace + 1);
+      const parsed = JSON.parse(jsonString);
+      
+      // Validate required fields
+      if (!parsed.bottomLine || !Array.isArray(parsed.bottomLine)) {
+        throw new Error("Invalid bottomLine field");
+      }
+      
       return {
-        ...parsed,
+        bottomLine: parsed.bottomLine,
+        nextSteps: parsed.nextSteps || [],
+        numbersUsed: parsed.numbersUsed || [],
+        citations: parsed.citations || [],
+        verificationChecklist: parsed.verificationChecklist || [],
         confidence: mode === "strict" ? 0.9 : 0.4,
         mode,
         sources,
@@ -348,11 +370,18 @@ function parseStructuredAnswer(
     }
   } catch (error) {
     console.error("Failed to parse structured answer:", error);
+    console.error("Raw AI response:", text.substring(0, 500));
   }
 
-  // Fallback to simple parsing
+  // Fallback - try to extract useful info from text
+  const lines = text.split("\n").filter((line) => line.trim());
+  const bottomLine = lines.slice(0, 3).map((line) => line.replace(/^[-*•]\s*/, "").trim());
+
   return {
-    bottomLine: [text.substring(0, 200) + "..."],
+    bottomLine:
+      bottomLine.length > 0
+        ? bottomLine
+        : ["Unable to generate complete answer. Please try rephrasing your question."],
     nextSteps: [],
     numbersUsed: sources.map((s) => ({
       value: "See source",
@@ -361,7 +390,7 @@ function parseStructuredAnswer(
     })),
     citations: sources.map((s) => ({ title: s.source_name, url: s.url })),
     verificationChecklist: ["Verify with official sources"],
-    confidence: mode === "strict" ? 0.7 : 0.3,
+    confidence: mode === "strict" ? 0.5 : 0.2,
     mode,
     sources,
     toolHandoffs: [],

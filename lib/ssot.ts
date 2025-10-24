@@ -104,8 +104,8 @@ export const ssot = {
       tier: "all-tiers",
       model: "Gemini-2.5-Flash",
       rateLimits: {
-        free: { questionsPerMonth: 5, maxTokens: 350, fileAnalysis: false },
-        premium: { questionsPerMonth: 50, maxTokens: 800, fileAnalysis: false },
+        free: { questionsPerMonth: 5, maxTokens: 2048, fileAnalysis: false },
+        premium: { questionsPerMonth: 50, maxTokens: 4096, fileAnalysis: false },
       },
       creditPacks: [
         { credits: 25, priceCents: 199 },
