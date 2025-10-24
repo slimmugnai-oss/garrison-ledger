@@ -175,9 +175,6 @@ export default function Header() {
                 <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400">
                   Military Financial Intelligence
                 </div>
-                <div className="-mt-0.5 text-xs text-gray-400 dark:text-gray-500">
-                  A FamilyMedia Company
-                </div>
               </div>
             </Link>
 
@@ -886,7 +883,7 @@ export default function Header() {
                 </SignInButton>
                 <SignUpButton mode="modal">
                   <button className="rounded-lg bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg">
-                    Get Started Free
+                    Start Free Account
                   </button>
                 </SignUpButton>
               </SignedOut>
@@ -945,21 +942,21 @@ export default function Header() {
                   <div className="space-y-2">
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="LayoutDashboard" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Dashboard</span>
                     </Link>
                     <Link
                       href="/dashboard/binder"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="FolderOpen" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Binder</span>
                     </Link>
                     <Link
                       href="/dashboard/pcs-copilot"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
@@ -975,7 +972,7 @@ export default function Header() {
                   <div className="space-y-2">
                     <Link
                       href="/dashboard/paycheck-audit"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
                       <span className="font-medium">LES Auditor</span>
@@ -985,14 +982,14 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/dashboard/pcs-copilot"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
                     </Link>
                     <Link
                       href="/dashboard/navigator"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Navigator</span>
@@ -1002,7 +999,7 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/dashboard/tdy-voucher"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="File" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">TDY Copilot</span>
@@ -1011,10 +1008,10 @@ export default function Header() {
                       </span>
                     </Link>
                     <Link
-                      href="/dashboard/intel"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      href="/dashboard/ask"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
-                      <Icon name="BookOpen" className="h-5 w-5 text-indigo-600" />
+                      <Icon name="MessageCircle" className="h-5 w-5 text-indigo-600" />
                       <span className="font-medium">Ask Assistant</span>
                     </Link>
                   </div>
@@ -1028,54 +1025,42 @@ export default function Header() {
                   <div className="space-y-2">
                     <Link
                       href="/dashboard/tools/tsp-modeler"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="TrendingUp" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">TSP Calculator</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/sdp-strategist"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="PiggyBank" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">SDP Calculator</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/house-hacking"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Home" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">House Hacking</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/pcs-planner"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">PCS Planner</span>
                     </Link>
                     <Link
-                      href="/dashboard/paycheck-audit"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
-                    >
-                      <Icon name="Shield" className="h-5 w-5 text-blue-600" />
-                      <span className="font-medium">
-                        Paycheck Audit{" "}
-                        <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
-                          Beta
-                        </span>
-                      </span>
-                    </Link>
-                    <Link
                       href="/dashboard/tools/on-base-savings"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="ShoppingCart" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">On-Base Savings</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/salary-calculator"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Calculator" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">Retirement Calculator</span>
@@ -1086,33 +1071,26 @@ export default function Header() {
                 {/* Mobile Intelligence Section */}
                 <div>
                   <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Intelligence
+                    Resources
                   </div>
                   <div className="space-y-2">
                     <Link
-                      href="/dashboard/ask"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
-                    >
-                      <Icon name="MessageCircle" className="h-5 w-5 text-purple-600" />
-                      <span className="font-medium">Ask Assistant</span>
-                    </Link>
-                    <Link
                       href="/dashboard/listening-post"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Radio" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Listening Post</span>
                     </Link>
                     <Link
                       href="/dashboard/directory"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Users" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Directory</span>
                     </Link>
                     <Link
-                      href="/dashboard/refer-earn"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      href="/dashboard/referrals"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Gift" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Refer & Earn</span>
@@ -1123,40 +1101,40 @@ export default function Header() {
                 {/* Mobile Resources Section */}
                 <div>
                   <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Resources
+                    Toolkits
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/pcs-hub"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">PCS Hub</span>
                     </Link>
                     <Link
                       href="/career-hub"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Briefcase" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Career Hub</span>
                     </Link>
                     <Link
                       href="/deployment"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Shield" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Deployment</span>
                     </Link>
                     <Link
                       href="/base-guides"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Guides</span>
                     </Link>
                     <Link
                       href="/on-base-shopping"
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="ShoppingCart" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">On-Base Shopping</span>
@@ -1183,7 +1161,7 @@ export default function Header() {
                   </SignInButton>
                   <SignUpButton mode="modal">
                     <button className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800">
-                      Get Started Free
+                      Start Free Account
                     </button>
                   </SignUpButton>
                 </div>

@@ -1,53 +1,55 @@
 /**
  * HOME PAGE - TOOLS-FIRST (v5.0)
- * 
+ *
  * Clear value prop: 4 premium tools for military finance
  */
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { SignedIn, SignedOut, SignUpButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import Icon from './components/ui/Icon';
-import AnimatedCard from './components/ui/AnimatedCard';
+import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
+import Icon from "./components/ui/Icon";
+import AnimatedCard from "./components/ui/AnimatedCard";
 
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",
-  description: "4 premium tools for military families: LES Auditor, Base Navigator, TDY Copilot, Intel Library. Catch pay errors, find perfect neighborhoods, build compliant vouchers.",
+  description:
+    "4 premium tools for military families: LES Auditor, Base Navigator, TDY Copilot, Intel Library. Catch pay errors, find perfect neighborhoods, build compliant vouchers.",
 };
 
 export default function Home() {
   return (
     <>
       <Header />
-      
+
       {/* Hero */}
       <section className="relative bg-gradient-to-b from-slate-50 to-white py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 font-lora mb-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="font-lora mb-6 text-5xl font-bold text-gray-900 lg:text-6xl">
               Military Financial Intelligence Platform
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              5 premium tools built for military families. Audit your pay. Navigate bases. 
-              Build vouchers. Track moves. Always-current intel.
+            <p className="mb-8 text-xl text-gray-600">
+              5 premium tools built for military families. Audit your pay. Navigate bases. Build
+              vouchers. Track moves. Always-current intel.
             </p>
-            
+
             <SignedOut>
               <SignUpButton mode="modal">
-                <button className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg">
-                  Start Free Trial →
+                <button className="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700">
+                  Start Free Account →
                 </button>
               </SignUpButton>
-              <p className="text-sm text-gray-600 mt-3">
-                Free tier includes: 1 LES audit/month, top 3 base previews, 3 TDY receipts/trip
+              <p className="mt-3 text-sm text-gray-600">
+                Free tier includes: 5 Ask Assistant questions/month, 1 LES audit/month, basic
+                calculators
               </p>
             </SignedOut>
 
             <SignedIn>
               <Link
                 href="/dashboard"
-                className="inline-block px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg"
+                className="inline-block rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700"
               >
                 Go to Dashboard →
               </Link>
@@ -57,28 +59,22 @@ export default function Home() {
       </section>
 
       {/* 5 Premium Tools */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 font-lora mb-4">
-              5 Premium Tools
-            </h2>
-            <p className="text-xl text-gray-600">
-              Everything you need to master military finances
-            </p>
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="font-lora mb-4 text-4xl font-bold text-gray-900">5 Premium Tools</h2>
+            <p className="text-xl text-gray-600">Everything you need to master military finances</p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 max-w-7xl mx-auto">
+          <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {/* LES Auditor */}
             <AnimatedCard>
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6 h-full">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="DollarSign" className="w-6 h-6 text-green-600" />
+              <div className="h-full rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+                  <Icon name="DollarSign" className="h-6 w-6 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">LES Auditor</h3>
-                <p className="text-sm text-gray-700 mb-3">
-                  Catch pay errors. Verify BAH/BAS/COLA.
-                </p>
+                <h3 className="mb-2 text-xl font-bold text-gray-900">LES Auditor</h3>
+                <p className="mb-3 text-sm text-gray-700">Catch pay errors. Verify BAH/BAS/COLA.</p>
                 <div className="text-xs font-semibold text-green-700">
                   Automated pay verification
                 </div>
@@ -87,65 +83,55 @@ export default function Home() {
 
             {/* PCS Copilot */}
             <AnimatedCard delay={0.1}>
-              <div className="bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-lg p-6 h-full">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Truck" className="w-6 h-6 text-orange-600" />
+              <div className="h-full rounded-lg border border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                  <Icon name="Truck" className="h-6 w-6 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">PCS Copilot</h3>
-                <p className="text-sm text-gray-700 mb-3">
+                <h3 className="mb-2 text-xl font-bold text-gray-900">PCS Copilot</h3>
+                <p className="mb-3 text-sm text-gray-700">
                   Maximize DITY move profit. Track expenses.
                 </p>
-                <div className="text-xs font-semibold text-orange-700">
-                  Move optimization
-                </div>
+                <div className="text-xs font-semibold text-orange-700">Move optimization</div>
               </div>
             </AnimatedCard>
 
             {/* Base Navigator */}
             <AnimatedCard delay={0.2}>
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6 h-full">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="MapPin" className="w-6 h-6 text-blue-600" />
+              <div className="h-full rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                  <Icon name="MapPin" className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Base Navigator</h3>
-                <p className="text-sm text-gray-700 mb-3">
+                <h3 className="mb-2 text-xl font-bold text-gray-900">Base Navigator</h3>
+                <p className="mb-3 text-sm text-gray-700">
                   Find perfect neighborhood. Schools + rent.
                 </p>
-                <div className="text-xs font-semibold text-blue-700">
-                  4 data sources
-                </div>
+                <div className="text-xs font-semibold text-blue-700">4 data sources</div>
               </div>
             </AnimatedCard>
 
             {/* TDY Copilot */}
             <AnimatedCard delay={0.3}>
-              <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-6 h-full">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="File" className="w-6 h-6 text-purple-600" />
+              <div className="h-full rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50 p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
+                  <Icon name="File" className="h-6 w-6 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">TDY Copilot</h3>
-                <p className="text-sm text-gray-700 mb-3">
-                  Build travel vouchers in 20 min.
-                </p>
-                <div className="text-xs font-semibold text-purple-700">
-                  Saves 2 hours
-                </div>
+                <h3 className="mb-2 text-xl font-bold text-gray-900">TDY Copilot</h3>
+                <p className="mb-3 text-sm text-gray-700">Build travel vouchers in 20 min.</p>
+                <div className="text-xs font-semibold text-purple-700">Saves 2 hours</div>
               </div>
             </AnimatedCard>
 
-            {/* Intel Library */}
+            {/* Ask Assistant */}
             <AnimatedCard delay={0.4}>
-              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-6 h-full">
-                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="BookOpen" className="w-6 h-6 text-indigo-600" />
+              <div className="h-full rounded-lg border border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 p-6">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
+                  <Icon name="MessageCircle" className="h-6 w-6 text-indigo-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Intel Library</h3>
-                <p className="text-sm text-gray-700 mb-3">
-                  Live BAH/BAS/TSP data. Always current.
+                <h3 className="mb-2 text-xl font-bold text-gray-900">Ask Assistant</h3>
+                <p className="mb-3 text-sm text-gray-700">
+                  Q&A with official military data sources.
                 </p>
-                <div className="text-xs font-semibold text-indigo-700">
-                  12 cards, auto-update
-                </div>
+                <div className="text-xs font-semibold text-indigo-700">5 free questions/month</div>
               </div>
             </AnimatedCard>
           </div>
@@ -153,50 +139,46 @@ export default function Home() {
       </section>
 
       {/* Pricing CTA */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            One price. Four tools. Unlimited use.
-          </p>
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-4xl font-bold text-gray-900">Simple, Transparent Pricing</h2>
+          <p className="mb-8 text-xl text-gray-600">One price. Four tools. Unlimited use.</p>
 
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 max-w-md mx-auto">
+          <div className="mx-auto max-w-md rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
             <div className="mb-6">
-              <div className="text-5xl font-bold text-gray-900 mb-2">
+              <div className="mb-2 text-5xl font-bold text-gray-900">
                 $9.99<span className="text-2xl text-gray-600">/month</span>
               </div>
               <p className="text-gray-600">or $99/year (save $20)</p>
             </div>
 
-            <ul className="text-left space-y-3 mb-8">
+            <ul className="mb-8 space-y-3 text-left">
               <li className="flex items-center gap-3">
-                <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
                 <span className="text-gray-700">Unlimited LES audits</span>
               </li>
               <li className="flex items-center gap-3">
-                <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
+                <span className="text-gray-700">50 Ask Assistant questions/month</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
                 <span className="text-gray-700">Full Base Navigator rankings</span>
               </li>
               <li className="flex items-center gap-3">
-                <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
                 <span className="text-gray-700">Unlimited TDY receipts & vouchers</span>
               </li>
               <li className="flex items-center gap-3">
-                <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="text-gray-700">Premium Intel Cards</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Icon name="CheckCircle" className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
                 <span className="text-gray-700">All calculators & tools</span>
               </li>
             </ul>
 
             <SignedOut>
               <SignUpButton mode="modal">
-                <button className="w-full px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg">
-                  Start Free Trial →
+                <button className="w-full rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700">
+                  Start Free Account →
                 </button>
               </SignUpButton>
             </SignedOut>
@@ -204,7 +186,7 @@ export default function Home() {
             <SignedIn>
               <Link
                 href="/dashboard/upgrade"
-                className="block w-full px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg text-center"
+                className="block w-full rounded-lg bg-blue-600 px-8 py-4 text-center text-lg font-semibold text-white hover:bg-blue-700"
               >
                 Upgrade Now →
               </Link>
@@ -217,4 +199,3 @@ export default function Home() {
     </>
   );
 }
-

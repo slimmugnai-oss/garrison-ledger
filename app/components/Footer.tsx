@@ -3,28 +3,28 @@ import Icon from "./ui/Icon";
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-border bg-card transition-colors dark:border-slate-700 dark:bg-slate-900">
+    <footer className="mt-20 border-t border-gray-200 bg-white transition-colors dark:border-slate-700 dark:bg-slate-900">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           {/* Brand with Authority */}
           <div>
-            <div className="text-text-headings mb-4 text-xl font-bold dark:text-white/90">
-              <Icon name="BarChart" className="mr-1 inline h-5 w-5" /> Garrison Ledger
+            <div className="mb-4 text-xl font-bold text-slate-900 dark:text-white">
+              <Icon name="Shield" className="mr-1 inline h-5 w-5" /> Garrison Ledger
             </div>
-            <p className="text-text-body mb-4 leading-relaxed dark:text-muted">
+            <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-400">
               Intelligent planning for military life.
             </p>
             {/* Authority Signals */}
             <div className="space-y-2">
-              <div className="text-body flex items-center gap-2 text-xs dark:text-muted">
-                <Icon name="Star" className="text-info dark:text-info h-4 w-4" />
+              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                <Icon name="Star" className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <span className="font-semibold">Military Financial Experts</span>
               </div>
-              <div className="text-body flex items-center gap-2 text-xs dark:text-muted">
-                <Icon name="Shield" className="h-4 w-4 text-success dark:text-green-400" />
+              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                <Icon name="Shield" className="h-4 w-4 text-green-600 dark:text-green-400" />
                 <span className="font-semibold">Trusted by 500+ Families</span>
               </div>
-              <div className="text-body flex items-center gap-2 text-xs dark:text-muted">
+              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                 <Icon name="CheckCircle" className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <span className="font-semibold">67+ Years Serving Military Families</span>
               </div>
@@ -33,12 +33,12 @@ export default function Footer() {
 
           {/* Premium Tools */}
           <div>
-            <h3 className="text-text-headings mb-4 font-bold dark:text-white/90">Premium Tools</h3>
+            <h3 className="mb-4 font-bold text-slate-900 dark:text-white">Premium Tools</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/dashboard/paycheck-audit"
-                  className="text-text-body hover:text-primary-accent dark:hover:text-info transition-colors dark:text-muted"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   LES Auditor
                 </Link>
@@ -46,7 +46,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/pcs-copilot"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   PCS Copilot
                 </Link>
@@ -54,7 +54,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/navigator"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Base Navigator
                 </Link>
@@ -62,7 +62,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/tdy-voucher"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   TDY Copilot
                 </Link>
@@ -70,7 +70,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/ask"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Ask Assistant
                 </Link>
@@ -80,12 +80,12 @@ export default function Footer() {
 
           {/* Toolkits */}
           <div>
-            <h3 className="text-text-headings mb-4 font-bold dark:text-white/90">Toolkits</h3>
+            <h3 className="mb-4 font-bold text-slate-900 dark:text-white">Toolkits</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/pcs-hub"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   PCS Hub
                 </Link>
@@ -93,7 +93,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/career-hub"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Career Hub
                 </Link>
@@ -101,7 +101,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/deployment"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Deployment Guide
                 </Link>
@@ -109,7 +109,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/on-base-shopping"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   On-Base Shopping
                 </Link>
@@ -119,12 +119,12 @@ export default function Footer() {
 
           {/* Resources */}
           <div>
-            <h3 className="text-text-headings mb-4 font-bold dark:text-white/90">Resources</h3>
+            <h3 className="mb-4 font-bold text-slate-900 dark:text-white">Resources</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/dashboard/listening-post"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Listening Post
                 </Link>
@@ -132,7 +132,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/directory"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Directory
                 </Link>
@@ -140,7 +140,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/referrals"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Refer & Earn
                 </Link>
@@ -148,7 +148,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/dashboard/upgrade"
-                  className="text-text-body hover:text-primary-accent transition-colors"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Upgrade
                 </Link>
@@ -158,14 +158,12 @@ export default function Footer() {
 
           {/* Support & Legal */}
           <div>
-            <h3 className="text-text-headings mb-4 font-bold dark:text-white/90">
-              Support & Legal
-            </h3>
+            <h3 className="mb-4 font-bold text-slate-900 dark:text-white">Support & Legal</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/contact"
-                  className="text-text-body hover:text-primary-accent font-semibold transition-colors"
+                  className="font-semibold text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Contact Us
                 </Link>
@@ -173,20 +171,23 @@ export default function Footer() {
               <li>
                 <Link
                   href="/disclosures"
-                  className="text-body font-semibold transition-colors hover:text-primary"
+                  className="font-semibold text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Disclosures
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-body transition-colors hover:text-primary">
+                <Link
+                  href="/privacy"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link
                   href="/privacy/cookies"
-                  className="text-body transition-colors hover:text-primary"
+                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Cookie Policy
                 </Link>
@@ -194,7 +195,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/privacy/do-not-sell"
-                  className="text-body text-sm transition-colors hover:text-primary"
+                  className="text-sm text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
                   Do Not Sell (CA)
                 </Link>
@@ -204,19 +205,19 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 border-t border-border pt-8 text-center dark:border-slate-700">
+        <div className="mt-12 border-t border-gray-200 pt-8 text-center dark:border-slate-700">
           <div className="mb-3 flex items-center justify-center gap-3">
-            <div className="text-text-muted text-xs font-medium dark:text-muted">
+            <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
               A FamilyMedia Company
             </div>
           </div>
-          <p className="text-text-muted text-sm dark:text-muted">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             © {new Date().getFullYear()} Garrison Ledger by FamilyMedia, LLC. All rights reserved.
           </p>
-          <p className="text-text-muted mt-1 text-xs dark:text-muted">
+          <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
             Serving Military Families Since 1958
           </p>
-          <p className="text-text-muted mt-2 text-xs dark:text-muted">
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
             Not affiliated with the U.S. Department of Defense or any branch of the Armed Forces.
           </p>
         </div>
