@@ -5,6 +5,59 @@
 
 ---
 
+## **Version 6.0.1** - 2025-10-23
+
+### 🌐 **Domain Migration: app.familymedia.com → garrisonledger.com**
+
+**Status:** ✅ Code Complete (External Services Pending)
+
+**Why This Matters:**
+- Professional military-focused brand identity
+- Better SEO for military search queries
+- Established before user acquisition begins
+- Clean domain name (memorable, trustworthy)
+
+**Code Changes:**
+- ✅ Updated `lib/seo-config.ts` - Site URL and contact email
+- ✅ Updated `lib/email-templates.tsx` - Base URL fallback
+- ✅ Updated all 5 email templates with www domain defaults
+  - `emails/WeeklyDigest.tsx`
+  - `emails/PCSChecklist.tsx`
+  - `emails/OnboardingWelcome.tsx`
+  - `emails/OnboardingFeatures.tsx`
+  - `emails/OnboardingPremium.tsx`
+- ✅ Created comprehensive migration documentation
+- ✅ Updated README.md with new domain
+- ✅ Added CHANGELOG entry
+
+**External Services to Update:**
+- ⏳ Cloudflare DNS configuration (CNAME records)
+- ⏳ Vercel domain addition and SSL provisioning
+- ⏳ Clerk authentication allowed origins
+- ⏳ Stripe webhook endpoint update
+- ⏳ Supabase site URL and redirect URLs
+- ⏳ Google Cloud Console API authorized origins
+- ⏳ Environment variables (NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_APP_URL)
+
+**Migration Approach:**
+- Clean cutover (no real users affected)
+- 301 redirects from old domain
+- Environment variable based (easy rollback)
+- Comprehensive testing checklist
+
+**Documentation:**
+- Created `docs/DOMAIN_MIGRATION_2025-10-23.md` with complete migration guide
+- Step-by-step external service configuration
+- Testing checklist (authentication, payments, APIs, email)
+- Rollback plan for emergency
+
+**Timeline:** 2-3 hours total  
+**Risk Level:** LOW (only test accounts exist)
+
+**See:** [`docs/DOMAIN_MIGRATION_2025-10-23.md`](docs/DOMAIN_MIGRATION_2025-10-23.md) for complete details
+
+---
+
 ## **Version 5.1.0** - 2025-10-20 (Evening Session)
 
 ### 🎨 **Major UI Enhancements & API Fixes**

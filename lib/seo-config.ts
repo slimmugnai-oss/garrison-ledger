@@ -3,13 +3,13 @@
  * Update SITE_URL when moving from subdomain to path-based routing
  */
 
-// 🔧 UPDATE THIS when Danny's redirects go live:
-// Change to: https://familymedia.com
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://app.familymedia.com";
+// Updated 2025-10-23: Domain migration to garrisonledger.com
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.garrisonledger.com";
 
 export const SITE_NAME = "Garrison Ledger";
 export const SITE_TAGLINE = "AI-Powered Financial Planning for Military Life";
-export const SITE_DESCRIPTION = "AI-powered military financial planning platform. Get your personalized plan with 8-10 expert content blocks curated specifically for your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS planner, and house hacking tools.";
+export const SITE_DESCRIPTION =
+  "AI-powered military financial planning platform. Get your personalized plan with 8-10 expert content blocks curated specifically for your rank, situation, and goals. Includes TSP calculator, SDP strategist, PCS planner, and house hacking tools.";
 
 export const SOCIAL_IMAGE = `${SITE_URL}/og-image.png`;
 export const TWITTER_HANDLE = "@GarrisonLedger"; // Update when you have one
@@ -54,7 +54,7 @@ export const DEFAULT_META = {
     "military base guides",
     "military family resources",
     "EFMP program guide",
-    "military childcare options"
+    "military childcare options",
   ],
   authors: [{ name: "Family Media, LLC" }],
   creator: "Family Media, LLC",
@@ -72,16 +72,16 @@ export const DEFAULT_META = {
         url: SOCIAL_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} - Military Financial Planning`
-      }
-    ]
+        alt: `${SITE_NAME} - Military Financial Planning`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} - ${SITE_TAGLINE}`,
     description: SITE_DESCRIPTION,
     images: [SOCIAL_IMAGE],
-    creator: TWITTER_HANDLE
+    creator: TWITTER_HANDLE,
   },
   robots: {
     index: true,
@@ -91,15 +91,15 @@ export const DEFAULT_META = {
       follow: true,
       "max-video-preview": -1,
       "max-image-preview": "large" as const,
-      "max-snippet": -1
-    }
+      "max-snippet": -1,
+    },
   },
   verification: {
     // 🔧 Add these after setting up Google Search Console & Bing Webmaster Tools
     google: "", // Add your Google verification code
     // yandex: "",
     // bing: ""
-  }
+  },
 };
 
 /**
@@ -111,7 +111,7 @@ export function generatePageMeta({
   path,
   keywords,
   noIndex = false,
-  image
+  image,
 }: {
   title: string;
   description: string;
@@ -132,18 +132,18 @@ export function generatePageMeta({
       title: fullTitle,
       description,
       url,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }]
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [ogImage]
+      images: [ogImage],
     },
     alternates: {
-      canonical: url
+      canonical: url,
     },
-    robots: noIndex ? { index: false, follow: false } : DEFAULT_META.robots
+    robots: noIndex ? { index: false, follow: false } : DEFAULT_META.robots,
   };
 }
 
@@ -160,8 +160,8 @@ export const organizationSchema = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "Customer Support",
-    email: "support@familymedia.com"
-  }
+    email: "support@garrisonledger.com",
+  },
 };
 
 export const softwareAppSchema = {
@@ -183,9 +183,9 @@ export const softwareAppSchema = {
         referenceQuantity: {
           "@type": "QuantitativeValue",
           value: "1",
-          unitCode: "MON"
-        }
-      }
+          unitCode: "MON",
+        },
+      },
     },
     {
       "@type": "Offer",
@@ -199,17 +199,17 @@ export const softwareAppSchema = {
         referenceQuantity: {
           "@type": "QuantitativeValue",
           value: "1",
-          unitCode: "ANN"
-        }
-      }
-    }
+          unitCode: "ANN",
+        },
+      },
+    },
   ],
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "4.8",
     ratingCount: "127",
     bestRating: "5",
-    worstRating: "1"
+    worstRating: "1",
   },
   description: SITE_DESCRIPTION,
   screenshot: `${SITE_URL}/screenshot.png`,
@@ -221,8 +221,7 @@ export const softwareAppSchema = {
     "PCS Move Planning & Tools",
     "Career Development Guidance",
     "Deployment Preparation Resources",
-    "Document Management (Binder)"
+    "Document Management (Binder)",
   ],
-  author: organizationSchema
+  author: organizationSchema,
 };
-

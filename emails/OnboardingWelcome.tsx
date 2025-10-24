@@ -10,8 +10,8 @@ import {
   Text,
   Hr,
   Link,
-} from '@react-email/components';
-import * as React from 'react';
+} from "@react-email/components";
+import * as React from "react";
 
 interface OnboardingWelcomeProps {
   userName?: string;
@@ -19,16 +19,16 @@ interface OnboardingWelcomeProps {
 }
 
 export const OnboardingWelcome = ({
-  userName = 'Service Member',
-  baseUrl = 'https://app.familymedia.com',
+  userName = "Service Member",
+  baseUrl = "https://www.garrisonledger.com",
 }: OnboardingWelcomeProps) => {
   const calculators = [
-    { emoji: '💰', name: 'TSP Calculator', desc: 'Project retirement growth' },
-    { emoji: '📦', name: 'PCS Planner', desc: 'Budget move + DITY profit' },
-    { emoji: '🏠', name: 'House Hacking', desc: 'Multi-unit property ROI' },
-    { emoji: '🎯', name: 'SDP Strategist', desc: 'Deployment savings' },
-    { emoji: '🎓', name: 'Career Analyzer', desc: 'Transition planning' },
-    { emoji: '🛒', name: 'On-Base Savings', desc: 'Commissary benefits' },
+    { emoji: "💰", name: "TSP Calculator", desc: "Project retirement growth" },
+    { emoji: "📦", name: "PCS Planner", desc: "Budget move + DITY profit" },
+    { emoji: "🏠", name: "House Hacking", desc: "Multi-unit property ROI" },
+    { emoji: "🎯", name: "SDP Strategist", desc: "Deployment savings" },
+    { emoji: "🎓", name: "Career Analyzer", desc: "Transition planning" },
+    { emoji: "🛒", name: "On-Base Savings", desc: "Commissary benefits" },
   ];
 
   return (
@@ -49,7 +49,8 @@ export const OnboardingWelcome = ({
             </Text>
 
             <Text style={text}>
-              You have immediate access to <strong>6 free military-specific financial calculators:</strong>
+              You have immediate access to{" "}
+              <strong>6 free military-specific financial calculators:</strong>
             </Text>
 
             {/* Calculator List */}
@@ -75,18 +76,15 @@ export const OnboardingWelcome = ({
             </Button>
 
             {/* Sign-off */}
-            <Text style={footer}>
-              Questions? Just reply to this email - we read every message.
-            </Text>
-            <Text style={signature}>
-              - The Garrison Ledger Team
-            </Text>
+            <Text style={footer}>Questions? Just reply to this email - we read every message.</Text>
+            <Text style={signature}>- The Garrison Ledger Team</Text>
           </Section>
 
           {/* Unsubscribe Footer */}
           <Hr style={hr} />
           <Text style={unsubscribe}>
-            You're receiving this as part of your welcome to Garrison Ledger.<br />
+            You're receiving this as part of your welcome to Garrison Ledger.
+            <br />
             <Link href={`${baseUrl}/dashboard/settings`} style={link}>
               Update email preferences
             </Link>
@@ -101,127 +99,127 @@ export default OnboardingWelcome;
 
 // Styles
 const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  backgroundColor: "#f6f9fc",
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
 };
 
 const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  marginBottom: '64px',
-  maxWidth: '600px',
+  backgroundColor: "#ffffff",
+  margin: "0 auto",
+  marginBottom: "64px",
+  maxWidth: "600px",
 };
 
 const header = {
-  background: 'linear-gradient(135deg, #1e40af 0%, #7c3aed 100%)',
-  padding: '40px 20px',
-  textAlign: 'center' as const,
+  background: "linear-gradient(135deg, #1e40af 0%, #7c3aed 100%)",
+  padding: "40px 20px",
+  textAlign: "center" as const,
 };
 
 const headerTitle = {
-  color: '#ffffff',
-  margin: '0',
-  fontSize: '28px',
-  fontWeight: 'bold',
+  color: "#ffffff",
+  margin: "0",
+  fontSize: "28px",
+  fontWeight: "bold",
 };
 
 const content = {
-  padding: '40px 20px',
+  padding: "40px 20px",
 };
 
 const text = {
-  color: '#374151',
-  fontSize: '16px',
-  lineHeight: '1.6',
-  margin: '0 0 16px 0',
+  color: "#374151",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "0 0 16px 0",
 };
 
 const calculatorList = {
-  margin: '24px 0',
+  margin: "24px 0",
 };
 
 const calculatorItem = {
-  display: 'flex' as const,
-  alignItems: 'flex-start' as const,
-  marginBottom: '12px',
-  backgroundColor: '#f9fafb',
-  border: '1px solid #e5e7eb',
-  borderRadius: '8px',
-  padding: '12px',
+  display: "flex" as const,
+  alignItems: "flex-start" as const,
+  marginBottom: "12px",
+  backgroundColor: "#f9fafb",
+  border: "1px solid #e5e7eb",
+  borderRadius: "8px",
+  padding: "12px",
 };
 
 const calculatorEmoji = {
-  fontSize: '24px',
-  margin: '0 12px 0 0',
-  lineHeight: '1',
+  fontSize: "24px",
+  margin: "0 12px 0 0",
+  lineHeight: "1",
 };
 
 const calculatorInfo = {
-  flex: '1',
+  flex: "1",
 };
 
 const calculatorName = {
-  color: '#1f2937',
-  fontSize: '14px',
-  fontWeight: 'bold',
-  margin: '0 0 2px 0',
+  color: "#1f2937",
+  fontSize: "14px",
+  fontWeight: "bold",
+  margin: "0 0 2px 0",
 };
 
 const calculatorDesc = {
-  color: '#6b7280',
-  fontSize: '12px',
-  margin: '0',
+  color: "#6b7280",
+  fontSize: "12px",
+  margin: "0",
 };
 
 const highlight = {
-  color: '#374151',
-  fontSize: '16px',
-  lineHeight: '1.6',
-  margin: '24px 0 16px 0',
+  color: "#374151",
+  fontSize: "16px",
+  lineHeight: "1.6",
+  margin: "24px 0 16px 0",
 };
 
 const button = {
-  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-  borderRadius: '8px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  padding: '16px 32px',
-  margin: '24px 0',
+  background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+  borderRadius: "8px",
+  color: "#fff",
+  fontSize: "16px",
+  fontWeight: "bold",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  padding: "16px 32px",
+  margin: "24px 0",
 };
 
 const footer = {
-  color: '#6b7280',
-  fontSize: '14px',
-  lineHeight: '1.6',
-  marginTop: '32px',
-  marginBottom: '8px',
+  color: "#6b7280",
+  fontSize: "14px",
+  lineHeight: "1.6",
+  marginTop: "32px",
+  marginBottom: "8px",
 };
 
 const signature = {
-  color: '#2563eb',
-  fontWeight: 'bold',
-  margin: '0',
+  color: "#2563eb",
+  fontWeight: "bold",
+  margin: "0",
 };
 
 const hr = {
-  borderColor: '#e5e7eb',
-  margin: '40px 0 20px 0',
+  borderColor: "#e5e7eb",
+  margin: "40px 0 20px 0",
 };
 
 const unsubscribe = {
-  color: '#9ca3af',
-  fontSize: '11px',
-  textAlign: 'center' as const,
-  margin: '0',
-  lineHeight: '1.5',
+  color: "#9ca3af",
+  fontSize: "11px",
+  textAlign: "center" as const,
+  margin: "0",
+  lineHeight: "1.5",
 };
 
 const link = {
-  color: '#6b7280',
-  textDecoration: 'underline',
+  color: "#6b7280",
+  textDecoration: "underline",
 };
-

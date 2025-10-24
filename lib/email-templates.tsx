@@ -1,11 +1,11 @@
-import { render } from '@react-email/render';
-import OnboardingWelcome from '@/emails/OnboardingWelcome';
-import OnboardingFeatures from '@/emails/OnboardingFeatures';
-import OnboardingPremium from '@/emails/OnboardingPremium';
-import WeeklyDigest from '@/emails/WeeklyDigest';
-import PCSChecklist from '@/emails/PCSChecklist';
+import { render } from "@react-email/render";
+import OnboardingWelcome from "@/emails/OnboardingWelcome";
+import OnboardingFeatures from "@/emails/OnboardingFeatures";
+import OnboardingPremium from "@/emails/OnboardingPremium";
+import WeeklyDigest from "@/emails/WeeklyDigest";
+import PCSChecklist from "@/emails/PCSChecklist";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.familymedia.com';
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.garrisonledger.com";
 
 /**
  * Email template renderer using React Email
@@ -39,19 +39,18 @@ export async function renderPCSChecklist(): Promise<string> {
  * Updated for 3-email sequence (Days 0, 3, 7)
  */
 export function getEmailSubject(template: string, userName?: string): string {
-  const name = userName || 'Service Member';
-  
+  const name = userName || "Service Member";
+
   const subjects: Record<string, string> = {
     // Onboarding sequence (3 emails)
-    'onboarding_welcome': `Welcome to Garrison Ledger - 6 Free Tools Ready`,
-    'onboarding_features': `Planning a PCS? Check These 2 Tools`,
-    'onboarding_premium': `Ready for Full Access? $9.99/month`,
-    
+    onboarding_welcome: `Welcome to Garrison Ledger - 6 Free Tools Ready`,
+    onboarding_features: `Planning a PCS? Check These 2 Tools`,
+    onboarding_premium: `Ready for Full Access? $9.99/month`,
+
     // Recurring & Lead Magnets
-    'weekly_digest': `${name}, Your Weekly Military Finance Update`,
-    'pcs_checklist': 'Your PCS Financial Checklist',
+    weekly_digest: `${name}, Your Weekly Military Finance Update`,
+    pcs_checklist: "Your PCS Financial Checklist",
   };
 
-  return subjects[template] || 'Update from Garrison Ledger';
+  return subjects[template] || "Update from Garrison Ledger";
 }
-

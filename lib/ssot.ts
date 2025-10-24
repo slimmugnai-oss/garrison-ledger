@@ -122,6 +122,48 @@ export const ssot = {
   },
 
   /**
+   * PRICING & MONETIZATION
+   */
+  pricing: {
+    subscription: {
+      monthly: {
+        priceUSD: 9.99,
+        priceId: process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID || "",
+        productId: "prod_TE5hK7gmtxzx1R",
+      },
+      annual: {
+        priceUSD: 99,
+        priceId: process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID || "",
+        productId: "prod_TE5hK7gmtxzx1R",
+        savings: 20, // $99 vs $119.88
+      },
+    },
+    questionPacks: {
+      pack25: {
+        questions: 25,
+        priceUSD: 1.99,
+        priceId: process.env.STRIPE_QUESTION_PACK_25_PRICE_ID || "",
+        productId: "prod_TI2nU6NbiSqE3u",
+        perQuestionCost: 0.0796,
+      },
+      pack100: {
+        questions: 100,
+        priceUSD: 5.99,
+        priceId: process.env.STRIPE_QUESTION_PACK_100_PRICE_ID || "",
+        productId: "prod_TI2pfWg3kcUG3l",
+        perQuestionCost: 0.0599,
+      },
+      pack250: {
+        questions: 250,
+        priceUSD: 9.99,
+        priceId: process.env.STRIPE_QUESTION_PACK_250_PRICE_ID || "",
+        productId: "prod_TI2qsCEXsNzfvS",
+        perQuestionCost: 0.03996,
+      },
+    },
+  },
+
+  /**
    * PLATFORM COUNTS
    * These should be computed at build/CI time
    * Manual edits discouraged - use generated/metrics.json

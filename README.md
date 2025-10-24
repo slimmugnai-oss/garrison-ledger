@@ -173,11 +173,13 @@ GOOGLE_API_KEY=
 
 ## 📊 PROJECT STATUS
 
-**Version:** 6.0.0 (Ask Assistant Launch)  
+**Version:** 6.0.1 (Domain Migration)  
 **Status:** 🟢 Production Ready  
-**Last Updated:** 2025-01-23
+**Domain:** https://www.garrisonledger.com  
+**Last Updated:** 2025-10-23
 
 ### **Recent Updates**
+- ✅ Domain Migration to garrisonledger.com (v6.0.1)
 - ✅ Ask Assistant Q&A Virtual Assistant (v6.0.0)
 - ✅ LES Auditor Pay Verification Tool
 - ✅ PCS Copilot Complete Planning System
