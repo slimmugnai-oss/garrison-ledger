@@ -19,65 +19,100 @@ interface OnboardingWelcomeProps {
 }
 
 export const OnboardingWelcome = ({
-  userName = "Service Member",
+  userName = "there",
   baseUrl = "https://www.garrisonledger.com",
 }: OnboardingWelcomeProps) => {
-  const calculators = [
-    { emoji: "💰", name: "TSP Calculator", desc: "Project retirement growth" },
-    { emoji: "📦", name: "PCS Planner", desc: "Budget move + DITY profit" },
-    { emoji: "🏠", name: "House Hacking", desc: "Multi-unit property ROI" },
-    { emoji: "🎯", name: "SDP Strategist", desc: "Deployment savings" },
-    { emoji: "🎓", name: "Career Analyzer", desc: "Transition planning" },
-    { emoji: "🛒", name: "On-Base Savings", desc: "Commissary benefits" },
-  ];
-
   return (
     <Html>
       <Head />
-      <Preview>Welcome to Garrison Ledger - 6 Free Tools Ready to Use</Preview>
+      <Preview>Welcome to Garrison Ledger - Get value in 2 minutes</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Gradient Header */}
           <Section style={header}>
-            <Heading style={headerTitle}>Welcome Aboard, {userName}</Heading>
+            <Heading style={headerTitle}>Hi {userName},</Heading>
           </Section>
 
           {/* Main Content */}
           <Section style={content}>
             <Text style={text}>
-              You just joined <strong>500+ military families</strong> using Garrison Ledger.
+              Welcome to Garrison Ledger. Here's how to get value in 2 minutes:
             </Text>
 
-            <Text style={text}>
-              You have immediate access to{" "}
-              <strong>6 free military-specific financial calculators:</strong>
-            </Text>
-
-            {/* Calculator List */}
-            <Section style={calculatorList}>
-              {calculators.map((calc, idx) => (
-                <Section key={idx} style={calculatorItem}>
-                  <Text style={calculatorEmoji}>{calc.emoji}</Text>
-                  <Section style={calculatorInfo}>
-                    <Text style={calculatorName}>{calc.name}</Text>
-                    <Text style={calculatorDesc}>{calc.desc}</Text>
-                  </Section>
-                </Section>
-              ))}
+            {/* Profile Completion Section */}
+            <Section style={actionSection}>
+              <Text style={sectionTitle}>
+                <strong>1. Complete your profile</strong>
+              </Text>
+              <Text style={text}>
+                Enter rank, years of service, zip/MHA, and dependents to unlock personalized calculations.
+              </Text>
+              <Button style={button} href={`${baseUrl}/dashboard/profile/setup`}>
+                Complete Your Profile →
+              </Button>
             </Section>
 
-            <Text style={highlight}>
-              <strong>Best part?</strong> No paywall. Use them right now.
+            {/* LES Auditor Section */}
+            <Section style={actionSection}>
+              <Text style={sectionTitle}>
+                <strong>2. Run your first LES audit</strong>
+              </Text>
+              <Text style={text}>
+                We auto-fill official tables (BAH/BAS/Base Pay/COLA/SGLI). You enter your actual taxes from the LES; we validate the math and flag issues.
+              </Text>
+              <Button style={buttonSecondary} href={`${baseUrl}/dashboard/les-auditor`}>
+                Try LES Auditor →
+              </Button>
+            </Section>
+
+            {/* Premium Tools Section */}
+            <Section style={actionSection}>
+              <Text style={sectionTitle}>
+                <strong>3. Try a premium tool:</strong>
+              </Text>
+              <Text style={text}>
+                • <Link href={`${baseUrl}/dashboard/tdy`} style={linkBold}>TDY / Travel Voucher Copilot</Link>
+              </Text>
+              <Text style={text}>
+                • <Link href={`${baseUrl}/dashboard/navigator`} style={linkBold}>Base / Area Navigator</Link>
+              </Text>
+            </Section>
+
+            {/* Free Access */}
+            <Text style={text}>
+              You also have access to our <strong>6 free calculators</strong> and <strong>"Ask a Military Expert"</strong>.
             </Text>
 
-            {/* CTA Button */}
-            <Button style={button} href={`${baseUrl}/dashboard`}>
-              Explore Free Calculators →
-            </Button>
+            {/* Premium Upgrade Section */}
+            <Section style={premiumSection}>
+              <Text style={premiumTitle}>
+                If you find value, Premium is $9.99/month:
+              </Text>
+              <Text style={bulletText}>
+                • Unlimited audits + full detail and history
+              </Text>
+              <Text style={bulletText}>
+                • Full TDY flow (unlimited docs)
+              </Text>
+              <Text style={bulletText}>
+                • Complete Base Navigator rankings and watchlists
+              </Text>
+              <Text style={bulletText}>
+                • More "Ask a Military Expert" questions
+              </Text>
+              <Button style={button} href={`${baseUrl}/dashboard/upgrade`}>
+                Upgrade to Premium →
+              </Button>
+            </Section>
 
             {/* Sign-off */}
-            <Text style={footer}>Questions? Just reply to this email - we read every message.</Text>
-            <Text style={signature}>- The Garrison Ledger Team</Text>
+            <Text style={footer}>
+              Questions or feedback? Reply to this email or contact{" "}
+              <Link href="mailto:support@garrisonledger.com" style={link}>
+                support@garrisonledger.com
+              </Link>
+            </Text>
+            <Text style={signature}>— The Garrison Ledger Team</Text>
           </Section>
 
           {/* Unsubscribe Footer */}
@@ -135,48 +170,19 @@ const text = {
   margin: "0 0 16px 0",
 };
 
-const calculatorList = {
-  margin: "24px 0",
-};
-
-const calculatorItem = {
-  display: "flex" as const,
-  alignItems: "flex-start" as const,
-  marginBottom: "12px",
+const actionSection = {
   backgroundColor: "#f9fafb",
   border: "1px solid #e5e7eb",
   borderRadius: "8px",
-  padding: "12px",
+  padding: "20px",
+  margin: "24px 0",
 };
 
-const calculatorEmoji = {
-  fontSize: "24px",
-  margin: "0 12px 0 0",
-  lineHeight: "1",
-};
-
-const calculatorInfo = {
-  flex: "1",
-};
-
-const calculatorName = {
+const sectionTitle = {
   color: "#1f2937",
-  fontSize: "14px",
+  fontSize: "18px",
   fontWeight: "bold",
-  margin: "0 0 2px 0",
-};
-
-const calculatorDesc = {
-  color: "#6b7280",
-  fontSize: "12px",
-  margin: "0",
-};
-
-const highlight = {
-  color: "#374151",
-  fontSize: "16px",
-  lineHeight: "1.6",
-  margin: "24px 0 16px 0",
+  margin: "0 0 12px 0",
 };
 
 const button = {
@@ -189,7 +195,48 @@ const button = {
   textAlign: "center" as const,
   display: "block",
   padding: "16px 32px",
+  margin: "16px 0 0 0",
+};
+
+const buttonSecondary = {
+  background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+  borderRadius: "8px",
+  color: "#fff",
+  fontSize: "16px",
+  fontWeight: "bold",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "block",
+  padding: "16px 32px",
+  margin: "16px 0 0 0",
+};
+
+const linkBold = {
+  color: "#2563eb",
+  textDecoration: "underline",
+  fontWeight: "600",
+};
+
+const premiumSection = {
+  backgroundColor: "#fef3c7",
+  border: "2px solid #f59e0b",
+  borderRadius: "8px",
+  padding: "24px",
   margin: "24px 0",
+};
+
+const premiumTitle = {
+  color: "#92400e",
+  fontSize: "18px",
+  fontWeight: "bold",
+  margin: "0 0 16px 0",
+};
+
+const bulletText = {
+  color: "#92400e",
+  fontSize: "15px",
+  lineHeight: "1.6",
+  margin: "0 0 8px 0",
 };
 
 const footer = {

@@ -43,7 +43,7 @@ export function getEmailSubject(template: string, userName?: string): string {
 
   const subjects: Record<string, string> = {
     // Onboarding sequence (3 emails)
-    onboarding_welcome: `Welcome to Garrison Ledger - 6 Free Tools Ready`,
+    onboarding_welcome: `Welcome to Garrison Ledger`,
     onboarding_features: `Planning a PCS? Check These 2 Tools`,
     onboarding_premium: `Ready for Full Access? $9.99/month`,
 
