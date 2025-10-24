@@ -91,7 +91,9 @@ export default function Home() {
                 <p className="mb-3 text-sm text-gray-700">
                   Maximize DITY move profit. Track expenses.
                 </p>
-                <div className="text-xs font-semibold text-orange-700">Avg $2,400 profit per PCS</div>
+                <div className="text-xs font-semibold text-orange-700">
+                  Avg $2,400 profit per PCS
+                </div>
               </div>
             </AnimatedCard>
 

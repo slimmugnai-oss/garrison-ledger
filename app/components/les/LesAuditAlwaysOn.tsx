@@ -204,12 +204,12 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       // Only fetch if we have complete profile data
       if (!month || !year || !paygrade || !mhaOrZip) return;
 
-      console.log('[LesAuditAlwaysOn] Fetching expected values with:', {
+      console.log("[LesAuditAlwaysOn] Fetching expected values with:", {
         month,
         year,
         rank: paygrade,
         location: mhaOrZip,
-        hasDependents: withDependents
+        hasDependents: withDependents,
       });
 
       setLoadingExpected(true);
@@ -229,8 +229,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
         if (response.ok) {
           const data = await response.json();
-          
-          console.log('[LesAuditAlwaysOn] Received expected values:', data);
+
+          console.log("[LesAuditAlwaysOn] Received expected values:", data);
 
           // Auto-fill allowances (official DFAS data) - only if field is empty
           if (data.base_pay && basePay === 0) setBasePay(data.base_pay);

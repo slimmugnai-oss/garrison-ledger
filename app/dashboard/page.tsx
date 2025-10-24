@@ -106,7 +106,8 @@ export default async function Dashboard() {
           <div className="mb-12">
             <h2 className="mb-6 text-2xl font-semibold text-gray-900">Your Premium Tools</h2>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Top Row: 3 cards */}
+            <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* LES Auditor */}
               <AnimatedCard delay={0}>
                 <Link
@@ -169,8 +170,42 @@ export default async function Dashboard() {
                 </Link>
               </AnimatedCard>
 
-              {/* TDY Copilot */}
+              {/* PCS Copilot */}
               <AnimatedCard delay={0.2}>
+                <Link
+                  href="/dashboard/pcs-copilot"
+                  className="block h-full rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg"
+                >
+                  <div className="flex h-full flex-col">
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                        <Icon name="Truck" className="h-6 w-6 text-orange-600" />
+                      </div>
+                      {!isPremium && (
+                        <Badge variant="warning">
+                          <Icon name="Lock" className="mr-1 inline h-3 w-3" />
+                          Premium
+                        </Badge>
+                      )}
+                    </div>
+
+                    <h3 className="mb-2 text-lg font-semibold text-gray-900">PCS Copilot</h3>
+                    <p className="mb-4 flex-grow text-sm text-gray-600">
+                      Maximize DITY move profit. Track receipts, estimate reimbursements.
+                    </p>
+
+                    <div className="text-sm text-gray-500">
+                      {isPremium ? "Unlimited claims" : "Premium only"}
+                    </div>
+                  </div>
+                </Link>
+              </AnimatedCard>
+            </div>
+
+            {/* Bottom Row: 2 cards centered */}
+            <div className="grid gap-6 md:grid-cols-2 lg:mx-auto lg:max-w-2xl">
+              {/* TDY Copilot */}
+              <AnimatedCard delay={0.3}>
                 <Link
                   href="/dashboard/tdy-voucher"
                   className="block h-full rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg"
@@ -203,7 +238,7 @@ export default async function Dashboard() {
               </AnimatedCard>
 
               {/* Ask Assistant */}
-              <AnimatedCard delay={0.3}>
+              <AnimatedCard delay={0.4}>
                 <Link
                   href="/dashboard/ask"
                   className="block h-full rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg"
@@ -230,50 +265,76 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Recent Activity */}
           <div className="mb-12">
-            <h2 className="mb-6 text-2xl font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="mb-6 text-2xl font-semibold text-gray-900">Recent Activity</h2>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Link
-                href="/dashboard/paycheck-audit"
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon name="Upload" className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-gray-900">Upload LES</span>
+            <div className="rounded-lg border border-gray-200 bg-white p-6">
+              <div className="space-y-4">
+                {/* LES Audits This Month */}
+                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+                      <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">LES Audits</div>
+                      <div className="text-sm text-gray-600">This month</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">{lesUploads || 0}</div>
+                    <div className="text-xs text-gray-500">
+                      {isPremium ? "Unlimited" : "1 free/month"}
+                    </div>
+                  </div>
                 </div>
-              </Link>
 
-              <Link
-                href="/dashboard/navigator/jblm"
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-gray-900">Compare Bases</span>
+                {/* TDY Trips Total */}
+                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                      <Icon name="File" className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">TDY Trips</div>
+                      <div className="text-sm text-gray-600">Total tracked</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">{tdyTrips || 0}</div>
+                    <div className="text-xs text-gray-500">
+                      {isPremium ? "Unlimited receipts" : "3 receipts/trip"}
+                    </div>
+                  </div>
                 </div>
-              </Link>
 
-              <Link
-                href="/dashboard/tdy-voucher"
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon name="File" className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-gray-900">Create TDY Trip</span>
+                {/* Profile Completion */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                      <Icon name="User" className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">Profile</div>
+                      <div className="text-sm text-gray-600">Setup status</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">
+                      {profileComplete ? "100%" : "Incomplete"}
+                    </div>
+                    {!profileComplete && (
+                      <Link
+                        href="/dashboard/profile/setup"
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Complete now
+                      </Link>
+                    )}
+                  </div>
                 </div>
-              </Link>
-
-              <Link
-                href="/dashboard/ask"
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon name="Search" className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium text-gray-900">Browse Intel</span>
-                </div>
-              </Link>
+              </div>
             </div>
           </div>
 
@@ -282,24 +343,29 @@ export default async function Dashboard() {
             <h2 className="mb-6 text-2xl font-semibold text-gray-900">Financial Calculators</h2>
 
             <div className="grid gap-4 md:grid-cols-3">
+              {/* TSP Modeler */}
               <Link
                 href="/dashboard/tools/tsp-modeler"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
-                <Icon name="Calculator" className="mb-3 h-8 w-8 text-blue-600" />
+                <Icon name="TrendingUp" className="mb-3 h-8 w-8 text-blue-600" />
                 <h3 className="mb-1 font-semibold text-gray-900">TSP Modeler</h3>
-                <p className="text-sm text-gray-600">Project retirement balance</p>
+                <p className="text-sm text-gray-600">
+                  Project retirement balance with BRS matching
+                </p>
               </Link>
 
+              {/* SDP Strategist */}
               <Link
                 href="/dashboard/tools/sdp-strategist"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="DollarSign" className="mb-3 h-8 w-8 text-green-600" />
                 <h3 className="mb-1 font-semibold text-gray-900">SDP Strategist</h3>
-                <p className="text-sm text-gray-600">10% deployment savings</p>
+                <p className="text-sm text-gray-600">10% deployment savings calculator</p>
               </Link>
 
+              {/* House Hacking */}
               <Link
                 href="/dashboard/tools/house-hacking"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
@@ -307,6 +373,36 @@ export default async function Dashboard() {
                 <Icon name="Home" className="mb-3 h-8 w-8 text-purple-600" />
                 <h3 className="mb-1 font-semibold text-gray-900">House Hacking</h3>
                 <p className="text-sm text-gray-600">BAH arbitrage calculator</p>
+              </Link>
+
+              {/* PCS Planner */}
+              <Link
+                href="/dashboard/tools/pcs-planner"
+                className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
+              >
+                <Icon name="Truck" className="mb-3 h-8 w-8 text-orange-600" />
+                <h3 className="mb-1 font-semibold text-gray-900">PCS Planner</h3>
+                <p className="text-sm text-gray-600">Move cost estimator and timeline</p>
+              </Link>
+
+              {/* On-Base Savings */}
+              <Link
+                href="/dashboard/tools/on-base-savings"
+                className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
+              >
+                <Icon name="Shield" className="mb-3 h-8 w-8 text-indigo-600" />
+                <h3 className="mb-1 font-semibold text-gray-900">On-Base Savings</h3>
+                <p className="text-sm text-gray-600">Compare on-base vs off-base living costs</p>
+              </Link>
+
+              {/* Military Salary Calculator */}
+              <Link
+                href="/dashboard/tools/salary-calculator"
+                className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
+              >
+                <Icon name="Calculator" className="mb-3 h-8 w-8 text-cyan-600" />
+                <h3 className="mb-1 font-semibold text-gray-900">Military Salary Calculator</h3>
+                <p className="text-sm text-gray-600">Total compensation by rank and location</p>
               </Link>
             </div>
           </div>
