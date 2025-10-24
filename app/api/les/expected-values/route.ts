@@ -37,6 +37,16 @@ export async function POST(req: NextRequest) {
     const body: ExpectedValuesRequest = await req.json();
     const { month, year, rank, location, hasDependents } = body;
 
+    // DEBUG: Log what we received
+    console.log('[ExpectedValues] Request received:', { 
+      userId, 
+      month, 
+      year, 
+      rank, 
+      location, 
+      hasDependents 
+    });
+
     // Validate inputs
     if (!month || !year) {
       throw Errors.invalidInput('month and year are required');
@@ -58,6 +68,16 @@ export async function POST(req: NextRequest) {
     // Try to build expected snapshot using the same logic as audit
     let snapshot;
     try {
+      console.log('[ExpectedValues] Calling buildExpectedSnapshot with:', {
+        userId,
+        month,
+        year,
+        paygrade: rank,
+        mha_or_zip: location,
+        with_dependents: Boolean(hasDependents),
+        yos
+      });
+      
       snapshot = await buildExpectedSnapshot({
         userId,
         month,
@@ -67,8 +87,11 @@ export async function POST(req: NextRequest) {
         with_dependents: Boolean(hasDependents),
         yos
       });
+      
+      console.log('[ExpectedValues] buildExpectedSnapshot SUCCESS, BAH:', snapshot.expected.bah_cents);
     } catch (error) {
       // If exact match fails (e.g., location not in BAH table), use smart fallbacks
+      console.error('[ExpectedValues] buildExpectedSnapshot FAILED:', error);
       logger.warn('[ExpectedValues] buildExpectedSnapshot failed, using fallbacks', { 
         rank, 
         location, 
