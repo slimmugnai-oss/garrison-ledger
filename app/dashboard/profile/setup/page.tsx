@@ -891,34 +891,37 @@ export default function ProfileSetupPage() {
                           >
                             <option value="">Select paygrade</option>
                             <optgroup label="Enlisted (E-1 to E-9)">
-                              <option value="E-1">E-1</option>
-                              <option value="E-2">E-2</option>
-                              <option value="E-3">E-3</option>
-                              <option value="E-4">E-4</option>
-                              <option value="E-5">E-5</option>
-                              <option value="E-6">E-6</option>
-                              <option value="E-7">E-7</option>
-                              <option value="E-8">E-8</option>
-                              <option value="E-9">E-9</option>
+                              <option value="E01">E-1</option>
+                              <option value="E02">E-2</option>
+                              <option value="E03">E-3</option>
+                              <option value="E04">E-4</option>
+                              <option value="E05">E-5</option>
+                              <option value="E06">E-6</option>
+                              <option value="E07">E-7</option>
+                              <option value="E08">E-8</option>
+                              <option value="E09">E-9</option>
                             </optgroup>
                             <optgroup label="Warrant Officer (W-1 to W-5)">
-                              <option value="W-1">W-1</option>
-                              <option value="W-2">W-2</option>
-                              <option value="W-3">W-3</option>
-                              <option value="W-4">W-4</option>
-                              <option value="W-5">W-5</option>
+                              <option value="W01">W-1</option>
+                              <option value="W02">W-2</option>
+                              <option value="W03">W-3</option>
+                              <option value="W04">W-4</option>
+                              <option value="W05">W-5</option>
                             </optgroup>
                             <optgroup label="Officer (O-1 to O-10)">
-                              <option value="O-1">O-1</option>
-                              <option value="O-2">O-2</option>
-                              <option value="O-3">O-3</option>
-                              <option value="O-4">O-4</option>
-                              <option value="O-5">O-5</option>
-                              <option value="O-6">O-6</option>
-                              <option value="O-7">O-7</option>
-                              <option value="O-8">O-8</option>
-                              <option value="O-9">O-9</option>
-                              <option value="O-10">O-10</option>
+                              <option value="O01">O-1</option>
+                              <option value="O02">O-2</option>
+                              <option value="O03">O-3</option>
+                              <option value="O04">O-4</option>
+                              <option value="O05">O-5</option>
+                              <option value="O06">O-6</option>
+                              <option value="O07">O-7</option>
+                              <option value="O08">O-8</option>
+                              <option value="O09">O-9</option>
+                              <option value="O10">O-10</option>
+                              <option value="O01E">O-1E</option>
+                              <option value="O02E">O-2E</option>
+                              <option value="O03E">O-3E</option>
                             </optgroup>
                           </select>
                         </ProfileFormField>
