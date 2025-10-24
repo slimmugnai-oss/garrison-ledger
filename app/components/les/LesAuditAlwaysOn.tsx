@@ -119,6 +119,87 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   );
 
   // ============================================================================
+  // AUTO-CALCULATE FICA & MEDICARE
+  // ============================================================================
+
+  useEffect(() => {
+    // Calculate taxable gross (Base + COLA, excludes BAH/BAS which are tax-free)
+    const taxableGross = basePay + cola;
+    
+    if (taxableGross > 0) {
+      // Auto-fill FICA (6.2%) if currently zero
+      if (fica === 0) {
+        const calculatedFica = Math.round(taxableGross * 0.062);
+        setFica(calculatedFica);
+      }
+      
+      // Auto-fill Medicare (1.45%) if currently zero
+      if (medicare === 0) {
+        const calculatedMedicare = Math.round(taxableGross * 0.0145);
+        setMedicare(calculatedMedicare);
+      }
+    }
+  }, [basePay, cola]); // Only recalculate when these change, not when fica/medicare change
+
+  // ============================================================================
+  // TAX VALIDATION LOGIC
+  // ============================================================================
+
+  const taxValidation = useMemo(() => {
+    const warnings: string[] = [];
+    const advisories: string[] = [];
+    
+    const taxableGross = basePay + cola;
+    
+    if (taxableGross === 0) return { warnings, advisories };
+    
+    // Validate FICA (should be 6.2% of taxable gross, ±$5 tolerance)
+    const expectedFica = Math.round(taxableGross * 0.062);
+    if (fica > 0 && Math.abs(fica - expectedFica) > 5) {
+      warnings.push(
+        `FICA is $${(fica / 100).toFixed(2)} but expected $${(expectedFica / 100).toFixed(2)} (6.2% of taxable gross). Check your LES.`
+      );
+    }
+    
+    // Validate Medicare (should be 1.45% of taxable gross, ±$2 tolerance)
+    const expectedMedicare = Math.round(taxableGross * 0.0145);
+    if (medicare > 0 && Math.abs(medicare - expectedMedicare) > 2) {
+      warnings.push(
+        `Medicare is $${(medicare / 100).toFixed(2)} but expected $${(expectedMedicare / 100).toFixed(2)} (1.45% of taxable gross). Check your LES.`
+      );
+    }
+    
+    // Federal tax reasonableness checks
+    const federalPercent = (federalTax / taxableGross) * 100;
+    
+    if (federalTax === 0) {
+      // $0 federal tax - could be CZTE, W-4 exemptions, or low income
+      advisories.push(
+        `Federal tax is $0.00. This could be due to: Combat Zone Tax Exclusion (CZTE), W-4 exemptions, or income below tax threshold. Verify this matches your LES.`
+      );
+    } else if (federalPercent < 5) {
+      advisories.push(
+        `Federal tax (${federalPercent.toFixed(1)}%) seems low. Typical: 10-15%. This might be correct if you have many exemptions or adjusted your W-4.`
+      );
+    } else if (federalPercent > 25) {
+      advisories.push(
+        `Federal tax (${federalPercent.toFixed(1)}%) seems high. Typical: 10-15%. This might be correct if you requested additional withholding on your W-4.`
+      );
+    }
+    
+    // Total tax burden check (shouldn't exceed 35%)
+    const totalTaxes = federalTax + stateTax + fica + medicare;
+    const totalPercent = (totalTaxes / taxableGross) * 100;
+    if (totalPercent > 35) {
+      warnings.push(
+        `Total tax burden is ${totalPercent.toFixed(1)}% - higher than typical 25-30%. Verify all amounts with your LES.`
+      );
+    }
+    
+    return { warnings, advisories };
+  }, [basePay, cola, federalTax, stateTax, fica, medicare]);
+
+  // ============================================================================
   // AUTO-POPULATE EXPECTED VALUES
   // ============================================================================
 
