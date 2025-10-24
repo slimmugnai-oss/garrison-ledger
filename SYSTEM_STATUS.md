@@ -106,14 +106,19 @@
    - Travel reimbursement estimates
    - JTR compliance
 
-5. **Ask Assistant** 🟢 *Active - v6.0*
+5. **Ask Assistant** 🟢 *Active - v6.0.1 - Token Limits Fixed 2025-10-24*
    - Status: Q&A virtual assistant with official data sources
+   - **CRITICAL FIX 2025-10-24:** Token limits increased (350→2048 free, 800→4096 premium)
+   - **Why:** Low limits were cutting off AI mid-generation, causing "..." in responses
+   - **Impact:** Template questions now work flawlessly, complete structured answers
    - Credit system: Free (5/month), Premium (50/month), Credit packs
    - Official data first: DFAS, DTMO, VA, TSP.gov
    - Strict sourcing: All answers cite source + effective date
    - Advisory mode: Clear warnings when no official data
    - Tool handoffs: Suggests LES Auditor, PCS Copilot, etc.
    - AI model: Gemini 2.5 Flash with structured responses
+   - Cost per question: ~$0.006 (less than a penny)
+   - **See:** `docs/ASK_ASSISTANT_TOKEN_LIMIT_FIX.md` for details
 
 ### **Calculators (Free + Premium) - AUTO-POPULATION ENABLED**
 
