@@ -94,7 +94,11 @@ export async function POST(req: NextRequest) {
 
       console.log(
         "[ExpectedValues] buildExpectedSnapshot SUCCESS, BAH:",
-        snapshot.expected.bah_cents
+        snapshot.expected.bah_cents,
+        "BAH type:",
+        typeof snapshot.expected.bah_cents,
+        "Full snapshot:",
+        JSON.stringify(snapshot.expected, null, 2)
       );
     } catch (error) {
       // If exact match fails (e.g., location not in BAH table), use smart fallbacks
@@ -130,16 +134,16 @@ export async function POST(req: NextRequest) {
     // Taxes are manual entry - we just provide FICA/Medicare for percentage validation
     const isOfficerRank = rank?.toLowerCase().includes("officer") || rank?.startsWith("O");
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       // ALLOWANCES (100% accurate from official tables)
-      bah: snapshot.expected.bah_cents || (Boolean(hasDependents) ? 180000 : 140000),
+      bah: snapshot.expected.bah_cents ?? 0, // Use nullish coalescing - 0 is valid, only null/undefined becomes 0
       bas:
-        snapshot.expected.bas_cents ||
+        snapshot.expected.bas_cents ??
         (isOfficerRank
           ? ssot.militaryPay.basMonthlyCents.officer
           : ssot.militaryPay.basMonthlyCents.enlisted),
-      cola: snapshot.expected.cola_cents || 0,
-      base_pay: snapshot.expected.base_pay_cents || 0,
+      cola: snapshot.expected.cola_cents ?? 0,
+      base_pay: snapshot.expected.base_pay_cents ?? 0,
 
       // SPECIAL PAYS (from profile)
       sdap: snapshot.expected.specials?.find((sp) => sp.code === "SDAP")?.cents || 0,
@@ -166,6 +170,13 @@ export async function POST(req: NextRequest) {
         year: snapshot.year,
       },
     });
+    
+    // Add aggressive no-cache headers
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
   } catch (error) {
     logger.error("[ExpectedValues] Failed to fetch expected values", error);
     return errorResponse(error);
