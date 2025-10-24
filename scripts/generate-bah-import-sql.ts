@@ -48,17 +48,20 @@ export function parseBAHCSV(csvPath: string): BAHRate[] {
       continue;
     }
     
-    const columns = line.split(',');
+    // Handle CSV with quoted location names that contain commas
+    // Example: CA024,"CAMP PENDLETON, CA",3594,3594,...
+    // We need to properly parse the quoted field
+    const match = line.match(/^([^,]+),"([^"]+)",(.+)$/);
+    if (!match) continue;
     
-    if (!columns[0] || columns[0].length < 4) continue;
-    
-    const mha = columns[0].replace(/"/g, '').trim();
-    const locationName = columns[1]?.replace(/"/g, '').trim();
+    const mha = match[1].trim();
+    const locationName = match[2].trim();
+    const rateColumns = match[3].split(',');
     
     if (!locationName) continue;
     
     for (let j = 0; j < PAYGRADES.length; j++) {
-      const rateColumn = columns[j + 2];
+      const rateColumn = rateColumns[j];  // Now using properly parsed rateColumns
       if (!rateColumn) continue;
       
       const rateValue = parseInt(rateColumn.replace(/"/g, '').trim());
