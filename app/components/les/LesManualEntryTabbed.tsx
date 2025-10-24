@@ -728,63 +728,45 @@ export default function LesManualEntryTabbed({
             </div>
 
             <div className="space-y-4">
-              <CurrencyInput
-                label="Federal Income Tax Withheld"
-                value={federalTax}
-                autoFilled={false}
-                onChange={setFederalTax}
-                onOverride={() => {}}
-                helpText='Enter exact amount from LES "FED TAX" or "FITW" line'
-                optional
-              />
+            <CurrencyInput
+              label="Federal Income Tax Withheld"
+              value={federalTax}
+              autoFilled={false}
+              onChange={setFederalTax}
+              onOverride={() => {}}
+              helpText='Enter exact amount from LES "FED TAX" or "FITW" line'
+              optional
+            />
 
-              <CurrencyInput
-                label="State Income Tax Withheld"
-                value={stateTax}
-                autoFilled={false}
-                onChange={setStateTax}
-                onOverride={() => {}}
-                helpText='Enter exact amount from LES "STATE TAX" (enter 0 for TX, FL, WA, etc.)'
-                optional
-              />
+            <CurrencyInput
+              label="State Income Tax Withheld"
+              value={stateTax}
+              autoFilled={false}
+              onChange={setStateTax}
+              onOverride={() => {}}
+              helpText='Enter exact amount from LES "STATE TAX" (enter 0 for TX, FL, WA, etc.)'
+              optional
+            />
 
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                FICA (Social Security)
-                {autoFilled.fica && (
-                  <span className="ml-2 text-xs font-normal text-green-600">
-                    ✓ Calculated (6.2%)
-                  </span>
-                )}
-              </label>
-              <CurrencyInput
-                value={fica}
-                autoFilled={autoFilled.fica}
-                onChange={setFica}
-                onOverride={() => setAutoFilled((prev) => ({ ...prev, fica: false }))}
-                helpText="Auto-calculated at 6.2% of taxable gross - edit if your LES differs"
-                optional
-              />
-            </div>
+            <CurrencyInput
+              label="FICA (Social Security) - Auto-calculated at 6.2%"
+              value={fica}
+              autoFilled={autoFilled.fica}
+              onChange={setFica}
+              onOverride={() => setAutoFilled((prev) => ({ ...prev, fica: false }))}
+              helpText="Auto-calculated at 6.2% of taxable gross - edit if your LES differs"
+              optional
+            />
 
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Medicare
-                {autoFilled.medicare && (
-                  <span className="ml-2 text-xs font-normal text-green-600">
-                    ✓ Calculated (1.45%)
-                  </span>
-                )}
-              </label>
-              <CurrencyInput
-                value={medicare}
-                autoFilled={autoFilled.medicare}
-                onChange={setMedicare}
-                onOverride={() => setAutoFilled((prev) => ({ ...prev, medicare: false }))}
-                helpText="Auto-calculated at 1.45% of taxable gross - edit if your LES differs"
-                optional
-              />
-            </div>
+            <CurrencyInput
+              label="Medicare - Auto-calculated at 1.45%"
+              value={medicare}
+              autoFilled={autoFilled.medicare}
+              onChange={setMedicare}
+              onOverride={() => setAutoFilled((prev) => ({ ...prev, medicare: false }))}
+              helpText="Auto-calculated at 1.45% of taxable gross - edit if your LES differs"
+              optional
+            />
             </div>
 
             <div className="mt-6 flex justify-between border-t pt-6">
