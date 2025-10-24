@@ -678,9 +678,8 @@ function createCZTEInfoFlag(fedTax: number): PayFlag {
   return {
     severity: "green",
     flag_code: "CZTE_INFO",
-    message: `Combat Zone Tax Exclusion detected (Federal tax: $${fedDollars})`,
-    suggestion:
-      "No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.",
+    message: `Federal tax is $${fedDollars}. This could be due to: Combat Zone Tax Exclusion (CZTE), W-4 exemptions, or income below tax threshold.`,
+    suggestion: "Verify this matches your LES. If you're in a combat zone, CZTE exempts federal income tax while FICA/Medicare still apply.",
     ref_url: "https://www.irs.gov/publications/p3",
   };
 }
