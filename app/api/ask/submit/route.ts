@@ -257,12 +257,32 @@ async function generateAnswer(
       }
     );
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[Gemini API] HTTP error:", response.status, errorText);
+      throw new Error(`Gemini API returned ${response.status}: ${errorText}`);
+    }
+
     const result = await response.json();
+    
+    // Enhanced logging
+    console.log("[Gemini API] Response status:", response.status);
+    console.log("[Gemini API] Candidates count:", result.candidates?.length || 0);
+    console.log("[Gemini API] First candidate:", JSON.stringify(result.candidates?.[0], null, 2).substring(0, 500));
+    
     const answerText = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    
+    if (!answerText) {
+      console.error("[Gemini API] No answer text in response:", JSON.stringify(result));
+      throw new Error("Gemini returned empty response");
+    }
+    
+    console.log("[Gemini API] Answer text length:", answerText.length, "chars");
+    console.log("[Gemini API] Answer preview:", answerText.substring(0, 200));
 
     return parseStructuredAnswer(answerText, dataSources, mode);
   } catch (error) {
-    console.error("Gemini API error:", error);
+    console.error("[Gemini API] Error:", error);
     return {
       bottomLine: ["Unable to generate answer at this time. Please try again."],
       nextSteps: [],
@@ -339,23 +359,23 @@ function parseStructuredAnswer(
   try {
     // Remove markdown code blocks if present
     let cleanedText = text.trim();
-    
+
     // Remove ```json or ``` wrapping
     cleanedText = cleanedText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-    
+
     // Try to extract JSON from response - find first { to last }
     const firstBrace = cleanedText.indexOf("{");
     const lastBrace = cleanedText.lastIndexOf("}");
-    
+
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       const jsonString = cleanedText.substring(firstBrace, lastBrace + 1);
       const parsed = JSON.parse(jsonString);
-      
+
       // Validate required fields
       if (!parsed.bottomLine || !Array.isArray(parsed.bottomLine)) {
         throw new Error("Invalid bottomLine field");
       }
-      
+
       return {
         bottomLine: parsed.bottomLine,
         nextSteps: parsed.nextSteps || [],
@@ -369,8 +389,10 @@ function parseStructuredAnswer(
       };
     }
   } catch (error) {
-    console.error("Failed to parse structured answer:", error);
-    console.error("Raw AI response:", text.substring(0, 500));
+    console.error("[ParseAnswer] Failed to parse structured answer:", error);
+    console.error("[ParseAnswer] Raw AI response length:", text.length);
+    console.error("[ParseAnswer] Raw AI response preview:", text.substring(0, 500));
+    console.error("[ParseAnswer] Raw AI response end:", text.substring(Math.max(0, text.length - 200)));
   }
 
   // Fallback - try to extract useful info from text
