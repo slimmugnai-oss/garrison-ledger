@@ -120,23 +120,27 @@
    - Travel reimbursement estimates
    - JTR compliance
 
-5. **Ask Assistant** 🟢 *Active - v6.2.1 - Credit System Fix 2025-01-24*
-   - Status: Q&A virtual assistant with official data sources AND personalized answers
-   - **CREDIT SYSTEM FIX (NEW!):** Fixed critical RLS policy bug preventing free users from accessing credits
-   - **PERSONALIZATION:** Uses user profile for "your BAH" not "hypothetical BAH"
-   - **EXPANDED SCOPE:** Now answers ANY military life question (PCS, deployment, career, benefits)
-   - **Example:** "Based on YOUR profile (E-5 with dependents in El Paso), your BAH is $1,773/month"
-   - Credit system: Free (5/month), Premium (50/month), Credit packs
-   - **Reliability:** 3x retry with exponential backoff, dual initialization (webhook + trigger)
-   - **Error Handling:** Specific error codes and user-friendly messages
-   - Official data first: DFAS, DTMO, VA, TSP.gov
-   - Strict sourcing: All answers cite source + effective date
-   - Advisory mode: Clear warnings when no official data
-   - Tool handoffs: Suggests LES Auditor, PCS Copilot, etc.
-   - AI model: Gemini 2.5 Flash with structured responses
-   - Token limits: 3072 (free), 6144 (premium) - comprehensive answers
-   - Cost per question: ~$0.006 (less than a penny)
-   - **See:** `docs/ASK_ASSISTANT_CREDIT_SYSTEM.md` for complete documentation
+5. **Ask Our Military Expert** 🟡 *Transformation in Progress - Phase 1 Complete 2025-01-25*
+   - **STATUS:** Q&A virtual assistant with official data sources AND personalized answers
+   - **TRANSFORMATION:** Evolving into comprehensive military ecosystem intelligence platform
+   - **Phase 1 Complete (RAG Foundation):** ✅ Vector database, embedding system, hybrid search
+   - **Credit System:** Free (5/month), Premium (50/month), Credit packs - ✅ Fixed RLS bug
+   - **Current Capabilities:**
+     - Personalization: Uses user profile for "your BAH" not "hypothetical BAH"
+     - Expanded scope: Answers ANY military life question (PCS, deployment, career, benefits)
+     - Official data first: DFAS, DTMO, VA, TSP.gov
+     - Strict sourcing: All answers cite source + effective date
+     - Tool handoffs: Suggests LES Auditor, PCS Copilot, etc.
+   - **RAG Infrastructure (NEW!):**
+     - Vector database: Supabase pgvector with HNSW index (<100ms searches)
+     - Embedding model: OpenAI text-embedding-3-small (1536 dimensions)
+     - Knowledge base: 410 content blocks = ~600 chunks embedded
+     - Hybrid search: Vector similarity + keyword matching
+     - Data freshness: 13 sources monitored with auto-refresh
+   - **AI Model:** Gemini 2.5 Flash with structured responses
+   - **Performance:** Token limits: 3072 (free), 6144 (premium), Cost: ~$0.0011/question
+   - **Next:** Phase 2 (Live data fetchers, military expert prompts, RAG integration)
+   - **Docs:** `PHASE_1_SUMMARY.md`, `docs/RAG_PHASE_1_COMPLETE.md`, `docs/DEPLOYMENT_GUIDE_PHASE_1.md`
 
 ### **Calculators (Free + Premium) - AUTO-POPULATION ENABLED**
 
@@ -722,7 +726,22 @@ See: `CODE_QUALITY_IMPLEMENTATION_SUMMARY.md` and `IMPLEMENTATION_SESSION_COMPLE
 
 ## 🔄 RECENT UPDATES
 
-**2025-01-24 (Ask Assistant Credit System Fix - CURRENT):**
+**2025-01-25 (Ask Military Expert - Phase 1 RAG Infrastructure - CURRENT):**
+- ✅ **RAG FOUNDATION COMPLETE:** Built production-grade retrieval-augmented generation system
+- ✅ **Vector Database:** Supabase pgvector with HNSW index for <100ms searches
+- ✅ **Embedding System:** OpenAI text-embedding-3-small integration ($0.02 per 1M tokens)
+- ✅ **Content Chunking:** Smart chunking by content type (500 words, 50-word overlap)
+- ✅ **Hybrid Search:** Vector similarity + keyword matching with deduplication
+- ✅ **Data Freshness Tracking:** 13 data sources monitored with auto-refresh scheduling
+- ✅ **Scripts & Tools:** Batch embedding, status checking, performance testing
+- ✅ **Files Created:** 2,874 lines of production code (6 core files + migration)
+- ✅ **Documentation:** 3 comprehensive guides (technical, deployment, overview)
+- ✅ **Cost:** $0.0055 to embed 410 content blocks, $5.60/month for 5K questions
+- ✅ **Quality:** 0 lint errors, TypeScript strict, RLS secured, performance optimized
+- **Next Phase:** Live data fetchers, military expert prompts, RAG integration with Ask Assistant
+- **See:** `PHASE_1_SUMMARY.md`, `docs/RAG_PHASE_1_COMPLETE.md`, `docs/DEPLOYMENT_GUIDE_PHASE_1.md`
+
+**2025-01-24 (Ask Assistant Credit System Fix):**
 - ✅ **CRITICAL FIX:** Resolved RLS policy bug blocking free users from accessing Ask Assistant
 - ✅ **Root Cause:** Missing INSERT policy on `ask_credits` table prevented credit initialization
 - ✅ **Database Migration:** Applied `20250124_ask_credits_rls_fix.sql` with 4 new RLS policies

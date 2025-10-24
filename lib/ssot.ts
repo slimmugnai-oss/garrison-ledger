@@ -123,6 +123,46 @@ export const ssot = {
         retryDelayMs: 200, // Start with 200ms delay, doubles each retry
         backupTrigger: true, // Database trigger acts as backup if webhook fails
       },
+      // RAG (Retrieval-Augmented Generation) System - NEW!
+      rag: {
+        enabled: true,
+        embeddingModel: "text-embedding-3-small", // OpenAI, 1536 dimensions
+        embeddingCostPer1M: 0.02, // $0.02 per 1M tokens
+        vectorDB: "Supabase pgvector", // Free with existing Supabase plan
+        searchAlgorithm: "HNSW", // Hierarchical Navigable Small World
+        similarityThreshold: 0.7, // Minimum cosine similarity for results
+        maxChunksRetrieved: 10, // Top K chunks to retrieve
+        chunkStrategy: {
+          maxChunkSize: 500, // words
+          overlapSize: 50, // words
+          preserveContext: true, // Include title/headers in chunks
+        },
+        hybridSearch: {
+          vectorWeight: 0.7, // 70% weight to vector similarity
+          keywordWeight: 0.3, // 30% weight to keyword matching
+          deduplicate: true,
+        },
+        performance: {
+          targetSearchTime: 100, // ms for vector search
+          targetTotalTime: 2000, // ms for complete answer generation
+        },
+      },
+      // Data Freshness Tracking - NEW!
+      dataFreshness: {
+        enabled: true,
+        strategy: "cache-first-live-fallback", // Check cache, fetch live if stale
+        freshnessThresholds: {
+          daily: 1,
+          weekly: 7,
+          monthly: 30,
+          quarterly: 90,
+          annually: 365,
+        },
+        autoRefresh: {
+          stale: "background", // Schedule background refresh if stale
+          expired: "immediate", // Fetch live immediately if expired
+        },
+      },
     },
     intelLibrary: {
       status: "deprecated",
