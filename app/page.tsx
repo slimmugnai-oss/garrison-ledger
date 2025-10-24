@@ -14,7 +14,7 @@ import AnimatedCard from "./components/ui/AnimatedCard";
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",
   description:
-    "4 premium tools for military families: LES Auditor, Base Navigator, TDY Copilot, Intel Library. Catch pay errors, find perfect neighborhoods, build compliant vouchers.",
+    "5 premium tools for military families: LES Auditor catches pay errors automatically, Base Navigator finds your perfect neighborhood, PCS Copilot maximizes DITY profit, TDY Copilot builds vouchers fast, Ask Assistant answers military finance questions with official data.",
 };
 
 export default function Home() {
@@ -76,7 +76,7 @@ export default function Home() {
                 <h3 className="mb-2 text-xl font-bold text-gray-900">LES Auditor</h3>
                 <p className="mb-3 text-sm text-gray-700">Catch pay errors. Verify BAH/BAS/COLA.</p>
                 <div className="text-xs font-semibold text-green-700">
-                  Automated pay verification
+                  Members find $500+ errors
                 </div>
               </div>
             </AnimatedCard>
@@ -91,7 +91,7 @@ export default function Home() {
                 <p className="mb-3 text-sm text-gray-700">
                   Maximize DITY move profit. Track expenses.
                 </p>
-                <div className="text-xs font-semibold text-orange-700">Move optimization</div>
+                <div className="text-xs font-semibold text-orange-700">Avg $2,400 profit per PCS</div>
               </div>
             </AnimatedCard>
 
@@ -105,7 +105,7 @@ export default function Home() {
                 <p className="mb-3 text-sm text-gray-700">
                   Find perfect neighborhood. Schools + rent.
                 </p>
-                <div className="text-xs font-semibold text-blue-700">4 data sources</div>
+                <div className="text-xs font-semibold text-blue-700">203 bases ranked</div>
               </div>
             </AnimatedCard>
 
@@ -117,7 +117,7 @@ export default function Home() {
                 </div>
                 <h3 className="mb-2 text-xl font-bold text-gray-900">TDY Copilot</h3>
                 <p className="mb-3 text-sm text-gray-700">Build travel vouchers in 20 min.</p>
-                <div className="text-xs font-semibold text-purple-700">Saves 2 hours</div>
+                <div className="text-xs font-semibold text-purple-700">Save 2+ hours per trip</div>
               </div>
             </AnimatedCard>
 
@@ -131,7 +131,7 @@ export default function Home() {
                 <p className="mb-3 text-sm text-gray-700">
                   Q&A with official military data sources.
                 </p>
-                <div className="text-xs font-semibold text-indigo-700">5 free questions/month</div>
+                <div className="text-xs font-semibold text-indigo-700">Answers in 10 seconds</div>
               </div>
             </AnimatedCard>
           </div>
