@@ -16,6 +16,7 @@ import AnimatedCard from "../components/ui/AnimatedCard";
 import Icon from "../components/ui/Icon";
 import Badge from "../components/ui/Badge";
 import { ensureUserExists } from "@/lib/ensure-user-exists";
+import ProfileSummaryWidget from "../components/dashboard/ProfileSummaryWidget";
 
 export const metadata: Metadata = {
   title: "Dashboard - Garrison Ledger",
@@ -49,11 +50,6 @@ export default async function Dashboard() {
     .maybeSingle();
 
   const profileComplete = profile?.profile_completed || false;
-
-  // If profile not complete, redirect to quick-start
-  if (!profileComplete) {
-    redirect("/dashboard/profile/quick-start");
-  }
 
   // Get usage stats
   const firstDayOfMonth = new Date();
@@ -97,6 +93,14 @@ export default async function Dashboard() {
               </div>
             </div>
           )}
+
+          {/* Profile Summary Widget */}
+          <div className="mb-12">
+            <ProfileSummaryWidget
+              profile={profile || {}}
+              userName={user.firstName || "Service Member"}
+            />
+          </div>
 
           {/* 5 Premium Tools - Hero Section */}
           <div className="mb-12">
@@ -213,7 +217,8 @@ export default async function Dashboard() {
 
                     <h3 className="mb-2 text-lg font-semibold text-gray-900">Ask Assistant</h3>
                     <p className="mb-4 flex-grow text-sm text-gray-600">
-                      Get instant answers to military financial questions with official data sources.
+                      Get instant answers to military financial questions with official data
+                      sources.
                     </p>
 
                     <div className="text-sm text-gray-500">

@@ -47,11 +47,9 @@ export default function AnswerDisplay({
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
             </div>
             <div className="flex-1">
-              <h3 className="mb-2 font-semibold text-blue-900">
-                Analyzing your question...
-              </h3>
+              <h3 className="mb-2 font-semibold text-blue-900">Analyzing your question...</h3>
               <p className="mb-3 text-sm text-blue-700">
-                I'm searching official data sources and preparing a comprehensive answer for you. 
+                I'm searching official data sources and preparing a comprehensive answer for you.
                 This usually takes 10-15 seconds.
               </p>
               <div className="space-y-1 text-xs text-blue-600">
@@ -71,7 +69,7 @@ export default function AnswerDisplay({
             </div>
           </div>
         </div>
-        
+
         {/* Skeleton for visual continuity */}
         <div className="animate-pulse space-y-3">
           <div className="h-4 w-3/4 rounded bg-gray-200"></div>

@@ -35,10 +35,7 @@ interface QuestionHistoryProps {
   collapsed?: boolean;
 }
 
-export default function QuestionHistory({
-  onViewAnswer,
-  collapsed = false,
-}: QuestionHistoryProps) {
+export default function QuestionHistory({ onViewAnswer, collapsed = false }: QuestionHistoryProps) {
   const [questions, setQuestions] = useState<HistoricalQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(!collapsed);
@@ -95,9 +92,7 @@ export default function QuestionHistory({
         <div className="flex items-center gap-2">
           <Icon name="ClipboardList" className="h-5 w-5 text-gray-600" />
           <h2 className="text-xl font-semibold text-gray-900">Question History</h2>
-          {questions.length > 0 && (
-            <Badge variant="info">{questions.length} total</Badge>
-          )}
+          {questions.length > 0 && <Badge variant="info">{questions.length} total</Badge>}
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -166,7 +161,7 @@ export default function QuestionHistory({
             <div className="space-y-3">
               {filteredQuestions.map((q, index) => (
                 <AnimatedCard key={q.id} delay={index * 0.05}>
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 transition-colors hover:border-blue-300 hover:bg-blue-50">
                     <div className="mb-2 flex items-start justify-between">
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{q.question}</p>
@@ -234,4 +229,3 @@ export default function QuestionHistory({
     </div>
   );
 }
-

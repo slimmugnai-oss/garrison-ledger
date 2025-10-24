@@ -35,7 +35,7 @@ export default function AskAssistantClient() {
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentTemplateId, setCurrentTemplateId] = useState<string | undefined>();
   const [isMobile, setIsMobile] = useState(false);
-  
+
   const creditMeterRef = useRef<{ refresh: () => Promise<void> }>(null);
   const answerRef = useRef<HTMLDivElement>(null);
 
@@ -150,7 +150,7 @@ export default function AskAssistantClient() {
     <>
       {/* Success Toast */}
       {showSuccess && (
-        <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-bottom-2 fade-in rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg duration-200">
+        <div className="animate-in slide-in-from-bottom-2 fade-in fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg duration-200">
           <div className="flex items-center gap-2">
             <Icon name="CheckCircle" className="h-5 w-5" />
             <div>
@@ -227,11 +227,7 @@ export default function AskAssistantClient() {
         {/* Answer Section - Sticky on desktop, drawer on mobile */}
         <div
           ref={answerRef}
-          className={`
-            rounded-lg border border-gray-200 bg-white p-6
-            ${isMobile ? "fixed bottom-0 left-0 right-0 z-40 max-h-[80vh] translate-y-full overflow-y-auto transition-transform duration-300 ease-out" : ""}
-            ${!isMobile ? "sticky top-24" : ""}
-          `}
+          className={`rounded-lg border border-gray-200 bg-white p-6 ${isMobile ? "fixed bottom-0 left-0 right-0 z-40 max-h-[80vh] translate-y-full overflow-y-auto transition-transform duration-300 ease-out" : ""} ${!isMobile ? "sticky top-24" : ""} `}
         >
           {/* Mobile: Swipe Handle */}
           {isMobile && answer && (

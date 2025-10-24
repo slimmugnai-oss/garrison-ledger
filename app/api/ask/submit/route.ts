@@ -251,9 +251,9 @@ function buildPrompt(
   maxTokens: number
 ): string {
   // Check if user profile is in context
-  const userProfile = contextData.find(source => source.table === 'user_profile');
+  const userProfile = contextData.find((source) => source.table === "user_profile");
   const hasUserProfile = !!userProfile;
-  
+
   const basePrompt = `You are an expert military financial and lifestyle advisor with comprehensive knowledge of:
 - Military pay, allowances, and benefits (BAH, BAS, TSP, SGLI, etc.)
 - PCS moves, deployments, and TDY
@@ -262,15 +262,17 @@ function buildPrompt(
 - Career progression, retirement systems (BRS vs High-3)
 - Military culture, regulations, and lifestyle
 
-${hasUserProfile ? `
+${
+  hasUserProfile
+    ? `
 **CRITICAL: You have access to the user's actual profile data. Use it to personalize your answer.**
 
 User Profile:
-- Rank/Paygrade: ${userProfile?.data.rank || userProfile?.data.paygrade || 'Unknown'}
-- Location (MHA/ZIP): ${userProfile?.data.mha_or_zip || 'Not set'}
-- Years of Service: ${userProfile?.data.years_of_service || 'Unknown'}
-- Dependents: ${userProfile?.data.has_dependents ? `Yes (${userProfile?.data.dependents_count || 1})` : 'No'}
-- Branch: ${userProfile?.data.branch || 'Unknown'}
+- Rank/Paygrade: ${userProfile?.data.rank || userProfile?.data.paygrade || "Unknown"}
+- Location (MHA/ZIP): ${userProfile?.data.mha_or_zip || "Not set"}
+- Years of Service: ${userProfile?.data.years_of_service || "Unknown"}
+- Dependents: ${userProfile?.data.has_dependents ? `Yes (${userProfile?.data.dependents_count || 1})` : "No"}
+- Branch: ${userProfile?.data.branch || "Unknown"}
 
 When answering:
 1. Use their ACTUAL rank, location, and dependent status - not hypothetical examples
@@ -278,7 +280,9 @@ When answering:
 3. If they ask about "my BAH" or "my pay", use THEIR specific data from the sources below
 4. If their profile is incomplete, tell them to update it at /dashboard/profile
 5. DO NOT say "if you were an E-5" - they ARE what their profile says they are
-` : ''}
+`
+    : ""
+}
 
 Answer the user's question comprehensively and conversationally. Write like you're talking to a fellow service member or military spouse - use "you" and "your", be relatable but professional, and acknowledge the real challenges they face.
 

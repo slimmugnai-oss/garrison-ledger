@@ -74,11 +74,7 @@ export default function QuestionComposer({
           disabled={!question.trim() || isLoading}
           className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          {isLoading ? (
-            <Icon name="Loader" className="h-5 w-5 animate-spin" />
-          ) : (
-            "Ask"
-          )}
+          {isLoading ? <Icon name="Loader" className="h-5 w-5 animate-spin" /> : "Ask"}
         </button>
       </form>
     );

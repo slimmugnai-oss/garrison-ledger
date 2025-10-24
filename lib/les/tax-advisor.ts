@@ -1,6 +1,6 @@
 /**
  * LES TAX ADVISOR
- * 
+ *
  * AI-powered explanations for tax discrepancies and advisories.
  * Uses Gemini 2.5 Flash to generate 4-6 sentence explanations for:
  * - FICA validation failures
@@ -11,27 +11,27 @@
  */
 
 export async function generateTaxAdvisory(
-  type: 'federal' | 'state' | 'fica' | 'medicare' | 'total',
+  type: "federal" | "state" | "fica" | "medicare" | "total",
   userValue: number,
   expectedValue: number,
   taxableGross: number,
   rank?: string
 ): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  
+
   if (!apiKey) {
-    console.error('[TaxAdvisor] No API key found');
-    return '';
+    console.error("[TaxAdvisor] No API key found");
+    return "";
   }
 
   try {
     const prompt = buildTaxAdvisoryPrompt(type, userValue, expectedValue, taxableGross, rank);
-    
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
@@ -43,19 +43,22 @@ export async function generateTaxAdvisory(
     );
 
     if (!response.ok) {
-      console.error('[TaxAdvisor] Gemini API error:', response.status);
-      return '';
+      console.error("[TaxAdvisor] Gemini API error:", response.status);
+      return "";
     }
 
     const result = await response.json();
-    const explanation = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    
-    console.log(`[TaxAdvisor] Generated ${type} explanation:`, explanation.substring(0, 100) + '...');
-    
+    const explanation = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    console.log(
+      `[TaxAdvisor] Generated ${type} explanation:`,
+      explanation.substring(0, 100) + "..."
+    );
+
     return explanation;
   } catch (error) {
-    console.error('[TaxAdvisor] Error generating explanation:', error);
-    return '';
+    console.error("[TaxAdvisor] Error generating explanation:", error);
+    return "";
   }
 }
 
@@ -70,11 +73,11 @@ function buildTaxAdvisoryPrompt(
   const userDollars = userValue / 100;
   const expectedDollars = expectedValue / 100;
   const grossDollars = taxableGross / 100;
-  
+
   const percent = ((userValue / taxableGross) * 100).toFixed(1);
   const expectedPercent = ((expectedValue / taxableGross) * 100).toFixed(1);
-  
-  return `You are a military financial advisor helping a service member ${rank ? `(${rank})` : ''} understand a ${type} tax withholding discrepancy on their Leave and Earnings Statement (LES).
+
+  return `You are a military financial advisor helping a service member ${rank ? `(${rank})` : ""} understand a ${type} tax withholding discrepancy on their Leave and Earnings Statement (LES).
 
 Their ${type} tax: $${userDollars.toFixed(2)} (${percent}% of gross)
 Expected typical: $${expectedDollars.toFixed(2)} (${expectedPercent}% of gross)

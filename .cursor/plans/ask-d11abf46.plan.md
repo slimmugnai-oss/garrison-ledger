@@ -1,448 +1,448 @@
-<!-- d11abf46-7e0b-42f0-af9a-2a0b081b6803 93d7a0d1-b69b-4e25-afa6-d1d4a13d82be -->
-# Ask Assistant Deep Audit & Enhancement Plan
+<!-- d11abf46-7e0b-42f0-af9a-2a0b081b6803 ba7e4702-87ea-4623-924e-4c43d08e9c57 -->
+# LES Tax Enhancement & Ask Assistant Personalization
 
-## Post-Deployment Audit Findings
+## Part 1: LES Auditor Tax Enhancements
 
-After reviewing the deployed Ask Assistant feature, I've identified **8 areas for improvement**:
+### Problem
 
-### **Critical Integration Issues**
+Currently, users manually enter all tax fields (Federal, State, FICA, Medicare) with no validation or assistance. FICA and Medicare are fixed formulas (6.2% and 1.45% of taxable gross) that should be auto-calculated.
 
-1. **NOT in Sitemap System** - Ask Assistant page (/dashboard/ask) is missing from site_pages table
-2. **Header Navigation Inconsistent** - Links point to wrong URLs (/dashboard/library, /dashboard/intel instead of /dashboard/ask)
-3. **Dashboard Card Description Wrong** - Describes old "Intel Library" instead of new "Ask Assistant" Q&A feature
-4. **Missing Admin Analytics** - No Ask Assistant metrics in admin dashboard
+### Solution
 
-### **Enhancement Opportunities**
+#### 1. Auto-Calculate FICA & Medicare (Editable with Validation)
 
-5. **No Question History UI** - Database tracks questions but user can't view their history
-6. **Missing Error States** - CreditMeter doesn't handle API failures gracefully
-7. **No Success Confirmation** - After submitting question, no visual confirmation
-8. **Template Questions Could Be Better** - Only 5 base templates, need more coverage
+**File: `app/components/les/LesManualEntryTabbed.tsx`**
 
----
-
-## Issue Details & Fixes
-
-### 1. Sitemap Integration (CRITICAL)
-
-**Problem:** Ask Assistant is not registered in the `site_pages` table, so:
-
-- Not tracked in admin sitemap dashboard
-- No health monitoring
-- No analytics tracking
-- Missing from platform-wide page management
-
-**Current Sitemap:**
-
-```sql
-SELECT * FROM site_pages WHERE path LIKE '%ask%';
--- Returns: 0 rows
-```
-
-**Fix:** Add Ask Assistant to sitemap
-
-```sql
-INSERT INTO site_pages (
-  path, title, category, tier_required, description,
-  status, file_path, component_name, 
-  api_endpoints, database_tables
-) VALUES (
-  '/dashboard/ask',
-  'Ask Assistant',
-  'Premium Tools',
-  'free', -- Available to all tiers with credit limits
-  'Q&A virtual assistant for military financial questions with official data sources',
-  'active',
-  'app/dashboard/ask/page.tsx',
-  'AskAssistantPage',
-  '["
-
-/api/ask/submit", "/api/ask/credits", "/api/ask/templates", "/api/ask/coverage-request", "/api/ask/credits/purchase"]'::jsonb,
-  '["ask_credits", "ask_questions", "ask_credit_purchases", "ask_coverage_requests", "user_profiles"]'::jsonb
-);
-```
-
----
-
-### 2. Header Navigation Fix (HIGH PRIORITY)
-
-**Problem:** Header has 3 different links pointing to wrong URLs:
-
-**File:** `app/components/Header.tsx`
-
-**Line 104-109:** Search modal link
+Add calculation effect when taxable gross changes:
 
 ```typescript
-<Link href="/dashboard/library"> {/* ❌ WRONG - should be /dashboard/ask */}
-  Ask Assistant
-</Link>
+// Add after other useEffects (~line 100)
+useEffect(() => {
+  // Calculate taxable gross (excludes BAH/BAS)
+  const taxableGross = 
+    parseFloat(basePay || '0') +
+    parseFloat(cola || '0') +
+    parseFloat(sdap || '0') +
+    parseFloat(hfpIdp || '0') +
+    parseFloat(fsa || '0') +
+    parseFloat(flpp || '0');
+  
+  if (taxableGross > 0) {
+    // Auto-fill FICA (6.2%)
+    if (!fica || parseFloat(fica) === 0) {
+      const calculatedFica = (taxableGross * 0.062).toFixed(2);
+      setFica(calculatedFica);
+      setAutoFilled(prev => ({ ...prev, fica: true }));
+    }
+    
+    // Auto-fill Medicare (1.45%)
+    if (!medicare || parseFloat(medicare) === 0) {
+      const calculatedMedicare = (taxableGross * 0.0145).toFixed(2);
+      setMedicare(calculatedMedicare);
+      setAutoFilled(prev => ({ ...prev, medicare: true }));
+    }
+  }
+}, [basePay, cola, sdap, hfpIdp, fsa, flpp]);
 ```
 
-**Line 444:** Premium Tools dropdown
+Update FICA/Medicare inputs to show they're calculated:
 
 ```typescript
-<Link href="/dashboard/intel"> {/* ❌ WRONG - should be /dashboard/ask */}
-  Ask Assistant
-</Link>
-```
-
-**Line 1094:** Mobile navigation
-
-```typescript
-<Link href="/dashboard/library"> {/* ❌ WRONG - should be /dashboard/ask */}
-  Ask Assistant
-</Link>
-```
-
-**Fix:** Update all 3 locations to use `/dashboard/ask`
-
----
-
-### 3. Dashboard Card Description Update (HIGH)
-
-**Problem:** Dashboard card (line 200-221 in `app/dashboard/page.tsx`) shows old description:
-
-```typescript
-<h3>Ask Assistant</h3>
-<p>Reference cards with live BAH/BAS/TSP data. Always current.</p>
-<div>12 cards • Auto-updating data</div>
-```
-
-This describes the **old Intel Library**, not the new **Ask Assistant Q&A system**.
-
-**Fix:** Update to accurately describe the feature:
-
-```typescript
-<h3>Ask Assistant</h3>
-<p>Get instant answers to military financial questions with official data sources.</p>
-<div>{isPremium ? "50 questions/month" : "5 questions/month"}</div>
-```
-
----
-
-### 4. Admin Dashboard Analytics (MEDIUM)
-
-**Problem:** Admin dashboard has no Ask Assistant metrics:
-
-- No question volume tracking
-- No credit usage monitoring
-- No template popularity data
-- No coverage request tracking
-
-**Current Admin Tabs:**
-
-1. Command Center - ❌ No Ask metrics
-2. Intel (Analytics) - ❌ No Ask sub-tab
-3. Personnel - ✅ Could show Ask usage per user
-4. Assets - ❌ Not relevant
-5. Ops Status - ✅ Could show data sources
-6. Sitemap - ❌ Missing Ask page entry
-
-**Fix:** Add Ask Assistant analytics to Admin Dashboard
-
-**Location:** Create new sub-tab in Intel section
-
-**Metrics to Track:**
-
-- Questions per day (chart)
-- Credit usage by tier
-- Most popular templates
-- Average confidence scores
-- Coverage requests (pending/completed)
-- Data source hit rates (which tables queried most)
-- Response time distribution
-- Error rate
-
----
-
-### 5. Question History UI (ENHANCEMENT)
-
-**Problem:** Database stores all questions in `ask_questions` table but user has no way to view their history.
-
-**User Benefit:**
-
-- Review past answers
-- Bookmark important questions
-- Share answers with spouse
-- Track what they've learned
-
-**Fix:** Add "History" tab to Ask Assistant page
-
-**New Component:** `app/components/ask/QuestionHistory.tsx`
-
-**Features:**
-
-- Chronological list of past questions
-- Search/filter by date, topic, confidence
-- Click to view full answer again
-- Delete/bookmark options
-- Export answers to PDF
-
----
-
-### 6. Error State Improvements (MEDIUM)
-
-**Problem:** `CreditMeter` component doesn't handle API failures well:
-
-- If `/api/ask/credits` fails, shows generic error
-- No retry mechanism
-- Doesn't explain what to do
-
-**Fix:** Add better error handling
-
-```typescript
-if (!credits) {
-  return (
-    <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-      <div className="mb-2 flex items-center gap-2">
-        <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
-        <span className="font-semibold text-red-800">Credits Not Available</span>
+// In Taxes tab section (~line 600)
+<div className="space-y-4">
+  <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+    <div className="flex items-start gap-2">
+      <Icon name="Info" className="h-4 w-4 text-blue-600 mt-0.5" />
+      <div className="text-xs text-blue-800">
+        <strong>FICA and Medicare are auto-calculated</strong> based on your taxable gross pay. 
+        You can edit these if your LES shows different amounts (rare).
       </div>
-      <p className="text-sm text-red-700 mb-3">
-        Unable to load your credit balance. This might be a temporary issue.
-      </p>
-      <button
-        onClick={() => fetchCredits()}
-        className="text-sm text-red-600 font-medium hover:text-red-700"
-      >
-        Try Again →
-      </button>
-    </div>
-  );
-}
-```
-
----
-
-### 7. Success Confirmation (UX ENHANCEMENT)
-
-**Problem:** After submitting a question, no visual confirmation that it worked. User just sees answer appear.
-
-**Fix:** Add success toast notification
-
-**In AskAssistantClient.tsx:**
-
-```typescript
-const [showSuccess, setShowSuccess] = useState(false);
-
-if (result.success) {
-  setAnswer(result.answer);
-  setShowSuccess(true);
-  setTimeout(() => setShowSuccess(false), 3000);
-}
-
-// Render:
-{showSuccess && (
-  <div className="fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg">
-    <div className="flex items-center gap-2">
-      <Icon name="CheckCircle" className="h-5 w-5" />
-      <span className="font-medium">Answer generated successfully!</span>
     </div>
   </div>
-)}
+  
+  {/* FICA Input */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      FICA (Social Security)
+      {autoFilled.fica && (
+        <span className="ml-2 text-xs text-green-600">✓ Calculated (6.2%)</span>
+      )}
+    </label>
+    <CurrencyInput
+      value={fica}
+      onChange={setFica}
+      placeholder="Auto-calculated"
+      className={autoFilled.fica ? 'bg-green-50 border-green-300' : ''}
+    />
+  </div>
+  
+  {/* Medicare Input */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Medicare
+      {autoFilled.medicare && (
+        <span className="ml-2 text-xs text-green-600">✓ Calculated (1.45%)</span>
+      )}
+    </label>
+    <CurrencyInput
+      value={medicare}
+      onChange={setMedicare}
+      placeholder="Auto-calculated"
+      className={autoFilled.medicare ? 'bg-green-50 border-green-300' : ''}
+    />
+  </div>
+</div>
 ```
 
----
+#### 2. Add Tax Reasonableness Validation
 
-### 8. Enhanced Template Questions (ENHANCEMENT)
+**File: `app/api/les/audit/route.ts`** (create if doesn't exist, or find existing audit endpoint)
 
-**Problem:** Only 5 base templates covering basic topics. Could add:
+Add validation logic:
 
-- Deployment-specific questions
-- State tax questions
-- Insurance questions
-- Career transition questions
-- Emergency fund questions
+```typescript
+interface TaxValidation {
+  isReasonable: boolean;
+  warnings: string[];
+  advisories: string[];
+}
 
-**Fix:** Expand template library in `/api/ask/templates/route.ts`
-
-**Add 10 More Templates:**
-
-1. "What's the SDP interest rate?"
-2. "How does combat zone tax exclusion work?"
-3. "What state should I claim as my home of record?"
-4. "Should I max out my TSP or pay off debt first?"
-5. "What happens to my benefits when I retire?"
-6. "Can I roll my TSP into a civilian 401k?"
-7. "How do I calculate my retirement pension?"
-8. "What's the difference between BRS and High-3?"
-9. "Should I have SGLI and civilian life insurance?"
-10. "How does BAH work during a PCS move?"
-
----
-
-## Implementation Plan
-
-### Phase 1: Sitemap Integration (15 min)
-
-1. Add Ask Assistant to `site_pages` table via SQL
-2. Run initial health check
-3. Verify shows in admin sitemap tab
-4. Add to auto health check job
-
-### Phase 2: Header Navigation Fix (10 min)
-
-1. Update search modal link (line 104)
-2. Update premium tools dropdown link (line 444)
-3. Update mobile nav link (line 1094)
-4. Test all navigation paths work
-
-### Phase 3: Dashboard Card Update (5 min)
-
-1. Update card description to match Q&A functionality
-2. Add credit count display (like LES shows uploads)
-3. Update icon if needed (currently BookOpen - good for Q&A)
-
-### Phase 4: Admin Analytics Integration (30 min)
-
-1. Create `/api/admin/analytics/ask-assistant` endpoint
-2. Add "Ask Assistant" sub-tab to Intel section
-3. Build metrics query (questions/day, credit usage, templates, etc.)
-4. Create charts for visualization
-5. Add coverage request tracking
-
-### Phase 5: Question History UI (45 min)
-
-1. Create `QuestionHistory.tsx` component
-2. Add "History" section to Ask page (expandable/collapsible)
-3. Query past questions from `ask_questions` table
-4. Add search/filter functionality
-5. Add "View Answer" button to re-display past answers
-6. Add delete/bookmark actions
-
-### Phase 6: Error Handling Enhancement (15 min)
-
-1. Add retry button to CreditMeter error state
-2. Add timeout handling (10s limit)
-3. Add specific error messages for common failures
-4. Test network disconnect scenarios
-
-### Phase 7: Success Confirmation (10 min)
-
-1. Add toast notification component
-2. Trigger on successful question submit
-3. Show credits remaining in toast
-4. Add slide-in animation
-
-### Phase 8: Template Library Expansion (20 min)
-
-1. Add 10 new base templates
-2. Add personalized templates for:
-
-   - Deployment status users
-   - High YOS users (15+ years)
-   - Users with rental properties
-   - Users approaching retirement
-
-3. Test template rendering
-
-### Phase 9: Final Testing & Documentation (30 min)
-
-1. Test all navigation paths
-2. Verify sitemap integration
-3. Test admin analytics
-4. Test question history
-5. Update SYSTEM_STATUS.md
-6. Create Ask Assistant feature doc
-
----
-
-## Files to Create
-
-1. `app/components/ask/QuestionHistory.tsx` - History UI
-2. `app/components/ask/SuccessToast.tsx` - Success notification
-3. `app/api/admin/analytics/ask-assistant/route.ts` - Admin analytics endpoint
-4. `app/dashboard/admin/components/AskAssistantAnalytics.tsx` - Admin metrics UI
-5. `docs/active/ASK_ASSISTANT_FEATURE_GUIDE.md` - User documentation
-
-## Files to Modify
-
-1. `app/components/Header.tsx` - Fix 3 navigation links
-2. `app/dashboard/page.tsx` - Update Ask card description
-3. `app/dashboard/ask/page.tsx` - Add question history section
-4. `app/components/ask/AskAssistantClient.tsx` - Add success toast
-5. `app/components/ask/CreditMeter.tsx` - Better error handling
-6. `app/api/ask/templates/route.ts` - Add more templates
-7. `app/dashboard/admin/intel/page.tsx` - Add Ask sub-tab (if exists)
-8. `SYSTEM_STATUS.md` - Update Ask Assistant section
-
-## Database Changes
-
-1. Add Ask Assistant page to sitemap:
-```sql
-INSERT INTO site_pages (...) VALUES (...);
+function validateTaxes(
+  federalTax: number,
+  stateTax: number,
+  fica: number,
+  medicare: number,
+  taxableGross: number,
+  userState?: string
+): TaxValidation {
+  const result: TaxValidation = {
+    isReasonable: true,
+    warnings: [],
+    advisories: []
+  };
+  
+  // Validate FICA (should be exactly 6.2%)
+  const expectedFica = taxableGross * 0.062;
+  if (Math.abs(fica - expectedFica) > 5) {
+    result.warnings.push(
+      `FICA is $${fica.toFixed(2)} but expected $${expectedFica.toFixed(2)} (6.2% of taxable gross). Check your LES.`
+    );
+  }
+  
+  // Validate Medicare (should be exactly 1.45%)
+  const expectedMedicare = taxableGross * 0.0145;
+  if (Math.abs(medicare - expectedMedicare) > 2) {
+    result.warnings.push(
+      `Medicare is $${medicare.toFixed(2)} but expected $${expectedMedicare.toFixed(2)} (1.45% of taxable gross). Check your LES.`
+    );
+  }
+  
+  // Federal tax reasonableness (8-22% typical)
+  const federalPercent = (federalTax / taxableGross) * 100;
+  if (federalPercent < 5) {
+    result.advisories.push(
+      `Your federal tax (${federalPercent.toFixed(1)}%) seems low. Typical range: 10-15%. This might be correct if you have many exemptions.`
+    );
+  } else if (federalPercent > 25) {
+    result.advisories.push(
+      `Your federal tax (${federalPercent.toFixed(1)}%) seems high. Typical range: 10-15%. This might be correct if you requested additional withholding.`
+    );
+  }
+  
+  // State tax reasonableness (depends on state)
+  if (userState && stateTax > 0) {
+    const statePercent = (stateTax / taxableGross) * 100;
+    const stateRanges: Record<string, { min: number; max: number }> = {
+      CA: { min: 1, max: 10 },
+      NY: { min: 4, max: 8 },
+      TX: { min: 0, max: 0 },
+      FL: { min: 0, max: 0 },
+      // Add more states as needed
+    };
+    
+    const range = stateRanges[userState];
+    if (range && statePercent > range.max * 1.5) {
+      result.advisories.push(
+        `Your ${userState} state tax (${statePercent.toFixed(1)}%) seems high. Typical range: ${range.min}-${range.max}%.`
+      );
+    }
+  }
+  
+  // Total tax burden check (shouldn't exceed 35%)
+  const totalTaxes = federalTax + stateTax + fica + medicare;
+  const totalPercent = (totalTaxes / taxableGross) * 100;
+  if (totalPercent > 35) {
+    result.warnings.push(
+      `Total tax burden is ${totalPercent.toFixed(1)}% - higher than typical 25-30%. Verify all amounts with your LES.`
+    );
+  }
+  
+  return result;
+}
 ```
 
-2. (Optional) Add question bookmarks table:
-```sql
-CREATE TABLE ask_question_bookmarks (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id TEXT NOT NULL,
-  question_id UUID NOT NULL REFERENCES ask_questions(id),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+#### 3. Add AI Explanations for Tax Advisories
+
+**File: `lib/les/tax-advisor.ts`** (new file)
+
+```typescript
+import { ssot } from '@/lib/ssot';
+
+export async function generateTaxAdvisory(
+  type: 'federal' | 'state' | 'fica' | 'medicare' | 'total',
+  userValue: number,
+  expectedValue: number,
+  taxableGross: number,
+  rank?: string
+): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey) return '';
+
+  const prompt = buildTaxAdvisoryPrompt(type, userValue, expectedValue, taxableGross, rank);
+  
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 500, // Brief explanation
+        },
+      }),
+    }
+  );
+
+  const result = await response.json();
+  return result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+function buildTaxAdvisoryPrompt(
+  type: string,
+  userValue: number,
+  expectedValue: number,
+  taxableGross: number,
+  rank?: string
+): string {
+  const percent = ((userValue / taxableGross) * 100).toFixed(1);
+  const expectedPercent = ((expectedValue / taxableGross) * 100).toFixed(1);
+  
+  return `You are a military financial advisor. A service member ${rank ? `(${rank})` : ''} has a ${type} tax withholding that differs from typical amounts.
+
+Their ${type} tax: $${userValue.toFixed(2)} (${percent}% of gross)
+Expected typical: $${expectedValue.toFixed(2)} (${expectedPercent}% of gross)
+Taxable gross: $${taxableGross.toFixed(2)}
+
+Provide a brief 4-6 sentence explanation covering:
+1. Why this might be happening (W-4 settings, YTD catch-up, bonuses, etc.)
+2. Whether this is concerning or normal
+3. What they should do next (check W-4, contact finance, verify LES)
+
+Write in a conversational, reassuring tone. Be specific and actionable. Do NOT use markdown or formatting - just plain text.`;
+}
 ```
 
+## Part 2: Ask Assistant Personalization Fix
 
----
+### Problem
 
-## Success Criteria
+The Ask Assistant is generating generic examples instead of using the actual user's profile data (rank, location, dependents) to provide personalized answers.
 
-### Navigation & Discovery
+**Current behavior:**
 
-- ✅ All header links point to /dashboard/ask
-- ✅ Dashboard card describes Q&A feature accurately
-- ✅ Ask page appears in sitemap with health status
-- ✅ Search modal links to Ask Assistant
+```
+"Based on the 2025 rates, if you were, for example, an E-5 with dependents..."
+```
 
-### Admin Dashboard
+**Expected behavior:**
 
-- ✅ Ask Assistant metrics in Intel tab
-- ✅ Coverage requests tracked
-- ✅ Credit usage monitored
-- ✅ Template popularity visible
+```
+"Based on your profile (E-5 with dependents in El Paso), your BAH is $1,773/month."
+```
 
-### User Experience
+### Root Cause
 
-- ✅ Question history accessible
-- ✅ Success confirmation after submit
-- ✅ Better error messages with retry
-- ✅ 15+ template questions available
-- ✅ Personalized templates work correctly
+The `lib/ask/data-query-engine.ts` extracts user profile data but the AI prompt doesn't explicitly instruct Gemini to USE this personalized data in its response.
 
-### Code Quality
+### Solution
 
-- ✅ 0 TypeScript errors
-- ✅ 0 ESLint errors
-- ✅ All links tested and working
-- ✅ Mobile responsive
-- ✅ Analytics events firing
+#### 1. Enhance User Profile Query
 
----
+**File: `lib/ask/data-query-engine.ts`**
 
-## Estimated Time: 3 hours
+Update `queryOfficialSources` to return user profile as a data source:
 
-**Priority Order:**
+```typescript
+export async function queryOfficialSources(
+  question: string,
+  userId: string
+): Promise<DataSource[]> {
+  const sources: DataSource[] = [];
+  
+  // FIRST: Get user profile data
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('user_id, paygrade, mha_or_zip, years_of_service, has_dependents, dependents_count, rank, branch')
+    .eq('user_id', userId)
+    .maybeSingle();
+  
+  // Add user profile as a data source for personalization
+  if (profile) {
+    sources.push({
+      table: 'user_profile',
+      source_name: 'User Profile',
+      url: '/dashboard/profile',
+      effective_date: new Date().toISOString().split('T')[0],
+      data: {
+        paygrade: profile.paygrade,
+        rank: profile.rank,
+        mha_or_zip: profile.mha_or_zip,
+        years_of_service: profile.years_of_service,
+        has_dependents: profile.has_dependents,
+        dependents_count: profile.dependents_count,
+        branch: profile.branch
+      }
+    });
+  }
+  
+  const entities = extractEntities(question, userId);
+  
+  // Continue with existing queries...
+  // (rest of function unchanged)
+}
+```
 
-1. **Phase 2 (10 min)** - Fix header navigation (blocks users from finding feature)
-2. **Phase 3 (5 min)** - Fix dashboard card (misleading description)
-3. **Phase 1 (15 min)** - Add to sitemap (enables monitoring)
-4. **Phase 8 (20 min)** - Expand templates (improves value)
-5. **Phase 4 (30 min)** - Admin analytics (operations visibility)
-6. **Phase 5 (45 min)** - Question history (user value add)
-7. **Phase 6-7 (25 min)** - Error handling + success toast (polish)
-8. **Phase 9 (30 min)** - Testing & docs
+#### 2. Update AI Prompt to Prioritize Personalization
 
-**Can ship after Phase 1-4** (60 min) - Phases 5-9 are enhancements
+**File: `app/api/ask/submit/route.ts`**
+
+Update `buildPrompt` function to emphasize using user profile:
+
+```typescript
+function buildPrompt(
+  question: string,
+  contextData: DataSource[],
+  mode: string,
+  maxTokens: number
+): string {
+  // Check if user profile is in context
+  const userProfile = contextData.find(source => source.table === 'user_profile');
+  const hasUserProfile = !!userProfile;
+  
+  const basePrompt = `You are an expert military financial and lifestyle advisor with comprehensive knowledge of:
+- Military pay, allowances, and benefits (BAH, BAS, TSP, SGLI, etc.)
+- PCS moves, deployments, and TDY
+- VA benefits, GI Bill, and military spouse resources
+- Military bases, installations, and OCONUS assignments
+- Career progression, retirement systems (BRS vs High-3)
+- Military culture, regulations, and lifestyle
+
+${hasUserProfile ? `
+**CRITICAL: You have access to the user's actual profile data. Use it to personalize your answer.**
+
+User Profile:
+- Rank/Paygrade: ${userProfile?.data.rank || userProfile?.data.paygrade || 'Unknown'}
+- Location (MHA/ZIP): ${userProfile?.data.mha_or_zip || 'Not set'}
+- Years of Service: ${userProfile?.data.years_of_service || 'Unknown'}
+- Dependents: ${userProfile?.data.has_dependents ? `Yes (${userProfile?.data.dependents_count || 1})` : 'No'}
+- Branch: ${userProfile?.data.branch || 'Unknown'}
+
+When answering:
+1. Use their ACTUAL rank, location, and dependent status - not hypothetical examples
+2. Say "Based on your profile" or "For you as an E-5 with dependents"
+3. If they ask about "my BAH" or "my pay", use THEIR specific data from the sources below
+4. If their profile is incomplete, tell them to update it at /dashboard/profile
+5. DO NOT say "if you were an E-5" - they ARE what their profile says they are
+` : ''}
+
+QUESTION: ${question}
+
+${mode === "strict" ? "OFFICIAL DATA AVAILABLE:" : "ADVISORY MODE - Using expert knowledge:"}
+${contextData
+  .map(
+    (source) => `
+Source: ${source.source_name}
+URL: ${source.url}
+Effective: ${source.effective_date}
+Data: ${JSON.stringify(source.data, null, 2)}
+`
+  )
+  .join("\n")}
+
+ANSWER GUIDELINES:
+1. ${mode === "strict" ? "Prioritize provided data sources and cite them" : "Use your comprehensive military knowledge"}
+2. ${hasUserProfile ? "**PERSONALIZE using their actual profile data - not hypothetical examples**" : "Provide general guidance"}
+3. Write conversationally - imagine explaining this to a friend over coffee
+4. Be comprehensive (200-400 words) but start with the most important info (BLUF)
+5. Include specific numbers, dates, regulations, and real-world examples
+6. Acknowledge challenges ("Yes, this is confusing" or "You're not alone in this")
+7. Suggest relevant Garrison Ledger tools (PCS Copilot, Base Navigator, LES Auditor, TSP Modeler)
+8. Provide verification steps for users to confirm information
+9. You have ${maxTokens} tokens - use them to be thorough and helpful
+10. CRITICAL: Return ONLY valid JSON, no markdown formatting, no explanatory text
+
+RESPONSE FORMAT - Return this EXACT JSON structure (no markdown, no code blocks):
+{
+  "bottomLine": ["Most important point first (use their ACTUAL profile data)", "Second key point", "Third key point", "Additional detail or context"],
+  "nextSteps": [{"text": "Specific action to take", "action": "Button text", "url": "optional_url"}],
+  "numbersUsed": [{"value": "Specific amount or rate", "source": "Source Name", "effective_date": "YYYY-MM-DD"}],
+  "citations": [{"title": "Source Title", "url": "Source URL"}],
+  "verificationChecklist": ["How to verify this info", "Where to check official sources", "Who to ask if unsure"],
+  "toolHandoffs": [{"tool": "PCS Copilot", "url": "/dashboard/pcs-copilot", "description": "Calculate exact PCS costs and see what you'll actually get"}]
+}
+
+${mode === "advisory" ? "ADVISORY MODE: You're operating on expert knowledge without specific official data. Be helpful and conversational but encourage users to verify with official sources. Suggest relevant Garrison Ledger tools that might have the data they need." : "STRICT MODE: Use provided official data as primary source. Supplement with context, explanation, and practical advice in a conversational tone."}
+
+EXAMPLE GOOD RESPONSE (with profile):
+"Based on your profile (E-5 with dependents in El Paso, TX), your BAH for 2025 is $1,773 per month. This rate is effective January 1, 2025, and is designed to cover your housing costs in the El Paso area. Your specific rate accounts for your rank (E-5) and the fact that you have dependents."
+
+NOT THIS (generic example):
+"If you were an E-5 with dependents in El Paso, your BAH would be $1,773/month."
+
+REMINDER: Return ONLY the JSON object above. Do not wrap it in markdown code blocks or add any explanatory text.`;
+
+  return basePrompt;
+}
+```
+
+## Testing Plan
+
+### LES Tax Enhancements
+
+1. Create new LES entry with entitlements
+2. Navigate to Taxes tab
+3. Verify FICA and Medicare are auto-calculated and highlighted
+4. Submit audit
+5. Check for tax validation warnings/advisories
+6. Verify AI explanations are generated for flagged items
+
+### Ask Assistant Personalization
+
+1. Ensure profile has: rank (E-5), location (El Paso), dependents (Yes)
+2. Ask: "What is my BAH?"
+3. Verify answer says: "Based on your profile (E-5 with dependents in El Paso)..." NOT "if you were"
+4. Ask: "How much is my base pay?"
+5. Verify personalized response with actual rank
+6. Test with incomplete profile (missing rank) - should prompt to update profile
+
+## Documentation Updates
+
+Update:
+
+- `docs/LES_AUDITOR_TESTING_GUIDE.md` - Add tax auto-calculation section
+- `docs/ASK_ASSISTANT_TESTING_GUIDE.md` - Add personalization verification
+- `SYSTEM_STATUS.md` - Note LES tax enhancements and Ask personalization fix
 
 ### To-dos
 
-- [ ] Fix 3 header navigation links to point to /dashboard/ask instead of /dashboard/library or /dashboard/intel
-- [ ] Update dashboard card description from Intel Library to Ask Assistant Q&A
-- [ ] Add Ask Assistant page to site_pages table with metadata and dependencies
-- [ ] Add 10+ more template questions covering deployment, taxes, insurance, career topics
-- [ ] Create Ask Assistant analytics sub-tab in admin Intel section with metrics
-- [ ] Build QuestionHistory component to show past questions and answers
-- [ ] Enhance error handling in CreditMeter with retry button and specific messages
-- [ ] Add success confirmation toast after question submission
-- [ ] Test all navigation, verify sitemap, test admin analytics, update documentation
+- [ ] Add auto-calculation effect for FICA (6.2%) and Medicare (1.45%) in LesManualEntryTabbed.tsx
+- [ ] Update Taxes tab UI to show FICA/Medicare are calculated with green highlight and info banner
+- [ ] Create tax validation logic (FICA/Medicare exact, Federal/State reasonableness) in audit API route
+- [ ] Create lib/les/tax-advisor.ts with AI explanation generation for flagged tax items
+- [ ] Add user profile as a data source in queryOfficialSources (data-query-engine.ts)
+- [ ] Update buildPrompt in ask/submit/route.ts to emphasize using actual user profile data, not hypothetical examples
+- [ ] Test LES tax auto-calculation, validation warnings, and AI explanations
+- [ ] Test Ask Assistant with complete profile, verify personalized responses (not 'if you were')
+- [ ] Update LES and Ask testing guides, SYSTEM_STATUS.md with new features
