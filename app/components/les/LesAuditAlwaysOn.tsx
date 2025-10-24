@@ -376,66 +376,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const { result, loading, error } = useLesAudit(inputs, true);
 
   // ============================================================================
-  // TAX VALIDATION (Real-time warnings/advisories)
-  // ============================================================================
-
-  const taxValidation = useMemo(() => {
-    const warnings: string[] = [];
-    const advisories: string[] = [];
-
-    // Calculate taxable gross (excludes BAH/BAS)
-    const taxableGross = basePay + cola;
-
-    if (taxableGross > 0) {
-      // FICA validation (should be exactly 6.2% ± $5)
-      const expectedFica = Math.round(taxableGross * 0.062);
-      if (fica > 0 && Math.abs(fica - expectedFica) > 5) {
-        warnings.push(
-          `FICA should be $${(expectedFica / 100).toFixed(2)} (6.2% of taxable gross). You have $${(fica / 100).toFixed(2)}. Check your LES.`
-        );
-      }
-
-      // Medicare validation (should be exactly 1.45% ± $2)
-      const expectedMedicare = Math.round(taxableGross * 0.0145);
-      if (medicare > 0 && Math.abs(medicare - expectedMedicare) > 2) {
-        warnings.push(
-          `Medicare should be $${(expectedMedicare / 100).toFixed(2)} (1.45% of taxable gross). You have $${(medicare / 100).toFixed(2)}. Check your LES.`
-        );
-      }
-
-      // Federal tax reasonableness (8-22% typical for military)
-      if (federalTax === 0 && taxableGross > 0) {
-        // $0 federal tax - could be CZTE, W-4 exemptions, or low income
-        advisories.push(
-          `Federal tax is $0.00. This could be due to: Combat Zone Tax Exclusion (CZTE), W-4 exemptions, or income below tax threshold. Verify this matches your LES.`
-        );
-      } else if (federalTax > 0) {
-        const federalPercent = (federalTax / taxableGross) * 100;
-        if (federalPercent < 5) {
-          advisories.push(
-            `Federal tax (${federalPercent.toFixed(1)}%) seems low. Typical: 10-15%. This might be correct if you have many exemptions or adjusted your W-4.`
-          );
-        } else if (federalPercent > 25) {
-          advisories.push(
-            `Federal tax (${federalPercent.toFixed(1)}%) seems high. Typical: 10-15%. This might be correct if you requested additional withholding on your W-4.`
-          );
-        }
-      }
-
-      // Total tax burden check (shouldn't exceed 35%)
-      const totalTaxes = federalTax + stateTax + fica + medicare;
-      const totalPercent = (totalTaxes / taxableGross) * 100;
-      if (totalPercent > 35) {
-        warnings.push(
-          `Total tax burden is ${totalPercent.toFixed(1)}% - higher than typical 25-30%. Verify all amounts with your LES.`
-        );
-      }
-    }
-
-    return { warnings, advisories };
-  }, [basePay, cola, fica, medicare, federalTax, stateTax]);
-
-  // ============================================================================
   // SAVE & PDF HANDLER (useCallback to prevent event listener churn)
   // ============================================================================
 
