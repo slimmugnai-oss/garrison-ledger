@@ -42,20 +42,8 @@ export function getBaseMHA(baseName: string): string | null {
   
   // If multiple matches (e.g., "Fort Campbell" in KY and TN), don't guess
   
-  // Try state extraction as fallback
-  const stateMatch = baseName.match(/,\s*([A-Z]{2})\s*$/);
-  if (stateMatch) {
-    const state = stateMatch[1];
-    return (baseMHAMap.stateDefaultMHA as Record<string, string>)[state] || null;
-  }
-  
-  // Last resort: try to find state abbreviation anywhere in string
-  for (const [state, mha] of Object.entries(baseMHAMap.stateDefaultMHA)) {
-    if (baseName.includes(state)) {
-      return mha;
-    }
-  }
-  
+  // No match found - return null
+  // Note: stateDefaultMHA fallback removed since we have comprehensive base mappings from official BAH data
   return null;
 }
 
