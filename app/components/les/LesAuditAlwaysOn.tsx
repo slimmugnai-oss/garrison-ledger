@@ -324,9 +324,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
       // Federal tax reasonableness (8-22% typical for military)
       if (federalTax === 0 && taxableGross > 0) {
-        // Special case: $0 federal tax could be Combat Zone Tax Exclusion (CZTE)
+        // $0 federal tax - could be CZTE, W-4 exemptions, or low income
         advisories.push(
-          `✓ Combat Zone Tax Exclusion detected (Federal tax: $0.00). No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.`
+          `Federal tax is $0.00. This could be due to: Combat Zone Tax Exclusion (CZTE), W-4 exemptions, or income below tax threshold. Verify this matches your LES.`
         );
       } else if (federalTax > 0) {
         const federalPercent = (federalTax / taxableGross) * 100;
@@ -920,21 +920,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       </Badge>
                     )}
                   </div>
-                </div>
-
-                {/* Confidence Badge */}
-                <div className="mt-4">
-                  <Badge
-                    variant={
-                      result.confidence === "high"
-                        ? "success"
-                        : result.confidence === "medium"
-                          ? "warning"
-                          : "danger"
-                    }
-                  >
-                    Confidence: {result.confidence.toUpperCase()}
-                  </Badge>
                 </div>
               </div>
 
