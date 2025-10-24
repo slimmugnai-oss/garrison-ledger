@@ -14,7 +14,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import { generateEmbedding } from "./generate-embeddings";
+import { generateEmbedding } from "../embeddings/generate-embeddings";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
