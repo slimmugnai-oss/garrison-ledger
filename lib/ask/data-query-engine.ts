@@ -362,7 +362,33 @@ export async function queryOfficialSources(
   const sources: DataSource[] = [];
 
   try {
-    // Step 1: Extract entities from question
+    // Step 1: Get user profile data for personalization (FIRST!)
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('user_id, paygrade, mha_or_zip, years_of_service, has_dependents, dependents_count, rank, branch')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    // Add user profile as a data source for personalization
+    if (profile) {
+      sources.push({
+        table: 'user_profile',
+        source_name: 'User Profile',
+        url: '/dashboard/profile',
+        effective_date: new Date().toISOString().split('T')[0],
+        data: {
+          paygrade: profile.paygrade,
+          rank: profile.rank,
+          mha_or_zip: profile.mha_or_zip,
+          years_of_service: profile.years_of_service,
+          has_dependents: profile.has_dependents,
+          dependents_count: profile.dependents_count,
+          branch: profile.branch
+        }
+      });
+    }
+    
+    // Step 2: Extract entities from question
     const entities = extractEntities(question);
 
     console.log("[DataQueryEngine] Extracted entities:", {
@@ -374,7 +400,7 @@ export async function queryOfficialSources(
       hasPersonalContext: entities.hasPersonalContext,
     });
 
-    // Step 2: Query relevant data sources based on topics
+    // Step 3: Query relevant data sources based on topics
     const queries: Promise<DataSource | null>[] = [];
 
     if (entities.topics.includes("bah")) {

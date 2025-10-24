@@ -164,6 +164,34 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
     }
   }, [hasProfile, userProfile, autoFilled.bah, month, year]);
 
+  // Auto-calculate FICA (6.2%) and Medicare (1.45%) based on taxable gross
+  useEffect(() => {
+    // Calculate taxable gross (excludes BAH/BAS which are non-taxable)
+    const taxableGross = 
+      parseFloat(basePay || '0') +
+      parseFloat(cola || '0') +
+      parseFloat(sdap || '0') +
+      parseFloat(hfpIdp || '0') +
+      parseFloat(fsa || '0') +
+      parseFloat(flpp || '0');
+    
+    if (taxableGross > 0) {
+      // Auto-fill FICA (6.2%) if empty or zero
+      if (!fica || parseFloat(fica) === 0) {
+        const calculatedFica = (taxableGross * 0.062).toFixed(2);
+        setFica(calculatedFica);
+        setAutoFilled(prev => ({ ...prev, fica: true }));
+      }
+      
+      // Auto-fill Medicare (1.45%) if empty or zero
+      if (!medicare || parseFloat(medicare) === 0) {
+        const calculatedMedicare = (taxableGross * 0.0145).toFixed(2);
+        setMedicare(calculatedMedicare);
+        setAutoFilled(prev => ({ ...prev, medicare: true }));
+      }
+    }
+  }, [basePay, cola, sdap, hfpIdp, fsa, flpp, fica, medicare]);
+
   // Calculate totals for summary tab
   const totals = useMemo(() => {
     const parseNum = (val: string) => val ? parseFloat(val) : 0;
@@ -608,11 +636,12 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               <div className="flex items-start gap-3">
                 <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-semibold text-blue-900 mb-1">Enter Actual Tax Values from Your LES</p>
+                  <p className="font-semibold text-blue-900 mb-1">
+                    <strong>FICA and Medicare are auto-calculated</strong> based on your taxable gross pay.
+                  </p>
                   <p className="text-blue-800">
-                    Find the "Taxes" section on your LES and enter the exact amounts withheld. 
-                    We'll validate that <strong>FICA = 6.2%</strong> and <strong>Medicare = 1.45%</strong> of your taxable pay 
-                    (Base + COLA + Special Pays, NOT including BAH/BAS).
+                    We automatically calculate FICA (6.2%) and Medicare (1.45%) from your taxable pay 
+                    (Base + COLA + Special Pays, NOT including BAH/BAS). You can edit these if your LES shows different amounts (rare).
                   </p>
                 </div>
               </div>
@@ -640,22 +669,36 @@ export default function LesManualEntryTabbed({ tier, isPremium: _isPremium, hasP
               />
 
               <CurrencyInput
-                label="FICA (Social Security Tax)"
+                label={
+                  <span>
+                    FICA (Social Security)
+                    {autoFilled.fica && (
+                      <span className="ml-2 text-xs text-green-600 font-normal">✓ Calculated (6.2%)</span>
+                    )}
+                  </span>
+                }
                 value={fica}
-                autoFilled={false}
+                autoFilled={autoFilled.fica}
                 onChange={setFica}
-                onOverride={() => {}}
-                helpText="Enter exact amount from LES &quot;FICA&quot; or &quot;SOC SEC&quot; - We'll verify it's ~6.2%"
+                onOverride={() => setAutoFilled(prev => ({ ...prev, fica: false }))}
+                helpText="Auto-calculated at 6.2% of taxable gross - edit if your LES differs"
                 optional
               />
 
               <CurrencyInput
-                label="Medicare Tax"
+                label={
+                  <span>
+                    Medicare
+                    {autoFilled.medicare && (
+                      <span className="ml-2 text-xs text-green-600 font-normal">✓ Calculated (1.45%)</span>
+                    )}
+                  </span>
+                }
                 value={medicare}
-                autoFilled={false}
+                autoFilled={autoFilled.medicare}
                 onChange={setMedicare}
-                onOverride={() => {}}
-                helpText="Enter exact amount from LES &quot;MEDICARE&quot; - We'll verify it's ~1.45%"
+                onOverride={() => setAutoFilled(prev => ({ ...prev, medicare: false }))}
+                helpText="Auto-calculated at 1.45% of taxable gross - edit if your LES differs"
                 optional
               />
             </div>

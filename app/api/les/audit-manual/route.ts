@@ -20,6 +20,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { buildExpectedSnapshot, validateRankYOS } from '@/lib/les/expected';
 import { compareLesToExpected } from '@/lib/les/compare';
+import { generateTaxAdvisory } from '@/lib/les/tax-advisor';
 import type { LesLine } from '@/app/types/les';
 import { ssot } from '@/lib/ssot';
 import { logger } from '@/lib/logger';
@@ -54,6 +55,129 @@ interface ManualEntryRequest {
     MEDICARE?: number; // Medicare (in cents)
   };
   netPay?: number;     // in cents
+}
+
+interface TaxValidation {
+  isReasonable: boolean;
+  warnings: string[];
+  advisories: string[];
+  aiExplanations?: Record<string, string>;
+}
+
+/**
+ * Validate tax withholdings for reasonableness
+ */
+async function validateTaxes(
+  federalTax: number,
+  stateTax: number,
+  fica: number,
+  medicare: number,
+  taxableGross: number,
+  userState?: string,
+  rank?: string
+): Promise<TaxValidation> {
+  const result: TaxValidation = {
+    isReasonable: true,
+    warnings: [],
+    advisories: [],
+    aiExplanations: {}
+  };
+  
+  // Validate FICA (should be exactly 6.2%)
+  const expectedFica = taxableGross * 0.062;
+  if (Math.abs(fica - expectedFica) > 5) {
+    result.warnings.push(
+      `FICA is $${(fica / 100).toFixed(2)} but expected $${(expectedFica / 100).toFixed(2)} (6.2% of taxable gross). Check your LES.`
+    );
+    // Generate AI explanation for significant FICA mismatch
+    const explanation = await generateTaxAdvisory('fica', fica, expectedFica, taxableGross, rank);
+    if (explanation) {
+      result.aiExplanations!['fica'] = explanation;
+    }
+  }
+  
+  // Validate Medicare (should be exactly 1.45%)
+  const expectedMedicare = taxableGross * 0.0145;
+  if (Math.abs(medicare - expectedMedicare) > 2) {
+    result.warnings.push(
+      `Medicare is $${(medicare / 100).toFixed(2)} but expected $${(expectedMedicare / 100).toFixed(2)} (1.45% of taxable gross). Check your LES.`
+    );
+    // Generate AI explanation for significant Medicare mismatch
+    const explanation = await generateTaxAdvisory('medicare', medicare, expectedMedicare, taxableGross, rank);
+    if (explanation) {
+      result.aiExplanations!['medicare'] = explanation;
+    }
+  }
+  
+  // Federal tax reasonableness (8-22% typical)
+  const federalPercent = (federalTax / taxableGross) * 100;
+  if (federalPercent < 5) {
+    result.advisories.push(
+      `Your federal tax (${federalPercent.toFixed(1)}%) seems low. Typical range: 10-15%. This might be correct if you have many exemptions.`
+    );
+    // Estimate typical federal tax for advisory
+    const typicalFederal = taxableGross * 0.12; // Midpoint
+    const explanation = await generateTaxAdvisory('federal', federalTax, typicalFederal, taxableGross, rank);
+    if (explanation) {
+      result.aiExplanations!['federal'] = explanation;
+    }
+  } else if (federalPercent > 25) {
+    result.advisories.push(
+      `Your federal tax (${federalPercent.toFixed(1)}%) seems high. Typical range: 10-15%. This might be correct if you requested additional withholding.`
+    );
+    const typicalFederal = taxableGross * 0.12;
+    const explanation = await generateTaxAdvisory('federal', federalTax, typicalFederal, taxableGross, rank);
+    if (explanation) {
+      result.aiExplanations!['federal'] = explanation;
+    }
+  }
+  
+  // State tax reasonableness (depends on state)
+  if (userState && stateTax > 0) {
+    const statePercent = (stateTax / taxableGross) * 100;
+    const stateRanges: Record<string, { min: number; max: number }> = {
+      CA: { min: 1, max: 10 },
+      NY: { min: 4, max: 8 },
+      TX: { min: 0, max: 0 },
+      FL: { min: 0, max: 0 },
+      WA: { min: 0, max: 0 },
+      AK: { min: 0, max: 0 },
+      NV: { min: 0, max: 0 },
+      SD: { min: 0, max: 0 },
+      WY: { min: 0, max: 0 },
+      TN: { min: 0, max: 1 },
+      NH: { min: 0, max: 5 },
+      // Add more states as needed
+    };
+    
+    const range = stateRanges[userState];
+    if (range && statePercent > range.max * 1.5) {
+      result.advisories.push(
+        `Your ${userState} state tax (${statePercent.toFixed(1)}%) seems high. Typical range: ${range.min}-${range.max}%.`
+      );
+      const typicalState = taxableGross * ((range.min + range.max) / 2 / 100);
+      const explanation = await generateTaxAdvisory('state', stateTax, typicalState, taxableGross, rank);
+      if (explanation) {
+        result.aiExplanations!['state'] = explanation;
+      }
+    }
+  }
+  
+  // Total tax burden check (shouldn't exceed 35%)
+  const totalTaxes = federalTax + stateTax + fica + medicare;
+  const totalPercent = (totalTaxes / taxableGross) * 100;
+  if (totalPercent > 35) {
+    result.warnings.push(
+      `Total tax burden is ${totalPercent.toFixed(1)}% - higher than typical 25-30%. Verify all amounts with your LES.`
+    );
+    const typicalTotal = taxableGross * 0.275;
+    const explanation = await generateTaxAdvisory('total', totalTaxes, typicalTotal, taxableGross, rank);
+    if (explanation) {
+      result.aiExplanations!['total'] = explanation;
+    }
+  }
+  
+  return result;
 }
 
 export async function POST(req: NextRequest) {
@@ -415,6 +539,33 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     const comparison = compareLesToExpected(lines, snapshot);
 
+    // ==========================================================================
+    // 9.5. TAX VALIDATION (NEW)
+    // ==========================================================================
+    let taxValidation: TaxValidation | null = null;
+    if (taxes && (taxes.FICA || taxes.MEDICARE || taxes.FITW || taxes.SITW)) {
+      // Calculate taxable gross (excludes BAH/BAS)
+      const taxableGross = 
+        (basePay || 0) +
+        (allowances.COLA || 0) +
+        (allowances.SDAP || 0) +
+        (allowances.HFP_IDP || 0) +
+        (allowances.FSA || 0) +
+        (allowances.FLPP || 0);
+      
+      if (taxableGross > 0) {
+        taxValidation = await validateTaxes(
+          taxes.FITW || 0,
+          taxes.SITW || 0,
+          taxes.FICA || 0,
+          taxes.MEDICARE || 0,
+          taxableGross,
+          undefined, // TODO: Get state from profile if needed
+          profile.paygrade
+        );
+      }
+    }
+
     // Store flags
     if (comparison.flags.length > 0) {
       const flagRows = comparison.flags.map(flag => ({
@@ -469,7 +620,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       snapshot,
       flags: comparison.flags,
-      summary: comparison.totals
+      summary: comparison.totals,
+      taxValidation: taxValidation ? {
+        warnings: taxValidation.warnings,
+        advisories: taxValidation.advisories,
+        aiExplanations: taxValidation.aiExplanations
+      } : undefined
     });
 
   } catch (error) {
