@@ -1,6 +1,6 @@
 /**
  * INTELLIGENT DATA QUERY ENGINE
- * 
+ *
  * Extracts entities from questions and queries relevant official data sources.
  * Designed for 100% accuracy - no random queries, only targeted data retrieval.
  */
@@ -55,7 +55,7 @@ function extractEntities(question: string): ExtractedEntities {
     // Match full base name or key parts (e.g., "Bliss" from "Fort Bliss")
     const baseWords = baseName.split(/[\s,]+/);
     const keyWord = baseWords.find((word) => word.length > 4); // Find significant word
-    
+
     if (keyWord && new RegExp(`\\b${keyWord}\\b`, "i").test(question)) {
       entities.bases.push(baseName);
       entities.mhaCodes.push(baseMap[baseName]);
@@ -71,9 +71,7 @@ function extractEntities(question: string): ExtractedEntities {
   // Extract paygrades (E-1 through E-9, O-1 through O-10, W-1 through W-5)
   const paygradeMatches = question.match(/\b[EOW]-?\d{1,2}\b/gi);
   if (paygradeMatches) {
-    entities.paygrades = paygradeMatches.map((pg) =>
-      pg.toUpperCase().replace("-", "")
-    );
+    entities.paygrades = paygradeMatches.map((pg) => pg.toUpperCase().replace("-", ""));
   }
 
   // Extract state codes (2-letter state abbreviations)
@@ -93,7 +91,14 @@ function extractEntities(question: string): ExtractedEntities {
     cola: ["cola", "cost of living allowance"],
     sdp: ["sdp", "savings deposit program", "deployment savings"],
     tax: ["tax", "federal tax", "state tax", "fica", "medicare"],
-    entitlements: ["entitlements", "dla", "dity", "ppm", "weight allowance"],
+    entitlements: ["dla", "dity", "ppm", "weight allowance", "entitlement"],
+    pcs: ["pcs", "move", "moving", "relocation", "transfer", "orders"],
+    deployment: ["deployment", "deploy", "combat pay", "hazard", "imminent danger"],
+    base: ["base", "installation", "station", "post", "fort", "camp"],
+    career: ["career", "promotion", "advancement", "reenlist", "separate"],
+    benefits: ["benefit", "va loan", "gi bill", "tricare", "commissary"],
+    spouse: ["spouse", "family", "dependent", "children"],
+    retirement: ["retire", "retirement", "pension", "high-3", "brs"],
   };
 
   for (const [topic, keywords] of Object.entries(topicKeywords)) {
@@ -102,9 +107,11 @@ function extractEntities(question: string): ExtractedEntities {
     }
   }
 
-  // If no topics detected, this is a general question - include all major topics
+  // If no topics detected, this is a general military question - allow it!
+  // Don't force it into narrow categories - Gemini can answer with general knowledge
   if (entities.topics.length === 0) {
-    entities.topics = ["bah", "basePay", "tsp", "sgli"];
+    // Mark as general military question
+    entities.topics = ["general"];
   }
 
   return entities;
@@ -113,10 +120,7 @@ function extractEntities(question: string): ExtractedEntities {
 /**
  * Query BAH rates based on extracted entities and user profile
  */
-async function queryBAH(
-  entities: ExtractedEntities,
-  userId: string
-): Promise<DataSource | null> {
+async function queryBAH(entities: ExtractedEntities, userId: string): Promise<DataSource | null> {
   let bahQuery = supabase.from("bah_rates").select("*");
   let hasFilter = false;
 
@@ -161,12 +165,12 @@ async function queryBAH(
         .select("mha")
         .ilike("mha", `${state}%`)
         .limit(3);
-      
+
       if (stateBah) {
         stateMHAs.push(...stateBah.map((row) => row.mha));
       }
     }
-    
+
     if (stateMHAs.length > 0) {
       bahQuery = bahQuery.in("mha", stateMHAs);
       hasFilter = true;
@@ -176,7 +180,18 @@ async function queryBAH(
   // If still no filter, get a diverse sample (top 10 most common MHAs)
   if (!hasFilter) {
     // Get major metro areas as examples
-    const majorMHAs = ["CA624", "VA105", "TX279", "NC090", "WA053", "HI001", "FL125", "GA031", "CO024", "IL001"];
+    const majorMHAs = [
+      "CA624",
+      "VA105",
+      "TX279",
+      "NC090",
+      "WA053",
+      "HI001",
+      "FL125",
+      "GA031",
+      "CO024",
+      "IL001",
+    ];
     bahQuery = bahQuery.in("mha", majorMHAs);
   }
 
@@ -269,10 +284,7 @@ async function queryTSP(): Promise<DataSource> {
  * Query SGLI rates (flat structure, no filtering needed)
  */
 async function querySGLI(): Promise<DataSource | null> {
-  const { data: sgliData } = await supabase
-    .from("sgli_rates")
-    .select("*")
-    .order("coverage_amount");
+  const { data: sgliData } = await supabase.from("sgli_rates").select("*").order("coverage_amount");
 
   if (sgliData && sgliData.length > 0) {
     return {
@@ -311,12 +323,19 @@ async function queryCOLA(entities: ExtractedEntities): Promise<DataSource | null
   }
 
   // OCONUS COLA (if foreign locations detected)
-  const oconusKeywords = ["oconus", "overseas", "japan", "germany", "korea", "italy", "okinawa", "ramstein", "yokota"];
+  const oconusKeywords = [
+    "oconus",
+    "overseas",
+    "japan",
+    "germany",
+    "korea",
+    "italy",
+    "okinawa",
+    "ramstein",
+    "yokota",
+  ];
   if (oconusKeywords.some((kw) => entities.topics.join(" ").includes(kw))) {
-    const { data: oconusCola } = await supabase
-      .from("oconus_cola_rates")
-      .select("*")
-      .limit(10);
+    const { data: oconusCola } = await supabase.from("oconus_cola_rates").select("*").limit(10);
 
     if (oconusCola && oconusCola.length > 0) {
       return {
@@ -396,4 +415,3 @@ export async function queryOfficialSources(
     return sources; // Return whatever we have so far
   }
 }
-
