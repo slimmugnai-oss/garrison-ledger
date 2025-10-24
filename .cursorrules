@@ -59,6 +59,7 @@ If any fail → do **not** ship; propose a compliant alternative.
 - **Admin Monitoring:** `/api/admin/users/sync-status` endpoint for sync verification
 
 **Key Integration Points:**
+
 - New users get: `user_profiles`, `entitlements`, `ask_credits` (5 free), `user_gamification`
 - Dashboard uses `ensureUserExists()` for safety
 - All RLS policies reference `auth.uid()` for Clerk user ID

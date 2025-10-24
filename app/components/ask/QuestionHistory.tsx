@@ -32,12 +32,16 @@ interface HistoricalQuestion {
 
 interface QuestionHistoryProps {
   onViewAnswer?: (answer: unknown) => void;
+  collapsed?: boolean;
 }
 
-export default function QuestionHistory({ onViewAnswer }: QuestionHistoryProps) {
+export default function QuestionHistory({
+  onViewAnswer,
+  collapsed = false,
+}: QuestionHistoryProps) {
   const [questions, setQuestions] = useState<HistoricalQuestion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!collapsed);
   const [filter, setFilter] = useState<"all" | "strict" | "advisory">("all");
 
   useEffect(() => {

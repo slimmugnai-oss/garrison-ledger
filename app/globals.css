@@ -608,3 +608,19 @@ button, a, [role="button"] {
   }
 }
 
+/* ============================================
+   ASK ASSISTANT - MOBILE DRAWER
+   Slide-up drawer for mobile answer display
+   ============================================ */
+
+@media (max-width: 767px) {
+  .active {
+    transform: translateY(0) !important;
+  }
+}
+
+/* Smooth scrolling for answer reveal */
+html {
+  scroll-behavior: smooth;
+}
+

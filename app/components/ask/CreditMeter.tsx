@@ -20,16 +20,18 @@ interface CreditData {
 
 interface CreditMeterProps {
   _onPurchaseClick?: () => void;
+  compact?: boolean;
 }
 
 export interface CreditMeterRef {
   refresh: () => Promise<void>;
 }
 
-const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(({ _onPurchaseClick }, ref) => {
-  const [credits, setCredits] = useState<CreditData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(
+  ({ _onPurchaseClick, compact = false }, ref) => {
+    const [credits, setCredits] = useState<CreditData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
   const fetchCredits = async () => {
     try {
@@ -74,6 +76,13 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(({ _onPurchaseC
   };
 
   if (loading) {
+    if (compact) {
+      return (
+        <div className="animate-pulse rounded-lg border border-gray-200 bg-white px-4 py-2">
+          <div className="h-4 w-32 rounded bg-gray-200"></div>
+        </div>
+      );
+    }
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-4">
         <div className="animate-pulse">
@@ -124,6 +133,31 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(({ _onPurchaseC
     if (credits.credits_remaining <= credits.credits_total * 0.3) return "text-yellow-600";
     return "text-green-600";
   };
+
+  // Compact mode for new layout
+  if (compact) {
+    return (
+      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-2">
+        <div className="flex items-center gap-2">
+          <Icon name="MessageCircle" className="h-4 w-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">
+            {credits.credits_remaining}/{credits.credits_total} questions
+          </span>
+          <Badge variant={credits.tier === "premium" ? "success" : "info"} className="text-xs">
+            {credits.tier}
+          </Badge>
+        </div>
+        {credits.tier === "free" && (
+          <a
+            href="/dashboard/upgrade"
+            className="text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            Upgrade
+          </a>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">

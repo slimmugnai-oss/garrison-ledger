@@ -3,15 +3,16 @@
 /**
  * ASK ASSISTANT - Client Component Wrapper
  *
+ * Compact layout with sticky answer and mobile drawer
  * Manages state between QuestionComposer and AnswerDisplay
- * Handles the full question submission lifecycle
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import QuestionComposer from "./QuestionComposer";
 import AnswerDisplay from "./AnswerDisplay";
 import CreditMeter from "./CreditMeter";
 import TemplateQuestions from "./TemplateQuestions";
+import QuestionHistory from "./QuestionHistory";
 import Icon from "@/app/components/ui/Icon";
 
 interface AnswerData {
@@ -25,10 +26,6 @@ interface AnswerData {
   toolHandoffs: { tool: string; url: string; description: string }[];
 }
 
-interface QuestionComposerRef {
-  fillQuestion: (text: string, id: string) => void;
-}
-
 export default function AskAssistantClient() {
   const [answer, setAnswer] = useState<AnswerData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,67 +34,79 @@ export default function AskAssistantClient() {
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [currentTemplateId, setCurrentTemplateId] = useState<string | undefined>();
+  const [isMobile, setIsMobile] = useState(false);
+  
   const creditMeterRef = useRef<{ refresh: () => Promise<void> }>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
 
-  const handleQuestionSubmit = useCallback(async (question: string, templateId?: string) => {
-    setIsLoading(true);
-    setError(null);
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-    try {
-      // Track analytics
+  const handleQuestionSubmit = useCallback(
+    async (question: string, templateId?: string) => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        await fetch("/api/analytics/track", {
+        // Track analytics
+        try {
+          await fetch("/api/analytics/track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              event: "ask_submit",
+              properties: {
+                question_length: question.length,
+                template_id: templateId,
+                has_template: !!templateId,
+              },
+              timestamp: new Date().toISOString(),
+            }),
+          });
+        } catch (analyticsError) {
+          console.debug("Analytics tracking failed:", analyticsError);
+        }
+
+        // Submit question
+        const response = await fetch("/api/ask/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            event: "ask_submit",
-            properties: {
-              question_length: question.length,
-              template_id: templateId,
-              has_template: !!templateId,
-            },
-            timestamp: new Date().toISOString(),
+            question: question.trim(),
+            templateId,
           }),
         });
-      } catch (analyticsError) {
-        console.debug("Analytics tracking failed:", analyticsError);
-      }
 
-      // Submit question
-      const response = await fetch("/api/ask/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: question.trim(),
-          templateId,
-        }),
-      });
+        const result = await response.json();
 
-      const result = await response.json();
+        if (!response.ok) {
+          // Handle specific error cases
+          if (response.status === 402) {
+            setError(
+              `Out of credits! You have ${result.credits_remaining || 0} questions remaining. ${result.tier === "free" ? "Upgrade to Premium for 50 questions/month." : "Purchase more credits to continue."}`
+            );
+            setCreditsRemaining(result.credits_remaining || 0);
+            return;
+          }
 
-      if (!response.ok) {
-        // Handle specific error cases
-        if (response.status === 402) {
-          setError(
-            `Out of credits! You have ${result.credits_remaining || 0} questions remaining. ${result.tier === "free" ? "Upgrade to Premium for 50 questions/month." : "Purchase more credits to continue."}`
-          );
-          setCreditsRemaining(result.credits_remaining || 0);
+          if (response.status === 401) {
+            setError("Please sign in to ask questions.");
+            return;
+          }
+
+          setError(result.error || "Failed to submit question. Please try again.");
           return;
         }
-
-        if (response.status === 401) {
-          setError("Please sign in to ask questions.");
-          return;
-        }
-
-        setError(result.error || "Failed to submit question. Please try again.");
-        return;
-      }
 
         if (result.success && result.answer) {
           setAnswer(result.answer);
           setCreditsRemaining(result.credits_remaining);
-          
+
           // Show success notification
           setShowSuccess(true);
           setTimeout(() => setShowSuccess(false), 3000);
@@ -106,25 +115,34 @@ export default function AskAssistantClient() {
           if (creditMeterRef.current?.refresh) {
             await creditMeterRef.current.refresh();
           }
+
+          // Auto-scroll to answer on desktop, activate drawer on mobile
+          setTimeout(() => {
+            if (isMobile) {
+              answerRef.current?.classList.add("active");
+            } else {
+              answerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 100);
         } else {
           setError("Received invalid response from server. Please try again.");
         }
-    } catch (err) {
-      console.error("Question submit error:", err);
-      setError("Network error. Please check your connection and try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      } catch (err) {
+        console.error("Question submit error:", err);
+        setError("Network error. Please check your connection and try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isMobile]
+  );
 
   const handleTemplateClick = useCallback((text: string, id: string) => {
-    // Fill the question composer with template text
     setCurrentQuestion(text);
     setCurrentTemplateId(id);
   }, []);
 
   const handleToolHandoff = useCallback((tool: string, url: string) => {
-    // Navigate to the tool
     window.location.href = url;
   }, []);
 
@@ -145,9 +163,9 @@ export default function AskAssistantClient() {
         </div>
       )}
 
-      {/* Credit Meter */}
-      <div className="mb-6">
-        <CreditMeter ref={creditMeterRef} />
+      {/* Credit Meter - Compact */}
+      <div className="mb-4">
+        <CreditMeter ref={creditMeterRef} compact />
       </div>
 
       {/* Error Banner */}
@@ -187,42 +205,53 @@ export default function AskAssistantClient() {
         </div>
       )}
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-        {/* Left Column - Question Composer (40%) */}
-        <div className="lg:col-span-2">
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900">Ask Your Question</h2>
+      {/* Single Column Compact Layout */}
+      <div className="space-y-6">
+        {/* Compact Composer */}
+        <div className="rounded-lg border-2 border-blue-600 bg-white p-4 shadow-sm">
+          <QuestionComposer
+            onQuestionSubmit={handleQuestionSubmit}
+            isLoading={isLoading}
+            maxLength={500}
+            initialQuestion={currentQuestion}
+            initialTemplateId={currentTemplateId}
+            compact
+          />
 
-            {/* Template Questions */}
-            <div className="mb-6">
-              <TemplateQuestions onTemplateClick={handleTemplateClick} />
+          {/* Templates Dropdown Below Input */}
+          <div className="mt-3 border-t border-gray-100 pt-3">
+            <TemplateQuestions onTemplateClick={handleTemplateClick} mode="dropdown" />
+          </div>
+        </div>
+
+        {/* Answer Section - Sticky on desktop, drawer on mobile */}
+        <div
+          ref={answerRef}
+          className={`
+            rounded-lg border border-gray-200 bg-white p-6
+            ${isMobile ? "fixed bottom-0 left-0 right-0 z-40 max-h-[80vh] translate-y-full overflow-y-auto transition-transform duration-300 ease-out" : ""}
+            ${!isMobile ? "sticky top-24" : ""}
+          `}
+        >
+          {/* Mobile: Swipe Handle */}
+          {isMobile && answer && (
+            <div className="mb-4 flex justify-center">
+              <div className="h-1 w-12 rounded-full bg-gray-300"></div>
             </div>
+          )}
 
-            {/* Question Composer */}
-            <QuestionComposer
-              onQuestionSubmit={handleQuestionSubmit}
-              isLoading={isLoading}
-              maxLength={500}
-              initialQuestion={currentQuestion}
-              initialTemplateId={currentTemplateId}
-            />
-          </div>
+          <h2 className="mb-4 text-xl font-semibold text-gray-900">Answer</h2>
+
+          <AnswerDisplay
+            answer={answer || undefined}
+            isLoading={isLoading}
+            onToolHandoff={handleToolHandoff}
+            sticky={!isMobile}
+          />
         </div>
 
-        {/* Right Column - Answer Pane (60%) */}
-        <div className="lg:col-span-3">
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900">Answer</h2>
-
-            {/* Answer Display */}
-            <AnswerDisplay
-              answer={answer || undefined}
-              isLoading={isLoading}
-              onToolHandoff={handleToolHandoff}
-            />
-          </div>
-        </div>
+        {/* Question History - Collapsed by Default */}
+        <QuestionHistory collapsed />
       </div>
     </>
   );

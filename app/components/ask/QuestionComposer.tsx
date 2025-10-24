@@ -16,6 +16,7 @@ interface QuestionComposerProps {
   maxLength?: number;
   initialQuestion?: string;
   initialTemplateId?: string;
+  compact?: boolean;
 }
 
 export default function QuestionComposer({
@@ -24,6 +25,7 @@ export default function QuestionComposer({
   maxLength = 500,
   initialQuestion = "",
   initialTemplateId,
+  compact = false,
 }: QuestionComposerProps) {
   const [question, setQuestion] = useState(initialQuestion);
   const [templateId, setTemplateId] = useState<string | undefined>(initialTemplateId);
@@ -53,6 +55,34 @@ export default function QuestionComposer({
     setQuestion("");
     setTemplateId(undefined);
   };
+
+  // Compact mode for new layout
+  if (compact) {
+    return (
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="text"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask a military financial question..."
+          className="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
+          maxLength={maxLength}
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          disabled={!question.trim() || isLoading}
+          className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+        >
+          {isLoading ? (
+            <Icon name="Loader" className="h-5 w-5 animate-spin" />
+          ) : (
+            "Ask"
+          )}
+        </button>
+      </form>
+    );
+  }
 
   return (
     <div className="space-y-4">

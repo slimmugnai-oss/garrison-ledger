@@ -19,12 +19,17 @@ interface TemplateQuestion {
 
 interface TemplateQuestionsProps {
   onTemplateClick?: (text: string, id: string) => void;
+  mode?: "grid" | "dropdown";
 }
 
-export default function TemplateQuestions({ onTemplateClick }: TemplateQuestionsProps) {
+export default function TemplateQuestions({
+  onTemplateClick,
+  mode = "grid",
+}: TemplateQuestionsProps) {
   const [templates, setTemplates] = useState<TemplateQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchTemplates();
@@ -119,6 +124,76 @@ export default function TemplateQuestions({ onTemplateClick }: TemplateQuestions
     );
   }
 
+  // Dropdown mode for compact layout
+  if (mode === "dropdown") {
+    return (
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+        >
+          <Icon name="Lightbulb" className="h-4 w-4" />
+          Need inspiration? Browse {templates.length} templates
+          <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} className="h-4 w-4" />
+        </button>
+
+        {isOpen && (
+          <div className="absolute left-0 right-0 top-full z-10 mt-2 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+            {/* Category Pills */}
+            <div className="mb-3 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    selectedCategory === category.id
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {category.label} ({category.count})
+                </button>
+              ))}
+            </div>
+
+            {/* Template List */}
+            <div className="space-y-1">
+              {filteredTemplates.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => {
+                    onTemplateClick?.(template.text, template.id);
+                    setIsOpen(false);
+                  }}
+                  className="block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex-1">{template.text}</span>
+                    {template.personalized && (
+                      <Badge variant="info" className="text-xs">
+                        You
+                      </Badge>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {filteredTemplates.length === 0 && (
+              <div className="py-4 text-center text-sm text-gray-500">
+                No templates for this category
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Grid mode (original layout)
   return (
     <div className="space-y-4">
       {/* Category Filter */}

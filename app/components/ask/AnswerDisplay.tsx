@@ -26,12 +26,14 @@ interface AnswerDisplayProps {
   answer?: AnswerData;
   isLoading?: boolean;
   onToolHandoff?: (tool: string, url: string) => void;
+  sticky?: boolean;
 }
 
 export default function AnswerDisplay({
   answer,
   isLoading = false,
   onToolHandoff,
+  sticky = false,
 }: AnswerDisplayProps) {
   const [showSources, setShowSources] = useState(false);
 
@@ -72,8 +74,13 @@ export default function AnswerDisplay({
     return "Low";
   };
 
+  const containerClasses = sticky
+    ? "max-h-[calc(100vh-200px)] overflow-y-auto"
+    : "";
+
   return (
-    <div className="space-y-6">
+    <div className={containerClasses}>
+      <div className="space-y-6">
       {/* Mode Banner */}
       {answer.mode === "advisory" && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
@@ -288,6 +295,7 @@ export default function AnswerDisplay({
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
