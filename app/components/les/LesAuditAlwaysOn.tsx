@@ -301,10 +301,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const taxValidation = useMemo(() => {
     const warnings: string[] = [];
     const advisories: string[] = [];
-    
+
     // Calculate taxable gross (excludes BAH/BAS)
     const taxableGross = basePay + cola;
-    
+
     if (taxableGross > 0) {
       // FICA validation (should be exactly 6.2% ± $5)
       const expectedFica = Math.round(taxableGross * 0.062);
@@ -313,7 +313,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           `FICA should be $${(expectedFica / 100).toFixed(2)} (6.2% of taxable gross). You have $${(fica / 100).toFixed(2)}. Check your LES.`
         );
       }
-      
+
       // Medicare validation (should be exactly 1.45% ± $2)
       const expectedMedicare = Math.round(taxableGross * 0.0145);
       if (medicare > 0 && Math.abs(medicare - expectedMedicare) > 2) {
@@ -321,9 +321,14 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           `Medicare should be $${(expectedMedicare / 100).toFixed(2)} (1.45% of taxable gross). You have $${(medicare / 100).toFixed(2)}. Check your LES.`
         );
       }
-      
+
       // Federal tax reasonableness (8-22% typical for military)
-      if (federalTax > 0) {
+      if (federalTax === 0 && taxableGross > 0) {
+        // Special case: $0 federal tax could be Combat Zone Tax Exclusion (CZTE)
+        advisories.push(
+          `✓ Combat Zone Tax Exclusion detected (Federal tax: $0.00). No action needed. CZTE exempts federal income tax while in combat zone. FICA/Medicare still apply.`
+        );
+      } else if (federalTax > 0) {
         const federalPercent = (federalTax / taxableGross) * 100;
         if (federalPercent < 5) {
           advisories.push(
@@ -335,7 +340,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           );
         }
       }
-      
+
       // Total tax burden check (shouldn't exceed 35%)
       const totalTaxes = federalTax + stateTax + fica + medicare;
       const totalPercent = (totalTaxes / taxableGross) * 100;
@@ -345,7 +350,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         );
       }
     }
-    
+
     return { warnings, advisories };
   }, [basePay, cola, fica, medicare, federalTax, stateTax]);
 
@@ -756,14 +761,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     helpText="Auto-calculated from taxable gross - edit if your LES differs"
                   />
                 </div>
-                
+
                 {/* Tax Validation Warnings */}
                 {taxValidation.warnings.length > 0 && (
                   <div className="rounded-lg border-l-4 border-red-400 bg-red-50 p-3">
                     <div className="flex gap-2">
-                      <Icon name="AlertTriangle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+                      <Icon
+                        name="AlertTriangle"
+                        className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600"
+                      />
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-red-900">Tax Validation Warnings</p>
+                        <p className="text-sm font-semibold text-red-900">
+                          Tax Validation Warnings
+                        </p>
                         <ul className="mt-1 space-y-1 text-xs text-red-800">
                           {taxValidation.warnings.map((w, i) => (
                             <li key={i}>• {w}</li>
@@ -773,7 +783,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Tax Validation Advisories */}
                 {taxValidation.advisories.length > 0 && (
                   <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-3">
