@@ -105,8 +105,8 @@ export const ssot = {
       model: "Gemini-2.5-Flash",
       modelNote: "GA since June 2025, production-stable",
       rateLimits: {
-        free: { questionsPerMonth: 5, maxTokens: 2048, fileAnalysis: false },
-        premium: { questionsPerMonth: 50, maxTokens: 4096, fileAnalysis: false },
+        free: { questionsPerMonth: 5, maxTokens: 3072, fileAnalysis: false },
+        premium: { questionsPerMonth: 50, maxTokens: 6144, fileAnalysis: false },
       },
       creditPacks: [
         { credits: 25, priceCents: 199 },
