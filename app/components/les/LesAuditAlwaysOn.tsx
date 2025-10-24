@@ -166,6 +166,29 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   }, [month, year, paygrade, mhaOrZip, withDependents]);
 
   // ============================================================================
+  // AUTO-CALCULATE FICA & MEDICARE (6.2% and 1.45% of taxable gross)
+  // ============================================================================
+
+  useEffect(() => {
+    // Calculate taxable gross (excludes BAH/BAS which are non-taxable)
+    const taxableGross = basePay + cola; // In cents already
+    
+    if (taxableGross > 0) {
+      // Auto-calculate FICA (6.2%) if empty or zero
+      if (fica === 0) {
+        const calculatedFica = Math.round(taxableGross * 0.062);
+        setFica(calculatedFica);
+      }
+      
+      // Auto-calculate Medicare (1.45%) if empty or zero
+      if (medicare === 0) {
+        const calculatedMedicare = Math.round(taxableGross * 0.0145);
+        setMedicare(calculatedMedicare);
+      }
+    }
+  }, [basePay, cola, fica, medicare]);
+
+  // ============================================================================
   // FETCH AUDIT HISTORY
   // ============================================================================
 
@@ -639,6 +662,17 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
             {!collapsedSections.taxes && (
               <div className="space-y-3 px-4 pb-4">
+                {/* Tax Info Banner */}
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                  <div className="flex items-start gap-2">
+                    <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+                    <div className="text-xs text-blue-800">
+                      <strong>FICA and Medicare are auto-calculated</strong> at 6.2% and 1.45% of taxable gross.
+                      You can edit if your LES differs (rare).
+                    </div>
+                  </div>
+                </div>
+                
                 <CurrencyField
                   label="Federal Tax"
                   value={federalTax}
@@ -651,18 +685,22 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   onChange={setStateTax}
                   helpText="State income tax withheld (if applicable)"
                 />
-                <CurrencyField
-                  label="FICA / Social Security"
-                  value={fica}
-                  onChange={setFica}
-                  helpText="Enter the dollar amount withheld (not the percentage). Example: $217.00"
-                />
-                <CurrencyField
-                  label="Medicare"
-                  value={medicare}
-                  onChange={setMedicare}
-                  helpText="Enter the dollar amount withheld (not the percentage). Example: $50.75"
-                />
+                <div>
+                  <CurrencyField
+                    label="FICA / Social Security ✓ Auto-calc (6.2%)"
+                    value={fica}
+                    onChange={setFica}
+                    helpText="Auto-calculated from taxable gross - edit if your LES differs"
+                  />
+                </div>
+                <div>
+                  <CurrencyField
+                    label="Medicare ✓ Auto-calc (1.45%)"
+                    value={medicare}
+                    onChange={setMedicare}
+                    helpText="Auto-calculated from taxable gross - edit if your LES differs"
+                  />
+                </div>
               </div>
             )}
           </div>
