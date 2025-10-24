@@ -134,16 +134,16 @@ async function queryBAH(entities: ExtractedEntities, userId: string): Promise<Da
   if (!hasFilter && entities.hasPersonalContext) {
     const { data: profile } = await supabase
       .from("user_profiles")
-      .select("mha_or_zip, paygrade")
+      .select("mha_code, paygrade")
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (profile?.mha_or_zip) {
+    if (profile?.mha_code) {
       // Check if it's an MHA code or ZIP
-      if (/^[A-Z]{2}\d{3}$/.test(profile.mha_or_zip)) {
-        bahQuery = bahQuery.eq("mha", profile.mha_or_zip);
+      if (/^[A-Z]{2}\d{3}$/.test(profile.mha_code)) {
+        bahQuery = bahQuery.eq("mha", profile.mha_code);
       } else {
-        bahQuery = bahQuery.eq("zip_code", profile.mha_or_zip);
+        bahQuery = bahQuery.eq("zip_code", profile.mha_code);
       }
       hasFilter = true;
 
@@ -366,7 +366,7 @@ export async function queryOfficialSources(
     const { data: profile } = await supabase
       .from("user_profiles")
       .select(
-        "user_id, paygrade, mha_or_zip, years_of_service, has_dependents, dependents_count, rank, branch"
+        "user_id, paygrade, mha_code, current_base, years_of_service, has_dependents, dependents_count, rank, branch"
       )
       .eq("user_id", userId)
       .maybeSingle();
@@ -381,7 +381,8 @@ export async function queryOfficialSources(
         data: {
           paygrade: profile.paygrade,
           rank: profile.rank,
-          mha_or_zip: profile.mha_or_zip,
+          mha_code: profile.mha_code,
+          current_base: profile.current_base,
           years_of_service: profile.years_of_service,
           has_dependents: profile.has_dependents,
           dependents_count: profile.dependents_count,

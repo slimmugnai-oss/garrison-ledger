@@ -269,14 +269,14 @@ ${
 
 User Profile:
 - Rank/Paygrade: ${userProfile?.data.rank || userProfile?.data.paygrade || "Unknown"}
-- Location (MHA/ZIP): ${userProfile?.data.mha_or_zip || "Not set"}
+- Location: ${userProfile?.data.current_base || userProfile?.data.mha_code || "Not set"}
 - Years of Service: ${userProfile?.data.years_of_service || "Unknown"}
 - Dependents: ${userProfile?.data.has_dependents ? `Yes (${userProfile?.data.dependents_count || 1})` : "No"}
 - Branch: ${userProfile?.data.branch || "Unknown"}
 
 When answering:
 1. Use their ACTUAL rank, location, and dependent status - not hypothetical examples
-2. Say "Based on your profile" or "For you as an E-5 with dependents"
+2. Say "Based on your profile" or "For you as an ${userProfile?.data.paygrade || userProfile?.data.rank} with dependents"
 3. If they ask about "my BAH" or "my pay", use THEIR specific data from the sources below
 4. If their profile is incomplete, tell them to update it at /dashboard/profile
 5. DO NOT say "if you were an E-5" - they ARE what their profile says they are
