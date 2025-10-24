@@ -113,6 +113,16 @@ export const ssot = {
         { credits: 100, priceCents: 599 },
         { credits: 250, priceCents: 999 },
       ],
+      creditExpiration: {
+        initialDays: 30, // Credits expire after 30 days
+        refreshType: "monthly", // Monthly refresh of credits
+        rollover: false, // Unused credits don't roll over
+      },
+      initialization: {
+        maxRetries: 3, // Retry credit initialization up to 3 times
+        retryDelayMs: 200, // Start with 200ms delay, doubles each retry
+        backupTrigger: true, // Database trigger acts as backup if webhook fails
+      },
     },
     intelLibrary: {
       status: "deprecated",

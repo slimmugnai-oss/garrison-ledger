@@ -18,6 +18,12 @@ interface CreditData {
   expires_at?: string;
 }
 
+interface CreditError {
+  code: string;
+  message: string;
+  status: number;
+}
+
 interface CreditMeterProps {
   _onPurchaseClick?: () => void;
   compact?: boolean;
@@ -31,6 +37,7 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(
   ({ _onPurchaseClick, compact = false }, ref) => {
     const [credits, setCredits] = useState<CreditData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<CreditError | null>(null);
     const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
     const fetchCredits = async () => {
@@ -40,9 +47,21 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(
 
         if (result.success) {
           setCredits(result);
+        } else {
+          // Store error details for better error messages
+          setError({
+            code: result.errorCode || "UNKNOWN",
+            message: result.message || result.error || "Unknown error",
+            status: response.status,
+          });
         }
       } catch (error) {
         console.error("Failed to fetch credits:", error);
+        setError({
+          code: "NETWORK_ERROR",
+          message: "Network connection failed",
+          status: 0,
+        });
       } finally {
         setLoading(false);
       }
@@ -94,6 +113,124 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(
       );
     }
 
+    if (!credits && error) {
+      // Determine error type and show specific message
+      const getErrorMessage = () => {
+        switch (error.code) {
+          case "NO_ENTITLEMENT":
+            return {
+              title: "Account Setup Incomplete",
+              message: "Please complete your profile setup to access Ask Assistant.",
+              action: "Complete Profile",
+              actionUrl: "/dashboard/profile/setup",
+              color: "yellow",
+            };
+          case "INIT_FAILED":
+            return {
+              title: "Initialization Failed",
+              message:
+                "We couldn't set up your question credits. This is usually temporary. Try refreshing the page.",
+              action: "Refresh Page",
+              actionFn: () => window.location.reload(),
+              color: "red",
+            };
+          case "DB_ERROR":
+            return {
+              title: "Database Error",
+              message: "Our database is experiencing issues. Please try again in a few minutes.",
+              action: "Try Again",
+              actionFn: () => {
+                setLoading(true);
+                setError(null);
+                fetchCredits();
+              },
+              color: "red",
+            };
+          case "NETWORK_ERROR":
+            return {
+              title: "Connection Failed",
+              message: "Unable to connect to the server. Please check your internet connection.",
+              action: "Retry",
+              actionFn: () => {
+                setLoading(true);
+                setError(null);
+                fetchCredits();
+              },
+              color: "orange",
+            };
+          default:
+            return {
+              title: "Credits Unavailable",
+              message: error.message || "Unable to load your credit balance. Please try again.",
+              action: "Try Again",
+              actionFn: () => {
+                setLoading(true);
+                setError(null);
+                fetchCredits();
+              },
+              color: "red",
+            };
+        }
+      };
+
+      const errorInfo = getErrorMessage();
+      const colorClasses = {
+        red: {
+          border: "border-red-200",
+          bg: "bg-red-50",
+          icon: "text-red-600",
+          title: "text-red-800",
+          text: "text-red-700",
+          button: "bg-red-600 hover:bg-red-700",
+        },
+        yellow: {
+          border: "border-yellow-200",
+          bg: "bg-yellow-50",
+          icon: "text-yellow-600",
+          title: "text-yellow-800",
+          text: "text-yellow-700",
+          button: "bg-yellow-600 hover:bg-yellow-700",
+        },
+        orange: {
+          border: "border-orange-200",
+          bg: "bg-orange-50",
+          icon: "text-orange-600",
+          title: "text-orange-800",
+          text: "text-orange-700",
+          button: "bg-orange-600 hover:bg-orange-700",
+        },
+      };
+
+      const colors = colorClasses[errorInfo.color as keyof typeof colorClasses] || colorClasses.red;
+
+      return (
+        <div className={`rounded-lg border ${colors.border} ${colors.bg} p-4`}>
+          <div className="mb-2 flex items-center gap-2">
+            <Icon name="AlertCircle" className={`h-5 w-5 ${colors.icon}`} />
+            <span className={`font-semibold ${colors.title}`}>{errorInfo.title}</span>
+          </div>
+          <p className={`mb-3 text-sm ${colors.text}`}>{errorInfo.message}</p>
+          {errorInfo.actionUrl ? (
+            <a
+              href={errorInfo.actionUrl}
+              className={`inline-flex items-center gap-2 rounded-lg ${colors.button} px-3 py-1.5 text-sm font-medium text-white`}
+            >
+              <Icon name="ArrowRight" className="h-4 w-4" />
+              {errorInfo.action}
+            </a>
+          ) : (
+            <button
+              onClick={errorInfo.actionFn}
+              className={`inline-flex items-center gap-2 rounded-lg ${colors.button} px-3 py-1.5 text-sm font-medium text-white`}
+            >
+              <Icon name="RefreshCw" className="h-4 w-4" />
+              {errorInfo.action}
+            </button>
+          )}
+        </div>
+      );
+    }
+
     if (!credits) {
       return (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
@@ -102,11 +239,12 @@ const CreditMeter = forwardRef<CreditMeterRef, CreditMeterProps>(
             <span className="font-semibold text-red-800">Credits Not Available</span>
           </div>
           <p className="mb-3 text-sm text-red-700">
-            Unable to load your credit balance. This might be a temporary network issue.
+            Unable to load your credit balance. Please refresh the page to try again.
           </p>
           <button
             onClick={() => {
               setLoading(true);
+              setError(null);
               fetchCredits();
             }}
             className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"

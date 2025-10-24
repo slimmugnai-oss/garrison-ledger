@@ -1,30 +1,30 @@
-import { NextRequest } from 'next/server';
-import { Webhook } from 'svix';
-import { WebhookEvent } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+import { NextRequest } from "next/server";
+import { Webhook } from "svix";
+import { WebhookEvent } from "@clerk/nextjs/server";
+import { supabaseAdmin } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, svix-id, svix-timestamp, svix-signature',
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, svix-id, svix-timestamp, svix-signature",
       },
     });
   }
 
   // Get the headers
-  const svix_id = req.headers.get('svix-id');
-  const svix_timestamp = req.headers.get('svix-timestamp');
-  const svix_signature = req.headers.get('svix-signature');
+  const svix_id = req.headers.get("svix-id");
+  const svix_timestamp = req.headers.get("svix-timestamp");
+  const svix_signature = req.headers.get("svix-signature");
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occurred -- no svix headers', {
+    return new Response("Error occurred -- no svix headers", {
       status: 400,
     });
   }
@@ -40,13 +40,13 @@ export async function POST(req: NextRequest) {
   // Verify the payload with the headers
   try {
     evt = wh.verify(payload, {
-      'svix-id': svix_id,
-      'svix-timestamp': svix_timestamp,
-      'svix-signature': svix_signature,
+      "svix-id": svix_id,
+      "svix-timestamp": svix_timestamp,
+      "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    logger.error('[ClerkWebhook] Signature verification failed', err);
-    return new Response('Invalid signature', {
+    logger.error("[ClerkWebhook] Signature verification failed", err);
+    return new Response("Invalid signature", {
       status: 400,
     });
   }
@@ -54,105 +54,134 @@ export async function POST(req: NextRequest) {
   // Handle the webhook
   const eventType = evt.type;
 
-  if (eventType === 'user.created') {
+  if (eventType === "user.created") {
     const { id, email_addresses } = evt.data;
     const email = email_addresses[0]?.email_address;
 
     if (!email) {
-      logger.warn('[ClerkWebhook] User created with no email', { userId: id });
-      return new Response('No email found', { status: 400 });
+      logger.warn("[ClerkWebhook] User created with no email", { userId: id });
+      return new Response("No email found", { status: 400 });
     }
 
     try {
       // Insert into profiles table (used for auth/staff bypass)
-      const { error: profilesError } = await supabaseAdmin
-        .from('profiles')
-        .insert([
-          {
-            id: id,
-            email: email,
-          },
-        ]);
+      const { error: profilesError } = await supabaseAdmin.from("profiles").insert([
+        {
+          id: id,
+          email: email,
+        },
+      ]);
 
       if (profilesError) {
-        logger.error('[ClerkWebhook] Failed to create profiles record', profilesError, { userId: id, email: email.split('@')[1] });
-        return new Response('Database error', { status: 500 });
+        logger.error("[ClerkWebhook] Failed to create profiles record", profilesError, {
+          userId: id,
+          email: email.split("@")[1],
+        });
+        return new Response("Database error", { status: 500 });
       }
 
       // Insert the new user into the user_profiles table
-      const { error: userProfileError } = await supabaseAdmin
-        .from('user_profiles')
-        .insert([
-          {
-            user_id: id,
-          },
-        ]);
+      const { error: userProfileError } = await supabaseAdmin.from("user_profiles").insert([
+        {
+          user_id: id,
+        },
+      ]);
 
       if (userProfileError) {
-        logger.error('[ClerkWebhook] Failed to create user_profiles record', userProfileError, { userId: id, email: email.split('@')[1] });
+        logger.error("[ClerkWebhook] Failed to create user_profiles record", userProfileError, {
+          userId: id,
+          email: email.split("@")[1],
+        });
         // Don't fail the webhook - profiles record is created
       }
 
       // Create free tier entitlement for new user
-      const { error: entitlementError } = await supabaseAdmin
-        .from('entitlements')
-        .insert([
-          {
-            user_id: id,
-            tier: 'free',
-            status: 'active',
-          },
-        ]);
+      const { error: entitlementError } = await supabaseAdmin.from("entitlements").insert([
+        {
+          user_id: id,
+          tier: "free",
+          status: "active",
+        },
+      ]);
 
       if (entitlementError) {
         // Don't fail the webhook - user profile is created, entitlement can be fixed later
-        logger.warn('[ClerkWebhook] Failed to create entitlement', { userId: id, error: entitlementError });
+        logger.warn("[ClerkWebhook] Failed to create entitlement", {
+          userId: id,
+          error: entitlementError,
+        });
       }
 
       // Initialize gamification for new user
-      const { error: gamificationError } = await supabaseAdmin
-        .from('user_gamification')
-        .insert([
-          {
-            user_id: id,
-            current_streak: 0,
-            longest_streak: 0,
-            total_logins: 1,
-            points: 0,
-          },
-        ]);
+      const { error: gamificationError } = await supabaseAdmin.from("user_gamification").insert([
+        {
+          user_id: id,
+          current_streak: 0,
+          longest_streak: 0,
+          total_logins: 1,
+          points: 0,
+        },
+      ]);
 
       if (gamificationError) {
         // Don't fail the webhook - core profile is created
-        logger.warn('[ClerkWebhook] Failed to create gamification', { userId: id, error: gamificationError });
+        logger.warn("[ClerkWebhook] Failed to create gamification", {
+          userId: id,
+          error: gamificationError,
+        });
       }
 
       // Initialize Ask Assistant credits (5 free questions)
-      const { error: creditsError } = await supabaseAdmin
-        .from('ask_credits')
-        .insert([
-          {
-            user_id: id,
-            credits_remaining: 5,
-            credits_total: 5,
-            tier: 'free',
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-          },
-        ]);
+      const { error: creditsError } = await supabaseAdmin.from("ask_credits").insert([
+        {
+          user_id: id,
+          credits_remaining: 5,
+          credits_total: 5,
+          tier: "free",
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        },
+      ]);
 
       if (creditsError) {
-        // Don't fail the webhook - core profile is created
-        logger.warn('[ClerkWebhook] Failed to create ask_credits', { userId: id, error: creditsError });
+        // Log error to admin error logs for monitoring
+        logger.error("[ClerkWebhook] Failed to create ask_credits", {
+          userId: id,
+          error: creditsError,
+        });
+
+        // Log to admin error logs table
+        await supabaseAdmin
+          .from("error_logs")
+          .insert({
+            level: "error",
+            source: "clerk_webhook_credits",
+            message: "Failed to initialize Ask Assistant credits during user signup",
+            details: {
+              userId: id,
+              email: email.split("@")[1],
+              error: creditsError.message || String(creditsError),
+              code: creditsError.code,
+            },
+          })
+          .catch((logErr) => {
+            logger.error("[ClerkWebhook] Failed to log credits error", { error: logErr });
+          });
+
+        // Don't fail the webhook - database trigger will handle it as backup
+      } else {
+        logger.info("[ClerkWebhook] Successfully initialized 5 free Ask Assistant credits", {
+          userId: id,
+        });
       }
 
-      logger.info('[ClerkWebhook] New user created', { userId: id, email: email.split('@')[1] });
-      return new Response('User created successfully', { status: 200 });
+      logger.info("[ClerkWebhook] New user created", { userId: id, email: email.split("@")[1] });
+      return new Response("User created successfully", { status: 200 });
     } catch (error) {
-      logger.error('[ClerkWebhook] Error creating user', error, { userId: id });
-      return new Response('Internal server error', { status: 500 });
+      logger.error("[ClerkWebhook] Error creating user", error, { userId: id });
+      return new Response("Internal server error", { status: 500 });
     }
   }
 
   // For other event types, just return success
-  return new Response('Webhook processed', { status: 200 });
+  return new Response("Webhook processed", { status: 200 });
 }

@@ -21,20 +21,40 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's current credits
-    const { data: credits, error } = await supabase
-      .from("ask_credits")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+    // Get user's current credits with retry logic
+    let credits = null;
+    let error = null;
+    let retryCount = 0;
+    const maxRetries = 3;
 
-    if (error && error.code !== "PGRST116") {
-      return NextResponse.json({ error: "Failed to fetch credits" }, { status: 500 });
+    while (retryCount < maxRetries && !credits) {
+      const result = await supabase.from("ask_credits").select("*").eq("user_id", userId).single();
+
+      credits = result.data;
+      error = result.error;
+
+      if (error && error.code === "PGRST116") {
+        // No credits record found - try to initialize
+        break;
+      } else if (error) {
+        // Other database error - retry with exponential backoff
+        retryCount++;
+        if (retryCount < maxRetries) {
+          await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, retryCount)));
+          continue;
+        }
+        console.error("[Credits API] Database error after retries:", error);
+        return NextResponse.json(
+          { error: "Database error", errorCode: "DB_ERROR", details: error.message },
+          { status: 500 }
+        );
+      }
+      break;
     }
 
-    // If no credits record, initialize
+    // If no credits record, initialize with retry
     if (!credits) {
-      return await initializeCredits(userId);
+      return await initializeCreditsWithRetry(userId);
     }
 
     // Check if credits expired (monthly refresh)
@@ -54,8 +74,11 @@ export async function GET() {
       expires_at: credits.expires_at,
     });
   } catch (error) {
-    console.error("Credits GET error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("[Credits API] Unexpected error:", error);
+    return NextResponse.json(
+      { error: "Internal server error", errorCode: "UNKNOWN_ERROR" },
+      { status: 500 }
+    );
   }
 }
 
@@ -95,17 +118,31 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Initialize credits for new user
+ * Initialize credits for new user with retry logic
  */
-async function initializeCredits(userId: string) {
+async function initializeCreditsWithRetry(userId: string, retryCount = 0): Promise<Response> {
+  const maxRetries = 3;
+
   try {
     // Check user's tier
-    const { data: entitlement } = await supabase
+    const { data: entitlement, error: entitlementError } = await supabase
       .from("entitlements")
       .select("tier")
       .eq("user_id", userId)
       .eq("status", "active")
       .single();
+
+    if (entitlementError) {
+      console.error("[Credits Init] No entitlement found for user:", userId);
+      return NextResponse.json(
+        {
+          error: "User entitlement not found",
+          errorCode: "NO_ENTITLEMENT",
+          message: "Please complete your profile setup first.",
+        },
+        { status: 404 }
+      );
+    }
 
     const tier = entitlement?.tier === "premium" ? "premium" : "free";
     const rateLimit = ssot.features.askAssistant.rateLimits[tier];
@@ -127,8 +164,31 @@ async function initializeCredits(userId: string) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: "Failed to initialize credits" }, { status: 500 });
+      console.error(`[Credits Init] Attempt ${retryCount + 1}/${maxRetries} failed:`, error);
+
+      // Retry with exponential backoff
+      if (retryCount < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 200 * Math.pow(2, retryCount)));
+        return initializeCreditsWithRetry(userId, retryCount + 1);
+      }
+
+      // Log to admin error logs
+      await logAdminError(userId, error);
+
+      return NextResponse.json(
+        {
+          error: "Failed to initialize credits",
+          errorCode: "INIT_FAILED",
+          message:
+            "Unable to set up your question credits. Please try refreshing the page or contact support.",
+        },
+        { status: 500 }
+      );
     }
+
+    console.log(
+      `[Credits Init] Successfully initialized ${creditsToAdd} credits for user ${userId} (${tier})`
+    );
 
     return NextResponse.json({
       success: true,
@@ -139,8 +199,49 @@ async function initializeCredits(userId: string) {
       initialized: true,
     });
   } catch (error) {
-    console.error("Initialize credits error:", error);
-    return NextResponse.json({ error: "Failed to initialize credits" }, { status: 500 });
+    console.error("[Credits Init] Unexpected error:", error);
+
+    // Retry on unexpected errors
+    if (retryCount < maxRetries - 1) {
+      await new Promise((resolve) => setTimeout(resolve, 200 * Math.pow(2, retryCount)));
+      return initializeCreditsWithRetry(userId, retryCount + 1);
+    }
+
+    return NextResponse.json(
+      {
+        error: "Failed to initialize credits",
+        errorCode: "UNKNOWN_ERROR",
+        message: "An unexpected error occurred. Please try again later.",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Legacy function - kept for backwards compatibility
+ */
+async function initializeCredits(userId: string) {
+  return initializeCreditsWithRetry(userId, 0);
+}
+
+/**
+ * Log error to admin error logs
+ */
+async function logAdminError(userId: string, error: unknown) {
+  try {
+    await supabase.from("error_logs").insert({
+      level: "error",
+      source: "ask_credits_initialization",
+      message: "Failed to initialize Ask Assistant credits",
+      details: {
+        userId,
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (logError) {
+    console.error("[Credits Init] Failed to log error:", logError);
   }
 }
 

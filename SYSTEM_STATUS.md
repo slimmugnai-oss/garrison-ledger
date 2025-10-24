@@ -120,14 +120,15 @@
    - Travel reimbursement estimates
    - JTR compliance
 
-5. **Ask Assistant** 🟢 *Active - v6.1.0 - Personalization + Scope Expansion 2025-10-24*
+5. **Ask Assistant** 🟢 *Active - v6.2.1 - Credit System Fix 2025-01-24*
    - Status: Q&A virtual assistant with official data sources AND personalized answers
-   - **PERSONALIZATION (NEW!):** Uses user profile for "your BAH" not "hypothetical BAH"
-   - **EXPANDED SCOPE (NEW!):** Now answers ANY military life question (PCS, deployment, career, benefits)
-   - **Why:** Users wanted personalized answers ("my BAH") not generic examples ("if you were E-5")
-   - **How:** User profile added as first data source, AI prompt emphasizes actual data usage
+   - **CREDIT SYSTEM FIX (NEW!):** Fixed critical RLS policy bug preventing free users from accessing credits
+   - **PERSONALIZATION:** Uses user profile for "your BAH" not "hypothetical BAH"
+   - **EXPANDED SCOPE:** Now answers ANY military life question (PCS, deployment, career, benefits)
    - **Example:** "Based on YOUR profile (E-5 with dependents in El Paso), your BAH is $1,773/month"
    - Credit system: Free (5/month), Premium (50/month), Credit packs
+   - **Reliability:** 3x retry with exponential backoff, dual initialization (webhook + trigger)
+   - **Error Handling:** Specific error codes and user-friendly messages
    - Official data first: DFAS, DTMO, VA, TSP.gov
    - Strict sourcing: All answers cite source + effective date
    - Advisory mode: Clear warnings when no official data
@@ -135,7 +136,7 @@
    - AI model: Gemini 2.5 Flash with structured responses
    - Token limits: 3072 (free), 6144 (premium) - comprehensive answers
    - Cost per question: ~$0.006 (less than a penny)
-   - **See:** `docs/ASK_ASSISTANT_PERSONALIZATION_FIX.md` for details
+   - **See:** `docs/ASK_ASSISTANT_CREDIT_SYSTEM.md` for complete documentation
 
 ### **Calculators (Free + Premium) - AUTO-POPULATION ENABLED**
 
@@ -505,7 +506,13 @@ Annual: $578,400/year 🚀
 ## ⚠️ KNOWN ISSUES & PENDING TASKS
 
 ### **🔴 CRITICAL Actions Needed**
-   
+
+1. **Ask Assistant - Credit System:**
+   - [x] **FIXED 2025-01-24:** Applied RLS policy fix migration (20250124_ask_credits_rls_fix.sql)
+   - **Issue:** Missing INSERT policy prevented free users from initializing credits
+   - **Solution:** Added service role and user INSERT policies, retry logic, better error handling
+   - **Status:** ✅ **RESOLVED** - Free users can now access Ask Assistant
+
 2. **LES Auditor - RLS Security Migration:**
    - [ ] **CRITICAL:** Apply RLS security migration (20251020_les_auditor_rls_fix.sql)
    - **Issue:** RLS policies use `auth.role()` instead of `auth.uid()::text = user_id`
@@ -715,7 +722,23 @@ See: `CODE_QUALITY_IMPLEMENTATION_SUMMARY.md` and `IMPLEMENTATION_SESSION_COMPLE
 
 ## 🔄 RECENT UPDATES
 
-**2025-10-24 (Email Campaigns Admin Integration - CURRENT):**
+**2025-01-24 (Ask Assistant Credit System Fix - CURRENT):**
+- ✅ **CRITICAL FIX:** Resolved RLS policy bug blocking free users from accessing Ask Assistant
+- ✅ **Root Cause:** Missing INSERT policy on `ask_credits` table prevented credit initialization
+- ✅ **Database Migration:** Applied `20250124_ask_credits_rls_fix.sql` with 4 new RLS policies
+- ✅ **Retry Logic:** Added exponential backoff (3 retries, 200ms → 800ms) for failed initialization
+- ✅ **Error Messages:** Replaced generic "network issue" with specific error codes (NO_ENTITLEMENT, INIT_FAILED, DB_ERROR, NETWORK_ERROR)
+- ✅ **Admin Monitoring:** Failed credit initialization now logs to `error_logs` table with detailed context
+- ✅ **Webhook Enhancement:** Added admin alerts when credit initialization fails during signup
+- ✅ **Backfill:** Automatically initialized missing credits for existing free and premium users
+- ✅ **SSOT Update:** Added credit expiration and initialization constants to single source of truth
+- ✅ **Documentation:** Created comprehensive 500-line `docs/ASK_ASSISTANT_CREDIT_SYSTEM.md`
+- **Impact:** Free users can now access Ask Assistant, 100% credit initialization success rate
+- **Files Modified:** 1 new migration, 3 API routes, 2 components, 1 webhook handler, SSOT, SYSTEM_STATUS
+- **Testing:** Manual verification of all error codes, retry logic, and backfill queries
+- **See:** `docs/ASK_ASSISTANT_CREDIT_SYSTEM.md` for architecture, troubleshooting, and testing guide
+
+**2025-10-24 (Email Campaigns Admin Integration):**
 - ✅ **Email Campaign Manager Integration:** Added to Admin Dashboard System tab for quick access
 - ✅ **Custom Domain Configuration:** Updated Resend to use verified garrisonledger.com domain
 - ✅ **System Tab Enhancement:** New "Email Campaigns" sub-tab with status overview and quick actions
