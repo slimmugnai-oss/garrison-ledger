@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
 
     const startTime = Date.now();
 
-    // Query official data sources
-    const dataSources = await queryOfficialSources(question);
+    // Query official data sources (pass userId for personalization)
+    const dataSources = await queryOfficialSources(question, userId);
 
     // Determine mode (strict vs advisory)
     const mode = dataSources.length > 0 ? "strict" : "advisory";
@@ -145,14 +145,40 @@ export async function POST(request: NextRequest) {
 /**
  * Query official data sources based on question keywords
  */
-async function queryOfficialSources(question: string): Promise<DataSource[]> {
+async function queryOfficialSources(question: string, userId: string): Promise<DataSource[]> {
   const sources: DataSource[] = [];
   const questionLower = question.toLowerCase();
 
   try {
-    // BAH queries
+    // BAH queries - Use user's location or extract from question
     if (questionLower.includes("bah") || questionLower.includes("housing allowance")) {
-      const { data: bahData } = await supabase.from("bah_rates").select("*").limit(5);
+      // Try to get user's MHA from profile first
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("mha_or_zip")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      let bahQuery = supabase.from("bah_rates").select("*");
+
+      // If user has MHA in profile, use it
+      if (profile?.mha_or_zip) {
+        bahQuery = bahQuery.or(`mha.eq.${profile.mha_or_zip},zip_code.eq.${profile.mha_or_zip}`);
+      }
+      
+      // Extract location from question (e.g., "Fort Bliss", "San Diego", "CA")
+      // Common base names and cities
+      const locationMatch = question.match(
+        /(Fort|Camp|Naval|Marine|Air Force Base|AFB|Bragg|Bliss|Hood|Campbell|Lewis|Pendleton|San Diego|Norfolk|Pearl Harbor|Okinawa)/i
+      );
+      
+      if (locationMatch) {
+        const location = locationMatch[0];
+        // Search in MHA names and ZIP codes
+        bahQuery = bahQuery.or(`mha.ilike.%${location}%,zip_code.ilike.%${location}%`);
+      }
+
+      const { data: bahData } = await bahQuery.limit(10); // Increased from 5 to 10
 
       if (bahData && bahData.length > 0) {
         sources.push({
