@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Log to admin error logs table
-        await supabaseAdmin
+        const { error: logError } = await supabaseAdmin
           .from("error_logs")
           .insert({
             level: "error",
@@ -162,10 +162,11 @@ export async function POST(req: NextRequest) {
               error: creditsError.message || String(creditsError),
               code: creditsError.code,
             },
-          })
-          .catch((logErr) => {
-            logger.error("[ClerkWebhook] Failed to log credits error", { error: logErr });
           });
+        
+        if (logError) {
+          logger.error("[ClerkWebhook] Failed to log credits error", { error: logError });
+        }
 
         // Don't fail the webhook - database trigger will handle it as backup
       } else {
