@@ -454,6 +454,7 @@ export default function ProfileSetupPage() {
     if (data.service_status && !["military_spouse", "dod_civilian"].includes(data.service_status)) {
       requiredFields.push(
         { field: data.rank, name: "rank", label: "Rank" },
+        { field: data.paygrade, name: "paygrade", label: "Paygrade" },
         { field: data.branch, name: "branch", label: "Branch" }
       );
     }
@@ -870,6 +871,55 @@ export default function ProfileSetupPage() {
                                   )}
                               </>
                             )}
+                          </select>
+                        </ProfileFormField>
+
+                        {/* NEW: Explicit Paygrade Selection */}
+                        <ProfileFormField
+                          label="Paygrade"
+                          required
+                          error={fieldErrors.paygrade}
+                          description="Select your exact paygrade (E-1 through E-9, W-1 through W-5, or O-1 through O-10)"
+                          success={!!data.paygrade}
+                        >
+                          <select
+                            className={getInputClass(!!fieldErrors.paygrade, !!data.paygrade)}
+                            value={data.paygrade ?? ""}
+                            onChange={(e) =>
+                              setData((d) => ({ ...d, paygrade: e.target.value || null }))
+                            }
+                          >
+                            <option value="">Select paygrade</option>
+                            <optgroup label="Enlisted (E-1 to E-9)">
+                              <option value="E-1">E-1</option>
+                              <option value="E-2">E-2</option>
+                              <option value="E-3">E-3</option>
+                              <option value="E-4">E-4</option>
+                              <option value="E-5">E-5</option>
+                              <option value="E-6">E-6</option>
+                              <option value="E-7">E-7</option>
+                              <option value="E-8">E-8</option>
+                              <option value="E-9">E-9</option>
+                            </optgroup>
+                            <optgroup label="Warrant Officer (W-1 to W-5)">
+                              <option value="W-1">W-1</option>
+                              <option value="W-2">W-2</option>
+                              <option value="W-3">W-3</option>
+                              <option value="W-4">W-4</option>
+                              <option value="W-5">W-5</option>
+                            </optgroup>
+                            <optgroup label="Officer (O-1 to O-10)">
+                              <option value="O-1">O-1</option>
+                              <option value="O-2">O-2</option>
+                              <option value="O-3">O-3</option>
+                              <option value="O-4">O-4</option>
+                              <option value="O-5">O-5</option>
+                              <option value="O-6">O-6</option>
+                              <option value="O-7">O-7</option>
+                              <option value="O-8">O-8</option>
+                              <option value="O-9">O-9</option>
+                              <option value="O-10">O-10</option>
+                            </optgroup>
                           </select>
                         </ProfileFormField>
                       </>
