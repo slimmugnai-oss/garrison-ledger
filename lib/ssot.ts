@@ -266,31 +266,6 @@ export const ssot = {
   },
 
   /**
-   * PRICING & TIERS
-   */
-  pricing: {
-    free: {
-      name: "Starter",
-      priceMonthly: 0,
-      features: ["Basic assessment", "2 AI-generated blocks", "Limited calculators"],
-    },
-    premium: {
-      name: "Premium",
-      priceMonthly: 9.99,
-      priceAnnual: 99,
-      stripeMonthlyPriceId: process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID || "",
-      stripeAnnualPriceId: process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID || "",
-      features: [
-        "Full AI plan (8-10 blocks)",
-        "PCS Money Copilot",
-        "All calculators",
-        "Base intelligence (weather/housing/schools)",
-        "Unlimited assessments",
-      ],
-    },
-  },
-
-  /**
    * SYSTEM CONSTANTS
    * Operational constants for tools and calculations
    */
