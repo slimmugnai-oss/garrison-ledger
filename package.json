@@ -44,9 +44,9 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "prepare": "husky",
-    "rag:embed-content": "ts-node scripts/embed-content-blocks.ts",
-    "rag:test-search": "ts-node scripts/test-rag-search.ts",
-    "rag:check-embeddings": "ts-node scripts/check-embeddings-status.ts"
+    "rag:embed-content": "node scripts/embed-content-blocks.mjs",
+    "rag:test-search": "node --loader ts-node/esm scripts/test-rag-search.ts",
+    "rag:check-embeddings": "node --loader ts-node/esm scripts/check-embeddings-status.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.7.2",
