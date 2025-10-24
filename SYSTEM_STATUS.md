@@ -2,11 +2,11 @@
 
 **Last Updated:** 2025-01-24  
 **Status:** 🟢 PRODUCTION  
-**Version:** 6.0.1 - Clerk-Supabase Integration Optimization  
+**Version:** 6.1.0 - LES Tax Enhancements + Ask Assistant Personalization  
 **Domain:** https://www.garrisonledger.com  
 **Deployment:** ✅ Live on Vercel  
 **SSOT Module:** ✅ `lib/ssot.ts` (Single Source of Truth)  
-**Code Quality:** ✅ TypeScript strict + ESLint clean (0 errors, 21 non-critical warnings)
+**Code Quality:** ✅ TypeScript strict + ESLint clean (0 errors)
 
 > **Quick Reference:** This document tracks the **current state** of Garrison Ledger. For historical changes, see [`docs/archive/SYSTEM_STATUS_HISTORY_*.md`](docs/archive/) and [`CHANGELOG.md`](CHANGELOG.md).
 
@@ -37,9 +37,13 @@
 
 ### **Premium Tools (Tier-Gated)**
 
-1. **LES Auditor** ✅ *Production Ready - Simplified for Maintainability 2025-10-22*
-   - **Status:** ✅ **100% Complete - Simple, Accurate, Trustworthy**
-   - **Approach:** Simplified - Focus on 100% accurate allowance validation, manual tax entry
+1. **LES Auditor** ✅ *Production Ready - Tax Enhancements Added 2025-10-24*
+   - **Status:** ✅ **100% Complete - Simple, Accurate, Trustworthy + Smart Tax Validation**
+   - **Approach:** Simplified - Focus on 100% accurate allowance validation, intelligent tax handling
+   
+   **What We AUTO-CALCULATE (NEW!):**
+   - ✅ **FICA (6.2% of taxable gross)** - Auto-filled, editable
+   - ✅ **Medicare (1.45% of taxable gross)** - Auto-filled, editable
    
    **What We AUTO-FILL (100% Accurate):**
    - ✅ BAH from official DFAS 2025 table (16,368 rates)
@@ -53,17 +57,26 @@
    **What Users ENTER (From Their Actual LES):**
    - 📝 Federal tax withheld
    - 📝 State tax withheld
-   - 📝 FICA tax
-   - 📝 Medicare tax
    - 📝 Dental premium
    - 📝 Net pay
+   - ✅ FICA/Medicare now auto-calculated (user can override)
    
-   **What We VALIDATE:**
-   - ✅ FICA = 6.2% of taxable gross? (Base + COLA + Specials, NOT BAH/BAS)
-   - ✅ Medicare = 1.45% of taxable gross?
+   **What We VALIDATE (ENHANCED!):**
+   - ✅ FICA = 6.2% of taxable gross? (Within $0.05 tolerance)
+   - ✅ Medicare = 1.45% of taxable gross? (Within $0.02 tolerance)
+   - ✅ Federal tax reasonableness (8-22% typical range, advisory if outside)
+   - ✅ State tax reasonableness (state-specific ranges, advisory if high)
+   - ✅ Total tax burden (<35% typical, warning if higher)
+   - ✅ **AI-powered explanations** for all tax advisories (Gemini 2.5 Flash)
    - ✅ Net pay math: Total - Deductions - Taxes = Net Pay?
    - ✅ Rank vs YOS sanity checks
    - ✅ Net pay reasonableness ($1.5K-$12K)
+   
+   **Tax Intelligence (NEW!):**
+   - 📖 AI explains WHY taxes are flagged (W-4 settings, YTD catch-up, bonuses)
+   - 📖 Conversational, reassuring tone (4-6 sentences)
+   - 📖 Actionable next steps (check W-4, contact finance, verify LES)
+   - 💰 Cost: ~$0.01 per audit with AI explanations
    
    **Data Management:**
    - ✅ Semi-automated freshness checker: `npm run check-data-freshness`
@@ -71,17 +84,18 @@
    - ✅ Annual update process documented
    - ✅ Complexity: LOW (9 data tables, annual updates only)
    
-   **Why Simplified:**
-   - Tax calculation too complex to maintain (W-4, YTD, 51 state systems)
-   - Users have actual tax values on their LES anyway
-   - Focus on our strength: official DFAS allowance tables
-   - Simple = maintainable = trustworthy
+   **Why This Approach:**
+   - Auto-calculate: Saves time (FICA/Medicare are always 6.2%/1.45%)
+   - Validation: Catches errors early (math mistakes, LES typos)
+   - AI explanations: Educational not accusatory ("here's why" not "you're wrong")
+   - Users still enter federal/state: Too complex to calculate (W-4, YTD, 51 states)
+   - Focus on our strength: official DFAS allowance tables + smart tax validation
    
    - Free: 1/month | Premium: Unlimited
-   - **See:** `LES_AUDITOR_FINAL_SUMMARY.md` for complete details
+   - **See:** `docs/LES_TAX_ENHANCEMENTS.md` for complete tax validation details
    - Database: 4 tables + storage bucket with RLS
    - Components: 9 specialized UI components
-   - **Status:** ✅ **PRODUCTION READY - Simple, Maintainable, 100% Accurate on Allowances**
+   - **Status:** ✅ **PRODUCTION READY - Simple, Maintainable, 100% Accurate + Smart Tax Help**
 
 2. **PCS Copilot** 🟢 *Active*
    - Status: 100% complete, premium-exclusive
@@ -106,19 +120,22 @@
    - Travel reimbursement estimates
    - JTR compliance
 
-5. **Ask Assistant** 🟢 *Active - v6.0.1 - Token Limits Fixed 2025-10-24*
-   - Status: Q&A virtual assistant with official data sources
-   - **CRITICAL FIX 2025-10-24:** Token limits increased (350→2048 free, 800→4096 premium)
-   - **Why:** Low limits were cutting off AI mid-generation, causing "..." in responses
-   - **Impact:** Template questions now work flawlessly, complete structured answers
+5. **Ask Assistant** 🟢 *Active - v6.1.0 - Personalization + Scope Expansion 2025-10-24*
+   - Status: Q&A virtual assistant with official data sources AND personalized answers
+   - **PERSONALIZATION (NEW!):** Uses user profile for "your BAH" not "hypothetical BAH"
+   - **EXPANDED SCOPE (NEW!):** Now answers ANY military life question (PCS, deployment, career, benefits)
+   - **Why:** Users wanted personalized answers ("my BAH") not generic examples ("if you were E-5")
+   - **How:** User profile added as first data source, AI prompt emphasizes actual data usage
+   - **Example:** "Based on YOUR profile (E-5 with dependents in El Paso), your BAH is $1,773/month"
    - Credit system: Free (5/month), Premium (50/month), Credit packs
    - Official data first: DFAS, DTMO, VA, TSP.gov
    - Strict sourcing: All answers cite source + effective date
    - Advisory mode: Clear warnings when no official data
    - Tool handoffs: Suggests LES Auditor, PCS Copilot, etc.
    - AI model: Gemini 2.5 Flash with structured responses
+   - Token limits: 3072 (free), 6144 (premium) - comprehensive answers
    - Cost per question: ~$0.006 (less than a penny)
-   - **See:** `docs/ASK_ASSISTANT_TOKEN_LIMIT_FIX.md` for details
+   - **See:** `docs/ASK_ASSISTANT_PERSONALIZATION_FIX.md` for details
 
 ### **Calculators (Free + Premium) - AUTO-POPULATION ENABLED**
 
