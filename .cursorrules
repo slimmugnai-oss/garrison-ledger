@@ -47,6 +47,23 @@ If any fail → do **not** ship; propose a compliant alternative.
 - **Rotation:** If a key appears in any doc, **assume compromise** → rotate and purge from history.
 - **PII:** RLS on all user tables; log redaction; no sensitive data in error messages.
 
+### **CLERK-SUPABASE INTEGRATION (CRITICAL)**
+
+**Garrison Ledger uses Clerk for authentication + Supabase for data storage with automatic user synchronization:**
+
+- **Authentication:** Clerk handles sign-in/sign-up UI and user management
+- **Data Storage:** Supabase provides PostgreSQL database with RLS policies
+- **User Sync:** Automatic user creation via webhook (`/api/webhooks/clerk/route.ts`)
+- **Safety Nets:** Database triggers + `ensureUserExists()` utility for reliability
+- **RLS Policies:** All use `auth.uid()::text = user_id` pattern (111 instances across 19 files)
+- **Admin Monitoring:** `/api/admin/users/sync-status` endpoint for sync verification
+
+**Key Integration Points:**
+- New users get: `user_profiles`, `entitlements`, `ask_credits` (5 free), `user_gamification`
+- Dashboard uses `ensureUserExists()` for safety
+- All RLS policies reference `auth.uid()` for Clerk user ID
+- See: `docs/CLERK_SUPABASE_INTEGRATION.md` for complete details
+
 ---
 
 ## 3) SINGLE SOURCE OF TRUTH (SSOT)
@@ -564,19 +581,28 @@ When the user says "Check SYSTEM_STATUS.md first, Follow .cursorrules, Use DEVEL
 
 ### **Core Systems (Don't Break These)**
 
-1. **AI Master Curator System**
+1. **Clerk-Supabase Integration** ⚠️ **CRITICAL**
+   - **Authentication:** Clerk handles all user sign-in/sign-up
+   - **Data Storage:** Supabase PostgreSQL with RLS policies
+   - **User Sync:** Automatic via webhook (`/api/webhooks/clerk/route.ts`)
+   - **Safety Nets:** Database triggers + `ensureUserExists()` utility
+   - **RLS Pattern:** All policies use `auth.uid()::text = user_id`
+   - **New Users Get:** `user_profiles`, `entitlements`, `ask_credits` (5 free), `user_gamification`
+   - **DO NOT** modify webhook or RLS policies without understanding impact
+
+2. **AI Master Curator System**
    - Two-phase: Curator (select blocks) → Weaver (create narrative)
    - Uses GPT-4o, costs ~$0.25/plan
    - Saves to `user_plans` table
    - DO NOT modify without discussing impact
 
-2. **Content Intelligence**
+3. **Content Intelligence**
    - 410 hand-curated content blocks
    - 100% metadata coverage required
    - Vector search infrastructure ready
    - DO NOT modify content blocks without migration
 
-3. **Dual Assessment System**
+4. **Dual Assessment System**
    - Old: `assessments` table (backward compatibility)
    - New: `user_assessments` table (AI system)
    - Dashboard checks BOTH for `hasAssessment`
