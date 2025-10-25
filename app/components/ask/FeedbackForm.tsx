@@ -125,7 +125,7 @@ export function FeedbackForm({
             onClick={() => setIsOpen(true)}
             className="text-gray-500"
           >
-            <Icon name="MoreHorizontal" className="h-4 w-4" />
+            <Icon name="Menu" className="h-4 w-4" />
           </Button>
         </div>
       </div>

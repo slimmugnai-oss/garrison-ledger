@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/node_modules.nosync
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,9 +13,11 @@
 
 # testing
 /coverage
+/coverage.nosync
 
 # next.js
 /.next/
+/.next.nosync
 /out/
 
 # production

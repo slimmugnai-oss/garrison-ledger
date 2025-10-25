@@ -1,0 +1,65 @@
+# Build outputs
+.next/
+out/
+build/
+dist/
+.vercel/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+.pnp/
+.yarn/
+
+# Testing & Coverage
+coverage/
+__tests__/__snapshots__/
+*.test.ts.snap
+
+# Logs & Temp Files
+*.log
+npm-debug.log*
+.DS_Store
+
+# Archive & Session Reports
+docs/archive/session-reports/
+*_COMPLETE.md
+*_SUMMARY.md
+*_STATUS.md
+
+# Large Data Files
+data/bah-rates-2025.json
+data/military_pay_tables.json
+
+# Email Templates Build
+emails/dist/
+
+# Generated Types
+.next/types/
+
+# Large Toolkits (reference only)
+resource toolkits/
+toolkit-integration/
+
+# Research & Review (not active code)
+research/
+review/
+newsletter-workspace/
+
+# Migration History (archive)
+supabase-migrations/*.sql
+
+# Package lock files (large, not needed for AI)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
