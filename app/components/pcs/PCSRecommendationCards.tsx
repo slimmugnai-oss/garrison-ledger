@@ -68,15 +68,15 @@ export default function PCSRecommendationCards({
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'dity_opportunity': return 'DollarSign';
-      case 'weight_warning': return 'Scale';
-      case 'receipt_reminder': return 'Receipt';
-      case 'timeline_warning': return 'Clock';
-      case 'document_missing': return 'FileWarning';
+      case 'dity_opportunity': return 'TrendingUp';
+      case 'weight_warning': return 'AlertTriangle';
+      case 'receipt_reminder': return 'File';
+      case 'timeline_warning': return 'Timer';
+      case 'document_missing': return 'AlertTriangle';
       case 'cost_savings': return 'TrendingUp';
       case 'entitlement_tip': return 'Info';
       case 'compliance_risk': return 'AlertTriangle';
-      default: return 'Bell';
+      default: return 'HelpCircle';
     }
   };
 
@@ -92,11 +92,8 @@ export default function PCSRecommendationCards({
           const isExpanded = expandedIds.has(rec.id);
           
           return (
-            <AnimatedCard 
-              key={rec.id} 
-              className="p-4 hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => toggleExpanded(rec.id)}
-            >
+            <div key={rec.id} onClick={() => toggleExpanded(rec.id)} className="cursor-pointer">
+              <AnimatedCard className="p-4 hover:shadow-md transition-shadow">
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg ${
                   rec.priority === 'high' ? 'bg-red-50' : 
@@ -133,12 +130,11 @@ export default function PCSRecommendationCards({
                   )}
 
                   {rec.action && (
-                    <div className="flex items-center gap-2 pt-2">
+                    <div className="flex items-center gap-2 pt-2" onClick={(e) => e.stopPropagation()}>
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           if (onRecommendationClick) {
                             onRecommendationClick(rec);
                           }
@@ -152,6 +148,7 @@ export default function PCSRecommendationCards({
                 </div>
               </div>
             </AnimatedCard>
+            </div>
           );
         })}
       </div>

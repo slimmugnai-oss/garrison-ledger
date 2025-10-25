@@ -1,169 +1,159 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 
-import { errorResponse, Errors } from "@/lib/api-errors";
-import { logger } from "@/lib/logger";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export const runtime = 'nodejs';
-
 /**
- * PCS ASSIGNMENT PLANNER - COMPARISON API
+ * PCS ASSIGNMENT PLANNER - Base Comparison API
  * 
- * Handles saving and retrieving base assignment comparisons
- * Used for pre-orders planning and base selection analysis
+ * Compare potential duty stations before receiving orders
  */
 
 export async function GET(request: NextRequest) {
   try {
     const user = await currentUser();
-    if (!user) throw Errors.unauthorized();
 
-    // Get all comparisons for user
-    const { data: comparisons, error } = await supabaseAdmin
-      .from('pcs_assignment_comparisons')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      logger.error('[PCSPlanner] Database error', error, { userId: user.id });
-      throw Errors.databaseError('Failed to fetch comparisons');
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    logger.info('[PCSPlanner] Comparisons retrieved', { 
-      userId: user.id, 
-      count: comparisons?.length || 0 
-    });
+    // Fetch user's saved comparisons
+    const { data: comparisons, error } = await supabaseAdmin
+      .from("pcs_assignment_comparisons")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
-    return NextResponse.json({ 
-      success: true, 
-      comparisons: comparisons || [] 
-    });
+    if (error) {
+      console.error("[PlannerCompare] Fetch error:", error);
+      return NextResponse.json(
+        { error: "Failed to load comparisons" },
+        { status: 500 }
+      );
+    }
 
+    return NextResponse.json({
+      success: true,
+      comparisons: comparisons || [],
+    });
   } catch (error) {
-    return errorResponse(error);
+    console.error("[PlannerCompare] Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
-    if (!user) throw Errors.unauthorized();
 
-    const { name, bases } = await request.json();
-
-    if (!name || !bases || bases.length < 2) {
-      throw Errors.badRequest('Name and at least 2 bases required');
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Calculate analysis data
-    const analysis = calculateAnalysis(bases);
+    const body = await request.json();
+    const { name, bases } = body;
+
+    if (!name || !bases || !Array.isArray(bases) || bases.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid request: name and bases array required" },
+        { status: 400 }
+      );
+    }
+
+    // Calculate analysis data for each base
+    const analysisData = {
+      baseCount: bases.length,
+      comparedAt: new Date().toISOString(),
+      summary: {
+        highestBah: bases.reduce((max, base) => 
+          base.bah > max.bah ? base : max, bases[0]
+        ),
+        lowestCol: bases.reduce((min, base) => 
+          base.colIndex < min.colIndex ? base : min, bases[0]
+        ),
+        bestSchools: bases.reduce((max, base) => 
+          base.schoolRating > max.schoolRating ? base : max, bases[0]
+        ),
+      },
+    };
 
     // Save comparison
     const { data: comparison, error } = await supabaseAdmin
-      .from('pcs_assignment_comparisons')
+      .from("pcs_assignment_comparisons")
       .insert({
         user_id: user.id,
         comparison_name: name,
         bases: bases,
-        analysis_data: analysis
+        analysis_data: analysisData,
       })
       .select()
       .single();
 
     if (error) {
-      logger.error('[PCSPlanner] Database error', error, { userId: user.id });
-      throw Errors.databaseError('Failed to save comparison');
+      console.error("[PlannerCompare] Insert error:", error);
+      return NextResponse.json(
+        { error: "Failed to save comparison" },
+        { status: 500 }
+      );
     }
 
-    logger.info('[PCSPlanner] Comparison saved', { 
-      userId: user.id, 
-      comparisonId: comparison.id,
-      baseCount: bases.length 
+    return NextResponse.json({
+      success: true,
+      comparison,
     });
-
-    return NextResponse.json({ 
-      success: true, 
-      comparison 
-    });
-
   } catch (error) {
-    return errorResponse(error);
+    console.error("[PlannerCompare] Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const user = await currentUser();
-    if (!user) throw Errors.unauthorized();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { searchParams } = new URL(request.url);
-    const comparisonId = searchParams.get('id');
+    const comparisonId = searchParams.get("id");
 
     if (!comparisonId) {
-      throw Errors.badRequest('Comparison ID required');
+      return NextResponse.json(
+        { error: "Comparison ID required" },
+        { status: 400 }
+      );
     }
 
-    // Delete comparison
     const { error } = await supabaseAdmin
-      .from('pcs_assignment_comparisons')
+      .from("pcs_assignment_comparisons")
       .delete()
-      .eq('id', comparisonId)
-      .eq('user_id', user.id);
+      .eq("id", comparisonId)
+      .eq("user_id", user.id);
 
     if (error) {
-      logger.error('[PCSPlanner] Delete error', error, { userId: user.id, comparisonId });
-      throw Errors.databaseError('Failed to delete comparison');
+      console.error("[PlannerCompare] Delete error:", error);
+      return NextResponse.json(
+        { error: "Failed to delete comparison" },
+        { status: 500 }
+      );
     }
 
-    logger.info('[PCSPlanner] Comparison deleted', { 
-      userId: user.id, 
-      comparisonId 
+    return NextResponse.json({
+      success: true,
+      message: "Comparison deleted",
     });
-
-    return NextResponse.json({ success: true });
-
   } catch (error) {
-    return errorResponse(error);
+    console.error("[PlannerCompare] Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-}
-
-/**
- * Calculate analysis data for base comparison
- */
-function calculateAnalysis(bases: any[]) {
-  if (bases.length < 2) return null;
-
-  // Find best options
-  const bestBah = bases.reduce((best, current) => 
-    current.bah > best.bah ? current : best
-  );
-  const bestCol = bases.reduce((best, current) => 
-    current.colIndex < best.colIndex ? current : best
-  );
-  const bestSchools = bases.reduce((best, current) => 
-    current.schoolRating > best.schoolRating ? current : best
-  );
-  const bestPcsCost = bases.reduce((best, current) => 
-    current.pcsCost < best.pcsCost ? current : best
-  );
-
-  // Generate recommendation
-  let recommendation = "";
-  if (bestBah.code === bestCol.code) {
-    recommendation = `${bestBah.name} offers the best BAH and cost of living combination.`;
-  } else if (bestSchools.code === bestPcsCost.code) {
-    recommendation = `${bestSchools.name} provides excellent schools with low PCS costs.`;
-  } else {
-    recommendation = `Consider your priorities: ${bestBah.name} for BAH, ${bestCol.name} for cost of living, ${bestSchools.name} for schools.`;
-  }
-
-  return {
-    bestBah: bestBah.name,
-    bestCol: bestCol.name,
-    bestSchools: bestSchools.name,
-    bestPcsCost: bestPcsCost.name,
-    recommendation
-  };
 }

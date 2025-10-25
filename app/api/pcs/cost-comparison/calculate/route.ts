@@ -128,26 +128,31 @@ async function calculateDITYReimbursement(
   effectiveDate: string
 ): Promise<number> {
   try {
-    // Get real MALT rate from JTR database
-    const maltRate = await getMALTRate(effectiveDate);
-    const baseRate = maltRate.ratePerMile;
+    // Get real MALT rate from JTR database (returns raw number per mile)
+    const maltPerMile = await getMALTRate(effectiveDate);
     
-    // Calculate weight allowance rate (simplified)
-    const weightRate = weight * distance * baseRate;
+    // Get DLA rate for rank and dependents (returns raw number)
+    const dlaAmount = await getDLARate(rank, dependents > 0, effectiveDate);
     
-    // Get DLA rate for rank and dependents
-    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
-    const dlaAmount = dlaRate.amount;
+    // Government pays 95% of what it would cost them to move it
+    // Simplified formula: (weight / 100) * distance * cost_per_cwt
+    // Industry standard: ~$50-$100 per 100 lbs per 1000 miles
+    const costPerCwt = 75; // $75 per 100 lbs per 1000 miles
+    const governmentMoveCost = (weight / 100) * (distance / 1000) * costPerCwt;
     
-    // Calculate total reimbursement
-    return weightRate + dlaAmount;
+    // User gets 95% of government cost + DLA + MALT
+    const dityReimbursement = governmentMoveCost * 0.95;
+    const maltReimbursement = distance * maltPerMile;
+    
+    return dityReimbursement + dlaAmount + maltReimbursement;
   } catch (error) {
     console.error('Error calculating DITY reimbursement:', error);
-    // Fallback to simplified calculation
-    const baseRate = 0.15;
-    const weightRate = weight * distance * baseRate;
-    const dlaAmount = getDLAForRank(rank, dependents > 0);
-    return weightRate + dlaAmount;
+    // Fallback to simplified calculation with confidence = 0
+    const estimatedGovCost = (weight / 100) * (distance / 1000) * 75;
+    const dityPortion = estimatedGovCost * 0.95;
+    const maltPortion = distance * 0.22; // 2025 MALT rate
+    const dlaPortion = getDLAForRank(rank, dependents > 0);
+    return dityPortion + maltPortion + dlaPortion;
   }
 }
 
@@ -159,22 +164,22 @@ async function calculateFullMoveCost(
   effectiveDate: string
 ): Promise<number> {
   try {
-    // Get real MALT rate for government move cost
-    const maltRate = await getMALTRate(effectiveDate);
-    const baseCost = weight * distance * maltRate.ratePerMile * 1.3; // 30% markup for moving company
+    // Industry standard government contracted move costs
+    // Base on DTMO and commercial moving company rates
+    const costPerCwt = 75; // $75 per 100 lbs (cwt) per 1000 miles
+    const baseCost = (weight / 100) * (distance / 1000) * costPerCwt;
     
-    // Get DLA rate for dependents
-    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
-    const dependentCost = dependents * (dlaRate.amount * 0.1); // 10% of DLA per dependent
+    // Add standard service fees
+    const packingCost = weight * 0.50; // Professional packing
+    const insuranceCost = baseCost * 0.02; // 2% insurance
+    const handlingFees = 500; // Base handling fee
     
-    return baseCost + dependentCost;
+    return baseCost + packingCost + insuranceCost + handlingFees;
   } catch (error) {
     console.error('Error calculating full move cost:', error);
-    // Fallback to simplified calculation
-    const baseCost = weight * distance * 0.20;
-    const rankMultiplier = getRankMultiplier(rank);
-    const dependentCost = dependents * 1000;
-    return (baseCost * rankMultiplier) + dependentCost;
+    // Fallback calculation
+    const baseCost = (weight / 100) * (distance / 1000) * 75;
+    return baseCost + (weight * 0.5) + 500;
   }
 }
 
@@ -184,26 +189,19 @@ async function calculateFullMoveEntitlements(
   effectiveDate: string
 ): Promise<number> {
   try {
-    // Get real DLA rate
-    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
-    const dla = dlaRate.amount;
+    // Get DLA - this is the only direct payment in full government move
+    const dlaAmount = await getDLARate(rank, dependents > 0, effectiveDate);
     
-    // Get real MALT rate
-    const maltRate = await getMALTRate(effectiveDate);
-    const malt = maltRate.ratePerMile * 1000; // 1000 miles average
+    // In a full government move, member gets:
+    // - DLA (cash payment)
+    // - Government pays movers directly (not an entitlement to member)
+    // - Travel expenses (MALT or airfare) if authorized separately
     
-    // Get real per diem rate (using default locality)
-    const perDiemRate = await getPerDiemRate('default', effectiveDate);
-    const perDiem = perDiemRate.rate * 3; // 3 days average
-    
-    return dla + malt + perDiem;
+    return dlaAmount;
   } catch (error) {
     console.error('Error calculating full move entitlements:', error);
-    // Fallback to simplified calculation
-    const dla = getDLAForRank(rank, dependents > 0);
-    const malt = 0.22 * 1000;
-    const perDiem = 166 * 3;
-    return dla + malt + perDiem;
+    // Fallback DLA calculation
+    return getDLAForRank(rank, dependents > 0);
   }
 }
 
@@ -214,16 +212,24 @@ async function calculatePartialDITYReimbursement(
   effectiveDate: string
 ): Promise<number> {
   try {
-    // Partial DITY gets proportional reimbursement
-    const fullReimbursement = await calculateDITYReimbursement(weight, distance, rank, 0, effectiveDate);
-    return fullReimbursement * 0.5; // 50% of full DITY reimbursement
+    // Get MALT rate for travel reimbursement (returns raw number per mile)
+    const maltPerMile = await getMALTRate(effectiveDate);
+    
+    // Calculate government cost for the portion being moved DITY
+    const costPerCwt = 75; // $75 per 100 lbs per 1000 miles
+    const governmentCost = (weight / 100) * (distance / 1000) * costPerCwt;
+    
+    // Partial DITY: 95% of government cost for weight moved + proportional MALT
+    const dityReimbursement = governmentCost * 0.95;
+    const maltReimbursement = distance * maltPerMile;
+    
+    return dityReimbursement + maltReimbursement;
   } catch (error) {
     console.error('Error calculating partial DITY reimbursement:', error);
-    // Fallback to simplified calculation
-    const baseRate = 0.15;
-    const weightRate = weight * distance * baseRate;
-    const dlaAmount = getDLAForRank(rank, false);
-    return (weightRate + dlaAmount) * 0.5;
+    // Fallback calculation
+    const governmentCost = (weight / 100) * (distance / 1000) * 75;
+    const maltFallback = distance * 0.22; // 2025 MALT rate
+    return (governmentCost * 0.95) + maltFallback;
   }
 }
 

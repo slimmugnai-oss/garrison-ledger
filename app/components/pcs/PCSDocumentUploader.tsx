@@ -46,6 +46,86 @@ export default function PCSDocumentUploader({
     { value: 'other', label: 'Other Document', icon: 'FileText' }
   ];
 
+  const pollDocumentStatus = async (documentId: string) => {
+    let attempts = 0;
+    const maxAttempts = 30; // 30 seconds max
+    
+    const poll = async (): Promise<void> => {
+      try {
+        const response = await fetch(`/api/pcs/document-status/${documentId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch status');
+        }
+
+        const data = await response.json();
+        const doc = data.document;
+
+        // Update document in state
+        setDocuments((prev) =>
+          prev.map((d) =>
+            d.id === documentId
+              ? {
+                  ...d,
+                  ocrStatus: doc.ocrStatus,
+                  extractedData: doc.normalizedData,
+                  normalizedData: doc.normalizedData,
+                  lastUpdated: doc.updatedAt,
+                  confidence: doc.normalizedData?.ocr_confidence
+                    ? {
+                        score: doc.normalizedData.ocr_confidence,
+                        level: doc.normalizedData.ocr_confidence_level || 'unknown',
+                        requiresReview: doc.normalizedData.requires_manual_review || false,
+                      }
+                    : d.confidence,
+                }
+              : d
+          )
+        );
+
+        // Check if processing is complete
+        if (doc.ocrStatus === 'completed' || doc.ocrStatus === 'needs_review') {
+          toast.success(
+            doc.ocrStatus === 'completed'
+              ? `Document processed successfully (${doc.normalizedData?.ocr_confidence || 0}% confidence)`
+              : 'Document processed but needs review'
+          );
+          
+          // Call callback if provided
+          if (onDocumentProcessed && doc.normalizedData) {
+            onDocumentProcessed({
+              id: documentId,
+              normalizedData: doc.normalizedData,
+            });
+          }
+          return;
+        }
+
+        if (doc.ocrStatus === 'failed') {
+          toast.error('Document processing failed. Please try uploading again.');
+          return;
+        }
+
+        // Continue polling if still processing
+        if (doc.ocrStatus === 'processing' && attempts < maxAttempts) {
+          attempts++;
+          setTimeout(poll, 1000); // Poll every second
+        } else if (attempts >= maxAttempts) {
+          toast.warning('Document is still processing. Check back in a moment.');
+        }
+      } catch (error) {
+        console.error('Polling error:', error);
+        if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(poll, 2000); // Retry with longer interval
+        }
+      }
+    };
+
+    // Start polling
+    poll();
+  };
+
   const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
@@ -127,70 +207,11 @@ export default function PCSDocumentUploader({
     }
   };
 
-  const pollDocumentStatus = async (documentId: string) => {
-    const maxAttempts = 30; // 5 minutes max
-    let attempts = 0;
-
-    const poll = async () => {
-      try {
-        const response = await fetch(`/api/pcs/document-status/${documentId}`);
-        const result = await response.json();
-
-        if (result.success) {
-          const status = result.status;
-          
-          // Update document in list
-          setDocuments(prev => prev.map(doc => 
-            doc.id === documentId ? { ...doc, ...status } : doc
-          ));
-
-          // If processing complete, notify parent
-          if (status.ocrStatus === 'completed' || status.ocrStatus === 'needs_review') {
-            if (onDocumentProcessed) {
-              onDocumentProcessed(status);
-            }
-
-            if (status.ocrStatus === 'completed') {
-              toast.success(`OCR completed with ${status.confidence.score}% confidence`);
-            } else {
-              toast.warning('OCR completed but needs manual review');
-            }
-            return;
-          }
-
-          // If failed, stop polling
-          if (status.ocrStatus === 'failed') {
-            toast.error('OCR processing failed. Please try uploading again.');
-            return;
-          }
-        }
-
-        // Continue polling if still processing
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(poll, 10000); // Poll every 10 seconds
-        } else {
-          toast.error('OCR processing timed out. Please check back later.');
-        }
-
-      } catch (error) {
-        console.error('Status polling failed:', error);
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(poll, 10000);
-        }
-      }
-    };
-
-    // Start polling after 2 seconds
-    setTimeout(poll, 2000);
-  };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'processing': return 'Loader2';
+      case 'processing': return 'Loader';
       case 'completed': return 'CheckCircle';
-      case 'needs_review': return 'AlertCircle';
+      case 'needs_review': return 'AlertTriangle';
       case 'failed': return 'XCircle';
       default: return 'File';
     }
@@ -264,7 +285,7 @@ export default function PCSDocumentUploader({
         >
           {uploading ? (
             <>
-              <Icon name="Loader2" className="animate-spin h-4 w-4 mr-2" />
+              <Icon name="Loader" className="animate-spin h-4 w-4 mr-2" />
               Uploading...
             </>
           ) : (

@@ -8,7 +8,7 @@ import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
+import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
 
 interface BaseData {
   code: string;
@@ -71,9 +71,12 @@ export default function PCSPlannerClient() {
       if (response.ok) {
         const data = await response.json();
         setComparisons(data.comparisons || []);
+      } else {
+        toast.error("Failed to load saved comparisons");
       }
     } catch (error) {
       console.error("Failed to load comparisons:", error);
+      toast.error("Failed to load saved comparisons");
     }
   };
 
@@ -167,17 +170,38 @@ export default function PCSPlannerClient() {
       });
 
       if (response.ok) {
-        toast.success("Comparison saved!");
+        toast.success("Comparison saved successfully!");
         setComparisonName("");
         setAnalysisData([]);
         setSelectedBases([]);
         loadComparisons();
       } else {
-        throw new Error("Save failed");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Save failed");
+      }
+    } catch (error: any) {
+      console.error("Save failed:", error);
+      toast.error(error.message || "Failed to save comparison");
+    }
+  };
+
+  const handleDeleteComparison = async (comparisonId: string) => {
+    if (!confirm("Delete this comparison?")) return;
+
+    try {
+      const response = await fetch(`/api/pcs/planner/compare?id=${comparisonId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("Comparison deleted");
+        loadComparisons();
+      } else {
+        throw new Error("Delete failed");
       }
     } catch (error) {
-      console.error("Save failed:", error);
-      toast.error("Failed to save comparison");
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete comparison");
     }
   };
 
@@ -239,7 +263,7 @@ export default function PCSPlannerClient() {
           >
             {loading ? (
               <>
-                <Icon name="Loader2" className="animate-spin h-4 w-4" />
+                <Icon name="Loader" className="animate-spin h-4 w-4" />
                 Analyzing...
               </>
             ) : (
@@ -338,7 +362,11 @@ export default function PCSPlannerClient() {
                       <Icon name="Eye" className="h-4 w-4 mr-1" />
                       View
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleDeleteComparison(comparison.id)}
+                    >
                       <Icon name="Trash2" className="h-4 w-4 mr-1" />
                       Delete
                     </Button>

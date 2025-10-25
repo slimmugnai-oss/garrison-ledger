@@ -1,17 +1,12 @@
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 
-import { errorResponse, Errors } from '@/lib/api-errors';
-import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
-
-export const runtime = 'nodejs';
+import { supabaseAdmin } from "@/lib/supabase";
 
 /**
- * PCS DOCUMENT STATUS - POLLING ENDPOINT
+ * PCS DOCUMENT STATUS POLLING
  * 
- * Returns OCR processing status for uploaded documents
- * Used by UI to show progress and confidence scores
+ * Allows clients to poll for OCR processing status after document upload
  */
 
 export async function GET(
@@ -19,74 +14,43 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) throw Errors.unauthorized();
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const documentId = params.id;
 
-    // Get document status
+    // Fetch document status
     const { data: document, error } = await supabaseAdmin
-      .from('pcs_claim_documents')
-      .select(`
-        id,
-        file_name,
-        document_type,
-        ocr_status,
-        ocr_data,
-        normalized_data,
-        created_at,
-        updated_at,
-        pcs_claims!inner(user_id)
-      `)
-      .eq('id', documentId)
-      .eq('pcs_claims.user_id', userId)
-      .maybeSingle();
+      .from("pcs_claim_documents")
+      .select("id, ocr_status, normalized_data, updated_at")
+      .eq("id", documentId)
+      .eq("user_id", user.id)
+      .single();
 
-    if (error) {
-      logger.error('[PCSDocumentStatus] Database error', error, { userId, documentId });
-      throw Errors.databaseError('Failed to fetch document status');
+    if (error || !document) {
+      return NextResponse.json(
+        { error: "Document not found" },
+        { status: 404 }
+      );
     }
 
-    if (!document) {
-      throw Errors.notFound('Document');
-    }
-
-    // Calculate processing time
-    const processingTime = document.updated_at 
-      ? new Date(document.updated_at).getTime() - new Date(document.created_at).getTime()
-      : null;
-
-    // Extract confidence data
-    const confidence = document.normalized_data?.ocr_confidence || 0;
-    const confidenceLevel = document.normalized_data?.ocr_confidence_level || 'unknown';
-    const requiresReview = document.normalized_data?.requires_manual_review || false;
-
-    const status = {
-      id: document.id,
-      fileName: document.file_name,
-      documentType: document.document_type,
-      ocrStatus: document.ocr_status,
-      confidence: {
-        score: confidence,
-        level: confidenceLevel,
-        requiresReview
+    return NextResponse.json({
+      success: true,
+      document: {
+        id: document.id,
+        ocrStatus: document.ocr_status,
+        normalizedData: document.normalized_data,
+        updatedAt: document.updated_at,
       },
-      processingTime: processingTime ? Math.round(processingTime / 1000) : null, // seconds
-      extractedData: document.ocr_data,
-      normalizedData: document.normalized_data,
-      lastUpdated: document.updated_at
-    };
-
-    logger.info('[PCSDocumentStatus] Status retrieved', { 
-      userId, 
-      documentId, 
-      ocrStatus: document.ocr_status,
-      confidence 
     });
-
-    return NextResponse.json({ success: true, status });
-
   } catch (error) {
-    return errorResponse(error);
+    console.error("[DocumentStatus] Error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch document status" },
+      { status: 500 }
+    );
   }
 }
