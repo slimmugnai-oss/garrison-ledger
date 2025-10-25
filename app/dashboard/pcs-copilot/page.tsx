@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import EnhancedPCSCopilotClient from "./EnhancedPCSCopilotClient";
 
