@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 
+import { getDLARate, getMALTRate, getPerDiemRate } from "@/lib/pcs/jtr-api";
+
 export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
@@ -19,28 +21,31 @@ export async function POST(request: NextRequest) {
       formData.dity_meals_cost +
       formData.dity_labor_cost;
 
-    // Calculate government reimbursement for DITY (95% of what they would pay for full move)
-    const dityGovernmentCost = calculateDITYReimbursement(
+    // Calculate government reimbursement for DITY using real JTR rates
+    const dityGovernmentCost = await calculateDITYReimbursement(
       formData.weight_authorized,
       formData.distance_miles,
       formData.rank_at_pcs,
-      formData.dependents_count
+      formData.dependents_count,
+      formData.departure_date || new Date().toISOString().split('T')[0]
     );
 
     const dityProfit = dityGovernmentCost - dityTotalCost;
     const dityProfitPercentage = dityTotalCost > 0 ? (dityProfit / dityTotalCost) * 100 : 0;
 
-    // Calculate Full Move costs
-    const fullMoveCost = calculateFullMoveCost(
+    // Calculate Full Move costs using real JTR rates
+    const fullMoveCost = await calculateFullMoveCost(
       formData.weight_authorized,
       formData.distance_miles,
       formData.rank_at_pcs,
-      formData.dependents_count
+      formData.dependents_count,
+      formData.departure_date || new Date().toISOString().split('T')[0]
     );
 
-    const fullMoveEntitlements = calculateFullMoveEntitlements(
+    const fullMoveEntitlements = await calculateFullMoveEntitlements(
       formData.rank_at_pcs,
-      formData.dependents_count
+      formData.dependents_count,
+      formData.departure_date || new Date().toISOString().split('T')[0]
     );
 
     const fullMoveNetCost = fullMoveCost - fullMoveEntitlements;
@@ -51,10 +56,11 @@ export async function POST(request: NextRequest) {
     const partialDityGasCost = partialDityWeight * 0.1; // $0.10 per lb estimate
     const partialDityTotalCost = partialDityTruckCost + partialDityGasCost;
 
-    const partialDityGovernmentCost = calculatePartialDITYReimbursement(
+    const partialDityGovernmentCost = await calculatePartialDITYReimbursement(
       partialDityWeight,
       formData.distance_miles,
-      formData.rank_at_pcs
+      formData.rank_at_pcs,
+      formData.departure_date || new Date().toISOString().split('T')[0]
     );
 
     const partialDityProfit = partialDityGovernmentCost - partialDityTotalCost;
@@ -114,59 +120,111 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper functions for calculations
-function calculateDITYReimbursement(
+async function calculateDITYReimbursement(
   weight: number,
   distance: number,
   rank: string,
-  dependents: number
-): number {
-  // Base rate per pound per mile (simplified)
-  const baseRate = 0.15; // $0.15 per lb per mile
-  const weightRate = weight * distance * baseRate;
-  
-  // Rank multiplier
-  const rankMultiplier = getRankMultiplier(rank);
-  
-  // Dependent allowance
-  const dependentAllowance = dependents * 500; // $500 per dependent
-  
-  return (weightRate * rankMultiplier) + dependentAllowance;
+  dependents: number,
+  effectiveDate: string
+): Promise<number> {
+  try {
+    // Get real MALT rate from JTR database
+    const maltRate = await getMALTRate(effectiveDate);
+    const baseRate = maltRate.ratePerMile;
+    
+    // Calculate weight allowance rate (simplified)
+    const weightRate = weight * distance * baseRate;
+    
+    // Get DLA rate for rank and dependents
+    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
+    const dlaAmount = dlaRate.amount;
+    
+    // Calculate total reimbursement
+    return weightRate + dlaAmount;
+  } catch (error) {
+    console.error('Error calculating DITY reimbursement:', error);
+    // Fallback to simplified calculation
+    const baseRate = 0.15;
+    const weightRate = weight * distance * baseRate;
+    const dlaAmount = getDLAForRank(rank, dependents > 0);
+    return weightRate + dlaAmount;
+  }
 }
 
-function calculateFullMoveCost(
+async function calculateFullMoveCost(
   weight: number,
   distance: number,
   rank: string,
-  dependents: number
-): number {
-  // Government cost for full move (what they would pay a moving company)
-  const baseCost = weight * distance * 0.20; // $0.20 per lb per mile
-  const rankMultiplier = getRankMultiplier(rank);
-  const dependentCost = dependents * 1000; // $1000 per dependent
-  
-  return (baseCost * rankMultiplier) + dependentCost;
+  dependents: number,
+  effectiveDate: string
+): Promise<number> {
+  try {
+    // Get real MALT rate for government move cost
+    const maltRate = await getMALTRate(effectiveDate);
+    const baseCost = weight * distance * maltRate.ratePerMile * 1.3; // 30% markup for moving company
+    
+    // Get DLA rate for dependents
+    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
+    const dependentCost = dependents * (dlaRate.amount * 0.1); // 10% of DLA per dependent
+    
+    return baseCost + dependentCost;
+  } catch (error) {
+    console.error('Error calculating full move cost:', error);
+    // Fallback to simplified calculation
+    const baseCost = weight * distance * 0.20;
+    const rankMultiplier = getRankMultiplier(rank);
+    const dependentCost = dependents * 1000;
+    return (baseCost * rankMultiplier) + dependentCost;
+  }
 }
 
-function calculateFullMoveEntitlements(
+async function calculateFullMoveEntitlements(
   rank: string,
-  dependents: number
-): number {
-  // DLA, MALT, Per Diem, etc.
-  const dla = getDLAForRank(rank, dependents > 0);
-  const malt = 0.22 * 1000; // $0.22 per mile for 1000 miles average
-  const perDiem = 166 * 3; // $166 per day for 3 days average
-  
-  return dla + malt + perDiem;
+  dependents: number,
+  effectiveDate: string
+): Promise<number> {
+  try {
+    // Get real DLA rate
+    const dlaRate = await getDLARate(rank, dependents > 0, effectiveDate);
+    const dla = dlaRate.amount;
+    
+    // Get real MALT rate
+    const maltRate = await getMALTRate(effectiveDate);
+    const malt = maltRate.ratePerMile * 1000; // 1000 miles average
+    
+    // Get real per diem rate (using default locality)
+    const perDiemRate = await getPerDiemRate('default', effectiveDate);
+    const perDiem = perDiemRate.rate * 3; // 3 days average
+    
+    return dla + malt + perDiem;
+  } catch (error) {
+    console.error('Error calculating full move entitlements:', error);
+    // Fallback to simplified calculation
+    const dla = getDLAForRank(rank, dependents > 0);
+    const malt = 0.22 * 1000;
+    const perDiem = 166 * 3;
+    return dla + malt + perDiem;
+  }
 }
 
-function calculatePartialDITYReimbursement(
+async function calculatePartialDITYReimbursement(
   weight: number,
   distance: number,
-  rank: string
-): number {
-  // Partial DITY gets proportional reimbursement
-  const fullReimbursement = calculateDITYReimbursement(weight, distance, rank, 0);
-  return fullReimbursement * 0.5; // 50% of full DITY reimbursement
+  rank: string,
+  effectiveDate: string
+): Promise<number> {
+  try {
+    // Partial DITY gets proportional reimbursement
+    const fullReimbursement = await calculateDITYReimbursement(weight, distance, rank, 0, effectiveDate);
+    return fullReimbursement * 0.5; // 50% of full DITY reimbursement
+  } catch (error) {
+    console.error('Error calculating partial DITY reimbursement:', error);
+    // Fallback to simplified calculation
+    const baseRate = 0.15;
+    const weightRate = weight * distance * baseRate;
+    const dlaAmount = getDLAForRank(rank, false);
+    return (weightRate + dlaAmount) * 0.5;
+  }
 }
 
 function getRankMultiplier(rank: string): number {

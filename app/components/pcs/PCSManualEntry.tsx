@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import { supabase } from "@/lib/supabase";
 
 interface PCSManualEntryProps {
@@ -805,6 +806,28 @@ export default function PCSManualEntry({
               <span>JTR 054206 - Mileage Allowance</span>
             </div>
           </div>
+        </AnimatedCard>
+
+        {/* Document Upload */}
+        <AnimatedCard className="p-6">
+          <h4 className="mb-4 font-semibold text-slate-900">Document Upload</h4>
+          <PCSDocumentUploader 
+            claimId={claimId}
+            onDocumentProcessed={(document) => {
+              console.log('Document processed:', document);
+              // Auto-populate form fields based on extracted data
+              if (document.normalizedData) {
+                const data = document.normalizedData;
+                if (data.member_name) setFormData(prev => ({ ...prev, claim_name: data.member_name }));
+                if (data.orders_date) setFormData(prev => ({ ...prev, pcs_orders_date: data.orders_date }));
+                if (data.departure_date) setFormData(prev => ({ ...prev, departure_date: data.departure_date }));
+                if (data.origin_base) setFormData(prev => ({ ...prev, origin_base: data.origin_base }));
+                if (data.destination_base) setFormData(prev => ({ ...prev, destination_base: data.destination_base }));
+                if (data.dependents_authorized) setFormData(prev => ({ ...prev, dependents_count: data.dependents_authorized }));
+                if (data.hhg_weight_allowance) setFormData(prev => ({ ...prev, estimated_weight: data.hhg_weight_allowance }));
+              }
+            }}
+          />
         </AnimatedCard>
       </div>
     </div>

@@ -136,6 +136,9 @@ export async function POST(req: NextRequest) {
     });
 
     // Start OCR processing (async)
+    processOCR(document.id, fileData, contentType, documentType).catch(err => {
+      logger.error('[PCSUpload] OCR processing failed', err, { userId, claimId, documentId: document.id });
+    });
 
     return NextResponse.json({
       success: true,
