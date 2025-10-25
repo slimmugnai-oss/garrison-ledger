@@ -53,7 +53,7 @@ const wizardSteps = [
   { id: "travel", title: "Travel Method", icon: "Truck" },
   { id: "lodging", title: "Lodging", icon: "Home" },
   { id: "costs", title: "Travel Costs", icon: "DollarSign" },
-  { id: "weight", title: "Weight & Distance", icon: "Package" },
+  { id: "weight", title: "Weight & Distance", icon: "Briefcase" },
   { id: "review", title: "Review", icon: "CheckCircle" },
 ];
 
@@ -505,7 +505,7 @@ export default function PCSMobileWizard({ userProfile, onComplete, onSave }: PCS
           <div className="space-y-6">
             <div className="mb-6 text-center">
               <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
-                <Icon name="Package" className="h-8 w-8 text-orange-600" />
+                <Icon name="Briefcase" className="h-8 w-8 text-orange-600" />
               </div>
               <h2 className="mb-2 text-2xl font-bold text-slate-900">Weight & Distance</h2>
               <p className="text-slate-600">PPM weight allowances and distance</p>
