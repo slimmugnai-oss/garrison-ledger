@@ -503,6 +503,30 @@ export default function AuditDetailClient({ upload, linesBySection, flagsBySever
           )}
         </div>
       </div>
+
+      {/* Ask Expert CTA */}
+      <div className="mt-8 rounded-lg border border-indigo-200 bg-indigo-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-100">
+            <Icon name="MessageCircle" className="h-6 w-6 text-indigo-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="mb-2 text-lg font-semibold text-gray-900">
+              Questions about your LES results?
+            </h3>
+            <p className="mb-4 text-sm text-gray-700">
+              Ask our Military Expert: "Why is my BAH different this month?" or "Should I adjust my TSP contribution?"
+            </p>
+            <Link
+              href="/dashboard/ask"
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+            >
+              <Icon name="MessageCircle" className="h-4 w-4" />
+              Ask Expert Now
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
