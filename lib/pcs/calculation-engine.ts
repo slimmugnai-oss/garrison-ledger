@@ -351,12 +351,57 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
   const effectiveDate = formData.pcs_orders_date || new Date().toISOString().split("T")[0];
   const hasDependents = formData.dependents_count > 0;
 
-  // Calculate all entitlements
-  const [dla, malt, perDiem] = await Promise.all([
-    calculateDLA(formData.rank_at_pcs, hasDependents, effectiveDate),
-    calculateMALT(formData.malt_distance, effectiveDate),
-    calculatePerDiem(formData.per_diem_days, "00000", effectiveDate), // Would use actual ZIP
-  ]);
+  // Calculate all entitlements with error handling
+  let dla, malt, perDiem;
+  
+  try {
+    dla = await calculateDLA(formData.rank_at_pcs, hasDependents, effectiveDate);
+  } catch (error) {
+    console.error('DLA calculation failed:', error);
+    // Use fallback DLA calculation
+    dla = {
+      amount: 0,
+      rateUsed: 0,
+      multiplier: 1,
+      effectiveDate,
+      citation: 'JTR 050302.B',
+      source: 'Unavailable - please calculate manually',
+      lastVerified: 'Never',
+      confidence: 0
+    };
+  }
+
+  try {
+    malt = await calculateMALT(formData.malt_distance, effectiveDate);
+  } catch (error) {
+    console.error('MALT calculation failed:', error);
+    // Use fallback MALT calculation
+    malt = {
+      distance: formData.malt_distance,
+      ratePerMile: 0.18,
+      amount: formData.malt_distance * 0.18,
+      effectiveDate,
+      citation: 'IRS Standard Mileage Rate',
+      source: 'Fallback rate - verify with finance office',
+      confidence: 50
+    };
+  }
+
+    try {
+      perDiem = await calculatePerDiem(formData.per_diem_days, "00000", effectiveDate);
+    } catch (error) {
+      console.error('Per diem calculation failed:', error);
+      // Use fallback per diem calculation
+      perDiem = {
+        days: formData.per_diem_days,
+        rate: 166,
+        amount: formData.per_diem_days * 166,
+        effectiveDate,
+        citation: 'DTMO Per Diem',
+        source: 'Standard CONUS rate - verify location',
+        confidence: 50
+      };
+    }
 
   const tle = calculateTLE(
     formData.tle_origin_nights,

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import { validatePCSClaim } from "@/lib/pcs/validation-engine";
 
 interface PCSMobileWizardProps {
   userProfile: {
@@ -14,6 +15,7 @@ interface PCSMobileWizardProps {
   };
   onComplete: (data: any) => void;
   onSave: (data: any) => void;
+  onValidationChange?: (flags: any[]) => void;
 }
 
 interface FormData {
@@ -57,7 +59,7 @@ const wizardSteps = [
   { id: "review", title: "Review", icon: "CheckCircle" },
 ];
 
-export default function PCSMobileWizard({ userProfile, onComplete, onSave }: PCSMobileWizardProps) {
+export default function PCSMobileWizard({ userProfile, onComplete, onSave, onValidationChange }: PCSMobileWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     claim_name: "",
@@ -113,6 +115,14 @@ export default function PCSMobileWizard({ userProfile, onComplete, onSave }: PCS
       setCurrentStep(currentStep - 1);
     }
   };
+
+  // Validate form data when it changes
+  useEffect(() => {
+    if (onValidationChange) {
+      const flags = validatePCSClaim(formData);
+      onValidationChange(flags);
+    }
+  }, [formData, onValidationChange]);
 
   const handleSave = () => {
     onSave(formData);

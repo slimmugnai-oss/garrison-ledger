@@ -10,8 +10,10 @@ import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import { PCSValidationExplainer } from "@/app/components/pcs/PCSAIExplanation";
+import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
 import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
 import { calculatePCSClaim } from "@/lib/pcs/calculation-engine";
+import { toast } from "sonner";
 
 interface Claim {
   id: string;
@@ -98,8 +100,28 @@ export default function EnhancedPCSCopilotClient({
     try {
       const estimates = await calculatePCSClaim(formData);
       setEstimates(estimates);
+      
+      // Show user feedback based on confidence scores
+      if (estimates.dla.confidence === 0) {
+        toast.warning('DLA rate unavailable. Using estimate. Please verify with finance office.');
+      }
+      
+      if (estimates.malt.confidence < 100) {
+        toast.info(`MALT rate may be outdated. Last verified: ${estimates.malt.lastVerified}`);
+      }
+      
+      if (estimates.perDiem.confidence < 100) {
+        toast.info('Per diem rate may not be location-specific. Verify with finance office.');
+      }
+      
+      if (estimates.confidence < 80) {
+        toast.warning('Some calculations used fallback rates. Please verify with finance office.');
+      } else {
+        toast.success('Calculations completed successfully!');
+      }
     } catch (error) {
       console.error("Failed to calculate estimates:", error);
+      toast.error('Failed to calculate estimates. Please try again.');
     }
   };
 
@@ -368,6 +390,7 @@ export default function EnhancedPCSCopilotClient({
               userProfile={userProfile}
               onComplete={handleCreateClaim}
               onSave={handleCreateClaim}
+              onValidationChange={handleValidationChange}
             />
           )}
 
@@ -375,6 +398,13 @@ export default function EnhancedPCSCopilotClient({
           {validationFlags.length > 0 && (
             <div className="mt-8">
               <PCSValidationExplainer flags={validationFlags} claimContext={getClaimContext()} />
+            </div>
+          )}
+
+          {/* Confidence Display */}
+          {estimates && (
+            <div className="mt-8">
+              <PCSConfidenceDisplay estimates={estimates} />
             </div>
           )}
 
