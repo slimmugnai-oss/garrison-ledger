@@ -5,7 +5,7 @@ import PCSCopilotMetrics from "@/app/components/admin/PCSCopilotMetrics";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import PageHeader from "@/app/components/ui/PageHeader";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export default async function AdminPCSCopilotPage() {
   const user = await currentUser();

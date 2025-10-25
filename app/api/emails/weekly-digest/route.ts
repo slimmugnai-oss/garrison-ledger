@@ -4,7 +4,7 @@ import { errorResponse, Errors } from '@/lib/api-errors';
 import { EMAIL_CONFIG } from '@/lib/email-config';
 import { renderWeeklyDigest, getEmailSubject } from '@/lib/email-templates';
 import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = "nodejs";
 

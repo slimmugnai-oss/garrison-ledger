@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 

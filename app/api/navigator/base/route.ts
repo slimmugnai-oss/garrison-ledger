@@ -20,7 +20,7 @@ import { fetchMilitaryAmenitiesData } from '@/lib/navigator/military';
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
 import { familyFitScore100 } from '@/lib/navigator/score';
 import { weatherComfortIndex } from '@/lib/navigator/weather';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

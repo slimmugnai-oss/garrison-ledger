@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 interface PageProps {
   params: Promise<{ id: string }>;

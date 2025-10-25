@@ -24,7 +24,7 @@ import { compareDetailed } from '@/lib/les/compare';
 import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
 import { checkAndIncrement } from '@/lib/limits';
 import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

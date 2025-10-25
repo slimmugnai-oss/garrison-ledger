@@ -6,7 +6,7 @@
  */
 
 import type { EstimateTotals, TdyItem } from '@/app/types/tdy';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import { computePerDiemSpans } from './perdiem';
 import { getDateRange } from './util';

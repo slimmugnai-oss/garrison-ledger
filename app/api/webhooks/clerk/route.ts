@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { Webhook } from "svix";
 
 import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
   // Handle CORS preflight requests

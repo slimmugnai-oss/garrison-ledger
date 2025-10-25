@@ -15,7 +15,7 @@ import { errorResponse, Errors } from "@/lib/api-errors";
 import { buildExpectedSnapshot } from "@/lib/les/expected";
 import { logger } from "@/lib/logger";
 import { ssot } from "@/lib/ssot";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

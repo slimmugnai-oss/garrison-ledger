@@ -14,7 +14,7 @@
 import type { ExpectedSnapshot, ExpectedSpecialPay } from "@/app/types/les";
 import { isOfficer, isEnlisted } from "@/app/types/les";
 import { ssot } from "@/lib/ssot";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export interface ExpectedPayParams {
   userId: string;

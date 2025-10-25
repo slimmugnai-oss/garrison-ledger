@@ -11,7 +11,7 @@
  * Security: All tier checks happen server-side. Never trust client-side tier claims.
  */
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export type Tier = "free" | "premium" | "staff";
 

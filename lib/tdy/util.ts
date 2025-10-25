@@ -5,7 +5,7 @@
  */
 
 import { ssot } from '@/lib/ssot';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 /**
  * Get current mileage rate in cents per mile

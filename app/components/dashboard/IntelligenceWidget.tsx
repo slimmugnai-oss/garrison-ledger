@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import AnimatedCard from '../ui/AnimatedCard';
 

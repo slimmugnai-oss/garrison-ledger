@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

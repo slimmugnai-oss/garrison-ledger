@@ -7,7 +7,7 @@
  * 3. Wrap obvious rates with comments (manual DataRef needed)
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import { lintContentBlock as _lintContentBlock } from './lint';
 

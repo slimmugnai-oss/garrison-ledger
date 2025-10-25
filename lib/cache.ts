@@ -6,7 +6,7 @@
  */
 
 import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 /**
  * Get cached value

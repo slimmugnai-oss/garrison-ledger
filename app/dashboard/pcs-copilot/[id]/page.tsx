@@ -2,7 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import PCSClaimClient from './PCSClaimClient';
 

@@ -10,7 +10,7 @@
  * - SPECIFIC_AMOUNT / SPECIFIC_YEAR
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export type FlagType = 
   | 'GUARANTEE_LANGUAGE'

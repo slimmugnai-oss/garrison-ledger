@@ -17,7 +17,7 @@ import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
 import { analyzeListingUrl } from '@/lib/navigator/housing';
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
 import { rentVsBahScore100, schoolsScore100, commuteScore100 } from '@/lib/navigator/score';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

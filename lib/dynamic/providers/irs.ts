@@ -6,7 +6,7 @@
  * TTL: 24 hours (limits change annually, usually November for next year)
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import type { ResolvedData, ProviderResult } from '../types';
 

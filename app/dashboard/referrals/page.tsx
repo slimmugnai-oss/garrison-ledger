@@ -8,7 +8,7 @@ import ReferralDashboard from '@/app/components/referrals/ReferralDashboard';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Referrals - Help a Battle Buddy Save Money",

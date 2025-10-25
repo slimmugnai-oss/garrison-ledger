@@ -26,7 +26,7 @@ import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { parseLesPdf } from '@/lib/les/parse';
 import { logger } from '@/lib/logger';
 import { ssot } from '@/lib/ssot';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 /**
  * Record server-side analytics event

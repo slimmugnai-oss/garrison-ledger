@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 const ADMIN_USER_IDS = ["user_2pjPs1dGeRGZ8укJM9X9pY3DGqL", "user_343xVqjkdILtBkaYAJfE5H8Wq0q"];
 

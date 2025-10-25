@@ -21,7 +21,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getUserTier, getLesAuditPolicy, checkLesAuditQuota } from '@/lib/auth/subscription';
 import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

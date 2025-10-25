@@ -4,7 +4,7 @@
  * Depublishes (sets to draft) content blocks with unresolved critical flags
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export interface DepublishResult {
   blockId: string;

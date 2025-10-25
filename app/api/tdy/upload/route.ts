@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { DocType } from '@/app/types/tdy';
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { normalizeReceiptText } from '@/lib/tdy/normalize';
 import { extractTextFromPdf, isImageFile, UnsupportedFormatError } from '@/lib/tdy/ocr';
 import { getMileageRateCents } from '@/lib/tdy/util';

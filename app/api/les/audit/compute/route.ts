@@ -25,7 +25,7 @@ import { normalizeLineCode } from '@/lib/les/codes';
 import { compareDetailed } from '@/lib/les/compare';
 import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
 import { applyAuditMasking, buildVarianceWaterfall, type AuditResult } from '@/lib/les/paywall';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';  // Need nodejs for Supabase queries
 export const dynamic = 'force-dynamic';

@@ -6,7 +6,7 @@
  * TTL: 24 hours (COLA updates quarterly)
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import type { ResolvedData, ProviderResult } from '../types';
 

@@ -10,7 +10,7 @@ import {
   calculateConfidenceScore
 } from '@/lib/pcs/jtr-rules';
 import { getPerDiemRate } from '@/lib/pcs/per-diem';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;

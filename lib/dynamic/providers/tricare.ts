@@ -6,7 +6,7 @@
  * TTL: 7 days (TRICARE costs change annually, usually January)
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import type { ResolvedData, ProviderResult } from '../types';
 

@@ -10,7 +10,7 @@
  */
 
 import type { TdyFlag, TdyItem } from '@/app/types/tdy';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 /**
  * Run all compliance checks for a trip
