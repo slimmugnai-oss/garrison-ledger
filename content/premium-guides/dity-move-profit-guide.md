@@ -317,6 +317,245 @@ Before your move, verify:
 
 ---
 
+## Advanced DITY Strategies
+
+### Truck Rental Negotiation
+
+**Negotiation Tactics**
+- **Book Early:** Reserve 4-6 weeks in advance for better rates
+- **Compare Companies:** U-Haul, Penske, Budget - get quotes from all
+- **Ask for Discounts:** Military discounts, AAA discounts, corporate rates
+- **Negotiate Terms:** Longer rental periods, unlimited mileage options
+- **Seasonal Timing:** Avoid peak season (May-August) when possible
+
+**Cost-Saving Tips**
+- **One-Way Rentals:** Often cheaper than round-trip
+- **Weekend vs Weekday:** Weekday rentals often cheaper
+- **Longer Rentals:** 7-day rental often same price as 3-day
+- **Mileage Packages:** Unlimited mileage if driving long distance
+- **Insurance Options:** Decline expensive insurance, use personal auto policy
+
+### Packing Material Sourcing
+
+**Free Packing Materials**
+- **Liquor Stores:** Free wine boxes (perfect for books)
+- **Grocery Stores:** Free produce boxes
+- **Office Supply Stores:** Free paper boxes
+- **Friends/Family:** Ask for moving boxes from recent moves
+- **Online Sources:** Facebook Marketplace, Craigslist free sections
+
+**Cost-Effective Packing Materials**
+- **Bubble Wrap:** Buy in bulk from office supply stores
+- **Packing Tape:** Generic tape often same quality as brand name
+- **Furniture Pads:** Rent from truck company or buy used
+- **Straps/Ropes:** Essential for securing furniture
+- **Plastic Wrap:** Great for protecting furniture
+
+**Packing Strategy**
+- **Heavy Items:** Books, tools, military gear (maximize weight)
+- **Light Items:** Clothes, linens, pillows (fill space)
+- **Fragile Items:** Wrap carefully, use original boxes when possible
+- **Furniture:** Disassemble when possible, protect with pads
+- **Appliances:** Clean and secure, use original packaging if available
+
+### Scale Ticket Tricks
+
+**Weight Maximization**
+- **Fill Truck Completely:** Use every cubic foot of space
+- **Heavy Items First:** Place heavy items at bottom
+- **Distribute Weight:** Balance weight throughout truck
+- **Professional Gear:** Weigh separately for additional allowance
+- **Vehicle Towing:** Tow car on trailer for extra weight
+
+**Scale Ticket Process**
+- **Empty Weight First:** Get empty weight at origin before loading
+- **Full Weight:** Get full weight after loading at origin
+- **Documentation:** Ensure tickets are certified and stamped
+- **Backup Copies:** Take photos of all weight tickets
+- **Timing:** Get tickets during business hours for best service
+
+**Common Scale Ticket Mistakes**
+- **Wrong Scale Type:** Must use CAT scale (Certified Automated Truck)
+- **Missing Documentation:** Tickets must be certified and stamped
+- **Timing Issues:** Get tickets during business hours
+- **Lost Tickets:** Keep multiple copies, take photos
+- **Incomplete Information:** Ensure all required fields are filled
+
+### Tax Implications
+
+**Taxable Income**
+- **DITY Profit:** Reimbursement minus expenses is taxable income
+- **Tax Bracket:** Profit taxed at your marginal tax rate
+- **Withholding:** No automatic withholding on DITY payments
+- **Quarterly Taxes:** May need to pay estimated taxes
+
+**Deductible Expenses**
+- **Truck Rental:** Full cost of truck rental
+- **Gas and Tolls:** All fuel and toll expenses
+- **Packing Materials:** Boxes, tape, bubble wrap, furniture pads
+- **Labor Costs:** Hired help for loading/unloading
+- **Equipment Rental:** Dollies, straps, moving equipment
+- **Lodging:** Hotel costs during multi-day moves
+- **Meals:** Meal costs during move (limited deduction)
+
+**Tax Planning Strategies**
+- **Track All Expenses:** Keep detailed records of all costs
+- **Receipt Management:** Save all receipts, take photos
+- **Tax Professional:** Consult tax professional for complex situations
+- **Quarterly Payments:** Consider quarterly tax payments
+- **Tax Software:** Use tax software that handles military situations
+
+### Multi-Leg Moves (OCONUS → CONUS)
+
+**OCONUS DITY Considerations**
+- **Weight Allowances:** Different weight allowances for OCONUS moves
+- **Shipping Costs:** Container shipping vs air freight
+- **Customs:** Customs documentation and requirements
+- **Timing:** Longer processing times for OCONUS moves
+- **Costs:** Higher costs for OCONUS moves
+
+**OCONUS to CONUS Strategy**
+- **Container Shipping:** Use container shipping for large moves
+- **Air Freight:** Use air freight for essential items
+- **Storage:** Consider storage options during transition
+- **Timing:** Plan for longer processing times
+- **Documentation:** Ensure all customs documentation is complete
+
+**OCONUS DITY Benefits**
+- **Higher Reimbursement:** OCONUS moves often have higher reimbursement rates
+- **Additional Allowances:** Extra allowances for OCONUS moves
+- **Tax Benefits:** Potential tax benefits for OCONUS moves
+- **Flexibility:** More flexibility in timing and methods
+- **Cost Savings:** Significant savings compared to full-service moves
+
+---
+
+## DITY Move Success Stories
+
+### E-6 Staff Sergeant's $6,500 Profit
+**Staff Sergeant Martinez, E-6, 10 years TIS, PCS from Fort Bragg to Fort Lewis**
+
+**Move Details:**
+- **Distance:** 3,200 miles
+- **Weight:** 11,000 lbs (max allowance)
+- **Government Cost:** $12,500
+- **Actual Cost:** $6,000
+- **Profit:** $6,500
+
+**Cost Breakdown:**
+- **Truck Rental:** $2,200 (26-foot Penske, 10 days)
+- **Gas:** $1,200 (3,200 miles)
+- **Packing Materials:** $300 (boxes, tape, bubble wrap)
+- **Labor:** $800 (hired help for loading/unloading)
+- **Lodging:** $500 (5 nights during drive)
+- **Tolls:** $200 (tolls and ferry)
+
+**Success Factors:**
+- **Early Planning:** Booked truck 8 weeks in advance
+- **Cost Negotiation:** Negotiated better rates with truck company
+- **Free Materials:** Used free boxes from liquor stores and grocery stores
+- **Efficient Packing:** Maximized weight without exceeding allowance
+- **Professional Help:** Hired experienced movers for loading/unloading
+
+### O-3 Captain's $8,200 Profit
+**Captain Johnson, O-3, 8 years TIS, PCS from Fort Hood to Fort Carson**
+
+**Move Details:**
+- **Distance:** 1,800 miles
+- **Weight:** 12,000 lbs (max allowance)
+- **Government Cost:** $15,000
+- **Actual Cost:** $6,800
+- **Profit:** $8,200
+
+**Cost Breakdown:**
+- **Truck Rental:** $1,800 (26-foot U-Haul, 7 days)
+- **Gas:** $720 (1,800 miles)
+- **Packing Materials:** $200 (free boxes, minimal supplies)
+- **Labor:** $600 (hired help for loading/unloading)
+- **Lodging:** $400 (3 nights during drive)
+- **Tolls:** $100 (tolls and fees)
+
+**Success Factors:**
+- **Off-Season Move:** Moved in October (off-peak season)
+- **Efficient Planning:** Detailed planning and organization
+- **Cost Optimization:** Minimized costs while maintaining quality
+- **Professional Help:** Hired experienced movers
+- **Tax Planning:** Consulted tax professional for tax optimization
+
+---
+
+## DITY Move Troubleshooting
+
+### Common Issues and Solutions
+
+**Issue: Truck Breakdown**
+- **Problem:** Truck breaks down during move
+- **Solution:** Contact truck company immediately, get replacement
+- **Prevention:** Choose reliable truck company, get roadside assistance
+- **Backup Plan:** Have backup plan for truck replacement
+
+**Issue: Weight Ticket Problems**
+- **Problem:** Weight tickets rejected or lost
+- **Solution:** Get new weight tickets, ensure proper certification
+- **Prevention:** Get multiple copies, take photos, store securely
+- **Backup Plan:** Have backup scale locations identified
+
+**Issue: Budget Overrun**
+- **Problem:** Costs exceed budget and advance payment
+- **Solution:** Prioritize essential costs, find cost savings
+- **Prevention:** Create detailed budget with buffer
+- **Backup Plan:** Have emergency fund for unexpected costs
+
+**Issue: Timeline Problems**
+- **Problem:** Move takes longer than planned
+- **Solution:** Adjust timeline, communicate with command
+- **Prevention:** Build buffer time into schedule
+- **Backup Plan:** Have flexible timeline and communication plan
+
+### Emergency Situations
+
+**Weather Delays**
+- **Problem:** Severe weather delays move
+- **Solution:** Wait for safe conditions, adjust timeline
+- **Prevention:** Check weather forecasts, have flexible schedule
+- **Backup Plan:** Have indoor storage options available
+
+**Vehicle Problems**
+- **Problem:** Personal vehicle breaks down during move
+- **Solution:** Get vehicle repaired or replaced
+- **Prevention:** Maintain vehicle before move, have roadside assistance
+- **Backup Plan:** Have backup transportation options
+
+**Family Emergencies**
+- **Problem:** Family emergency during move
+- **Solution:** Prioritize family, adjust move timeline
+- **Prevention:** Have family support system in place
+- **Backup Plan:** Have emergency contacts and support system
+
+---
+
+## DITY Move Resources
+
+### Military Resources
+- **Transportation Office:** DITY move authorization and guidance
+- **Finance Office:** Advance payment and reimbursement questions
+- **Legal Office:** POA, will, and legal document assistance
+- **Family Support:** Financial counseling and resources
+
+### Commercial Resources
+- **Truck Rental Companies:** U-Haul, Penske, Budget
+- **Moving Labor Services:** HireAHelper, TaskRabbit
+- **Packing Supplies:** Office supply stores, online retailers
+- **Scale Locations:** CAT scale locator, truck stops
+
+### Online Resources
+- **Move.mil:** Official DOD moving portal
+- **DITY Move Forums:** Online community support
+- **Tax Resources:** IRS publications, tax software
+- **Cost Calculators:** DITY move profit calculators
+
+---
+
 **A DITY move isn't for everyone, but if you're willing to put in the work, it's one of the easiest ways to earn $3,000-$5,000 during PCS. The military is literally paying you to move your own stuff. Take advantage of it.**
 
 🎖️ **PCS smart. Profit smarter.**

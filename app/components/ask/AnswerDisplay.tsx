@@ -11,6 +11,7 @@ import { useState } from "react";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import { FeedbackForm } from "./FeedbackForm";
 
 interface AnswerData {
   bottomLine: string[];
@@ -28,6 +29,8 @@ interface AnswerDisplayProps {
   isLoading?: boolean;
   onToolHandoff?: (tool: string, url: string) => void;
   sticky?: boolean;
+  questionId?: string;
+  questionText?: string;
 }
 
 export default function AnswerDisplay({
@@ -35,6 +38,8 @@ export default function AnswerDisplay({
   isLoading = false,
   onToolHandoff,
   sticky = false,
+  questionId,
+  questionText,
 }: AnswerDisplayProps) {
   const [showSources, setShowSources] = useState(false);
 
@@ -358,6 +363,22 @@ export default function AnswerDisplay({
               <p className="mt-1">Response time: ~2-3 seconds | Model: Gemini 2.5 Flash</p>
             </div>
           </div>
+        )}
+
+        {/* Feedback Form */}
+        {answer && questionId && questionText && (
+          <FeedbackForm
+            questionId={questionId}
+            questionText={questionText}
+            answerText={JSON.stringify(answer)}
+            answerMode={answer.mode}
+            confidenceScore={answer.confidence}
+            responseTimeMs={1800}
+            sourcesUsed={answer.citations?.map((c) => c.title) || []}
+            onFeedbackSubmitted={() => {
+              console.log("Feedback submitted successfully");
+            }}
+          />
         )}
       </div>
     </div>
