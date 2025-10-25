@@ -1,6 +1,4 @@
-import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
-import remarkGfm from "remark-gfm";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -38,8 +36,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withMDX = createMDX({
-  // Basic configuration to avoid serialization issues
-});
-
-export default withMDX(nextConfig);
+export default nextConfig;
