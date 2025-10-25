@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // Log the interaction for analytics
     try {
-      const { supabaseAdmin } = await import("@/lib/supabase");
+      const { supabaseAdmin } = await import("@/lib/supabase/admin");
       await supabaseAdmin.from("pcs_analytics").insert({
         user_id: userId,
         event_type: "ai_explanation_generated",
