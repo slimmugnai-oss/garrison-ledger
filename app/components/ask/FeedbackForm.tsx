@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@/app/components/ui/icon";
-import { Button } from "@/app/components/ui/button";
+import { Icon } from "@/app/components/ui/Icon";
+import { Button } from "@/app/components/ui/Button";
 
 interface FeedbackFormProps {
   questionId: string;

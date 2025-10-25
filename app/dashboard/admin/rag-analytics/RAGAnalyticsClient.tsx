@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Icon } from "@/app/components/ui/icon";
+import { Icon } from "@/app/components/ui/Icon";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 
 interface AnalyticsData {
