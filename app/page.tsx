@@ -59,7 +59,7 @@ export default function Home() {
       </section>
 
       {/* Military Expert Spotlight - New Section */}
-      <section className="bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 py-20 text-white">
+      <section className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             {/* Left: Headline + Copy */}
@@ -75,7 +75,7 @@ export default function Home() {
                 Your 24/7 Military Life Expert
               </h2>
 
-              <p className="mb-6 text-xl leading-relaxed text-blue-100">
+              <p className="mb-6 text-xl leading-relaxed text-slate-200">
                 Stop Googling. Stop waiting for Facebook responses. Get instant, expert answers to
                 ANY military life question—financial, PCS, deployment, career, benefits, base life.
               </p>
@@ -107,7 +107,7 @@ export default function Home() {
                     Ask Your First Question Free →
                   </button>
                 </SignUpButton>
-                <p className="mt-3 text-sm text-blue-200">
+                <p className="mt-3 text-sm text-slate-300">
                   5 free questions/month • No credit card required
                 </p>
               </SignedOut>
@@ -125,13 +125,13 @@ export default function Home() {
             {/* Right: Example Questions Preview */}
             <div className="space-y-4">
               <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
-                <p className="mb-2 text-sm font-semibold text-blue-200">Example Question:</p>
+                <p className="mb-2 text-sm font-semibold text-yellow-300">Example Question:</p>
                 <p className="mb-3 text-lg font-medium">
                   "What's my BAH as an E-5 at Fort Hood with dependents?"
                 </p>
                 <div className="rounded-md bg-white/20 p-3 text-sm">
                   <p className="font-semibold text-yellow-400">Expert Answer:</p>
-                  <p className="mt-1 text-blue-50">
+                  <p className="mt-1 text-slate-100">
                     "Your BAH at Fort Hood (Killeen, TX MHA) as an E-5 with dependents is{" "}
                     <strong>$1,773/month</strong> (2025 rates). This covers a 3BR house in Killeen
                     ($1,400-1,600/mo), leaving $200-300 for utilities..."
@@ -154,7 +154,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <p className="text-center text-sm text-blue-300">
+              <p className="text-center text-sm text-slate-300">
                 + deployment, career, benefits, base life, and more
               </p>
             </div>
