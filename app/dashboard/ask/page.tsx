@@ -165,8 +165,8 @@ export default async function AskAssistantPage() {
               </h1>
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
-                Your 24/7 military life advisor with 20 years of experience. Get instant, expert
-                answers to ANY military life question—financial, PCS, deployment, career, benefits,
+                Your 24/7 military life advisor. Get instant, expert
+                answers to ANY military life question; financial, PCS, deployment, career, benefits,
                 base life.
               </p>
 
