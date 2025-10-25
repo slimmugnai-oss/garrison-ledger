@@ -103,9 +103,9 @@ export default function Header() {
                 <Link
                   href="/dashboard/ask"
                   onClick={() => setShowSearch(false)}
-                  className="rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                  className="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition-colors hover:bg-indigo-100 dark:bg-indigo-900/20 dark:text-indigo-300 dark:hover:bg-indigo-900/30"
                 >
-                  Ask Assistant
+                  Ask Our Military Expert
                 </Link>
                 <Link
                   href="/dashboard/tools/tsp-modeler"
@@ -436,7 +436,7 @@ export default function Header() {
                           </div>
                         </Link>
 
-                        {/* Ask Assistant */}
+                        {/* Ask Our Military Expert */}
                         <Link
                           href="/dashboard/ask"
                           className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
@@ -453,10 +453,13 @@ export default function Header() {
                             <div
                               className={`text-sm font-semibold ${isActivePath("/dashboard/ask") ? "text-indigo-600" : "text-slate-900 group-hover:text-indigo-600 dark:text-white"}`}
                             >
-                              Ask Assistant
+                              Ask Our Military Expert
+                              <span className="ml-2 rounded bg-indigo-100 px-1.5 py-0.5 text-xs text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                Expert Mode
+                              </span>
                             </div>
                             <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                              Q&A with official data
+                              AI-powered military expertise
                             </div>
                           </div>
                         </Link>
@@ -1012,7 +1015,10 @@ export default function Header() {
                       className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MessageCircle" className="h-5 w-5 text-indigo-600" />
-                      <span className="font-medium">Ask Assistant</span>
+                      <span className="font-medium">Ask Our Military Expert</span>
+                      <span className="ml-auto rounded bg-indigo-100 px-2 py-0.5 text-xs text-indigo-700">
+                        Expert Mode
+                      </span>
                     </Link>
                   </div>
                 </div>

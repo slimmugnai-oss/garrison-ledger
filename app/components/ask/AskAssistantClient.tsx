@@ -225,26 +225,67 @@ export default function AskAssistantClient() {
         </div>
 
         {/* Answer Section - Sticky on desktop, drawer on mobile */}
-        <div
-          ref={answerRef}
-          className={`rounded-lg border border-gray-200 bg-white p-6 ${isMobile ? "fixed bottom-0 left-0 right-0 z-40 max-h-[80vh] translate-y-full overflow-y-auto transition-transform duration-300 ease-out" : ""} ${!isMobile ? "sticky top-24" : ""} `}
-        >
-          {/* Mobile: Swipe Handle */}
-          {isMobile && answer && (
-            <div className="mb-4 flex justify-center">
-              <div className="h-1 w-12 rounded-full bg-gray-300"></div>
+        {answer || isLoading ? (
+          <div
+            ref={answerRef}
+            className={`rounded-lg border border-gray-200 bg-white p-6 ${isMobile ? "fixed bottom-0 left-0 right-0 z-40 max-h-[80vh] translate-y-full overflow-y-auto transition-transform duration-300 ease-out" : ""} ${!isMobile ? "sticky top-24" : ""} `}
+          >
+            {/* Mobile: Swipe Handle */}
+            {isMobile && answer && (
+              <div className="mb-4 flex justify-center">
+                <div className="h-1 w-12 rounded-full bg-gray-300"></div>
+              </div>
+            )}
+
+            <h2 className="mb-4 text-xl font-semibold text-gray-900">Expert Answer</h2>
+
+            <AnswerDisplay
+              answer={answer || undefined}
+              isLoading={isLoading}
+              onToolHandoff={handleToolHandoff}
+              sticky={!isMobile}
+            />
+          </div>
+        ) : (
+          /* Empty State with Starter Questions */
+          <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+            <Icon name="MessageCircle" className="mx-auto mb-4 h-16 w-16 text-indigo-600" />
+            <h3 className="mb-2 text-xl font-bold text-gray-900">
+              What's your first question?
+            </h3>
+            <p className="mb-6 text-gray-600">
+              Our Military Expert can answer questions about financial topics, PCS moves, deployment, career progression, benefits, base life, and more.
+            </p>
+
+            {/* Popular starter questions */}
+            <div className="grid gap-3 md:grid-cols-2">
+              <button 
+                onClick={() => handleQuestionSubmit("What's my BAH as an E-5 at Fort Hood with dependents?")}
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              >
+                💰 "What's my BAH as an E-5 at Fort Hood with dependents?"
+              </button>
+              <button 
+                onClick={() => handleQuestionSubmit("How do I maximize DITY move profit?")}
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              >
+                🚚 "How do I maximize DITY move profit?"
+              </button>
+              <button 
+                onClick={() => handleQuestionSubmit("How does the Savings Deposit Program work?")}
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              >
+                🎖️ "How does the Savings Deposit Program work?"
+              </button>
+              <button 
+                onClick={() => handleQuestionSubmit("Should I take the SRB or invest in TSP?")}
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              >
+                💼 "Should I take the SRB or invest in TSP?"
+              </button>
             </div>
-          )}
-
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">Expert Answer</h2>
-
-          <AnswerDisplay
-            answer={answer || undefined}
-            isLoading={isLoading}
-            onToolHandoff={handleToolHandoff}
-            sticky={!isMobile}
-          />
-        </div>
+          </div>
+        )}
 
         {/* Question History - Collapsed by Default */}
         <QuestionHistory collapsed />
