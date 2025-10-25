@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * ASK ASSISTANT - Client Component Wrapper
+ * ASK OUR MILITARY EXPERT - Client Component Wrapper
  *
  * Compact layout with sticky answer and mobile drawer
  * Manages state between QuestionComposer and AnswerDisplay
@@ -154,7 +154,7 @@ export default function AskAssistantClient() {
           <div className="flex items-center gap-2">
             <Icon name="CheckCircle" className="h-5 w-5" />
             <div>
-              <p className="font-medium">Answer generated successfully!</p>
+              <p className="font-medium">Expert answer generated successfully!</p>
               {creditsRemaining !== null && (
                 <p className="text-xs text-green-100">{creditsRemaining} questions remaining</p>
               )}
@@ -236,7 +236,7 @@ export default function AskAssistantClient() {
             </div>
           )}
 
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">Answer</h2>
+          <h2 className="mb-4 text-xl font-semibold text-gray-900">Expert Answer</h2>
 
           <AnswerDisplay
             answer={answer || undefined}
