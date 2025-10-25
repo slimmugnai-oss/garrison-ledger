@@ -19,19 +19,33 @@ export async function POST() {
     if (!allowed) throw Errors.rateLimitExceeded("Rate limit exceeded. Try again tomorrow.");
 
     // Check premium status
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     let isPremium = false;
     try {
-      const { data: access, error } = await supabase.from("v_user_access").select("is_premium").eq("user_id", userId).single();
+      const { data: access, error } = await supabase
+        .from("v_user_access")
+        .select("is_premium")
+        .eq("user_id", userId)
+        .single();
       if (error) {
-        const { data: entitlements } = await supabase.from("entitlements").select("tier, status").eq("user_id", userId).single();
-        isPremium = entitlements?.tier === 'premium' && entitlements?.status === 'active';
+        const { data: entitlements } = await supabase
+          .from("entitlements")
+          .select("tier, status")
+          .eq("user_id", userId)
+          .single();
+        isPremium = entitlements?.tier === "premium" && entitlements?.status === "active";
       } else {
         isPremium = !!access?.is_premium;
       }
     } catch (premiumError) {
-      logger.warn('[GenerateGuide] Failed to check premium status, falling back', { userId, error: premiumError });
-      const premiumUsers = ['user_33nCvhdTTFQtPnYN4sggCEUAHbn'];
+      logger.warn("[GenerateGuide] Failed to check premium status, falling back", {
+        userId,
+        error: premiumError,
+      });
+      const premiumUsers = ["user_33nCvhdTTFQtPnYN4sggCEUAHbn"];
       isPremium = premiumUsers.includes(userId);
     }
     isPremium = true; // TEMPORARY
@@ -48,12 +62,12 @@ export async function POST() {
       .maybeSingle();
 
     if (assessmentError) {
-      logger.error('[GenerateGuide] Failed to fetch assessment', assessmentError, { userId });
+      logger.error("[GenerateGuide] Failed to fetch assessment", assessmentError, { userId });
       throw Errors.databaseError("Failed to fetch assessment data");
     }
 
     if (!assessmentData?.answers) {
-      logger.warn('[GenerateGuide] No assessment found', { userId });
+      logger.warn("[GenerateGuide] No assessment found", { userId });
       throw Errors.invalidInput("No assessment found. Complete the assessment first.");
     }
 
@@ -74,17 +88,21 @@ export async function POST() {
     const buffer = Buffer.concat(chunks);
 
     const duration = Date.now() - startTime;
-    logger.info('[GenerateGuide] PDF generated', { userId, userName, bufferSize: buffer.length, duration });
+    logger.info("[GenerateGuide] PDF generated", {
+      userId,
+      userName,
+      bufferSize: buffer.length,
+      duration,
+    });
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="Your-AI-Curated-Plan-${new Date().toISOString().slice(0, 10)}.pdf"`,
-        "Cache-Control": "no-store"
-      }
+        "Cache-Control": "no-store",
+      },
     });
   } catch (error) {
     return errorResponse(error);
   }
 }
-

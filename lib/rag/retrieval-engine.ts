@@ -8,7 +8,22 @@
  * 4. Reranking (future: Cohere)
  *
  * Performance Target: <100ms for 100K vectors
- *
+ */
+
+import { logger } from "@/lib/logger";
+
+interface DatabaseRow {
+  id: string;
+  content_id: string;
+  content: string;
+  content_text: string;
+  content_type: string;
+  metadata: Record<string, unknown>;
+  similarity?: number;
+  rank?: number;
+}
+
+/**
  * Created: 2025-01-25
  * Part of: Ask Military Expert RAG System
  */
@@ -81,17 +96,17 @@ export async function vectorSearch(
     const { data, error } = await query;
 
     if (error) {
-      console.error("[RAG] Vector search failed:", error);
+      logger.error("[RAG] Vector search failed:", error);
       return [];
     }
 
     if (!data || data.length === 0) {
-      console.log("[RAG] No results from vector search");
+      logger.info("[RAG] No results from vector search");
       return [];
     }
 
     // Map to RetrievedChunk format
-    const chunks: RetrievedChunk[] = data.map((row: any) => ({
+    const chunks: RetrievedChunk[] = data.map((row: DatabaseRow) => ({
       id: row.id,
       content_id: row.content_id,
       content_type: row.content_type,
@@ -101,10 +116,10 @@ export async function vectorSearch(
       retrieval_method: "vector",
     }));
 
-    console.log(`[RAG] Vector search found ${chunks.length} results`);
+    logger.info(`[RAG] Vector search found ${chunks.length} results`);
     return chunks.slice(0, limit);
   } catch (error) {
-    console.error("[RAG] Vector search exception:", error);
+    logger.error("[RAG] Vector search exception:", error);
     return [];
   }
 }
@@ -153,7 +168,7 @@ export async function keywordSearch(
     });
 
     if (error) {
-      console.error("[RAG] Keyword search failed:", error);
+      logger.error("[RAG] Keyword search failed:", error);
       return [];
     }
 
@@ -161,7 +176,7 @@ export async function keywordSearch(
       return [];
     }
 
-    const chunks: RetrievedChunk[] = data.map((row: any) => ({
+    const chunks: RetrievedChunk[] = data.map((row: DatabaseRow) => ({
       id: row.id,
       content_id: row.content_id,
       content_type: row.content_type,
@@ -171,10 +186,10 @@ export async function keywordSearch(
       retrieval_method: "keyword",
     }));
 
-    console.log(`[RAG] Keyword search found ${chunks.length} results`);
+    logger.info(`[RAG] Keyword search found ${chunks.length} results`);
     return chunks;
   } catch (error) {
-    console.error("[RAG] Keyword search exception:", error);
+    logger.error("[RAG] Keyword search exception:", error);
     return [];
   }
 }
@@ -195,20 +210,20 @@ export async function hybridSearch(
   const limit = options?.limit || 10;
   const includeKeyword = options?.includeKeywordSearch !== false;
 
-  console.log(`[RAG] Hybrid search: "${query.substring(0, 100)}..." (limit: ${limit})`);
+  logger.info(`[RAG] Hybrid search: "${query.substring(0, 100)}..." (limit: ${limit})`);
 
   try {
     // Step 1: Generate query embedding
     const startEmbed = Date.now();
     const queryEmbedding = await generateEmbedding(query);
     const embedTime = Date.now() - startEmbed;
-    console.log(`[RAG] Query embedding generated in ${embedTime}ms`);
+    logger.info(`[RAG] Query embedding generated in ${embedTime}ms`);
 
     // Step 2: Vector similarity search
     const startVector = Date.now();
     const vectorResults = await vectorSearch(queryEmbedding, filters, limit);
     const vectorTime = Date.now() - startVector;
-    console.log(`[RAG] Vector search completed in ${vectorTime}ms`);
+    logger.info(`[RAG] Vector search completed in ${vectorTime}ms`);
 
     // Step 3: Keyword search (if enabled and vector results are sparse)
     let keywordResults: RetrievedChunk[] = [];
@@ -216,7 +231,7 @@ export async function hybridSearch(
       const startKeyword = Date.now();
       keywordResults = await keywordSearch(query, filters, 5);
       const keywordTime = Date.now() - startKeyword;
-      console.log(`[RAG] Keyword search completed in ${keywordTime}ms`);
+      logger.info(`[RAG] Keyword search completed in ${keywordTime}ms`);
     }
 
     // Step 4: Merge and deduplicate
@@ -238,14 +253,14 @@ export async function hybridSearch(
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
 
-    console.log(`[RAG] Hybrid search complete: ${results.length} unique results`);
-    console.log(
+    logger.info(`[RAG] Hybrid search complete: ${results.length} unique results`);
+    logger.info(
       `[RAG] Breakdown: ${vectorResults.length} vector, ${keywordResults.length} keyword, ${results.length} merged`
     );
 
     return results;
   } catch (error) {
-    console.error("[RAG] Hybrid search failed:", error);
+    logger.error("[RAG] Hybrid search failed:", error);
     return [];
   }
 }
@@ -442,18 +457,18 @@ export async function hybridSearchWithMetrics(
  * Test vector search performance
  */
 export async function testSearchPerformance(testQueries: string[]): Promise<void> {
-  console.log("[RAG] Testing search performance...");
+  logger.info("[RAG] Testing search performance...");
 
   for (const query of testQueries) {
     const { results, metrics } = await hybridSearchWithMetrics(query, undefined, { limit: 10 });
 
-    console.log(`\n[TEST] Query: "${query}"`);
-    console.log(`       Time: ${metrics.total_time_ms}ms`);
-    console.log(`       Results: ${metrics.results_count}`);
-    console.log(`       Avg Similarity: ${metrics.avg_similarity}`);
+    logger.info(`\n[TEST] Query: "${query}"`);
+    logger.info(`       Time: ${metrics.total_time_ms}ms`);
+    logger.info(`       Results: ${metrics.results_count}`);
+    logger.info(`       Avg Similarity: ${metrics.avg_similarity}`);
 
     if (results.length > 0) {
-      console.log(
+      logger.info(
         `       Top result: ${results[0].content_type} (${results[0].similarity.toFixed(3)})`
       );
     }

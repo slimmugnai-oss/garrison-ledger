@@ -22,7 +22,9 @@ const eslintConfig = [
   {
     ignores: [
       "node_modules/**",
+      "node_modules.nosync/**", // ADD THIS
       ".next/**",
+      ".next.nosync/**", // ADD THIS
       "out/**",
       "build/**",
       "next-env.d.ts",

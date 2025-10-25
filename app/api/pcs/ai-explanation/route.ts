@@ -4,6 +4,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
 
+interface ValidationFlag {
+  field: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  suggestion?: string;
+  category?: string;
+  jtr_citation?: string;
+  suggested_fix?: string;
+}
+
+interface ClaimContext {
+  rank?: string;
+  branch?: string;
+  hasDependents?: boolean;
+  pcsType?: string;
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
 /**
@@ -65,7 +82,10 @@ export async function POST(req: NextRequest) {
 /**
  * Create context-aware prompt for AI explanation
  */
-function createExplanationPrompt(validationFlag: any, claimContext: any): string {
+function createExplanationPrompt(
+  validationFlag: ValidationFlag,
+  claimContext: ClaimContext
+): string {
   const basePrompt = `
 You are a military financial expert explaining a PCS claim validation issue to a service member.
 

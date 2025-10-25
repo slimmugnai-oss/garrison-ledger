@@ -8,6 +8,8 @@
  * - JTR compliance
  */
 
+import { logger } from "@/lib/logger";
+
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";
@@ -136,7 +138,7 @@ async function calculateDLA(
       confidence: 100,
     };
   } catch (error) {
-    console.error("DLA calculation failed:", error);
+    logger.error("DLA calculation failed:", error);
     return {
       amount: 0,
       rateUsed: 0,
@@ -205,7 +207,7 @@ async function calculateMALT(
       confidence: 100,
     };
   } catch (error) {
-    console.error("MALT calculation failed:", error);
+    logger.error("MALT calculation failed:", error);
     return {
       distance,
       ratePerMile: 0.18,
@@ -241,7 +243,7 @@ async function calculatePerDiem(
       confidence: perDiemRate ? 100 : 80,
     };
   } catch (error) {
-    console.error("Per diem calculation failed:", error);
+    logger.error("Per diem calculation failed:", error);
     return {
       days,
       rate: 166,
@@ -354,55 +356,55 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
 
   // Calculate all entitlements with error handling
   let dla, malt, perDiem;
-  
+
   try {
     dla = await calculateDLA(formData.rank_at_pcs, hasDependents, effectiveDate);
   } catch (error) {
-    console.error('DLA calculation failed:', error);
+    logger.error("DLA calculation failed:", error);
     // Use fallback DLA calculation
     dla = {
       amount: 0,
       rateUsed: 0,
       multiplier: 1,
       effectiveDate,
-      citation: 'JTR 050302.B',
-      source: 'Unavailable - please calculate manually',
-      lastVerified: 'Never',
-      confidence: 0
+      citation: "JTR 050302.B",
+      source: "Unavailable - please calculate manually",
+      lastVerified: "Never",
+      confidence: 0,
     };
   }
 
   try {
     malt = await calculateMALT(formData.malt_distance, effectiveDate);
   } catch (error) {
-    console.error('MALT calculation failed:', error);
+    logger.error("MALT calculation failed:", error);
     // Use fallback MALT calculation
     malt = {
       distance: formData.malt_distance,
       ratePerMile: 0.18,
       amount: formData.malt_distance * 0.18,
       effectiveDate,
-      citation: 'IRS Standard Mileage Rate',
-      source: 'Fallback rate - verify with finance office',
-      confidence: 50
+      citation: "IRS Standard Mileage Rate",
+      source: "Fallback rate - verify with finance office",
+      confidence: 50,
     };
   }
 
-    try {
-      perDiem = await calculatePerDiem(formData.per_diem_days, "00000", effectiveDate);
-    } catch (error) {
-      console.error('Per diem calculation failed:', error);
-      // Use fallback per diem calculation
-      perDiem = {
-        days: formData.per_diem_days,
-        rate: 166,
-        amount: formData.per_diem_days * 166,
-        locality: 'Standard CONUS rate - verify location',
-        effectiveDate,
-        citation: 'DTMO Per Diem',
-        confidence: 50
-      };
-    }
+  try {
+    perDiem = await calculatePerDiem(formData.per_diem_days, "00000", effectiveDate);
+  } catch (error) {
+    logger.error("Per diem calculation failed:", error);
+    // Use fallback per diem calculation
+    perDiem = {
+      days: formData.per_diem_days,
+      rate: 166,
+      amount: formData.per_diem_days * 166,
+      locality: "Standard CONUS rate - verify location",
+      effectiveDate,
+      citation: "DTMO Per Diem",
+      confidence: 50,
+    };
+  }
 
   const tle = calculateTLE(
     formData.tle_origin_nights,
@@ -469,7 +471,7 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
       data_sources: dataSources,
     });
   } catch (error) {
-    console.error("Failed to save calculation snapshot:", error);
+    logger.error("Failed to save calculation snapshot:", error);
   }
 
   return result;
@@ -549,7 +551,7 @@ export async function getCalculationHistory(claimId: string): Promise<Calculatio
       })) || []
     );
   } catch (error) {
-    console.error("Failed to get calculation history:", error);
+    logger.error("Failed to get calculation history:", error);
     return [];
   }
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Icon from "@/app/components/ui/Icon";
+import { logger } from "@/lib/logger";
 
 interface PCSHelpWidgetProps {
   claimContext: {
@@ -115,7 +116,7 @@ export default function PCSHelpWidget({ claimContext, onAskQuestion }: PCSHelpWi
       setRecentQuestions(updated);
       localStorage.setItem("pcs-recent-questions", JSON.stringify(updated));
     } catch (error) {
-      console.error("Failed to ask question:", error);
+      logger.error("Failed to ask question:", error);
     } finally {
       setIsAsking(false);
     }
@@ -138,7 +139,7 @@ export default function PCSHelpWidget({ claimContext, onAskQuestion }: PCSHelpWi
 
       setCustomQuestion("");
     } catch (error) {
-      console.error("Failed to ask question:", error);
+      logger.error("Failed to ask question:", error);
     } finally {
       setIsAsking(false);
     }

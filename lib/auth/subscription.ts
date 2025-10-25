@@ -7,7 +7,11 @@
  * - free: Limited access (1 audit/month, top 2 flags, no exact variance, no PDF)
  * - premium: Full access (unlimited audits, all flags, exact variance, PDF export, history)
  * - staff: Internal/QA bypass (all premium features)
- *
+ */
+
+import { logger } from "@/lib/logger";
+
+/**
  * Security: All tier checks happen server-side. Never trust client-side tier claims.
  */
 
@@ -23,7 +27,7 @@ export type Tier = "free" | "premium" | "staff";
  */
 export async function getUserTier(userId: string): Promise<Tier> {
   try {
-    console.log("[getUserTier] Checking tier for user:", userId);
+    logger.info("[getUserTier] Checking tier for user:", userId);
 
     // Query entitlements table for tier
     const { data: entitlement } = await supabaseAdmin
@@ -32,7 +36,7 @@ export async function getUserTier(userId: string): Promise<Tier> {
       .eq("user_id", userId)
       .maybeSingle();
 
-    console.log("[getUserTier] Entitlement data:", entitlement);
+    logger.info("[getUserTier] Entitlement data:", entitlement);
 
     // Check for staff bypass via profiles table
     const { data: profile } = await supabaseAdmin
@@ -41,7 +45,7 @@ export async function getUserTier(userId: string): Promise<Tier> {
       .eq("id", userId)
       .maybeSingle();
 
-    console.log("[getUserTier] Profile data:", profile);
+    logger.info("[getUserTier] Profile data:", profile);
 
     // Staff bypass: Check for @garrisonledger.com or @slimmugnai.com OR slimmugnai@gmail.com
     const isStaffEmail =
@@ -50,13 +54,13 @@ export async function getUserTier(userId: string): Promise<Tier> {
       profile?.email === "slimmugnai@gmail.com";
 
     if (isStaffEmail) {
-      console.log("[getUserTier] Staff bypass detected for email:", profile?.email);
+      logger.info("[getUserTier] Staff bypass detected for email:", profile?.email);
       return "staff";
     }
 
     // If no entitlement found, return free tier
     if (!entitlement) {
-      console.log("[getUserTier] No entitlement found, returning free tier");
+      logger.info("[getUserTier] No entitlement found, returning free tier");
       return "free";
     }
 
@@ -65,14 +69,14 @@ export async function getUserTier(userId: string): Promise<Tier> {
       entitlement.status === "active" &&
       (entitlement.tier === "premium" || entitlement.tier === "pro")
     ) {
-      console.log("[getUserTier] Active subscription found, returning premium");
+      logger.info("[getUserTier] Active subscription found, returning premium");
       return "premium";
     }
 
-    console.log("[getUserTier] No active subscription, returning free tier");
+    logger.info("[getUserTier] No active subscription, returning free tier");
     return "free";
   } catch (error) {
-    console.error("[Subscription] Error fetching tier:", error);
+    logger.error("[Subscription] Error fetching tier:", error);
     return "free"; // Fail-safe to free tier
   }
 }
@@ -161,7 +165,7 @@ export async function checkLesAuditQuota(
       resetsAt,
     };
   } catch (error) {
-    console.error("[Quota] Error checking LES audit quota:", error);
+    logger.error("[Quota] Error checking LES audit quota:", error);
     // Fail-safe: allow if we can't check
     return {
       allowed: true,

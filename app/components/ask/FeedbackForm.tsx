@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Button from "@/app/components/ui/Button";
+import { logger } from "@/lib/logger";
 
 interface FeedbackFormProps {
   questionId: string;
@@ -84,10 +85,10 @@ export function FeedbackForm({
         setFeedbackText("");
         onFeedbackSubmitted();
       } else {
-        console.error("Failed to submit feedback");
+        logger.error("Failed to submit feedback");
       }
     } catch (error) {
-      console.error("Error submitting feedback:", error);
+      logger.error("Error submitting feedback:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -166,21 +167,21 @@ export function FeedbackForm({
         <label className="mb-2 block text-sm font-medium text-gray-700">Quick feedback</label>
         <div className="flex items-center gap-2">
           <Button
-            variant={thumbsUp === true ? "default" : "outline"}
+            variant={thumbsUp === true ? "primary" : "outline"}
             size="sm"
             onClick={() => setThumbsUp(true)}
             className="flex items-center gap-1"
           >
-            <Icon name="ThumbsUp" className="h-4 w-4" />
+            <Icon name="TrendingUp" className="h-4 w-4" />
             Helpful
           </Button>
           <Button
-            variant={thumbsUp === false ? "destructive" : "outline"}
+            variant={thumbsUp === false ? "secondary" : "outline"}
             size="sm"
             onClick={() => setThumbsUp(false)}
             className="flex items-center gap-1"
           >
-            <Icon name="ThumbsDown" className="h-4 w-4" />
+            <Icon name="TrendingDown" className="h-4 w-4" />
             Not helpful
           </Button>
         </div>
@@ -202,7 +203,7 @@ export function FeedbackForm({
                   : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
               }`}
             >
-              <Icon name={category.icon} className={`h-4 w-4 ${category.color}`} />
+              <Icon name={category.icon as any} className={`h-4 w-4 ${category.color}`} />
               <span>{category.name}</span>
             </button>
           ))}
@@ -231,7 +232,7 @@ export function FeedbackForm({
         <Button onClick={handleSubmit} disabled={isSubmitting} className="flex items-center gap-1">
           {isSubmitting ? (
             <>
-              <Icon name="Loader2" className="h-4 w-4 animate-spin" />
+              <Icon name="Loader" className="h-4 w-4 animate-spin" />
               Submitting...
             </>
           ) : (

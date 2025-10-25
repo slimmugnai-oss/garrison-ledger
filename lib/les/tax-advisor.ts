@@ -10,6 +10,8 @@
  * - Total tax burden warnings
  */
 
+import { logger } from "@/lib/logger";
+
 export async function generateTaxAdvisory(
   type: "federal" | "state" | "fica" | "medicare" | "total",
   userValue: number,
@@ -20,7 +22,7 @@ export async function generateTaxAdvisory(
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
   if (!apiKey) {
-    console.error("[TaxAdvisor] No API key found");
+    logger.error("[TaxAdvisor] No API key found");
     return "";
   }
 
@@ -43,21 +45,21 @@ export async function generateTaxAdvisory(
     );
 
     if (!response.ok) {
-      console.error("[TaxAdvisor] Gemini API error:", response.status);
+      logger.error("[TaxAdvisor] Gemini API error:", response.status);
       return "";
     }
 
     const result = await response.json();
     const explanation = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    console.log(
+    logger.info(
       `[TaxAdvisor] Generated ${type} explanation:`,
       explanation.substring(0, 100) + "..."
     );
 
     return explanation;
   } catch (error) {
-    console.error("[TaxAdvisor] Error generating explanation:", error);
+    logger.error("[TaxAdvisor] Error generating explanation:", error);
     return "";
   }
 }

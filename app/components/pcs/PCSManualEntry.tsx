@@ -6,6 +6,28 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
+import { logger } from "@/lib/logger";
+
+interface PCSClaimData {
+  claimId: string;
+  memberName: string;
+  rank: string;
+  branch: string;
+  pcsType: string;
+  originBase: string;
+  destinationBase: string;
+  ordersDate: string;
+  maltDistance: number;
+  perDiemDays: number;
+  [key: string]: unknown;
+}
+
+interface ValidationFlag {
+  field: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  suggestion?: string;
+}
 
 interface PCSManualEntryProps {
   claimId: string;
@@ -15,11 +37,11 @@ interface PCSManualEntryProps {
     currentBase?: string;
     hasDependents?: boolean;
   };
-  onSave: (data: any) => void;
-  onValidationChange: (flags: any[]) => void;
+  onSave: (data: PCSClaimData) => void;
+  onValidationChange: (flags: ValidationFlag[]) => void;
 }
 
-interface FormData {
+interface PCSFormData {
   // Basic Info
   claim_name: string;
   pcs_orders_date: string;
@@ -65,7 +87,7 @@ export default function PCSManualEntry({
   onSave,
   onValidationChange,
 }: PCSManualEntryProps) {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<PCSFormData>({
     claim_name: "",
     pcs_orders_date: "",
     departure_date: "",
@@ -139,7 +161,7 @@ export default function PCSManualEntry({
           distance_miles: distance,
         }));
       } catch (error) {
-        console.warn("Could not calculate distance:", error);
+        logger.warn("Could not calculate distance:", error);
       }
     }
   };
@@ -216,14 +238,30 @@ export default function PCSManualEntry({
       const estimates = await response.json();
       setEstimates(estimates);
     } catch (error) {
-      console.error("Failed to calculate estimates:", error);
+      logger.error("Failed to calculate estimates:", error);
     } finally {
       setIsCalculating(false);
     }
   };
 
   const handleSave = () => {
-    onSave(formData);
+    // Convert FormData to PCSClaimData
+    const claimData: PCSClaimData = {
+      claimId: claimId,
+      memberName: formData.claim_name || "",
+      rank: formData.rank_at_pcs || "",
+      branch: formData.branch || "",
+      pcsType: formData.travel_method || "",
+      ordersDate: formData.pcs_orders_date || "",
+      originBase: formData.origin_base || "",
+      destinationBase: formData.destination_base || "",
+      departureDate: formData.departure_date || "",
+      arrivalDate: formData.arrival_date || "",
+      maltDistance: formData.malt_distance || 0,
+      perDiemDays: formData.per_diem_days || 0,
+      hasDependents: formData.dependents_count > 0,
+    };
+    onSave(claimData);
   };
 
   const sections = [
@@ -810,20 +848,39 @@ export default function PCSManualEntry({
         {/* Document Upload */}
         <AnimatedCard className="p-6">
           <h4 className="mb-4 font-semibold text-slate-900">Document Upload</h4>
-          <PCSDocumentUploader 
+          <PCSDocumentUploader
             claimId={claimId}
             onDocumentProcessed={(document) => {
-              console.log('Document processed:', document);
+              logger.info("Document processed:", document);
               // Auto-populate form fields based on extracted data
               if (document.normalizedData) {
                 const data = document.normalizedData;
-                if (data.member_name) setFormData(prev => ({ ...prev, claim_name: data.member_name }));
-                if (data.orders_date) setFormData(prev => ({ ...prev, pcs_orders_date: data.orders_date }));
-                if (data.departure_date) setFormData(prev => ({ ...prev, departure_date: data.departure_date }));
-                if (data.origin_base) setFormData(prev => ({ ...prev, origin_base: data.origin_base }));
-                if (data.destination_base) setFormData(prev => ({ ...prev, destination_base: data.destination_base }));
-                if (data.dependents_authorized) setFormData(prev => ({ ...prev, dependents_count: data.dependents_authorized }));
-                if (data.hhg_weight_allowance) setFormData(prev => ({ ...prev, estimated_weight: data.hhg_weight_allowance }));
+                if (data.member_name)
+                  setFormData((prev) => ({ ...prev, claim_name: data.member_name as string }));
+                if (data.orders_date)
+                  setFormData((prev) => ({ ...prev, pcs_orders_date: data.orders_date as string }));
+                if (data.departure_date)
+                  setFormData((prev) => ({
+                    ...prev,
+                    departure_date: data.departure_date as string,
+                  }));
+                if (data.origin_base)
+                  setFormData((prev) => ({ ...prev, origin_base: data.origin_base as string }));
+                if (data.destination_base)
+                  setFormData((prev) => ({
+                    ...prev,
+                    destination_base: data.destination_base as string,
+                  }));
+                if (data.dependents_authorized)
+                  setFormData((prev) => ({
+                    ...prev,
+                    dependents_count: data.dependents_authorized as number,
+                  }));
+                if (data.hhg_weight_allowance)
+                  setFormData((prev) => ({
+                    ...prev,
+                    estimated_weight: data.hhg_weight_allowance as number,
+                  }));
               }
             }}
           />

@@ -16,7 +16,7 @@ interface ShareData {
 
 export default function SharePage() {
   const params = useParams();
-  const token = params.token as string;
+  const token = params?.token as string;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export default function SharePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0F1E]">
+      <div className="flex min-h-screen items-center justify-center bg-[#0A0F1E]">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#00E5A0] border-r-transparent"></div>
           <p className="mt-4 text-muted">Loading...</p>
@@ -57,10 +57,10 @@ export default function SharePage() {
 
   if (error || !shareData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0F1E]">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
+      <div className="flex min-h-screen items-center justify-center bg-[#0A0F1E]">
+        <div className="max-w-md text-center">
+          <div className="mb-4 text-6xl">🔒</div>
+          <h1 className="mb-2 text-2xl font-bold text-white">Access Denied</h1>
           <p className="text-muted">{error}</p>
         </div>
       </div>
@@ -72,20 +72,25 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen bg-[#0A0F1E] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] p-6 mb-6">
-          <h1 className="text-2xl font-bold mb-2">{shareData.file.display_name}</h1>
-          <p className="text-muted text-sm">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 rounded-lg border border-[#2A2F3E] bg-[#1A1F2E] p-6">
+          <h1 className="mb-2 text-2xl font-bold">{shareData.file.display_name}</h1>
+          <p className="text-sm text-muted">
             {(shareData.file.size_bytes / 1024).toFixed(1)} KB • {shareData.file.content_type}
           </p>
           {shareData.canDownload && (
             <a
               href={shareData.signedUrl}
               download={shareData.file.display_name}
-              className="mt-4 inline-flex items-center px-4 py-2 bg-[#00E5A0] text-[#0A0F1E] rounded-lg font-medium hover:bg-[#00CC8E] transition-colors"
+              className="mt-4 inline-flex items-center rounded-lg bg-[#00E5A0] px-4 py-2 font-medium text-[#0A0F1E] transition-colors hover:bg-[#00CC8E]"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              <svg className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
               </svg>
               Download
             </a>
@@ -93,34 +98,46 @@ export default function SharePage() {
         </div>
 
         {/* Preview */}
-        <div className="bg-[#1A1F2E] rounded-lg border border-[#2A2F3E] p-6">
+        <div className="rounded-lg border border-[#2A2F3E] bg-[#1A1F2E] p-6">
           {isPdf && (
             <iframe
               src={shareData.signedUrl}
-              className="w-full h-[800px] rounded border border-[#2A2F3E]"
+              className="h-[800px] w-full rounded border border-[#2A2F3E]"
               title={shareData.file.display_name}
             />
           )}
           {isImage && (
-            <div className="relative min-h-[400px] flex items-center justify-center">
+            <div className="relative flex min-h-[400px] items-center justify-center">
               <Image
                 src={shareData.signedUrl}
                 alt={shareData.file.display_name}
                 width={1200}
                 height={800}
-                className="max-w-full h-auto rounded object-contain"
-                style={{ maxHeight: '800px' }}
+                className="h-auto max-w-full rounded object-contain"
+                style={{ maxHeight: "800px" }}
                 priority
               />
             </div>
           )}
           {!isPdf && !isImage && (
-            <div className="text-center py-12 text-muted">
-              <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <div className="py-12 text-center text-muted">
+              <svg
+                className="mx-auto mb-4 h-16 w-16 opacity-50"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <p>Preview not available for this file type</p>
-              {shareData.canDownload && <p className="mt-2">Use the download button above to view this file</p>}
+              {shareData.canDownload && (
+                <p className="mt-2">Use the download button above to view this file</p>
+              )}
             </div>
           )}
         </div>
@@ -128,4 +145,3 @@ export default function SharePage() {
     </div>
   );
 }
-

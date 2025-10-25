@@ -61,6 +61,7 @@ export default function Header() {
   }, [showSearch]);
 
   const isActivePath = (path: string) => {
+    if (!pathname) return false;
     if (path === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(path);
   };

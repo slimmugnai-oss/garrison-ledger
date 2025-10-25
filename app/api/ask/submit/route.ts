@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
 import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
+import { logger } from "@/lib/logger";
 import { ssot } from "@/lib/ssot";
 
 const supabase = createClient(
@@ -97,9 +98,9 @@ export async function POST(request: NextRequest) {
         },
         { limit: 5 } // Retrieve top 5 most relevant chunks
       );
-      console.log(`[Ask RAG] Retrieved ${ragChunks.length} knowledge chunks`);
+      logger.info(`[Ask RAG] Retrieved ${ragChunks.length} knowledge chunks`);
     } catch (error) {
-      console.error("[Ask RAG] Failed to retrieve chunks:", error);
+      logger.error("[Ask RAG] Failed to retrieve chunks:", error);
       // Continue without RAG if it fails - don't block the request
     }
 
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
       .eq("user_id", userId);
 
     if (updateError) {
-      console.error("Failed to update credits:", updateError);
+      logger.error("Failed to update credits:", updateError);
     }
 
     // Save question to history
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (saveError) {
-      console.error("Failed to save question:", saveError);
+      logger.error("Failed to save question:", saveError);
     }
 
     return NextResponse.json({
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
       tier: userTier,
     });
   } catch (error) {
-    console.error("Ask submit error:", error);
+    logger.error("Ask submit error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -184,7 +185,7 @@ async function generateAnswer(
   // Use GEMINI_API_KEY (consistent with explainer and other AI features)
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (!apiKey) {
-    console.error("[Ask Assistant] No API key found (checked GEMINI_API_KEY and GOOGLE_API_KEY)");
+    logger.error("[Ask Assistant] No API key found (checked GEMINI_API_KEY and GOOGLE_API_KEY)");
     return {
       bottomLine: ["API configuration error. Please contact support."],
       nextSteps: [],
@@ -219,16 +220,16 @@ async function generateAnswer(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("[Gemini API] HTTP error:", response.status, errorText);
+      logger.error("[Gemini API] HTTP error:", { status: response.status, error: errorText });
       throw new Error(`Gemini API returned ${response.status}: ${errorText}`);
     }
 
     const result = await response.json();
 
     // Enhanced logging
-    console.log("[Gemini API] Response status:", response.status);
-    console.log("[Gemini API] Candidates count:", result.candidates?.length || 0);
-    console.log(
+    logger.info("[Gemini API] Response status:", response.status);
+    logger.info("[Gemini API] Candidates count:", result.candidates?.length || 0);
+    logger.info(
       "[Gemini API] First candidate:",
       JSON.stringify(result.candidates?.[0], null, 2).substring(0, 500)
     );
@@ -236,16 +237,18 @@ async function generateAnswer(
     const answerText = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     if (!answerText) {
-      console.error("[Gemini API] No answer text in response:", JSON.stringify(result));
+      logger.error("[Gemini API] No answer text in response:", JSON.stringify(result));
       throw new Error("Gemini returned empty response");
     }
 
-    console.log("[Gemini API] Answer text length:", answerText.length, "chars");
-    console.log("[Gemini API] Answer preview:", answerText.substring(0, 200));
+    logger.info("[Gemini API] Answer text length:", { length: answerText.length, unit: "chars" });
+    logger.info("[Gemini API] Answer preview:", { preview: answerText.substring(0, 200) });
 
     return parseStructuredAnswer(answerText, dataSources, mode);
   } catch (error) {
-    console.error("[Gemini API] Error:", error);
+    logger.error("[Gemini API] Error:", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return {
       bottomLine: ["Unable to generate answer at this time. Please try again."],
       nextSteps: [],
@@ -430,10 +433,10 @@ function parseStructuredAnswer(
       };
     }
   } catch (error) {
-    console.error("[ParseAnswer] Failed to parse structured answer:", error);
-    console.error("[ParseAnswer] Raw AI response length:", text.length);
-    console.error("[ParseAnswer] Raw AI response preview:", text.substring(0, 500));
-    console.error(
+    logger.error("[ParseAnswer] Failed to parse structured answer:", error);
+    logger.error("[ParseAnswer] Raw AI response length:", text.length);
+    logger.error("[ParseAnswer] Raw AI response preview:", text.substring(0, 500));
+    logger.error(
       "[ParseAnswer] Raw AI response end:",
       text.substring(Math.max(0, text.length - 200))
     );

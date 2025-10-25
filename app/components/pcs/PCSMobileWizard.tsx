@@ -6,6 +6,28 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import { validatePCSClaim } from "@/lib/pcs/validation-engine";
+import { logger } from "@/lib/logger";
+
+interface PCSClaimData {
+  claimId: string;
+  memberName: string;
+  rank: string;
+  branch: string;
+  pcsType: string;
+  originBase: string;
+  destinationBase: string;
+  ordersDate: string;
+  maltDistance: number;
+  perDiemDays: number;
+  [key: string]: unknown;
+}
+
+interface ValidationFlag {
+  field: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  suggestion?: string;
+}
 
 interface PCSMobileWizardProps {
   userProfile: {
@@ -14,12 +36,12 @@ interface PCSMobileWizardProps {
     currentBase?: string;
     hasDependents?: boolean;
   };
-  onComplete: (data: any) => void;
-  onSave: (data: any) => void;
-  onValidationChange?: (flags: any[]) => void;
+  onComplete: (data: PCSClaimData) => void;
+  onSave: (data: PCSClaimData) => void;
+  onValidationChange?: (flags: ValidationFlag[]) => void;
 }
 
-interface FormData {
+interface PCSFormData {
   // Basic Info
   claim_name: string;
   pcs_orders_date: string;
@@ -60,9 +82,14 @@ const wizardSteps = [
   { id: "review", title: "Review", icon: "CheckCircle" },
 ];
 
-export default function PCSMobileWizard({ userProfile, onComplete, onSave, onValidationChange }: PCSMobileWizardProps) {
+export default function PCSMobileWizard({
+  userProfile,
+  onComplete,
+  onSave,
+  onValidationChange,
+}: PCSMobileWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<PCSFormData>({
     claim_name: "",
     pcs_orders_date: "",
     departure_date: "",
@@ -126,7 +153,23 @@ export default function PCSMobileWizard({ userProfile, onComplete, onSave, onVal
   }, [formData, onValidationChange]);
 
   const handleSave = () => {
-    onSave(formData);
+    // Convert PCSFormData to PCSClaimData
+    const claimData: PCSClaimData = {
+      claimId: `mobile-${Date.now()}`,
+      memberName: formData.claim_name || "",
+      rank: formData.rank_at_pcs || "",
+      branch: formData.branch || "",
+      pcsType: formData.travel_method || "",
+      ordersDate: formData.pcs_orders_date || "",
+      originBase: formData.origin_base || "",
+      destinationBase: formData.destination_base || "",
+      departureDate: formData.departure_date || "",
+      arrivalDate: formData.arrival_date || "",
+      maltDistance: formData.malt_distance || 0,
+      perDiemDays: formData.per_diem_days || 0,
+      hasDependents: formData.dependents_count > 0,
+    };
+    onSave(claimData);
   };
 
   const handleComplete = async () => {
@@ -141,10 +184,45 @@ export default function PCSMobileWizard({ userProfile, onComplete, onSave, onVal
       const estimates = await response.json();
       setEstimates(estimates);
 
-      onComplete({ ...formData, estimates });
+      // Convert PCSFormData to PCSClaimData
+      const claimData: PCSClaimData = {
+        claimId: `mobile-${Date.now()}`,
+        memberName: formData.claim_name || "",
+        rank: formData.rank_at_pcs || "",
+        branch: formData.branch || "",
+        pcsType: formData.travel_method || "",
+        ordersDate: formData.pcs_orders_date || "",
+        originBase: formData.origin_base || "",
+        destinationBase: formData.destination_base || "",
+        departureDate: formData.departure_date || "",
+        arrivalDate: formData.arrival_date || "",
+        maltDistance: formData.malt_distance || 0,
+        perDiemDays: formData.per_diem_days || 0,
+        hasDependents: formData.dependents_count > 0,
+      };
+
+      onComplete({ ...claimData, estimates });
     } catch (error) {
-      console.error("Failed to calculate estimates:", error);
-      onComplete(formData);
+      logger.error("Failed to calculate estimates:", error);
+
+      // Convert PCSFormData to PCSClaimData for error case too
+      const claimData: PCSClaimData = {
+        claimId: `mobile-${Date.now()}`,
+        memberName: formData.claim_name || "",
+        rank: formData.rank_at_pcs || "",
+        branch: formData.branch || "",
+        pcsType: formData.travel_method || "",
+        ordersDate: formData.pcs_orders_date || "",
+        originBase: formData.origin_base || "",
+        destinationBase: formData.destination_base || "",
+        departureDate: formData.departure_date || "",
+        arrivalDate: formData.arrival_date || "",
+        maltDistance: formData.malt_distance || 0,
+        perDiemDays: formData.per_diem_days || 0,
+        hasDependents: formData.dependents_count > 0,
+      };
+
+      onComplete(claimData);
     } finally {
       setIsCalculating(false);
     }

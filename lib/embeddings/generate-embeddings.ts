@@ -8,6 +8,11 @@
  * - Batch processing for efficiency
  * - Job tracking for monitoring
  * - Error handling with retries
+ */
+
+import { logger } from "@/lib/logger";
+
+/**
  * - Cost tracking
  *
  * Created: 2025-01-25
@@ -73,7 +78,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 
     return response.data[0].embedding;
   } catch (error) {
-    console.error("[Embeddings] Generation failed:", error);
+    logger.error("[Embeddings] Generation failed:", error);
     throw new Error(
       `Failed to generate embedding: ${error instanceof Error ? error.message : "Unknown error"}`
     );
@@ -115,20 +120,20 @@ export async function batchGenerateEmbeddings(
         options.onProgress(Math.min(i + batchSize, texts.length), texts.length);
       }
 
-      console.log(
+      logger.info(
         `[Embeddings] Batch ${Math.floor(i / batchSize) + 1}: ${batch.length} embeddings generated`
       );
     } catch (error) {
-      console.error(`[Embeddings] Batch failed at index ${i}:`, error);
+      logger.error(`[Embeddings] Batch failed at index ${i}:`, error);
 
       // Retry individual items in failed batch
-      console.log(`[Embeddings] Retrying ${batch.length} items individually...`);
+      logger.info(`[Embeddings] Retrying ${batch.length} items individually...`);
       for (const text of batch) {
         try {
           const embedding = await generateEmbedding(text);
           allEmbeddings.push(embedding);
         } catch (retryError) {
-          console.error("[Embeddings] Individual retry failed:", retryError);
+          logger.error("[Embeddings] Individual retry failed:", retryError);
           // Push zero vector as placeholder
           allEmbeddings.push(new Array(1536).fill(0));
         }
@@ -168,11 +173,11 @@ export async function createEmbeddingJob(
     .single();
 
   if (error) {
-    console.error("[Embeddings] Failed to create job:", error);
+    logger.error("[Embeddings] Failed to create job:", error);
     throw new Error("Failed to create embedding job");
   }
 
-  console.log(`[Embeddings] Job created: ${data.id} (${jobType} - ${contentType})`);
+  logger.info(`[Embeddings] Job created: ${data.id} (${jobType} - ${contentType})`);
   return data.id;
 }
 
@@ -193,7 +198,7 @@ export async function updateJobProgress(
     .eq("id", jobId);
 
   if (error) {
-    console.error("[Embeddings] Failed to update job progress:", error);
+    logger.error("[Embeddings] Failed to update job progress:", error);
   }
 }
 
@@ -230,10 +235,10 @@ export async function completeJob(
     .eq("id", jobId);
 
   if (error) {
-    console.error("[Embeddings] Failed to complete job:", error);
+    logger.error("[Embeddings] Failed to complete job:", error);
   }
 
-  console.log(
+  logger.info(
     `[Embeddings] Job ${jobId} ${status}. Duration: ${duration}s, Avg: ${avgTimePerItem}ms/item`
   );
 }
@@ -288,11 +293,11 @@ export async function processAndStoreEmbeddings(
       });
 
       if (error) {
-        console.error(`[Embeddings] Failed to insert batch at index ${i}:`, error);
+        logger.error(`[Embeddings] Failed to insert batch at index ${i}:`, error);
         failedCount += batch.length;
       } else {
         successCount += batch.length;
-        console.log(
+        logger.info(
           `[Embeddings] Inserted ${batch.length} embeddings (${successCount}/${inputs.length})`
         );
       }
@@ -300,7 +305,7 @@ export async function processAndStoreEmbeddings(
       // Update job progress
       await updateJobProgress(jobId, successCount, failedCount);
     } catch (error) {
-      console.error(`[Embeddings] Batch processing failed at index ${i}:`, error);
+      logger.error(`[Embeddings] Batch processing failed at index ${i}:`, error);
       failedCount += batch.length;
       await updateJobProgress(jobId, successCount, failedCount);
     }
@@ -324,11 +329,11 @@ export async function deleteEmbeddingsByType(contentType: string): Promise<numbe
     .eq("content_type", contentType);
 
   if (error) {
-    console.error("[Embeddings] Failed to delete embeddings:", error);
+    logger.error("[Embeddings] Failed to delete embeddings:", error);
     throw new Error("Failed to delete embeddings");
   }
 
-  console.log(`[Embeddings] Deleted ${count || 0} embeddings for type: ${contentType}`);
+  logger.info(`[Embeddings] Deleted ${count || 0} embeddings for type: ${contentType}`);
   return count || 0;
 }
 
@@ -341,7 +346,7 @@ export async function getEmbeddingStats(): Promise<Record<string, number>> {
     .select("content_type, chunk_count");
 
   if (error) {
-    console.error("[Embeddings] Failed to get stats:", error);
+    logger.error("[Embeddings] Failed to get stats:", error);
     return {};
   }
 

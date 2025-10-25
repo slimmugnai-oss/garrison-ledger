@@ -7,6 +7,7 @@
  */
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
@@ -241,7 +242,7 @@ export default function AnswerDisplay({
                               }),
                             });
                           } catch (error) {
-                            console.debug("Analytics tracking failed:", error);
+                            logger.debug("Analytics tracking failed:", error);
                           }
 
                           onToolHandoff?.(tool.tool, tool.url);
@@ -376,7 +377,7 @@ export default function AnswerDisplay({
             responseTimeMs={1800}
             sourcesUsed={answer.citations?.map((c) => c.title) || []}
             onFeedbackSubmitted={() => {
-              console.log("Feedback submitted successfully");
+              logger.info("Feedback submitted successfully");
             }}
           />
         )}

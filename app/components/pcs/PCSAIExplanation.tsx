@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Icon from "@/app/components/ui/Icon";
+import { logger } from "@/lib/logger";
 
 interface ValidationFlag {
   field: string;
@@ -12,6 +13,13 @@ interface ValidationFlag {
   suggested_fix?: string;
   jtr_citation?: string;
   category: string;
+}
+
+interface ClaimContext {
+  rank?: string;
+  branch?: string;
+  hasDependents?: boolean;
+  pcsType?: string;
 }
 
 interface PCSAIExplanationProps {
@@ -44,7 +52,7 @@ export default function PCSAIExplanation({ validationFlag, claimContext }: PCSAI
       const { explanation } = await response.json();
       setExplanation(explanation);
     } catch (error) {
-      console.error("Failed to get AI explanation:", error);
+      logger.error("Failed to get AI explanation:", error);
       setExplanation("Sorry, I could not generate an explanation at this time.");
     } finally {
       setIsLoading(false);
@@ -164,7 +172,7 @@ export function PCSValidationExplainer({
   claimContext,
 }: {
   flags: ValidationFlag[];
-  claimContext: any;
+  claimContext: ClaimContext;
 }) {
   const [expandedFlags, setExpandedFlags] = useState<Set<string>>(new Set());
 

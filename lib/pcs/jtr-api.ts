@@ -8,6 +8,8 @@
  * - Weight Allowance Tables
  */
 
+import { logger } from "@/lib/logger";
+
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export interface PerDiemRate {
@@ -82,7 +84,7 @@ export async function fetchPerDiemRates(
 
     return perDiemRate;
   } catch (error) {
-    console.error("Failed to fetch per diem rates:", error);
+    logger.error("Failed to fetch per diem rates:", error);
     return null;
   }
 }
@@ -140,7 +142,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
 
     return dlaRates;
   } catch (error) {
-    console.error("Failed to fetch DLA rates:", error);
+    logger.error("Failed to fetch DLA rates:", error);
     return [];
   }
 }
@@ -185,7 +187,7 @@ export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | n
 
     return maltRate;
   } catch (error) {
-    console.error("Failed to fetch MALT rate:", error);
+    logger.error("Failed to fetch MALT rate:", error);
     return null;
   }
 }
@@ -203,7 +205,7 @@ export async function getDLARate(
     const rate = dlaRates.find((r) => r.payGrade === rank && r.withDependents === hasDependents);
     return rate?.amount || 0;
   } catch (error) {
-    console.error("Failed to get DLA rate:", error);
+    logger.error("Failed to get DLA rate:", error);
     return 0;
   }
 }
@@ -218,7 +220,7 @@ export async function getMALTRate(
     const maltRate = await fetchMALTRate(effectiveDate);
     return maltRate?.ratePerMile || 0.18; // Fallback to current rate
   } catch (error) {
-    console.error("Failed to get MALT rate:", error);
+    logger.error("Failed to get MALT rate:", error);
     return 0.18;
   }
 }
@@ -233,7 +235,7 @@ export async function getPerDiemRate(
   try {
     return await fetchPerDiemRates(zipCode, effectiveDate);
   } catch (error) {
-    console.error("Failed to get per diem rate:", error);
+    logger.error("Failed to get per diem rate:", error);
     return null;
   }
 }
@@ -253,7 +255,7 @@ export async function calculateDistance(origin: string, destination: string): Pr
     const { distance } = await response.json();
     return distance;
   } catch (error) {
-    console.error("Failed to calculate distance:", error);
+    logger.error("Failed to calculate distance:", error);
     return 0;
   }
 }
@@ -325,26 +327,26 @@ async function fetchFromDTMOAPI(
   // DTMO doesn't have a public REST API
   // Use pre-seeded database with annual updates from DTMO website
   const { data } = await supabaseAdmin
-    .from('jtr_rates_cache')
-    .select('*')
-    .eq('rate_type', 'per_diem')
-    .eq('rate_data->>zipCode', zipCode)
-    .gte('effective_date', effectiveDate)
-    .order('effective_date', { ascending: false })
+    .from("jtr_rates_cache")
+    .select("*")
+    .eq("rate_type", "per_diem")
+    .eq("rate_data->>zipCode", zipCode)
+    .gte("effective_date", effectiveDate)
+    .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-    
+
   if (data) return data.rate_data as PerDiemRate;
-  
+
   // Fallback to standard CONUS rate
   return {
     zipCode,
-    city: 'Standard CONUS',
-    state: '',
+    city: "Standard CONUS",
+    state: "",
     effectiveDate,
     lodgingRate: 120,
     mealRate: 46,
-    totalRate: 166
+    totalRate: 166,
   };
 }
 
@@ -352,69 +354,129 @@ async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
   // Use existing get_dla_rate() SQL function from migration
   // Query actual rates from jtr_rates_cache table
   const { data } = await supabaseAdmin
-    .from('jtr_rates_cache')
-    .select('*')
-    .eq('rate_type', 'dla')
-    .gte('effective_date', effectiveDate)
-    .order('effective_date', { ascending: false })
+    .from("jtr_rates_cache")
+    .select("*")
+    .eq("rate_type", "dla")
+    .gte("effective_date", effectiveDate)
+    .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-    
+
   if (data && data.rate_data) {
     // Transform cached data to DLARate array
     const rateData = data.rate_data as Record<string, number>;
     return Object.entries(rateData).map(([key, amount]) => {
-      const [payGrade, withDependents] = key.split('_');
+      const [payGrade, withDependents] = key.split("_");
       return {
         payGrade,
-        withDependents: withDependents === 'with',
+        withDependents: withDependents === "with",
         amount,
         effectiveDate: data.effective_date,
-        citation: 'JTR 050302.B'
+        citation: "JTR 050302.B",
       };
     });
   }
-  
+
   // Fallback to hardcoded rates if no cached data
   return [
-    { payGrade: "E1-E4", withDependents: false, amount: 1234, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "E1-E4", withDependents: true, amount: 2468, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "E5-E6", withDependents: false, amount: 1543, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "E5-E6", withDependents: true, amount: 3086, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "E7-E9", withDependents: false, amount: 1852, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "E7-E9", withDependents: true, amount: 3704, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "O1-O3", withDependents: false, amount: 2160, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "O1-O3", withDependents: true, amount: 4320, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "O4-O6", withDependents: false, amount: 2469, effectiveDate, citation: "JTR 050302.B" },
-    { payGrade: "O4-O6", withDependents: true, amount: 4938, effectiveDate, citation: "JTR 050302.B" }
+    {
+      payGrade: "E1-E4",
+      withDependents: false,
+      amount: 1234,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "E1-E4",
+      withDependents: true,
+      amount: 2468,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "E5-E6",
+      withDependents: false,
+      amount: 1543,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "E5-E6",
+      withDependents: true,
+      amount: 3086,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "E7-E9",
+      withDependents: false,
+      amount: 1852,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "E7-E9",
+      withDependents: true,
+      amount: 3704,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "O1-O3",
+      withDependents: false,
+      amount: 2160,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "O1-O3",
+      withDependents: true,
+      amount: 4320,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "O4-O6",
+      withDependents: false,
+      amount: 2469,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
+    {
+      payGrade: "O4-O6",
+      withDependents: true,
+      amount: 4938,
+      effectiveDate,
+      citation: "JTR 050302.B",
+    },
   ];
 }
 
 async function fetchFromIRSAPI(effectiveDate: string): Promise<MALTRate | null> {
   // Query jtr_rates_cache for MALT rate
   const { data } = await supabaseAdmin
-    .from('jtr_rates_cache')
-    .select('*')
-    .eq('rate_type', 'malt')
-    .gte('effective_date', effectiveDate)
-    .order('effective_date', { ascending: false })
+    .from("jtr_rates_cache")
+    .select("*")
+    .eq("rate_type", "malt")
+    .gte("effective_date", effectiveDate)
+    .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
-    
+
   if (data && data.rate_data) {
     return {
       ratePerMile: data.rate_data.rate_per_mile,
       effectiveDate: data.effective_date,
       source: "IRS",
-      citation: "IRS Standard Mileage Rate"
+      citation: "IRS Standard Mileage Rate",
     };
   }
-  
+
   // Fallback to hardcoded rate if no cached data
   return {
     ratePerMile: 0.18,
     effectiveDate,
     source: "IRS",
-    citation: "IRS Standard Mileage Rate"
+    citation: "IRS Standard Mileage Rate",
   };
 }

@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * LES ALWAYS-ON AUDIT COMPONENT
  *
@@ -8,10 +10,20 @@
  * - Real-time computation (400ms debounce)
  * - Server-side paywall enforcement
  * - No "Run Audit" button - always computing
- * - Save/PDF for premium users only
  */
 
-"use client";
+import { logger } from "@/lib/logger";
+
+interface LESLine {
+  line_code: string;
+  description: string;
+  amount_cents: number;
+  section: string;
+}
+
+/**
+ * - Save/PDF for premium users only
+ */
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 
@@ -34,7 +46,7 @@ interface Props {
 
 export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   // Debug tier value
-  console.log("[LesAuditAlwaysOn] Tier:", tier, "User:", userProfile);
+  logger.info("[LesAuditAlwaysOn] Tier:", { tier, userProfile });
 
   // ============================================================================
   // STATE
@@ -205,7 +217,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       // Only fetch if we have complete profile data
       if (!month || !year || !paygrade || !mhaOrZip) return;
 
-      console.log("[LesAuditAlwaysOn] Fetching expected values with:", {
+      logger.info("[LesAuditAlwaysOn] Fetching expected values with:", {
         month,
         year,
         rank: paygrade,
@@ -231,7 +243,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         if (response.ok) {
           const data = await response.json();
 
-          console.log("[LesAuditAlwaysOn] Received expected values:", data);
+          logger.info("[LesAuditAlwaysOn] Received expected values:", data);
 
           // Auto-fill allowances (official DFAS data) - only if field is empty
           if (data.base_pay && basePay === 0) setBasePay(data.base_pay);
@@ -244,7 +256,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           if (data.sgli && sgli === 0) setSgli(data.sgli);
         }
       } catch (error) {
-        console.error("Failed to fetch expected values:", error);
+        logger.error("Failed to fetch expected values:", error);
       } finally {
         setLoadingExpected(false);
       }
@@ -297,7 +309,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         setHistory(data.audits || []);
       }
     } catch (error) {
-      console.error("Failed to fetch history:", error);
+      logger.error("Failed to fetch history:", error);
     } finally {
       setLoadingHistory(false);
     }
@@ -421,7 +433,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       // Refresh history to show newly saved audit
       fetchHistory();
     } catch (error) {
-      console.error("[Save] Error:", error);
+      logger.error("[Save] Error:", error);
       alert("Failed to save audit. Please try again.");
     } finally {
       setSaving(false);
@@ -447,7 +459,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       // Helper to find line amount from linesBySection structure
       const findAmount = (section: string, code: string) => {
         const sectionLines = data.linesBySection[section] || [];
-        const line = sectionLines.find((l: any) => l.line_code === code);
+        const line = sectionLines.find((l: LESLine) => l.line_code === code);
         return line?.amount_cents || 0;
       };
 
@@ -474,7 +486,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       });
       alert(`Loaded audit from ${monthName} ${data.metadata.year}. Edit and re-run as needed.`);
     } catch (error) {
-      console.error("[Load Audit] Error:", error);
+      logger.error("[Load Audit] Error:", error);
       alert("Failed to load audit. Please try again.");
     }
   }, []);
@@ -499,7 +511,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           throw new Error("Failed to delete");
         }
       } catch (error) {
-        console.error("[Delete Audit] Error:", error);
+        logger.error("[Delete Audit] Error:", error);
         alert("Failed to delete audit.");
       }
     },

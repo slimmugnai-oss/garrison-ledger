@@ -4,9 +4,29 @@
  * Enables offline capability, background sync, and push notifications
  */
 
+import { logger } from "@/lib/logger";
+
+interface ClaimData {
+  claimId: string;
+  memberName: string;
+  rank: string;
+  branch: string;
+  pcsType: string;
+  originBase: string;
+  destinationBase: string;
+  ordersDate: string;
+  [key: string]: unknown;
+}
+
+interface ServiceWorkerMessage {
+  type: string;
+  claimId?: string;
+  [key: string]: unknown;
+}
+
 export async function registerServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-    console.log("[PWA] Service Worker not supported");
+    logger.info("[PWA] Service Worker not supported");
     return false;
   }
 
@@ -15,7 +35,7 @@ export async function registerServiceWorker() {
       scope: "/",
     });
 
-    console.log("[PWA] Service Worker registered successfully:", registration.scope);
+    logger.info("[PWA] Service Worker registered successfully:", registration.scope);
 
     // Check for updates
     registration.addEventListener("updatefound", () => {
@@ -25,7 +45,7 @@ export async function registerServiceWorker() {
       newWorker.addEventListener("statechange", () => {
         if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
           // New service worker available
-          console.log("[PWA] New version available");
+          logger.info("[PWA] New version available");
           showUpdateNotification();
         }
       });
@@ -33,7 +53,7 @@ export async function registerServiceWorker() {
 
     // Handle controller change
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      console.log("[PWA] Service Worker controller changed");
+      logger.info("[PWA] Service Worker controller changed");
       window.location.reload();
     });
 
@@ -44,7 +64,7 @@ export async function registerServiceWorker() {
 
     return registration;
   } catch (error) {
-    console.error("[PWA] Service Worker registration failed:", error);
+    logger.error("[PWA] Service Worker registration failed:", error);
     return false;
   }
 }
@@ -57,10 +77,10 @@ export async function unregisterServiceWorker() {
   try {
     const registration = await navigator.serviceWorker.ready;
     const unregistered = await registration.unregister();
-    console.log("[PWA] Service Worker unregistered:", unregistered);
+    logger.info("[PWA] Service Worker unregistered:", unregistered);
     return unregistered;
   } catch (error) {
-    console.error("[PWA] Service Worker unregistration failed:", error);
+    logger.error("[PWA] Service Worker unregistration failed:", error);
     return false;
   }
 }
@@ -81,14 +101,14 @@ export async function checkServiceWorkerStatus() {
       waiting: !!registration?.waiting,
     };
   } catch (error) {
-    console.error("[PWA] Failed to check service worker status:", error);
+    logger.error("[PWA] Failed to check service worker status:", error);
     return { supported: true, registered: false, active: false, error: true };
   }
 }
 
-export async function syncClaimData(claimData: any) {
+export async function syncClaimData(claimData: ClaimData) {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-    console.log("[PWA] Service Worker not available for sync");
+    logger.info("[PWA] Service Worker not available for sync");
     return false;
   }
 
@@ -101,20 +121,20 @@ export async function syncClaimData(claimData: any) {
     // Register background sync
     if ("sync" in registration) {
       await (registration as any).sync.register("sync-pcs-claim");
-      console.log("[PWA] Background sync registered");
+      logger.info("[PWA] Background sync registered");
       return true;
     } else {
-      console.log("[PWA] Background sync not supported, attempting immediate sync");
+      logger.info("[PWA] Background sync not supported, attempting immediate sync");
       // Fallback: try to sync immediately
       return await syncClaimImmediately(claimData);
     }
   } catch (error) {
-    console.error("[PWA] Failed to register background sync:", error);
+    logger.error("[PWA] Failed to register background sync:", error);
     return false;
   }
 }
 
-async function syncClaimImmediately(claimData: any) {
+async function syncClaimImmediately(claimData: ClaimData) {
   try {
     const response = await fetch("/api/pcs/claim", {
       method: "POST",
@@ -126,15 +146,15 @@ async function syncClaimImmediately(claimData: any) {
 
     return response.ok;
   } catch (error) {
-    console.error("[PWA] Immediate sync failed:", error);
+    logger.error("[PWA] Immediate sync failed:", error);
     return false;
   }
 }
 
-async function storePendingClaim(claimData: any) {
+async function storePendingClaim(claimData: ClaimData) {
   // Store in IndexedDB for background sync
   if (!("indexedDB" in window)) {
-    console.log("[PWA] IndexedDB not supported");
+    logger.info("[PWA] IndexedDB not supported");
     return;
   }
 
@@ -150,9 +170,9 @@ async function storePendingClaim(claimData: any) {
       method: "POST",
     });
 
-    console.log("[PWA] Claim stored for sync");
+    logger.info("[PWA] Claim stored for sync");
   } catch (error) {
-    console.error("[PWA] Failed to store pending claim:", error);
+    logger.error("[PWA] Failed to store pending claim:", error);
   }
 }
 
@@ -173,18 +193,22 @@ async function openClaimsDB(): Promise<IDBDatabase> {
   });
 }
 
-function handleServiceWorkerMessage(data: any) {
-  console.log("[PWA] Message from service worker:", data);
+function handleServiceWorkerMessage(data: ServiceWorkerMessage) {
+  logger.info("[PWA] Message from service worker:", data);
 
   switch (data.type) {
     case "sync-success":
-      showSyncSuccessNotification(data.claimId);
+      if (data.claimId) {
+        showSyncSuccessNotification(data.claimId);
+      }
       break;
     case "sync-failed":
-      showSyncFailedNotification(data.claimId);
+      if (data.claimId) {
+        showSyncFailedNotification(data.claimId);
+      }
       break;
     default:
-      console.log("[PWA] Unknown message type:", data.type);
+      logger.info("[PWA] Unknown message type:", data.type);
   }
 }
 
@@ -212,13 +236,13 @@ function showSyncFailedNotification(claimId: string) {
 
 export async function requestPushNotificationPermission() {
   if (typeof window === "undefined" || !("Notification" in window)) {
-    console.log("[PWA] Push notifications not supported");
+    logger.info("[PWA] Push notifications not supported");
     return false;
   }
 
   try {
     const permission = await Notification.requestPermission();
-    console.log("[PWA] Notification permission:", permission);
+    logger.info("[PWA] Notification permission:", permission);
 
     if (permission === "granted") {
       await subscribeToPushNotifications();
@@ -227,7 +251,7 @@ export async function requestPushNotificationPermission() {
 
     return false;
   } catch (error) {
-    console.error("[PWA] Failed to request notification permission:", error);
+    logger.error("[PWA] Failed to request notification permission:", error);
     return false;
   }
 }
@@ -241,7 +265,7 @@ async function subscribeToPushNotifications() {
       applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ""),
     });
 
-    console.log("[PWA] Push subscription:", subscription);
+    logger.info("[PWA] Push subscription:", subscription);
 
     // Send subscription to server
     await fetch("/api/pcs/push-subscribe", {
@@ -254,7 +278,7 @@ async function subscribeToPushNotifications() {
 
     return subscription;
   } catch (error) {
-    console.error("[PWA] Push subscription failed:", error);
+    logger.error("[PWA] Push subscription failed:", error);
     return null;
   }
 }

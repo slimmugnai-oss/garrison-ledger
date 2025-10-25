@@ -6,6 +6,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 import baseToMHAMap from "@/lib/data/base-mha-map.json";
 
@@ -395,7 +396,7 @@ export async function queryOfficialSources(
     // Step 2: Extract entities from question
     const entities = extractEntities(question);
 
-    console.log("[DataQueryEngine] Extracted entities:", {
+    logger.info("[DataQueryEngine] Extracted entities:", {
       bases: entities.bases,
       mhaCodes: entities.mhaCodes,
       paygrades: entities.paygrades,
@@ -437,11 +438,11 @@ export async function queryOfficialSources(
       }
     }
 
-    console.log("[DataQueryEngine] Found", sources.length, "data sources");
+    logger.info("[DataQueryEngine] Found data sources", { count: sources.length });
 
     return sources;
   } catch (error) {
-    console.error("[DataQueryEngine] Error querying data sources:", error);
+    logger.error("[DataQueryEngine] Error querying data sources:", error);
     return sources; // Return whatever we have so far
   }
 }

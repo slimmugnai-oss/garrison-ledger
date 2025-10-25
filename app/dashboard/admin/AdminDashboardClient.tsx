@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-import AdminTabNavigation from './components/AdminTabNavigation';
-import { Alert } from './components/AlertPanel';
-import AnalyticsTab from './tabs/AnalyticsTab';
-import ContentTab from './tabs/ContentTab';
-import OverviewTab from './tabs/OverviewTab';
-import SitemapTab from './tabs/SitemapTab';
-import SystemTab from './tabs/SystemTab';
-import UsersTab from './tabs/UsersTab';
+import AdminTabNavigation from "./components/AdminTabNavigation";
+import { Alert } from "./components/AlertPanel";
+import AnalyticsTab from "./tabs/AnalyticsTab";
+import ContentTab from "./tabs/ContentTab";
+import OverviewTab from "./tabs/OverviewTab";
+import SitemapTab from "./tabs/SitemapTab";
+import SystemTab from "./tabs/SystemTab";
+import UsersTab from "./tabs/UsersTab";
 
 interface ActivityItem {
   id: string;
-  type: 'signup' | 'premium' | 'support' | 'tool_use';
+  type: "signup" | "premium" | "support" | "tool_use";
   message: string;
   timestamp: string;
   userId?: string;
@@ -49,12 +49,15 @@ export default function AdminDashboardClient({
 }: AdminDashboardClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Sync with URL
   useEffect(() => {
-    const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl && ['overview', 'analytics', 'users', 'content', 'system', 'sitemap'].includes(tabFromUrl)) {
+    const tabFromUrl = searchParams?.get("tab");
+    if (
+      tabFromUrl &&
+      ["overview", "analytics", "users", "content", "system", "sitemap"].includes(tabFromUrl)
+    ) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
@@ -62,14 +65,14 @@ export default function AdminDashboardClient({
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     // Update URL without page reload
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', tab);
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    params.set("tab", tab);
     router.push(`/dashboard/admin?${params.toString()}`, { scroll: false });
   };
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'overview':
+      case "overview":
         return (
           <OverviewTab
             initialMetrics={metrics}
@@ -77,37 +80,36 @@ export default function AdminDashboardClient({
             initialActivity={recentActivity}
           />
         );
-      case 'analytics':
+      case "analytics":
         return <AnalyticsTab />;
-      case 'users':
+      case "users":
         return <UsersTab />;
-      case 'content':
+      case "content":
         return <ContentTab />;
-      case 'system':
+      case "system":
         return <SystemTab />;
-      case 'sitemap':
+      case "sitemap":
         return <SitemapTab />;
       default:
-        return <OverviewTab initialMetrics={metrics} initialAlerts={alerts} initialActivity={recentActivity} />;
+        return (
+          <OverviewTab
+            initialMetrics={metrics}
+            initialAlerts={alerts}
+            initialActivity={recentActivity}
+          />
+        );
     }
   };
 
   return (
     <>
       {/* Tab Navigation */}
-      <AdminTabNavigation
-        activeTab={activeTab}
-        onChange={handleTabChange}
-        badges={badges}
-      />
+      <AdminTabNavigation activeTab={activeTab} onChange={handleTabChange} badges={badges} />
 
       {/* Tab Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="tab-content">
-          {renderTab()}
-        </div>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="tab-content">{renderTab()}</div>
       </div>
     </>
   );
 }
-

@@ -1,26 +1,30 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from 'resend';
+import { Resend } from "resend";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { logger } from "@/lib/logger";
+
+interface EmailData {
+  inputs: Record<string, unknown>;
+  outputs: Record<string, unknown>;
+}
 
 // Initialize Resend only if API key is available
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Helper to format currency
 const fmt = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(value);
 };
 
 // Email templates for each calculator
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const templates: Record<string, (data: { inputs: any; outputs: any }) => string> = {
+const templates: Record<string, (data: EmailData) => string> = {
   tsp: (data) => `
     <h2>Your TSP Allocation Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
@@ -28,115 +32,115 @@ const templates: Record<string, (data: { inputs: any; outputs: any }) => string>
       <ul>
         <li>Current Age: ${data.inputs.age}</li>
         <li>Retirement Age: ${data.inputs.retire}</li>
-        <li>Current Balance: ${fmt(data.inputs.balance)}</li>
-        <li>Monthly Contribution: ${fmt(data.inputs.monthly)}</li>
-        <li>Allocation: C${data.inputs.mix.C}% / S${data.inputs.mix.S}% / I${data.inputs.mix.I}% / F${data.inputs.mix.F}% / G${data.inputs.mix.G}%</li>
+        <li>Current Balance: ${fmt(Number(data.inputs.balance) || 0)}</li>
+        <li>Monthly Contribution: ${fmt(Number(data.inputs.monthly) || 0)}</li>
+        <li>Allocation: C${(data.inputs.mix as any)?.C || 0}% / S${(data.inputs.mix as any)?.S || 0}% / I${(data.inputs.mix as any)?.I || 0}% / F${(data.inputs.mix as any)?.F || 0}% / G${(data.inputs.mix as any)?.G || 0}%</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Results:</h3>
       <ul>
-        <li><strong>Projected Balance at Retirement:</strong> ${fmt(data.outputs.endCustom || 0)}</li>
-        <li><strong>Difference vs Default Allocation:</strong> ${fmt(data.outputs.diff || 0)}</li>
+        <li><strong>Projected Balance at Retirement:</strong> ${fmt(Number(data.outputs.endCustom) || 0)}</li>
+        <li><strong>Difference vs Default Allocation:</strong> ${fmt(Number(data.outputs.diff) || 0)}</li>
       </ul>
     </div>
   `,
-  
+
   sdp: (data) => `
     <h2>Your SDP Strategy Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
       <ul>
         <li>Deployment Duration: ${data.inputs.months} months</li>
-        <li>SDP Deposit: ${fmt(data.inputs.deposit)}</li>
+        <li>SDP Deposit: ${fmt(Number(data.inputs.deposit) || 0)}</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Results:</h3>
       <ul>
-        <li><strong>SDP Interest Earned:</strong> ${fmt(data.outputs.interest || 0)}</li>
-        <li><strong>Total Payout:</strong> ${fmt(data.outputs.total || 0)}</li>
+        <li><strong>SDP Interest Earned:</strong> ${fmt(Number(data.outputs.interest) || 0)}</li>
+        <li><strong>Total Payout:</strong> ${fmt(Number(data.outputs.total) || 0)}</li>
       </ul>
     </div>
   `,
-  
-  'house-hacking': (data) => `
+
+  "house-hacking": (data) => `
     <h2>Your House Hacking Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Inputs:</h3>
       <ul>
-        <li>Purchase Price: ${fmt(data.inputs.price || 0)}</li>
-        <li>Monthly Rent: ${fmt(data.inputs.rent || 0)}</li>
+        <li>Purchase Price: ${fmt(Number(data.inputs.price) || 0)}</li>
+        <li>Monthly Rent: ${fmt(Number(data.inputs.rent) || 0)}</li>
         <li>Down Payment: ${data.inputs.down || 0}%</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Results:</h3>
       <ul>
-        <li><strong>Monthly Cash Flow:</strong> ${fmt(data.outputs.cashFlow || 0)}</li>
-        <li><strong>Annual ROI:</strong> ${(data.outputs.roi || 0).toFixed(1)}%</li>
+        <li><strong>Monthly Cash Flow:</strong> ${fmt(Number(data.outputs.cashFlow) || 0)}</li>
+        <li><strong>Annual ROI:</strong> ${(Number(data.outputs.roi) || 0).toFixed(1)}%</li>
       </ul>
     </div>
   `,
-  
+
   pcs: (data) => `
     <h2>Your PCS Financial Plan</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Income:</h3>
       <ul>
-        <li>DLA: ${fmt(data.outputs.totalIncome || 0)}</li>
-        <li>Total Income: ${fmt(data.outputs.totalIncome || 0)}</li>
+        <li>DLA: ${fmt(Number(data.outputs.totalIncome) || 0)}</li>
+        <li>Total Income: ${fmt(Number(data.outputs.totalIncome) || 0)}</li>
       </ul>
     </div>
     <div style="background: #fff4e6; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Expenses:</h3>
       <ul>
-        <li>Total Expenses: ${fmt(data.outputs.totalExpenses || 0)}</li>
+        <li>Total Expenses: ${fmt(Number(data.outputs.totalExpenses) || 0)}</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Net Result:</h3>
-      <p style="font-size: 24px; font-weight: bold; color: ${data.outputs.netEstimate >= 0 ? '#059669' : '#DC2626'};">
-        ${fmt(data.outputs.netEstimate || 0)}
+      <p style="font-size: 24px; font-weight: bold; color: ${(Number(data.outputs.netEstimate) || 0) >= 0 ? "#059669" : "#DC2626"};">
+        ${fmt(Number(data.outputs.netEstimate) || 0)}
       </p>
-      ${data.outputs.netProfit > 0 ? `<p><strong>PPM Profit:</strong> ${fmt(data.outputs.netProfit)}</p>` : ''}
+      ${(Number(data.outputs.netProfit) || 0) > 0 ? `<p><strong>PPM Profit:</strong> ${fmt(Number(data.outputs.netProfit) || 0)}</p>` : ""}
     </div>
   `,
-  
+
   savings: (data) => `
     <h2>Your Annual Savings Analysis</h2>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Your Total Annual Savings:</h3>
       <p style="font-size: 32px; font-weight: bold; color: #059669;">
-        ${fmt(data.outputs.grandTotal || 0)}
+        ${fmt(Number(data.outputs.grandTotal) || 0)}
       </p>
     </div>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Breakdown:</h3>
       <ul>
-        <li>Commissary Savings: ${fmt(data.outputs.totalCommissarySavings || 0)}</li>
-        <li>Exchange Savings: ${fmt(data.outputs.totalExchangeSavings || 0)}</li>
+        <li>Commissary Savings: ${fmt(Number(data.outputs.totalCommissarySavings) || 0)}</li>
+        <li>Exchange Savings: ${fmt(Number(data.outputs.totalExchangeSavings) || 0)}</li>
       </ul>
     </div>
   `,
-  
+
   career: (data) => `
     <h2>Your Career Opportunity Analysis</h2>
     <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>Comparison:</h3>
       <ul>
-        <li>Current Position: ${fmt(data.inputs.currentData.salary)}</li>
-        <li>New Opportunity: ${fmt(data.inputs.newData.salary)}</li>
+        <li>Current Position: ${fmt(Number((data.inputs.currentData as any)?.salary) || 0)}</li>
+        <li>New Opportunity: ${fmt(Number((data.inputs.newData as any)?.salary) || 0)}</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3>After Adjustments:</h3>
-      <p style="font-size: 24px; font-weight: bold; color: ${data.outputs.isPositive ? '#059669' : '#DC2626'};">
-        ${data.outputs.isPositive ? '+' : ''}${fmt(data.outputs.netDifference || 0)}
+      <p style="font-size: 24px; font-weight: bold; color: ${data.outputs.isPositive ? "#059669" : "#DC2626"};">
+        ${data.outputs.isPositive ? "+" : ""}${fmt(Number(data.outputs.netDifference) || 0)}
       </p>
       <p style="margin-top: 10px;">${data.outputs.executiveSummary}</p>
     </div>
-  `
+  `,
 };
 
 export async function POST(req: NextRequest) {
@@ -151,7 +155,7 @@ export async function POST(req: NextRequest) {
     const userEmail = user.emailAddresses[0]?.emailAddress;
 
     if (!userEmail) {
-      logger.warn('[EmailResults] User email not found', { userId });
+      logger.warn("[EmailResults] User email not found", { userId });
       throw Errors.invalidInput("User email not found in account");
     }
 
@@ -164,17 +168,19 @@ export async function POST(req: NextRequest) {
     // Get template function
     const templateFn = templates[tool as keyof typeof templates];
     if (!templateFn) {
-      throw Errors.invalidInput(`Invalid tool: ${tool}. Must be one of: ${Object.keys(templates).join(', ')}`);
+      throw Errors.invalidInput(
+        `Invalid tool: ${tool}. Must be one of: ${Object.keys(templates).join(", ")}`
+      );
     }
 
     // Generate email HTML
     const toolNames: Record<string, string> = {
-      tsp: 'TSP Allocation Modeler',
-      sdp: 'SDP Payout Strategist',
-      'house-hacking': 'House Hacking Calculator',
-      pcs: 'PCS Financial Planner',
-      savings: 'Annual Savings Command Center',
-      career: 'Career Opportunity Analyzer'
+      tsp: "TSP Allocation Modeler",
+      sdp: "SDP Payout Strategist",
+      "house-hacking": "House Hacking Calculator",
+      pcs: "PCS Financial Planner",
+      savings: "Annual Savings Command Center",
+      career: "Career Opportunity Analyzer",
     };
 
     const emailHtml = `
@@ -187,7 +193,7 @@ export async function POST(req: NextRequest) {
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: #0A2463; color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
             <h1 style="margin: 0; font-size: 28px;">Garrison Ledger</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">${toolNames[tool] || 'Calculator'} Results</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">${toolNames[tool] || "Calculator"} Results</p>
           </div>
 
           <div style="background: white; padding: 20px;">
@@ -217,32 +223,35 @@ export async function POST(req: NextRequest) {
 
     // Check if Resend is configured
     if (!resend) {
-      logger.error('[EmailResults] RESEND_API_KEY not configured');
+      logger.error("[EmailResults] RESEND_API_KEY not configured");
       throw Errors.externalApiError("Resend", "Email service not configured");
     }
 
     // Send email using Resend
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'Garrison Ledger <noreply@garrisonledger.com>',
+      from: "Garrison Ledger <noreply@garrisonledger.com>",
       to: userEmail,
       subject: `Your ${toolNames[tool]} Results - Garrison Ledger`,
-      html: emailHtml
+      html: emailHtml,
     });
 
     if (emailError) {
-      logger.error('[EmailResults] Failed to send email', emailError, { userId, tool, userEmail: userEmail.split('@')[1] });
+      logger.error("[EmailResults] Failed to send email", emailError, {
+        userId,
+        tool,
+        userEmail: userEmail.split("@")[1],
+      });
       throw Errors.externalApiError("Resend", "Failed to send email");
     }
 
     const duration = Date.now() - startTime;
-    logger.info('[EmailResults] Email sent', { userId, tool, emailId: emailData?.id, duration });
-    
+    logger.info("[EmailResults] Email sent", { userId, tool, emailId: emailData?.id, duration });
+
     return NextResponse.json({
       success: true,
-      emailId: emailData?.id
+      emailId: emailData?.id,
     });
   } catch (error) {
     return errorResponse(error);
   }
 }
-

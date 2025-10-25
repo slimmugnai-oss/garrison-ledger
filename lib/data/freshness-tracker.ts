@@ -8,7 +8,11 @@
  * - Check cache first (fast)
  * - If stale, fetch live data (slower but accurate)
  * - Schedule background refresh
- *
+ */
+
+import { logger } from "@/lib/logger";
+
+/**
  * Created: 2025-01-25
  * Part of: Ask Military Expert Real-Time Data Layer
  */
@@ -173,7 +177,7 @@ export const DATA_SOURCES: Record<string, DataSource> = {
 export function isDataFresh(sourceId: string): boolean {
   const source = DATA_SOURCES[sourceId];
   if (!source) {
-    console.warn(`[Freshness] Unknown data source: ${sourceId}`);
+    logger.warn(`[Freshness] Unknown data source: ${sourceId}`);
     return false;
   }
 
@@ -186,7 +190,7 @@ export function isDataFresh(sourceId: string): boolean {
   const isFresh = daysSinceUpdate < threshold;
 
   if (!isFresh) {
-    console.log(
+    logger.info(
       `[Freshness] ${source.name} is stale (${Math.floor(daysSinceUpdate)} days old, threshold: ${threshold})`
     );
   }
@@ -249,14 +253,14 @@ export function scheduleDataRefresh(
 ): void {
   const source = DATA_SOURCES[sourceId];
   if (!source) {
-    console.warn(`[Refresh] Cannot schedule unknown source: ${sourceId}`);
+    logger.warn(`[Refresh] Cannot schedule unknown source: ${sourceId}`);
     return;
   }
 
   // Check if already queued
   const existing = refreshQueue.find((task) => task.sourceId === sourceId);
   if (existing) {
-    console.log(`[Refresh] ${source.name} already queued, updating priority`);
+    logger.info(`[Refresh] ${source.name} already queued, updating priority`);
     existing.priority = priority;
     return;
   }
@@ -268,7 +272,7 @@ export function scheduleDataRefresh(
     reason,
   });
 
-  console.log(
+  logger.info(
     `[Refresh] Scheduled ${source.name} for refresh (priority: ${priority}, reason: ${reason})`
   );
 }
@@ -301,7 +305,7 @@ export function markDataSourceUpdated(sourceId: string): void {
   source.last_checked = new Date();
   source.status = "fresh";
 
-  console.log(`[Freshness] ${source.name} marked as updated`);
+  logger.info(`[Freshness] ${source.name} marked as updated`);
 }
 
 // ============================================================================

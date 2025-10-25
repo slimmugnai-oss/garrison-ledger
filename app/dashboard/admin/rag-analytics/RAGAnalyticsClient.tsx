@@ -167,7 +167,7 @@ export default function RAGAnalyticsClient() {
                   {(data.satisfactionRate * 100).toFixed(1)}%
                 </p>
               </div>
-              <Icon name="ThumbsUp" className="h-8 w-8 text-green-600" />
+              <Icon name="TrendingUp" className="h-8 w-8 text-green-600" />
             </div>
           </div>
         </AnimatedCard>
