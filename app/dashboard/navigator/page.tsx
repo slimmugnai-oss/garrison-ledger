@@ -5,14 +5,15 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import Icon from "@/app/components/ui/Icon";
-import Badge from "@/app/components/ui/Badge";
-import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import bases from "@/lib/data/bases-seed.json";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
+import bases from "@/lib/data/bases-seed.json";
 
 export const metadata: Metadata = {
   title: "Base Navigator | Garrison Ledger",

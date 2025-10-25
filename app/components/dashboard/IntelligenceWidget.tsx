@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import AnimatedCard from '../ui/AnimatedCard';
+
 import { supabaseAdmin } from '@/lib/supabase';
+
+import AnimatedCard from '../ui/AnimatedCard';
 
 interface IntelligenceWidgetProps {
   userId: string;

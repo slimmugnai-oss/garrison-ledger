@@ -9,12 +9,13 @@
  */
 
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
+import { redirect } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
+import Header from '@/app/components/Header';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 
 export default async function FeedsManagementPage() {
   const user = await currentUser();

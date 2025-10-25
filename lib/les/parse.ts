@@ -10,6 +10,8 @@
  *   npm install pdf-parse @types/pdf-parse
  */
 
+import pdf from "pdf-parse";
+
 import type {
   LesLine,
   ParseResult,
@@ -17,10 +19,10 @@ import type {
   ParserConfig,
   LesSection,
 } from "@/app/types/les";
+
 import { canonicalizeCode, getSection } from "./codes";
 
 // PDF parser for Node.js runtime
-import pdf from "pdf-parse";
 
 /**
  * Parse LES PDF buffer into structured line items

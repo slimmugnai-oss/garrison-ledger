@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import { renderToStream } from "@react-pdf/renderer";
-import PersonalizedGuide from "@/lib/plan/pdf-generator";
+import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+
+import { errorResponse, Errors } from "@/lib/api-errors";
 import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
-import { errorResponse, Errors } from "@/lib/api-errors";
+import PersonalizedGuide from "@/lib/plan/pdf-generator";
 
 export async function POST() {
   const startTime = Date.now();

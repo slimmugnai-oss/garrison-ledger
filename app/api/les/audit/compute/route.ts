@@ -19,11 +19,12 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
 import { getUserTier, getLesAuditPolicy } from '@/lib/auth/subscription';
-import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
-import { compareDetailed } from '@/lib/les/compare';
-import { applyAuditMasking, buildVarianceWaterfall, type AuditResult } from '@/lib/les/paywall';
 import { normalizeLineCode } from '@/lib/les/codes';
+import { compareDetailed } from '@/lib/les/compare';
+import { buildExpectedSnapshotWithBases } from '@/lib/les/expected';
+import { applyAuditMasking, buildVarianceWaterfall, type AuditResult } from '@/lib/les/paywall';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';  // Need nodejs for Supabase queries

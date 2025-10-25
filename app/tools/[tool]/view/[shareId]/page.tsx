@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import Header from "@/app/components/Header";
+import { notFound } from "next/navigation";
+
 import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
 
 interface SharePageProps {

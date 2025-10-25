@@ -4,12 +4,13 @@
  * Clear value prop: 4 premium tools for military finance
  */
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
-import Icon from "./components/ui/Icon";
+
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 import AnimatedCard from "./components/ui/AnimatedCard";
+import Icon from "./components/ui/Icon";
 
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",

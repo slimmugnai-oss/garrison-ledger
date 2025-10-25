@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
 import AdminTabNavigation from './components/AdminTabNavigation';
-import OverviewTab from './tabs/OverviewTab';
-import AnalyticsTab from './tabs/AnalyticsTab';
-import UsersTab from './tabs/UsersTab';
-import ContentTab from './tabs/ContentTab';
-import SystemTab from './tabs/SystemTab';
-import SitemapTab from './tabs/SitemapTab';
 import { Alert } from './components/AlertPanel';
+import AnalyticsTab from './tabs/AnalyticsTab';
+import ContentTab from './tabs/ContentTab';
+import OverviewTab from './tabs/OverviewTab';
+import SitemapTab from './tabs/SitemapTab';
+import SystemTab from './tabs/SystemTab';
+import UsersTab from './tabs/UsersTab';
 
 interface ActivityItem {
   id: string;

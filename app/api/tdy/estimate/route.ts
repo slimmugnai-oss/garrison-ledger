@@ -7,9 +7,10 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 import { estimateTrip } from '@/lib/tdy/estimate';
 
 export const runtime = 'nodejs';

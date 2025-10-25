@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import MetricCard from '../components/MetricCard';
-import AlertPanel, { Alert } from '../components/AlertPanel';
-import Icon from '@/app/components/ui/Icon';
+
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Icon from '@/app/components/ui/Icon';
+
+import AlertPanel, { Alert } from '../components/AlertPanel';
+import MetricCard from '../components/MetricCard';
 
 interface OverviewMetrics {
   mrr: number;

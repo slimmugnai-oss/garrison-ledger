@@ -6,9 +6,10 @@
  */
 
 import { NextResponse } from 'next/server';
+
+import { errorResponse } from '@/lib/api-errors';
 import { getAllFeedStatuses } from '@/lib/dynamic/fetch';
 import { logger } from '@/lib/logger';
-import { errorResponse } from '@/lib/api-errors';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { useEffect } from 'react';
 
 /**
  * REFERRAL CAPTURE COMPONENT

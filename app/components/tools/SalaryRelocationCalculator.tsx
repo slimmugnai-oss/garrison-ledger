@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { track } from '@/lib/track';
-import Icon from '@/app/components/ui/Icon';
+
 import Explainer from '@/app/components/ai/Explainer';
+import Icon from '@/app/components/ui/Icon';
+import { track } from '@/lib/track';
 
 const CITY_DATA = [
   { value: "100.0", label: "National Average" },

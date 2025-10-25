@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
+import type { Metadata } from "next";
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
 
 export const metadata: Metadata = {
   title: "Email Leads - Admin Dashboard",

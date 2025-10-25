@@ -7,8 +7,10 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '../ui/Icon';
+
 import type { TdyVoucher } from '@/app/types/tdy';
+
+import Icon from '../ui/Icon';
 
 interface Props {
   tripId: string;

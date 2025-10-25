@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { supabaseAdmin } from "@/lib/supabase";
-import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from "next/server";
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;

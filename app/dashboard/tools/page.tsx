@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import { redirect } from 'next/navigation';
+import type { Metadata } from "next";
 import Link from 'next/link';
-import AnimatedCard from '../../components/ui/AnimatedCard';
+import { redirect } from 'next/navigation';
+
 import { generatePageMeta } from "@/lib/seo-config";
+
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
+import AnimatedCard from '../../components/ui/AnimatedCard';
 import Icon from '../../components/ui/Icon';
 
 export const metadata: Metadata = generatePageMeta({

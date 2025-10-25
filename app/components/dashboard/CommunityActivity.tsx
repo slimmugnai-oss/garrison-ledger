@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import AnimatedCard from '../ui/AnimatedCard';
 import Icon from '../ui/Icon';
 

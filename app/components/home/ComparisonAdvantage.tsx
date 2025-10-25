@@ -1,8 +1,8 @@
 'use client';
 
 import AnimatedCard from '../ui/AnimatedCard';
-import Icon from '../ui/Icon';
 import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 export default function ComparisonAdvantage() {
   return (

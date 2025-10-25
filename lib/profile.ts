@@ -1,5 +1,4 @@
-import { supabase } from './supabase';
-import { Profile } from './supabase';
+import { supabase , Profile } from './supabase';
 
 /**
  * Get user profile by Clerk user ID

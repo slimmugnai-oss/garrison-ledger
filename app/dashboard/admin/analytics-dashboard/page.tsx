@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import PageHeader from '@/app/components/ui/PageHeader';
-import Icon from '@/app/components/ui/Icon';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
+
 
 const ADMIN_USER_IDS = ['user_2qG7CqFtj5L8X2dRNJpW0kFYW8f'];
 

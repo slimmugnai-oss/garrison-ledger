@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+
 import { getAllBases } from '@/app/data/bases';
 import type { BaseData } from '@/app/data/bases';
+
 import Icon from '../ui/Icon';
 
 interface ExternalData {

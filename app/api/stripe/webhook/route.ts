@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase";
-import { logger } from "@/lib/logger";
-import Stripe from "stripe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

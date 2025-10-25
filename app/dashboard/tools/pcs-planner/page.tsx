@@ -1,9 +1,10 @@
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import Link from 'next/link';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
-import PcsFinancialPlanner from '@/app/components/tools/PcsFinancialPlanner';
-import Header from '@/app/components/Header';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import PcsFinancialPlanner from '@/app/components/tools/PcsFinancialPlanner';
 import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 

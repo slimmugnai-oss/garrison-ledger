@@ -1,7 +1,8 @@
-import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(request: Request) {
   try {

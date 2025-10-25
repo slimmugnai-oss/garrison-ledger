@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Icon from '@/app/components/ui/Icon';
+
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 import { formatMonthYear, centsToDoollars } from '@/app/types/les';
 import type { LesHistoryItem } from '@/app/types/les';
 

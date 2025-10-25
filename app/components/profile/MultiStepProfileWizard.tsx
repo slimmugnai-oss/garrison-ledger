@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Icon from '../ui/Icon';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import Icon from '../ui/Icon';
 
 export default function MultiStepProfileWizard() {
   const router = useRouter();

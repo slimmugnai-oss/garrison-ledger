@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
-import { logger } from '@/lib/logger';
+import { NextResponse } from 'next/server';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
 
 const ADMIN_USER_IDS = ['user_2qG7CqFtj5L8X2dRNJpW0kFYW8f'];
 

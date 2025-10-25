@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import Icon from './Icon';
+
 import AnimatedCard from './AnimatedCard';
+import Icon from './Icon';
 
 interface Resource {
   title: string;

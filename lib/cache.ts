@@ -5,8 +5,8 @@
  * Reused across Base Navigator, Intel Library, etc.
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Get cached value

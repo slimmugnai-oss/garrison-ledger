@@ -1,15 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
-import PageHeader from '@/app/components/ui/PageHeader';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import TestEmailModal from '@/app/components/admin/campaigns/TestEmailModal';
+import { useState } from 'react';
+
 import BulkAnnouncementModal from '@/app/components/admin/campaigns/BulkAnnouncementModal';
 import TargetedCampaignModal from '@/app/components/admin/campaigns/TargetedCampaignModal';
+import TestEmailModal from '@/app/components/admin/campaigns/TestEmailModal';
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
 
 export default function CampaignsPageClient() {
   const [showTestModal, setShowTestModal] = useState(false);

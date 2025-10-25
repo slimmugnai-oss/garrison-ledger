@@ -1,19 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import PageHeader from "@/app/components/ui/PageHeader";
-import Badge from "@/app/components/ui/Badge";
-import Icon from "@/app/components/ui/Icon";
-import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
-import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
-import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
 import { PCSValidationExplainer } from "@/app/components/pcs/PCSAIExplanation";
 import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
-import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
+import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
+import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
+import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
+import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
+import PageHeader from "@/app/components/ui/PageHeader";
 import { calculatePCSClaim } from "@/lib/pcs/calculation-engine";
-import { toast } from "sonner";
+import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
+
 
 interface Claim {
   id: string;
@@ -107,14 +109,14 @@ export default function EnhancedPCSCopilotClient({
       }
       
       if (estimates.malt.confidence < 100) {
-        toast.info(`MALT rate may be outdated. Last verified: ${estimates.malt.lastVerified}`);
+        toast.info('MALT rate may be outdated. Please verify with finance office.');
       }
       
       if (estimates.perDiem.confidence < 100) {
         toast.info('Per diem rate may not be location-specific. Verify with finance office.');
       }
       
-      if (estimates.confidence < 80) {
+      if (estimates.confidence.overall < 80) {
         toast.warning('Some calculations used fallback rates. Please verify with finance office.');
       } else {
         toast.success('Calculations completed successfully!');

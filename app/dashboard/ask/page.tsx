@@ -6,12 +6,13 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
-import Icon from "@/app/components/ui/Icon";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
+import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import Icon from "@/app/components/ui/Icon";
 
 export const metadata: Metadata = {
   title: "Ask Our Military Expert - 24/7 Military Life Advisor | Garrison Ledger",

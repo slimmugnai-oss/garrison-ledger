@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+
 import { SITE_URL } from "@/lib/seo-config";
 
 /**

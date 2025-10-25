@@ -1,8 +1,9 @@
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * GET - Fetch user's rating for content

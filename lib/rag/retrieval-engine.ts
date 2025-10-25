@@ -14,6 +14,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+
 import { generateEmbedding } from "../embeddings/generate-embeddings";
 
 const supabase = createClient(
@@ -69,7 +70,7 @@ export async function vectorSearch(
     const matchCount = limit * 2; // Get more for potential reranking
 
     // Call Supabase RPC function for vector search
-    let query = supabase.rpc("search_knowledge_filtered", {
+    const query = supabase.rpc("search_knowledge_filtered", {
       query_embedding: JSON.stringify(queryEmbedding),
       content_types: filters?.content_types || null,
       metadata_filter: buildMetadataFilter(filters),

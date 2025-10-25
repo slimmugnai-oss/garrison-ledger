@@ -2,8 +2,9 @@
 
 import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+
 import Icon from "./ui/Icon";
 
 export default function Header() {

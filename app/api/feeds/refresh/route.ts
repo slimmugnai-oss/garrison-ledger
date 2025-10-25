@@ -7,9 +7,10 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+import { errorResponse, Errors } from '@/lib/api-errors';
 import { refreshSourceData } from '@/lib/dynamic/fetch';
 import { logger } from '@/lib/logger';
-import { errorResponse, Errors } from '@/lib/api-errors';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

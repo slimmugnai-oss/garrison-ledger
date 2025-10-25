@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
-import { Inter, Lora } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import type { Metadata } from "next";
+import { Inter, Lora } from "next/font/google";
+
 import { DEFAULT_META, softwareAppSchema, organizationSchema } from "@/lib/seo-config";
+
+import PageViewTracker from "./components/analytics/PageViewTracker";
 import ReferralCapture from "./components/auth/ReferralCapture";
 import KeyboardShortcuts from "./components/ui/KeyboardShortcuts";
-import PageViewTracker from "./components/analytics/PageViewTracker";
 import "./globals.css";
 
 const inter = Inter({

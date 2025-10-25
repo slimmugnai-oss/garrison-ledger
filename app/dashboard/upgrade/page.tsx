@@ -5,16 +5,20 @@
  * Clean, sophisticated, military-professional aesthetic
  */
 
-import type { Metadata } from "next";
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import BillingPortalButton from "../../components/BillingPortalButton";
-import UpgradePageClient from "./UpgradePageClient";
-import Icon from "../../components/ui/Icon";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
 import { ssot } from "@/lib/ssot";
+
+import BillingPortalButton from "../../components/BillingPortalButton";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
+import Icon from "../../components/ui/Icon";
+
+import UpgradePageClient from "./UpgradePageClient";
+
 
 export const metadata: Metadata = {
   title: "Upgrade to Premium - Garrison Ledger",

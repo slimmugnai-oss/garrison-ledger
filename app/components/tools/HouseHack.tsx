@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+
+import Explainer from '@/app/components/ai/Explainer';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
+import FootNote from '@/app/components/layout/FootNote';
+import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
+import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
+import Section from '@/app/components/ui/Section';
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { track } from '@/lib/track';
-import Icon from '@/app/components/ui/Icon';
-import FootNote from '@/app/components/layout/FootNote';
-import Explainer from '@/app/components/ai/Explainer';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import PageHeader from '@/app/components/ui/PageHeader';
-import Section from '@/app/components/ui/Section';
-import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 

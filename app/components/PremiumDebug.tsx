@@ -1,7 +1,8 @@
 'use client';
 
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 import { useState } from 'react';
+
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 export default function PremiumDebug() {
   const { isPremium, loading } = usePremiumStatus();

@@ -8,8 +8,9 @@
  * - JTR compliance
  */
 
-import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";
 import { supabaseAdmin } from "@/lib/supabase";
+
+import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";
 
 export interface CalculationResult {
   dla: {
@@ -396,9 +397,9 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
         days: formData.per_diem_days,
         rate: 166,
         amount: formData.per_diem_days * 166,
+        locality: 'Standard CONUS rate - verify location',
         effectiveDate,
         citation: 'DTMO Per Diem',
-        source: 'Standard CONUS rate - verify location',
         confidence: 50
       };
     }

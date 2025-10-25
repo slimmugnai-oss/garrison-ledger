@@ -1,9 +1,10 @@
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import Link from 'next/link';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
-import CareerOpportunityAnalyzer from '@/app/components/tools/CareerOpportunityAnalyzer';
-import Header from '@/app/components/Header';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import CareerOpportunityAnalyzer from '@/app/components/tools/CareerOpportunityAnalyzer';
 import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
 

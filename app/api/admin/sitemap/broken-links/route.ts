@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { load } from "cheerio";
+import { NextResponse } from "next/server";
 
 const ADMIN_USER_IDS = ["user_343xVqjkdILtBkaYAJfE5H8Wq0q"];
 

@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import { track } from '@/lib/track';
-import FootNote from '@/app/components/layout/FootNote';
-import Explainer from '@/app/components/ai/Explainer';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+
+import Explainer from '@/app/components/ai/Explainer';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
+import FootNote from '@/app/components/layout/FootNote';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
 import Section from '@/app/components/ui/Section';
 import { tspHistoricalReturns, tspAverageReturns, getContributionRecommendation, getMatchingLifecycleFund } from '@/app/data/tsp-historical-returns';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 const fmt = (v: number) => v.toLocaleString(undefined, { 
   style: 'currency', 

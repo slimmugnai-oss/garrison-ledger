@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from '@/lib/supabase';
+
 import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = "nodejs";
 export const revalidate = 300; // Cache for 5 minutes

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({

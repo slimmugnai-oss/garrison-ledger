@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";

@@ -7,8 +7,8 @@
 
 'use client';
 
-import Icon from '../ui/Icon';
 import AnimatedCard from '../ui/AnimatedCard';
+import Icon from '../ui/Icon';
 
 interface ProfileIncompletePromptProps {
   missingFields: string[];

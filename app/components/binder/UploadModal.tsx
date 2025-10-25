@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+
 import Icon from '../ui/Icon';
 
 interface Folder {

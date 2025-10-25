@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Header from '@/app/components/Header';
 import { createClient } from '@supabase/supabase-js';
+import { useState, useEffect } from 'react';
+
+import Header from '@/app/components/Header';
 
 type FeedItem = {
   id: string;

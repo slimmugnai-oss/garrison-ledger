@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PaymentButton from '../../components/PaymentButton';
-import BillingPortalButton from '../../components/BillingPortalButton';
-import Icon from '../../components/ui/Icon';
+import type { Metadata } from "next";
+import { redirect } from 'next/navigation';
+
 import { generatePageMeta } from "@/lib/seo-config";
+
+import BillingPortalButton from '../../components/BillingPortalButton';
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
+import PaymentButton from '../../components/PaymentButton';
+import Icon from '../../components/ui/Icon';
+
 
 export const metadata: Metadata = generatePageMeta({
   title: "Upgrade to Premium - Unlock Full Military Life Planning",

@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { track } from '@/lib/track';
+
+import Explainer from '@/app/components/ai/Explainer';
+import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
 import CitySearchInput from '@/app/components/ui/CitySearchInput';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
-import Section from '@/app/components/ui/Section';
 import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import Explainer from '@/app/components/ai/Explainer';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import Section from '@/app/components/ui/Section';
 import { getSkillsGap, remoteWorkPremiums } from '@/app/data/mos-translator';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 interface City {
   city: string;

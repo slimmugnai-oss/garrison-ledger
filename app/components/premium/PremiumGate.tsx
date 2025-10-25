@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
 
 type Props = {

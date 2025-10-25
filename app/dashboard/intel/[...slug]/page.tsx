@@ -6,17 +6,20 @@
  */
 
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
+import { bundleMDX } from 'mdx-bundler';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
-import { getIntelCardBySlug, getAllIntelCardSlugs } from '@/lib/content/mdx-loader';
+import Header from '@/app/components/Header';
 import Badge from '@/app/components/ui/Badge';
+import { getIntelCardBySlug, getAllIntelCardSlugs } from '@/lib/content/mdx-loader';
+
 import IntelCardContent from './IntelCardContent';
 import ShareButton from './ShareButton';
-import type { Metadata } from 'next';
-import { bundleMDX } from 'mdx-bundler';
+
 
 export async function generateStaticParams() {
   const slugs = getAllIntelCardSlugs();

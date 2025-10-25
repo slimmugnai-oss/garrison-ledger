@@ -6,9 +6,10 @@
 
 'use client';
 
-import Icon from '../ui/Icon';
-import Badge from '../ui/Badge';
 import type { TdyFlag } from '@/app/types/tdy';
+
+import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 interface Props {
   flags: TdyFlag[];

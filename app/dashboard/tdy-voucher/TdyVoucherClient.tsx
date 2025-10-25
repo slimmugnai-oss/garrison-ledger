@@ -7,10 +7,13 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '@/app/components/ui/Icon';
+
 import Badge from '@/app/components/ui/Badge';
-import TdyWizard from './TdyWizard';
+import Icon from '@/app/components/ui/Icon';
 import type { TdyTrip } from '@/app/types/tdy';
+
+import TdyWizard from './TdyWizard';
+
 
 interface Props {
   isPremium: boolean;

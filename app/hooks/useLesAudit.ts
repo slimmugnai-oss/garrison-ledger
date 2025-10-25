@@ -19,6 +19,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+
 import type { MaskedAuditResult } from "@/lib/les/paywall";
 
 export interface AuditInputs {

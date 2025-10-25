@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Icon from "@/app/components/ui/Icon";
 import Link from "next/link";
+import { useState } from "react";
+
+import Icon from "@/app/components/ui/Icon";
 import type { PayFlag, FlagSeverity } from "@/app/types/les";
 import { centsToDoollars } from "@/app/types/les";
 

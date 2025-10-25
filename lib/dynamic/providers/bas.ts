@@ -7,6 +7,7 @@
  */
 
 import { ssot } from '@/lib/ssot';
+
 import type { ResolvedData, ProviderResult } from '../types';
 
 export interface BASParams {

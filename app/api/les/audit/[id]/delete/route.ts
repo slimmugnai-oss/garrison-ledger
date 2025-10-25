@@ -8,8 +8,8 @@
  */
 
 import { currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import Icon from '../ui/Icon';
 
 export default function ExitIntentPopup() {

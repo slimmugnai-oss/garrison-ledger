@@ -5,13 +5,13 @@
  * Handles routing, validation, caching, and error handling
  */
 
-import type { DataRefParams, ProviderResult, SourceKey } from './types';
 import { getBAHRate, type BAHParams } from './providers/bah';
 import { getBASRate, type BASParams } from './providers/bas';
 import { getCOLARate, type COLAParams } from './providers/cola';
 import { getIRSLimit, type IRSParams } from './providers/irs';
-import { getTRICARECost, type TRICAREParams } from './providers/tricare';
 import { getMileageRate, type MileageParams } from './providers/mileage';
+import { getTRICARECost, type TRICAREParams } from './providers/tricare';
+import type { DataRefParams, ProviderResult, SourceKey } from './types';
 
 /**
  * Resolve a DataRef to actual data

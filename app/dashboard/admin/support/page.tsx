@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
+import type { Metadata } from "next";
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import TicketActions from '@/app/components/admin/TicketActions';
 import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
-import TicketActions from '@/app/components/admin/TicketActions';
 
 export const metadata: Metadata = {
   title: "Support Tickets - Admin Dashboard",

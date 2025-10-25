@@ -7,9 +7,11 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '../ui/Icon';
-import Badge from '../ui/Badge';
+
 import type { DocType } from '@/app/types/tdy';
+
+import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 interface Props {
   tripId: string;

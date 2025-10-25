@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Link from 'next/link';
+
+import { generatePageMeta } from "@/lib/seo-config";
+
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 import AnimatedCard from '../components/ui/AnimatedCard';
 import Icon from '../components/ui/Icon';
-import { generatePageMeta } from "@/lib/seo-config";
 import RelatedResources from '../components/ui/RelatedResources';
 
 export const metadata: Metadata = generatePageMeta({

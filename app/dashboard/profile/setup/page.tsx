@@ -1,19 +1,19 @@
 "use client";
 
-import { Suspense } from "react";
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import Icon from "@/app/components/ui/Icon";
-import BaseAutocomplete from "@/app/components/ui/BaseAutocomplete";
-import ProfileLoadingSkeleton from "@/app/components/profile/ProfileLoadingSkeleton";
-import ProfileSection from "@/app/components/profile/ProfileSection";
+import { Suspense , useEffect, useMemo, useState } from "react";
+
 import ProfileFormField, { getInputClass } from "@/app/components/profile/ProfileFormField";
+import ProfileLoadingSkeleton from "@/app/components/profile/ProfileLoadingSkeleton";
 import ProfileProgress from "@/app/components/profile/ProfileProgress";
-import militaryRanks from "@/lib/data/military-ranks.json";
-import militaryComponents from "@/lib/data/military-components.json";
-import { getRankPaygrade, getRankCategory } from "@/lib/data/rank-paygrade-map";
+import ProfileSection from "@/app/components/profile/ProfileSection";
+import BaseAutocomplete from "@/app/components/ui/BaseAutocomplete";
+import Icon from "@/app/components/ui/Icon";
 import { getBaseMHA, getMHALocationType } from "@/lib/data/base-mha-helpers";
+import militaryComponents from "@/lib/data/military-components.json";
+import militaryRanks from "@/lib/data/military-ranks.json";
+import { getRankPaygrade, getRankCategory } from "@/lib/data/rank-paygrade-map";
 
 type ProfilePayload = {
   // Basic info

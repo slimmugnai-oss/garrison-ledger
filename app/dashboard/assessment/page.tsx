@@ -1,7 +1,8 @@
-import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+
 import AssessmentClient from './AssessmentClient';
 
 export const metadata: Metadata = {

@@ -14,9 +14,10 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Icon from "@/app/components/ui/Icon";
-import Badge from "@/app/components/ui/Badge";
+
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 import { useLesAudit } from "@/app/hooks/useLesAudit";
 import type { AuditInputs } from "@/app/hooks/useLesAudit";
 import type { Tier } from "@/lib/auth/subscription";

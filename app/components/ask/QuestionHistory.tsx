@@ -7,9 +7,10 @@
  */
 
 import { useState, useEffect } from "react";
-import Icon from "@/app/components/ui/Icon";
-import Badge from "@/app/components/ui/Badge";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 
 interface HistoricalQuestion {
   id: string;

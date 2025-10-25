@@ -5,6 +5,7 @@
  */
 
 import Link from 'next/link';
+
 import IntelCardEmbed from '../mdx/IntelCardEmbed';
 
 interface IntelCardSidebarProps {

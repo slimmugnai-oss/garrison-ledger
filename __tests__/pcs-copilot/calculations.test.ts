@@ -37,8 +37,8 @@ describe('PCS Calculations', () => {
     const mockDLARate = 3086;
     
     // Test the calculation logic
-    const rank = 'E5';
-    const hasDependents = true;
+    const _rank = 'E5';
+    const _hasDependents = true;
     const expectedAmount = mockDLARate;
     
     expect(expectedAmount).toBe(3086);
@@ -79,8 +79,8 @@ describe('PCS Calculations', () => {
   test('PPM calculation', () => {
     // Test PPM calculation logic
     const weight = 8000; // pounds
-    const distance = 1000; // miles
-    const rank = 'E5';
+    const _distance = 1000; // miles
+    const _rank = 'E5';
     
     // Mock PPM rate calculation
     const ppmRate = 0.95; // 95% of government cost
@@ -194,7 +194,7 @@ describe('API Endpoints', () => {
 
   test('AI explanation endpoint', async () => {
     // Mock AI explanation
-    const validationFlag = {
+    const _validationFlag = {
       field: 'departure_date',
       severity: 'warning',
       message: 'Date may be too early',
@@ -211,7 +211,7 @@ describe('API Endpoints', () => {
 describe('Error Handling', () => {
   test('Graceful degradation on API failure', () => {
     // Test fallback behavior
-    const mockError = new Error('API unavailable');
+    const _mockError = new Error('API unavailable');
     
     // Simulate fallback calculation
     const fallbackRate = 0.18;
@@ -223,7 +223,7 @@ describe('Error Handling', () => {
 
   test('User feedback for errors', () => {
     // Test error message generation
-    const errorType = 'DLA_UNAVAILABLE';
+    const _errorType = 'DLA_UNAVAILABLE';
     const userMessage = 'DLA rate unavailable. Using estimate. Please verify with finance office.';
     
     expect(userMessage).toContain('unavailable');

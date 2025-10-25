@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Icon from '../../components/ui/Icon';
+import { useState, useEffect } from 'react';
+
 import AnimatedCard from '../../components/ui/AnimatedCard';
+import Icon from '../../components/ui/Icon';
 import { badgeColors } from '../../data/bases';
 import { removeFromComparison } from '../../lib/base-analytics';
 

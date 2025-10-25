@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/app/components/Header';
+import { useState, useEffect, Suspense } from 'react';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 
 interface ContentBlock {

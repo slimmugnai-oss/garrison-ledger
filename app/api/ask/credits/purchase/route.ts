@@ -5,9 +5,10 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+
 import { ssot } from "@/lib/ssot";
 
 const supabase = createClient(

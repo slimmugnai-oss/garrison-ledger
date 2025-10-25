@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
+import { useState, useCallback } from 'react';
+
+import Icon from '@/app/components/ui/Icon';
+import type { LesUploadResponse, LesAuditResponse } from '@/app/types/les';
+import { ssot } from '@/lib/ssot';
+
 import LesFlags from './LesFlags';
 import LesSummary from './LesSummary';
-import { ssot } from '@/lib/ssot';
-import type { LesUploadResponse, LesAuditResponse } from '@/app/types/les';
+
 
 interface Props {
   tier: string;

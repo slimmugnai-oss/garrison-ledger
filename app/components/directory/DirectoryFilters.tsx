@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 
 interface DirectoryFiltersProps {

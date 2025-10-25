@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
-import MetricCard from "../components/MetricCard";
+import Icon from "@/app/components/ui/Icon";
+
 import DataTable, { Column } from "../components/DataTable";
+import MetricCard from "../components/MetricCard";
 
 interface SitePage {
   id: string;

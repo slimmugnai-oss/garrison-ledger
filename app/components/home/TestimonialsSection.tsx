@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
 import AnimatedCard from '../ui/AnimatedCard';
-import Icon from '../ui/Icon';
 import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 interface Testimonial {
   id: string;

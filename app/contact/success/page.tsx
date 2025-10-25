@@ -1,11 +1,12 @@
 'use client';
 
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import Icon from '@/app/components/ui/Icon';
 
 // Note: metadata cannot be exported from client components
 // This page needs to be a client component due to the onClick handler for copying ticket ID

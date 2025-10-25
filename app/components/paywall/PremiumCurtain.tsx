@@ -18,8 +18,9 @@
 
 "use client";
 
-import Icon from "@/app/components/ui/Icon";
 import Link from "next/link";
+
+import Icon from "@/app/components/ui/Icon";
 
 export interface PremiumCurtainProps {
   children: React.ReactNode;

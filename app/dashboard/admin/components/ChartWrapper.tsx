@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 

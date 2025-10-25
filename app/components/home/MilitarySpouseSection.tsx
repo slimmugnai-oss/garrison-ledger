@@ -1,9 +1,10 @@
 'use client';
 
 import { SignUpButton } from '@clerk/nextjs';
+
 import AnimatedCard from '../ui/AnimatedCard';
-import Icon from '../ui/Icon';
 import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 export default function MilitarySpouseSection() {
   return (

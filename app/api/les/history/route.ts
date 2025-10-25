@@ -16,10 +16,11 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+
 import type { LesHistoryItem } from '@/app/types/les';
-import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';

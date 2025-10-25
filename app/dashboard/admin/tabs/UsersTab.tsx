@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import DataTable, { Column } from '../components/DataTable';
-import UserDetailModal from '../components/UserDetailModal';
+
 import Badge from '@/app/components/ui/Badge';
+
+import DataTable, { Column } from '../components/DataTable';
 import MetricCard from '../components/MetricCard';
+import UserDetailModal from '../components/UserDetailModal';
 
 interface User {
   user_id: string;

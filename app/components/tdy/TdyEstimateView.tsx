@@ -6,8 +6,9 @@
 
 'use client';
 
-import Icon from '../ui/Icon';
 import type { EstimateTotals } from '@/app/types/tdy';
+
+import Icon from '../ui/Icon';
 
 interface Props {
   totals: EstimateTotals;

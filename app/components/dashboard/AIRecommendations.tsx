@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
 import Icon from '@/app/components/ui/Icon';
 
 interface Recommendation {

@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
+import type { Metadata } from "next";
 import { redirect } from 'next/navigation';
+
 import CampaignsPageClient from './CampaignsPageClient';
 
 export const metadata: Metadata = {

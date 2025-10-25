@@ -1,6 +1,7 @@
 'use client';
 
 import { FC } from 'react';
+
 import { iconRegistry, IconName, type LucideIcon } from './icon-registry';
 
 interface IconProps {

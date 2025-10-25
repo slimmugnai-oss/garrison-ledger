@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Icon from '../ui/Icon';
+
 import { basesData } from '@/app/data/bases';
+
+import Icon from '../ui/Icon';
 
 export default function BaseComparisonPanel() {
   const [comparisonList, setComparisonList] = useState<string[]>([]);

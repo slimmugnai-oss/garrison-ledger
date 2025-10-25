@@ -7,13 +7,14 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { extractTextFromPdf, isImageFile, UnsupportedFormatError } from '@/lib/tdy/ocr';
-import { normalizeReceiptText } from '@/lib/tdy/normalize';
-import { getMileageRateCents } from '@/lib/tdy/util';
+
 import type { DocType } from '@/app/types/tdy';
-import { logger } from '@/lib/logger';
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
+import { normalizeReceiptText } from '@/lib/tdy/normalize';
+import { extractTextFromPdf, isImageFile, UnsupportedFormatError } from '@/lib/tdy/ocr';
+import { getMileageRateCents } from '@/lib/tdy/util';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

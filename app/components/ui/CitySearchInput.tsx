@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+
 import cityData from '@/lib/data/cost-of-living-cities.json';
 
 interface City {

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+
 import Icon from '../ui/Icon';
 
 interface BinderFile {

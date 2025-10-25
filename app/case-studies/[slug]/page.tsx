@@ -1,11 +1,12 @@
-import { notFound } from 'next/navigation';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
-import Link from 'next/link';
 import type { Metadata } from "next";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 import type { IconName } from '@/app/components/ui/icon-registry';
 
 interface CaseStudyData {

@@ -1,17 +1,18 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
-import StorageBar from '@/app/components/binder/StorageBar';
-import FolderSidebar from '@/app/components/binder/FolderSidebar';
-import FileCard from '@/app/components/binder/FileCard';
-import UploadModal from '@/app/components/binder/UploadModal';
-import FilePreview from '@/app/components/binder/FilePreview';
-import BinderLoadingSkeleton from '@/app/components/binder/BinderLoadingSkeleton';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+
 import BinderEmptyState from '@/app/components/binder/BinderEmptyState';
+import BinderLoadingSkeleton from '@/app/components/binder/BinderLoadingSkeleton';
+import FileCard from '@/app/components/binder/FileCard';
+import FilePreview from '@/app/components/binder/FilePreview';
+import FolderSidebar from '@/app/components/binder/FolderSidebar';
+import StorageBar from '@/app/components/binder/StorageBar';
+import UploadModal from '@/app/components/binder/UploadModal';
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import Icon from '@/app/components/ui/Icon';
 
 interface BinderFile {
   id: string;

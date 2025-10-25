@@ -7,11 +7,12 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import Icon from "@/app/components/ui/Icon";
-import Badge from "@/app/components/ui/Badge";
+import { useState, useEffect } from "react";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 import type {
   BaseSeed,
   NeighborhoodCard,

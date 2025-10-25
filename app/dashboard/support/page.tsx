@@ -1,11 +1,12 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import ContactForm from '@/app/components/contact/ContactForm';
-import PageHeader from '@/app/components/ui/PageHeader';
-import Icon from '@/app/components/ui/Icon';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import ContactForm from '@/app/components/contact/ContactForm';
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
 
 export default async function DashboardSupportPage() {
   const { userId } = await auth();

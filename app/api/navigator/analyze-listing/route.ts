@@ -8,15 +8,16 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+
+import type { AnalyzeListingRequest, AnalyzeListingResponse } from '@/app/types/navigator';
+import { errorResponse, Errors } from '@/lib/api-errors';
 import bases from '@/lib/data/bases-seed.json';
+import { logger } from '@/lib/logger';
+import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
 import { analyzeListingUrl } from '@/lib/navigator/housing';
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
-import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
 import { rentVsBahScore100, schoolsScore100, commuteScore100 } from '@/lib/navigator/score';
-import type { AnalyzeListingRequest, AnalyzeListingResponse } from '@/app/types/navigator';
-import { logger } from '@/lib/logger';
-import { errorResponse, Errors } from '@/lib/api-errors';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

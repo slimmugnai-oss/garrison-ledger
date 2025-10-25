@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Icon from '../ui/Icon';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
 import type { BaseData } from '@/app/data/bases';
+
+import Icon from '../ui/Icon';
 
 interface ExternalData {
   schools?: {

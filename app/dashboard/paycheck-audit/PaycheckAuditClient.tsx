@@ -7,15 +7,16 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import Icon from '@/app/components/ui/Icon';
-import Badge from '@/app/components/ui/Badge';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import IntelCardLink from '@/app/components/les/IntelCardLink';
+import { useState } from 'react';
+
 import AuditProvenancePopover from '@/app/components/les/AuditProvenancePopover';
 import ExportAuditPDF from '@/app/components/les/ExportAuditPDF';
+import IntelCardLink from '@/app/components/les/IntelCardLink';
 import LesManualEntryTabbed from '@/app/components/les/LesManualEntryTabbed';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 import type { LesAuditResponse, PayFlag } from '@/app/types/les';
 
 interface Props {

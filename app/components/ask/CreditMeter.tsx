@@ -7,8 +7,9 @@
  */
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import Icon from "@/app/components/ui/Icon";
+
 import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 import { ssot } from "@/lib/ssot";
 
 interface CreditData {

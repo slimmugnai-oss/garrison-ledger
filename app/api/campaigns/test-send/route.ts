@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from "next/server";
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { EMAIL_CONFIG } from '@/lib/email-config';
 import { 
   renderOnboardingWelcome, 
   renderOnboardingFeatures,
@@ -10,7 +11,7 @@ import {
   renderPCSChecklist,
   getEmailSubject 
 } from '@/lib/email-templates';
-import { EMAIL_CONFIG } from '@/lib/email-config';
+import { logger } from '@/lib/logger';
 
 export const runtime = "nodejs";
 

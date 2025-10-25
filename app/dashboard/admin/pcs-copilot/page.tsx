@@ -1,10 +1,11 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { supabaseAdmin } from "@/lib/supabase";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import PageHeader from "@/app/components/ui/PageHeader";
+
 import PCSCopilotMetrics from "@/app/components/admin/PCSCopilotMetrics";
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import PageHeader from "@/app/components/ui/PageHeader";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export default async function AdminPCSCopilotPage() {
   const user = await currentUser();

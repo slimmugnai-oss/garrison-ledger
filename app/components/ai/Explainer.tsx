@@ -1,6 +1,6 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRef, useState, useEffect } from "react";
 
 export default function Explainer({ payload }: { payload: Record<string, unknown> }) {
   const [text, setText] = useState<string>("");

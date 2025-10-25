@@ -6,14 +6,18 @@
  */
 
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
-import BaseNavigatorClient from './BaseNavigatorClient';
-import bases from '@/lib/data/bases-seed.json';
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import bases from '@/lib/data/bases-seed.json';
+
+import BaseNavigatorClient from './BaseNavigatorClient';
+
+
 
 export async function generateStaticParams() {
   return bases.map(base => ({

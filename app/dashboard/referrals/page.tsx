@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
+import type { Metadata } from "next";
 import { redirect } from 'next/navigation';
-import { supabaseAdmin } from '@/lib/supabase';
+
+import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import ReferralDashboard from '@/app/components/referrals/ReferralDashboard';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
-import ReferralDashboard from '@/app/components/referrals/ReferralDashboard';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Referrals - Help a Battle Buddy Save Money",

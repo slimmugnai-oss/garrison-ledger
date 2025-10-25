@@ -1,10 +1,11 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import Header from '@/app/components/Header';
+
 import Footer from '@/app/components/Footer';
-import { supabaseAdmin } from '@/lib/supabase';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
+import { supabaseAdmin } from '@/lib/supabase';
 
 const ADMIN_USER_IDS = ['user_343xVqjkdILtBkaYAJfE5H8Wq0q'];
 

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getComparisonList, removeFromComparison, clearComparison } from '@/app/lib/base-analytics';
+
 import { badgeColors } from '@/app/data/bases';
+import { getComparisonList, removeFromComparison, clearComparison } from '@/app/lib/base-analytics';
 
 export default function ComparisonBar() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

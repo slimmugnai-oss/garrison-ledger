@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+
 import Header from "@/app/components/Header";
 
 export const dynamic = "force-dynamic";

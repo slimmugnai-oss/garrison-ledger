@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '@/app/components/Header';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 
 export interface DataSourceStatus {
   name: string;

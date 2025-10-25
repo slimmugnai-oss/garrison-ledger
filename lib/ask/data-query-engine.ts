@@ -6,6 +6,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+
 import baseToMHAMap from "@/lib/data/base-mha-map.json";
 
 const supabase = createClient(

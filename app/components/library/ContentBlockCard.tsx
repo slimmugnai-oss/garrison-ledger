@@ -1,6 +1,7 @@
 'use client';
 
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+
 import BookmarkButton from './BookmarkButton';
 import RatingButton from './RatingButton';
 import ShareButton from './ShareButton';

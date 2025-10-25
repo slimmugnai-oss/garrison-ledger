@@ -5,8 +5,9 @@
  * for military service members. Thorough testing is essential.
  */
 
-import { compareLesToExpected } from '../compare';
 import type { LesLine, ExpectedSnapshot } from '@/app/types/les';
+
+import { compareLesToExpected } from '../compare';
 
 describe('LES Comparison Logic', () => {
   describe('Basic Functionality', () => {

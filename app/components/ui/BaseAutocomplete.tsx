@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+
 import militaryBasesData from '@/lib/data/military-bases.json';
 
 interface MilitaryBase {

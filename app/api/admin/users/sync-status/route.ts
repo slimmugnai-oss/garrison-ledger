@@ -1,6 +1,7 @@
-import { supabaseAdmin } from '@/lib/supabase';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Admin endpoint to check Clerk-Supabase sync status

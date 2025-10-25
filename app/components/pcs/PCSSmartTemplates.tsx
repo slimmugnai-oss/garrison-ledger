@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import Icon from "@/app/components/ui/Icon";
 
 interface SmartQuestionTemplate {

@@ -6,15 +6,16 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import Header from "@/app/components/Header";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
 import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
 import { LesAuditAlwaysOn } from "@/app/components/les/LesAuditAlwaysOn";
 import ProfileIncompletePrompt from "@/app/components/les/ProfileIncompletePrompt";
-import { getUserTier } from "@/lib/auth/subscription";
 import Icon from "@/app/components/ui/Icon";
-import type { Metadata } from "next";
+import { getUserTier } from "@/lib/auth/subscription";
 
 export const metadata: Metadata = {
   title: "LES & Paycheck Auditor | Garrison Ledger",

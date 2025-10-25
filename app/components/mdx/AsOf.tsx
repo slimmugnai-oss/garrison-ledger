@@ -5,8 +5,9 @@
  * Server component - displays data freshness
  */
 
-import type { SourceKey } from '@/lib/dynamic/types';
 import { getProvenance } from '@/lib/dynamic/registry';
+import type { SourceKey } from '@/lib/dynamic/types';
+
 import Icon from '../ui/Icon';
 
 interface AsOfProps {

@@ -7,19 +7,20 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+
+import type { NavigatorRequest, NavigatorResponse, NeighborhoodCard, KidsGrade } from '@/app/types/navigator';
 import { errorResponse, Errors } from '@/lib/api-errors';
 import bases from '@/lib/data/bases-seed.json';
-import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
-import { fetchMedianRent, fetchSampleListings } from '@/lib/navigator/housing';
-import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
-import { weatherComfortIndex } from '@/lib/navigator/weather';
-import { fetchCrimeData } from '@/lib/navigator/crime';
+import { logger } from '@/lib/logger';
 import { fetchAmenitiesData } from '@/lib/navigator/amenities';
+import { fetchCrimeData } from '@/lib/navigator/crime';
+import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
+import { fetchMedianRent, fetchSampleListings } from '@/lib/navigator/housing';
 import { fetchMilitaryAmenitiesData } from '@/lib/navigator/military';
+import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
 import { familyFitScore100 } from '@/lib/navigator/score';
-import type { NavigatorRequest, NavigatorResponse, NeighborhoodCard, KidsGrade } from '@/app/types/navigator';
+import { weatherComfortIndex } from '@/lib/navigator/weather';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

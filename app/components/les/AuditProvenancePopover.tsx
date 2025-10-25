@@ -8,8 +8,10 @@
 'use client';
 
 import { useState } from 'react';
-import Icon from '../ui/Icon';
+
 import { ssot } from '@/lib/ssot';
+
+import Icon from '../ui/Icon';
 
 interface AuditProvenancePopoverProps {
   snapshot: {

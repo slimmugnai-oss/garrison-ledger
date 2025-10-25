@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import Icon from '@/app/components/ui/Icon';
+
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 
 interface TabConfig {
   id: string;

@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+
 import Icon from '../ui/Icon';
+
 import BookmarkButton from './BookmarkButton';
-import ShareButton from './ShareButton';
 import RatingButton from './RatingButton';
+import ShareButton from './ShareButton';
 
 interface ContentBlock {
   id: string;

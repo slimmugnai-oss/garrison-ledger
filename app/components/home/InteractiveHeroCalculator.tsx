@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { SignUpButton } from '@clerk/nextjs';
+import { useState } from 'react';
+
 import Icon from '../ui/Icon';
 
 export default function InteractiveHeroCalculator() {

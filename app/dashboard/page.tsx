@@ -5,18 +5,20 @@
  * Removes all assessment/plan clutter
  */
 
-import type { Metadata } from "next";
 import { currentUser } from "@clerk/nextjs/server";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
-import AnimatedCard from "../components/ui/AnimatedCard";
-import Icon from "../components/ui/Icon";
-import Badge from "../components/ui/Badge";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
 import { ensureUserExists } from "@/lib/ensure-user-exists";
+
 import ProfileSummaryWidget from "../components/dashboard/ProfileSummaryWidget";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import AnimatedCard from "../components/ui/AnimatedCard";
+import Badge from "../components/ui/Badge";
+import Icon from "../components/ui/Icon";
 
 export const metadata: Metadata = {
   title: "Dashboard - Garrison Ledger",

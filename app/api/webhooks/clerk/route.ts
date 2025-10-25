@@ -1,8 +1,9 @@
+import { WebhookEvent } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { Webhook } from "svix";
-import { WebhookEvent } from "@clerk/nextjs/server";
-import { supabaseAdmin } from "@/lib/supabase";
+
 import { logger } from "@/lib/logger";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   // Handle CORS preflight requests

@@ -9,8 +9,8 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 
 // Admin user IDs
 const ADMIN_USER_IDS = [

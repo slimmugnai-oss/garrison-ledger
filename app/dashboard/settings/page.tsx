@@ -1,13 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import PageHeader from "@/app/components/ui/PageHeader";
-import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import BillingPortalButton from "@/app/components/BillingPortalButton";
 import { createClient } from "@supabase/supabase-js";
-import { calculateProfileCompletion } from "@/lib/profile-recommendations";
+import { redirect } from "next/navigation";
+
+import BillingPortalButton from "@/app/components/BillingPortalButton";
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Icon from "@/app/components/ui/Icon";
+import PageHeader from "@/app/components/ui/PageHeader";
+import { calculateProfileCompletion } from "@/lib/profile-recommendations";
 
 export default async function SettingsPage() {
   const user = await currentUser();

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
 import AnimatedCard from '../ui/AnimatedCard';
-import Icon from '../ui/Icon';
 import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 interface SpouseData {
   isConnected: boolean;

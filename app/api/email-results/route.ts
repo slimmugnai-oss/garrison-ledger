@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from 'resend';
-import { logger } from "@/lib/logger";
+
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { logger } from "@/lib/logger";
 
 // Initialize Resend only if API key is available
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;

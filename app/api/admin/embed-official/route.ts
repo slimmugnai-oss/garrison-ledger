@@ -16,9 +16,9 @@
  * Part of: Ask Military Expert RAG System
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const supabase = createClient(

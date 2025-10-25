@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { track } from '@/lib/track';
-import Icon from '@/app/components/ui/Icon';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+
 import Explainer from '@/app/components/ai/Explainer';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
 import ComparisonMode from '@/app/components/calculators/ComparisonMode';
+import ExportButtons from '@/app/components/calculators/ExportButtons';
+import Icon from '@/app/components/ui/Icon';
 import { pcsTimingAdvice } from '@/app/data/bah-rates';
+import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
+import { track } from '@/lib/track';
 
 type TabMode = 'basic' | 'ppm';
 

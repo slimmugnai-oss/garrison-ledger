@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from 'next/server';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
 import { calculateDistance } from '@/lib/pcs/distance';
-import { getPerDiemRate } from '@/lib/pcs/per-diem';
 import { 
   getDLARate, 
   getMALTRate,
   calculateConfidenceScore
 } from '@/lib/pcs/jtr-rules';
+import { getPerDiemRate } from '@/lib/pcs/per-diem';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;

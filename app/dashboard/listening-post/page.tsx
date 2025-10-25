@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import Header from '@/app/components/Header';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 
 interface FeedItem {
   id: string;

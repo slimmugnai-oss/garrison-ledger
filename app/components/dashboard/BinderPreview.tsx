@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
 import AnimatedCard from '../ui/AnimatedCard';
 import Icon from '../ui/Icon';
 import type { IconName } from '../ui/icon-registry';

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Icon from "@/app/components/ui/Icon";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Icon from "@/app/components/ui/Icon";
 import {
   getProfileRecommendations,
   calculateProfileCompletion,

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import MetricCard from "../components/MetricCard";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+
+import MetricCard from "../components/MetricCard";
 
 interface RevenueData {
   chartData: Array<{ month: string; signups: number; premium: number; mrr: number }>;

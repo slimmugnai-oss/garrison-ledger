@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Icon from '../ui/Icon';
+
 import AnimatedCard from '../ui/AnimatedCard';
+import Icon from '../ui/Icon';
 
 interface FinancialData {
   hasTSP: boolean;

@@ -5,12 +5,13 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { ssot } from "@/lib/ssot";
+import { NextRequest, NextResponse } from "next/server";
+
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
 import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
+import { ssot } from "@/lib/ssot";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

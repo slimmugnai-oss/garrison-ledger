@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+
 import AnimatedCard from '../ui/AnimatedCard';
-import Icon from '../ui/Icon';
 import Badge from '../ui/Badge';
+import Icon from '../ui/Icon';
 
 export default function ScenarioStorytelling() {
   const scenarios = [

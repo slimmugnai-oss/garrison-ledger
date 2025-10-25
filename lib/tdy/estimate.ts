@@ -5,8 +5,9 @@
  * Handles: 75% M&IE on travel days, lodging caps, taxes
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
 import type { EstimateTotals, TdyItem } from '@/app/types/tdy';
+import { supabaseAdmin } from '@/lib/supabase';
+
 import { computePerDiemSpans } from './perdiem';
 import { getDateRange } from './util';
 

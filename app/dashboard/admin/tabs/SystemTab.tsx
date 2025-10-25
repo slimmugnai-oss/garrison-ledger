@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
+
+import ConfigurationManager from "../components/ConfigurationManager";
 import DataSourceCard, { DataSourceStatus } from "../components/DataSourceCard";
 import ErrorLogsViewer from "../components/ErrorLogsViewer";
-import ConfigurationManager from "../components/ConfigurationManager";
 
 export default function SystemTab() {
   const [activeSubTab, setActiveSubTab] = useState("data-sources");

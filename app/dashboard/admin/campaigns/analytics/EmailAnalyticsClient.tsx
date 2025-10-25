@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Header from '@/app/components/Header';
+import { useState, useEffect } from 'react';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
 import PageHeader from '@/app/components/ui/PageHeader';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import { logger } from '@/lib/logger';
 
 interface EmailStats {

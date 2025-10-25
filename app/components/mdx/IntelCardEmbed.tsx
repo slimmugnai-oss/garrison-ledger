@@ -6,6 +6,7 @@
  */
 
 import { getIntelCardBySlug } from '@/lib/content/mdx-loader';
+
 import Icon from '../ui/Icon';
 
 interface IntelCardEmbedProps {

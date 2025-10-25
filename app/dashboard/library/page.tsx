@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/app/components/Header';
+import { useState, useEffect, Suspense } from 'react';
+
 import Footer from '@/app/components/Footer';
-import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import Header from '@/app/components/Header';
 import BookmarkButton from '@/app/components/library/BookmarkButton';
+import OnboardingTour from '@/app/components/library/OnboardingTour';
 import RatingButton from '@/app/components/library/RatingButton';
 import ShareButton from '@/app/components/library/ShareButton';
+import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Icon from '@/app/components/ui/Icon';
-import OnboardingTour from '@/app/components/library/OnboardingTour';
 
 interface ContentBlock {
   id: string;

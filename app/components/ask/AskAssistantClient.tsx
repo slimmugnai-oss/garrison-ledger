@@ -8,12 +8,14 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import QuestionComposer from "./QuestionComposer";
+
+import Icon from "@/app/components/ui/Icon";
+
 import AnswerDisplay from "./AnswerDisplay";
 import CreditMeter from "./CreditMeter";
-import TemplateQuestions from "./TemplateQuestions";
+import QuestionComposer from "./QuestionComposer";
 import QuestionHistory from "./QuestionHistory";
-import Icon from "@/app/components/ui/Icon";
+import TemplateQuestions from "./TemplateQuestions";
 
 interface AnswerData {
   bottomLine: string[];

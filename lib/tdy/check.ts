@@ -9,8 +9,8 @@
  * - Rate lookup failures
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
 import type { TdyFlag, TdyItem } from '@/app/types/tdy';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Run all compliance checks for a trip

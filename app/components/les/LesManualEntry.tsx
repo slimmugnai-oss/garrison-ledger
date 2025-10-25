@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Icon from '@/app/components/ui/Icon';
-import LesFlags from './LesFlags';
-import CurrencyInput from './CurrencyInput';
 import type { LesAuditResponse } from '@/app/types/les';
+
+import CurrencyInput from './CurrencyInput';
+import LesFlags from './LesFlags';
 
 interface Props {
   tier: string;

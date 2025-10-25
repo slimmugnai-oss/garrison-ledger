@@ -5,9 +5,10 @@
  * Implements TTL-based cache invalidation and refresh logic
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
-import type { CacheEntry } from './types';
 import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
+
+import type { CacheEntry } from './types';
 
 /**
  * Get cached data or fetch fresh

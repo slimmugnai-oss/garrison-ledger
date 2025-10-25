@@ -7,6 +7,7 @@
 
 import { resolveDataRef } from '@/lib/dynamic/registry';
 import type { DataRefParams } from '@/lib/dynamic/types';
+
 import Icon from '../ui/Icon';
 
 type RateBadgeProps = Omit<DataRefParams, 'source'> & {

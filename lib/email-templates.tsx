@@ -1,9 +1,10 @@
 import { render } from "@react-email/render";
-import OnboardingWelcome from "@/emails/OnboardingWelcome";
+
 import OnboardingFeatures from "@/emails/OnboardingFeatures";
 import OnboardingPremium from "@/emails/OnboardingPremium";
-import WeeklyDigest from "@/emails/WeeklyDigest";
+import OnboardingWelcome from "@/emails/OnboardingWelcome";
 import PCSChecklist from "@/emails/PCSChecklist";
+import WeeklyDigest from "@/emails/WeeklyDigest";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.garrisonledger.com";
 

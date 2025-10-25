@@ -8,9 +8,10 @@
 'use client';
 
 import { MDXProvider } from '@mdx-js/react';
-import { useMDXComponents } from '@/lib/content/mdx-components';
 import { getMDXComponent } from 'mdx-bundler/client';
 import { useMemo } from 'react';
+
+import { useMDXComponents } from '@/lib/content/mdx-components';
 
 export default function IntelCardContent({ 
   code 

@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Header from '@/app/components/Header';
+import { useState, useEffect } from 'react';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+import FeedbackModal from '@/app/components/plan/FeedbackModal';
+import SharePlanButton from '@/app/components/plan/SharePlanButton';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
 import { IconName } from '@/app/components/ui/icon-registry';
-import FeedbackModal from '@/app/components/plan/FeedbackModal';
-import SharePlanButton from '@/app/components/plan/SharePlanButton';
+import PageHeader from '@/app/components/ui/PageHeader';
 
 interface ContentBlock {
   id: string;

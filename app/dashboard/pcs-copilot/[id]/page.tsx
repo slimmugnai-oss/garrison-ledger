@@ -1,7 +1,9 @@
-import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+
 import { supabaseAdmin } from '@/lib/supabase';
+
 import PCSClaimClient from './PCSClaimClient';
 
 export const metadata: Metadata = {

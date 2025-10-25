@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from "@/lib/logger";
+
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { EMAIL_CONFIG } from '@/lib/email-config';
+import { logger } from "@/lib/logger";
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = "nodejs";
 

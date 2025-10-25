@@ -1,9 +1,10 @@
-import { supabaseAdmin } from '@/lib/supabase';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Header from '@/app/components/Header';
+import { notFound } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
+import { supabaseAdmin } from '@/lib/supabase';
 
 interface PageProps {
   params: Promise<{ id: string }>;

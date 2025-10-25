@@ -1,8 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import Icon from '@/app/components/ui/Icon';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
+import { cn } from '@/lib/utils';
 
 interface CurrencyInputProps {
   label: string;

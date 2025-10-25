@@ -11,12 +11,14 @@
  * - Compare before/after corrections
  */
 
-import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import Header from '@/app/components/Header';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
+
 import ComparisonClient from './ComparisonClient';
 
 export const metadata: Metadata = {

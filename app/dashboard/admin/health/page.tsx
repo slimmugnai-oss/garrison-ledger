@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import type { Metadata } from "next";
 import Link from 'next/link';
-import Header from '@/app/components/Header';
+import { redirect } from 'next/navigation';
+
 import Footer from '@/app/components/Footer';
-import Icon from '@/app/components/ui/Icon';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
 import Badge from '@/app/components/ui/Badge';
+import Icon from '@/app/components/ui/Icon';
 
 export const metadata: Metadata = {
   title: "System Health - Admin Dashboard",

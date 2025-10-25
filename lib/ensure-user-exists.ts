@@ -1,6 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server';
-import { supabaseAdmin } from './supabase';
+
 import { logger } from './logger';
+import { supabaseAdmin } from './supabase';
 
 /**
  * Safety function to ensure user exists in database

@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { logger } from '@/lib/logger';
+import { NextResponse } from 'next/server';
+
 import { Errors } from '@/lib/api-errors';
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET() {
   try {

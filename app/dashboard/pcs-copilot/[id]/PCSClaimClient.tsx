@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import Header from '@/app/components/Header';
+import { useState } from 'react';
+
 import Footer from '@/app/components/Footer';
+import Header from '@/app/components/Header';
 import AnimatedCard from '@/app/components/ui/AnimatedCard';
-import PageHeader from '@/app/components/ui/PageHeader';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
+import PageHeader from '@/app/components/ui/PageHeader';
 
 interface Claim {
   id: string;

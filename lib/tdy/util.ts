@@ -4,8 +4,8 @@
  * Shared utility functions for TDY Copilot
  */
 
-import { supabaseAdmin } from '@/lib/supabase';
 import { ssot } from '@/lib/ssot';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Get current mileage rate in cents per mile

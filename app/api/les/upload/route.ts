@@ -19,13 +19,14 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { parseLesPdf } from '@/lib/les/parse';
-import { buildExpectedSnapshot } from '@/lib/les/expected';
-import { compareLesToExpected } from '@/lib/les/compare';
-import { ssot } from '@/lib/ssot';
-import { logger } from '@/lib/logger';
+
 import { errorResponse, Errors } from '@/lib/api-errors';
+import { compareLesToExpected } from '@/lib/les/compare';
+import { buildExpectedSnapshot } from '@/lib/les/expected';
+import { parseLesPdf } from '@/lib/les/parse';
+import { logger } from '@/lib/logger';
+import { ssot } from '@/lib/ssot';
+import { supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Record server-side analytics event

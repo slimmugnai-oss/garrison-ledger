@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+
 import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
 import { supabaseAdmin } from "@/lib/supabase";

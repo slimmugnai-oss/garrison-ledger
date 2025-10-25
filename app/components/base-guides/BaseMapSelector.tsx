@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import * as d3 from 'd3';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import * as topojson from 'topojson-client';
+
 import { basesData, oconusBases, branchColors, badgeColors, type BaseData } from '@/app/data/bases';
 import { trackBaseView, trackBaseSearch, trackFilterUsage, trackGuideClickthrough, addToComparison, getComparisonList } from '@/app/lib/base-analytics';
-import { useAuth } from '@clerk/nextjs';
+
 
 export default function BaseMapSelector() {
   const svgRef = useRef<SVGSVGElement>(null);

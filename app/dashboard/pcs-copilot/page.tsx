@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
 import { currentUser } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { supabaseAdmin } from "@/lib/supabase";
-import Header from "@/app/components/Header";
+
 import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
+import { supabaseAdmin } from "@/lib/supabase";
+
 import PCSCopilotClient from "./PCSCopilotClient";
 
 export const metadata: Metadata = {
