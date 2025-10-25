@@ -1,16 +1,56 @@
 {
-  "name": "Garrison Ledger - Military Financial Planning",
-  "short_name": "Garrison Ledger",
-  "description": "AI-powered financial planning platform for military members and families",
-  "start_url": "/dashboard",
+  "name": "Garrison Ledger - PCS Copilot",
+  "short_name": "PCS Copilot",
+  "description": "AI-powered PCS reimbursement assistant for military families",
+  "start_url": "/dashboard/pcs-copilot/enhanced?source=pwa",
   "display": "standalone",
   "background_color": "#0F172A",
   "theme_color": "#2563EB",
   "orientation": "portrait-primary",
+  "categories": ["finance", "productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
   "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-384x384.png",
+      "sizes": "384x384",
       "type": "image/png",
       "purpose": "any maskable"
     },
@@ -21,56 +61,72 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["finance", "productivity", "business"],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your financial dashboard",
-      "url": "/dashboard",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Create New Claim",
+      "short_name": "New Claim",
+      "description": "Start a new PCS claim",
+      "url": "/dashboard/pcs-copilot/enhanced?action=new",
+      "icons": [
+        {
+          "src": "/shortcut-new-claim.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name": "Intel Library",
-      "short_name": "Library",
-      "description": "Browse expert content",
-      "url": "/dashboard/library",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "View Claims",
+      "short_name": "Claims",
+      "description": "View all PCS claims",
+      "url": "/dashboard/pcs-copilot/enhanced",
+      "icons": [
+        {
+          "src": "/shortcut-view-claims.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name": "Calculators",
-      "short_name": "Calculators",
-      "description": "Financial planning calculators",
-      "url": "/dashboard/tools",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Assessment",
-      "short_name": "Assessment",
-      "description": "Take financial assessment",
-      "url": "/dashboard/assessment",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Ask Assistant",
+      "short_name": "Ask",
+      "description": "Get PCS help from AI assistant",
+      "url": "/dashboard/ask?context=pcs",
+      "icons": [
+        {
+          "src": "/shortcut-ask.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshot-1.png",
+      "src": "/screenshots/pcs-copilot-mobile-1.png",
+      "sizes": "540x720",
       "type": "image/png",
-      "sizes": "1280x720",
-      "form_factor": "wide"
+      "form_factor": "narrow"
     },
     {
-      "src": "/screenshot-2.png",
+      "src": "/screenshots/pcs-copilot-mobile-2.png",
+      "sizes": "540x720",
       "type": "image/png",
-      "sizes": "750x1334",
       "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/pcs-copilot-desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ],
   "related_applications": [],
   "prefer_related_applications": false,
-  "scope": "/",
-  "lang": "en-US",
-  "dir": "ltr",
-  "iarc_rating_id": ""
+  "features": [
+    "offline",
+    "background-sync",
+    "push-notifications"
+  ]
 }
-

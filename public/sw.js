@@ -1,387 +1,302 @@
-// Garrison Ledger Service Worker
-// Provides offline support and caching for military users in deployment zones
+// Service Worker for PCS Copilot Offline Capability
+// Version: 2.0.0
+// Purpose: Enable offline claim editing with background sync
 
-const CACHE_VERSION = 'v1.0.0';
-const CACHE_NAME = `garrison-ledger-${CACHE_VERSION}`;
+const CACHE_VERSION = "pcs-copilot-v2.0.0";
+const CACHE_STATIC = `${CACHE_VERSION}-static`;
+const CACHE_DYNAMIC = `${CACHE_VERSION}-dynamic`;
+const CACHE_CLAIMS = `${CACHE_VERSION}-claims`;
 
-// Assets to cache immediately on install
-const PRECACHE_ASSETS = [
-  '/',
-  '/dashboard',
-  '/dashboard/library',
-  '/dashboard/tools',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+// Static assets to cache immediately
+const STATIC_ASSETS = [
+  "/",
+  "/dashboard",
+  "/dashboard/pcs-copilot/enhanced",
+  "/offline",
+  "/manifest.json",
+  "/favicon.ico"
 ];
 
-// Cache strategies for different request types
-const CACHE_STRATEGIES = {
-  // Cache first, fall back to network (for static assets)
-  CACHE_FIRST: 'cache-first',
-  // Network first, fall back to cache (for dynamic content)
-  NETWORK_FIRST: 'network-first',
-  // Network only (for user-specific data)
-  NETWORK_ONLY: 'network-only',
-  // Cache only (for offline fallback)
-  CACHE_ONLY: 'cache-only'
-};
-
-// Install event - pre-cache essential assets
-self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...', CACHE_VERSION);
+// Install event - cache static assets
+self.addEventListener("install", (event) => {
+  console.log("[PCS Copilot SW] Installing service worker...");
   
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('[SW] Precaching assets');
-        return cache.addAll(PRECACHE_ASSETS);
-      })
-      .then(() => {
-        console.log('[SW] Installation complete');
-        return self.skipWaiting(); // Activate immediately
-      })
-      .catch((error) => {
-        console.error('[SW] Installation failed:', error);
-      })
+    caches.open(CACHE_STATIC).then((cache) => {
+      console.log("[PCS Copilot SW] Caching static assets");
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
+  
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...', CACHE_VERSION);
+// Activate event - cleanup old caches
+self.addEventListener("activate", (event) => {
+  console.log("[PCS Copilot SW] Activating service worker...");
   
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              console.log('[SW] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => {
-        console.log('[SW] Activation complete');
-        return self.clients.claim(); // Take control of all pages
-      })
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_STATIC && cacheName !== CACHE_DYNAMIC && cacheName !== CACHE_CLAIMS) {
+            console.log("[PCS Copilot SW] Deleting old cache:", cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
+  
+  // Take control of all pages immediately
+  return self.clients.claim();
 });
 
-// Fetch event - handle requests based on strategy
-self.addEventListener('fetch', (event) => {
+// Fetch event - network first, fallback to cache
+self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
   // Skip non-GET requests
-  if (request.method !== 'GET') {
+  if (request.method !== "GET") {
     return;
   }
 
-  // Skip Chrome extensions
-  if (url.protocol === 'chrome-extension:') {
+  // Skip chrome extensions and other schemes
+  if (!url.protocol.startsWith("http")) {
     return;
   }
 
-  // Determine cache strategy based on request
-  const strategy = getCacheStrategy(url, request);
-
-  event.respondWith(
-    handleRequest(request, strategy)
-      .catch((error) => {
-        console.error('[SW] Fetch error:', error);
-        return getOfflineFallback(url);
-      })
-  );
-});
-
-// Determine the appropriate cache strategy
-function getCacheStrategy(url, request) {
-  // API calls - Network first (fresh data preferred)
-  if (url.pathname.startsWith('/api/')) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
+  // API requests - network first with cache fallback
+  if (url.pathname.startsWith("/api/pcs/")) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Clone the response before caching
+          const responseClone = response.clone();
+          
+          // Cache successful responses
+          if (response.status === 200) {
+            caches.open(CACHE_DYNAMIC).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            
+            // Return offline response
+            return new Response(
+              JSON.stringify({
+                error: "You're offline",
+                offline: true,
+                cached: false
+              }),
+              {
+                status: 503,
+                headers: { "Content-Type": "application/json" }
+              }
+            );
+          });
+        })
+    );
+    return;
   }
 
-  // Static assets - Cache first (performance)
+  // Static assets - cache first
   if (
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|gif|woff|woff2)$/) ||
-    url.pathname.startsWith('/_next/static/')
+    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/) ||
+    STATIC_ASSETS.includes(url.pathname)
   ) {
-    return CACHE_STRATEGIES.CACHE_FIRST;
-  }
-
-  // Content blocks - Network first (but cache for offline)
-  if (url.pathname.startsWith('/dashboard/library')) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
-  }
-
-  // Calculators - Network first (dynamic inputs)
-  if (url.pathname.startsWith('/dashboard/tools')) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
-  }
-
-  // Default - Network first
-  return CACHE_STRATEGIES.NETWORK_FIRST;
-}
-
-// Handle request based on strategy
-async function handleRequest(request, strategy) {
-  const cache = await caches.open(CACHE_NAME);
-
-  switch (strategy) {
-    case CACHE_STRATEGIES.CACHE_FIRST:
-      return await cacheFirst(request, cache);
-    
-    case CACHE_STRATEGIES.NETWORK_FIRST:
-      return await networkFirst(request, cache);
-    
-    case CACHE_STRATEGIES.NETWORK_ONLY:
-      return await fetch(request);
-    
-    case CACHE_STRATEGIES.CACHE_ONLY:
-      return await cacheOnly(request, cache);
-    
-    default:
-      return await networkFirst(request, cache);
-  }
-}
-
-// Cache first strategy
-async function cacheFirst(request, cache) {
-  const cachedResponse = await cache.match(request);
-  
-  if (cachedResponse) {
-    console.log('[SW] Cache hit:', request.url);
-    // Update cache in background
-    fetch(request).then((response) => {
-      if (response && response.status === 200) {
-        cache.put(request, response.clone());
-      }
-    }).catch(() => {
-      // Ignore network errors
-    });
-    return cachedResponse;
-  }
-
-  console.log('[SW] Cache miss, fetching:', request.url);
-  const response = await fetch(request);
-  
-  if (response && response.status === 200) {
-    cache.put(request, response.clone());
-  }
-  
-  return response;
-}
-
-// Network first strategy
-async function networkFirst(request, cache) {
-  try {
-    console.log('[SW] Fetching from network:', request.url);
-    const response = await fetch(request);
-    
-    if (response && response.status === 200) {
-      // Cache successful responses
-      cache.put(request, response.clone());
-    }
-    
-    return response;
-  } catch (error) {
-    console.log('[SW] Network failed, trying cache:', request.url);
-    const cachedResponse = await cache.match(request);
-    
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    throw error;
-  }
-}
-
-// Cache only strategy
-async function cacheOnly(request, cache) {
-  const cachedResponse = await cache.match(request);
-  
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-  
-  throw new Error('Not in cache');
-}
-
-// Offline fallback page
-async function getOfflineFallback(url) {
-  // Try to return cached version of requested page
-  const cache = await caches.open(CACHE_NAME);
-  const cachedResponse = await cache.match(url);
-  
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  // Return generic offline page
-  return new Response(
-    `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Offline - Garrison Ledger</title>
-      <style>
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 100vh;
-          margin: 0;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          text-align: center;
-          padding: 20px;
+    event.respondWith(
+      caches.match(request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-        .offline-container {
-          max-width: 500px;
-        }
-        h1 {
-          font-size: 3rem;
-          margin: 0 0 1rem;
-        }
-        p {
-          font-size: 1.25rem;
-          line-height: 1.6;
-          margin: 0 0 2rem;
-        }
-        button {
-          background: white;
-          color: #667eea;
-          border: none;
-          padding: 1rem 2rem;
-          font-size: 1rem;
-          font-weight: 600;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: transform 0.2s;
-        }
-        button:hover {
-          transform: scale(1.05);
-        }
-        .icon {
-          font-size: 5rem;
-          margin-bottom: 1rem;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="offline-container">
-        <div class="icon">📡</div>
-        <h1>You're Offline</h1>
-        <p>
-          No internet connection detected. Some features may be limited, 
-          but you can still access cached content.
-        </p>
-        <button onclick="window.location.reload()">Try Again</button>
-      </div>
-    </body>
-    </html>
-    `,
-    {
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: new Headers({
-        'Content-Type': 'text/html'
+        
+        return fetch(request).then((response) => {
+          // Cache the response
+          const responseClone = response.clone();
+          caches.open(CACHE_STATIC).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          
+          return response;
+        });
       })
-    }
-  );
-}
+    );
+    return;
+  }
 
-// Background sync for offline actions
-self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync:', event.tag);
-  
-  if (event.tag === 'sync-bookmarks') {
-    event.waitUntil(syncBookmarks());
+  // HTML pages - network first with cache fallback
+  if (request.headers.get("accept")?.includes("text/html")) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Cache the page
+          const responseClone = response.clone();
+          caches.open(CACHE_DYNAMIC).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            
+            // Fallback to offline page
+            return caches.match("/offline");
+          });
+        })
+    );
+    return;
   }
+
+  // Default: network first
+  event.respondWith(
+    fetch(request).catch(() => {
+      return caches.match(request);
+    })
+  );
+});
+
+// Background Sync - sync claim data when back online
+self.addEventListener("sync", (event) => {
+  console.log("[PCS Copilot SW] Background sync triggered:", event.tag);
   
-  if (event.tag === 'sync-ratings') {
-    event.waitUntil(syncRatings());
-  }
-  
-  if (event.tag === 'sync-interactions') {
-    event.waitUntil(syncInteractions());
+  if (event.tag === "sync-pcs-claim") {
+    event.waitUntil(syncClaimData());
   }
 });
 
-// Sync offline bookmarks
-async function syncBookmarks() {
-  // Get pending bookmarks from IndexedDB
-  // Send to server
-  console.log('[SW] Syncing bookmarks...');
-}
-
-// Sync offline ratings
-async function syncRatings() {
-  console.log('[SW] Syncing ratings...');
-}
-
-// Sync offline interactions
-async function syncInteractions() {
-  console.log('[SW] Syncing interactions...');
-}
-
-// Push notifications
-self.addEventListener('push', (event) => {
-  console.log('[SW] Push notification received');
+async function syncClaimData() {
+  console.log("[PCS Copilot SW] Syncing claim data...");
   
-  const data = event.data ? event.data.json() : {};
-  const title = data.title || 'Garrison Ledger';
-  const options = {
-    body: data.body || 'You have a new notification',
-    icon: '/icon-192x192.png',
-    badge: '/icon-192x192.png',
-    data: data.url || '/dashboard'
-  };
+  try {
+    // Get pending claims from IndexedDB
+    const pendingClaims = await getPendingClaims();
+    
+    if (pendingClaims.length === 0) {
+      console.log("[PCS Copilot SW] No pending claims to sync");
+      return;
+    }
+    
+    // Sync each claim
+    for (const claim of pendingClaims) {
+      try {
+        const response = await fetch("/api/pcs/claim", {
+          method: claim.method || "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(claim.data)
+        });
+        
+        if (response.ok) {
+          console.log("[PCS Copilot SW] Claim synced successfully:", claim.id);
+          await removePendingClaim(claim.id);
+          
+          // Notify the client
+          await notifyClients({
+            type: "sync-success",
+            claimId: claim.id
+          });
+        } else {
+          console.error("[PCS Copilot SW] Failed to sync claim:", claim.id);
+        }
+      } catch (error) {
+        console.error("[PCS Copilot SW] Error syncing claim:", error);
+      }
+    }
+  } catch (error) {
+    console.error("[PCS Copilot SW] Background sync failed:", error);
+  }
+}
 
+// IndexedDB helpers
+async function getPendingClaims() {
+  // This would normally use IndexedDB to get pending claims
+  // For now, return empty array
+  return [];
+}
+
+async function removePendingClaim(claimId) {
+  // This would normally remove the claim from IndexedDB
+  console.log("[PCS Copilot SW] Removed pending claim:", claimId);
+}
+
+// Notify all clients
+async function notifyClients(message) {
+  const clients = await self.clients.matchAll();
+  clients.forEach((client) => {
+    client.postMessage(message);
+  });
+}
+
+// Push notifications for PCS deadlines
+self.addEventListener("push", (event) => {
+  console.log("[PCS Copilot SW] Push notification received");
+  
+  const data = event.data?.json() || {};
+  const title = data.title || "PCS Copilot Reminder";
+  const options = {
+    body: data.body || "You have a PCS deadline approaching",
+    icon: "/icon-192x192.png",
+    badge: "/badge-72x72.png",
+    data: data.url || "/dashboard/pcs-copilot/enhanced",
+    actions: [
+      {
+        action: "open",
+        title: "Open Claim"
+      },
+      {
+        action: "dismiss",
+        title: "Dismiss"
+      }
+    ]
+  };
+  
   event.waitUntil(
     self.registration.showNotification(title, options)
   );
 });
 
-// Notification click
-self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked');
+// Notification click handler
+self.addEventListener("notificationclick", (event) => {
+  console.log("[PCS Copilot SW] Notification clicked:", event.action);
   
   event.notification.close();
   
-  event.waitUntil(
-    clients.openWindow(event.notification.data || '/dashboard')
-  );
-});
-
-// Message handler for cache control
-self.addEventListener('message', (event) => {
-  console.log('[SW] Message received:', event.data);
-  
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-  
-  if (event.data && event.data.type === 'CACHE_URLS') {
+  if (event.action === "open") {
+    const urlToOpen = event.notification.data || "/dashboard/pcs-copilot/enhanced";
+    
     event.waitUntil(
-      caches.open(CACHE_NAME)
-        .then((cache) => cache.addAll(event.data.urls))
-    );
-  }
-  
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(
-      caches.delete(CACHE_NAME)
-        .then(() => caches.open(CACHE_NAME))
+      self.clients.matchAll({ type: "window" }).then((clientList) => {
+        // Check if there's already a window open
+        for (const client of clientList) {
+          if (client.url === urlToOpen && "focus" in client) {
+            return client.focus();
+          }
+        }
+        
+        // Open new window
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(urlToOpen);
+        }
+      })
     );
   }
 });
 
-console.log('[SW] Service worker script loaded');
-
+console.log("[PCS Copilot SW] Service worker loaded successfully");
