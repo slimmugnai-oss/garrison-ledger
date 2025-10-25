@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 
     logger.info(`Found ${feedItems.length} feed items to enrich`);
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const results = {
       processed: 0,
       approved: 0, // score ≥ 8

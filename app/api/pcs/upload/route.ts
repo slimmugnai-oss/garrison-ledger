@@ -13,7 +13,7 @@ export const maxDuration = 60;
  * PCS MONEY COPILOT - DOCUMENT UPLOAD & OCR
  * 
  * Handles upload of PCS documents (orders, receipts, weigh tickets, etc.)
- * Uses Gemini 2.0 Flash Vision for OCR and data extraction
+ * Uses Gemini 2.5 Flash for OCR and data extraction
  * 
  * Free: 3 uploads per month
  * Premium: Unlimited uploads
@@ -174,7 +174,7 @@ async function processOCR(
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-2.0-flash-exp'
+      model: 'gemini-2.5-flash'
     });
 
     // Extract base64 image data

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const prompt = createExplanationPrompt(validationFlag, claimContext);
 
     // Generate explanation using Gemini 2.5 Flash
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const explanation = response.text();
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
           validation_category: validationFlag.category,
           severity: validationFlag.severity,
           explanation_length: explanation.length,
-          model_used: "gemini-2.0-flash-exp",
+          model_used: "gemini-2.5-flash",
         },
       });
     } catch (analyticsError) {
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       explanation,
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       cost: "~$0.001", // Estimated cost per explanation
     });
   } catch (error) {

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash-exp", // Latest model - better quality, same speed
+    model: "gemini-2.5-flash", // GA model - production-stable, better quality
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 2000,

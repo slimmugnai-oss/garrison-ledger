@@ -40,18 +40,24 @@ export const ssot = {
   models: {
     planGeneration: {
       provider: "Google",
-      model: "Gemini-2.0-Flash",
+      model: "Gemini-2.5-Flash",
       approxCostPerPlanUSD: 0.02,
       maxTokens: 8192,
       temperature: 0.7,
     },
     explainers: {
       provider: "Google",
-      model: "Gemini-2.0-Flash",
+      model: "Gemini-2.5-Flash",
     },
     assessment: {
       provider: "Google",
-      model: "Gemini-2.0-Flash",
+      model: "Gemini-2.5-Flash",
+    },
+    pcsOCR: {
+      provider: "Google",
+      model: "Gemini-2.5-Flash",
+      approxCostPerDocumentUSD: 0.0003,
+      features: ["vision", "structured_output", "json_mode"],
     },
     // Legacy reference (for documentation only)
     legacy: {
