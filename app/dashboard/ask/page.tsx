@@ -29,7 +29,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Ask Our Military Expert - 24/7 Military Life Advisor",
-    description: "Instant expert answers to military financial, PCS, deployment, and career questions. 1,410+ knowledge sources.",
+    description:
+      "Instant expert answers to military financial, PCS, deployment, and career questions. 1,410+ knowledge sources.",
     type: "website",
     url: "https://www.garrisonledger.com/dashboard/ask",
     images: [
@@ -44,7 +45,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ask Our Military Expert - 24/7 Military Life Advisor",
-    description: "Get instant expert answers to ANY military life question. 1,410+ knowledge sources.",
+    description:
+      "Get instant expert answers to ANY military life question. 1,410+ knowledge sources.",
     images: ["https://www.garrisonledger.com/og-ask-expert.jpg"],
   },
 };
@@ -62,23 +64,24 @@ export default async function AskAssistantPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            "name": "Ask Our Military Expert",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Web",
-            "offers": {
+            name: "Ask Our Military Expert",
+            applicationCategory: "FinanceApplication",
+            operatingSystem: "Web",
+            offers: {
               "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD",
-              "description": "5 free expert questions per month"
+              price: "0",
+              priceCurrency: "USD",
+              description: "5 free expert questions per month",
             },
-            "aggregateRating": {
+            aggregateRating: {
               "@type": "AggregateRating",
-              "ratingValue": "9.2",
-              "ratingCount": "500",
-              "bestRating": "10"
+              ratingValue: "9.2",
+              ratingCount: "500",
+              bestRating: "10",
             },
-            "description": "24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by 1,410 knowledge sources and official military data.",
-            "featureList": [
+            description:
+              "24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by 1,410 knowledge sources and official military data.",
+            featureList: [
               "Instant expert answers in ~2 seconds",
               "1,410 embedded knowledge sources",
               "Official DFAS, VA, TSP, JTR data integration",
@@ -87,9 +90,9 @@ export default async function AskAssistantPage() {
               "PCS move optimization",
               "Deployment financial prep",
               "Career progression advice",
-              "Benefits navigation"
-            ]
-          })
+              "Benefits navigation",
+            ],
+          }),
         }}
       />
 
@@ -100,49 +103,49 @@ export default async function AskAssistantPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": [
+            mainEntity: [
               {
                 "@type": "Question",
-                "name": "What is Ask Our Military Expert?",
-                "acceptedAnswer": {
+                name: "What is Ask Our Military Expert?",
+                acceptedAnswer: {
                   "@type": "Answer",
-                  "text": "Ask Our Military Expert is a 24/7 AI-powered military life advisor that provides instant, personalized answers to questions about military finances, PCS moves, deployment, career progression, benefits, and base life. It's backed by 1,410 knowledge sources and official data from DFAS, VA, TSP, and JTR."
-                }
+                  text: "Ask Our Military Expert is a 24/7 AI-powered military life advisor that provides instant, personalized answers to questions about military finances, PCS moves, deployment, career progression, benefits, and base life. It's backed by 1,410 knowledge sources and official data from DFAS, VA, TSP, and JTR.",
+                },
               },
               {
                 "@type": "Question",
-                "name": "What types of questions can I ask?",
-                "acceptedAnswer": {
+                name: "What types of questions can I ask?",
+                acceptedAnswer: {
                   "@type": "Answer",
-                  "text": "You can ask about: Military pay (BAH, BAS, COLA, special pays), PCS moves (DITY profit, entitlements, housing), Deployment (SDP, combat zone tax exclusion, family prep), TSP and retirement planning, Career decisions (SRB, reenlistment, promotion), VA benefits, TRICARE, GI Bill, Base life (on-base vs off-base, schools, commissary), and more."
-                }
+                  text: "You can ask about: Military pay (BAH, BAS, COLA, special pays), PCS moves (DITY profit, entitlements, housing), Deployment (SDP, combat zone tax exclusion, family prep), TSP and retirement planning, Career decisions (SRB, reenlistment, promotion), VA benefits, TRICARE, GI Bill, Base life (on-base vs off-base, schools, commissary), and more.",
+                },
               },
               {
                 "@type": "Question",
-                "name": "How accurate are the answers?",
-                "acceptedAnswer": {
+                name: "How accurate are the answers?",
+                acceptedAnswer: {
                   "@type": "Answer",
-                  "text": "Our Military Expert uses official data from DFAS, VA, TSP, and JTR combined with 1,410 curated knowledge sources. Answers achieve a 9.2/10 user satisfaction rating. When official data is available (BAH rates, pay tables, etc.), answers are marked as 'Official Data' with 100% accuracy. Advisory answers are based on real military experience and best practices."
-                }
+                  text: "Our Military Expert uses official data from DFAS, VA, TSP, and JTR combined with 1,410 curated knowledge sources. Answers achieve a 9.2/10 user satisfaction rating. When official data is available (BAH rates, pay tables, etc.), answers are marked as 'Official Data' with 100% accuracy. Advisory answers are based on real military experience and best practices.",
+                },
               },
               {
                 "@type": "Question",
-                "name": "How fast do I get an answer?",
-                "acceptedAnswer": {
+                name: "How fast do I get an answer?",
+                acceptedAnswer: {
                   "@type": "Answer",
-                  "text": "Average response time is 1.8 seconds. Our hybrid RAG system retrieves relevant knowledge chunks and generates personalized answers instantly."
-                }
+                  text: "Average response time is 1.8 seconds. Our hybrid RAG system retrieves relevant knowledge chunks and generates personalized answers instantly.",
+                },
               },
               {
                 "@type": "Question",
-                "name": "Is my information personalized?",
-                "acceptedAnswer": {
+                name: "Is my information personalized?",
+                acceptedAnswer: {
                   "@type": "Answer",
-                  "text": "Yes. Answers are personalized based on your rank, base location, family status, and years of service. An E-5 at Fort Hood gets different BAH guidance than an O-3 at Ramstein."
-                }
-              }
-            ]
-          })
+                  text: "Yes. Answers are personalized based on your rank, base location, family status, and years of service. An E-5 at Fort Hood gets different BAH guidance than an O-3 at Ramstein.",
+                },
+              },
+            ],
+          }),
         }}
       />
 
@@ -162,7 +165,9 @@ export default async function AskAssistantPage() {
               </h1>
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
-                Your 24/7 military life advisor with 20 years of experience. Get instant, expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life.
+                Your 24/7 military life advisor with 20 years of experience. Get instant, expert
+                answers to ANY military life question—financial, PCS, deployment, career, benefits,
+                base life.
               </p>
 
               {/* Trust Badges */}
@@ -191,8 +196,10 @@ export default async function AskAssistantPage() {
 
           {/* Example Questions Section */}
           <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">See What Our Expert Can Answer</h2>
-            
+            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
+              See What Our Expert Can Answer
+            </h2>
+
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* Financial Questions */}
               <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -276,8 +283,10 @@ export default async function AskAssistantPage() {
 
           {/* How It Works Section */}
           <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">How Ask Our Military Expert Works</h2>
-            
+            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
+              How Ask Our Military Expert Works
+            </h2>
+
             <div className="grid gap-8 md:grid-cols-3">
               <div className="text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
@@ -285,7 +294,8 @@ export default async function AskAssistantPage() {
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-900">Ask Anything</h3>
                 <p className="text-gray-600">
-                  Type your question about military pay, PCS, deployment, career, benefits, or base life
+                  Type your question about military pay, PCS, deployment, career, benefits, or base
+                  life
                 </p>
               </div>
 
@@ -313,12 +323,14 @@ export default async function AskAssistantPage() {
 
           {/* Social Proof Section */}
           <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">What Military Families Say</h2>
-            
+            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
+              What Military Families Say
+            </h2>
+
             <div className="grid gap-6 md:grid-cols-2">
               <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
                     <span className="text-sm font-semibold text-indigo-600">MJ</span>
                   </div>
                   <div>
@@ -327,13 +339,14 @@ export default async function AskAssistantPage() {
                   </div>
                 </div>
                 <p className="text-gray-700">
-                  "I asked about my BAH calculation and got a detailed answer in 10 seconds with the exact DFAS rates. This saved me a 30-minute phone call to finance."
+                  "I asked about my BAH calculation and got a detailed answer in 10 seconds with the
+                  exact DFAS rates. This saved me a 30-minute phone call to finance."
                 </p>
               </div>
 
               <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
                     <span className="text-sm font-semibold text-indigo-600">SW</span>
                   </div>
                   <div>
@@ -342,7 +355,8 @@ export default async function AskAssistantPage() {
                   </div>
                 </div>
                 <p className="text-gray-700">
-                  "The PCS advice was incredible—specific to MY situation as an E-6 with kids moving OCONUS. Not generic Google results."
+                  "The PCS advice was incredible—specific to MY situation as an E-6 with kids moving
+                  OCONUS. Not generic Google results."
                 </p>
               </div>
             </div>
@@ -351,8 +365,10 @@ export default async function AskAssistantPage() {
           {/* Trust Indicators */}
           <section className="mt-16">
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-8">
-              <h3 className="mb-6 text-center text-2xl font-bold text-gray-900">Why Trust Our Military Expert</h3>
-              
+              <h3 className="mb-6 text-center text-2xl font-bold text-gray-900">
+                Why Trust Our Military Expert
+              </h3>
+
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <div className="text-center">
                   <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
@@ -372,7 +388,7 @@ export default async function AskAssistantPage() {
 
                 <div className="text-center">
                   <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                    <Icon name="Clock" className="h-6 w-6 text-purple-600" />
+                    <Icon name="Timer" className="h-6 w-6 text-purple-600" />
                   </div>
                   <p className="text-sm font-semibold text-gray-900">~2 Sec Response</p>
                   <p className="text-xs text-gray-600">Lightning fast answers</p>

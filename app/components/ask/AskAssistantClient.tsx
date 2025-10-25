@@ -250,36 +250,37 @@ export default function AskAssistantClient() {
           /* Empty State with Starter Questions */
           <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center">
             <Icon name="MessageCircle" className="mx-auto mb-4 h-16 w-16 text-indigo-600" />
-            <h3 className="mb-2 text-xl font-bold text-gray-900">
-              What's your first question?
-            </h3>
+            <h3 className="mb-2 text-xl font-bold text-gray-900">What's your first question?</h3>
             <p className="mb-6 text-gray-600">
-              Our Military Expert can answer questions about financial topics, PCS moves, deployment, career progression, benefits, base life, and more.
+              Our Military Expert can answer questions about financial topics, PCS moves,
+              deployment, career progression, benefits, base life, and more.
             </p>
 
             {/* Popular starter questions */}
             <div className="grid gap-3 md:grid-cols-2">
-              <button 
-                onClick={() => handleQuestionSubmit("What's my BAH as an E-5 at Fort Hood with dependents?")}
-                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              <button
+                onClick={() =>
+                  handleQuestionSubmit("What's my BAH as an E-5 at Fort Hood with dependents?")
+                }
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
               >
                 💰 "What's my BAH as an E-5 at Fort Hood with dependents?"
               </button>
-              <button 
+              <button
                 onClick={() => handleQuestionSubmit("How do I maximize DITY move profit?")}
-                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
               >
                 🚚 "How do I maximize DITY move profit?"
               </button>
-              <button 
+              <button
                 onClick={() => handleQuestionSubmit("How does the Savings Deposit Program work?")}
-                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
               >
                 🎖️ "How does the Savings Deposit Program work?"
               </button>
-              <button 
+              <button
                 onClick={() => handleQuestionSubmit("Should I take the SRB or invest in TSP?")}
-                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                className="rounded-lg border border-gray-200 bg-white p-3 text-left text-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50"
               >
                 💼 "Should I take the SRB or invest in TSP?"
               </button>
