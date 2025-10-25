@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         {
           content_types: ["premium_guide", "jtr_rule", "sgli_rate"],
         },
-        5 // Retrieve top 5 most relevant chunks
+        { limit: 5 } // Retrieve top 5 most relevant chunks
       );
       console.log(`[Ask RAG] Retrieved ${ragChunks.length} knowledge chunks`);
     } catch (error) {
