@@ -97,7 +97,7 @@ export default function Header() {
             {/* Search Shortcuts */}
             <div className="border-b border-slate-200 px-6 py-4 dark:border-slate-700">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                   Quick Access:
                 </span>
                 <Link
@@ -133,7 +133,7 @@ export default function Header() {
 
             {/* Search Footer */}
             <div className="flex items-center justify-between bg-slate-50 px-6 py-3 dark:bg-slate-900">
-              <div className="flex items-center gap-4 text-xs text-slate-400">
+              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                 <div className="flex items-center gap-1.5">
                   <kbd className="rounded border border-gray-200 bg-white px-2 py-1 font-mono text-xs dark:border-slate-600 dark:bg-slate-800">
                     ↵
@@ -157,7 +157,7 @@ export default function Header() {
       )}
 
       {/* Header - Premium Design */}
-      <header className="bg-gradient-to-r from-slate-800 to-slate-700 sticky top-0 z-[100] border-b-2 border-slate-600/50 shadow-sm backdrop-blur-xl">
+      <header className="bg-white/98 dark:bg-slate-900/98 sticky top-0 z-[100] border-b-2 border-slate-200/50 shadow-sm backdrop-blur-xl dark:border-slate-700/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo - Premium Brand */}
@@ -169,10 +169,10 @@ export default function Header() {
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 blur-md transition-all duration-300 group-hover:opacity-30 sm:rounded-xl" />
               </div>
               <div className="hidden sm:block">
-                <div className="bg-gradient-to-r from-white via-slate-100 to-white bg-clip-text text-lg font-bold text-transparent sm:text-xl">
+                <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-lg font-bold text-transparent dark:from-white dark:via-slate-100 dark:to-white sm:text-xl">
                   Garrison Ledger
                 </div>
-                <div className="-mt-1 text-xs font-medium tracking-wide text-slate-300">
+                <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400">
                   Military Financial Intelligence
                 </div>
               </div>
@@ -190,8 +190,8 @@ export default function Header() {
                   <button
                     className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
                       isActivePath("/dashboard")
-                        ? "text-white"
-                        : "text-slate-300 hover:text-white"
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
                   >
                     Dashboard
@@ -299,8 +299,8 @@ export default function Header() {
                       isActivePath("/dashboard/tdy-copilot") ||
                       isActivePath("/dashboard/tdy-voucher") ||
                       isActivePath("/dashboard/intel")
-                        ? "text-white"
-                        : "text-slate-300 hover:text-white"
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
                   >
                     Premium Tools
@@ -477,8 +477,8 @@ export default function Header() {
                   <button
                     className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
                       isActivePath("/dashboard/tools")
-                        ? "text-white"
-                        : "text-slate-300 hover:text-white"
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
                   >
                     Calculators
@@ -645,8 +645,8 @@ export default function Header() {
                       isActivePath("/dashboard/listening-post") ||
                       isActivePath("/dashboard/directory") ||
                       isActivePath("/dashboard/refer-earn")
-                        ? "text-white"
-                        : "text-slate-300 hover:text-white"
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
                   >
                     Resources
@@ -758,8 +758,8 @@ export default function Header() {
                     isActivePath("/career-hub") ||
                     isActivePath("/deployment") ||
                     isActivePath("/on-base-shopping")
-                      ? "text-white"
-                      : "text-slate-300 hover:text-white"
+                      ? "text-slate-900 dark:text-white"
+                      : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                   }`}
                 >
                   Toolkits
@@ -895,7 +895,7 @@ export default function Header() {
                 {/* Search Button - Simple Icon */}
                 <button
                   onClick={() => setShowSearch(!showSearch)}
-                  className="hidden p-2 text-slate-300 transition-colors hover:text-white lg:flex"
+                  className="hidden p-2 text-gray-600 transition-colors hover:text-blue-600 lg:flex"
                   title="Search (Press /)"
                 >
                   <Icon name="Search" className="h-5 w-5" />
@@ -924,7 +924,7 @@ export default function Header() {
               {/* Mobile Menu Button - Enhanced */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="rounded-lg p-2 text-slate-300 transition-all hover:bg-slate-700 hover:text-white lg:hidden"
+                className="rounded-lg p-2 text-gray-600 transition-all hover:bg-gray-100 hover:text-slate-900 dark:hover:bg-slate-800 lg:hidden"
               >
                 <Icon name={mobileMenuOpen ? "X" : "Menu"} className="h-5 w-5" />
               </button>
@@ -934,32 +934,32 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="border-t border-slate-600 bg-slate-800 lg:hidden">
+          <div className="border-t border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900 lg:hidden">
             <div className="space-y-4 px-4 py-6">
               <SignedIn>
                 {/* Mobile Dashboard Section */}
                 <div>
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Dashboard
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/dashboard"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="LayoutDashboard" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Dashboard</span>
                     </Link>
                     <Link
                       href="/dashboard/binder"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="FolderOpen" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Binder</span>
                     </Link>
                     <Link
                       href="/dashboard/pcs-copilot"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
@@ -969,13 +969,13 @@ export default function Header() {
 
                 {/* Mobile Premium Tools Section */}
                 <div>
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Premium Tools
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/dashboard/paycheck-audit"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
                       <span className="font-medium">LES Auditor</span>
@@ -985,14 +985,14 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/dashboard/pcs-copilot"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-orange-600" />
                       <span className="font-medium">PCS Copilot</span>
                     </Link>
                     <Link
                       href="/dashboard/navigator"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Navigator</span>
@@ -1002,7 +1002,7 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/dashboard/tdy-voucher"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="File" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">TDY Copilot</span>
@@ -1012,7 +1012,7 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/dashboard/ask"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MessageCircle" className="h-5 w-5 text-indigo-600" />
                       <span className="font-medium">Ask Our Military Expert</span>
@@ -1025,48 +1025,48 @@ export default function Header() {
 
                 {/* Mobile Core Tools Section */}
                 <div>
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Calculators
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/dashboard/tools/tsp-modeler"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="TrendingUp" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">TSP Calculator</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/sdp-strategist"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="PiggyBank" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">SDP Calculator</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/house-hacking"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Home" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">House Hacking</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/pcs-planner"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">PCS Planner</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/on-base-savings"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="ShoppingCart" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">On-Base Savings</span>
                     </Link>
                     <Link
                       href="/dashboard/tools/salary-calculator"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Calculator" className="h-5 w-5 text-emerald-600" />
                       <span className="font-medium">Retirement Calculator</span>
@@ -1076,27 +1076,27 @@ export default function Header() {
 
                 {/* Mobile Intelligence Section */}
                 <div>
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Resources
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/dashboard/listening-post"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Radio" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Listening Post</span>
                     </Link>
                     <Link
                       href="/dashboard/directory"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Users" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Directory</span>
                     </Link>
                     <Link
                       href="/dashboard/referrals"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Gift" className="h-5 w-5 text-purple-600" />
                       <span className="font-medium">Refer & Earn</span>
@@ -1106,41 +1106,41 @@ export default function Header() {
 
                 {/* Mobile Resources Section */}
                 <div>
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Toolkits
                   </div>
                   <div className="space-y-2">
                     <Link
                       href="/pcs-hub"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Truck" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">PCS Hub</span>
                     </Link>
                     <Link
                       href="/career-hub"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Briefcase" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Career Hub</span>
                     </Link>
                     <Link
                       href="/deployment"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="Shield" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Deployment</span>
                     </Link>
                     <Link
                       href="/base-guides"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Guides</span>
                     </Link>
                     <Link
                       href="/on-base-shopping"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-700"
+                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
                     >
                       <Icon name="ShoppingCart" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">On-Base Shopping</span>
@@ -1149,7 +1149,7 @@ export default function Header() {
                 </div>
 
                 {/* Mobile Upgrade CTA */}
-                <div className="border-t border-slate-600 pt-4">
+                <div className="border-t border-gray-200 pt-4 dark:border-slate-700">
                   <Link
                     href="/dashboard/upgrade"
                     className="block w-full rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-center text-sm font-semibold text-white transition-all hover:from-emerald-700 hover:to-emerald-800"
