@@ -96,7 +96,8 @@ export default function PCSCopilotClient({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <div className="min-h-screen bg-background">
         {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
 
@@ -654,6 +655,7 @@ export default function PCSCopilotClient({
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
