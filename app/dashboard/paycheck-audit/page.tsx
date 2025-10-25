@@ -109,21 +109,19 @@ export default async function PaycheckAuditPage() {
         </section>
 
         {/* Main Content */}
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          {!profileComplete ? (
-            <ProfileIncompletePrompt missingFields={missingFields} />
-          ) : (
-            <LesAuditAlwaysOn
-              tier={tier}
-              userProfile={{
-                paygrade: profile?.paygrade,
-                yos: profile?.years_of_service,
-                mhaCode: mhaCode,
-                hasDependents: profile?.has_dependents,
-              }}
-            />
-          )}
-        </div>
+        {!profileComplete ? (
+          <ProfileIncompletePrompt missingFields={missingFields} />
+        ) : (
+          <LesAuditAlwaysOn
+            tier={tier}
+            userProfile={{
+              paygrade: profile?.paygrade,
+              yos: profile?.years_of_service,
+              mhaCode: mhaCode,
+              hasDependents: profile?.has_dependents,
+            }}
+          />
+        )}
       </main>
       <Footer />
     </>

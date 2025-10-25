@@ -86,18 +86,16 @@ export default async function PCSCopilotPage() {
         </section>
 
         {/* Main Content */}
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <PCSCopilotClient
-            initialClaims={claims || []}
-            isPremium={isPremium}
-            tier={tier}
-            userProfile={{
-              rank: profile?.rank,
-              branch: profile?.branch,
-              currentBase: profile?.current_base,
-            }}
-          />
-        </div>
+        <PCSCopilotClient
+          initialClaims={claims || []}
+          isPremium={isPremium}
+          tier={tier}
+          userProfile={{
+            rank: profile?.rank,
+            branch: profile?.branch,
+            currentBase: profile?.current_base,
+          }}
+        />
       </main>
       <Footer />
     </>

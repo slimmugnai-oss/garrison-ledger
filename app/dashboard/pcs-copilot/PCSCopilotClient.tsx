@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import PageHeader from "@/app/components/ui/PageHeader";
 import Badge from "@/app/components/ui/Badge";
@@ -98,9 +96,7 @@ export default function PCSCopilotClient({
   };
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
         {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
 
@@ -459,7 +455,6 @@ export default function PCSCopilotClient({
           </div>
         </div>
       </div>
-      <Footer />
 
       {/* New Claim Modal */}
       {showNewClaimModal && (
@@ -659,6 +654,6 @@ export default function PCSCopilotClient({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
