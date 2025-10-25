@@ -8,7 +8,7 @@
  * - Weight Allowance Tables
  */
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export interface PerDiemRate {
   zipCode: string;

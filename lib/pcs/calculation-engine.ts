@@ -8,7 +8,7 @@
  * - JTR compliance
  */
 
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";
 
