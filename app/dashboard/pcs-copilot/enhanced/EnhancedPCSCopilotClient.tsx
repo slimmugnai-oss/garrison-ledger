@@ -402,7 +402,7 @@ export default function EnhancedPCSCopilotClient({
 
             <AnimatedCard className="p-6">
               <div className="mb-4 w-fit rounded-xl bg-purple-50 p-3">
-                <Icon name="Bot" className="h-6 w-6 text-purple-600" />
+                <Icon name="Sparkles" className="h-6 w-6 text-purple-600" />
               </div>
               <h4 className="mb-2 font-bold text-slate-900">AI Guidance</h4>
               <p className="text-sm text-slate-600">
