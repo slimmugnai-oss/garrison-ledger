@@ -10,6 +10,7 @@ import { createClient } from "@supabase/supabase-js";
 import { ssot } from "@/lib/ssot";
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
+import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -85,11 +86,27 @@ export async function POST(request: NextRequest) {
     // Query official data sources (pass userId for personalization)
     const dataSources = await queryOfficialSources(question, userId);
 
+    // 🆕 RAG RETRIEVAL: Search knowledge base for relevant guidance
+    let ragChunks: RetrievedChunk[] = [];
+    try {
+      ragChunks = await hybridSearch(
+        question,
+        {
+          content_types: ["premium_guide", "jtr_rule", "sgli_rate"],
+        },
+        5 // Retrieve top 5 most relevant chunks
+      );
+      console.log(`[Ask RAG] Retrieved ${ragChunks.length} knowledge chunks`);
+    } catch (error) {
+      console.error("[Ask RAG] Failed to retrieve chunks:", error);
+      // Continue without RAG if it fails - don't block the request
+    }
+
     // Determine mode (strict vs advisory)
     const mode = dataSources.length > 0 ? "strict" : "advisory";
 
-    // Generate AI answer
-    const answer = await generateAnswer(question, dataSources, mode, userTier);
+    // Generate AI answer with RAG context
+    const answer = await generateAnswer(question, dataSources, ragChunks, mode, userTier);
 
     const responseTime = Date.now() - startTime;
 
@@ -137,11 +154,12 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Generate AI answer using Gemini 2.5 Flash
+ * Generate AI answer using Gemini 2.5 Flash with RAG context
  */
 async function generateAnswer(
   question: string,
   dataSources: DataSource[],
+  ragChunks: RetrievedChunk[],
   mode: "strict" | "advisory",
   userTier: string
 ): Promise<AnswerResponse> {
@@ -160,7 +178,7 @@ async function generateAnswer(
     data: source.data,
   }));
 
-  const prompt = buildPrompt(question, contextData, mode, maxTokens);
+  const prompt = buildPrompt(question, contextData, ragChunks, mode, maxTokens);
 
   // Use GEMINI_API_KEY (consistent with explainer and other AI features)
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -242,11 +260,12 @@ async function generateAnswer(
 }
 
 /**
- * Build prompt for Gemini with strict sourcing requirements
+ * Build prompt for Gemini with strict sourcing requirements + RAG context
  */
 function buildPrompt(
   question: string,
   contextData: DataSource[],
+  ragChunks: RetrievedChunk[],
   mode: string,
   maxTokens: number
 ): string {
@@ -307,6 +326,26 @@ Data: ${JSON.stringify(source.data, null, 2)}
 `
   )
   .join("\n")}
+
+${
+  ragChunks.length > 0
+    ? `
+📚 KNOWLEDGE BASE CONTEXT (${ragChunks.length} relevant excerpts from premium guides):
+${ragChunks
+  .map(
+    (chunk, idx) => `
+[${idx + 1}] ${chunk.content_type} (similarity: ${chunk.similarity.toFixed(2)}):
+${chunk.content_text.substring(0, 600)}...
+Guide: ${chunk.metadata?.guide_title || "Unknown"}
+Section: ${chunk.metadata?.section || "N/A"}
+`
+  )
+  .join("\n")}
+
+**CRITICAL: These knowledge base excerpts contain detailed strategies, examples, and step-by-step guidance. Use them to enhance your answer with practical, actionable advice.**
+`
+    : ""
+}
 
 ANSWER GUIDELINES:
 1. ${mode === "strict" ? "Prioritize provided data sources and cite them" : "Use your comprehensive military knowledge"}
