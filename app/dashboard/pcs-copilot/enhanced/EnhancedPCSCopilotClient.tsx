@@ -181,7 +181,7 @@ export default function EnhancedPCSCopilotClient({
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
               >
-                <Icon name="Smartphone" className="mr-2 inline h-4 w-4" />
+                <Icon name="Monitor" className="mr-2 inline h-4 w-4" />
                 Mobile Wizard
               </button>
             )}
@@ -412,7 +412,7 @@ export default function EnhancedPCSCopilotClient({
 
             <AnimatedCard className="p-6">
               <div className="mb-4 w-fit rounded-xl bg-orange-50 p-3">
-                <Icon name="Smartphone" className="h-6 w-6 text-orange-600" />
+                <Icon name="Monitor" className="h-6 w-6 text-orange-600" />
               </div>
               <h4 className="mb-2 font-bold text-slate-900">Mobile Optimized</h4>
               <p className="text-sm text-slate-600">
@@ -460,7 +460,7 @@ export default function EnhancedPCSCopilotClient({
                   className="w-full rounded-lg border-2 border-green-200 bg-green-50 p-4 transition-colors hover:bg-green-100"
                 >
                   <div className="flex items-center gap-3">
-                    <Icon name="Smartphone" className="h-6 w-6 text-green-600" />
+                    <Icon name="Monitor" className="h-6 w-6 text-green-600" />
                     <div className="text-left">
                       <div className="font-semibold text-green-900">Mobile Wizard</div>
                       <div className="text-sm text-green-700">

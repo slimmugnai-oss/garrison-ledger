@@ -792,15 +792,15 @@ export default function PCSManualEntry({
           <h4 className="mb-3 font-semibold text-slate-900">JTR Citations</h4>
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
-              <Icon name="FileText" className="h-4 w-4 text-blue-600" />
+              <Icon name="File" className="h-4 w-4 text-blue-600" />
               <span>JTR 050302.B - Dislocation Allowance</span>
             </div>
             <div className="flex items-center gap-2">
-              <Icon name="FileText" className="h-4 w-4 text-blue-600" />
+              <Icon name="File" className="h-4 w-4 text-blue-600" />
               <span>JTR 054205 - Temporary Lodging Expense</span>
             </div>
             <div className="flex items-center gap-2">
-              <Icon name="FileText" className="h-4 w-4 text-blue-600" />
+              <Icon name="File" className="h-4 w-4 text-blue-600" />
               <span>JTR 054206 - Mileage Allowance</span>
             </div>
           </div>
