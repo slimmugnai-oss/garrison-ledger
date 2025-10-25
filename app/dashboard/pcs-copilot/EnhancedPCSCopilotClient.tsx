@@ -178,7 +178,7 @@ export default function EnhancedPCSCopilotClient({
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex space-x-8">
                 <Link
-                  href="/dashboard/pcs-copilot/enhanced"
+                  href="/dashboard/pcs-copilot"
                   className="border-b-2 border-blue-500 px-1 py-2 text-sm font-medium text-blue-600"
                 >
                   <Icon name="Plus" className="mr-2 inline h-4 w-4" />
@@ -199,7 +199,7 @@ export default function EnhancedPCSCopilotClient({
                   Cost Comparison
                 </Link>
                 <Link
-                  href="/dashboard/pcs-copilot/enhanced?view=planner"
+                  href="/dashboard/pcs-copilot/planner"
                   className="border-b-2 border-transparent px-1 py-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                 >
                   <Icon name="MapPin" className="mr-2 inline h-4 w-4" />
