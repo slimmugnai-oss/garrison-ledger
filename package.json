@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "npx tsx scripts/prebuild-sitemap-metadata.ts",
+    "prebuild": "echo 'Skipping prebuild for Vercel'",
     "build": "next build",
     "dev": "next dev --turbopack",
     "lint": "eslint . --ext .ts,.tsx,.js,.cjs --max-warnings=0",
