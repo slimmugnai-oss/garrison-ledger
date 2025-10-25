@@ -118,7 +118,7 @@ export default function PCSAIExplanation({ validationFlag, claimContext }: PCSAI
               ) : explanation ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Icon name="Bot" className="h-4 w-4 text-blue-600" />
+                    <Icon name="Sparkles" className="h-4 w-4 text-blue-600" />
                     <span className="text-sm font-medium text-blue-900">AI Explanation</span>
                   </div>
                   <div className="text-sm leading-relaxed text-gray-700">{explanation}</div>
