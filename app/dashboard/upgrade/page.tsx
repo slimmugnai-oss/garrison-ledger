@@ -19,14 +19,17 @@ import Icon from "../../components/ui/Icon";
 
 import UpgradePageClient from "./UpgradePageClient";
 
-
 export const metadata: Metadata = {
   title: "Upgrade to Premium - Garrison Ledger",
   description:
     "Unlimited access to 5 premium tools or buy Ask Assistant question packs. Choose the plan that fits your needs.",
 };
 
-export default async function UpgradePage() {
+export default async function UpgradePage({
+  searchParams,
+}: {
+  searchParams: { feature?: string };
+}) {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
@@ -69,7 +72,7 @@ export default async function UpgradePage() {
   return (
     <>
       <Header />
-      <UpgradePageClient pricingData={pricingData} />
+      <UpgradePageClient pricingData={pricingData} feature={searchParams.feature} />
       <Footer />
     </>
   );
