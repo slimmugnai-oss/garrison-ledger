@@ -107,7 +107,7 @@ export function FeedbackForm({
             onClick={() => setThumbsUp(true)}
             className="flex items-center gap-1"
           >
-            <Icon name="ThumbsUp" className="h-4 w-4" />
+            <Icon name="Check" className="h-4 w-4" />
             Yes
           </Button>
           <Button
@@ -116,7 +116,7 @@ export function FeedbackForm({
             onClick={() => setThumbsUp(false)}
             className="flex items-center gap-1"
           >
-            <Icon name="ThumbsDown" className="h-4 w-4" />
+            <Icon name="X" className="h-4 w-4" />
             No
           </Button>
           <Button
