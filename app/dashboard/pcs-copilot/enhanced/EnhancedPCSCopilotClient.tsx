@@ -9,6 +9,7 @@ import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
+import PCSRecommendationCards from "@/app/components/pcs/PCSRecommendationCards";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
@@ -53,6 +54,7 @@ export default function EnhancedPCSCopilotClient({
   const [currentView, setCurrentView] = useState<"list" | "manual" | "mobile">("list");
   const [validationFlags, setValidationFlags] = useState<any[]>([]);
   const [estimates, setEstimates] = useState<any>(null);
+  const [formData, setFormData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile device
@@ -413,12 +415,38 @@ export default function EnhancedPCSCopilotClient({
 
           {/* Manual Entry View */}
           {currentView === "manual" && (
-            <PCSManualEntry
-              claimId={selectedClaim?.id || "new"}
-              userProfile={userProfile}
-              onSave={handleCreateClaim}
-              onValidationChange={handleValidationChange}
-            />
+            <div className="space-y-6">
+              <PCSManualEntry
+                claimId={selectedClaim?.id || "new"}
+                userProfile={userProfile}
+                onSave={handleCreateClaim}
+                onValidationChange={handleValidationChange}
+              />
+
+              {/* Smart Recommendations */}
+              {formData && (
+                <div className="mt-8">
+                  <PCSRecommendationCards 
+                    claimData={{
+                      estimated_weight: formData.estimated_weight,
+                      distance_miles: formData.distance_miles,
+                      rank: userProfile.rank,
+                      has_dependents: userProfile.hasDependents,
+                      departure_date: formData.departure_date,
+                      arrival_date: formData.arrival_date,
+                      origin_base: formData.origin_base,
+                      destination_base: formData.destination_base,
+                      move_type: formData.move_type,
+                    }}
+                    onRecommendationClick={(rec) => {
+                      if (rec.link) {
+                        window.location.href = rec.link;
+                      }
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           )}
 
           {/* Mobile Wizard View */}

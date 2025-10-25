@@ -158,8 +158,6 @@ export async function POST(req: NextRequest) {
 /**
  * Process OCR with Gemini 2.0 Flash Vision
  * Runs async after upload completes
- * 
- * TODO: Integrate this function into the upload flow
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function processOCR(
