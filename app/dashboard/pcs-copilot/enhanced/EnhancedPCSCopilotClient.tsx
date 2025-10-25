@@ -16,7 +16,6 @@ import PageHeader from "@/app/components/ui/PageHeader";
 import { calculatePCSClaim } from "@/lib/pcs/calculation-engine";
 import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
 
-
 interface Claim {
   id: string;
   claim_name: string;
@@ -102,28 +101,28 @@ export default function EnhancedPCSCopilotClient({
     try {
       const estimates = await calculatePCSClaim(formData);
       setEstimates(estimates);
-      
+
       // Show user feedback based on confidence scores
       if (estimates.dla.confidence === 0) {
-        toast.warning('DLA rate unavailable. Using estimate. Please verify with finance office.');
+        toast.warning("DLA rate unavailable. Using estimate. Please verify with finance office.");
       }
-      
+
       if (estimates.malt.confidence < 100) {
-        toast.info('MALT rate may be outdated. Please verify with finance office.');
+        toast.info("MALT rate may be outdated. Please verify with finance office.");
       }
-      
+
       if (estimates.perDiem.confidence < 100) {
-        toast.info('Per diem rate may not be location-specific. Verify with finance office.');
+        toast.info("Per diem rate may not be location-specific. Verify with finance office.");
       }
-      
+
       if (estimates.confidence.overall < 80) {
-        toast.warning('Some calculations used fallback rates. Please verify with finance office.');
+        toast.warning("Some calculations used fallback rates. Please verify with finance office.");
       } else {
-        toast.success('Calculations completed successfully!');
+        toast.success("Calculations completed successfully!");
       }
     } catch (error) {
       console.error("Failed to calculate estimates:", error);
-      toast.error('Failed to calculate estimates. Please try again.');
+      toast.error("Failed to calculate estimates. Please try again.");
     }
   };
 
@@ -171,6 +170,42 @@ export default function EnhancedPCSCopilotClient({
             title="PCS Money Copilot Elite"
             subtitle="Manual entry, real-time validation, and AI-powered guidance for maximum PCS profit"
           />
+
+          {/* Navigation Tabs */}
+          <div className="mb-8">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8">
+                <Link
+                  href="/dashboard/pcs-copilot/enhanced"
+                  className="border-b-2 border-blue-500 px-1 py-2 text-sm font-medium text-blue-600"
+                >
+                  <Icon name="Plus" className="mr-2 inline h-4 w-4" />
+                  New Claim
+                </Link>
+                <Link
+                  href="/dashboard/pcs-copilot/library"
+                  className="border-b-2 border-transparent px-1 py-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                >
+                  <Icon name="Archive" className="mr-2 inline h-4 w-4" />
+                  Claims Library
+                </Link>
+                <Link
+                  href="/dashboard/pcs-copilot/comparison"
+                  className="border-b-2 border-transparent px-1 py-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                >
+                  <Icon name="BarChart" className="mr-2 inline h-4 w-4" />
+                  Cost Comparison
+                </Link>
+                <Link
+                  href="/dashboard/pcs-copilot/enhanced?view=planner"
+                  className="border-b-2 border-transparent px-1 py-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                >
+                  <Icon name="MapPin" className="mr-2 inline h-4 w-4" />
+                  Assignment Planner
+                </Link>
+              </nav>
+            </div>
+          </div>
 
           {/* View Toggle */}
           <div className="mb-8 flex gap-2">
