@@ -14,5 +14,5 @@ export interface Profile {
   updated_at: string;
 }
 
-// Re-export admin client for backward compatibility
-export { supabaseAdmin } from './supabase/admin';
+// Admin client is now imported directly from './supabase/admin'
+// This prevents client-side initialization when server-side code imports admin
