@@ -152,7 +152,7 @@ export default async function AskAssistantPage() {
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 py-16 text-white">
+        <section className="bg-gradient-to-r from-slate-800 to-slate-700 py-16 text-white">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
