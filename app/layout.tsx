@@ -1,5 +1,5 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { ClerkProvider } from "@clerk/nextjs";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 
@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   ...DEFAULT_META,
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: "/next.svg", sizes: "any" },
+      { url: "/next.svg", sizes: "16x16", type: "image/svg+xml" },
+      { url: "/next.svg", sizes: "32x32", type: "image/svg+xml" },
     ],
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    shortcut: "/next.svg",
+    apple: "/next.svg",
   },
   ...(process.env.NEXT_PUBLIC_ENV !== "production"
     ? { robots: { index: false, follow: false } }
@@ -57,7 +57,7 @@ export default function RootLayout({
           />
         </head>
         <body
-          className={`${inter.variable} ${lora.variable} font-sans antialiased bg-background text-text-body`}
+          className={`${inter.variable} ${lora.variable} text-text-body bg-background font-sans antialiased`}
         >
           <ReferralCapture />
           <KeyboardShortcuts />
