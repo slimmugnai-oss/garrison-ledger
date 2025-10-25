@@ -655,7 +655,6 @@ export default function PCSCopilotClient({
           </div>
         </div>
       )}
-      </div>
     </>
   );
 }
