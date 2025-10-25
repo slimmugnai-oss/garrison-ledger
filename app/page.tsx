@@ -9,7 +9,6 @@ import Link from "next/link";
 
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import AnimatedCard from "./components/ui/AnimatedCard";
 import Icon from "./components/ui/Icon";
 
 export const metadata = {
@@ -67,7 +66,9 @@ export default function Home() {
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
                 <Icon name="Sparkles" className="h-4 w-4 text-yellow-400" />
-                <span className="text-sm font-semibold text-yellow-400">NEW: Expert Mode Active</span>
+                <span className="text-sm font-semibold text-yellow-400">
+                  NEW: Expert Mode Active
+                </span>
               </div>
 
               <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
@@ -75,21 +76,28 @@ export default function Home() {
               </h2>
 
               <p className="mb-6 text-xl leading-relaxed text-blue-100">
-                Stop Googling. Stop waiting for Facebook responses. Get instant, expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life.
+                Stop Googling. Stop waiting for Facebook responses. Get instant, expert answers to
+                ANY military life question—financial, PCS, deployment, career, benefits, base life.
               </p>
 
               <ul className="mb-8 space-y-3 text-lg">
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
-                  <span><strong>1,410 knowledge sources</strong> + official DFAS/VA/TSP data</span>
+                  <span>
+                    <strong>1,410 knowledge sources</strong> + official DFAS/VA/TSP data
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
-                  <span><strong>Personalized to YOUR situation</strong> (rank, base, family status)</span>
+                  <span>
+                    <strong>Personalized to YOUR situation</strong> (rank, base, family status)
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
-                  <span><strong>Instant answers in ~2 seconds</strong> with step-by-step guidance</span>
+                  <span>
+                    <strong>Instant answers in ~2 seconds</strong> with step-by-step guidance
+                  </span>
                 </li>
               </ul>
 
@@ -118,11 +126,15 @@ export default function Home() {
             <div className="space-y-4">
               <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
                 <p className="mb-2 text-sm font-semibold text-blue-200">Example Question:</p>
-                <p className="mb-3 text-lg font-medium">"What's my BAH as an E-5 at Fort Hood with dependents?"</p>
+                <p className="mb-3 text-lg font-medium">
+                  "What's my BAH as an E-5 at Fort Hood with dependents?"
+                </p>
                 <div className="rounded-md bg-white/20 p-3 text-sm">
                   <p className="font-semibold text-yellow-400">Expert Answer:</p>
                   <p className="mt-1 text-blue-50">
-                    "Your BAH at Fort Hood (Killeen, TX MHA) as an E-5 with dependents is <strong>$1,773/month</strong> (2025 rates). This covers a 3BR house in Killeen ($1,400-1,600/mo), leaving $200-300 for utilities..."
+                    "Your BAH at Fort Hood (Killeen, TX MHA) as an E-5 with dependents is{" "}
+                    <strong>$1,773/month</strong> (2025 rates). This covers a 3BR house in Killeen
+                    ($1,400-1,600/mo), leaving $200-300 for utilities..."
                   </p>
                 </div>
               </div>
@@ -150,97 +162,408 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5 Premium Tools */}
-      <section className="bg-white py-20">
+      {/* LES Auditor Spotlight */}
+      <section className="mt-px bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-16 text-center">
-            <h2 className="font-lora mb-4 text-4xl font-bold text-gray-900">5 Premium Tools</h2>
-            <p className="text-xl text-gray-600">Everything you need to master military finances</p>
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: Headline + Copy */}
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Icon name="Shield" className="h-4 w-4 text-green-400" />
+                <span className="text-sm font-semibold text-green-400">CATCH PAY ERRORS</span>
+              </div>
+
+              <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
+                Your Personal Pay Guard
+              </h2>
+
+              <p className="mb-6 text-xl leading-relaxed text-slate-200">
+                Stop losing money to pay errors. Automatic auditing catches BAH mistakes, COLA
+                discrepancies, and missing allowances before they cost you thousands.
+              </p>
+
+              <ul className="mb-8 space-y-3 text-lg">
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
+                  <span>
+                    <strong>16,368 BAH rates</strong> verified and auto-populated
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
+                  <span>
+                    <strong>Catches $500+ errors average</strong> per member per year
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
+                  <span>
+                    <strong>3-minute audit process</strong> with instant error alerts
+                  </span>
+                </li>
+              </ul>
+
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-4 text-lg font-bold text-white hover:from-green-600 hover:to-emerald-700">
+                    Audit My LES Free →
+                  </button>
+                </SignUpButton>
+                <p className="mt-3 text-sm text-slate-300">
+                  1 free audit/month • No credit card required
+                </p>
+              </SignedOut>
+
+              <SignedIn>
+                <Link
+                  href="/dashboard/les-auditor"
+                  className="inline-block rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-4 text-lg font-bold text-white hover:from-green-600 hover:to-emerald-700"
+                >
+                  Audit My LES →
+                </Link>
+              </SignedIn>
+            </div>
+
+            {/* Right: Example Audit Preview */}
+            <div className="space-y-4">
+              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+                <p className="mb-2 text-sm font-semibold text-green-300">Example Audit Result:</p>
+                <p className="mb-3 text-lg font-medium">E-5 @ Fort Bragg, NC (2025)</p>
+                <div className="rounded-md bg-white/20 p-3 text-sm">
+                  <p className="font-semibold text-green-400">⚠️ Error Detected:</p>
+                  <p className="mt-1 text-slate-100">
+                    Expected BAH: <strong className="text-green-400">$1,959</strong>
+                    <br />
+                    Your LES shows: <strong className="text-red-400">$1,812</strong>
+                    <br />
+                    <strong className="text-yellow-400">Missing: $147/month → $1,764/year</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  ✓ BAH verified
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  ✓ BAS correct
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  ✓ COLA matched
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  ✓ Tax withholdings
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-slate-300">
+                Automatic error detection across all pay components
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {/* LES Auditor */}
-            <AnimatedCard>
-              <div className="h-full rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                  <Icon name="DollarSign" className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">LES Auditor</h3>
-                <p className="mb-3 text-sm text-gray-700">Catch pay errors. Verify BAH/BAS/COLA.</p>
-                <div className="text-xs font-semibold text-green-700">
-                  Members find $500+ errors
-                </div>
+      {/* PCS Copilot Spotlight */}
+      <section className="mt-px bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: Headline + Copy */}
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Icon name="Truck" className="h-4 w-4 text-orange-400" />
+                <span className="text-sm font-semibold text-orange-400">MAXIMIZE DITY PROFIT</span>
               </div>
-            </AnimatedCard>
 
-            {/* PCS Copilot */}
-            <AnimatedCard delay={0.1}>
-              <div className="h-full rounded-lg border border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
-                  <Icon name="Truck" className="h-6 w-6 text-orange-600" />
-                </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">PCS Copilot</h3>
-                <p className="mb-3 text-sm text-gray-700">
-                  Maximize DITY move profit. Track expenses.
+              <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
+                Your PCS Money Machine
+              </h2>
+
+              <p className="mb-6 text-xl leading-relaxed text-slate-200">
+                Stop leaving money on the table. Track every DITY move expense, maximize your
+                profit, and turn your PCS into a $2,000+ payday.
+              </p>
+
+              <ul className="mb-8 space-y-3 text-lg">
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-orange-400" />
+                  <span>
+                    <strong>Average $2,400 profit</strong> per DITY move
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-orange-400" />
+                  <span>
+                    <strong>Receipt tracking built-in</strong> with photo capture
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-orange-400" />
+                  <span>
+                    <strong>Official JTR weight tables</strong> for accurate payments
+                  </span>
+                </li>
+              </ul>
+
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="rounded-lg bg-gradient-to-r from-orange-500 to-red-600 px-8 py-4 text-lg font-bold text-white hover:from-orange-600 hover:to-red-700">
+                    Start My PCS →
+                  </button>
+                </SignUpButton>
+                <p className="mt-3 text-sm text-slate-300">
+                  Free for all members • Track unlimited moves
                 </p>
-                <div className="text-xs font-semibold text-orange-700">
-                  Avg $2,400 profit per PCS
+              </SignedOut>
+
+              <SignedIn>
+                <Link
+                  href="/dashboard/pcs-copilot"
+                  className="inline-block rounded-lg bg-gradient-to-r from-orange-500 to-red-600 px-8 py-4 text-lg font-bold text-white hover:from-orange-600 hover:to-red-700"
+                >
+                  Start My PCS →
+                </Link>
+              </SignedIn>
+            </div>
+
+            {/* Right: Example Expense Tracker */}
+            <div className="space-y-4">
+              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+                <p className="mb-2 text-sm font-semibold text-orange-300">Example PCS Profits:</p>
+                <p className="mb-3 text-lg font-medium">Fort Hood → Fort Bragg (8,500 lbs)</p>
+                <div className="rounded-md bg-white/20 p-3 text-sm">
+                  <p className="font-semibold text-orange-400">💰 Profit Breakdown:</p>
+                  <p className="mt-1 text-slate-100">
+                    Gov't Reimbursement: <strong className="text-green-400">$3,847</strong>
+                    <br />
+                    Your Expenses: <strong className="text-red-400">$1,210</strong>
+                    <br />
+                    <strong className="text-yellow-400">Net Profit: $2,637</strong>
+                  </p>
                 </div>
               </div>
-            </AnimatedCard>
 
-            {/* Base Navigator */}
-            <AnimatedCard delay={0.2}>
-              <div className="h-full rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                  <Icon name="MapPin" className="h-6 w-6 text-blue-600" />
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🚚 Fuel costs
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">Base Navigator</h3>
-                <p className="mb-3 text-sm text-gray-700">
-                  Find perfect neighborhood. Schools + rent.
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🏨 Hotels
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  📦 Boxes
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  💪 Movers
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-slate-300">
+                Track every expense to maximize your reimbursement
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Base Navigator Spotlight */}
+      <section className="mt-px bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: Headline + Copy */}
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Icon name="MapPin" className="h-4 w-4 text-blue-400" />
+                <span className="text-sm font-semibold text-blue-400">FIND YOUR PERFECT BASE</span>
+              </div>
+
+              <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
+                Your Next Assignment Intel
+              </h2>
+
+              <p className="mb-6 text-xl leading-relaxed text-slate-200">
+                Stop guessing where to live. Get real-time housing costs, school ratings, and
+                neighborhood insights for 203 military bases worldwide.
+              </p>
+
+              <ul className="mb-8 space-y-3 text-lg">
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-blue-400" />
+                  <span>
+                    <strong>203 bases ranked</strong> with full cost breakdowns
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-blue-400" />
+                  <span>
+                    <strong>Live housing prices</strong> from Zillow integration
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-blue-400" />
+                  <span>
+                    <strong>Real school ratings</strong> from GreatSchools.org
+                  </span>
+                </li>
+              </ul>
+
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 px-8 py-4 text-lg font-bold text-white hover:from-blue-600 hover:to-cyan-700">
+                    Explore Bases Free →
+                  </button>
+                </SignUpButton>
+                <p className="mt-3 text-sm text-slate-300">Free tier: 5 base searches/month</p>
+              </SignedOut>
+
+              <SignedIn>
+                <Link
+                  href="/dashboard/base-navigator"
+                  className="inline-block rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 px-8 py-4 text-lg font-bold text-white hover:from-blue-600 hover:to-cyan-700"
+                >
+                  Explore Bases →
+                </Link>
+              </SignedIn>
+            </div>
+
+            {/* Right: Example Base Comparison */}
+            <div className="space-y-4">
+              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+                <p className="mb-2 text-sm font-semibold text-blue-300">Example Base Intel:</p>
+                <p className="mb-3 text-lg font-medium">Fort Bragg, NC (Rank #12)</p>
+                <div className="rounded-md bg-white/20 p-3 text-sm">
+                  <p className="font-semibold text-blue-400">📊 Key Stats:</p>
+                  <p className="mt-1 text-slate-100">
+                    Avg 3BR Rent: <strong className="text-blue-400">$1,450/mo</strong>
+                    <br />
+                    Top Schools: <strong className="text-green-400">9/10 rating</strong>
+                    <br />
+                    <strong className="text-yellow-400">BAH Coverage: 100%</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🏠 Housing
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🎓 Schools
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🌤️ Weather
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  💰 Cost of living
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-slate-300">
+                Real-time data from Zillow, GreatSchools, and Google Weather
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TDY Copilot Spotlight */}
+      <section className="mt-px bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: Headline + Copy */}
+            <div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Icon name="File" className="h-4 w-4 text-purple-400" />
+                <span className="text-sm font-semibold text-purple-400">BUILD VOUCHERS FAST</span>
+              </div>
+
+              <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
+                Your Travel Voucher Assistant
+              </h2>
+
+              <p className="mb-6 text-xl leading-relaxed text-slate-200">
+                Stop spending hours on DTS vouchers. Track receipts, calculate per diem, and build
+                submission-ready vouchers in 20 minutes instead of 2+ hours.
+              </p>
+
+              <ul className="mb-8 space-y-3 text-lg">
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
+                  <span>
+                    <strong>Save 2+ hours per trip</strong> with auto-calculations
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
+                  <span>
+                    <strong>Receipt photo capture</strong> with OCR text extraction
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
+                  <span>
+                    <strong>Official JTR per diem rates</strong> for all locations
+                  </span>
+                </li>
+              </ul>
+
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 px-8 py-4 text-lg font-bold text-white hover:from-purple-600 hover:to-violet-700">
+                    Create Voucher Free →
+                  </button>
+                </SignUpButton>
+                <p className="mt-3 text-sm text-slate-300">
+                  Free for all members • Unlimited vouchers
                 </p>
-                <div className="text-xs font-semibold text-blue-700">203 bases ranked</div>
-              </div>
-            </AnimatedCard>
+              </SignedOut>
 
-            {/* TDY Copilot */}
-            <AnimatedCard delay={0.3}>
-              <div className="h-full rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50 p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                  <Icon name="File" className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">TDY Copilot</h3>
-                <p className="mb-3 text-sm text-gray-700">Build travel vouchers in 20 min.</p>
-                <div className="text-xs font-semibold text-purple-700">Save 2+ hours per trip</div>
-              </div>
-            </AnimatedCard>
+              <SignedIn>
+                <Link
+                  href="/dashboard/tdy-copilot"
+                  className="inline-block rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 px-8 py-4 text-lg font-bold text-white hover:from-purple-600 hover:to-violet-700"
+                >
+                  Create Voucher →
+                </Link>
+              </SignedIn>
+            </div>
 
-            {/* Ask Our Military Expert */}
-            <AnimatedCard delay={0.4}>
-              <div className="h-full rounded-lg border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-6 shadow-lg">
-                {/* NEW Badge */}
-                <div className="mb-3 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-2 py-1 text-xs font-bold text-white">
-                  <Icon name="Sparkles" className="h-3 w-3" />
-                  EXPERT MODE
-                </div>
-
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600">
-                  <Icon name="MessageCircle" className="h-6 w-6 text-white" />
-                </div>
-
-                <h3 className="mb-2 text-xl font-bold text-gray-900">Ask Our Military Expert</h3>
-
-                <p className="mb-3 text-sm text-gray-700">
-                  <strong>24/7 military life advisor.</strong> Financial, PCS, deployment, career, benefits—instant expert answers.
-                </p>
-
-                <div className="space-y-1 text-xs">
-                  <div className="font-semibold text-indigo-700">📊 1,410 knowledge sources</div>
-                  <div className="font-semibold text-indigo-700">⚡ ~2 sec response time</div>
-                  <div className="font-semibold text-indigo-700">⭐ 9.2/10 answer quality</div>
+            {/* Right: Example Voucher Preview */}
+            <div className="space-y-4">
+              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+                <p className="mb-2 text-sm font-semibold text-purple-300">Example Voucher:</p>
+                <p className="mb-3 text-lg font-medium">TDY to Washington, DC (3 days)</p>
+                <div className="rounded-md bg-white/20 p-3 text-sm">
+                  <p className="font-semibold text-purple-400">💰 Reimbursement:</p>
+                  <p className="mt-1 text-slate-100">
+                    Per Diem (3 days): <strong className="text-purple-400">$360</strong>
+                    <br />
+                    Mileage (200 mi): <strong className="text-purple-400">$118</strong>
+                    <br />
+                    <strong className="text-yellow-400">Total: $478</strong>
+                  </p>
                 </div>
               </div>
-            </AnimatedCard>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  📸 Receipts
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🍽️ Per diem
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  ⛽ Mileage
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
+                  🏨 Lodging
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-slate-300">
+                Ready-to-submit voucher in under 20 minutes
+              </p>
+            </div>
           </div>
         </div>
       </section>
