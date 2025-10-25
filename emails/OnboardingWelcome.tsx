@@ -45,7 +45,8 @@ export const OnboardingWelcome = ({
                 <strong>1. Complete your profile</strong>
               </Text>
               <Text style={text}>
-                Enter rank, years of service, zip/MHA, and dependents to unlock personalized calculations.
+                Enter rank, years of service, zip/MHA, and dependents to unlock personalized
+                calculations.
               </Text>
               <Button style={button} href={`${baseUrl}/dashboard/profile/setup`}>
                 Complete Your Profile →
@@ -58,7 +59,8 @@ export const OnboardingWelcome = ({
                 <strong>2. Run your first LES audit</strong>
               </Text>
               <Text style={text}>
-                We auto-fill official tables (BAH/BAS/Base Pay/COLA/SGLI). You enter your actual taxes from the LES; we validate the math and flag issues.
+                We auto-fill official tables (BAH/BAS/Base Pay/COLA/SGLI). You enter your actual
+                taxes from the LES; we validate the math and flag issues.
               </Text>
               <Button style={buttonSecondary} href={`${baseUrl}/dashboard/les-auditor`}>
                 Try LES Auditor →
@@ -71,35 +73,32 @@ export const OnboardingWelcome = ({
                 <strong>3. Try a premium tool:</strong>
               </Text>
               <Text style={text}>
-                • <Link href={`${baseUrl}/dashboard/tdy`} style={linkBold}>TDY / Travel Voucher Copilot</Link>
+                •{" "}
+                <Link href={`${baseUrl}/dashboard/tdy`} style={linkBold}>
+                  TDY / Travel Voucher Copilot
+                </Link>
               </Text>
               <Text style={text}>
-                • <Link href={`${baseUrl}/dashboard/navigator`} style={linkBold}>Base / Area Navigator</Link>
+                •{" "}
+                <Link href={`${baseUrl}/dashboard/navigator`} style={linkBold}>
+                  Base / Area Navigator
+                </Link>
               </Text>
             </Section>
 
             {/* Free Access */}
             <Text style={text}>
-              You also have access to our <strong>6 free calculators</strong> and <strong>"Ask a Military Expert"</strong>.
+              You also have access to our <strong>6 free calculators</strong> and{" "}
+              <strong>"Ask a Military Expert"</strong>.
             </Text>
 
             {/* Premium Upgrade Section */}
             <Section style={premiumSection}>
-              <Text style={premiumTitle}>
-                If you find value, Premium is $9.99/month:
-              </Text>
-              <Text style={bulletText}>
-                • Unlimited audits + full detail and history
-              </Text>
-              <Text style={bulletText}>
-                • Full TDY flow (unlimited docs)
-              </Text>
-              <Text style={bulletText}>
-                • Complete Base Navigator rankings and watchlists
-              </Text>
-              <Text style={bulletText}>
-                • More "Ask a Military Expert" questions
-              </Text>
+              <Text style={premiumTitle}>If you find value, Premium is $9.99/month:</Text>
+              <Text style={bulletText}>• Unlimited audits + full detail and history</Text>
+              <Text style={bulletText}>• Full TDY flow (unlimited docs)</Text>
+              <Text style={bulletText}>• Complete Base Navigator rankings and watchlists</Text>
+              <Text style={bulletText}>• More "Ask a Military Expert" questions</Text>
               <Button style={button} href={`${baseUrl}/dashboard/upgrade`}>
                 Upgrade to Premium →
               </Button>

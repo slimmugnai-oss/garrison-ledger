@@ -23,7 +23,7 @@
     "audit:console-logs": "ts-node scripts/check-console-logs.ts",
     "audit:all": "npm run audit:empty-catches && npm run audit:any-types && npm run audit:console-logs",
     "check-data-freshness": "ts-node scripts/check-data-freshness.ts",
-    "import-bah": "ts-node scripts/import-bah-rates.ts",
+    "import-bah": "ts-node scripts/import-bah-csv.ts",
     "import-pay-tables": "ts-node scripts/import-pay-tables.ts",
     "content:lint": "ts-node lib/content/lint.ts",
     "content:autofix": "ts-node lib/content/autofix.ts",
@@ -31,7 +31,6 @@
     "content:audit:import": "ts-node lib/content/audit.ts import",
     "content:update-feeds": "curl -X GET http://localhost:3000/api/feeds/refresh?source=BAH,COLA,IRS_TSP_LIMITS",
     "content:report": "ts-node lib/content/report.ts",
-    "import-bah": "ts-node scripts/import-bah-csv.ts",
     "generate-bah-sql": "ts-node scripts/generate-bah-sql.ts",
     "generate-bah-sql-chunked": "ts-node scripts/generate-bah-sql-chunked.ts",
     "type-check": "tsc --noEmit",
@@ -47,7 +46,8 @@
     "rag:embed-content": "node scripts/embed-content-blocks.mjs",
     "rag:embed-official": "node scripts/embed-official-data.mjs",
     "rag:test-search": "node --loader ts-node/esm scripts/test-rag-search.ts",
-    "rag:check-embeddings": "node --loader ts-node/esm scripts/check-embeddings-status.ts"
+    "rag:check-embeddings": "node scripts/check-embeddings-status.mjs",
+    "rag:embed-premium-guides": "node scripts/embed-premium-guides.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.7.2",

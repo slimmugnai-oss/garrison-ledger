@@ -150,20 +150,18 @@ export async function POST(req: NextRequest) {
         });
 
         // Log to admin error logs table
-        const { error: logError } = await supabaseAdmin
-          .from("error_logs")
-          .insert({
-            level: "error",
-            source: "clerk_webhook_credits",
-            message: "Failed to initialize Ask Assistant credits during user signup",
-            details: {
-              userId: id,
-              email: email.split("@")[1],
-              error: creditsError.message || String(creditsError),
-              code: creditsError.code,
-            },
-          });
-        
+        const { error: logError } = await supabaseAdmin.from("error_logs").insert({
+          level: "error",
+          source: "clerk_webhook_credits",
+          message: "Failed to initialize Ask Assistant credits during user signup",
+          details: {
+            userId: id,
+            email: email.split("@")[1],
+            error: creditsError.message || String(creditsError),
+            code: creditsError.code,
+          },
+        });
+
         if (logError) {
           logger.error("[ClerkWebhook] Failed to log credits error", { error: logError });
         }
