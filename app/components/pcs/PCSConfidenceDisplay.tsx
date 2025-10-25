@@ -19,11 +19,11 @@ interface ConfidenceDisplayProps {
 export default function PCSConfidenceDisplay({ estimates }: ConfidenceDisplayProps) {
   const [showDetails, setShowDetails] = useState(false);
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 90) return "green";
-    if (confidence >= 70) return "yellow";
-    if (confidence >= 50) return "orange";
-    return "red";
+  const getConfidenceVariant = (confidence: number) => {
+    if (confidence >= 90) return "success";
+    if (confidence >= 70) return "warning";
+    if (confidence >= 50) return "warning";
+    return "danger";
   };
 
   const getConfidenceLabel = (confidence: number) => {
@@ -50,7 +50,7 @@ export default function PCSConfidenceDisplay({ estimates }: ConfidenceDisplayPro
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-slate-700">Overall Confidence</span>
-          <Badge color={getConfidenceColor(estimates.confidence)}>
+          <Badge variant={getConfidenceVariant(estimates.confidence)}>
             {getConfidenceLabel(estimates.confidence)}
           </Badge>
         </div>
@@ -80,7 +80,7 @@ export default function PCSConfidenceDisplay({ estimates }: ConfidenceDisplayPro
           <div className="border-l-4 border-blue-200 pl-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-slate-700">DLA Rate</span>
-              <Badge color={getConfidenceColor(estimates.dla.confidence)}>
+              <Badge variant={getConfidenceVariant(estimates.dla.confidence)}>
                 {estimates.dla.confidence}%
               </Badge>
             </div>
@@ -96,7 +96,7 @@ export default function PCSConfidenceDisplay({ estimates }: ConfidenceDisplayPro
           <div className="border-l-4 border-green-200 pl-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-slate-700">MALT Rate</span>
-              <Badge color={getConfidenceColor(estimates.malt.confidence)}>
+              <Badge variant={getConfidenceVariant(estimates.malt.confidence)}>
                 {estimates.malt.confidence}%
               </Badge>
             </div>
@@ -112,7 +112,7 @@ export default function PCSConfidenceDisplay({ estimates }: ConfidenceDisplayPro
           <div className="border-l-4 border-purple-200 pl-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-slate-700">Per Diem Rate</span>
-              <Badge color={getConfidenceColor(estimates.perDiem.confidence)}>
+              <Badge variant={getConfidenceVariant(estimates.perDiem.confidence)}>
                 {estimates.perDiem.confidence}%
               </Badge>
             </div>
