@@ -227,13 +227,13 @@ export default function PCSHelpWidget({ claimContext, onAskQuestion }: PCSHelpWi
                             id: `recent-${index}`,
                             question,
                             category: "Recent",
-                            icon: "Clock",
+                            icon: "Timer",
                           })
                         }
                         className="w-full rounded-lg border border-gray-200 p-3 text-left transition-colors hover:border-blue-300 hover:bg-blue-50"
                       >
                         <div className="flex items-center gap-2">
-                          <Icon name="Clock" className="h-4 w-4 text-gray-400" />
+                          <Icon name="Timer" className="h-4 w-4 text-gray-400" />
                           <span className="text-sm text-slate-700">{question}</span>
                         </div>
                       </button>
