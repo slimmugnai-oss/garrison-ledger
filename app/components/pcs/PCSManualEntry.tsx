@@ -6,7 +6,6 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
-import { supabase } from "@/lib/supabase";
 
 interface PCSManualEntryProps {
   claimId: string;
