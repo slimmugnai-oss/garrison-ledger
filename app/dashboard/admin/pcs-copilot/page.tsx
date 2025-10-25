@@ -44,14 +44,32 @@ export default async function AdminPCSCopilotPage() {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  // Fetch validation issues
-  const { data: validationIssues } = await supabaseAdmin
+  // Fetch validation issues (fetch all, aggregate client-side)
+  const { data: allChecks } = await supabaseAdmin
     .from("pcs_claim_checks")
-    .select("check_category, severity, COUNT(*)")
-    .eq("is_resolved", false)
-    .group("check_category, severity")
-    .order("count", { ascending: false })
-    .limit(10);
+    .select("check_category, severity")
+    .eq("is_resolved", false);
+
+  // Aggregate validation issues client-side
+  const validationIssues = allChecks
+    ? Object.entries(
+        allChecks.reduce(
+          (acc, check) => {
+            const key = `${check.check_category}__${check.severity}`;
+            acc[key] = {
+              check_category: check.check_category,
+              severity: check.severity,
+              count: (acc[key]?.count || 0) + 1,
+            };
+            return acc;
+          },
+          {} as Record<string, { check_category: string; severity: string; count: number }>
+        )
+      )
+        .map(([_, value]) => value)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10)
+    : [];
 
   // Fetch rate health
   const { data: rateHealth } = await supabaseAdmin
