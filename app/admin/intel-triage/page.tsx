@@ -8,25 +8,20 @@
  */
 
 import { currentUser } from '@clerk/nextjs/server';
-import { createClient } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import Badge from '@/app/components/ui/Badge';
 import Icon from '@/app/components/ui/Icon';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export default async function IntelTriagePage() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
   // Get flagged content blocks
-  const { data: flags } = await supabase
+  const { data: flags } = await supabaseAdmin
     .from('content_flags')
     .select(`
       *,
