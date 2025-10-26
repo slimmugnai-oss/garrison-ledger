@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     // Check if user is authenticated and is staff
     const { userId } = await auth();
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find users in user_profiles who are missing from profiles
-    const { data: missingUsers, error: queryError } = await supabaseAdmin.rpc(
+    const { data: _missingUsers, error: queryError } = await supabaseAdmin.rpc(
       "get_missing_profiles",
       {}
     );

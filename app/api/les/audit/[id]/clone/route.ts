@@ -16,6 +16,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+interface LESLine {
+  line_code: string;
+  description: string;
+  amount: number;
+  pay_period: string;
+  section: string;
+}
+
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
@@ -73,7 +81,7 @@ export async function POST(
 
   // Clone line items
   if (original.les_lines && original.les_lines.length > 0) {
-    const clonedLines = original.les_lines.map((line: any) => ({
+    const clonedLines = original.les_lines.map((line: LESLine) => ({
       upload_id: newUpload.id,
       line_code: line.line_code,
       description: line.description,

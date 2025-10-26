@@ -6,11 +6,39 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 
+interface Metrics {
+  total_claims: number;
+  completion_rate: number;
+  avg_estimate: number;
+  avg_readiness: number;
+  total_savings: number;
+}
+
+interface RecentClaim {
+  id: string;
+  claim_name: string;
+  status: string;
+  created_at: string;
+}
+
+interface ValidationIssue {
+  id: string;
+  field: string;
+  severity: string;
+  message: string;
+}
+
+interface RateHealth {
+  source: string;
+  status: string;
+  last_updated: string;
+}
+
 interface PCSCopilotMetricsProps {
-  metrics: any;
-  recentClaims: any[];
-  validationIssues: any[];
-  rateHealth: any[];
+  metrics: Metrics;
+  recentClaims: RecentClaim[];
+  validationIssues: ValidationIssue[];
+  rateHealth: RateHealth[];
 }
 
 export default function PCSCopilotMetrics({

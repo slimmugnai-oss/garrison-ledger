@@ -16,6 +16,15 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+interface LESLine {
+  section: string;
+  amount_cents: number;
+}
+
+interface PayFlag {
+  severity: string;
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -51,29 +60,29 @@ export async function GET(
 
   // Group lines by section
   const linesBySection = {
-    ALLOWANCE: upload.les_lines.filter((l: any) => l.section === 'ALLOWANCE'),
-    TAX: upload.les_lines.filter((l: any) => l.section === 'TAX'),
-    DEDUCTION: upload.les_lines.filter((l: any) => l.section === 'DEDUCTION'),
-    ALLOTMENT: upload.les_lines.filter((l: any) => l.section === 'ALLOTMENT'),
-    DEBT: upload.les_lines.filter((l: any) => l.section === 'DEBT'),
-    ADJUSTMENT: upload.les_lines.filter((l: any) => l.section === 'ADJUSTMENT')
+    ALLOWANCE: upload.les_lines.filter((l: LESLine) => l.section === 'ALLOWANCE'),
+    TAX: upload.les_lines.filter((l: LESLine) => l.section === 'TAX'),
+    DEDUCTION: upload.les_lines.filter((l: LESLine) => l.section === 'DEDUCTION'),
+    ALLOTMENT: upload.les_lines.filter((l: LESLine) => l.section === 'ALLOTMENT'),
+    DEBT: upload.les_lines.filter((l: LESLine) => l.section === 'DEBT'),
+    ADJUSTMENT: upload.les_lines.filter((l: LESLine) => l.section === 'ADJUSTMENT')
   };
 
   // Group flags by severity
   const flagsBySeverity = {
-    red: upload.pay_flags.filter((f: any) => f.severity === 'red'),
-    yellow: upload.pay_flags.filter((f: any) => f.severity === 'yellow'),
-    green: upload.pay_flags.filter((f: any) => f.severity === 'green')
+    red: upload.pay_flags.filter((f: PayFlag) => f.severity === 'red'),
+    yellow: upload.pay_flags.filter((f: PayFlag) => f.severity === 'yellow'),
+    green: upload.pay_flags.filter((f: PayFlag) => f.severity === 'green')
   };
 
   // Compute totals
   const totals = {
-    allowances: linesBySection.ALLOWANCE.reduce((sum: number, l: any) => sum + l.amount_cents, 0),
-    taxes: linesBySection.TAX.reduce((sum: number, l: any) => sum + l.amount_cents, 0),
-    deductions: linesBySection.DEDUCTION.reduce((sum: number, l: any) => sum + l.amount_cents, 0),
-    allotments: linesBySection.ALLOTMENT.reduce((sum: number, l: any) => sum + l.amount_cents, 0),
-    debts: linesBySection.DEBT.reduce((sum: number, l: any) => sum + l.amount_cents, 0),
-    adjustments: linesBySection.ADJUSTMENT.reduce((sum: number, l: any) => sum + l.amount_cents, 0)
+    allowances: linesBySection.ALLOWANCE.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0),
+    taxes: linesBySection.TAX.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0),
+    deductions: linesBySection.DEDUCTION.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0),
+    allotments: linesBySection.ALLOTMENT.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0),
+    debts: linesBySection.DEBT.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0),
+    adjustments: linesBySection.ADJUSTMENT.reduce((sum: number, l: LESLine) => sum + l.amount_cents, 0)
   };
 
   return NextResponse.json({

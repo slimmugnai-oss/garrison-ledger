@@ -4,6 +4,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+// Data interfaces
+interface EstimateData {
+  total_estimated: number;
+}
+
+interface ReadinessData {
+  readiness_score: number;
+}
+
+interface SavingsData {
+  total_estimated: number;
+}
+
 /**
  * PCS COPILOT ADMIN METRICS API
  *
@@ -97,7 +110,7 @@ export async function GET(req: NextRequest) {
     const avgEstimateValue =
       estimates.length > 0
         ? Math.round(
-            estimates.reduce((sum: number, e: any) => sum + (e.total_estimated || 0), 0) /
+            estimates.reduce((sum: number, e: EstimateData) => sum + (e.total_estimated || 0), 0) /
               estimates.length
           )
         : 0;
@@ -106,14 +119,14 @@ export async function GET(req: NextRequest) {
     const avgReadinessValue =
       readinessScores.length > 0
         ? Math.round(
-            readinessScores.reduce((sum: number, c: any) => sum + (c.readiness_score || 0), 0) /
+            readinessScores.reduce((sum: number, c: ReadinessData) => sum + (c.readiness_score || 0), 0) /
               readinessScores.length
           )
         : 0;
 
     const savings = totalSavings.data || [];
     const totalSavingsValue = savings.reduce(
-      (sum: number, s: any) => sum + (s.total_estimated || 0),
+      (sum: number, s: SavingsData) => sum + (s.total_estimated || 0),
       0
     );
 
@@ -138,7 +151,7 @@ export async function GET(req: NextRequest) {
       metrics,
       generated_at: new Date().toISOString(),
     });
-  } catch (error) {
-    return errorResponse(error);
+  } catch (_error) {
+    return errorResponse(_error);
   }
 }

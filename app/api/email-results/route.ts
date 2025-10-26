@@ -5,8 +5,18 @@ import { Resend } from "resend";
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { logger } from "@/lib/logger";
 
+interface TSPMix {
+  C?: number;
+  S?: number;
+  I?: number;
+  F?: number;
+  G?: number;
+}
+
 interface EmailData {
-  inputs: Record<string, unknown>;
+  inputs: Record<string, unknown> & {
+    mix?: TSPMix;
+  };
   outputs: Record<string, unknown>;
 }
 
@@ -34,7 +44,7 @@ const templates: Record<string, (data: EmailData) => string> = {
         <li>Retirement Age: ${data.inputs.retire}</li>
         <li>Current Balance: ${fmt(Number(data.inputs.balance) || 0)}</li>
         <li>Monthly Contribution: ${fmt(Number(data.inputs.monthly) || 0)}</li>
-        <li>Allocation: C${(data.inputs.mix as any)?.C || 0}% / S${(data.inputs.mix as any)?.S || 0}% / I${(data.inputs.mix as any)?.I || 0}% / F${(data.inputs.mix as any)?.F || 0}% / G${(data.inputs.mix as any)?.G || 0}%</li>
+        <li>Allocation: C${data.inputs.mix?.C || 0}% / S${data.inputs.mix?.S || 0}% / I${data.inputs.mix?.I || 0}% / F${data.inputs.mix?.F || 0}% / G${data.inputs.mix?.G || 0}%</li>
       </ul>
     </div>
     <div style="background: #e7f5ec; padding: 20px; border-radius: 10px; margin: 20px 0;">
