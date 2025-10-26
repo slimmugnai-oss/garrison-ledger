@@ -62,13 +62,6 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
     ? `${base.city}, ${base.country}` 
     : `${base.city}, ${base.state}`;
 
-  // Load external data when expanded
-  useEffect(() => {
-    if (expanded && !externalData && !loadingData) {
-      loadExternalData();
-    }
-  }, [expanded, externalData, loadExternalData, loadingData]);
-
   const loadExternalData = async () => {
     try {
       setLoadingData(true);
@@ -98,6 +91,13 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
       setLoadingData(false);
     }
   };
+
+  // Load external data when expanded
+  useEffect(() => {
+    if (expanded && !externalData && !loadingData) {
+      loadExternalData();
+    }
+  }, [expanded, externalData, loadExternalData, loadingData]);
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all border border-slate-200 dark:border-slate-700 overflow-hidden">

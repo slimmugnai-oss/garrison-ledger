@@ -20,8 +20,11 @@ interface LESLine {
   line_code: string;
   description: string;
   amount: number;
+  amount_cents: number;
   pay_period: string;
   section: string;
+  taxability: string;
+  raw: string;
 }
 
 export async function POST(

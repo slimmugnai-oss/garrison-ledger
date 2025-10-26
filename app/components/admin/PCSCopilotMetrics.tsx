@@ -12,6 +12,13 @@ interface Metrics {
   avg_estimate: number;
   avg_readiness: number;
   total_savings: number;
+  claims_started: number;
+  claims_completed: number;
+  avg_completion_time: number;
+  return_users: number;
+  premium_conversions: number;
+  user_satisfaction: number;
+  support_tickets: number;
 }
 
 interface RecentClaim {
@@ -19,19 +26,21 @@ interface RecentClaim {
   claim_name: string;
   status: string;
   created_at: string;
+  user_profiles: any;
+  readiness_score: number;
+  completion_percentage: number;
 }
 
 interface ValidationIssue {
-  id: string;
-  field: string;
+  check_category: string;
   severity: string;
-  message: string;
+  count: number;
 }
 
 interface RateHealth {
-  source: string;
-  status: string;
-  last_updated: string;
+  rate_type: string;
+  last_verified: string;
+  verification_status: string;
 }
 
 interface PCSCopilotMetricsProps {

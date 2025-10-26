@@ -45,6 +45,8 @@ interface PayTableRow {
   paygrade: string;
   monthly_rate_cents: number;
   effective_date: string;
+  years_of_service: number;
+  effective_year: number;
 }
 
 // Helper: Generate embedding
