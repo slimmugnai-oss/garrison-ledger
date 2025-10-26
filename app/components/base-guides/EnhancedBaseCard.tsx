@@ -67,7 +67,7 @@ export default function EnhancedBaseCard({ base, showDetails = false }: Enhanced
     if (expanded && !externalData && !loadingData) {
       loadExternalData();
     }
-  }, [expanded]);
+  }, [expanded, externalData, loadExternalData, loadingData]);
 
   const loadExternalData = async () => {
     try {

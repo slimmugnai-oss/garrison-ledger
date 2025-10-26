@@ -30,10 +30,6 @@ export default function FinancialHealthScore({ profileData }: FinancialHealthSco
   const [healthScore, setHealthScore] = useState(0);
   const [metrics, setMetrics] = useState<HealthMetric[]>([]);
 
-  useEffect(() => {
-    calculateHealthScore();
-  }, [profileData]);
-
   const calculateHealthScore = () => {
     const calculatedMetrics: HealthMetric[] = [];
     let totalScore = 0;
@@ -129,6 +125,10 @@ export default function FinancialHealthScore({ profileData }: FinancialHealthSco
     setMetrics(calculatedMetrics);
     setHealthScore(Math.round(totalScore));
   };
+
+  useEffect(() => {
+    calculateHealthScore();
+  }, [profileData, calculateHealthScore]);
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return { bg: 'from-green-600 to-emerald-600', text: 'text-green-600', label: 'Excellent' };

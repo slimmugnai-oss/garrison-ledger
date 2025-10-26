@@ -48,7 +48,7 @@ export function withAnalytics<P extends object>(
     useEffect(() => {
       // Track view when component mounts
       trackWidgetView(widgetName);
-    }, []);
+    }, [trackWidgetView, widgetName]);
 
     return <Component {...props} />;
   };

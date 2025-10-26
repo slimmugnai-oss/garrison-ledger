@@ -41,7 +41,7 @@ export default function ComparisonMode({
   // Load scenarios on mount
   useEffect(() => {
     loadScenarios();
-  }, [tool]);
+  }, [tool, loadScenarios]);
 
   async function loadScenarios() {
     try {
