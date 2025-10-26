@@ -9,7 +9,17 @@
  */
 
 import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+
+// Use admin client for server-side operations, null for client-side
+function getSupabaseClient() {
+  // Only use supabaseAdmin on server-side
+  if (typeof window === "undefined") {
+    // Dynamic import to avoid client-side bundling
+    return require("@/lib/supabase/admin").supabaseAdmin;
+  }
+  // Client-side: return null to avoid errors
+  return null;
+}
 
 export interface PerDiemRate {
   zipCode: string;
@@ -52,8 +62,15 @@ export async function fetchPerDiemRates(
   effectiveDate: string
 ): Promise<PerDiemRate | null> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      // Client-side: return mock data or null
+      logger.info("Per diem rate requested on client-side, returning null");
+      return null;
+    }
+    
     // Check cache first
-    const { data: cached } = await supabaseAdmin
+    const { data: cached } = await supabase
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "per_diem")
@@ -72,7 +89,7 @@ export async function fetchPerDiemRates(
 
     if (perDiemRate) {
       // Cache the result
-      await supabaseAdmin.from("jtr_rates_cache").insert({
+      await supabase.from("jtr_rates_cache").insert({
         rate_type: "per_diem",
         effective_date: effectiveDate,
         rate_data: perDiemRate,
@@ -93,8 +110,15 @@ export async function fetchPerDiemRates(
  */
 export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      // Client-side: return empty array
+      logger.info("DLA rates requested on client-side, returning empty array");
+      return [];
+    }
+    
     // Check cache first
-    const { data: cached } = await supabaseAdmin
+    const { data: cached } = await supabase
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "dla")
@@ -130,7 +154,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
         {} as Record<string, number>
       );
 
-      await supabaseAdmin.from("jtr_rates_cache").insert({
+      await supabase.from("jtr_rates_cache").insert({
         rate_type: "dla",
         effective_date: effectiveDate,
         rate_data: rateData,
@@ -151,8 +175,15 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
  */
 export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | null> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      // Client-side: return null
+      logger.info("MALT rate requested on client-side, returning null");
+      return null;
+    }
+    
     // Check cache first
-    const { data: cached } = await supabaseAdmin
+    const { data: cached } = await supabase
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "malt")
@@ -175,7 +206,7 @@ export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | n
 
     if (maltRate) {
       // Cache the result
-      await supabaseAdmin.from("jtr_rates_cache").insert({
+      await supabase.from("jtr_rates_cache").insert({
         rate_type: "malt",
         effective_date: effectiveDate,
         rate_data: { rate_per_mile: maltRate.ratePerMile },
@@ -271,8 +302,18 @@ export async function verifyRateFreshness(): Promise<{
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    // Client-side: return default status
+    return {
+      dla: { status: "stale", lastUpdate: "", nextUpdate: "" },
+      per_diem: { status: "stale", lastUpdate: "", nextUpdate: "" },
+      malt: { status: "stale", lastUpdate: "", nextUpdate: "" },
+    };
+  }
+
   // Check DLA rates
-  const { data: dlaCache } = await supabaseAdmin
+  const { data: dlaCache } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "dla")
@@ -281,7 +322,7 @@ export async function verifyRateFreshness(): Promise<{
     .maybeSingle();
 
   // Check per diem rates
-  const { data: perDiemCache } = await supabaseAdmin
+  const { data: perDiemCache } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "per_diem")
@@ -290,7 +331,7 @@ export async function verifyRateFreshness(): Promise<{
     .maybeSingle();
 
   // Check MALT rates
-  const { data: maltCache } = await supabaseAdmin
+  const { data: maltCache } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "malt")
@@ -325,7 +366,12 @@ async function fetchFromDTMOAPI(
 ): Promise<PerDiemRate | null> {
   // DTMO doesn't have a public REST API
   // Use pre-seeded database with annual updates from DTMO website
-  const { data } = await supabaseAdmin
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return null;
+  }
+  
+  const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "per_diem")
@@ -352,7 +398,12 @@ async function fetchFromDTMOAPI(
 async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
   // Use existing get_dla_rate() SQL function from migration
   // Query actual rates from jtr_rates_cache table
-  const { data } = await supabaseAdmin
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return [];
+  }
+  
+  const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "dla")
@@ -453,7 +504,12 @@ async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
 
 async function fetchFromIRSAPI(effectiveDate: string): Promise<MALTRate | null> {
   // Query jtr_rates_cache for MALT rate
-  const { data } = await supabaseAdmin
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return null;
+  }
+  
+  const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "malt")

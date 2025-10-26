@@ -460,27 +460,27 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
     const supabase = getSupabaseClient();
     if (supabase) {
       await supabase.from("pcs_entitlement_snapshots").insert({
-      claim_id: formData.claim_name, // Would be actual claim ID
-      dla_amount: dla.amount,
-      tle_days: tle.origin.days + tle.destination.days,
-      tle_amount: tle.total,
-      malt_miles: malt.distance,
-      malt_amount: malt.amount,
-      per_diem_days: perDiem.days,
-      per_diem_amount: perDiem.amount,
-      ppm_weight: ppm.weight,
-      ppm_estimate: ppm.amount,
-      total_estimated: total,
-      calculation_details: result,
-      rates_used: {
-        dla: dla.rateUsed,
-        malt: malt.ratePerMile,
-        perDiem: perDiem.rate,
-      },
-      confidence_scores: confidence,
-      jtr_rule_version: result.jtrRuleVersion,
-      data_sources: dataSources,
-    });
+        claim_id: formData.claim_name, // Would be actual claim ID
+        dla_amount: dla.amount,
+        tle_days: tle.origin.days + tle.destination.days,
+        tle_amount: tle.total,
+        malt_miles: malt.distance,
+        malt_amount: malt.amount,
+        per_diem_days: perDiem.days,
+        per_diem_amount: perDiem.amount,
+        ppm_weight: ppm.weight,
+        ppm_estimate: ppm.amount,
+        total_estimated: total,
+        calculation_details: result,
+        rates_used: {
+          dla: dla.rateUsed,
+          malt: malt.ratePerMile,
+          perDiem: perDiem.rate,
+        },
+        confidence_scores: confidence,
+        jtr_rule_version: result.jtrRuleVersion,
+        data_sources: dataSources,
+      });
     } else {
       // Client-side: just log the calculation
       console.log("📊 PCS calculation completed (client-side only):", {
@@ -488,7 +488,7 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
         total: total,
         dla: dla.amount,
         malt: malt.amount,
-        perDiem: perDiem.amount
+        perDiem: perDiem.amount,
       });
     }
   } catch (error) {
@@ -509,7 +509,7 @@ export async function getCalculationHistory(claimId: string): Promise<Calculatio
       console.log("📊 Calculation history requested (client-side only):", { claimId });
       return [];
     }
-    
+
     const { data: snapshots } = await supabase
       .from("pcs_entitlement_snapshots")
       .select("*")
