@@ -122,6 +122,14 @@ export default function PCSManualEntry({
     per_diem?: number;
     total?: number;
   } | null>(null);
+  const [realTimePreview, setRealTimePreview] = useState<{
+    dla: number;
+    tle: number;
+    malt: number;
+    perDiem: number;
+    total: number;
+    lastUpdated: string;
+  } | null>(null);
   const [currentSection, setCurrentSection] = useState<string>("basic");
 
   const calculateDerivedFields = async () => {
@@ -157,6 +165,50 @@ export default function PCSManualEntry({
       } catch (error) {
         logger.warn("Could not calculate distance:", error);
       }
+    }
+
+    // Calculate real-time preview
+    calculateRealTimePreview();
+  };
+
+  const calculateRealTimePreview = async () => {
+    // Only calculate if we have minimum required data
+    if (
+      !formData.rank_at_pcs ||
+      formData.dependents_count === undefined ||
+      !formData.malt_distance ||
+      !formData.per_diem_days
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/pcs/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank: formData.rank_at_pcs,
+          dependents: formData.dependents_count > 0,
+          distance: formData.malt_distance,
+          perDiemDays: formData.per_diem_days,
+          tleOriginNights: formData.tle_origin_nights || 0,
+          tleDestinationNights: formData.tle_destination_nights || 0,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setRealTimePreview({
+          dla: result.dla || 0,
+          tle: result.tle || 0,
+          malt: result.malt || 0,
+          perDiem: result.perDiem || 0,
+          total: (result.dla || 0) + (result.tle || 0) + (result.malt || 0) + (result.perDiem || 0),
+          lastUpdated: new Date().toLocaleTimeString(),
+        });
+      }
+    } catch (error) {
+      console.error("Failed to calculate preview:", error);
     }
   };
 
@@ -885,6 +937,57 @@ export default function PCSManualEntry({
                   </div>
                 </div>
               ))}
+            </div>
+          </AnimatedCard>
+        )}
+
+        {/* Real-Time Preview */}
+        {realTimePreview && (
+          <AnimatedCard className="border-blue-200 bg-blue-50 p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <Icon name="Calculator" className="h-5 w-5 text-blue-600" />
+              <h4 className="font-semibold text-blue-900">Live Calculation Preview</h4>
+              <Badge variant="secondary" className="text-xs">
+                Updated {realTimePreview.lastUpdated}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-700">DLA:</span>
+                  <span className="font-semibold text-blue-900">
+                    ${realTimePreview.dla.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-700">TLE:</span>
+                  <span className="font-semibold text-blue-900">
+                    ${realTimePreview.tle.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-700">MALT:</span>
+                  <span className="font-semibold text-blue-900">
+                    ${realTimePreview.malt.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-700">Per Diem:</span>
+                  <span className="font-semibold text-blue-900">
+                    ${realTimePreview.perDiem.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 border-t border-blue-200 pt-3">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-blue-900">Total Estimated:</span>
+                <span className="text-lg font-bold text-blue-900">
+                  ${realTimePreview.total.toLocaleString()}
+                </span>
+              </div>
             </div>
           </AnimatedCard>
         )}

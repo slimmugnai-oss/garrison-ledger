@@ -243,10 +243,13 @@ export default function EnhancedPCSCopilotClient({
 
   const handleAskQuestion = async (question: string) => {
     try {
-      const response = await fetch("/api/ask/pcs-context", {
+      const response = await fetch("/api/ask/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+          question,
+          templateId: "pcs-copilot-help",
+        }),
       });
 
       const result = await response.json();
@@ -255,9 +258,16 @@ export default function EnhancedPCSCopilotClient({
         // Show response in a modal or notification
         console.log("AI Response:", result.response);
         // You could implement a modal here to show the response
+        alert(
+          `Answer: ${result.response.bottomLine?.join(" ") || result.response.answer || "No answer available"}`
+        );
+      } else {
+        console.error("Ask Assistant error:", result.error);
+        alert("Sorry, I couldn't answer that question. Please try again.");
       }
     } catch (error) {
       console.error("Failed to ask question:", error);
+      alert("Sorry, there was an error. Please try again.");
     }
   };
 

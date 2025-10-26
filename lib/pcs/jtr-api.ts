@@ -105,7 +105,7 @@ export async function fetchPerDiemRates(
     }
 
     // Fetch from DTMO API (mock implementation - would use real API)
-    const perDiemRate = await fetchFromDTMOAPI(zipCode, effectiveDate);
+    const perDiemRate = await getPerDiemRateFromDB(zipCode, effectiveDate);
 
     if (perDiemRate) {
       // Cache the result
@@ -161,7 +161,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
     }
 
     // Fetch from DFAS (mock implementation)
-    const dlaRates = await fetchFromDFASAPI(effectiveDate);
+    const dlaRates = await getDLARatesFromDB(effectiveDate);
 
     if (dlaRates.length > 0) {
       // Cache the result
@@ -222,7 +222,7 @@ export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | n
     }
 
     // Fetch from IRS API (mock implementation)
-    const maltRate = await fetchFromIRSAPI(effectiveDate);
+    const maltRate = await getMALTRateFromDB(effectiveDate);
 
     if (maltRate) {
       // Cache the result
@@ -536,9 +536,9 @@ export async function verifyRateFreshness(): Promise<{
   };
 }
 
-// Mock API implementations (would be replaced with real API calls)
+// Database lookup functions for 2025 official rates
 
-async function fetchFromDTMOAPI(
+async function getPerDiemRateFromDB(
   zipCode: string,
   effectiveDate: string
 ): Promise<PerDiemRate | null> {
@@ -593,7 +593,7 @@ async function fetchFromDTMOAPI(
   return null;
 }
 
-async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
+async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
   // Query REAL 2025 DLA rates from entitlements_data table (44 rows, all ranks)
   const supabase = getSupabaseClient();
   if (!supabase) {
@@ -628,7 +628,7 @@ async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
   }));
 }
 
-async function fetchFromIRSAPI(effectiveDate: string): Promise<MALTRate | null> {
+async function getMALTRateFromDB(effectiveDate: string): Promise<MALTRate | null> {
   // Query REAL 2025 MALT rate from jtr_rates_cache (verified IRS data)
   const supabase = getSupabaseClient();
   if (!supabase) {

@@ -48,63 +48,79 @@ export default function PCSPlannerClient() {
   const [loading, setLoading] = useState(false);
   const [analysisData, setAnalysisData] = useState<BaseData[]>([]);
 
-  // Sample base data (in production, this would come from an API)
-  const availableBases = [
-    {
-      code: "JBSA",
-      name: "Joint Base San Antonio",
-      state: "TX",
-      bah: 1800,
-      colIndex: 95,
-      schoolRating: 8.5,
-    },
-    { code: "FTBL", name: "Fort Bliss", state: "TX", bah: 1650, colIndex: 88, schoolRating: 7.2 },
-    { code: "FTBR", name: "Fort Bragg", state: "NC", bah: 1950, colIndex: 92, schoolRating: 8.1 },
-    {
-      code: "FTCM",
-      name: "Fort Campbell",
-      state: "KY",
-      bah: 1750,
-      colIndex: 89,
-      schoolRating: 7.8,
-    },
-    { code: "FTDR", name: "Fort Drum", state: "NY", bah: 1850, colIndex: 105, schoolRating: 8.3 },
-    { code: "FTGV", name: "Fort Gordon", state: "GA", bah: 1700, colIndex: 87, schoolRating: 7.5 },
-    { code: "FTHO", name: "Fort Hood", state: "TX", bah: 1600, colIndex: 85, schoolRating: 6.9 },
-    {
-      code: "FTLV",
-      name: "Fort Leavenworth",
-      state: "KS",
-      bah: 1650,
-      colIndex: 90,
-      schoolRating: 8.7,
-    },
-    {
-      code: "FTLE",
-      name: "Fort Leonard Wood",
-      state: "MO",
-      bah: 1550,
-      colIndex: 82,
-      schoolRating: 7.1,
-    },
-    { code: "FTME", name: "Fort Meade", state: "MD", bah: 2200, colIndex: 120, schoolRating: 8.9 },
-    { code: "FTRI", name: "Fort Riley", state: "KS", bah: 1600, colIndex: 88, schoolRating: 7.6 },
-    { code: "FTSI", name: "Fort Sill", state: "OK", bah: 1500, colIndex: 80, schoolRating: 6.8 },
-    { code: "FTST", name: "Fort Stewart", state: "GA", bah: 1650, colIndex: 86, schoolRating: 7.3 },
-    {
-      code: "FTWA",
-      name: "Fort Wainwright",
-      state: "AK",
-      bah: 2100,
-      colIndex: 110,
-      schoolRating: 8.2,
-    },
-    { code: "FTWO", name: "Fort Worth", state: "TX", bah: 1800, colIndex: 94, schoolRating: 8.0 },
-  ];
+  const [availableBases, setAvailableBases] = useState<BaseData[]>([]);
 
   useEffect(() => {
     loadComparisons();
+    loadBases();
   }, []);
+
+  const loadBases = async () => {
+    try {
+      const response = await fetch("/api/pcs/planner/bases");
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableBases(data.bases || []);
+      } else {
+        console.error("Failed to load bases, using fallback");
+        // Fallback to a few key bases if API fails
+        setAvailableBases([
+          {
+            code: "JBSA",
+            name: "Joint Base San Antonio",
+            state: "TX",
+            bah: 1800,
+            colIndex: 95,
+            schoolRating: 8.5,
+            distance: 0,
+            pcsCost: 0,
+          },
+          {
+            code: "FTBL",
+            name: "Fort Bliss",
+            state: "TX",
+            bah: 1650,
+            colIndex: 88,
+            schoolRating: 7.2,
+            distance: 0,
+            pcsCost: 0,
+          },
+          {
+            code: "FTBR",
+            name: "Fort Bragg",
+            state: "NC",
+            bah: 1950,
+            colIndex: 92,
+            schoolRating: 8.1,
+            distance: 0,
+            pcsCost: 0,
+          },
+          {
+            code: "FTCM",
+            name: "Fort Campbell",
+            state: "KY",
+            bah: 1750,
+            colIndex: 89,
+            schoolRating: 7.8,
+            distance: 0,
+            pcsCost: 0,
+          },
+          {
+            code: "FTME",
+            name: "Fort Meade",
+            state: "MD",
+            bah: 2200,
+            colIndex: 120,
+            schoolRating: 8.9,
+            distance: 0,
+            pcsCost: 0,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to load bases:", error);
+    }
+  };
 
   const loadComparisons = async () => {
     try {
