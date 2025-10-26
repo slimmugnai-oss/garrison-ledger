@@ -2,11 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
-import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
+import Card, {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
 
@@ -44,21 +50,56 @@ export default function PCSPlannerClient() {
 
   // Sample base data (in production, this would come from an API)
   const availableBases = [
-    { code: "JBSA", name: "Joint Base San Antonio", state: "TX", bah: 1800, colIndex: 95, schoolRating: 8.5 },
+    {
+      code: "JBSA",
+      name: "Joint Base San Antonio",
+      state: "TX",
+      bah: 1800,
+      colIndex: 95,
+      schoolRating: 8.5,
+    },
     { code: "FTBL", name: "Fort Bliss", state: "TX", bah: 1650, colIndex: 88, schoolRating: 7.2 },
     { code: "FTBR", name: "Fort Bragg", state: "NC", bah: 1950, colIndex: 92, schoolRating: 8.1 },
-    { code: "FTCM", name: "Fort Campbell", state: "KY", bah: 1750, colIndex: 89, schoolRating: 7.8 },
+    {
+      code: "FTCM",
+      name: "Fort Campbell",
+      state: "KY",
+      bah: 1750,
+      colIndex: 89,
+      schoolRating: 7.8,
+    },
     { code: "FTDR", name: "Fort Drum", state: "NY", bah: 1850, colIndex: 105, schoolRating: 8.3 },
     { code: "FTGV", name: "Fort Gordon", state: "GA", bah: 1700, colIndex: 87, schoolRating: 7.5 },
     { code: "FTHO", name: "Fort Hood", state: "TX", bah: 1600, colIndex: 85, schoolRating: 6.9 },
-    { code: "FTLV", name: "Fort Leavenworth", state: "KS", bah: 1650, colIndex: 90, schoolRating: 8.7 },
-    { code: "FTLE", name: "Fort Leonard Wood", state: "MO", bah: 1550, colIndex: 82, schoolRating: 7.1 },
+    {
+      code: "FTLV",
+      name: "Fort Leavenworth",
+      state: "KS",
+      bah: 1650,
+      colIndex: 90,
+      schoolRating: 8.7,
+    },
+    {
+      code: "FTLE",
+      name: "Fort Leonard Wood",
+      state: "MO",
+      bah: 1550,
+      colIndex: 82,
+      schoolRating: 7.1,
+    },
     { code: "FTME", name: "Fort Meade", state: "MD", bah: 2200, colIndex: 120, schoolRating: 8.9 },
     { code: "FTRI", name: "Fort Riley", state: "KS", bah: 1600, colIndex: 88, schoolRating: 7.6 },
     { code: "FTSI", name: "Fort Sill", state: "OK", bah: 1500, colIndex: 80, schoolRating: 6.8 },
     { code: "FTST", name: "Fort Stewart", state: "GA", bah: 1650, colIndex: 86, schoolRating: 7.3 },
-    { code: "FTWA", name: "Fort Wainwright", state: "AK", bah: 2100, colIndex: 110, schoolRating: 8.2 },
-    { code: "FTWO", name: "Fort Worth", state: "TX", bah: 1800, colIndex: 94, schoolRating: 8.0 }
+    {
+      code: "FTWA",
+      name: "Fort Wainwright",
+      state: "AK",
+      bah: 2100,
+      colIndex: 110,
+      schoolRating: 8.2,
+    },
+    { code: "FTWO", name: "Fort Worth", state: "TX", bah: 1800, colIndex: 94, schoolRating: 8.0 },
   ];
 
   useEffect(() => {
@@ -81,10 +122,8 @@ export default function PCSPlannerClient() {
   };
 
   const handleBaseToggle = (baseCode: string) => {
-    setSelectedBases(prev => 
-      prev.includes(baseCode) 
-        ? prev.filter(code => code !== baseCode)
-        : [...prev, baseCode]
+    setSelectedBases((prev) =>
+      prev.includes(baseCode) ? prev.filter((code) => code !== baseCode) : [...prev, baseCode]
     );
   };
 
@@ -104,28 +143,28 @@ export default function PCSPlannerClient() {
 
     setLoading(true);
     try {
-      const bases = availableBases.filter(base => selectedBases.includes(base.code));
+      const bases = availableBases.filter((base) => selectedBases.includes(base.code));
       const analysisData = await Promise.all(
         bases.map(async (base) => ({
           ...base,
           distance: Math.floor(Math.random() * 2000) + 500, // Mock distance
-          pcsCost: await calculatePcsCost(base)
+          pcsCost: await calculatePcsCost(base),
         }))
       );
 
       setAnalysisData(analysisData);
 
       // Find best options
-      const bestBah = analysisData.reduce((best, current) => 
+      const bestBah = analysisData.reduce((best, current) =>
         current.bah > best.bah ? current : best
       );
-      const bestCol = analysisData.reduce((best, current) => 
+      const bestCol = analysisData.reduce((best, current) =>
         current.colIndex < best.colIndex ? current : best
       );
-      const bestSchools = analysisData.reduce((best, current) => 
+      const bestSchools = analysisData.reduce((best, current) =>
         current.schoolRating > best.schoolRating ? current : best
       );
-      const bestPcsCost = analysisData.reduce((best, current) => 
+      const bestPcsCost = analysisData.reduce((best, current) =>
         current.pcsCost < best.pcsCost ? current : best
       );
 
@@ -165,8 +204,8 @@ export default function PCSPlannerClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: comparisonName,
-          bases: analysisData
-        })
+          bases: analysisData,
+        }),
       });
 
       if (response.ok) {
@@ -226,6 +265,17 @@ export default function PCSPlannerClient() {
 
   return (
     <div className="space-y-6">
+      {/* Back Button */}
+      <div className="mb-6">
+        <Link
+          href="/dashboard/pcs-copilot"
+          className="flex items-center gap-2 font-medium text-blue-600 hover:text-blue-700"
+        >
+          <Icon name="ArrowLeft" className="h-4 w-4" />
+          Back to PCS Copilot
+        </Link>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -237,13 +287,13 @@ export default function PCSPlannerClient() {
 
       {/* Base Selection */}
       <AnimatedCard className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Bases to Compare</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Select Bases to Compare</h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
           {availableBases.map((base) => (
             <button
               key={base.code}
               onClick={() => handleBaseToggle(base.code)}
-              className={`p-3 rounded-lg border text-left transition-colors ${
+              className={`rounded-lg border p-3 text-left transition-colors ${
                 selectedBases.includes(base.code)
                   ? "border-blue-500 bg-blue-50 text-blue-900"
                   : "border-gray-200 hover:border-gray-300"
@@ -255,7 +305,7 @@ export default function PCSPlannerClient() {
             </button>
           ))}
         </div>
-        
+
         <div className="mt-4 flex items-center gap-4">
           <Button
             onClick={analyzeBases}
@@ -264,7 +314,7 @@ export default function PCSPlannerClient() {
           >
             {loading ? (
               <>
-                <Icon name="Loader" className="animate-spin h-4 w-4" />
+                <Icon name="Loader" className="h-4 w-4 animate-spin" />
                 Analyzing...
               </>
             ) : (
@@ -275,7 +325,7 @@ export default function PCSPlannerClient() {
             )}
           </Button>
           <span className="text-sm text-gray-600">
-            {selectedBases.length} base{selectedBases.length !== 1 ? 's' : ''} selected
+            {selectedBases.length} base{selectedBases.length !== 1 ? "s" : ""} selected
           </span>
         </div>
       </AnimatedCard>
@@ -283,7 +333,7 @@ export default function PCSPlannerClient() {
       {/* Analysis Results */}
       {analysisData.length > 0 && (
         <AnimatedCard className="p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">Analysis Results</h2>
             <div className="flex items-center gap-2">
               <Input
@@ -293,7 +343,7 @@ export default function PCSPlannerClient() {
                 className="w-48"
               />
               <Button onClick={saveComparison} size="sm">
-                <Icon name="Save" className="h-4 w-4 mr-1" />
+                <Icon name="Save" className="mr-1 h-4 w-4" />
                 Save
               </Button>
             </div>
@@ -347,7 +397,7 @@ export default function PCSPlannerClient() {
       {/* Saved Comparisons */}
       {comparisons.length > 0 && (
         <AnimatedCard className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Saved Comparisons</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Saved Comparisons</h2>
           <div className="space-y-3">
             {comparisons.map((comparison) => (
               <Card key={comparison.id} className="p-4">
@@ -355,20 +405,21 @@ export default function PCSPlannerClient() {
                   <div>
                     <h3 className="font-medium text-gray-900">{comparison.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {comparison.bases.length} bases • {new Date(comparison.createdAt).toLocaleDateString()}
+                      {comparison.bases.length} bases •{" "}
+                      {new Date(comparison.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button size="sm" variant="outline">
-                      <Icon name="Eye" className="h-4 w-4 mr-1" />
+                      <Icon name="Eye" className="mr-1 h-4 w-4" />
                       View
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => handleDeleteComparison(comparison.id)}
                     >
-                      <Icon name="Trash2" className="h-4 w-4 mr-1" />
+                      <Icon name="Trash2" className="mr-1 h-4 w-4" />
                       Delete
                     </Button>
                   </div>

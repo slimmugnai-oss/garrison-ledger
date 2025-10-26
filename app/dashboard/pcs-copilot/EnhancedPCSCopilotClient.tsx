@@ -9,16 +9,16 @@ import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import PCSDocumentLibrary from "@/app/components/pcs/PCSDocumentLibrary";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
-import { PCSLoadingOverlay } from "@/app/components/pcs/PCSLoadingOverlay";
+import PCSLoadingOverlay, { usePCSLoadingStates } from "@/app/components/pcs/PCSLoadingOverlay";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
-import { PCSMobileInterface } from "@/app/components/pcs/PCSMobileInterface";
+import PCSMobileInterface from "@/app/components/pcs/PCSMobileInterface";
 import {
   PCSOnboardingTour,
   PCSOnboardingChecklist,
   PCSFeatureHighlights,
 } from "@/app/components/pcs/PCSOnboardingTour";
-import { PCSHelpSystem, PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
+import PCSHelpSystem, { PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
 // import { PCSOptimisticUI } from "@/app/components/pcs/PCSOptimisticUI";
 import PCSRecommendationCards from "@/app/components/pcs/PCSRecommendationCards";
 import PCSValidationResults from "@/app/components/pcs/PCSValidationResults";
@@ -27,7 +27,6 @@ import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PageHeader from "@/app/components/ui/PageHeader";
 import { calculatePCSClaim, FormData, CalculationResult } from "@/lib/pcs/calculation-engine";
-import { usePCSLoadingStates } from "@/app/components/pcs/PCSLoadingOverlay";
 // import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
 
 interface Claim {
@@ -371,7 +370,7 @@ export default function EnhancedPCSCopilotClient({
         isOpen={showOnboarding}
         onClose={() => setShowOnboarding(false)}
         onComplete={handleOnboardingComplete}
-        userType={userProfile.is_premium ? "premium" : "new"}
+        userType={isPremium ? "premium" : "new"}
       />
 
       {/* Help System */}

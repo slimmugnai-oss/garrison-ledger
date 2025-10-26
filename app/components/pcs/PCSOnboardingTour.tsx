@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader } from "@/app/components/ui/Card";
-import { Button } from "@/app/components/ui/Button";
-import { Badge } from "@/app/components/ui/Badge";
-import { Icon } from "@/app/components/ui/Icon";
+import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
+import Button from "@/app/components/ui/Button";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 
 interface TourStep {
   id: string;
@@ -43,28 +43,33 @@ export function PCSOnboardingTour({
       {
         id: "welcome",
         title: "Welcome to PCS Copilot",
-        content: "Your AI-powered assistant for maximizing PCS entitlements. Let's take a quick tour to get you started.",
+        content:
+          "Your AI-powered assistant for maximizing PCS entitlements. Let's take a quick tour to get you started.",
         target: "body",
         position: "top",
       },
       {
         id: "claims-overview",
         title: "Your PCS Claims",
-        content: "Here you'll see all your PCS claims with status, entitlements, and completion progress. Each claim represents a different PCS move.",
+        content:
+          "Here you'll see all your PCS claims with status, entitlements, and completion progress. Each claim represents a different PCS move.",
         target: "[data-tour='claims-list']",
         position: "bottom",
       },
       {
         id: "new-claim",
         title: "Create New Claim",
-        content: "Start a new PCS claim by clicking this button. We'll guide you through the process step by step.",
+        content:
+          "Start a new PCS claim by clicking this button. We'll guide you through the process step by step.",
         target: "[data-tour='new-claim-button']",
         position: "bottom",
         action: {
           label: "Try It",
           onClick: () => {
             // Trigger new claim creation
-            const button = document.querySelector("[data-tour='new-claim-button']") as HTMLButtonElement;
+            const button = document.querySelector(
+              "[data-tour='new-claim-button']"
+            ) as HTMLButtonElement;
             button?.click();
           },
         },
@@ -72,42 +77,48 @@ export function PCSOnboardingTour({
       {
         id: "manual-entry",
         title: "Manual Entry",
-        content: "Use manual entry for detailed claim information. Perfect for when you have all your PCS details ready.",
+        content:
+          "Use manual entry for detailed claim information. Perfect for when you have all your PCS details ready.",
         target: "[data-tour='manual-entry']",
         position: "right",
       },
       {
         id: "mobile-wizard",
         title: "Mobile Wizard",
-        content: "The mobile wizard guides you through PCS claim creation step by step. Great for on-the-go planning.",
+        content:
+          "The mobile wizard guides you through PCS claim creation step by step. Great for on-the-go planning.",
         target: "[data-tour='mobile-wizard']",
         position: "left",
       },
       {
         id: "documents",
         title: "Document Management",
-        content: "Upload receipts, orders, and other PCS documents. Our AI will extract key information automatically.",
+        content:
+          "Upload receipts, orders, and other PCS documents. Our AI will extract key information automatically.",
         target: "[data-tour='documents']",
         position: "top",
       },
       {
         id: "calculations",
         title: "AI Calculations",
-        content: "Get instant calculations for DLA, TLE, MALT, Per Diem, and more using real 2025 JTR rates and regulations.",
+        content:
+          "Get instant calculations for DLA, TLE, MALT, Per Diem, and more using real 2025 JTR rates and regulations.",
         target: "[data-tour='calculations']",
         position: "bottom",
       },
       {
         id: "validation",
         title: "JTR Validation",
-        content: "Our AI validates your claim against current JTR regulations and provides suggestions for optimization.",
+        content:
+          "Our AI validates your claim against current JTR regulations and provides suggestions for optimization.",
         target: "[data-tour='validation']",
         position: "right",
       },
       {
         id: "export",
         title: "Export & Submit",
-        content: "Generate professional PDF and Excel claim packages ready for submission to your finance office.",
+        content:
+          "Generate professional PDF and Excel claim packages ready for submission to your finance office.",
         target: "[data-tour='export']",
         position: "left",
       },
@@ -118,14 +129,16 @@ export function PCSOnboardingTour({
         {
           id: "premium-features",
           title: "Premium Features",
-          content: "As a premium user, you have access to advanced AI optimization, priority support, and exclusive tools.",
+          content:
+            "As a premium user, you have access to advanced AI optimization, priority support, and exclusive tools.",
           target: "[data-tour='premium-badge']",
           position: "bottom",
         },
         {
           id: "sub-pages",
           title: "Advanced Tools",
-          content: "Access Claims Library, Cost Comparison, and Assignment Planner for comprehensive PCS planning.",
+          content:
+            "Access Claims Library, Cost Comparison, and Assignment Planner for comprehensive PCS planning.",
           target: "[data-tour='sub-pages']",
           position: "top",
         }
@@ -159,7 +172,7 @@ export function PCSOnboardingTour({
     } else {
       setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
+        setCurrentStep((prev) => prev + 1);
         setIsAnimating(false);
       }, 200);
     }
@@ -169,7 +182,7 @@ export function PCSOnboardingTour({
     if (!isFirstStep) {
       setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStep(prev => prev - 1);
+        setCurrentStep((prev) => prev - 1);
         setIsAnimating(false);
       }, 200);
     }
@@ -199,11 +212,13 @@ export function PCSOnboardingTour({
 
       {/* Tour Card */}
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <Card className={`w-full max-w-md transform transition-all duration-300 ${
-          isAnimating ? "scale-95 opacity-0" : "scale-100 opacity-100"
-        }`}>
+        <Card
+          className={`w-full max-w-md transform transition-all duration-300 ${
+            isAnimating ? "scale-95 opacity-0" : "scale-100 opacity-100"
+          }`}
+        >
           <CardHeader className="text-center">
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <Badge variant="info">
                 Step {currentStep + 1} of {steps.length}
               </Badge>
@@ -216,55 +231,42 @@ export function PCSOnboardingTour({
                 <Icon name="X" className="h-4 w-4" />
               </Button>
             </div>
-            
+
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
               <Icon name="MapPin" className="h-8 w-8 text-blue-600" />
             </div>
-            
+
             <h2 className="text-xl font-semibold">{currentStepData.title}</h2>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
-            <p className="text-gray-600 text-center">
-              {currentStepData.content}
-            </p>
+            <p className="text-center text-gray-600">{currentStepData.content}</p>
 
             {currentStepData.action && (
-              <Button
-                onClick={currentStepData.action.onClick}
-                className="w-full"
-                variant="outline"
-              >
-                <Icon name="Play" className="h-4 w-4 mr-2" />
+              <Button onClick={currentStepData.action.onClick} className="w-full" variant="outline">
+                <Icon name="ArrowRight" className="mr-2 h-4 w-4" />
                 {currentStepData.action.label}
               </Button>
             )}
 
             <div className="flex gap-2">
               {!isFirstStep && (
-                <Button
-                  variant="outline"
-                  onClick={handlePrevious}
-                  className="flex-1"
-                >
-                  <Icon name="ChevronLeft" className="h-4 w-4 mr-2" />
+                <Button variant="outline" onClick={handlePrevious} className="flex-1">
+                  <Icon name="ChevronLeft" className="mr-2 h-4 w-4" />
                   Previous
                 </Button>
               )}
-              
-              <Button
-                onClick={handleNext}
-                className="flex-1"
-              >
+
+              <Button onClick={handleNext} className="flex-1">
                 {isLastStep ? (
                   <>
-                    <Icon name="Check" className="h-4 w-4 mr-2" />
+                    <Icon name="Check" className="mr-2 h-4 w-4" />
                     Complete Tour
                   </>
                 ) : (
                   <>
                     Next
-                    <Icon name="ChevronRight" className="h-4 w-4 ml-2" />
+                    <Icon name="ChevronRight" className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
@@ -276,7 +278,7 @@ export function PCSOnboardingTour({
                 <button
                   key={index}
                   onClick={() => setCurrentStep(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
+                  className={`h-2 w-2 rounded-full transition-colors ${
                     index === currentStep
                       ? "bg-blue-600"
                       : index < currentStep
@@ -296,11 +298,7 @@ export function PCSOnboardingTour({
 /**
  * Onboarding checklist component
  */
-export function PCSOnboardingChecklist({
-  onComplete,
-}: {
-  onComplete: () => void;
-}) {
+export function PCSOnboardingChecklist({ onComplete }: { onComplete: () => void }) {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
 
   const checklist = [
@@ -337,7 +335,7 @@ export function PCSOnboardingChecklist({
   ];
 
   const handleStepComplete = (stepId: string) => {
-    setCompletedSteps(prev => [...prev, stepId]);
+    setCompletedSteps((prev) => [...prev, stepId]);
   };
 
   const allCompleted = completedSteps.length === checklist.length;
@@ -357,36 +355,32 @@ export function PCSOnboardingChecklist({
           <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
           <h3 className="text-lg font-semibold">Getting Started Checklist</h3>
         </div>
-        <p className="text-gray-600">
-          Complete these steps to get the most out of PCS Copilot
-        </p>
+        <p className="text-gray-600">Complete these steps to get the most out of PCS Copilot</p>
       </CardHeader>
       <CardContent className="space-y-3">
         {checklist.map((step, index) => (
           <div
             key={step.id}
-            className={`flex items-start gap-3 p-3 rounded-lg border ${
+            className={`flex items-start gap-3 rounded-lg border p-3 ${
               completedSteps.includes(step.id)
-                ? "bg-green-50 border-green-200"
-                : "bg-gray-50 border-gray-200"
+                ? "border-green-200 bg-green-50"
+                : "border-gray-200 bg-gray-50"
             }`}
           >
-            <div className="flex-shrink-0 mt-1">
+            <div className="mt-1 flex-shrink-0">
               {completedSteps.includes(step.id) ? (
                 <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
               ) : (
-                <div className="h-5 w-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                  <span className="text-xs font-medium text-gray-500">
-                    {index + 1}
-                  </span>
+                <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-300">
+                  <span className="text-xs font-medium text-gray-500">{index + 1}</span>
                 </div>
               )}
             </div>
-            
-            <div className="flex-1 min-w-0">
+
+            <div className="min-w-0 flex-1">
               <h4 className="font-medium text-gray-900">{step.title}</h4>
-              <p className="text-sm text-gray-600 mt-1">{step.description}</p>
-              
+              <p className="mt-1 text-sm text-gray-600">{step.description}</p>
+
               {!completedSteps.includes(step.id) && (
                 <Button
                   size="sm"
@@ -402,13 +396,14 @@ export function PCSOnboardingChecklist({
         ))}
 
         {allCompleted && (
-          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4">
             <div className="flex items-center gap-2 text-green-800">
               <Icon name="CheckCircle" className="h-5 w-5" />
               <span className="font-medium">Congratulations!</span>
             </div>
-            <p className="text-green-700 text-sm mt-1">
-              You've completed the onboarding checklist. You're ready to maximize your PCS entitlements!
+            <p className="mt-1 text-sm text-green-700">
+              You've completed the onboarding checklist. You're ready to maximize your PCS
+              entitlements!
             </p>
           </div>
         )}
@@ -425,12 +420,14 @@ export function PCSFeatureHighlights() {
     {
       icon: "Calculator",
       title: "AI-Powered Calculations",
-      description: "Get accurate DLA, TLE, MALT, and Per Diem calculations using real 2025 JTR rates",
+      description:
+        "Get accurate DLA, TLE, MALT, and Per Diem calculations using real 2025 JTR rates",
     },
     {
       icon: "Shield",
       title: "JTR Validation",
-      description: "Ensure compliance with current Joint Travel Regulations and get optimization suggestions",
+      description:
+        "Ensure compliance with current Joint Travel Regulations and get optimization suggestions",
     },
     {
       icon: "Upload",
@@ -440,24 +437,25 @@ export function PCSFeatureHighlights() {
     {
       icon: "File",
       title: "Export Packages",
-      description: "Generate professional PDF and Excel claim packages for finance office submission",
+      description:
+        "Generate professional PDF and Excel claim packages for finance office submission",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {features.map((feature, index) => (
-        <Card key={index} className="hover:shadow-md transition-shadow">
+        <Card key={index} className="transition-shadow hover:shadow-md">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
                   <Icon name={feature.icon as any} className="h-5 w-5 text-blue-600" />
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <h4 className="font-semibold text-gray-900">{feature.title}</h4>
-                <p className="text-sm text-gray-600 mt-1">{feature.description}</p>
+                <p className="mt-1 text-sm text-gray-600">{feature.description}</p>
               </div>
             </div>
           </CardContent>

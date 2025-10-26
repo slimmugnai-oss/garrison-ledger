@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/app/components/ui/Card";
-import { Button } from "@/app/components/ui/Button";
-import { Badge } from "@/app/components/ui/Badge";
-import { Icon } from "@/app/components/ui/Icon";
+import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
+import Button from "@/app/components/ui/Button";
+import Badge from "@/app/components/ui/Badge";
+import Icon from "@/app/components/ui/Icon";
 
 interface HelpArticle {
   id: string;
@@ -308,14 +308,15 @@ Solutions to common problems and questions.
     let filtered = helpArticles;
 
     if (selectedCategory && selectedCategory !== "all") {
-      filtered = filtered.filter(article => article.category === selectedCategory);
+      filtered = filtered.filter((article) => article.category === selectedCategory);
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(article =>
-        article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        article.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        article.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(
+        (article) =>
+          article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          article.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          article.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -341,9 +342,9 @@ Solutions to common problems and questions.
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="flex h-full">
         {/* Sidebar */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
+        <div className="flex w-80 flex-col border-r border-gray-200 bg-white">
+          <div className="border-b border-gray-200 p-4">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Help Center</h2>
               <Button variant="ghost" size="sm" onClick={onClose}>
                 <Icon name="X" className="h-4 w-4" />
@@ -352,13 +353,16 @@ Solutions to common problems and questions.
 
             {/* Search */}
             <div className="relative mb-4">
-              <Icon name="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Icon
+                name="Search"
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400"
+              />
               <input
                 type="text"
                 placeholder="Search help articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -368,7 +372,7 @@ Solutions to common problems and questions.
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors ${
                     selectedCategory === category.id
                       ? "bg-blue-100 text-blue-700"
                       : "hover:bg-gray-100"
@@ -388,14 +392,14 @@ Solutions to common problems and questions.
                 <button
                   key={article.id}
                   onClick={() => setSelectedArticle(article)}
-                  className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                  className={`w-full rounded-lg border p-3 text-left transition-colors ${
                     selectedArticle?.id === article.id
-                      ? "bg-blue-50 border-blue-200"
-                      : "bg-white border-gray-200 hover:bg-gray-50"
+                      ? "border-blue-200 bg-blue-50"
+                      : "border-gray-200 bg-white hover:bg-gray-50"
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-medium text-sm">{article.title}</h3>
+                  <div className="mb-2 flex items-start justify-between">
+                    <h3 className="text-sm font-medium">{article.title}</h3>
                     <Badge
                       variant={
                         article.difficulty === "beginner"
@@ -413,7 +417,7 @@ Solutions to common problems and questions.
                     {article.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded"
+                        className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-500"
                       >
                         {tag}
                       </span>
@@ -426,16 +430,14 @@ Solutions to common problems and questions.
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 bg-white overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-white">
           {selectedArticle ? (
             <div className="p-6">
               <div className="max-w-4xl">
-                <div className="flex items-center justify-between mb-6">
+                <div className="mb-6 flex items-center justify-between">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {selectedArticle.title}
-                    </h1>
-                    <div className="flex items-center gap-4 mt-2">
+                    <h1 className="text-2xl font-bold text-gray-900">{selectedArticle.title}</h1>
+                    <div className="mt-2 flex items-center gap-4">
                       <Badge
                         variant={
                           selectedArticle.difficulty === "beginner"
@@ -453,7 +455,7 @@ Solutions to common problems and questions.
                     </div>
                   </div>
                   <Button variant="outline" onClick={() => setSelectedArticle(null)}>
-                    <Icon name="ArrowLeft" className="h-4 w-4 mr-2" />
+                    <Icon name="ArrowLeft" className="mr-2 h-4 w-4" />
                     Back to List
                   </Button>
                 </div>
@@ -466,9 +468,9 @@ Solutions to common problems and questions.
                   />
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold mb-4">Related Articles</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-8 border-t border-gray-200 pt-6">
+                  <h3 className="mb-4 text-lg font-semibold">Related Articles</h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {helpArticles
                       .filter(
                         (article) =>
@@ -480,12 +482,10 @@ Solutions to common problems and questions.
                         <button
                           key={article.id}
                           onClick={() => setSelectedArticle(article)}
-                          className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50"
                         >
-                          <h4 className="font-medium text-gray-900">
-                            {article.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <h4 className="font-medium text-gray-900">{article.title}</h4>
+                          <p className="mt-1 text-sm text-gray-600">
                             {article.content.substring(0, 100)}...
                           </p>
                         </button>
@@ -497,61 +497,61 @@ Solutions to common problems and questions.
           ) : (
             <div className="p-6">
               <div className="max-w-4xl">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">
-                  {selectedCategory === "all" ? "All Help Articles" : categories.find(c => c.id === selectedCategory)?.name}
+                <h1 className="mb-6 text-2xl font-bold text-gray-900">
+                  {selectedCategory === "all"
+                    ? "All Help Articles"
+                    : categories.find((c) => c.id === selectedCategory)?.name}
                 </h1>
 
                 {filteredArticles.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Icon name="Search" className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No articles found
-                    </h3>
+                  <div className="py-12 text-center">
+                    <Icon name="Search" className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                    <h3 className="mb-2 text-lg font-medium text-gray-900">No articles found</h3>
                     <p className="text-gray-600">
                       Try adjusting your search terms or category filter.
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredArticles.map((article) => (
-                      <Card
+                      <div
                         key={article.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
+                        className="cursor-pointer transition-shadow hover:shadow-md"
                         onClick={() => setSelectedArticle(article)}
                       >
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="font-semibold text-gray-900">
-                              {article.title}
-                            </h3>
-                            <Badge
-                              variant={
-                                article.difficulty === "beginner"
-                                  ? "success"
-                                  : article.difficulty === "intermediate"
-                                    ? "warning"
-                                    : "danger"
-                              }
-                              className="text-xs"
-                            >
-                              {article.difficulty}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3">
-                            {article.content.substring(0, 150)}...
-                          </p>
-                          <div className="flex flex-wrap gap-1">
-                            {article.tags.slice(0, 3).map((tag) => (
-                              <span
-                                key={tag}
-                                className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded"
+                        <Card>
+                          <CardContent className="p-4">
+                            <div className="mb-3 flex items-start justify-between">
+                              <h3 className="font-semibold text-gray-900">{article.title}</h3>
+                              <Badge
+                                variant={
+                                  article.difficulty === "beginner"
+                                    ? "success"
+                                    : article.difficulty === "intermediate"
+                                      ? "warning"
+                                      : "danger"
+                                }
+                                className="text-xs"
                               >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
+                                {article.difficulty}
+                              </Badge>
+                            </div>
+                            <p className="mb-3 text-sm text-gray-600">
+                              {article.content.substring(0, 150)}...
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {article.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-500"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -567,13 +567,7 @@ Solutions to common problems and questions.
 /**
  * Quick help widget for contextual assistance
  */
-export function PCSQuickHelp({
-  context,
-  onOpenHelp,
-}: {
-  context: string;
-  onOpenHelp: () => void;
-}) {
+export function PCSQuickHelp({ context, onOpenHelp }: { context: string; onOpenHelp: () => void }) {
   const getContextualTips = (context: string) => {
     switch (context) {
       case "calculations":
@@ -609,13 +603,13 @@ export function PCSQuickHelp({
     <Card className="border-blue-200 bg-blue-50">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <Icon name="Lightbulb" className="h-5 w-5 text-blue-600 mt-0.5" />
+          <Icon name="Lightbulb" className="mt-0.5 h-5 w-5 text-blue-600" />
           <div className="flex-1">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tips</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <h4 className="mb-2 font-medium text-blue-900">Quick Tips</h4>
+            <ul className="space-y-1 text-sm text-blue-800">
               {tips.map((tip, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
+                  <span className="mt-1 text-blue-600">•</span>
                   <span>{tip}</span>
                 </li>
               ))}
@@ -624,9 +618,9 @@ export function PCSQuickHelp({
               variant="outline"
               size="sm"
               onClick={onOpenHelp}
-              className="mt-3 text-blue-700 border-blue-300 hover:bg-blue-100"
+              className="mt-3 border-blue-300 text-blue-700 hover:bg-blue-100"
             >
-              <Icon name="HelpCircle" className="h-4 w-4 mr-2" />
+              <Icon name="HelpCircle" className="mr-2 h-4 w-4" />
               More Help
             </Button>
           </div>
@@ -635,3 +629,5 @@ export function PCSQuickHelp({
     </Card>
   );
 }
+
+export default PCSHelpSystem;

@@ -2,14 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
-import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
+import Card, {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-
 
 interface CostComparison {
   id: string;
@@ -20,7 +25,7 @@ interface CostComparison {
   weight_authorized: number;
   dependents_count: number;
   rank_at_pcs: string;
-  
+
   // DITY costs
   dity_truck_rental: number;
   dity_gas_cost: number;
@@ -30,11 +35,11 @@ interface CostComparison {
   dity_total_cost: number;
   dity_government_cost: number;
   dity_profit: number;
-  
+
   // Full Move costs
   full_move_cost: number;
   full_move_entitlements: number;
-  
+
   // Partial DITY costs
   partial_dity_weight: number;
   partial_dity_truck_cost: number;
@@ -42,7 +47,7 @@ interface CostComparison {
   partial_dity_total_cost: number;
   partial_dity_government_cost: number;
   partial_dity_profit: number;
-  
+
   // Analysis
   recommended_option: "dity" | "full_move" | "partial_dity";
   break_even_weight: number;
@@ -58,14 +63,14 @@ interface ComparisonFormData {
   weight_authorized: number;
   dependents_count: number;
   rank_at_pcs: string;
-  
+
   // DITY inputs
   dity_truck_rental: number;
   dity_gas_cost: number;
   dity_hotel_cost: number;
   dity_meals_cost: number;
   dity_labor_cost: number;
-  
+
   // Partial DITY inputs
   partial_dity_weight: number;
 }
@@ -74,7 +79,7 @@ export default function PCSCostComparisonClient() {
   const [comparisons, setComparisons] = useState<CostComparison[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"calculator" | "history">("calculator");
-  
+
   // Form data
   const [formData, setFormData] = useState<ComparisonFormData>({
     origin_base: "",
@@ -124,7 +129,7 @@ export default function PCSCostComparisonClient() {
     try {
       setLoading(true);
       const response = await fetch("/api/pcs/cost-comparison");
-      
+
       if (!response.ok) {
         throw new Error("Failed to load comparisons");
       }
@@ -140,9 +145,9 @@ export default function PCSCostComparisonClient() {
   };
 
   const handleInputChange = (field: keyof ComparisonFormData, value: string | number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -151,7 +156,7 @@ export default function PCSCostComparisonClient() {
       const response = await fetch("/api/pcs/cost-comparison/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
@@ -179,8 +184,8 @@ export default function PCSCostComparisonClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          results
-        })
+          results,
+        }),
       });
 
       if (!response.ok) {
@@ -206,19 +211,27 @@ export default function PCSCostComparisonClient() {
 
   const getRecommendationColor = (option: string) => {
     switch (option) {
-      case "dity": return "success";
-      case "full_move": return "neutral";
-      case "partial_dity": return "warning";
-      default: return "secondary";
+      case "dity":
+        return "success";
+      case "full_move":
+        return "neutral";
+      case "partial_dity":
+        return "warning";
+      default:
+        return "secondary";
     }
   };
 
   const getRecommendationIcon = (option: string) => {
     switch (option) {
-      case "dity": return "Truck";
-      case "full_move": return "Shield";
-      case "partial_dity": return "Briefcase";
-      default: return "HelpCircle";
+      case "dity":
+        return "Truck";
+      case "full_move":
+        return "Shield";
+      case "partial_dity":
+        return "Briefcase";
+      default:
+        return "HelpCircle";
     }
   };
 
@@ -233,7 +246,21 @@ export default function PCSCostComparisonClient() {
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "calculator" | "history")}>
+      {/* Back Button */}
+      <div className="mb-6">
+        <Link
+          href="/dashboard/pcs-copilot"
+          className="flex items-center gap-2 font-medium text-blue-600 hover:text-blue-700"
+        >
+          <Icon name="ArrowLeft" className="h-4 w-4" />
+          Back to PCS Copilot
+        </Link>
+      </div>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as "calculator" | "history")}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="calculator">Cost Calculator</TabsTrigger>
           <TabsTrigger value="history">Comparison History</TabsTrigger>
@@ -276,12 +303,16 @@ export default function PCSCostComparisonClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Weight Authorized (lbs)</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Weight Authorized (lbs)
+                  </label>
                   <Input
                     type="number"
                     placeholder="0"
                     value={formData.weight_authorized.toString()}
-                    onChange={(value) => handleInputChange("weight_authorized", parseInt(value) || 0)}
+                    onChange={(value) =>
+                      handleInputChange("weight_authorized", parseInt(value) || 0)
+                    }
                   />
                 </div>
                 <div>
@@ -290,7 +321,9 @@ export default function PCSCostComparisonClient() {
                     type="number"
                     placeholder="0"
                     value={formData.dependents_count.toString()}
-                    onChange={(value) => handleInputChange("dependents_count", parseInt(value) || 0)}
+                    onChange={(value) =>
+                      handleInputChange("dependents_count", parseInt(value) || 0)
+                    }
                   />
                 </div>
                 <div>
@@ -305,7 +338,7 @@ export default function PCSCostComparisonClient() {
 
               {/* DITY Cost Inputs */}
               <div className="border-t pt-4">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">DITY Move Costs</h3>
+                <h3 className="mb-4 text-lg font-medium text-gray-900">DITY Move Costs</h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
                     <label className="text-sm font-medium text-gray-700">Truck Rental</label>
@@ -313,7 +346,9 @@ export default function PCSCostComparisonClient() {
                       type="number"
                       placeholder="0"
                       value={formData.dity_truck_rental.toString()}
-                      onChange={(value) => handleInputChange("dity_truck_rental", parseFloat(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("dity_truck_rental", parseFloat(value) || 0)
+                      }
                     />
                   </div>
                   <div>
@@ -322,7 +357,9 @@ export default function PCSCostComparisonClient() {
                       type="number"
                       placeholder="0"
                       value={formData.dity_gas_cost.toString()}
-                      onChange={(value) => handleInputChange("dity_gas_cost", parseFloat(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("dity_gas_cost", parseFloat(value) || 0)
+                      }
                     />
                   </div>
                   <div>
@@ -331,7 +368,9 @@ export default function PCSCostComparisonClient() {
                       type="number"
                       placeholder="0"
                       value={formData.dity_hotel_cost.toString()}
-                      onChange={(value) => handleInputChange("dity_hotel_cost", parseFloat(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("dity_hotel_cost", parseFloat(value) || 0)
+                      }
                     />
                   </div>
                   <div>
@@ -340,7 +379,9 @@ export default function PCSCostComparisonClient() {
                       type="number"
                       placeholder="0"
                       value={formData.dity_meals_cost.toString()}
-                      onChange={(value) => handleInputChange("dity_meals_cost", parseFloat(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("dity_meals_cost", parseFloat(value) || 0)
+                      }
                     />
                   </div>
                   <div>
@@ -349,16 +390,22 @@ export default function PCSCostComparisonClient() {
                       type="number"
                       placeholder="0"
                       value={formData.dity_labor_cost.toString()}
-                      onChange={(value) => handleInputChange("dity_labor_cost", parseFloat(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("dity_labor_cost", parseFloat(value) || 0)
+                      }
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Partial DITY Weight (lbs)</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Partial DITY Weight (lbs)
+                    </label>
                     <Input
                       type="number"
                       placeholder="0"
                       value={formData.partial_dity_weight.toString()}
-                      onChange={(value) => handleInputChange("partial_dity_weight", parseInt(value) || 0)}
+                      onChange={(value) =>
+                        handleInputChange("partial_dity_weight", parseInt(value) || 0)
+                      }
                     />
                   </div>
                 </div>
@@ -386,8 +433,13 @@ export default function PCSCostComparisonClient() {
               <Card className="border-green-200 bg-green-50">
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <Icon name={getRecommendationIcon(results.recommended)} className="h-5 w-5 text-green-600" />
-                    <CardTitle className="text-green-800">Recommended: {results.recommended.replace('_', ' ').toUpperCase()}</CardTitle>
+                    <Icon
+                      name={getRecommendationIcon(results.recommended)}
+                      className="h-5 w-5 text-green-600"
+                    />
+                    <CardTitle className="text-green-800">
+                      Recommended: {results.recommended.replace("_", " ").toUpperCase()}
+                    </CardTitle>
                   </div>
                   <CardDescription>
                     Based on your inputs, this option will maximize your profit.
@@ -414,11 +466,15 @@ export default function PCSCostComparisonClient() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Gov Reimbursement:</span>
-                      <span className="font-medium">{formatCurrency(results.dity.government_cost)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(results.dity.government_cost)}
+                      </span>
                     </div>
                     <div className="flex justify-between border-t pt-2">
                       <span className="text-sm font-medium">Your Profit:</span>
-                      <span className={`font-bold ${results.dity.profit > 0 ? "text-green-600" : "text-red-600"}`}>
+                      <span
+                        className={`font-bold ${results.dity.profit > 0 ? "text-green-600" : "text-red-600"}`}
+                      >
                         {formatCurrency(results.dity.profit)}
                       </span>
                     </div>
@@ -429,7 +485,9 @@ export default function PCSCostComparisonClient() {
                 </Card>
 
                 {/* Full Move Results */}
-                <Card className={results.recommended === "full_move" ? "ring-2 ring-green-500" : ""}>
+                <Card
+                  className={results.recommended === "full_move" ? "ring-2 ring-green-500" : ""}
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">Full Move</CardTitle>
@@ -445,7 +503,9 @@ export default function PCSCostComparisonClient() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Your Entitlements:</span>
-                      <span className="font-medium">{formatCurrency(results.full_move.entitlements)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(results.full_move.entitlements)}
+                      </span>
                     </div>
                     <div className="flex justify-between border-t pt-2">
                       <span className="text-sm font-medium">Net Cost to You:</span>
@@ -453,14 +513,14 @@ export default function PCSCostComparisonClient() {
                         {formatCurrency(results.full_move.net_cost)}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      No profit, but no hassle
-                    </div>
+                    <div className="text-xs text-gray-500">No profit, but no hassle</div>
                   </CardContent>
                 </Card>
 
                 {/* Partial DITY Results */}
-                <Card className={results.recommended === "partial_dity" ? "ring-2 ring-green-500" : ""}>
+                <Card
+                  className={results.recommended === "partial_dity" ? "ring-2 ring-green-500" : ""}
+                >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">Partial DITY</CardTitle>
@@ -472,15 +532,21 @@ export default function PCSCostComparisonClient() {
                   <CardContent className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Your Cost:</span>
-                      <span className="font-medium">{formatCurrency(results.partial_dity.total_cost)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(results.partial_dity.total_cost)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Gov Reimbursement:</span>
-                      <span className="font-medium">{formatCurrency(results.partial_dity.government_cost)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(results.partial_dity.government_cost)}
+                      </span>
                     </div>
                     <div className="flex justify-between border-t pt-2">
                       <span className="text-sm font-medium">Your Profit:</span>
-                      <span className={`font-bold ${results.partial_dity.profit > 0 ? "text-green-600" : "text-red-600"}`}>
+                      <span
+                        className={`font-bold ${results.partial_dity.profit > 0 ? "text-green-600" : "text-red-600"}`}
+                      >
                         {formatCurrency(results.partial_dity.profit)}
                       </span>
                     </div>
@@ -495,9 +561,7 @@ export default function PCSCostComparisonClient() {
               <Card>
                 <CardHeader>
                   <CardTitle>Break-even Analysis</CardTitle>
-                  <CardDescription>
-                    Weight threshold where DITY becomes profitable
-                  </CardDescription>
+                  <CardDescription>Weight threshold where DITY becomes profitable</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center">
@@ -529,7 +593,7 @@ export default function PCSCostComparisonClient() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{comparison.comparison_name}</CardTitle>
                       <Badge variant={getRecommendationColor(comparison.recommended_option)}>
-                        {comparison.recommended_option.replace('_', ' ').toUpperCase()}
+                        {comparison.recommended_option.replace("_", " ").toUpperCase()}
                       </Badge>
                     </div>
                     <CardDescription>
@@ -547,7 +611,9 @@ export default function PCSCostComparisonClient() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">DITY Profit:</span>
-                      <span className={`font-medium ${comparison.dity_profit > 0 ? "text-green-600" : "text-red-600"}`}>
+                      <span
+                        className={`font-medium ${comparison.dity_profit > 0 ? "text-green-600" : "text-red-600"}`}
+                      >
                         {formatCurrency(comparison.dity_profit)}
                       </span>
                     </div>
