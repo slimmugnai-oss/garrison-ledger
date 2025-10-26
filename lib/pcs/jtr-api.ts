@@ -68,7 +68,7 @@ export async function fetchPerDiemRates(
       logger.info("Per diem rate requested on client-side, returning null");
       return null;
     }
-    
+
     // Check cache first
     const { data: cached } = await supabase
       .from("jtr_rates_cache")
@@ -116,7 +116,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
       logger.info("DLA rates requested on client-side, returning empty array");
       return [];
     }
-    
+
     // Check cache first
     const { data: cached } = await supabase
       .from("jtr_rates_cache")
@@ -181,7 +181,7 @@ export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | n
       logger.info("MALT rate requested on client-side, returning null");
       return null;
     }
-    
+
     // Check cache first
     const { data: cached } = await supabase
       .from("jtr_rates_cache")
@@ -370,7 +370,7 @@ async function fetchFromDTMOAPI(
   if (!supabase) {
     return null;
   }
-  
+
   const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
@@ -402,7 +402,7 @@ async function fetchFromDFASAPI(effectiveDate: string): Promise<DLARate[]> {
   if (!supabase) {
     return [];
   }
-  
+
   const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
@@ -508,7 +508,7 @@ async function fetchFromIRSAPI(effectiveDate: string): Promise<MALTRate | null> 
   if (!supabase) {
     return null;
   }
-  
+
   const { data } = await supabase
     .from("jtr_rates_cache")
     .select("*")
