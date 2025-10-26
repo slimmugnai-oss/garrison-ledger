@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { calculateDistance } from "@/lib/pcs/distance";
 
 export async function POST(request: NextRequest) {
   try {
-    const { origin, destination } = await request.json();
+    const { origin, destination, useGoogleMaps = false } = await request.json();
 
     if (!origin || !destination) {
       return NextResponse.json(
@@ -11,16 +12,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, return a mock distance calculation
-    // In production, this would use Google Maps API or similar
-    const mockDistance = Math.floor(Math.random() * 2000) + 100; // 100-2100 miles
+    // Use the real distance calculation function
+    const result = await calculateDistance(origin, destination, useGoogleMaps);
 
     return NextResponse.json({
-      distance: mockDistance,
+      distance: result.miles,
       origin,
       destination,
       unit: "miles",
-      source: "Mock calculation - verify with finance office"
+      method: result.method,
+      source: result.method === 'google-maps' 
+        ? "Google Maps Distance Matrix API" 
+        : result.method === 'cached'
+        ? "Pre-calculated base-to-base distances"
+        : "Haversine formula (straight-line distance)"
     });
   } catch (error) {
     console.error("Distance calculation error:", error);

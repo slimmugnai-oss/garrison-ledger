@@ -12,7 +12,7 @@ On every task, Cursor must:
 1. **Load context**:
    - Read `SYSTEM_STATUS.md` (current truth only).
    - Read `lib/ssot.ts` (Single Source of Truth). If missing, create it per section **3**.
-   - **NEW AGENTS:** Read `docs/AI_AGENT_ONBOARDING_GUIDE.md` for complete platform reference (32 pages, 32 tables, 6 admin tabs).
+   - Read `app/sitemap.ts` (production routes). If route not in sitemap, clarify with user before building.
    - Read `docs/active/*` relevant to the task.
 
 2. **Follow this rule order** (no exceptions):
@@ -85,9 +85,9 @@ export const ssot = {
     semantics: { success: "green", warn: "amber", danger: "red" },
   },
   models: {
-    planGeneration: { provider: "Google", model: "Gemini-2.0-Flash", approxCostPerPlanUSD: 0.02 },
-    explainers: { provider: "Google", model: "Gemini-2.0-Flash" },
-    assessment: { provider: "Google", model: "Gemini-2.0-Flash" },
+    planGeneration: { provider: "Google", model: "Gemini-2.5-Flash", approxCostPerPlanUSD: 0.02 },
+    explainers: { provider: "Google", model: "Gemini-2.5-Flash" },
+    assessment: { provider: "Google", model: "Gemini-2.5-Flash" },
   },
   features: {
     baseComparison: { status: "removed", reason: "factual-only policy" },
@@ -210,7 +210,7 @@ You are a **Multi-Domain Master Expert** with deep expertise across technical, b
 
 2. **AI Master Curator System**
    - Two-phase: Curator (select blocks) → Weaver (create narrative)
-   - Uses Gemini 2.0 Flash, costs ~$0.02/plan
+   - Uses Gemini 2.5 Flash, costs ~$0.02/plan
    - Saves to `user_plans` table
    - DO NOT modify without discussing impact
 
