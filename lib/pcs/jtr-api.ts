@@ -15,11 +15,12 @@
 import { logger } from "@/lib/logger";
 
 // Use admin client for server-side operations, null for client-side
-function getSupabaseClient() {
+async function getSupabaseClient() {
   // Only use supabaseAdmin on server-side
   if (typeof window === "undefined") {
     // Dynamic import to avoid client-side bundling
-    return require("@/lib/supabase/admin").supabaseAdmin;
+    const { supabaseAdmin } = await import("@/lib/supabase/admin");
+    return supabaseAdmin;
   }
   // Client-side: return null to avoid errors
   return null;
@@ -82,7 +83,7 @@ export async function fetchPerDiemRates(
   effectiveDate: string
 ): Promise<PerDiemRate | null> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       // Client-side: return mock data or null
       logger.info("Per diem rate requested on client-side, returning null");
@@ -130,7 +131,7 @@ export async function fetchPerDiemRates(
  */
 export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       // Client-side: return empty array
       logger.info("DLA rates requested on client-side, returning empty array");
@@ -195,7 +196,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
  */
 export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | null> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       // Client-side: return null
       logger.info("MALT rate requested on client-side, returning null");
@@ -276,7 +277,7 @@ export async function getBAHRate(
   effectiveDate: string = new Date().toISOString().split("T")[0]
 ): Promise<BAHRate | null> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       logger.info("BAH rate requested on client-side, returning null");
       return null;
@@ -326,7 +327,7 @@ export async function getBasePayRate(
   effectiveDate: string = new Date().toISOString().split("T")[0]
 ): Promise<BasePayRate | null> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       logger.info("Base pay rate requested on client-side, returning null");
       return null;
@@ -373,7 +374,7 @@ export async function getWeightAllowance(
   effectiveDate: string = new Date().toISOString().split("T")[0]
 ): Promise<WeightAllowance | null> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       logger.info("Weight allowance requested on client-side, returning null");
       return null;
@@ -480,7 +481,7 @@ export async function verifyRateFreshness(): Promise<{
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
-  const supabase = getSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) {
     // Client-side: return default status
     return {
@@ -543,7 +544,7 @@ async function getPerDiemRateFromDB(
   effectiveDate: string
 ): Promise<PerDiemRate | null> {
   // Query REAL 2025 per diem rates from jtr_rates_cache (300 verified locations)
-  const supabase = getSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) {
     return null;
   }
@@ -595,7 +596,7 @@ async function getPerDiemRateFromDB(
 
 async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
   // Query REAL 2025 DLA rates from entitlements_data table (44 rows, all ranks)
-  const supabase = getSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) {
     return [];
   }
@@ -630,7 +631,7 @@ async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
 
 async function getMALTRateFromDB(effectiveDate: string): Promise<MALTRate | null> {
   // Query REAL 2025 MALT rate from jtr_rates_cache (verified IRS data)
-  const supabase = getSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) {
     return null;
   }

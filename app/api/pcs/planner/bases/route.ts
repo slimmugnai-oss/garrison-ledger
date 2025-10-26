@@ -184,7 +184,6 @@ function generateSchoolRating(state: string): number {
     IL: 4.7,
     MI: 4.6,
     PA: 4.5,
-    NY: 4.4,
     AL: 4.3,
     MS: 4.2,
     LA: 4.1,
