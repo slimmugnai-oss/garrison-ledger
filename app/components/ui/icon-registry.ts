@@ -1,6 +1,6 @@
 /**
  * Centralized Icon Registry
- * 
+ *
  * This file explicitly imports and exports all Lucide icons used in the application.
  * Benefits:
  * - Full type safety (no 'any' types)
@@ -14,7 +14,7 @@ import {
   // Navigation & Brand
   BarChart,
   Monitor,
-  
+
   // Actions & Status
   Check,
   CircleCheck,
@@ -37,12 +37,12 @@ import {
   Quote,
   GraduationCap,
   Cloud,
-  
+
   // Business & Career
   Briefcase,
   Target,
   Star,
-  
+
   // Financial
   DollarSign,
   Banknote,
@@ -51,29 +51,34 @@ import {
   TrendingDown,
   PiggyBank,
   Calculator,
-  
+
   // PCS & Moving
   Truck,
   House,
   Home,
-  
+  Building,
+  Fuel,
+  Bed,
+  Utensils,
+  Receipt,
+
   // Shopping & Commissary
   ShoppingCart,
-  
+
   // Military & Deployment
   Shield,
-  
+
   // Tools & Information
   Wrench,
   Lightbulb,
   AlertTriangle,
   Settings,
   Command,
-  
+
   // Time
   Timer,
   Calendar,
-  
+
   // Navigation
   ChevronRight,
   ChevronUp,
@@ -84,7 +89,7 @@ import {
   List,
   RotateCcw,
   CloudOff,
-  
+
   // User & Interface
   User,
   Users,
@@ -92,7 +97,7 @@ import {
   HelpCircle,
   Crown,
   Sparkles,
-  
+
   // Layout & Structure
   LayoutDashboard,
   ClipboardCheck,
@@ -100,13 +105,13 @@ import {
   Library,
   MapPin,
   Map,
-  
+
   // General
   Zap,
   BookOpen,
   ClipboardList,
   Gift,
-  
+
   // Admin & Monitoring (NEW)
   Activity,
   Brain,
@@ -129,28 +134,27 @@ import {
   ArrowLeft,
   Copy,
   AlertCircle,
-  
+
   // Theme Toggle
   Moon,
   Sun,
-  
+
   // Listening Post
   Radio,
   Newspaper,
-  
+
   // Export & Sharing
   Printer,
   Camera,
   Loader,
   Archive,
   Save,
-  
+
   // Additional Icons
   Eye,
   Ban,
-  
   type LucideIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
 /**
  * Icon Registry - Maps icon names to components
@@ -160,7 +164,7 @@ export const iconRegistry = {
   // Navigation & Brand
   BarChart,
   Monitor,
-  
+
   // Actions & Status
   Check,
   CircleCheck,
@@ -189,12 +193,12 @@ export const iconRegistry = {
   AlertCircle,
   GraduationCap,
   Cloud,
-  
+
   // Business & Career
   Briefcase,
   Target,
   Star,
-  
+
   // Financial
   DollarSign,
   Banknote,
@@ -203,29 +207,34 @@ export const iconRegistry = {
   TrendingDown,
   PiggyBank,
   Calculator,
-  
+
   // PCS & Moving
   Truck,
   House,
   Home,
-  
+  Building,
+  Fuel,
+  Bed,
+  Utensils,
+  Receipt,
+
   // Shopping & Commissary
   ShoppingCart,
-  
+
   // Military & Deployment
   Shield,
-  
+
   // Tools & Information
   Wrench,
   Lightbulb,
   AlertTriangle,
   Settings,
   Command,
-  
+
   // Time
   Timer,
   Calendar,
-  
+
   // Navigation
   ChevronLeft,
   ChevronRight,
@@ -237,7 +246,7 @@ export const iconRegistry = {
   List,
   RotateCcw,
   CloudOff,
-  
+
   // User & Interface
   User,
   Users,
@@ -245,7 +254,7 @@ export const iconRegistry = {
   HelpCircle,
   Crown,
   Sparkles,
-  
+
   // Layout & Structure
   LayoutDashboard,
   ClipboardCheck,
@@ -253,13 +262,13 @@ export const iconRegistry = {
   Library,
   MapPin,
   Map,
-  
+
   // General
   Zap,
   BookOpen,
   ClipboardList,
   Gift,
-  
+
   // Admin & Monitoring
   Activity,
   Brain,
@@ -275,14 +284,14 @@ export const iconRegistry = {
   MessageCircle,
   Rss,
   XCircle,
-  
+
   // Theme Toggle
   Moon,
   Sun,
   // Listening Post
   Radio,
   Newspaper,
-  
+
   // Export & Sharing
   Printer,
   Camera,
@@ -298,4 +307,3 @@ export type IconName = keyof typeof iconRegistry;
 
 // Export Lucide icon type for component props
 export type { LucideIcon };
-

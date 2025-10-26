@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { PCSValidationExplainer } from "@/app/components/pcs/PCSAIExplanation";
+import PCSAIExplanation from "@/app/components/pcs/PCSAIExplanation";
 import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
+import PCSDocumentLibrary from "@/app/components/pcs/PCSDocumentLibrary";
+import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
 import PCSRecommendationCards from "@/app/components/pcs/PCSRecommendationCards";
+import PCSValidationResults from "@/app/components/pcs/PCSValidationResults";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
@@ -36,6 +39,27 @@ interface ValidationFlag {
   suggestion?: string;
 }
 
+interface ValidationSummary {
+  total_rules: number;
+  passed: number;
+  warnings: number;
+  errors: number;
+  overall_score: number;
+  results: ValidationResult[];
+}
+
+interface ValidationResult {
+  rule_code: string;
+  rule_title: string;
+  category: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  suggestion?: string;
+  citation: string;
+  passed: boolean;
+  details?: any;
+}
+
 interface EnhancedPCSCopilotClientProps {
   initialClaims: Claim[];
   isPremium: boolean;
@@ -58,11 +82,15 @@ export default function EnhancedPCSCopilotClient({
   const [showNewClaimModal, setShowNewClaimModal] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [_isCreating, setIsCreating] = useState(false);
-  const [currentView, setCurrentView] = useState<"list" | "manual" | "mobile">("list");
+  const [currentView, setCurrentView] = useState<"list" | "manual" | "mobile" | "documents">(
+    "list"
+  );
   const [validationFlags, setValidationFlags] = useState<ValidationFlag[]>([]);
   const [estimates, setEstimates] = useState<CalculationResult | null>(null);
   const [formData, _setFormData] = useState<FormData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [validationResults, setValidationResults] = useState<ValidationSummary | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   // Detect mobile device
   useEffect(() => {
@@ -132,6 +160,39 @@ export default function EnhancedPCSCopilotClient({
     } catch (error) {
       console.error("Failed to calculate estimates:", error);
       toast.error("Failed to calculate estimates. Please try again.");
+    }
+  };
+
+  const handleValidateClaim = async (formData: FormData) => {
+    setIsValidating(true);
+    try {
+      const response = await fetch("/api/pcs/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Validation failed");
+      }
+
+      const data = await response.json();
+      setValidationResults(data.validation);
+
+      if (data.validation.errors > 0) {
+        toast.error(`${data.validation.errors} validation errors found`);
+      } else if (data.validation.warnings > 0) {
+        toast.warning(`${data.validation.warnings} warnings found`);
+      } else {
+        toast.success("All validations passed!");
+      }
+    } catch (error) {
+      console.error("Validation error:", error);
+      toast.error("Failed to validate claim. Please try again.");
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -253,6 +314,17 @@ export default function EnhancedPCSCopilotClient({
                 Mobile Wizard
               </button>
             )}
+            <button
+              onClick={() => setCurrentView("documents")}
+              className={`rounded-lg px-4 py-2 font-medium transition-colors ${
+                currentView === "documents"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              <Icon name="File" className="mr-2 inline h-4 w-4" />
+              Documents
+            </button>
           </div>
 
           {/* Main Content */}
@@ -428,12 +500,13 @@ export default function EnhancedPCSCopilotClient({
                 userProfile={userProfile}
                 onSave={handleCreateClaim}
                 onValidationChange={handleValidationChange}
+                onValidate={handleValidateClaim}
               />
 
               {/* Smart Recommendations */}
               {formData && (
                 <div className="mt-8">
-                  <PCSRecommendationCards 
+                  <PCSRecommendationCards
                     claimData={{
                       estimated_weight: formData.estimated_weight,
                       distance_miles: formData.distance_miles,
@@ -466,36 +539,96 @@ export default function EnhancedPCSCopilotClient({
             />
           )}
 
+          {/* Documents View */}
+          {currentView === "documents" && selectedClaim && (
+            <div className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-slate-900">Document Management</h2>
+                <p className="text-slate-600">
+                  Upload and manage receipts, invoices, and other PCS-related documents
+                </p>
+              </div>
+
+              {/* Document Uploader */}
+              <PCSDocumentUploader
+                claimId={selectedClaim.id}
+                onDocumentUploaded={(document) => {
+                  toast.success(`Document ${document.name} uploaded successfully`);
+                }}
+                onDocumentProcessed={(document) => {
+                  toast.success(`Document ${document.name} processed successfully`);
+                }}
+              />
+
+              {/* Document Library */}
+              <PCSDocumentLibrary
+                claimId={selectedClaim.id}
+                onDocumentSelect={(document) => {
+                  console.log("Document selected:", document);
+                }}
+                onDocumentDelete={(documentId) => {
+                  toast.success("Document deleted successfully");
+                }}
+              />
+            </div>
+          )}
+
           {/* Validation Explainer */}
           {validationFlags.length > 0 && (
             <div className="mt-8">
-              <PCSValidationExplainer flags={validationFlags as any} claimContext={getClaimContext()} />
+              <PCSAIExplanation
+                ruleCode="VALIDATION"
+                ruleTitle="Validation Results"
+                category="general"
+                severity="info"
+                message="Review validation results below"
+                userContext={{
+                  rank: userProfile.rank,
+                  branch: userProfile.branch,
+                  hasDependents: userProfile.hasDependents,
+                  pcsType: "PCS",
+                }}
+              />
             </div>
           )}
 
           {/* Confidence Display */}
           {estimates && (
             <div className="mt-8">
-              <PCSConfidenceDisplay estimates={{
-                dla: {
-                  confidence: estimates.dla.confidence,
-                  source: estimates.dla.source,
-                  lastVerified: estimates.dla.lastVerified
-                },
-                malt: {
-                  confidence: estimates.malt.confidence,
-                  source: estimates.malt.source,
-                  lastVerified: estimates.malt.effectiveDate
-                },
-                perDiem: {
-                  confidence: estimates.perDiem.confidence,
-                  source: estimates.perDiem.citation,
-                  lastVerified: estimates.perDiem.effectiveDate
-                },
-                total: estimates.total,
-                confidence: estimates.confidence.overall,
-                dataSources: estimates.dataSources
-              }} />
+              <PCSConfidenceDisplay
+                estimates={{
+                  dla: {
+                    confidence: estimates.dla.confidence,
+                    source: estimates.dla.source,
+                    lastVerified: estimates.dla.lastVerified,
+                  },
+                  malt: {
+                    confidence: estimates.malt.confidence,
+                    source: estimates.malt.source,
+                    lastVerified: estimates.malt.effectiveDate,
+                  },
+                  perDiem: {
+                    confidence: estimates.perDiem.confidence,
+                    source: estimates.perDiem.citation,
+                    lastVerified: estimates.perDiem.effectiveDate,
+                  },
+                  total: estimates.total,
+                  confidence: estimates.confidence.overall,
+                  dataSources: estimates.dataSources,
+                }}
+              />
+            </div>
+          )}
+
+          {/* Validation Results */}
+          {validationResults && (
+            <div className="mt-8">
+              <PCSValidationResults
+                validation={validationResults}
+                onFixSuggestion={(ruleCode, suggestion) => {
+                  toast.info(`Fix suggestion: ${suggestion}`);
+                }}
+              />
             </div>
           )}
 

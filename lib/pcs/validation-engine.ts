@@ -1,488 +1,579 @@
 /**
- * PCS COPILOT VALIDATION ENGINE
+ * JTR VALIDATION ENGINE
  *
- * Real-time validation with JTR compliance checking
- * Three layers: Field-level, Cross-field, JTR compliance
+ * Comprehensive validation system using real JTR rules from database.
+ * Validates PCS claims against official Joint Travel Regulations.
  */
 
-export interface ValidationFlag {
-  field: string;
+import { logger } from "@/lib/logger";
+
+// Use admin client for server-side operations, null for client-side
+function getSupabaseClient() {
+  // Only use supabaseAdmin on server-side
+  if (typeof window === "undefined") {
+    // Dynamic import to avoid client-side bundling
+    return require("@/lib/supabase/admin").supabaseAdmin;
+  }
+  // Client-side: return null to avoid errors
+  return null;
+}
+
+export interface JTRRule {
+  id: string;
+  rule_code: string;
+  rule_title: string;
+  category: string;
+  description: string;
+  eligibility_criteria: any;
+  calculation_formula: string;
+  rate_table: any;
+  branch_specific: any;
+  common_mistakes: string[];
+  citations: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ValidationResult {
+  rule_code: string;
+  rule_title: string;
+  category: string;
   severity: "error" | "warning" | "info";
   message: string;
-  suggested_fix?: string;
-  jtr_citation?: string;
-  category: string;
+  suggestion?: string;
+  citation: string;
+  passed: boolean;
+  details?: any;
 }
 
-export interface FormData {
-  // Basic Info
-  claim_name: string;
-  pcs_orders_date: string;
-  departure_date: string;
-  arrival_date: string;
-  origin_base: string;
-  destination_base: string;
-
-  // Travel Details
-  travel_method: string;
-  dependents_count: number;
-  rank_at_pcs: string;
-  branch: string;
-
-  // Lodging (TLE)
-  tle_origin_nights: number;
-  tle_destination_nights: number;
-  tle_origin_rate: number;
-  tle_destination_rate: number;
-
-  // Travel Costs
-  malt_distance: number;
-  per_diem_days: number;
-  fuel_receipts: number;
-
-  // Weight & Distance
-  estimated_weight: number;
-  actual_weight: number;
-  distance_miles: number;
+export interface ValidationSummary {
+  total_rules: number;
+  passed: number;
+  warnings: number;
+  errors: number;
+  overall_score: number;
+  results: ValidationResult[];
 }
 
 /**
- * Layer 1: Field-Level Validation (Instant)
- * Validates individual fields as user types
+ * Load all JTR rules from database
  */
-export function validateFieldLevel(formData: FormData): ValidationFlag[] {
-  const flags: ValidationFlag[] = [];
-
-  // Required fields
-  if (!formData.claim_name.trim()) {
-    flags.push({
-      field: "claim_name",
-      severity: "error",
-      message: "Claim name is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.pcs_orders_date) {
-    flags.push({
-      field: "pcs_orders_date",
-      severity: "error",
-      message: "PCS orders date is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.departure_date) {
-    flags.push({
-      field: "departure_date",
-      severity: "error",
-      message: "Departure date is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.arrival_date) {
-    flags.push({
-      field: "arrival_date",
-      severity: "error",
-      message: "Arrival date is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.origin_base.trim()) {
-    flags.push({
-      field: "origin_base",
-      severity: "error",
-      message: "Origin base is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.destination_base.trim()) {
-    flags.push({
-      field: "destination_base",
-      severity: "error",
-      message: "Destination base is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.rank_at_pcs.trim()) {
-    flags.push({
-      field: "rank_at_pcs",
-      severity: "error",
-      message: "Rank at PCS is required",
-      category: "required_field",
-    });
-  }
-
-  if (!formData.branch.trim()) {
-    flags.push({
-      field: "branch",
-      severity: "error",
-      message: "Branch is required",
-      category: "required_field",
-    });
-  }
-
-  // Date validation
-  if (formData.pcs_orders_date) {
-    const ordersDate = new Date(formData.pcs_orders_date);
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-    if (ordersDate < sixMonthsAgo) {
-      flags.push({
-        field: "pcs_orders_date",
-        severity: "warning",
-        message: "PCS orders date is more than 6 months old",
-        suggested_fix: "Verify this is the correct orders date",
-        category: "date_range",
-      });
+export async function loadJTRRules(): Promise<JTRRule[]> {
+  try {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      logger.info("JTR rules requested on client-side, returning empty array");
+      return [];
     }
+
+    const { data, error } = await supabase
+      .from("jtr_rules")
+      .select("*")
+      .order("category", { ascending: true });
+
+    if (error) {
+      logger.error("Failed to load JTR rules:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    logger.error("Failed to load JTR rules:", error);
+    return [];
+  }
+}
+
+/**
+ * Validate DLA (Dislocation Allowance) claim
+ */
+export async function validateDLA(
+  rank: string,
+  hasDependents: boolean,
+  amount: number,
+  rules: JTRRule[]
+): Promise<ValidationResult[]> {
+  const results: ValidationResult[] = [];
+  const dlaRule = rules.find((r) => r.category === "DLA");
+
+  if (!dlaRule) {
+    results.push({
+      rule_code: "DLA-001",
+      rule_title: "DLA Rule Missing",
+      category: "DLA",
+      severity: "error",
+      message: "DLA validation rule not found in database",
+      citation: "JTR 050302.B",
+      passed: false,
+    });
+    return results;
   }
 
-  // TLE validation
-  if (formData.tle_origin_nights > 10) {
-    flags.push({
-      field: "tle_origin_nights",
+  // Validate rank format
+  if (!rank || rank.length < 2) {
+    results.push({
+      rule_code: dlaRule.rule_code,
+      rule_title: dlaRule.rule_title,
+      category: "DLA",
+      severity: "error",
+      message: "Invalid rank format. Must be valid military rank (e.g., E-5, O-3)",
+      suggestion: "Enter rank in format: E-1 through E-9, O-1 through O-10, W-1 through W-5",
+      citation: dlaRule.citations[0] || "JTR 050302.B",
+      passed: false,
+    });
+  }
+
+  // Validate amount is positive
+  if (amount <= 0) {
+    results.push({
+      rule_code: dlaRule.rule_code,
+      rule_title: dlaRule.rule_title,
+      category: "DLA",
+      severity: "error",
+      message: "DLA amount must be greater than zero",
+      suggestion: "DLA is a one-time allowance based on rank and dependency status",
+      citation: dlaRule.citations[0] || "JTR 050302.B",
+      passed: false,
+    });
+  }
+
+  // Check for common mistakes
+  if (dlaRule.common_mistakes) {
+    dlaRule.common_mistakes.forEach((mistake, index) => {
+      results.push({
+        rule_code: dlaRule.rule_code,
+        rule_title: dlaRule.rule_title,
+        category: "DLA",
+        severity: "info",
+        message: `Common mistake to avoid: ${mistake}`,
+        citation: dlaRule.citations[0] || "JTR 050302.B",
+        passed: true,
+      });
+    });
+  }
+
+  // If all validations pass, add success result
+  if (results.length === 0 || results.every((r) => r.passed)) {
+    results.push({
+      rule_code: dlaRule.rule_code,
+      rule_title: dlaRule.rule_title,
+      category: "DLA",
+      severity: "info",
+      message: "DLA claim appears to be valid",
+      citation: dlaRule.citations[0] || "JTR 050302.B",
+      passed: true,
+    });
+  }
+
+  return results;
+}
+
+/**
+ * Validate MALT (Mileage Allowance in Lieu of Transportation)
+ */
+export async function validateMALT(
+  distance: number,
+  rate: number,
+  totalAmount: number,
+  rules: JTRRule[]
+): Promise<ValidationResult[]> {
+  const results: ValidationResult[] = [];
+  const maltRule = rules.find((r) => r.category === "MALT");
+
+  if (!maltRule) {
+    results.push({
+      rule_code: "MALT-001",
+      rule_title: "MALT Rule Missing",
+      category: "MALT",
+      severity: "error",
+      message: "MALT validation rule not found in database",
+      citation: "JTR 054206",
+      passed: false,
+    });
+    return results;
+  }
+
+  // Validate distance
+  if (distance <= 0) {
+    results.push({
+      rule_code: maltRule.rule_code,
+      rule_title: maltRule.rule_title,
+      category: "MALT",
+      severity: "error",
+      message: "MALT distance must be greater than zero",
+      suggestion: "Enter the actual miles driven for your PCS move",
+      citation: maltRule.citations[0] || "JTR 054206",
+      passed: false,
+    });
+  }
+
+  // Validate rate is reasonable (current IRS rate is around $0.67/mile)
+  if (rate < 0.5 || rate > 1.0) {
+    results.push({
+      rule_code: maltRule.rule_code,
+      rule_title: maltRule.rule_title,
+      category: "MALT",
       severity: "warning",
-      message: "TLE at origin exceeds 10 days (JTR maximum)",
-      suggested_fix: "Reduce to 10 days or less",
-      jtr_citation: "JTR 054205",
-      category: "tle_limit_exceeded",
+      message: `MALT rate ($${rate.toFixed(2)}/mile) seems unusual`,
+      suggestion:
+        "Current IRS standard mileage rate is approximately $0.67/mile. Verify with finance office.",
+      citation: maltRule.citations[0] || "JTR 054206",
+      passed: true,
     });
   }
 
-  if (formData.tle_destination_nights > 10) {
-    flags.push({
-      field: "tle_destination_nights",
+  // Validate calculation
+  const expectedAmount = distance * rate;
+  const difference = Math.abs(totalAmount - expectedAmount);
+  if (difference > 1.0) {
+    // Allow $1 tolerance for rounding
+    results.push({
+      rule_code: maltRule.rule_code,
+      rule_title: maltRule.rule_title,
+      category: "MALT",
       severity: "warning",
-      message: "TLE at destination exceeds 10 days (JTR maximum)",
-      suggested_fix: "Reduce to 10 days or less",
-      jtr_citation: "JTR 054205",
-      category: "tle_limit_exceeded",
+      message: `MALT calculation may be incorrect. Expected: $${expectedAmount.toFixed(2)}, Entered: $${totalAmount.toFixed(2)}`,
+      suggestion: `Recalculate: ${distance} miles × $${rate.toFixed(2)}/mile = $${expectedAmount.toFixed(2)}`,
+      citation: maltRule.citations[0] || "JTR 054206",
+      passed: true,
     });
   }
 
-  // Weight validation
-  if (formData.estimated_weight > 0) {
-    const maxWeight = getWeightAllowance(formData.rank_at_pcs);
-    if (formData.estimated_weight > maxWeight) {
-      flags.push({
-        field: "estimated_weight",
-        severity: "warning",
-        message: `Estimated weight (${formData.estimated_weight} lbs) exceeds authorized allowance (${maxWeight} lbs)`,
-        suggested_fix: "Verify weight estimate or check if you qualify for additional weight",
-        jtr_citation: "JTR 054703",
-        category: "weight_exceeded",
+  // Check for common mistakes
+  if (maltRule.common_mistakes) {
+    maltRule.common_mistakes.forEach((mistake, index) => {
+      results.push({
+        rule_code: maltRule.rule_code,
+        rule_title: maltRule.rule_title,
+        category: "MALT",
+        severity: "info",
+        message: `Common mistake to avoid: ${mistake}`,
+        citation: maltRule.citations[0] || "JTR 054206",
+        passed: true,
       });
-    }
+    });
   }
 
-  return flags;
+  return results;
 }
 
 /**
- * Layer 2: Cross-Field Validation (On blur)
- * Validates relationships between fields
+ * Validate TLE (Temporary Lodging Expense)
  */
-export function validateCrossField(formData: FormData): ValidationFlag[] {
-  const flags: ValidationFlag[] = [];
+export async function validateTLE(
+  originNights: number,
+  destinationNights: number,
+  originRate: number,
+  destinationRate: number,
+  rules: JTRRule[]
+): Promise<ValidationResult[]> {
+  const results: ValidationResult[] = [];
+  const tleRule = rules.find((r) => r.category === "TLE");
 
-  // Date logic
-  if (formData.departure_date && formData.arrival_date) {
-    const departure = new Date(formData.departure_date);
-    const arrival = new Date(formData.arrival_date);
-
-    if (departure >= arrival) {
-      flags.push({
-        field: "arrival_date",
-        severity: "error",
-        message: "Arrival date must be after departure date",
-        category: "date_logic",
-      });
-    }
-
-    // Check for reasonable travel time
-    const travelDays = Math.ceil((arrival.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24));
-    if (travelDays > 30) {
-      flags.push({
-        field: "arrival_date",
-        severity: "warning",
-        message: "Travel period exceeds 30 days - verify dates are correct",
-        suggested_fix: "Check if this includes authorized en route stops",
-        category: "travel_duration",
-      });
-    }
-  }
-
-  // PCS orders date vs travel dates
-  if (formData.pcs_orders_date && formData.departure_date) {
-    const ordersDate = new Date(formData.pcs_orders_date);
-    const departureDate = new Date(formData.departure_date);
-
-    if (departureDate < ordersDate) {
-      flags.push({
-        field: "departure_date",
-        severity: "error",
-        message: "Departure date cannot be before PCS orders date",
-        category: "date_logic",
-      });
-    }
-
-    // Check for reasonable gap between orders and departure
-    const daysBetween = Math.ceil(
-      (departureDate.getTime() - ordersDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    if (daysBetween > 90) {
-      flags.push({
-        field: "departure_date",
-        severity: "warning",
-        message: "More than 90 days between orders and departure",
-        suggested_fix: "Verify dates are correct or check for authorized delays",
-        category: "orders_to_departure_gap",
-      });
-    }
-  }
-
-  // Travel days vs per diem days
-  if (formData.departure_date && formData.arrival_date && formData.per_diem_days > 0) {
-    const departure = new Date(formData.departure_date);
-    const arrival = new Date(formData.arrival_date);
-    const actualTravelDays = Math.ceil(
-      (arrival.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (Math.abs(formData.per_diem_days - actualTravelDays) > 1) {
-      flags.push({
-        field: "per_diem_days",
-        severity: "warning",
-        message: `Per diem days (${formData.per_diem_days}) doesn't match travel period (${actualTravelDays} days)`,
-        suggested_fix: "Verify per diem calculation or travel dates",
-        category: "per_diem_mismatch",
-      });
-    }
-  }
-
-  // MALT distance vs actual distance
-  if (formData.malt_distance > 0 && formData.distance_miles > 0) {
-    const distanceDiff = Math.abs(formData.malt_distance - formData.distance_miles);
-    const percentDiff = (distanceDiff / formData.distance_miles) * 100;
-
-    if (percentDiff > 10) {
-      flags.push({
-        field: "malt_distance",
-        severity: "warning",
-        message: `MALT distance (${formData.malt_distance} miles) differs significantly from actual distance (${formData.distance_miles} miles)`,
-        suggested_fix: "Verify MALT distance calculation or actual distance",
-        category: "distance_mismatch",
-      });
-    }
-  }
-
-  return flags;
-}
-
-/**
- * Layer 3: JTR Compliance Validation (On save)
- * Validates against Joint Travel Regulations
- */
-export function validateJTRCompliance(formData: FormData): ValidationFlag[] {
-  const flags: ValidationFlag[] = [];
-
-  // TLE total days validation
-  const totalTLEDays = formData.tle_origin_nights + formData.tle_destination_nights;
-  if (totalTLEDays > 20) {
-    flags.push({
-      field: "tle_origin_nights",
+  if (!tleRule) {
+    results.push({
+      rule_code: "TLE-001",
+      rule_title: "TLE Rule Missing",
+      category: "TLE",
       severity: "error",
-      message: `Total TLE days (${totalTLEDays}) exceeds JTR maximum of 20 days`,
-      suggested_fix: "Reduce TLE days to 20 or less total",
-      jtr_citation: "JTR 054205",
-      category: "tle_total_exceeded",
+      message: "TLE validation rule not found in database",
+      citation: "JTR 054205",
+      passed: false,
+    });
+    return results;
+  }
+
+  // Validate night limits (max 10 per location)
+  if (originNights > 10) {
+    results.push({
+      rule_code: tleRule.rule_code,
+      rule_title: tleRule.rule_title,
+      category: "TLE",
+      severity: "error",
+      message: `Origin TLE nights (${originNights}) exceeds 10-day limit`,
+      suggestion: "TLE is limited to 10 days per location (origin and destination)",
+      citation: tleRule.citations[0] || "JTR 054205",
+      passed: false,
     });
   }
 
-  // Per diem validation
-  if (formData.per_diem_days > 0) {
-    const departure = new Date(formData.departure_date);
-    const arrival = new Date(formData.arrival_date);
-    const maxPerDiemDays =
-      Math.ceil((arrival.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24)) + 2; // +2 for first/last day
-
-    if (formData.per_diem_days > maxPerDiemDays) {
-      flags.push({
-        field: "per_diem_days",
-        severity: "warning",
-        message: `Per diem days (${formData.per_diem_days}) exceeds reasonable travel period`,
-        suggested_fix: "Verify per diem calculation",
-        jtr_citation: "JTR 054401",
-        category: "per_diem_excessive",
-      });
-    }
+  if (destinationNights > 10) {
+    results.push({
+      rule_code: tleRule.rule_code,
+      rule_title: tleRule.rule_title,
+      category: "TLE",
+      severity: "error",
+      message: `Destination TLE nights (${destinationNights}) exceeds 10-day limit`,
+      suggestion: "TLE is limited to 10 days per location (origin and destination)",
+      citation: tleRule.citations[0] || "JTR 054205",
+      passed: false,
+    });
   }
 
-  // Dependents validation
-  if (formData.dependents_count > 0 && !formData.rank_at_pcs.includes("O")) {
-    // Enlisted with dependents - check for common issues
-    if (formData.dependents_count > 6) {
-      flags.push({
-        field: "dependents_count",
-        severity: "warning",
-        message: "More than 6 dependents - verify count is correct",
-        suggested_fix: "Double-check dependent count",
-        category: "dependent_count_high",
-      });
-    }
-  }
-
-  // Rank validation
-  if (formData.rank_at_pcs) {
-    const validRanks = [
-      "E1",
-      "E2",
-      "E3",
-      "E4",
-      "E5",
-      "E6",
-      "E7",
-      "E8",
-      "E9",
-      "O1",
-      "O2",
-      "O3",
-      "O4",
-      "O5",
-      "O6",
-      "O7",
-      "O8",
-      "O9",
-      "O10",
-    ];
-
-    if (!validRanks.includes(formData.rank_at_pcs)) {
-      flags.push({
-        field: "rank_at_pcs",
-        severity: "warning",
-        message: "Rank format may be incorrect",
-        suggested_fix: "Use format like E-5, O-3, etc.",
-        category: "rank_format",
-      });
-    }
-  }
-
-  // Branch validation
-  const validBranches = ["Army", "Navy", "Air Force", "Marine Corps", "Coast Guard", "Space Force"];
-  if (formData.branch && !validBranches.includes(formData.branch)) {
-    flags.push({
-      field: "branch",
+  // Validate rates are reasonable
+  if (originRate > 200 || destinationRate > 200) {
+    results.push({
+      rule_code: tleRule.rule_code,
+      rule_title: tleRule.rule_title,
+      category: "TLE",
       severity: "warning",
-      message: "Branch may be incorrect",
-      suggested_fix: "Select from valid branch options",
-      category: "branch_validation",
+      message: `TLE rate ($${Math.max(originRate, destinationRate)}) seems high`,
+      suggestion:
+        "TLE rates should be based on locality per diem rates. Verify with finance office.",
+      citation: tleRule.citations[0] || "JTR 054205",
+      passed: true,
     });
   }
 
-  return flags;
+  return results;
 }
 
 /**
- * Main validation function that runs all three layers
+ * Validate Per Diem claims
  */
-export function validatePCSClaim(formData: FormData): ValidationFlag[] {
-  const fieldFlags = validateFieldLevel(formData);
-  const crossFieldFlags = validateCrossField(formData);
-  const jtrFlags = validateJTRCompliance(formData);
+export async function validatePerDiem(
+  days: number,
+  rate: number,
+  totalAmount: number,
+  rules: JTRRule[]
+): Promise<ValidationResult[]> {
+  const results: ValidationResult[] = [];
+  const perDiemRule = rules.find((r) => r.category === "per_diem");
 
-  return [...fieldFlags, ...crossFieldFlags, ...jtrFlags];
+  if (!perDiemRule) {
+    results.push({
+      rule_code: "PERDIEM-001",
+      rule_title: "Per Diem Rule Missing",
+      category: "per_diem",
+      severity: "error",
+      message: "Per diem validation rule not found in database",
+      citation: "JTR 054401",
+      passed: false,
+    });
+    return results;
+  }
+
+  // Validate days
+  if (days <= 0) {
+    results.push({
+      rule_code: perDiemRule.rule_code,
+      rule_title: perDiemRule.rule_title,
+      category: "per_diem",
+      severity: "error",
+      message: "Per diem days must be greater than zero",
+      suggestion: "Enter the number of travel days for your PCS move",
+      citation: perDiemRule.citations[0] || "JTR 054401",
+      passed: false,
+    });
+  }
+
+  // Validate rate is reasonable
+  if (rate < 20 || rate > 200) {
+    results.push({
+      rule_code: perDiemRule.rule_code,
+      rule_title: perDiemRule.rule_title,
+      category: "per_diem",
+      severity: "warning",
+      message: `Per diem rate ($${rate.toFixed(2)}) seems unusual`,
+      suggestion: "Per diem rates vary by locality. Verify with DTMO calculator.",
+      citation: perDiemRule.citations[0] || "JTR 054401",
+      passed: true,
+    });
+  }
+
+  return results;
 }
 
 /**
- * Get weight allowance by rank
+ * Validate PPM (Personally Procured Move)
  */
-function getWeightAllowance(rank: string): number {
-  const weightTable: Record<string, number> = {
-    E1: 5000,
-    E2: 5000,
-    E3: 5000,
-    E4: 5000,
-    E5: 7000,
-    E6: 7000,
-    E7: 11000,
-    E8: 11000,
-    E9: 11000,
-    O1: 8000,
-    O2: 8000,
-    O3: 13000,
-    O4: 13000,
-    O5: 16000,
-    O6: 16000,
-    O7: 18000,
-    O8: 18000,
-    O9: 18000,
-    O10: 18000,
-  };
+export async function validatePPM(
+  weight: number,
+  distance: number,
+  estimatedAmount: number,
+  rules: JTRRule[]
+): Promise<ValidationResult[]> {
+  const results: ValidationResult[] = [];
+  const ppmRule = rules.find((r) => r.category === "PPM");
 
-  return weightTable[rank] || 5000;
+  if (!ppmRule) {
+    results.push({
+      rule_code: "PPM-001",
+      rule_title: "PPM Rule Missing",
+      category: "PPM",
+      severity: "error",
+      message: "PPM validation rule not found in database",
+      citation: "JTR 054703",
+      passed: false,
+    });
+    return results;
+  }
+
+  // Validate weight
+  if (weight <= 0) {
+    results.push({
+      rule_code: ppmRule.rule_code,
+      rule_title: ppmRule.rule_title,
+      category: "PPM",
+      severity: "error",
+      message: "PPM weight must be greater than zero",
+      suggestion: "Enter the actual weight of your household goods",
+      citation: ppmRule.citations[0] || "JTR 054703",
+      passed: false,
+    });
+  }
+
+  // Validate distance
+  if (distance <= 0) {
+    results.push({
+      rule_code: ppmRule.rule_code,
+      rule_title: ppmRule.rule_title,
+      category: "PPM",
+      severity: "error",
+      message: "PPM distance must be greater than zero",
+      suggestion: "Enter the distance of your PCS move",
+      citation: ppmRule.citations[0] || "JTR 054703",
+      passed: false,
+    });
+  }
+
+  // Check for common mistakes
+  if (ppmRule.common_mistakes) {
+    ppmRule.common_mistakes.forEach((mistake, index) => {
+      results.push({
+        rule_code: ppmRule.rule_code,
+        rule_title: ppmRule.rule_title,
+        category: "PPM",
+        severity: "info",
+        message: `Common mistake to avoid: ${mistake}`,
+        citation: ppmRule.citations[0] || "JTR 054703",
+        passed: true,
+      });
+    });
+  }
+
+  return results;
 }
 
 /**
- * Calculate confidence score based on validation flags
+ * Main validation function - validates entire PCS claim
  */
-export function calculateConfidenceScore(flags: ValidationFlag[]): {
-  overall: number;
-  factors: {
-    hasOrders: boolean;
-    hasWeighTickets: boolean;
-    datesVerified: boolean;
-    ratesFromAPI: boolean;
-    distanceVerified: boolean;
-    receiptsComplete: boolean;
-  };
-  level: "excellent" | "good" | "fair" | "needs_work";
-  recommendations: string[];
-} {
-  const errorCount = flags.filter((f) => f.severity === "error").length;
-  const warningCount = flags.filter((f) => f.severity === "warning").length;
+export async function validatePCSClaim(claimData: any): Promise<ValidationSummary> {
+  try {
+    // Load JTR rules
+    const rules = await loadJTRRules();
 
-  let score = 100;
-  score -= errorCount * 20; // Each error reduces by 20 points
-  score -= warningCount * 5; // Each warning reduces by 5 points
+    if (rules.length === 0) {
+      return {
+        total_rules: 0,
+        passed: 0,
+        warnings: 0,
+        errors: 1,
+        overall_score: 0,
+        results: [
+          {
+            rule_code: "SYSTEM-001",
+            rule_title: "System Error",
+            category: "system",
+            severity: "error",
+            message: "Unable to load JTR validation rules",
+            citation: "System",
+            passed: false,
+          },
+        ],
+      };
+    }
 
-  score = Math.max(0, score);
+    const allResults: ValidationResult[] = [];
 
-  const factors = {
-    hasOrders: true, // Assume true if we're validating
-    hasWeighTickets: false, // Would need to check for weigh tickets
-    datesVerified: flags.filter((f) => f.category === "date_logic").length === 0,
-    ratesFromAPI: true, // Assume true if using our system
-    distanceVerified: flags.filter((f) => f.category === "distance_mismatch").length === 0,
-    receiptsComplete: false, // Would need to check for receipts
-  };
+    // Validate DLA
+    if (claimData.dla) {
+      const dlaResults = await validateDLA(
+        claimData.rank,
+        claimData.hasDependents,
+        claimData.dla.amount,
+        rules
+      );
+      allResults.push(...dlaResults);
+    }
 
-  let level: "excellent" | "good" | "fair" | "needs_work";
-  if (score >= 90) level = "excellent";
-  else if (score >= 70) level = "good";
-  else if (score >= 50) level = "fair";
-  else level = "needs_work";
+    // Validate MALT
+    if (claimData.malt) {
+      const maltResults = await validateMALT(
+        claimData.malt.distance,
+        claimData.malt.rate,
+        claimData.malt.amount,
+        rules
+      );
+      allResults.push(...maltResults);
+    }
 
-  const recommendations: string[] = [];
-  if (errorCount > 0) {
-    recommendations.push("Fix all errors before submitting");
+    // Validate TLE
+    if (claimData.tle) {
+      const tleResults = await validateTLE(
+        claimData.tle.originNights,
+        claimData.tle.destinationNights,
+        claimData.tle.originRate,
+        claimData.tle.destinationRate,
+        rules
+      );
+      allResults.push(...tleResults);
+    }
+
+    // Validate Per Diem
+    if (claimData.perDiem) {
+      const perDiemResults = await validatePerDiem(
+        claimData.perDiem.days,
+        claimData.perDiem.rate,
+        claimData.perDiem.amount,
+        rules
+      );
+      allResults.push(...perDiemResults);
+    }
+
+    // Validate PPM
+    if (claimData.ppm) {
+      const ppmResults = await validatePPM(
+        claimData.ppm.weight,
+        claimData.ppm.distance,
+        claimData.ppm.amount,
+        rules
+      );
+      allResults.push(...ppmResults);
+    }
+
+    // Calculate summary
+    const passed = allResults.filter((r) => r.passed).length;
+    const warnings = allResults.filter((r) => r.severity === "warning").length;
+    const errors = allResults.filter((r) => r.severity === "error").length;
+    const overall_score = Math.round((passed / allResults.length) * 100);
+
+    return {
+      total_rules: allResults.length,
+      passed,
+      warnings,
+      errors,
+      overall_score,
+      results: allResults,
+    };
+  } catch (error) {
+    logger.error("PCS claim validation failed:", error);
+    return {
+      total_rules: 0,
+      passed: 0,
+      warnings: 0,
+      errors: 1,
+      overall_score: 0,
+      results: [
+        {
+          rule_code: "SYSTEM-002",
+          rule_title: "Validation Error",
+          category: "system",
+          severity: "error",
+          message: "An error occurred during validation",
+          citation: "System",
+          passed: false,
+        },
+      ],
+    };
   }
-  if (warningCount > 0) {
-    recommendations.push("Review warnings for potential issues");
-  }
-  if (score < 70) {
-    recommendations.push("Add more details to improve accuracy");
-  }
-
-  return {
-    overall: score,
-    factors,
-    level,
-    recommendations,
-  };
 }

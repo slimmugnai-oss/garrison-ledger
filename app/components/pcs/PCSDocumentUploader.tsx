@@ -1,374 +1,380 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 
+import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 
-interface ProcessedDocument {
+interface UploadedDocument {
   id: string;
-  claimId: string;
-  documentType: string;
-  status: string;
-  processingTime: number | null;
-  extractedData: Record<string, unknown>;
-  normalizedData: Record<string, unknown>;
-  lastUpdated: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  thumbnail?: string;
+  ocrText?: string;
+  extractedData?: {
+    amount?: number;
+    date?: string;
+    vendor?: string;
+    category?: string;
+  };
+  uploadedAt: string;
 }
 
 interface PCSDocumentUploaderProps {
   claimId: string;
-  onDocumentProcessed?: (document: ProcessedDocument) => void;
-  className?: string;
-}
-
-interface DocumentStatus {
-  id: string;
-  fileName: string;
-  documentType: string;
-  ocrStatus: "processing" | "completed" | "needs_review" | "failed";
-  confidence: {
-    score: number;
-    level: string;
-    requiresReview: boolean;
-  };
-  processingTime: number | null;
-  extractedData: Record<string, unknown>;
-  normalizedData: Record<string, unknown>;
-  lastUpdated: string;
+  onDocumentUploaded?: (document: UploadedDocument) => void;
+  onDocumentProcessed?: (document: UploadedDocument) => void;
+  maxFiles?: number;
+  acceptedTypes?: string[];
 }
 
 export default function PCSDocumentUploader({
   claimId,
+  onDocumentUploaded,
   onDocumentProcessed,
-  className = "",
+  maxFiles = 20,
+  acceptedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"],
 }: PCSDocumentUploaderProps) {
-  const [uploading, setUploading] = useState(false);
-  const [documents, setDocuments] = useState<DocumentStatus[]>([]);
-  const [dragOver, setDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const documentTypes = [
-    { value: "orders", label: "PCS Orders", icon: "File" },
-    { value: "weigh_ticket", label: "Weigh Ticket", icon: "Scale" },
-    { value: "lodging_receipt", label: "Lodging Receipt", icon: "Home" },
-    { value: "fuel_receipt", label: "Fuel Receipt", icon: "Fuel" },
-    { value: "meal_receipt", label: "Meal Receipt", icon: "Utensils" },
-    { value: "other", label: "Other Document", icon: "File" },
-  ];
+  const handleFileSelect = useCallback(
+    async (files: FileList | null) => {
+      if (!files || files.length === 0) return;
 
-  const pollDocumentStatus = async (documentId: string) => {
-    let attempts = 0;
-    const maxAttempts = 30; // 30 seconds max
+      const fileArray = Array.from(files);
 
-    const poll = async (): Promise<void> => {
+      // Validate file count
+      if (uploadedDocuments.length + fileArray.length > maxFiles) {
+        toast.error(`Maximum ${maxFiles} files allowed`);
+        return;
+      }
+
+      // Validate file types
+      const invalidFiles = fileArray.filter((file) => !acceptedTypes.includes(file.type));
+      if (invalidFiles.length > 0) {
+        toast.error(`Invalid file types: ${invalidFiles.map((f) => f.name).join(", ")}`);
+        return;
+      }
+
+      setIsUploading(true);
+      setUploadProgress(0);
+
       try {
-        const response = await fetch(`/api/pcs/document-status/${documentId}`);
+        for (let i = 0; i < fileArray.length; i++) {
+          const file = fileArray[i];
+          const progress = ((i + 1) / fileArray.length) * 100;
+          setUploadProgress(progress);
+
+          // Upload file to Supabase Storage
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("claimId", claimId);
+
+          const response = await fetch("/api/pcs/documents/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to upload ${file.name}`);
+          }
+
+          const result = await response.json();
+          const uploadedDoc: UploadedDocument = {
+            id: result.documentId,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            url: result.url,
+            thumbnail: result.thumbnail,
+            uploadedAt: new Date().toISOString(),
+          };
+
+          setUploadedDocuments((prev) => [...prev, uploadedDoc]);
+          onDocumentUploaded?.(uploadedDoc);
+
+          // Process document for OCR
+          if (result.needsOCR) {
+            const processResponse = await fetch("/api/pcs/documents/process", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                documentId: result.documentId,
+                claimId,
+              }),
+            });
+
+            if (processResponse.ok) {
+              const processResult = await processResponse.json();
+              const processedDoc = {
+                ...uploadedDoc,
+                ocrText: processResult.ocrText,
+                extractedData: processResult.extractedData,
+              };
+
+              setUploadedDocuments((prev) =>
+                prev.map((doc) => (doc.id === result.documentId ? processedDoc : doc))
+              );
+              onDocumentProcessed?.(processedDoc);
+            }
+          }
+        }
+
+        toast.success(`${fileArray.length} document(s) uploaded successfully`);
+      } catch (error) {
+        console.error("Upload error:", error);
+        toast.error("Failed to upload documents. Please try again.");
+      } finally {
+        setIsUploading(false);
+        setUploadProgress(0);
+      }
+    },
+    [
+      claimId,
+      maxFiles,
+      acceptedTypes,
+      uploadedDocuments.length,
+      onDocumentUploaded,
+      onDocumentProcessed,
+    ]
+  );
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      handleFileSelect(e.dataTransfer.files);
+    },
+    [handleFileSelect]
+  );
+
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleFileSelect(e.target.files);
+    },
+    [handleFileSelect]
+  );
+
+  const handleRemoveDocument = useCallback(
+    async (documentId: string) => {
+      try {
+        const response = await fetch("/api/pcs/documents/delete", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ documentId, claimId }),
+        });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch status");
+          throw new Error("Failed to delete document");
         }
 
-        const data = await response.json();
-        const doc = data.document;
-
-        // Update document in state
-        setDocuments((prev) =>
-          prev.map((d) =>
-            d.id === documentId
-              ? {
-                  ...d,
-                  ocrStatus: doc.ocrStatus,
-                  extractedData: doc.normalizedData,
-                  normalizedData: doc.normalizedData,
-                  lastUpdated: doc.updatedAt,
-                  confidence: doc.normalizedData?.ocr_confidence
-                    ? {
-                        score: doc.normalizedData.ocr_confidence,
-                        level: doc.normalizedData.ocr_confidence_level || "unknown",
-                        requiresReview: doc.normalizedData.requires_manual_review || false,
-                      }
-                    : d.confidence,
-                }
-              : d
-          )
-        );
-
-        // Check if processing is complete
-        if (doc.ocrStatus === "completed" || doc.ocrStatus === "needs_review") {
-          toast.success(
-            doc.ocrStatus === "completed"
-              ? `Document processed successfully (${doc.normalizedData?.ocr_confidence || 0}% confidence)`
-              : "Document processed but needs review"
-          );
-
-          // Call callback if provided
-          if (onDocumentProcessed && doc.normalizedData) {
-            onDocumentProcessed({
-              id: documentId,
-              claimId: claimId,
-              documentType: doc.documentType || "unknown",
-              status: "completed",
-              processingTime: null,
-              extractedData: doc.extractedData || {},
-              normalizedData: doc.normalizedData,
-              lastUpdated: new Date().toISOString(),
-            });
-          }
-          return;
-        }
-
-        if (doc.ocrStatus === "failed") {
-          toast.error("Document processing failed. Please try uploading again.");
-          return;
-        }
-
-        // Continue polling if still processing
-        if (doc.ocrStatus === "processing" && attempts < maxAttempts) {
-          attempts++;
-          setTimeout(poll, 1000); // Poll every second
-        } else if (attempts >= maxAttempts) {
-          toast.warning("Document is still processing. Check back in a moment.");
-        }
+        setUploadedDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
+        toast.success("Document deleted successfully");
       } catch (error) {
-        console.error("Polling error:", error);
-        if (attempts < maxAttempts) {
-          attempts++;
-          setTimeout(poll, 2000); // Retry with longer interval
-        }
+        console.error("Delete error:", error);
+        toast.error("Failed to delete document");
       }
-    };
+    },
+    [claimId]
+  );
 
-    // Start polling
-    poll();
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const handleFileSelect = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    const file = files[0];
-    const documentType =
-      (document.getElementById("document-type") as HTMLSelectElement)?.value || "other";
-
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Please upload a valid image (JPEG, PNG, WebP) or PDF file");
-      return;
-    }
-
-    // Validate file size (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size must be less than 10MB");
-      return;
-    }
-
-    await uploadDocument(file, documentType);
-  };
-
-  const uploadDocument = async (file: File, documentType: string) => {
-    setUploading(true);
-
-    try {
-      // Convert file to base64
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
-      // Upload document
-      const response = await fetch("/api/pcs/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          claimId,
-          documentType,
-          fileName: file.name,
-          fileData: base64,
-          contentType: file.type,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || "Upload failed");
-      }
-
-      toast.success("Document uploaded successfully! OCR processing started...");
-
-      // Add to documents list
-      const newDocument: DocumentStatus = {
-        id: result.document.id,
-        fileName: result.document.fileName,
-        documentType: result.document.documentType,
-        ocrStatus: "processing",
-        confidence: { score: 0, level: "unknown", requiresReview: false },
-        processingTime: null,
-        extractedData: {},
-        normalizedData: {},
-        lastUpdated: new Date().toISOString(),
-      };
-
-      setDocuments((prev) => [...prev, newDocument]);
-
-      // Start polling for status updates
-      pollDocumentStatus(result.document.id);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error("Failed to upload document. Please try again.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "processing":
-        return "Loader";
-      case "completed":
-        return "CheckCircle";
-      case "needs_review":
-        return "AlertTriangle";
-      case "failed":
-        return "XCircle";
-      default:
-        return "File";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "processing":
-        return "text-blue-600";
-      case "completed":
-        return "text-green-600";
-      case "needs_review":
-        return "text-yellow-600";
-      case "failed":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
-
-  const getConfidenceColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+  const getFileIcon = (type: string) => {
+    if (type.startsWith("image/")) return "Image";
+    if (type === "application/pdf") return "File";
+    return "File";
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Upload Area */}
-      <div
-        className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
-          dragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
-        }`}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragOver(true);
-        }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDragOver(false);
-          handleFileSelect(e.dataTransfer.files);
-        }}
-      >
-        <Icon name="Upload" className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-        <h3 className="mb-2 text-lg font-semibold text-gray-900">Upload PCS Documents</h3>
-        <p className="mb-4 text-gray-600">Drag and drop files here, or click to select files</p>
-
-        {/* Document Type Selector */}
-        <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-700">Document Type</label>
-          <select
-            id="document-type"
-            className="mx-auto block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          >
-            {documentTypes.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {uploading ? (
-            <>
-              <Icon name="Loader" className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
-            </>
-          ) : (
-            <>
-              <Icon name="Upload" className="mr-2 h-4 w-4" />
-              Choose Files
-            </>
-          )}
-        </button>
-
-        <input id="input_y696ixgod" ref={fileInputRef}
-          type="file"
-          accept="image/*,application/pdf"
-          onChange={(e) => handleFileSelect(e.target.files)}
-          className="hidden"
-        />
-
-        <p className="mt-2 text-xs text-gray-500">Supported: JPEG, PNG, WebP, PDF (max 10MB)</p>
+    <AnimatedCard className="p-6">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-slate-900">Document Upload</h3>
+        <p className="text-sm text-slate-600">
+          Upload receipts, invoices, and other PCS-related documents
+        </p>
       </div>
 
-      {/* Document List */}
-      {documents.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium text-gray-900">Uploaded Documents</h4>
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
-            >
-              <div className="flex items-center space-x-3">
-                <Icon
-                  name={getStatusIcon(doc.ocrStatus)}
-                  className={`h-5 w-5 ${getStatusColor(doc.ocrStatus)} ${
-                    doc.ocrStatus === "processing" ? "animate-spin" : ""
-                  }`}
-                />
-                <div>
-                  <p className="font-medium text-gray-900">{doc.fileName}</p>
-                  <p className="text-sm text-gray-600">
-                    {doc.documentType.replace("_", " ").toUpperCase()}
-                  </p>
-                </div>
-              </div>
+      {/* Upload Area */}
+      <div
+        className={`relative rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+          isDragOver ? "border-blue-400 bg-blue-50" : "border-slate-300 hover:border-slate-400"
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept={acceptedTypes.join(",")}
+          onChange={handleFileInputChange}
+          className="absolute inset-0 w-full cursor-pointer opacity-0"
+          disabled={isUploading}
+        />
 
-              <div className="text-right">
-                {doc.ocrStatus === "completed" && (
-                  <div className="text-sm">
-                    <span className={`font-medium ${getConfidenceColor(doc.confidence.score)}`}>
-                      {doc.confidence.score}% confidence
-                    </span>
-                    {doc.confidence.requiresReview && (
-                      <p className="text-xs text-yellow-600">Needs review</p>
+        {isUploading ? (
+          <div className="space-y-4">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+            <div>
+              <p className="text-sm font-medium text-slate-900">Uploading...</p>
+              <div className="mt-2 h-2 w-full rounded-full bg-slate-200">
+                <div
+                  className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="mt-1 text-xs text-slate-600">{Math.round(uploadProgress)}%</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="mx-auto h-12 w-12 rounded-full bg-slate-100 p-3">
+              <Icon name="Upload" className="h-6 w-6 text-slate-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-900">
+                Drop files here or click to browse
+              </p>
+              <p className="text-xs text-slate-600">
+                Supports: JPG, PNG, PDF, WebP (max {maxFiles} files)
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Uploaded Documents */}
+      {uploadedDocuments.length > 0 && (
+        <div className="mt-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h4 className="text-sm font-medium text-slate-900">
+              Uploaded Documents ({uploadedDocuments.length})
+            </h4>
+            <Badge variant="neutral" size="sm">
+              {uploadedDocuments.length}/{maxFiles}
+            </Badge>
+          </div>
+
+          <div className="space-y-3">
+            {uploadedDocuments.map((doc) => (
+              <div
+                key={doc.id}
+                className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3"
+              >
+                {/* Thumbnail or Icon */}
+                <div className="flex-shrink-0">
+                  {doc.thumbnail ? (
+                    <img
+                      src={doc.thumbnail}
+                      alt={doc.name}
+                      className="h-10 w-10 rounded object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded bg-slate-100">
+                      <Icon name={getFileIcon(doc.type)} className="h-5 w-5 text-slate-600" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Document Info */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-slate-900">{doc.name}</p>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <span>{formatFileSize(doc.size)}</span>
+                    <span>•</span>
+                    <span>{new Date(doc.uploadedAt).toLocaleDateString()}</span>
+                    {doc.extractedData?.amount && (
+                      <>
+                        <span>•</span>
+                        <span className="font-medium text-green-600">
+                          ${doc.extractedData.amount.toFixed(2)}
+                        </span>
+                      </>
                     )}
                   </div>
-                )}
-                {doc.ocrStatus === "processing" && (
-                  <p className="text-sm text-blue-600">Processing...</p>
-                )}
-                {doc.ocrStatus === "failed" && <p className="text-sm text-red-600">Failed</p>}
+                </div>
+
+                {/* Status Badge */}
+                <div className="flex-shrink-0">
+                  {doc.ocrText ? (
+                    <Badge variant="success" size="sm">
+                      Processed
+                    </Badge>
+                  ) : (
+                    <Badge variant="warning" size="sm">
+                      Processing
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-shrink-0 items-center gap-1">
+                  <button
+                    onClick={() => window.open(doc.url, "_blank")}
+                    className="p-1 text-slate-400 hover:text-slate-600"
+                    title="View document"
+                  >
+                    <Icon name="Eye" className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleRemoveDocument(doc.id)}
+                    className="p-1 text-slate-400 hover:text-red-600"
+                    title="Delete document"
+                  >
+                    <Icon name="Trash2" className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
-    </div>
+
+      {/* Help Text */}
+      <div className="mt-4 rounded-lg bg-blue-50 p-3">
+        <div className="flex items-start gap-2">
+          <Icon name="Info" className="mt-0.5 h-4 w-4 text-blue-600" />
+          <div className="text-xs text-blue-800">
+            <p className="font-medium">Document Tips:</p>
+            <ul className="mt-1 space-y-1">
+              <li>• Upload clear, well-lit photos of receipts</li>
+              <li>• Include all PCS-related expenses (gas, lodging, meals, etc.)</li>
+              <li>• Keep original receipts for your records</li>
+              <li>• Documents are automatically processed for expense extraction</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </AnimatedCard>
   );
 }

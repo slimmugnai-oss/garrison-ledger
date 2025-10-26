@@ -3,77 +3,110 @@
 import { useState } from "react";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
-import { logger } from "@/lib/logger";
 
-interface ValidationFlag {
-  field: string;
-  severity: "error" | "warning" | "info";
-  message: string;
-  suggested_fix?: string;
-  jtr_citation?: string;
-  category: string;
+interface RetrievedChunk {
+  id: string;
+  content_id: string;
+  content_type: string;
+  content_text: string;
+  metadata: Record<string, unknown>;
+  similarity: number;
+  retrieval_method: "vector" | "keyword" | "hybrid";
 }
 
-interface ClaimContext {
-  rank?: string;
-  branch?: string;
-  hasDependents?: boolean;
-  pcsType?: string;
+interface AIExplanation {
+  explanation: string;
+  sources: RetrievedChunk[];
+  confidence: number;
+  suggestions: string[];
+  jtr_citations: string[];
 }
 
 interface PCSAIExplanationProps {
-  validationFlag: ValidationFlag;
-  claimContext: {
+  ruleCode: string;
+  ruleTitle: string;
+  category: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  userContext?: {
     rank?: string;
     branch?: string;
     hasDependents?: boolean;
     pcsType?: string;
   };
+  onExplanationGenerated?: (explanation: AIExplanation) => void;
 }
 
-export default function PCSAIExplanation({ validationFlag, claimContext }: PCSAIExplanationProps) {
-  const [explanation, setExplanation] = useState<string | null>(null);
+export default function PCSAIExplanation({
+  ruleCode,
+  ruleTitle,
+  category,
+  severity,
+  message,
+  userContext,
+  onExplanationGenerated,
+}: PCSAIExplanationProps) {
+  const [explanation, setExplanation] = useState<AIExplanation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const getAIExplanation = async () => {
+  const generateExplanation = async () => {
     setIsLoading(true);
+    setError(null);
+
     try {
-      const response = await fetch("/api/pcs/ai-explanation", {
+      const response = await fetch("/api/pcs/explain", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          validationFlag,
-          claimContext,
+          type: "validation",
+          data: {
+            rule_code: ruleCode,
+            rule_title: ruleTitle,
+            category,
+            severity,
+            message,
+            user_context: userContext,
+          },
         }),
       });
 
-      const { explanation } = await response.json();
-      setExplanation(explanation);
-    } catch (error) {
-      logger.error("Failed to get AI explanation:", error);
-      setExplanation("Sorry, I could not generate an explanation at this time.");
+      if (!response.ok) {
+        throw new Error("Failed to generate explanation");
+      }
+
+      const data = await response.json();
+      setExplanation(data.explanation);
+
+      if (onExplanationGenerated) {
+        onExplanationGenerated(data.explanation);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate explanation");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getSeverityIcon = () => {
-    switch (validationFlag.severity) {
+  const getSeverityIcon = (severity: string) => {
+    switch (severity) {
       case "error":
-        return "AlertTriangle";
+        return "XCircle";
       case "warning":
-        return "AlertCircle";
+        return "AlertTriangle";
       case "info":
         return "Info";
       default:
-        return "AlertCircle";
+        return "CheckCircle";
     }
   };
 
-  const getSeverityColor = () => {
-    switch (validationFlag.severity) {
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
       case "error":
         return "text-red-600 bg-red-50 border-red-200";
       case "warning":
@@ -81,161 +114,168 @@ export default function PCSAIExplanation({ validationFlag, claimContext }: PCSAI
       case "info":
         return "text-blue-600 bg-blue-50 border-blue-200";
       default:
-        return "text-gray-600 bg-gray-50 border-gray-200";
+        return "text-green-600 bg-green-50 border-green-200";
     }
   };
 
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 0.8) return "text-green-600";
+    if (confidence >= 0.6) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getConfidenceLabel = (confidence: number) => {
+    if (confidence >= 0.8) return "High";
+    if (confidence >= 0.6) return "Medium";
+    return "Low";
+  };
+
   return (
-    <div className={`rounded-lg border-l-4 p-4 ${getSeverityColor()}`}>
-      <div className="flex items-start gap-3">
-        <Icon name={getSeverityIcon()} className="mt-0.5 h-5 w-5 flex-shrink-0" />
-        <div className="flex-1">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-medium">{validationFlag.message}</p>
-              {validationFlag.suggested_fix && (
-                <p className="mt-1 text-sm text-gray-600">💡 {validationFlag.suggested_fix}</p>
-              )}
-              {validationFlag.jtr_citation && (
-                <p className="mt-1 text-xs text-gray-500">
-                  Citation: {validationFlag.jtr_citation}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => {
-                setIsExpanded(!isExpanded);
-                if (!explanation && !isLoading) {
-                  getAIExplanation();
+    <AnimatedCard className="p-6">
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`rounded-lg p-2 ${getSeverityColor(severity)}`}>
+            <Icon name={getSeverityIcon(severity)} className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">AI Explanation</h3>
+            <p className="text-sm text-slate-600">
+              {ruleTitle} ({ruleCode})
+            </p>
+          </div>
+        </div>
+
+        {!explanation && (
+          <button
+            onClick={generateExplanation}
+            disabled={isLoading}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+          >
+            <Icon name={isLoading ? "Loader" : "Brain"} className="h-4 w-4" />
+            {isLoading ? "Generating..." : "Explain"}
+          </button>
+        )}
+      </div>
+
+      {/* Error State */}
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="flex items-center gap-2">
+            <Icon name="XCircle" className="h-5 w-5 text-red-600" />
+            <span className="text-sm font-medium text-red-800">Error</span>
+          </div>
+          <p className="mt-1 text-sm text-red-700">{error}</p>
+          <button
+            onClick={generateExplanation}
+            className="mt-2 text-sm text-red-600 underline hover:text-red-700"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {/* Explanation Content */}
+      {explanation && (
+        <div className="space-y-4">
+          {/* Main Explanation */}
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Icon name="Brain" className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium text-slate-700">AI Explanation</span>
+              <Badge
+                variant={
+                  getConfidenceLabel(explanation.confidence) === "High" ? "success" : "warning"
                 }
-              }}
-              className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              <Icon name="MessageCircle" className="h-4 w-4" />
-              {isExpanded ? "Hide" : "AI"} Explanation
-            </button>
+              >
+                {getConfidenceLabel(explanation.confidence)} Confidence
+              </Badge>
+            </div>
+            <div className="prose prose-sm max-w-none">
+              <div
+                dangerouslySetInnerHTML={{ __html: explanation.explanation.replace(/\n/g, "<br>") }}
+              />
+            </div>
           </div>
 
-          {/* AI Explanation */}
-          {isExpanded && (
-            <div className="mt-4 border-t border-gray-200 pt-4">
-              {isLoading ? (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
-                  <span>Getting AI explanation...</span>
-                </div>
-              ) : explanation ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Icon name="Sparkles" className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-900">AI Explanation</span>
-                  </div>
-                  <div className="text-sm leading-relaxed text-gray-700">{explanation}</div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={getAIExplanation}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-700"
-                    >
-                      Regenerate
-                    </button>
-                    <button
-                      onClick={() => window.open("/dashboard/ask", "_blank")}
-                      className="text-xs font-medium text-blue-600 hover:text-blue-700"
-                    >
-                      Ask Follow-up →
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={getAIExplanation}
-                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
-                >
-                  <Icon name="MessageCircle" className="h-4 w-4" />
-                  Get AI Explanation
-                </button>
-              )}
+          {/* Suggestions */}
+          {explanation.suggestions.length > 0 && (
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Icon name="Lightbulb" className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-800">Suggestions</span>
+              </div>
+              <ul className="space-y-1 text-sm text-green-700">
+                {explanation.suggestions.map((suggestion, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <Icon name="CheckCircle" className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                    <span>{suggestion}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
+
+          {/* JTR Citations */}
+          {explanation.jtr_citations.length > 0 && (
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Icon name="File" className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">JTR Citations</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {explanation.jtr_citations.map((citation, index) => (
+                  <Badge key={index} variant="info" size="sm">
+                    {citation}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Sources */}
+          {explanation.sources.length > 0 && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Icon name="BookOpen" className="h-4 w-4 text-slate-600" />
+                <span className="text-sm font-medium text-slate-700">Sources</span>
+                <Badge variant="neutral" size="sm">
+                  {explanation.sources.length} found
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                {explanation.sources.map((source, index) => (
+                  <div key={index} className="rounded border border-slate-200 bg-white p-3">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="text-xs font-medium text-slate-600">
+                        {source.content_type}
+                      </span>
+                      <Badge variant="neutral" size="sm">
+                        {Math.round(source.similarity * 100)}% match
+                      </Badge>
+                    </div>
+                    <p className="line-clamp-2 text-xs text-slate-600">
+                      {source.content_text.substring(0, 200)}...
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Regenerate Button */}
+          <div className="flex justify-end">
+            <button
+              onClick={generateExplanation}
+              disabled={isLoading}
+              className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+            >
+              <Icon name="RefreshCw" className="h-4 w-4" />
+              Regenerate
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * AI Explanation Generator Component
- * Shows AI-powered explanations for validation flags
- */
-export function PCSValidationExplainer({
-  flags,
-  claimContext,
-}: {
-  flags: ValidationFlag[];
-  claimContext: ClaimContext;
-}) {
-  const [expandedFlags, setExpandedFlags] = useState<Set<string>>(new Set());
-
-  const _toggleFlag = (flagId: string) => {
-    const newExpanded = new Set(expandedFlags);
-    if (newExpanded.has(flagId)) {
-      newExpanded.delete(flagId);
-    } else {
-      newExpanded.add(flagId);
-    }
-    setExpandedFlags(newExpanded);
-  };
-
-  if (flags.length === 0) {
-    return (
-      <AnimatedCard className="border-green-200 bg-green-50 p-4">
-        <div className="flex items-center gap-2">
-          <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-          <span className="font-medium text-green-900">No validation issues found</span>
-        </div>
-      </AnimatedCard>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Validation Issues ({flags.length})</h3>
-        <button
-          onClick={() => setExpandedFlags(new Set(flags.map((_, i) => i.toString())))}
-          className="text-sm font-medium text-blue-600 hover:text-blue-700"
-        >
-          Expand All
-        </button>
-      </div>
-
-      {flags.map((flag, index) => (
-        <PCSAIExplanation key={index} validationFlag={flag} claimContext={claimContext} />
-      ))}
-
-      {/* Summary Actions */}
-      <div className="mt-6 rounded-lg bg-blue-50 p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Icon name="Lightbulb" className="h-5 w-5 text-blue-600" />
-          <span className="font-medium text-blue-900">Need Help?</span>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => window.open("/dashboard/ask", "_blank")}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700"
-          >
-            <Icon name="MessageCircle" className="h-4 w-4" />
-            Ask Military Expert
-          </button>
-          <button
-            onClick={() => window.open("/docs/jtr-guide", "_blank")}
-            className="flex items-center gap-2 rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm text-blue-600 transition-colors hover:bg-blue-50"
-          >
-            <Icon name="BookOpen" className="h-4 w-4" />
-            JTR Guide
-          </button>
-        </div>
-      </div>
-    </div>
+      )}
+    </AnimatedCard>
   );
 }
