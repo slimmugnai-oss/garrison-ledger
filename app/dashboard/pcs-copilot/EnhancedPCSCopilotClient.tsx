@@ -9,8 +9,17 @@ import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import PCSDocumentLibrary from "@/app/components/pcs/PCSDocumentLibrary";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
+import { PCSLoadingOverlay } from "@/app/components/pcs/PCSLoadingOverlay";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
+import { PCSMobileInterface } from "@/app/components/pcs/PCSMobileInterface";
+import {
+  PCSOnboardingTour,
+  PCSOnboardingChecklist,
+  PCSFeatureHighlights,
+} from "@/app/components/pcs/PCSOnboardingTour";
+import { PCSHelpSystem, PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
+// import { PCSOptimisticUI } from "@/app/components/pcs/PCSOptimisticUI";
 import PCSRecommendationCards from "@/app/components/pcs/PCSRecommendationCards";
 import PCSValidationResults from "@/app/components/pcs/PCSValidationResults";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
@@ -18,6 +27,7 @@ import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PageHeader from "@/app/components/ui/PageHeader";
 import { calculatePCSClaim, FormData, CalculationResult } from "@/lib/pcs/calculation-engine";
+import { usePCSLoadingStates } from "@/app/components/pcs/PCSLoadingOverlay";
 // import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
 
 interface Claim {
@@ -91,6 +101,14 @@ export default function EnhancedPCSCopilotClient({
   const [isMobile, setIsMobile] = useState(false);
   const [validationResults, setValidationResults] = useState<ValidationSummary | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [helpContext, setHelpContext] = useState("general");
+
+  // Loading state management
+  const loadingStates = usePCSLoadingStates();
 
   // Detect mobile device
   useEffect(() => {
@@ -101,6 +119,16 @@ export default function EnhancedPCSCopilotClient({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Check for first-time user and show onboarding
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem("pcs-copilot-onboarding-completed");
+    const isFirstTime = claims.length === 0 && !hasSeenOnboarding;
+
+    if (isFirstTime) {
+      setShowOnboarding(true);
+    }
+  }, [claims.length]);
 
   const handleCreateClaim = async (formData: any) => {
     setIsCreating(true);
@@ -135,9 +163,12 @@ export default function EnhancedPCSCopilotClient({
   };
 
   const _handleCalculateEstimates = async (formData: FormData) => {
+    const loadingId = `calculation-${Date.now()}`;
     try {
+      loadingStates.startLoading(loadingId, "calculation", "Calculating PCS entitlements...");
       const estimates = await calculatePCSClaim(formData);
       setEstimates(estimates);
+      loadingStates.completeLoading(loadingId, true, "Calculations complete");
 
       // Show user feedback based on confidence scores
       if (estimates.dla.confidence === 0) {
@@ -159,13 +190,16 @@ export default function EnhancedPCSCopilotClient({
       }
     } catch (error) {
       console.error("Failed to calculate estimates:", error);
+      loadingStates.completeLoading(loadingId, false, "Calculation failed");
       toast.error("Failed to calculate estimates. Please try again.");
     }
   };
 
   const handleValidateClaim = async (formData: FormData) => {
+    const loadingId = `validation-${Date.now()}`;
     setIsValidating(true);
     try {
+      loadingStates.startLoading(loadingId, "validation", "Validating PCS claim...");
       const response = await fetch("/api/pcs/validate", {
         method: "POST",
         headers: {
@@ -182,14 +216,26 @@ export default function EnhancedPCSCopilotClient({
       setValidationResults(data.validation);
 
       if (data.validation.errors > 0) {
+        loadingStates.completeLoading(
+          loadingId,
+          false,
+          `${data.validation.errors} validation errors found`
+        );
         toast.error(`${data.validation.errors} validation errors found`);
       } else if (data.validation.warnings > 0) {
+        loadingStates.completeLoading(
+          loadingId,
+          true,
+          `${data.validation.warnings} warnings found`
+        );
         toast.warning(`${data.validation.warnings} warnings found`);
       } else {
+        loadingStates.completeLoading(loadingId, true, "All validations passed!");
         toast.success("All validations passed!");
       }
     } catch (error) {
       console.error("Validation error:", error);
+      loadingStates.completeLoading(loadingId, false, "Validation failed");
       toast.error("Failed to validate claim. Please try again.");
     } finally {
       setIsValidating(false);
@@ -216,6 +262,99 @@ export default function EnhancedPCSCopilotClient({
     }
   };
 
+  const handleExportPDF = async () => {
+    if (!selectedClaim) return;
+
+    const loadingId = `export-pdf-${selectedClaim.id}`;
+    try {
+      setIsExporting(true);
+      loadingStates.startLoading(loadingId, "export", "Generating PDF...");
+      const response = await fetch("/api/pcs/export/pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          claimId: selectedClaim.id,
+          type: "full",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("PDF generation failed");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pcs-claim-${selectedClaim.id}-full.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      loadingStates.completeLoading(loadingId, true, "PDF exported successfully!");
+      toast.success("PDF exported successfully!");
+    } catch (error) {
+      console.error("PDF export failed:", error);
+      loadingStates.completeLoading(loadingId, false, "PDF export failed");
+      toast.error("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (!selectedClaim) return;
+
+    const loadingId = `export-excel-${selectedClaim.id}`;
+    try {
+      setIsExporting(true);
+      loadingStates.startLoading(loadingId, "export", "Generating Excel...");
+      const response = await fetch("/api/pcs/export/excel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          claimId: selectedClaim.id,
+          type: "full",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Excel generation failed");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pcs-claim-${selectedClaim.id}-full.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      loadingStates.completeLoading(loadingId, true, "Excel file exported successfully!");
+      toast.success("Excel file exported successfully!");
+    } catch (error) {
+      console.error("Excel export failed:", error);
+      loadingStates.completeLoading(loadingId, false, "Excel export failed");
+      toast.error("Failed to generate Excel file. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setOnboardingCompleted(true);
+    setShowOnboarding(false);
+    localStorage.setItem("pcs-copilot-onboarding-completed", "true");
+    toast.success("Welcome to PCS Copilot! You're ready to maximize your entitlements.");
+  };
+
   const getClaimContext = () => ({
     rank: userProfile.rank,
     branch: userProfile.branch,
@@ -227,6 +366,30 @@ export default function EnhancedPCSCopilotClient({
 
   return (
     <>
+      {/* Onboarding Tour */}
+      <PCSOnboardingTour
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+        userType={userProfile.is_premium ? "premium" : "new"}
+      />
+
+      {/* Help System */}
+      <PCSHelpSystem
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+        searchQuery=""
+        category=""
+      />
+
+      {/* Loading Overlay */}
+      <PCSLoadingOverlay
+        loadingStates={loadingStates.loadingStates}
+        onCancel={(id: string) => loadingStates.clearLoading(id)}
+        showProgress={true}
+        maxDisplay={3}
+      />
+
       <div className="min-h-screen bg-background">
         {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
@@ -248,6 +411,7 @@ export default function EnhancedPCSCopilotClient({
                 <Link
                   href="/dashboard/pcs-copilot"
                   className="border-b-2 border-blue-500 px-1 py-2 text-sm font-medium text-blue-600"
+                  data-tour="new-claim-button"
                 >
                   <Icon name="Plus" className="mr-2 inline h-4 w-4" />
                   New Claim
@@ -297,6 +461,7 @@ export default function EnhancedPCSCopilotClient({
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
+              data-tour="manual-entry"
             >
               <Icon name="Edit" className="mr-2 inline h-4 w-4" />
               Manual Entry
@@ -309,6 +474,7 @@ export default function EnhancedPCSCopilotClient({
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
+                data-tour="mobile-wizard"
               >
                 <Icon name="Monitor" className="mr-2 inline h-4 w-4" />
                 Mobile Wizard
@@ -321,10 +487,39 @@ export default function EnhancedPCSCopilotClient({
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
+              data-tour="documents"
             >
               <Icon name="File" className="mr-2 inline h-4 w-4" />
               Documents
             </button>
+            {selectedClaim && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleExportPDF()}
+                  disabled={isExporting}
+                  className="rounded-lg bg-green-600 px-4 py-2 font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                >
+                  <Icon name="File" className="mr-2 inline h-4 w-4" />
+                  {isExporting ? "Generating..." : "Export PDF"}
+                </button>
+                <button
+                  onClick={() => handleExportExcel()}
+                  disabled={isExporting}
+                  className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+                >
+                  <Icon name="Download" className="mr-2 inline h-4 w-4" />
+                  {isExporting ? "Generating..." : "Export Excel"}
+                </button>
+                <Link
+                  href={`/dashboard/pcs-copilot/${selectedClaim.id}/summary`}
+                  target="_blank"
+                  className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-700"
+                >
+                  <Icon name="Printer" className="mr-2 inline h-4 w-4" />
+                  Print Summary
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Main Content */}
@@ -531,12 +726,24 @@ export default function EnhancedPCSCopilotClient({
 
           {/* Mobile Wizard View */}
           {currentView === "mobile" && (
-            <PCSMobileWizard
-              userProfile={userProfile}
-              onComplete={handleCreateClaim}
-              onSave={handleCreateClaim}
-              onValidationChange={handleValidationChange}
-            />
+            <div className="space-y-6">
+              {/* Mobile Interface */}
+              <PCSMobileInterface
+                onSave={handleCreateClaim}
+                onValidate={handleValidateClaim}
+                showDebugTools={true}
+              />
+
+              {/* Fallback to original mobile wizard */}
+              <div className="hidden">
+                <PCSMobileWizard
+                  userProfile={userProfile}
+                  onComplete={handleCreateClaim}
+                  onSave={handleCreateClaim}
+                  onValidationChange={handleValidationChange}
+                />
+              </div>
+            </div>
           )}
 
           {/* Documents View */}
