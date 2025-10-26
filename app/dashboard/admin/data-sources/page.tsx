@@ -6,10 +6,11 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
@@ -43,10 +44,6 @@ interface DataSourceStatus {
 }
 
 async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
 
   const today = new Date();
   const sixMonthsAgo = new Date(today);
@@ -56,7 +53,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   const sources: DataSourceStatus[] = [];
 
   // 1. Military Pay Tables
-  const { count: payTablesCount, data: latestPay } = await supabase
+  const { count: payTablesCount, data: latestPay } = await supabaseAdmin
     .from("military_pay_tables")
     .select("effective_date", { count: "exact" })
     .order("effective_date", { ascending: false })
@@ -76,7 +73,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 2. BAH Rates
-  const { count: bahCount, data: latestBah } = await supabase
+  const { count: bahCount, data: latestBah } = await supabaseAdmin
     .from("bah_rates")
     .select("effective_date", { count: "exact" })
     .order("effective_date", { ascending: false })
@@ -113,7 +110,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 4. SGLI Rates
-  const { count: sgliCount, data: latestSgli } = await supabase
+  const { count: sgliCount, data: latestSgli } = await supabaseAdmin
     .from("sgli_rates")
     .select("effective_date", { count: "exact" })
     .order("effective_date", { ascending: false })
@@ -133,7 +130,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 5. Tax Constants
-  const { data: taxConstants } = await supabase
+  const { data: taxConstants } = await supabaseAdmin
     .from("payroll_tax_constants")
     .select("*")
     .eq("effective_year", 2025)
@@ -156,7 +153,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 6. State Tax Rates
-  const { count: stateTaxCount } = await supabase
+  const { count: stateTaxCount } = await supabaseAdmin
     .from("state_tax_rates")
     .select("*", { count: "exact" })
     .eq("effective_year", 2025);
@@ -175,7 +172,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 7. CONUS COLA
-  const { count: conusColaCount, data: latestConusCola } = await supabase
+  const { count: conusColaCount, data: latestConusCola } = await supabaseAdmin
     .from("conus_cola_rates")
     .select("effective_date", { count: "exact" })
     .order("effective_date", { ascending: false })
@@ -195,7 +192,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 8. OCONUS COLA
-  const { count: oconusColaCount, data: latestOconusCola } = await supabase
+  const { count: oconusColaCount, data: latestOconusCola } = await supabaseAdmin
     .from("oconus_cola_rates")
     .select("effective_date", { count: "exact" })
     .order("effective_date", { ascending: false })
@@ -215,7 +212,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 9. PCS Entitlements
-  const { count: entitlementsCount, data: latestEntitlement } = await supabase
+  const { count: entitlementsCount, data: latestEntitlement } = await supabaseAdmin
     .from("entitlements_data")
     .select("effective_year", { count: "exact" })
     .order("effective_year", { ascending: false })
@@ -235,7 +232,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 10. JTR Rules
-  const { count: jtrCount } = await supabase.from("jtr_rules").select("*", { count: "exact" });
+  const { count: jtrCount } = await supabaseAdmin.from("jtr_rules").select("*", { count: "exact" });
 
   sources.push({
     name: "JTR Rules",
@@ -251,7 +248,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 11. Content Blocks
-  const { count: contentCount } = await supabase
+  const { count: contentCount } = await supabaseAdmin
     .from("content_blocks")
     .select("*", { count: "exact" });
 
@@ -269,7 +266,7 @@ async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
   });
 
   // 12. Base External Data Cache
-  const { count: baseDataCount } = await supabase
+  const { count: baseDataCount } = await supabaseAdmin
     .from("base_external_data_cache")
     .select("*", { count: "exact" });
 

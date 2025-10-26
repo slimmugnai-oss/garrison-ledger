@@ -10,7 +10,7 @@ export const supabase = (() => {
     console.warn("Supabase environment variables are missing or empty. Client will be null.");
     return null as any;
   }
-  
+
   try {
     return createClient(supabaseUrl, supabaseAnonKey);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function isAllowed(email?: string | null) {
   const list = (process.env.ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
@@ -11,8 +11,7 @@ export default async function AdminAssessments() {
   const email = user?.emailAddresses?.[0]?.emailAddress ?? null;
   if (!isAllowed(email)) return <div className="p-6">Not authorized.</div>;
 
-  const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { data, error } = await sb
+  const { data, error } = await supabaseAdmin
     .from("assessments")
     .select("user_id, updated_at, answers")
     .order("updated_at", { ascending: false })

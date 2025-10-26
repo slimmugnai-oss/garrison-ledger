@@ -5,16 +5,12 @@
  * Uses Supabase for storage (can be replaced with your analytics provider).
  */
 
-import { createClient } from '@supabase/supabase-js';
-
 import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
-// Create a client-side Supabase instance
+// Use admin client for server-side analytics
 function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  return supabaseAdmin;
 }
 
 // Track when a user views a base (clicks on map or card)
