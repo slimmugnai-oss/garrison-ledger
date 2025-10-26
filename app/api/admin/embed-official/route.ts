@@ -28,6 +28,25 @@ const supabase = createClient(
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Data interfaces
+interface BAHRateRow {
+  id: number;
+  paygrade: string;
+  with_dependents: boolean;
+  rate_cents: number;
+  mha: string;
+  location_name?: string;
+  effective_date: string;
+  zip_code?: string;
+}
+
+interface PayTableRow {
+  id: number;
+  paygrade: string;
+  monthly_rate_cents: number;
+  effective_date: string;
+}
+
 // Helper: Generate embedding
 async function generateEmbedding(text: string): Promise<number[]> {
   const response = await openai.embeddings.create({
@@ -39,7 +58,7 @@ async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 // Data formatters
-function formatBAHRate(row: any) {
+function formatBAHRate(row: BAHRateRow) {
   const withDeps = row.with_dependents ? "with dependents" : "without dependents";
   const amount = (row.rate_cents / 100).toFixed(2);
 
@@ -61,7 +80,7 @@ function formatBAHRate(row: any) {
   };
 }
 
-function formatPayTable(row: any) {
+function formatPayTable(row: PayTableRow) {
   const amount = (row.monthly_rate_cents / 100).toFixed(2);
 
   return {
@@ -80,7 +99,7 @@ function formatPayTable(row: any) {
   };
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Auth check: Admin only
     const { userId } = await auth();
@@ -189,8 +208,9 @@ export async function GET(request: NextRequest) {
           send("\n✅ Your military expert now has official data loaded!");
 
           controller.close();
-        } catch (error: any) {
-          send(`\n❌ Error: ${error.message}`);
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          send(`\n❌ Error: ${errorMessage}`);
           controller.close();
         }
       },
@@ -203,7 +223,8 @@ export async function GET(request: NextRequest) {
         Connection: "keep-alive",
       },
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
