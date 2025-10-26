@@ -44,7 +44,6 @@ interface DataSourceStatus {
 }
 
 async function getDataSourcesStatus(): Promise<DataSourceStatus[]> {
-
   const today = new Date();
   const sixMonthsAgo = new Date(today);
   sixMonthsAgo.setMonth(today.getMonth() - 6);

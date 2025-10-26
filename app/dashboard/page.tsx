@@ -6,12 +6,12 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ensureUserExists } from "@/lib/ensure-user-exists";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import ProfileSummaryWidget from "../components/dashboard/ProfileSummaryWidget";
 import Footer from "../components/Footer";
@@ -30,13 +30,8 @@ export default async function Dashboard() {
   const user = await ensureUserExists();
   if (!user) redirect("/sign-in");
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
   // Check premium status
-  const { data: entitlement } = await supabase
+  const { data: entitlement } = await supabaseAdmin
     .from("entitlements")
     .select("tier, status")
     .eq("user_id", user.id)
@@ -45,7 +40,7 @@ export default async function Dashboard() {
   const isPremium = entitlement?.tier === "premium" && entitlement?.status === "active";
 
   // Get user profile
-  const { data: profile } = await supabase
+  const { data: profile } = await supabaseAdmin
     .from("user_profiles")
     .select("*")
     .eq("user_id", user.id)
@@ -57,13 +52,13 @@ export default async function Dashboard() {
   const firstDayOfMonth = new Date();
   firstDayOfMonth.setDate(1);
 
-  const { count: lesUploads } = await supabase
+  const { count: lesUploads } = await supabaseAdmin
     .from("les_uploads")
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
     .gte("created_at", firstDayOfMonth.toISOString());
 
-  const { count: tdyTrips } = await supabase
+  const { count: tdyTrips } = await supabaseAdmin
     .from("tdy_trips")
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id);

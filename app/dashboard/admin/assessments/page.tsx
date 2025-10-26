@@ -2,7 +2,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function isAllowed(email?: string | null) {
-  const list = (process.env.ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  const list = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
   return !!email && list.includes(email.toLowerCase());
 }
 
@@ -20,9 +23,9 @@ export default async function AdminAssessments() {
   if (error) return <div className="p-6">Error: {String(error.message)}</div>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-4">
+    <div className="mx-auto max-w-5xl space-y-4 p-6">
       <h1 className="text-2xl font-bold">Assessments (latest)</h1>
-      <div className="rounded border bg-surface overflow-auto">
+      <div className="bg-surface overflow-auto rounded border">
         <table className="min-w-full text-sm">
           <thead className="bg-slate-50">
             <tr>
@@ -36,11 +39,13 @@ export default async function AdminAssessments() {
               type AssessmentRow = { user_id: string; updated_at: string; answers: unknown };
               const rows: AssessmentRow[] = (data ?? []) as AssessmentRow[];
               return rows.map((r) => (
-              <tr key={`${r.user_id}-${r.updated_at}`} className="border-t align-top">
-                <td className="px-3 py-2">{r.user_id}</td>
-                <td className="px-3 py-2">{new Date(r.updated_at).toLocaleString()}</td>
-                <td className="px-3 py-2 whitespace-pre-wrap">{JSON.stringify(r.answers, null, 2)}</td>
-              </tr>
+                <tr key={`${r.user_id}-${r.updated_at}`} className="border-t align-top">
+                  <td className="px-3 py-2">{r.user_id}</td>
+                  <td className="px-3 py-2">{new Date(r.updated_at).toLocaleString()}</td>
+                  <td className="whitespace-pre-wrap px-3 py-2">
+                    {JSON.stringify(r.answers, null, 2)}
+                  </td>
+                </tr>
               ));
             })()}
           </tbody>
@@ -49,5 +54,3 @@ export default async function AdminAssessments() {
     </div>
   );
 }
-
-
