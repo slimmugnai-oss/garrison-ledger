@@ -238,7 +238,7 @@ export default async function Dashboard() {
               <AnimatedCard delay={0.4}>
                 <Link
                   href="/dashboard/ask"
-                  className="block h-full rounded-lg border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-6 transition-all hover:shadow-2xl hover:scale-105"
+                  className="block h-full rounded-lg border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-6 transition-all hover:scale-105 hover:shadow-2xl"
                 >
                   <div className="flex h-full flex-col">
                     {/* Badge: "NEW EXPERT MODE" */}
@@ -261,7 +261,9 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>24/7 military life advisor.</strong> Financial questions, PCS decisions, deployment prep, career guidance, benefits, base life—get instant expert answers backed by official data.
+                      <strong>24/7 military life advisor.</strong> Financial questions, PCS
+                      decisions, deployment prep, career guidance, benefits, base life—get instant
+                      expert answers backed by official data.
                     </p>
 
                     {/* Stats Row */}
@@ -271,7 +273,7 @@ export default async function Dashboard() {
                         <span>⚡ ~2 sec response</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-indigo-700 font-semibold">
+                        <span className="text-xs font-semibold text-indigo-700">
                           ⭐ 9.2/10 answer quality
                         </span>
                         <span className="text-xs font-bold text-gray-900">

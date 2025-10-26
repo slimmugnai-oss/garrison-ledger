@@ -7,6 +7,7 @@ import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+import SupabaseDebugger from "@/app/components/debug/SupabaseDebugger";
 import EnhancedPCSCopilotClient from "./EnhancedPCSCopilotClient";
 
 export const metadata: Metadata = {
@@ -105,6 +106,7 @@ export default async function PCSCopilotPage() {
             hasDependents: profile?.has_dependents,
           }}
         />
+        <SupabaseDebugger />
       </main>
       <Footer />
     </>
