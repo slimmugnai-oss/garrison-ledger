@@ -226,20 +226,20 @@ export default function PCSSmartTemplates({ claimContext, onAskQuestion }: PCSSm
     setProcessedTemplates(processed);
   }, [claimContext]);
 
-  const getVariableValue = (variable: string, context: any): string | null => {
+  const getVariableValue = (variable: string, context: Record<string, unknown>): string | null => {
     switch (variable) {
       case "rank":
-        return context.rank || null;
+        return (context.rank as string) || null;
       case "withDependents":
         return context.hasDependents ? "with family" : "without dependents";
       case "branch":
-        return context.branch || null;
+        return (context.branch as string) || null;
       case "originBase":
-        return context.originBase || null;
+        return (context.originBase as string) || null;
       case "destinationBase":
-        return context.destinationBase || null;
+        return (context.destinationBase as string) || null;
       case "pcsType":
-        return context.pcsType || "CONUS";
+        return (context.pcsType as string) || "CONUS";
       case "distance":
         return context.distance ? `${context.distance}` : null;
       case "travelMethod":

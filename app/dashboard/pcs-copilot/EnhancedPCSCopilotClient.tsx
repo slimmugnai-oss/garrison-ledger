@@ -129,7 +129,7 @@ export default function EnhancedPCSCopilotClient({
     }
   }, [claims.length]);
 
-  const handleCreateClaim = async (formData: any) => {
+  const handleCreateClaim = async (formData: Record<string, unknown> | FormData) => {
     setIsCreating(true);
     try {
       const response = await fetch("/api/pcs/claim", {

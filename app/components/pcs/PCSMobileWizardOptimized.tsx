@@ -119,7 +119,7 @@ export function PCSMobileWizardOptimized({
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
 
-  const handleFieldChange = (fieldName: string, value: any) => {
+  const handleFieldChange = (fieldName: string, value: string | number | boolean) => {
     setFormData((prev) => ({
       ...prev,
       [fieldName]: value,
