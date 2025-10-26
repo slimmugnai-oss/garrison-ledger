@@ -6,17 +6,28 @@
  */
 
 import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// Use admin client for server-side analytics
+// Use admin client for server-side analytics, null for client-side
 function getSupabaseClient() {
-  return supabaseAdmin;
+  // Only use supabaseAdmin on server-side
+  if (typeof window === "undefined") {
+    // Dynamic import to avoid client-side bundling
+    return require("@/lib/supabase/admin").supabaseAdmin;
+  }
+  // Client-side: return null to avoid errors
+  return null;
 }
 
 // Track when a user views a base (clicks on map or card)
 export async function trackBaseView(baseId: string, baseName: string, userId?: string) {
   try {
     const supabase = getSupabaseClient();
+    
+    // Skip database tracking on client-side
+    if (!supabase) {
+      console.log("📊 Base view tracked (client-side only):", { baseId, baseName });
+      return;
+    }
 
     await supabase.from("base_guide_analytics").insert({
       event_type: "base_view",
@@ -53,6 +64,12 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
 export async function trackBaseSearch(query: string, resultsCount: number, userId?: string) {
   try {
     const supabase = getSupabaseClient();
+    
+    // Skip database tracking on client-side
+    if (!supabase) {
+      console.log("📊 Base search tracked (client-side only):", { query, resultsCount });
+      return;
+    }
 
     await supabase.from("base_guide_analytics").insert({
       event_type: "search",
@@ -74,6 +91,12 @@ export async function trackBaseSearch(query: string, resultsCount: number, userI
 export async function trackFilterUsage(filterType: string, filterValue: string, userId?: string) {
   try {
     const supabase = getSupabaseClient();
+    
+    // Skip database tracking on client-side
+    if (!supabase) {
+      console.log("📊 Filter usage tracked (client-side only):", { filterType, filterValue });
+      return;
+    }
 
     await supabase.from("base_guide_analytics").insert({
       event_type: "filter",
@@ -100,6 +123,12 @@ export async function trackGuideClickthrough(
 ) {
   try {
     const supabase = getSupabaseClient();
+    
+    // Skip database tracking on client-side
+    if (!supabase) {
+      console.log("📊 Guide clickthrough tracked (client-side only):", { baseId, baseName, url });
+      return;
+    }
 
     await supabase.from("base_guide_analytics").insert({
       event_type: "guide_clickthrough",

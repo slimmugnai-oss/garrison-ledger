@@ -62,9 +62,7 @@ export default async function PCSCopilotPage() {
                 <span className="text-sm font-semibold text-yellow-400">PCS COPILOT</span>
               </div>
 
-              <h1 className="font-lora mb-6 text-5xl font-bold leading-tight">
-                PCS Money Copilot
-              </h1>
+              <h1 className="font-lora mb-6 text-5xl font-bold leading-tight">PCS Money Copilot</h1>
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
                 Manual entry, real-time validation, and AI-powered guidance. Turn your PCS move into

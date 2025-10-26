@@ -11,7 +11,9 @@ export default function SupabaseDebugger() {
       userAgent: navigator.userAgent,
       environment: {
         NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? "Present" : "Missing",
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Present" : "Missing",
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          ? "Present"
+          : "Missing",
       },
       window: {
         location: window.location.href,
@@ -20,7 +22,7 @@ export default function SupabaseDebugger() {
       supabase: {
         // Check if supabase is available
         available: typeof window !== "undefined" && (window as any).supabase ? "Yes" : "No",
-      }
+      },
     };
 
     console.log("🔍 SupabaseDebugger Info:", info);
@@ -50,9 +52,7 @@ export default function SupabaseDebugger() {
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg bg-red-100 p-4 shadow-lg">
       <h3 className="font-bold text-red-800">Supabase Debug Info</h3>
-      <pre className="text-xs text-red-700">
-        {JSON.stringify(debugInfo, null, 2)}
-      </pre>
+      <pre className="text-xs text-red-700">{JSON.stringify(debugInfo, null, 2)}</pre>
     </div>
   );
 }

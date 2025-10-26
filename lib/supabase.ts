@@ -10,7 +10,7 @@ const wrappedCreateClient = (url: string, key: string, options?: any) => {
   console.error("  - Options:", options);
   console.error("  - This may cause 'supabaseKey is required' errors!");
   console.error("  - Use supabaseAdmin for server-side or supabase for client-side instead");
-  
+
   return originalCreateClient(url, key, options);
 };
 
@@ -24,10 +24,12 @@ if (typeof window !== "undefined") {
       console.error("🚨 SUPABASE KEY ERROR DETECTED!");
       console.error("  - Error:", event.error.message);
       console.error("  - Stack:", event.error.stack);
-      console.error("  - This usually means a component is trying to create a Supabase client with missing environment variables");
+      console.error(
+        "  - This usually means a component is trying to create a Supabase client with missing environment variables"
+      );
     }
   });
-  
+
   window.addEventListener("unhandledrejection", (event) => {
     if (event.reason && event.reason.message && event.reason.message.includes("supabaseKey")) {
       console.error("🚨 SUPABASE KEY PROMISE REJECTION!");
@@ -47,8 +49,11 @@ export const supabase = (() => {
   console.log("🔍 Supabase Client Debug Info:");
   console.log("  - NEXT_PUBLIC_SUPABASE_URL:", supabaseUrl ? "✅ Present" : "❌ Missing");
   console.log("  - NEXT_PUBLIC_SUPABASE_ANON_KEY:", supabaseAnonKey ? "✅ Present" : "❌ Missing");
-  console.log("  - Environment:", typeof window !== "undefined" ? "🌐 Client-side" : "🖥️ Server-side");
-  
+  console.log(
+    "  - Environment:",
+    typeof window !== "undefined" ? "🌐 Client-side" : "🖥️ Server-side"
+  );
+
   if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === "" || supabaseAnonKey === "") {
     console.error("❌ Supabase environment variables are missing or empty. Client will be null.");
     console.error("  - URL:", supabaseUrl);
