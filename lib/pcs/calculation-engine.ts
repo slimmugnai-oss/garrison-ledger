@@ -9,7 +9,17 @@
  */
 
 import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+
+// Use admin client for server-side analytics, null for client-side
+function getSupabaseClient() {
+  // Only use supabaseAdmin on server-side
+  if (typeof window === "undefined") {
+    // Dynamic import to avoid client-side bundling
+    return require("@/lib/supabase/admin").supabaseAdmin;
+  }
+  // Client-side: return null to avoid errors
+  return null;
+}
 
 import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";
 
@@ -447,7 +457,9 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
 
   // Save calculation snapshot
   try {
-    await supabaseAdmin.from("pcs_entitlement_snapshots").insert({
+    const supabase = getSupabaseClient();
+    if (supabase) {
+      await supabase.from("pcs_entitlement_snapshots").insert({
       claim_id: formData.claim_name, // Would be actual claim ID
       dla_amount: dla.amount,
       tle_days: tle.origin.days + tle.destination.days,
@@ -469,6 +481,16 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
       jtr_rule_version: result.jtrRuleVersion,
       data_sources: dataSources,
     });
+    } else {
+      // Client-side: just log the calculation
+      console.log("📊 PCS calculation completed (client-side only):", {
+        claimId: formData.claim_name,
+        total: total,
+        dla: dla.amount,
+        malt: malt.amount,
+        perDiem: perDiem.amount
+      });
+    }
   } catch (error) {
     logger.error("Failed to save calculation snapshot:", error);
   }
@@ -481,14 +503,21 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
  */
 export async function getCalculationHistory(claimId: string): Promise<CalculationResult[]> {
   try {
-    const { data: snapshots } = await supabaseAdmin
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      // Client-side: return empty array
+      console.log("📊 Calculation history requested (client-side only):", { claimId });
+      return [];
+    }
+    
+    const { data: snapshots } = await supabase
       .from("pcs_entitlement_snapshots")
       .select("*")
       .eq("claim_id", claimId)
       .order("created_at", { ascending: false });
 
     return (
-      snapshots?.map((snapshot) => ({
+      snapshots?.map((snapshot: any) => ({
         dla: {
           amount: snapshot.dla_amount,
           rateUsed: snapshot.rates_used?.dla || 0,

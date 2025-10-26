@@ -22,7 +22,7 @@ function getSupabaseClient() {
 export async function trackBaseView(baseId: string, baseName: string, userId?: string) {
   try {
     const supabase = getSupabaseClient();
-    
+
     // Skip database tracking on client-side
     if (!supabase) {
       console.log("📊 Base view tracked (client-side only):", { baseId, baseName });
@@ -64,7 +64,7 @@ export async function trackBaseView(baseId: string, baseName: string, userId?: s
 export async function trackBaseSearch(query: string, resultsCount: number, userId?: string) {
   try {
     const supabase = getSupabaseClient();
-    
+
     // Skip database tracking on client-side
     if (!supabase) {
       console.log("📊 Base search tracked (client-side only):", { query, resultsCount });
@@ -91,7 +91,7 @@ export async function trackBaseSearch(query: string, resultsCount: number, userI
 export async function trackFilterUsage(filterType: string, filterValue: string, userId?: string) {
   try {
     const supabase = getSupabaseClient();
-    
+
     // Skip database tracking on client-side
     if (!supabase) {
       console.log("📊 Filter usage tracked (client-side only):", { filterType, filterValue });
@@ -123,7 +123,7 @@ export async function trackGuideClickthrough(
 ) {
   try {
     const supabase = getSupabaseClient();
-    
+
     // Skip database tracking on client-side
     if (!supabase) {
       console.log("📊 Guide clickthrough tracked (client-side only):", { baseId, baseName, url });
