@@ -1,6 +1,7 @@
-import { Metadata } from "next";
 import { currentUser } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
 import PCSClaimsLibraryClient from "./PCSClaimsLibraryClient";
 
 export const metadata: Metadata = {

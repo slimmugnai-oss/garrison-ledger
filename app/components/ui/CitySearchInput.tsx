@@ -122,10 +122,8 @@ export default function CitySearchInput({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <label className="block text-sm font-semibold text-body mb-2">
-        {label}
-      </label>
-      <input
+      <label htmlFor="label" className="block text-sm font-semibold text-body mb-2">{label}</label>
+                <input
         ref={inputRef}
         type="text"
         value={searchTerm}

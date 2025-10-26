@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 
+import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
-import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import { logger } from "@/lib/logger";
 
 interface PCSClaimData {
@@ -112,23 +112,14 @@ export default function PCSManualEntry({
 
   const [validationFlags, setValidationFlags] = useState<ValidationFlag[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [estimates, setEstimates] = useState<any>(null);
+  const [estimates, setEstimates] = useState<{
+    dla?: number;
+    tle?: number;
+    malt?: number;
+    per_diem?: number;
+    total?: number;
+  } | null>(null);
   const [currentSection, setCurrentSection] = useState<string>("basic");
-
-  // Auto-calculate fields when dependencies change
-  useEffect(() => {
-    calculateDerivedFields();
-  }, [
-    formData.departure_date,
-    formData.arrival_date,
-    formData.origin_base,
-    formData.destination_base,
-  ]);
-
-  // Real-time validation
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
 
   const calculateDerivedFields = async () => {
     if (!formData.departure_date || !formData.arrival_date) return;
@@ -224,6 +215,22 @@ export default function PCSManualEntry({
     onValidationChange(flags);
   };
 
+  // Auto-calculate fields when dependencies change
+  useEffect(() => {
+    calculateDerivedFields();
+  }, [
+    formData.departure_date,
+    formData.arrival_date,
+    formData.origin_base,
+    formData.destination_base,
+    calculateDerivedFields,
+  ]);
+
+  // Real-time validation
+  useEffect(() => {
+    validateForm();
+  }, [formData, validateForm]);
+
   const calculateEstimates = async () => {
     setIsCalculating(true);
     try {
@@ -307,11 +314,9 @@ export default function PCSManualEntry({
               <h4 className="mb-4 font-semibold text-slate-900">Basic Information</h4>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Claim Name
+                  <label htmlFor="claim_name_" className="mb-2 block text-sm font-medium text-slate-700">Claim Name
                   </label>
-                  <input
-                    type="text"
+                <input id="claim_name" type="text"
                     value={formData.claim_name}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, claim_name: e.target.value }))
@@ -323,11 +328,9 @@ export default function PCSManualEntry({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      PCS Orders Date
+                    <label htmlFor="pcs_orders_date_" className="mb-2 block text-sm font-medium text-slate-700">PCS Orders Date
                     </label>
-                    <input
-                      type="date"
+                <input id="pcs_orders_date" type="date"
                       value={formData.pcs_orders_date}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, pcs_orders_date: e.target.value }))
@@ -336,11 +339,9 @@ export default function PCSManualEntry({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Departure Date
+                    <label htmlFor="departure_date_" className="mb-2 block text-sm font-medium text-slate-700">Departure Date
                     </label>
-                    <input
-                      type="date"
+                <input id="departure_date" type="date"
                       value={formData.departure_date}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, departure_date: e.target.value }))
@@ -352,11 +353,9 @@ export default function PCSManualEntry({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Arrival Date
+                    <label htmlFor="arrival_date_" className="mb-2 block text-sm font-medium text-slate-700">Arrival Date
                     </label>
-                    <input
-                      type="date"
+                <input id="arrival_date" type="date"
                       value={formData.arrival_date}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, arrival_date: e.target.value }))
@@ -365,11 +364,9 @@ export default function PCSManualEntry({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Origin Base
+                    <label htmlFor="origin_base_" className="mb-2 block text-sm font-medium text-slate-700">Origin Base
                     </label>
-                    <input
-                      type="text"
+                <input id="origin_base" type="text"
                       value={formData.origin_base}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, origin_base: e.target.value }))
@@ -381,11 +378,9 @@ export default function PCSManualEntry({
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Destination Base
+                  <label htmlFor="destination_base_" className="mb-2 block text-sm font-medium text-slate-700">Destination Base
                   </label>
-                  <input
-                    type="text"
+                <input id="destination_base" type="text"
                     value={formData.destination_base}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, destination_base: e.target.value }))
@@ -422,11 +417,9 @@ export default function PCSManualEntry({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Dependents Count
+                    <label htmlFor="dependents_count_" className="mb-2 block text-sm font-medium text-slate-700">Dependents Count
                     </label>
-                    <input
-                      type="number"
+                <input id="dependents_count" type="number"
                       min="0"
                       value={formData.dependents_count}
                       onChange={(e) =>
@@ -439,11 +432,9 @@ export default function PCSManualEntry({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Rank at PCS
+                    <label htmlFor="rank_at_pcs_" className="mb-2 block text-sm font-medium text-slate-700">Rank at PCS
                     </label>
-                    <input
-                      type="text"
+                <input id="rank_at_pcs" type="text"
                       value={formData.rank_at_pcs}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, rank_at_pcs: e.target.value }))
@@ -481,11 +472,9 @@ export default function PCSManualEntry({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Origin Nights
+                    <label htmlFor="origin_nights_" className="mb-2 block text-sm font-medium text-slate-700">Origin Nights
                     </label>
-                    <input
-                      type="number"
+                <input id="tle_origin_nights" type="number"
                       min="0"
                       max="10"
                       value={formData.tle_origin_nights}
@@ -500,11 +489,9 @@ export default function PCSManualEntry({
                     <p className="mt-1 text-xs text-gray-500">Max 10 days per JTR</p>
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Destination Nights
+                    <label htmlFor="destination_nights_" className="mb-2 block text-sm font-medium text-slate-700">Destination Nights
                     </label>
-                    <input
-                      type="number"
+                <input id="tle_destination_nights" type="number"
                       min="0"
                       max="10"
                       value={formData.tle_destination_nights}
@@ -527,8 +514,7 @@ export default function PCSManualEntry({
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-2 text-gray-500">$</span>
-                      <input
-                        type="number"
+                      <input id="tle_origin_rate" type="number"
                         step="0.01"
                         min="0"
                         value={formData.tle_origin_rate}
@@ -549,8 +535,7 @@ export default function PCSManualEntry({
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-2 text-gray-500">$</span>
-                      <input
-                        type="number"
+                      <input id="tle_destination_rate" type="number"
                         step="0.01"
                         min="0"
                         value={formData.tle_destination_rate}
@@ -576,11 +561,9 @@ export default function PCSManualEntry({
               <h4 className="mb-4 font-semibold text-slate-900">Travel Costs</h4>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    MALT Distance (miles)
+                  <label htmlFor="malt_distance_miles_" className="mb-2 block text-sm font-medium text-slate-700">MALT Distance (miles)
                   </label>
-                  <input
-                    type="number"
+                <input id="malt_distance" type="number"
                     min="0"
                     value={formData.malt_distance}
                     onChange={(e) =>
@@ -596,11 +579,9 @@ export default function PCSManualEntry({
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Per Diem Days
+                  <label htmlFor="per_diem_days_" className="mb-2 block text-sm font-medium text-slate-700">Per Diem Days
                   </label>
-                  <input
-                    type="number"
+                <input id="per_diem_days" type="number"
                     min="0"
                     value={formData.per_diem_days}
                     onChange={(e) =>
@@ -620,8 +601,7 @@ export default function PCSManualEntry({
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-gray-500">$</span>
-                    <input
-                      type="number"
+                    <input id="fuel_receipts" type="number"
                       step="0.01"
                       min="0"
                       value={formData.fuel_receipts}
@@ -647,11 +627,9 @@ export default function PCSManualEntry({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Estimated Weight (lbs)
+                    <label htmlFor="estimated_weight_lbs_" className="mb-2 block text-sm font-medium text-slate-700">Estimated Weight (lbs)
                     </label>
-                    <input
-                      type="number"
+                <input id="estimated_weight" type="number"
                       min="0"
                       value={formData.estimated_weight}
                       onChange={(e) =>
@@ -665,11 +643,9 @@ export default function PCSManualEntry({
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">
-                      Actual Weight (lbs)
+                    <label htmlFor="actual_weight_lbs_" className="mb-2 block text-sm font-medium text-slate-700">Actual Weight (lbs)
                     </label>
-                    <input
-                      type="number"
+                <input id="actual_weight" type="number"
                       min="0"
                       value={formData.actual_weight}
                       onChange={(e) =>
@@ -685,11 +661,9 @@ export default function PCSManualEntry({
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Distance (miles)
+                  <label htmlFor="distance_miles_" className="mb-2 block text-sm font-medium text-slate-700">Distance (miles)
                   </label>
-                  <input
-                    type="number"
+                <input id="distance_miles" type="number"
                     min="0"
                     value={formData.distance_miles}
                     onChange={(e) =>
@@ -780,7 +754,7 @@ export default function PCSManualEntry({
           <AnimatedCard className="p-4">
             <h4 className="mb-3 font-semibold text-slate-900">Estimated Entitlements</h4>
             <div className="space-y-3">
-              {estimates.dla && (
+              {estimates?.dla && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">DLA</span>
                   <span className="font-semibold text-green-600">
@@ -788,7 +762,7 @@ export default function PCSManualEntry({
                   </span>
                 </div>
               )}
-              {estimates.tle && (
+              {estimates?.tle && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">TLE</span>
                   <span className="font-semibold text-green-600">
@@ -796,7 +770,7 @@ export default function PCSManualEntry({
                   </span>
                 </div>
               )}
-              {estimates.malt && (
+              {estimates?.malt && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">MALT</span>
                   <span className="font-semibold text-green-600">
@@ -804,7 +778,7 @@ export default function PCSManualEntry({
                   </span>
                 </div>
               )}
-              {estimates.per_diem && (
+              {estimates?.per_diem && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Per Diem</span>
                   <span className="font-semibold text-green-600">
@@ -812,7 +786,7 @@ export default function PCSManualEntry({
                   </span>
                 </div>
               )}
-              {estimates.total && (
+              {estimates?.total && (
                 <div className="mt-3 border-t pt-3">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-slate-900">Total Estimate</span>

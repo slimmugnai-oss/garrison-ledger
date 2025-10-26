@@ -9,7 +9,6 @@
  */
 
 import { logger } from "@/lib/logger";
-
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export interface PerDiemRate {

@@ -301,9 +301,7 @@ export default function HouseHack() {
               </h3>
               
               <div className="mb-4">
-                <label className="block text-sm font-semibold text-indigo-900 mb-2">
-                  Expected Annual Appreciation (%)
-                </label>
+                <label htmlFor="expected_annual_appreciation_" className="block text-sm font-semibold text-indigo-900 mb-2">Expected Annual Appreciation (%)</label>
                 <input
                   type="number"
                   min={0}
@@ -538,10 +536,8 @@ function Num({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-body">
-        {label}
-      </label>
-      <input 
+      <label htmlFor="label" className="block text-sm font-semibold text-body">{label}</label>
+                <input 
         type="number" 
         value={v} 
         onChange={e => set(Number(e.target.value))}

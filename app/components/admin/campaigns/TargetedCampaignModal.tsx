@@ -156,10 +156,8 @@ export default function TargetedCampaignModal({ isOpen, onClose }: TargetedCampa
 
           {/* Subject */}
           <div>
-            <label className="block text-sm font-semibold text-text-body mb-2">
-              Email Subject
-            </label>
-            <input
+            <label htmlFor="email_subject" className="block text-sm font-semibold text-text-body mb-2">Email Subject</label>
+                <input
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}

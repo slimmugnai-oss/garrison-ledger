@@ -68,10 +68,6 @@ function ContentBlocksSubTab() {
     byDomain: Record<string, number>;
   } | null>(null);
 
-  useEffect(() => {
-    loadContentBlocks();
-  }, [statusFilter, domainFilter]);
-
   const loadContentBlocks = async () => {
     setLoading(true);
     try {
@@ -92,6 +88,10 @@ function ContentBlocksSubTab() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadContentBlocks();
+  }, [statusFilter, domainFilter, loadContentBlocks]);
 
   const columns: Column<ContentBlock>[] = [
     {
@@ -259,10 +259,6 @@ function ListeningPostSubTab() {
     bySources: Record<string, number>;
   } | null>(null);
 
-  useEffect(() => {
-    loadFeedItems();
-  }, [statusFilter, sourceFilter]);
-
   const loadFeedItems = async () => {
     setLoading(true);
     try {
@@ -284,6 +280,10 @@ function ListeningPostSubTab() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadFeedItems();
+  }, [statusFilter, sourceFilter, loadFeedItems]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

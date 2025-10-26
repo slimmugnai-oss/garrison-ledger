@@ -80,10 +80,8 @@ export default function TestEmailModal({ isOpen, onClose }: TestEmailModalProps)
         <div className="space-y-4">
           {/* Test Email Input */}
           <div>
-            <label className="block text-sm font-semibold text-text-body mb-2">
-              Send To
-            </label>
-            <input
+            <label htmlFor="send_to" className="block text-sm font-semibold text-text-body mb-2">Send To</label>
+                <input
               type="email"
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
@@ -116,10 +114,8 @@ export default function TestEmailModal({ isOpen, onClose }: TestEmailModalProps)
 
           {/* User Name */}
           <div>
-            <label className="block text-sm font-semibold text-text-body mb-2">
-              User Name (for personalization)
-            </label>
-            <input
+            <label htmlFor="user_name_for_personalization" className="block text-sm font-semibold text-text-body mb-2">User Name (for personalization)</label>
+                <input
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}

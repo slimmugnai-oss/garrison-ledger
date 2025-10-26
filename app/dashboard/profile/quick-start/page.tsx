@@ -153,8 +153,7 @@ export default function QuickStartProfilePage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               4. Current Base (City, State or ZIP) <span className="text-red-600">*</span>
             </label>
-            <input
-              type="text"
+            <input id="input_itg4zugiz" type="text"
               value={currentBase}
               onChange={(e) => setCurrentBase(e.target.value)}
               placeholder="Fort Liberty, NC or 28310"

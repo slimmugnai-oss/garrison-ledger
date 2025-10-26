@@ -141,7 +141,7 @@ export default function AssessmentClient({ isPremium }: AssessmentClientProps) {
       }
     }
     init();
-  }, [canTakeAssessment]);
+  }, [canTakeAssessment, trackAnalytics]);
 
   async function loadNextQuestion(newAnswers: Record<string, string | string[]>, asked: string[]) {
     setLoading(true);

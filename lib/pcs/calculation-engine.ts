@@ -9,7 +9,6 @@
  */
 
 import { logger } from "@/lib/logger";
-
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import { getDLARate, getMALTRate, getPerDiemRate, calculateDistance } from "./jtr-api";

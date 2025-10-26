@@ -1,0 +1,89 @@
+
+> garrison-ledger@0.1.0 prebuild
+> echo 'Skipping prebuild for Vercel'
+
+Skipping prebuild for Vercel
+
+> garrison-ledger@0.1.0 build
+> NODE_OPTIONS='--max-old-space-size=8192' next build
+
+   ▲ Next.js 15.5.4
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 15.3s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+(node:63105) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63104) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63108) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63110) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63109) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63107) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63106) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+Warning: TT: undefined function: 32
+(node:63105) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+Warning: TT: undefined function: 32
+(node:63110) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+   Generating static pages (0/194) ...
+(node:63148) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63149) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63147) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:63146) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (48/194) 
+(node:63145) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (96/194) 
+(node:63151) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Error fetching sitemap: Error: Dynamic server usage: Route /api/admin/sitemap couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (.next/server/chunks/9771.js:8:19605)
+    at m (.next/server/chunks/2796.js:1:11581)
+    at f (.next/server/chunks/4620.js:29:1462)
+    at async y (.next/server/chunks/4620.js:31:20037)
+    at async y (.next/server/app/api/admin/sitemap/route.js:1:1253) {
+  description: "Route /api/admin/sitemap couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (145/194) 
+(node:63150) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Error getting current user: Error: Dynamic server usage: Route /dashboard/admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (.next/server/chunks/9771.js:8:19605)
+    at m (.next/server/chunks/2796.js:1:11581)
+    at f (.next/server/chunks/4620.js:29:1462)
+    at async y (.next/server/chunks/4620.js:31:20037)
+    at async f (.next/server/app/dashboard/support/page.js:1:15040)
+    at async n (.next/server/app/dashboard/admin/page.js:44:10576) {
+  description: "Route /dashboard/admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+[INFO] [PlatformStats] Platform stats fetched {
+  users: 4,
+  totalPlans: 0,
+  weeklyPlans: 0,
+  contentBlocks: 410,
+  lastUpdated: '2025-10-26T00:19:58.116Z'
+}
+ ✓ Generating static pages (194/194)
+   Finalizing page optimization ...
+   Collecting build traces ...
+[Error: ELOOP: too many symbolic links encountered, readlink '/Users/slim/Library/Mobile Documents/com~apple~CloudDocs/Cursor/Cursor Files/garrison-ledger/coverage/coverage.nosync/server'] {
+  errno: -62,
+  code: 'ELOOP',
+  syscall: 'readlink',
+  path: '/Users/slim/Library/Mobile Documents/com~apple~CloudDocs/Cursor/Cursor Files/garrison-ledger/coverage/coverage.nosync/server'
+}

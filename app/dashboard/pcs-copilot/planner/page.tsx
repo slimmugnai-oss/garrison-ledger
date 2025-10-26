@@ -1,8 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import PageHeader from "@/app/components/ui/PageHeader";
 import Badge from "@/app/components/ui/Badge";
+import PageHeader from "@/app/components/ui/PageHeader";
+
 import PCSPlannerClient from "./PCSPlannerClient";
 
 export const metadata = {

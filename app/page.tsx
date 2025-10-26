@@ -4,8 +4,9 @@
  * Clear value prop: 4 premium tools for military finance
  */
 
-import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
+
+import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 
 import Footer from "./components/Footer";
 import Header from "./components/Header";

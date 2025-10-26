@@ -269,7 +269,7 @@ export default function TspModeler() {
             <h2 className="text-2xl font-bold text-primary mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-body">Current Age</label>
+                <label htmlFor="current_age" className="block text-sm font-semibold text-body">Current Age</label>
                 <input 
                   type="number" 
                   className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
@@ -278,7 +278,7 @@ export default function TspModeler() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-body">Retirement Age</label>
+                <label htmlFor="retirement_age" className="block text-sm font-semibold text-body">Retirement Age</label>
                 <input 
                   type="number" 
                   className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
@@ -287,7 +287,7 @@ export default function TspModeler() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-body">Current Balance</label>
+                <label htmlFor="current_balance" className="block text-sm font-semibold text-body">Current Balance</label>
                 <input 
                   type="number" 
                   className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 
@@ -296,7 +296,7 @@ export default function TspModeler() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-body">Monthly Contribution</label>
+                <label htmlFor="monthly_contribution" className="block text-sm font-semibold text-body">Monthly Contribution</label>
                 <input 
                   type="number" 
                   className="w-full px-4 py-3 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface" 

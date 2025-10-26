@@ -6,9 +6,10 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import { logger } from "@/lib/logger";
 
 import baseToMHAMap from "@/lib/data/base-mha-map.json";
+import { logger } from "@/lib/logger";
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

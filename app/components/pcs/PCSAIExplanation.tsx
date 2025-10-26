@@ -176,7 +176,7 @@ export function PCSValidationExplainer({
 }) {
   const [expandedFlags, setExpandedFlags] = useState<Set<string>>(new Set());
 
-  const toggleFlag = (flagId: string) => {
+  const _toggleFlag = (flagId: string) => {
     const newExpanded = new Set(expandedFlags);
     if (newExpanded.has(flagId)) {
       newExpanded.delete(flagId);

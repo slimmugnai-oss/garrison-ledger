@@ -315,8 +315,7 @@ export default function PCSDocumentUploader({
           )}
         </button>
 
-        <input
-          ref={fileInputRef}
+        <input id="input_y696ixgod" ref={fileInputRef}
           type="file"
           accept="image/*,application/pdf"
           onChange={(e) => handleFileSelect(e.target.files)}

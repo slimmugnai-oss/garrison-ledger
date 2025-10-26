@@ -200,11 +200,8 @@ export default function MultiStepProfileWizard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-body mb-2">
-                    Rank *
-                  </label>
-                  <input
-                    type="text"
+                  <label htmlFor="rank_" className="block text-sm font-semibold text-body mb-2">Rank *</label>
+                <input id="rank" type="text"
                     value={formData.rank}
                     onChange={(e) => setFormData({ ...formData, rank: e.target.value })}
                     placeholder="e.g., E-5, O-3, W-2"
@@ -214,11 +211,8 @@ export default function MultiStepProfileWizard() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-body mb-2">
-                    Years of Service *
-                  </label>
-                  <input
-                    type="number"
+                  <label htmlFor="years_of_service_" className="block text-sm font-semibold text-body mb-2">Years of Service *</label>
+                <input id="years_of_service" type="number"
                     value={formData.years_of_service}
                     onChange={(e) => setFormData({ ...formData, years_of_service: e.target.value })}
                     placeholder="e.g., 8"
@@ -232,11 +226,8 @@ export default function MultiStepProfileWizard() {
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-body mb-2">
-                Current Duty Station
-              </label>
-              <input
-                type="text"
+              <label htmlFor="current_duty_station" className="block text-sm font-semibold text-body mb-2">Current Duty Station</label>
+                <input id="current_base" type="text"
                 value={formData.current_base}
                 onChange={(e) => setFormData({ ...formData, current_base: e.target.value })}
                 placeholder="e.g., Fort Hood, Camp Pendleton, etc."
@@ -272,11 +263,8 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-body mb-2">
-                Number of Children *
-              </label>
-              <input
-                type="number"
+              <label htmlFor="number_of_children_" className="block text-sm font-semibold text-body mb-2">Number of Children *</label>
+                <input id="num_children" type="number"
                 value={formData.num_children}
                 onChange={(e) => setFormData({ ...formData, num_children: e.target.value })}
                 min="0"
@@ -301,11 +289,8 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-body mb-2">
-                Next PCS Date (if known)
-              </label>
-              <input
-                type="date"
+              <label htmlFor="next_pcs_date_if_known" className="block text-sm font-semibold text-body mb-2">Next PCS Date (if known)</label>
+                <input id="pcs_date" type="date"
                 value={formData.pcs_date}
                 onChange={(e) => setFormData({ ...formData, pcs_date: e.target.value })}
                 className="w-full px-4 py-3 border-2 border-default rounded-xl focus:border-info focus:ring-2 focus:ring-blue-200 outline-none"
@@ -313,11 +298,8 @@ export default function MultiStepProfileWizard() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-body mb-2">
-                Next Duty Station (if known)
-              </label>
-              <input
-                type="text"
+              <label htmlFor="next_duty_station_if_known" className="block text-sm font-semibold text-body mb-2">Next Duty Station (if known)</label>
+                <input id="next_base" type="text"
                 value={formData.next_base}
                 onChange={(e) => setFormData({ ...formData, next_base: e.target.value })}
                 placeholder="e.g., Fort Bragg, Norfolk, etc."

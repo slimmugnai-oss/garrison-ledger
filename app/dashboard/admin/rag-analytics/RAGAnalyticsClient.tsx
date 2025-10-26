@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Icon from "@/app/components/ui/Icon";
+
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Icon from "@/app/components/ui/Icon";
 
 interface AnalyticsData {
   totalQuestions: number;
@@ -34,10 +35,6 @@ export default function RAGAnalyticsClient() {
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState("7d");
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [timeRange]);
-
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
@@ -55,6 +52,10 @@ export default function RAGAnalyticsClient() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [timeRange, fetchAnalytics]);
 
   if (loading) {
     return (

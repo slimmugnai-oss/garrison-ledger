@@ -400,10 +400,8 @@ export default function PcsFinancialPlanner() {
         
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-semibold text-purple-900 mb-2">
-              Storage Duration (months)
-            </label>
-            <input
+            <label htmlFor="storage_duration_months" className="block text-sm font-semibold text-purple-900 mb-2">Storage Duration (months)</label>
+                <input
               type="number"
               min={0}
               max={24}
@@ -413,10 +411,8 @@ export default function PcsFinancialPlanner() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-purple-900 mb-2">
-              Estimated Cubic Feet
-            </label>
-            <input
+            <label htmlFor="estimated_cubic_feet" className="block text-sm font-semibold text-purple-900 mb-2">Estimated Cubic Feet</label>
+                <input
               type="number"
               min={0}
               step={100}
@@ -737,10 +733,8 @@ export default function PcsFinancialPlanner() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Distance (miles)
-                  </label>
-                  <input
+                  <label htmlFor="distance_miles" className="block text-sm font-medium text-body mb-1">Distance (miles)</label>
+                <input
                     type="number"
                     value={ppmDistance}
                     onChange={(e) => setPpmDistance(Number(e.target.value))}

@@ -29,7 +29,7 @@ jest.mock("@/lib/supabase", () => ({
 describe("PCS Calculations", () => {
   beforeAll(() => {
     // Set up test environment
-    (process.env as any).NODE_ENV = "test";
+    (process.env as { NODE_ENV?: string }).NODE_ENV = "test";
   });
 
   test("DLA calculation for E5 with dependents", async () => {

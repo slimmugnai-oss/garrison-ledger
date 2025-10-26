@@ -280,10 +280,8 @@ export default function OnBaseSavingsCalculator() {
         <div className="space-y-6">
           {/* Sales Tax Rate */}
           <div>
-            <label className="block text-base font-semibold text-primary mb-2">
-              💳 Your Local Sales Tax Rate (%)
-            </label>
-            <input
+            <label htmlFor="_your_local_sales_tax_rate_" className="block text-base font-semibold text-primary mb-2">💳 Your Local Sales Tax Rate (%)</label>
+                <input
               type="number"
               value={salesTaxRate}
               onChange={(e) => setSalesTaxRate(Number(e.target.value))}
@@ -346,10 +344,8 @@ export default function OnBaseSavingsCalculator() {
 
           {/* Weekly Gas */}
           <div>
-            <label className="block text-base font-semibold text-primary mb-2">
-              ⛽ Average Weekly Gas (Gallons)
-            </label>
-            <input
+            <label htmlFor="_average_weekly_gas_gallons" className="block text-base font-semibold text-primary mb-2">⛽ Average Weekly Gas (Gallons)</label>
+                <input
               type="number"
               value={weeklyGasGallons}
               onChange={(e) => setWeeklyGasGallons(Number(e.target.value))}

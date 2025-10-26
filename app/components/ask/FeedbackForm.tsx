@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Icon from "@/app/components/ui/Icon";
+
 import Button from "@/app/components/ui/Button";
+import Icon from "@/app/components/ui/Icon";
 import { logger } from "@/lib/logger";
 
 interface FeedbackFormProps {

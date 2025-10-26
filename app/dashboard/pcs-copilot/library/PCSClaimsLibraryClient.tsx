@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Icon from "@/app/components/ui/Icon";
+import { toast } from "sonner";
+
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
+import Card, {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/Card";
+import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
 import {
   Select,
@@ -12,14 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
-import Card, {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components/ui/Card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-import { toast } from "sonner";
+
 
 interface PCSClaim {
   id: string;
@@ -46,6 +48,18 @@ interface ClaimsStats {
   totalSavings: number;
   averagePerClaim: number;
   statusBreakdown: Record<string, number>;
+}
+
+interface Claim {
+  id: string;
+  claim_name: string;
+  status: string;
+  readiness_score: number;
+  completion_percentage: number;
+  entitlements: {
+    total?: number;
+  } | null;
+  created_at: string;
 }
 
 export default function PCSClaimsLibraryClient() {
@@ -130,13 +144,13 @@ export default function PCSClaimsLibraryClient() {
       case "draft":
         return "secondary";
       case "submitted":
-        return "default";
+        return "info";
       case "approved":
         return "success";
       case "paid":
         return "success";
       case "rejected":
-        return "destructive";
+        return "danger";
       case "archived":
         return "secondary";
       default:
@@ -182,9 +196,9 @@ export default function PCSClaimsLibraryClient() {
     });
   };
 
-  const handleClaimSelect = (claimId: string) => {
+  const handleClaimSelect = (claim: PCSClaim) => {
     setSelectedClaims((prev) =>
-      prev.includes(claimId) ? prev.filter((id) => id !== claimId) : [...prev, claimId]
+      prev.includes(claim.id) ? prev.filter((id) => id !== claim.id) : [...prev, claim.id]
     );
   };
 
@@ -330,7 +344,7 @@ export default function PCSClaimsLibraryClient() {
       </div>
 
       {/* View Mode Tabs */}
-      <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
+      <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as "timeline" | "grid" | "comparison")}>
         <TabsList>
           <TabsTrigger value="timeline">Timeline View</TabsTrigger>
           <TabsTrigger value="grid">Grid View</TabsTrigger>
@@ -383,7 +397,15 @@ function TimelineView({
   getStatusIcon,
   formatCurrency,
   formatDate,
-}: any) {
+}: {
+  claims: PCSClaim[];
+  onClaimSelect: (claim: PCSClaim) => void;
+  selectedClaims: string[];
+  getStatusColor: (status: string) => string;
+  getStatusIcon: (status: string) => string;
+  formatCurrency: (amount: number) => string;
+  formatDate: (date: string) => string;
+}) {
   const sortedClaims = [...claims].sort(
     (a, b) =>
       new Date(b.departure_date || b.created_at).getTime() -
@@ -412,7 +434,7 @@ function TimelineView({
                     selectedClaims.includes(claim.id) ? "bg-blue-600" : "bg-gray-200"
                   }`}
                 >
-                  <Icon name={getStatusIcon(claim.status)} className="h-4 w-4 text-white" />
+                  <Icon name={getStatusIcon(claim.status) as any} className="h-4 w-4 text-white" />
                 </div>
               </div>
 
@@ -424,13 +446,13 @@ function TimelineView({
               >
                 <div
                   className="cursor-pointer transition-shadow hover:shadow-md"
-                  onClick={() => onClaimSelect(claim.id)}
+                  onClick={() => onClaimSelect(claim)}
                 >
                   <Card>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{claim.claim_name}</CardTitle>
-                      <Badge variant={getStatusColor(claim.status)}>
+                      <Badge variant={getStatusColor(claim.status) as any}>
                         {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
                       </Badge>
                     </div>
@@ -451,12 +473,12 @@ function TimelineView({
                       </div>
                       <div>
                         <p className="text-gray-500">Entitlements</p>
-                        <p className="font-medium">{formatCurrency(claim.total_entitlements)}</p>
+                        <p className="font-medium">{formatCurrency(claim.total_entitlements || 0)}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Savings</p>
                         <p className="font-medium text-green-600">
-                          {formatCurrency(claim.net_savings)}
+                          {formatCurrency(claim.net_savings || 0)}
                         </p>
                       </div>
                     </div>
@@ -481,7 +503,15 @@ function GridView({
   getStatusIcon,
   formatCurrency,
   formatDate,
-}: any) {
+}: {
+  claims: PCSClaim[];
+  onClaimSelect: (claim: PCSClaim) => void;
+  selectedClaims: string[];
+  getStatusColor: (status: string) => string;
+  getStatusIcon: (status: string) => string;
+  formatCurrency: (amount: number) => string;
+  formatDate: (date: string) => string;
+}) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {claims.length === 0 ? (
@@ -497,13 +527,13 @@ function GridView({
             className={`cursor-pointer transition-shadow hover:shadow-md ${
               selectedClaims.includes(claim.id) ? "ring-2 ring-blue-500" : ""
             }`}
-            onClick={() => onClaimSelect(claim.id)}
+            onClick={() => onClaimSelect(claim)}
           >
             <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="truncate text-lg">{claim.claim_name}</CardTitle>
-                <Badge variant={getStatusColor(claim.status)}>
+                <Badge variant={getStatusColor(claim.status) as any}>
                   {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
                 </Badge>
               </div>
@@ -524,12 +554,12 @@ function GridView({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Entitlements:</span>
-                  <span className="font-medium">{formatCurrency(claim.total_entitlements)}</span>
+                  <span className="font-medium">{formatCurrency(claim.total_entitlements || 0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Savings:</span>
                   <span className="font-medium text-green-600">
-                    {formatCurrency(claim.net_savings)}
+                    {formatCurrency(claim.net_savings || 0)}
                   </span>
                 </div>
               </div>
@@ -543,7 +573,17 @@ function GridView({
 }
 
 // Comparison View Component
-function ComparisonView({ claims, getStatusColor, formatCurrency, formatDate }: any) {
+function ComparisonView({ 
+  claims, 
+  getStatusColor, 
+  formatCurrency, 
+  formatDate 
+}: {
+  claims: PCSClaim[];
+  getStatusColor: (status: string) => string;
+  formatCurrency: (amount: number) => string;
+  formatDate: (date: string) => string;
+}) {
   if (claims.length < 2) {
     return (
       <div className="py-12 text-center">
@@ -593,16 +633,16 @@ function ComparisonView({ claims, getStatusColor, formatCurrency, formatDate }: 
                   </div>
                 </td>
                 <td className="p-4">
-                  <Badge variant={getStatusColor(claim.status)}>
+                  <Badge variant={getStatusColor(claim.status) as any}>
                     {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
                   </Badge>
                 </td>
                 <td className="p-4">
-                  <div className="font-medium">{formatCurrency(claim.total_entitlements)}</div>
+                  <div className="font-medium">{formatCurrency(claim.total_entitlements || 0)}</div>
                 </td>
                 <td className="p-4">
                   <div className="font-medium text-green-600">
-                    {formatCurrency(claim.net_savings)}
+                    {formatCurrency(claim.net_savings || 0)}
                   </div>
                 </td>
               </tr>

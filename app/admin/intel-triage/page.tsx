@@ -257,7 +257,7 @@ export default async function IntelTriagePage() {
                           </div>
 
                           <form action="/api/admin/resolve-flag" method="post">
-                            <input type="hidden" name="flagId" value={String(flag.id)} />
+                            <input id="flagId" type="hidden" name="flagId" value={String(flag.id)} />
                             <button
                               type="submit"
                               className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700"

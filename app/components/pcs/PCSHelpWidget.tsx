@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import AnimatedCard from "@/app/components/ui/AnimatedCard";
+// import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Icon from "@/app/components/ui/Icon";
 import { logger } from "@/lib/logger";
 

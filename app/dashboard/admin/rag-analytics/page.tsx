@@ -1,6 +1,7 @@
-import { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
 import RAGAnalyticsClient from "./RAGAnalyticsClient";
 
 export const metadata: Metadata = {

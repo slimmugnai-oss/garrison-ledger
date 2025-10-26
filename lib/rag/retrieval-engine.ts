@@ -10,7 +10,10 @@
  * Performance Target: <100ms for 100K vectors
  */
 
+import { createClient } from "@supabase/supabase-js";
+
 import { logger } from "@/lib/logger";
+import { generateEmbedding } from "../embeddings/generate-embeddings";
 
 interface DatabaseRow {
   id: string;
@@ -22,15 +25,6 @@ interface DatabaseRow {
   similarity?: number;
   rank?: number;
 }
-
-/**
- * Created: 2025-01-25
- * Part of: Ask Military Expert RAG System
- */
-
-import { createClient } from "@supabase/supabase-js";
-
-import { generateEmbedding } from "../embeddings/generate-embeddings";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

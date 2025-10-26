@@ -9,13 +9,8 @@
  * - staff: Internal/QA bypass (all premium features)
  */
 
-import { logger } from "@/lib/logger";
-
-/**
- * Security: All tier checks happen server-side. Never trust client-side tier claims.
- */
-
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
 
 export type Tier = "free" | "premium" | "staff";
 

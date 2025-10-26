@@ -208,8 +208,7 @@ export default function ContactForm({ variant = 'public', userEmail, userName, u
                     : 'border-[#2A2F3E] hover:border-[#3A3F4E]'
                 }`}
               >
-                <input
-                  type="radio"
+                <input id="urgency" type="radio"
                   name="urgency"
                   value={level.value}
                   checked={formData.urgency === level.value}

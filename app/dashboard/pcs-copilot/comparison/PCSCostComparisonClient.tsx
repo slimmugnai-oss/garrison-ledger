@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Icon from "@/app/components/ui/Icon";
+import { toast } from "sonner";
+
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
-import Input from "@/app/components/ui/Input";
 import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
+import Icon from "@/app/components/ui/Icon";
+import Input from "@/app/components/ui/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-import { toast } from "sonner";
+
 
 interface CostComparison {
   id: string;
@@ -231,7 +233,7 @@ export default function PCSCostComparisonClient() {
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "calculator" | "history")}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="calculator">Cost Calculator</TabsTrigger>
           <TabsTrigger value="history">Comparison History</TabsTrigger>

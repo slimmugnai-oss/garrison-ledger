@@ -10,7 +10,6 @@
  * - Error handling with retries
  */
 
-import { logger } from "@/lib/logger";
 
 /**
  * - Cost tracking
@@ -21,6 +20,8 @@ import { logger } from "@/lib/logger";
 
 import { createClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
+
+import { logger } from "@/lib/logger";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -365,8 +365,8 @@ export default function BriefingAdminPage() {
 
                   {/* Editable Fields */}
                   <div>
-                    <label className="block text-sm font-semibold text-body mb-2">Title</label>
-                    <input
+                    <label htmlFor="title" className="block text-sm font-semibold text-body mb-2">Title</label>
+                <input
                       type="text"
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
@@ -395,8 +395,8 @@ export default function BriefingAdminPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-body mb-2">Tags (comma-separated)</label>
-                    <input
+                    <label htmlFor="tags_commaseparated" className="block text-sm font-semibold text-body mb-2">Tags (comma-separated)</label>
+                <input
                       type="text"
                       value={editTags.join(', ')}
                       onChange={(e) => setEditTags(e.target.value.split(',').map(t => t.trim()).filter(Boolean))}
@@ -435,8 +435,8 @@ export default function BriefingAdminPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-body mb-2">SEO Keywords (comma-separated)</label>
-                    <input
+                    <label htmlFor="seo_keywords_commaseparated" className="block text-sm font-semibold text-body mb-2">SEO Keywords (comma-separated)</label>
+                <input
                       type="text"
                       value={editSEOKeywords.join(', ')}
                       onChange={(e) => setEditSEOKeywords(e.target.value.split(',').map(k => k.trim()).filter(Boolean))}

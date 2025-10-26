@@ -14,8 +14,8 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PageHeader from "@/app/components/ui/PageHeader";
-import { calculatePCSClaim } from "@/lib/pcs/calculation-engine";
-import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
+import { calculatePCSClaim, FormData, CalculationResult } from "@/lib/pcs/calculation-engine";
+// import { validatePCSClaim, calculateConfidenceScore } from "@/lib/pcs/validation-engine";
 
 interface Claim {
   id: string;
@@ -27,6 +27,13 @@ interface Claim {
     total?: number;
   } | null;
   created_at: string;
+}
+
+interface ValidationFlag {
+  field: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  suggestion?: string;
 }
 
 interface EnhancedPCSCopilotClientProps {
@@ -50,11 +57,11 @@ export default function EnhancedPCSCopilotClient({
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
   const [showNewClaimModal, setShowNewClaimModal] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [_isCreating, setIsCreating] = useState(false);
   const [currentView, setCurrentView] = useState<"list" | "manual" | "mobile">("list");
-  const [validationFlags, setValidationFlags] = useState<any[]>([]);
-  const [estimates, setEstimates] = useState<any>(null);
-  const [formData, setFormData] = useState<any>(null);
+  const [validationFlags, setValidationFlags] = useState<ValidationFlag[]>([]);
+  const [estimates, setEstimates] = useState<CalculationResult | null>(null);
+  const [formData, _setFormData] = useState<FormData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile device
@@ -95,11 +102,11 @@ export default function EnhancedPCSCopilotClient({
     }
   };
 
-  const handleValidationChange = (flags: any[]) => {
+  const handleValidationChange = (flags: ValidationFlag[]) => {
     setValidationFlags(flags);
   };
 
-  const handleCalculateEstimates = async (formData: any) => {
+  const _handleCalculateEstimates = async (formData: FormData) => {
     try {
       const estimates = await calculatePCSClaim(formData);
       setEstimates(estimates);
@@ -436,7 +443,7 @@ export default function EnhancedPCSCopilotClient({
                       arrival_date: formData.arrival_date,
                       origin_base: formData.origin_base,
                       destination_base: formData.destination_base,
-                      move_type: formData.move_type,
+                      move_type: formData.travel_method as "dity" | "full" | "partial" | undefined,
                     }}
                     onRecommendationClick={(rec) => {
                       if (rec.link) {
@@ -462,14 +469,33 @@ export default function EnhancedPCSCopilotClient({
           {/* Validation Explainer */}
           {validationFlags.length > 0 && (
             <div className="mt-8">
-              <PCSValidationExplainer flags={validationFlags} claimContext={getClaimContext()} />
+              <PCSValidationExplainer flags={validationFlags as any} claimContext={getClaimContext()} />
             </div>
           )}
 
           {/* Confidence Display */}
           {estimates && (
             <div className="mt-8">
-              <PCSConfidenceDisplay estimates={estimates} />
+              <PCSConfidenceDisplay estimates={{
+                dla: {
+                  confidence: estimates.dla.confidence,
+                  source: estimates.dla.source,
+                  lastVerified: estimates.dla.lastVerified
+                },
+                malt: {
+                  confidence: estimates.malt.confidence,
+                  source: estimates.malt.source,
+                  lastVerified: estimates.malt.effectiveDate
+                },
+                perDiem: {
+                  confidence: estimates.perDiem.confidence,
+                  source: estimates.perDiem.citation,
+                  lastVerified: estimates.perDiem.effectiveDate
+                },
+                total: estimates.total,
+                confidence: estimates.confidence.overall,
+                dataSources: estimates.dataSources
+              }} />
             </div>
           )}
 

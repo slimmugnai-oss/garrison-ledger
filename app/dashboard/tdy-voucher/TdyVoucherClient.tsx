@@ -189,11 +189,9 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Origin (City, ST or ZIP)
+                  <label htmlFor="origin_city_st_or_zip_" className="block text-sm font-medium text-gray-700 mb-2">Origin (City, ST or ZIP)
                   </label>
-                  <input
-                    type="text"
+                <input id="input_8qte6pu2b" type="text"
                     value={origin}
                     onChange={e => setOrigin(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -202,11 +200,9 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Destination (City, ST or ZIP)
+                  <label htmlFor="destination_city_st_or_zip_" className="block text-sm font-medium text-gray-700 mb-2">Destination (City, ST or ZIP)
                   </label>
-                  <input
-                    type="text"
+                <input id="input_iweb7d1zn" type="text"
                     value={destination}
                     onChange={e => setDestination(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -217,11 +213,9 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Depart Date
+                  <label htmlFor="depart_date_" className="block text-sm font-medium text-gray-700 mb-2">Depart Date
                   </label>
-                  <input
-                    type="date"
+                <input id="input_u8sm7jfp6" type="date"
                     value={departDate}
                     onChange={e => setDepartDate(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -229,11 +223,9 @@ export default function TdyVoucherClient({ isPremium, initialTrips }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Return Date
+                  <label htmlFor="return_date_" className="block text-sm font-medium text-gray-700 mb-2">Return Date
                   </label>
-                  <input
-                    type="date"
+                <input id="input_gabwolp7d" type="date"
                     value={returnDate}
                     onChange={e => setReturnDate(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"

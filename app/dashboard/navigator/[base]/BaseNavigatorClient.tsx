@@ -196,11 +196,9 @@ export default function BaseNavigatorClient({
 
             {/* BAH */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Your Monthly BAH
+              <label htmlFor="your_monthly_bah_" className="mb-2 block text-sm font-medium text-gray-700">Your Monthly BAH
               </label>
-              <input
-                type="number"
+                <input id="input_pozstmjkt" type="number"
                 value={Math.round(bahMonthlyCents / 100)}
                 onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"

@@ -1,4 +1,3 @@
-import { SignedIn, SignedOut } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import Link from 'next/link';
 
@@ -7,6 +6,7 @@ import Header from '@/app/components/Header';
 import OnBaseSavingsCalculator from '@/app/components/tools/OnBaseSavingsCalculator';
 import Icon from '@/app/components/ui/Icon';
 import { generatePageMeta } from "@/lib/seo-config";
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 
 export const metadata: Metadata = generatePageMeta({
   title: "Annual Savings Command Center - Commissary & Exchange Calculator",

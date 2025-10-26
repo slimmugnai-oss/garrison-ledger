@@ -6,9 +6,9 @@ import { toast } from "sonner";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
+import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
-import Card, { CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/Card";
 
 interface BaseData {
   code: string;
@@ -88,11 +88,11 @@ export default function PCSPlannerClient() {
     );
   };
 
-  const calculatePcsCost = async (base: any) => {
+  const calculatePcsCost = async (base: Record<string, unknown>) => {
     // This would call the real PCS calculation API
     // For now, using simplified calculation
-    const baseCost = base.bah * 0.1; // 10% of BAH as rough PCS cost
-    const distanceCost = base.distance * 0.5; // $0.50 per mile
+    const baseCost = (base.bah as number) * 0.1; // 10% of BAH as rough PCS cost
+    const distanceCost = (base.distance as number) * 0.5; // $0.50 per mile
     return baseCost + distanceCost;
   };
 
@@ -179,9 +179,10 @@ export default function PCSPlannerClient() {
         const errorData = await response.json();
         throw new Error(errorData.error || "Save failed");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Save failed:", error);
-      toast.error(error.message || "Failed to save comparison");
+      const errorMessage = error instanceof Error ? error.message : "Failed to save comparison";
+      toast.error(errorMessage);
     }
   };
 

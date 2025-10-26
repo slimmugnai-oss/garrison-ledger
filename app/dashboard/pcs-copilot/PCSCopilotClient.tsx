@@ -467,10 +467,11 @@ export default function PCSCopilotClient({
             <form onSubmit={handleCreateClaim} className="space-y-6">
               {/* Claim Name */}
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                <label htmlFor="claim_name" className="mb-2 block text-sm font-semibold text-slate-700">
                   Claim Name
                 </label>
                 <input
+                  id="claim_name"
                   type="text"
                   value={formData.claim_name}
                   onChange={(e) => setFormData((prev) => ({ ...prev, claim_name: e.target.value }))}
@@ -482,10 +483,11 @@ export default function PCSCopilotClient({
 
               {/* PCS Orders Date */}
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                <label htmlFor="pcs_orders_date" className="mb-2 block text-sm font-semibold text-slate-700">
                   PCS Orders Date
                 </label>
                 <input
+                  id="pcs_orders_date"
                   type="date"
                   value={formData.pcs_orders_date}
                   onChange={(e) =>
@@ -499,11 +501,8 @@ export default function PCSCopilotClient({
               {/* Travel Dates */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Departure Date
-                  </label>
-                  <input
-                    type="date"
+                  <label htmlFor="departure_date" className="mb-2 block text-sm font-semibold text-slate-700">Departure Date</label>
+                <input id="departure_date" type="date"
                     value={formData.departure_date}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, departure_date: e.target.value }))
@@ -513,11 +512,8 @@ export default function PCSCopilotClient({
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Arrival Date
-                  </label>
-                  <input
-                    type="date"
+                  <label htmlFor="arrival_date" className="mb-2 block text-sm font-semibold text-slate-700">Arrival Date</label>
+                <input id="arrival_date" type="date"
                     value={formData.arrival_date}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, arrival_date: e.target.value }))
@@ -531,11 +527,8 @@ export default function PCSCopilotClient({
               {/* Bases */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Origin Base
-                  </label>
-                  <input
-                    type="text"
+                  <label htmlFor="origin_base" className="mb-2 block text-sm font-semibold text-slate-700">Origin Base</label>
+                <input id="origin_base" type="text"
                     value={formData.origin_base}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, origin_base: e.target.value }))
@@ -546,11 +539,8 @@ export default function PCSCopilotClient({
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Destination Base
-                  </label>
-                  <input
-                    type="text"
+                  <label htmlFor="destination_base" className="mb-2 block text-sm font-semibold text-slate-700">Destination Base</label>
+                <input id="destination_base" type="text"
                     value={formData.destination_base}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, destination_base: e.target.value }))
@@ -581,11 +571,8 @@ export default function PCSCopilotClient({
                   </select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Number of Dependents
-                  </label>
-                  <input
-                    type="number"
+                  <label htmlFor="number_of_dependents" className="mb-2 block text-sm font-semibold text-slate-700">Number of Dependents</label>
+                <input id="dependents_count" type="number"
                     min="0"
                     value={formData.dependents_count}
                     onChange={(e) =>
@@ -602,11 +589,8 @@ export default function PCSCopilotClient({
               {/* Rank & Branch */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    Rank at PCS
-                  </label>
-                  <input
-                    type="text"
+                  <label htmlFor="rank_at_pcs" className="mb-2 block text-sm font-semibold text-slate-700">Rank at PCS</label>
+                <input id="rank_at_pcs" type="text"
                     value={formData.rank_at_pcs}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, rank_at_pcs: e.target.value }))

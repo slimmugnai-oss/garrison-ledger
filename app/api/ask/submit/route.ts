@@ -10,8 +10,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
-import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
 import { logger } from "@/lib/logger";
+import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
 import { ssot } from "@/lib/ssot";
 
 const supabase = createClient(

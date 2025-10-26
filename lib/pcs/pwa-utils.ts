@@ -120,7 +120,7 @@ export async function syncClaimData(claimData: ClaimData) {
 
     // Register background sync
     if ("sync" in registration) {
-      await (registration as any).sync.register("sync-pcs-claim");
+      await (registration as ServiceWorkerRegistration & { sync: any }).sync.register("sync-pcs-claim");
       logger.info("[PWA] Background sync registered");
       return true;
     } else {

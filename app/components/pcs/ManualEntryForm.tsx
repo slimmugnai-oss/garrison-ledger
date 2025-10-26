@@ -35,10 +35,11 @@ export default function ManualEntryForm({
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="member_name" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Member Name *
                 </label>
                 <input
+                  id="member_name"
                   type="text"
                   required
                   value={(formData.member_name as string) || ''}
@@ -48,11 +49,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Rank *
+                <label htmlFor="rank_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Rank *
                 </label>
-                <input
-                  type="text"
+                <input id="rank as string) || ''" type="text"
                   required
                   value={(formData.rank as string) || ''}
                   onChange={(e) => updateField('rank', e.target.value)}
@@ -64,11 +63,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Orders Date *
+                <label htmlFor="orders_date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Orders Date *
                 </label>
-                <input
-                  type="date"
+                <input id="orders_date as string) || ''" type="date"
                   required
                   value={(formData.orders_date as string) || ''}
                   onChange={(e) => updateField('orders_date', e.target.value)}
@@ -76,11 +73,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Report Date *
+                <label htmlFor="report_date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Report Date *
                 </label>
-                <input
-                  type="date"
+                <input id="report_date as string) || ''" type="date"
                   required
                   value={(formData.report_date as string) || ''}
                   onChange={(e) => updateField('report_date', e.target.value)}
@@ -91,11 +86,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Origin Base *
+                <label htmlFor="origin_base_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Origin Base *
                 </label>
-                <input
-                  type="text"
+                <input id="origin_base as string) || ''" type="text"
                   required
                   value={(formData.origin_base as string) || ''}
                   onChange={(e) => updateField('origin_base', e.target.value)}
@@ -104,11 +97,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Destination Base *
+                <label htmlFor="destination_base_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Destination Base *
                 </label>
-                <input
-                  type="text"
+                <input id="destination_base as string) || ''" type="text"
                   required
                   value={(formData.destination_base as string) || ''}
                   onChange={(e) => updateField('destination_base', e.target.value)}
@@ -119,11 +110,9 @@ export default function ManualEntryForm({
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Number of Dependents Authorized
+              <label htmlFor="number_of_dependents_authorized_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Number of Dependents Authorized
               </label>
-              <input
-                type="number"
+                <input id="dependents_authorized as number) || 0" type="number"
                 min="0"
                 value={(formData.dependents_authorized as number) || 0}
                 onChange={(e) => updateField('dependents_authorized', parseInt(e.target.value))}
@@ -144,11 +133,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Weigh Date *
+                <label htmlFor="weigh_date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Weigh Date *
                 </label>
-                <input
-                  type="date"
+                <input id="weigh_date as string) || ''" type="date"
                   required
                   value={(formData.weigh_date as string) || ''}
                   onChange={(e) => updateField('weigh_date', e.target.value)}
@@ -174,11 +161,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Weight (lbs) *
+                <label htmlFor="weight_lbs_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Weight (lbs) *
                 </label>
-                <input
-                  type="number"
+                <input id="weight as number) || ''" type="number"
                   required
                   min="0"
                   value={(formData.weight as number) || ''}
@@ -188,11 +173,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Vehicle Make/Model *
+                <label htmlFor="vehicle_makemodel_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Vehicle Make/Model *
                 </label>
-                <input
-                  type="text"
+                <input id="vehicle_info as string) || ''" type="text"
                   required
                   value={(formData.vehicle_info as string) || ''}
                   onChange={(e) => updateField('vehicle_info', e.target.value)}
@@ -201,11 +184,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Location *
+                <label htmlFor="location_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Location *
                 </label>
-                <input
-                  type="text"
+                <input id="location as string) || ''" type="text"
                   required
                   value={(formData.location as string) || ''}
                   onChange={(e) => updateField('location', e.target.value)}
@@ -222,11 +203,9 @@ export default function ManualEntryForm({
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Hotel/Lodging Name *
+                <label htmlFor="hotellodging_name_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Hotel/Lodging Name *
                 </label>
-                <input
-                  type="text"
+                <input id="vendor as string) || ''" type="text"
                   required
                   value={(formData.vendor as string) || ''}
                   onChange={(e) => updateField('vendor', e.target.value)}
@@ -235,11 +214,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Location *
+                <label htmlFor="location_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Location *
                 </label>
-                <input
-                  type="text"
+                <input id="location as string) || ''" type="text"
                   required
                   value={(formData.location as string) || ''}
                   onChange={(e) => updateField('location', e.target.value)}
@@ -251,11 +228,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Check-In Date *
+                <label htmlFor="checkin_date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Check-In Date *
                 </label>
-                <input
-                  type="date"
+                <input id="check_in_date as string) || ''" type="date"
                   required
                   value={(formData.check_in_date as string) || ''}
                   onChange={(e) => updateField('check_in_date', e.target.value)}
@@ -263,11 +238,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Check-Out Date *
+                <label htmlFor="checkout_date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Check-Out Date *
                 </label>
-                <input
-                  type="date"
+                <input id="check_out_date as string) || ''" type="date"
                   required
                   value={(formData.check_out_date as string) || ''}
                   onChange={(e) => updateField('check_out_date', e.target.value)}
@@ -283,8 +256,7 @@ export default function ManualEntryForm({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
+                  <input id="total_amount as number) || ''" type="number"
                     required
                     min="0"
                     step="0.01"
@@ -301,8 +273,7 @@ export default function ManualEntryForm({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
+                  <input id="room_rate as number) || ''" type="number"
                     min="0"
                     step="0.01"
                     value={(formData.room_rate as number) || ''}
@@ -313,11 +284,9 @@ export default function ManualEntryForm({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Confirmation #
+                <label htmlFor="confirmation_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Confirmation #
                 </label>
-                <input
-                  type="text"
+                <input id="confirmation_number as string) || ''" type="text"
                   value={(formData.confirmation_number as string) || ''}
                   onChange={(e) => updateField('confirmation_number', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
@@ -332,11 +301,9 @@ export default function ManualEntryForm({
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Gas Station *
+                <label htmlFor="gas_station_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Gas Station *
                 </label>
-                <input
-                  type="text"
+                <input id="vendor as string) || ''" type="text"
                   required
                   value={(formData.vendor as string) || ''}
                   onChange={(e) => updateField('vendor', e.target.value)}
@@ -345,11 +312,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Location *
+                <label htmlFor="location_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Location *
                 </label>
-                <input
-                  type="text"
+                <input id="location as string) || ''" type="text"
                   required
                   value={(formData.location as string) || ''}
                   onChange={(e) => updateField('location', e.target.value)}
@@ -361,11 +326,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Date *
+                <label htmlFor="date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Date *
                 </label>
-                <input
-                  type="date"
+                <input id="date as string) || ''" type="date"
                   required
                   value={(formData.date as string) || ''}
                   onChange={(e) => updateField('date', e.target.value)}
@@ -373,11 +336,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Gallons
+                <label htmlFor="gallons_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Gallons
                 </label>
-                <input
-                  type="number"
+                <input id="gallons as number) || ''" type="number"
                   min="0"
                   step="0.01"
                   value={(formData.gallons as number) || ''}
@@ -391,8 +352,7 @@ export default function ManualEntryForm({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
+                  <input id="total_amount as number) || ''" type="number"
                     required
                     min="0"
                     step="0.01"
@@ -412,11 +372,9 @@ export default function ManualEntryForm({
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Restaurant/Vendor *
+                <label htmlFor="restaurantvendor_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Restaurant/Vendor *
                 </label>
-                <input
-                  type="text"
+                <input id="vendor as string) || ''" type="text"
                   required
                   value={(formData.vendor as string) || ''}
                   onChange={(e) => updateField('vendor', e.target.value)}
@@ -424,11 +382,9 @@ export default function ManualEntryForm({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Location *
+                <label htmlFor="location_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Location *
                 </label>
-                <input
-                  type="text"
+                <input id="location as string) || ''" type="text"
                   required
                   value={(formData.location as string) || ''}
                   onChange={(e) => updateField('location', e.target.value)}
@@ -440,11 +396,9 @@ export default function ManualEntryForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Date *
+                <label htmlFor="date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Date *
                 </label>
-                <input
-                  type="date"
+                <input id="date as string) || ''" type="date"
                   required
                   value={(formData.date as string) || ''}
                   onChange={(e) => updateField('date', e.target.value)}
@@ -457,8 +411,7 @@ export default function ManualEntryForm({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
+                  <input id="total_amount as number) || ''" type="number"
                     required
                     min="0"
                     step="0.01"
@@ -477,11 +430,9 @@ export default function ManualEntryForm({
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Description *
+              <label htmlFor="description_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Description *
               </label>
-              <input
-                type="text"
+                <input id="description as string) || ''" type="text"
                 required
                 value={(formData.description as string) || ''}
                 onChange={(e) => updateField('description', e.target.value)}
@@ -490,11 +441,9 @@ export default function ManualEntryForm({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Date *
+                <label htmlFor="date_" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Date *
                 </label>
-                <input
-                  type="date"
+                <input id="date as string) || ''" type="date"
                   required
                   value={(formData.date as string) || ''}
                   onChange={(e) => updateField('date', e.target.value)}
@@ -507,8 +456,7 @@ export default function ManualEntryForm({
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                  <input
-                    type="number"
+                  <input id="amount as number) || ''" type="number"
                     required
                     min="0"
                     step="0.01"

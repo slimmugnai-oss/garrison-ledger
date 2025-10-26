@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-import Icon from "../ui/Icon";
 import { logger } from "@/lib/logger";
+
+import Icon from "../ui/Icon";
 
 interface FeedbackModalProps {
   isOpen: boolean;

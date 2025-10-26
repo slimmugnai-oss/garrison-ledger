@@ -143,9 +143,7 @@ export default function SdpStrategist() {
             
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-body mb-2">
-                  SDP Payout Amount
-                </label>
+                <label htmlFor="sdp_payout_amount" className="block text-sm font-semibold text-body mb-2">SDP Payout Amount</label>
                 <input
                   type="number"
                   min={0}
@@ -158,9 +156,7 @@ export default function SdpStrategist() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-body mb-2">
-                  Deployment Duration (months)
-                </label>
+                <label htmlFor="deployment_duration_months" className="block text-sm font-semibold text-body mb-2">Deployment Duration (months)</label>
                 <input
                   type="number"
                   min={3}
@@ -173,9 +169,7 @@ export default function SdpStrategist() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-body mb-2">
-                  Monthly Base Pay
-                </label>
+                <label htmlFor="monthly_base_pay" className="block text-sm font-semibold text-body mb-2">Monthly Base Pay</label>
                 <input
                   type="number"
                   min={0}
@@ -188,9 +182,7 @@ export default function SdpStrategist() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-body mb-2">
-                  State Tax Rate (%)
-                </label>
+                <label htmlFor="state_tax_rate_" className="block text-sm font-semibold text-body mb-2">State Tax Rate (%)</label>
                 <input
                   type="number"
                   min={0}

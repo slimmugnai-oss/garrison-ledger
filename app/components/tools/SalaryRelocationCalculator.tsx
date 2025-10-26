@@ -203,10 +203,8 @@ export default function SalaryRelocationCalculator() {
             {useCustom && (
               <div className="mt-4 grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-body mb-1">
-                    Current City COL Index
-                  </label>
-                  <input
+                  <label htmlFor="current_city_col_index" className="block text-xs font-medium text-body mb-1">Current City COL Index</label>
+                <input
                     type="number"
                     value={customCurrentCOL}
                     onChange={(e) => setCustomCurrentCOL(Number(e.target.value))}
@@ -216,10 +214,8 @@ export default function SalaryRelocationCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-body mb-1">
-                    New City COL Index
-                  </label>
-                  <input
+                  <label htmlFor="new_city_col_index" className="block text-xs font-medium text-body mb-1">New City COL Index</label>
+                <input
                     type="number"
                     value={customNewCOL}
                     onChange={(e) => setCustomNewCOL(Number(e.target.value))}

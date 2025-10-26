@@ -624,7 +624,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Year</label>
+                <label htmlFor="year" className="mb-1 block text-sm font-medium text-gray-700">Year</label>
                 <input
                   type="number"
                   value={year || ""}

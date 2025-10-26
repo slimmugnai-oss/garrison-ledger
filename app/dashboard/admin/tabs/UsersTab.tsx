@@ -38,10 +38,6 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const [profileFilter, setProfileFilter] = useState('all');
   const [total, setTotal] = useState(initialTotal);
 
-  useEffect(() => {
-    loadUsers();
-  }, [searchQuery, tierFilter, branchFilter, profileFilter]);
-
   const loadUsers = async () => {
     setLoading(true);
     try {
@@ -74,6 +70,10 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadUsers();
+  }, [searchQuery, tierFilter, branchFilter, profileFilter, loadUsers]);
 
   const handleBulkEmail = async (selectedIds: string[]) => {
     alert(`Would send email to ${selectedIds.length} users`);
