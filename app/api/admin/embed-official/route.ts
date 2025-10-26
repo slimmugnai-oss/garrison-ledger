@@ -211,7 +211,7 @@ export async function GET(_request: NextRequest) {
 
           controller.close();
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
           send(`\n❌ Error: ${errorMessage}`);
           controller.close();
         }
@@ -226,7 +226,7 @@ export async function GET(_request: NextRequest) {
       },
     });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
