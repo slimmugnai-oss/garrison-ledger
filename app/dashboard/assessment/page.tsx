@@ -1,9 +1,9 @@
 import { currentUser } from '@clerk/nextjs/server';
-import { createClient } from '@supabase/supabase-js';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import AssessmentClient from './AssessmentClient';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
   title: 'Military Assessment | Garrison Ledger',
@@ -15,8 +15,7 @@ export default async function AdaptiveAssessmentPage() {
   if (!user) redirect('/sign-in');
 
   // Check if user has completed their profile
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-  const { data: profileRow } = await supabase
+  const { data: profileRow } = await supabaseAdmin
     .from("user_profiles")
     .select("profile_completed")
     .eq("user_id", user.id)
@@ -30,7 +29,7 @@ export default async function AdaptiveAssessmentPage() {
   }
 
   // Check premium status
-  const { data: entitlement } = await supabase
+  const { data: entitlement } = await supabaseAdmin
     .from('entitlements')
     .select('tier, status')
     .eq('user_id', user.id)
