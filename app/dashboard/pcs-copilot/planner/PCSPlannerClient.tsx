@@ -143,11 +143,11 @@ export default function PCSPlannerClient() {
     );
   };
 
-  const calculatePcsCost = async (base: Record<string, unknown>) => {
+  const calculatePcsCost = async (base: BaseData) => {
     // This would call the real PCS calculation API
     // For now, using simplified calculation
-    const baseCost = (base.bah as number) * 0.1; // 10% of BAH as rough PCS cost
-    const distanceCost = (base.distance as number) * 0.5; // $0.50 per mile
+    const baseCost = base.bah * 0.1; // 10% of BAH as rough PCS cost
+    const distanceCost = base.distance * 0.5; // $0.50 per mile
     return baseCost + distanceCost;
   };
 
