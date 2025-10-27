@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import BinderEmptyState from "@/app/components/binder/BinderEmptyState";
 import BinderLoadingSkeleton from "@/app/components/binder/BinderLoadingSkeleton";
+import DeleteConfirmationModal from "@/app/components/binder/DeleteConfirmationModal";
 import FileCard from "@/app/components/binder/FileCard";
 import FilePreview from "@/app/components/binder/FilePreview";
 import FolderSidebar from "@/app/components/binder/FolderSidebar";
@@ -77,6 +78,8 @@ function BinderContent() {
   const [showMoveModal, setShowMoveModal] = useState(false);
   const [showExpiryModal, setShowExpiryModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
 
   // Selected file for modals
   const [selectedFile, setSelectedFile] = useState<BinderFile | null>(null);
@@ -309,20 +312,24 @@ function BinderContent() {
     }
   };
 
-  const handleDelete = async (file: BinderFile) => {
-    // Use toast for confirmation instead of confirm()
-    const confirmDelete = window.confirm(`Delete "${file.display_name}"? This cannot be undone.`);
-    if (!confirmDelete) return;
+  const handleDeleteClick = (file: BinderFile) => {
+    setSelectedFile(file);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedFile) return;
 
     try {
       const response = await fetch("/api/binder/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileId: file.id }),
+        body: JSON.stringify({ fileId: selectedFile.id }),
       });
 
       if (response.ok) {
         toast.success("File deleted successfully");
+        setShowDeleteModal(false);
         loadFiles();
       } else {
         toast.error("Failed to delete file");
@@ -333,10 +340,13 @@ function BinderContent() {
     }
   };
 
+  const handleBulkDeleteClick = () => {
+    if (selectedFiles.size === 0) return;
+    setShowBulkDeleteModal(true);
+  };
+
   const handleBulkDelete = async () => {
     if (selectedFiles.size === 0) return;
-    const confirmDelete = window.confirm(`Delete ${selectedFiles.size} files? This cannot be undone.`);
-    if (!confirmDelete) return;
 
     try {
       await Promise.all(
@@ -351,6 +361,7 @@ function BinderContent() {
       toast.success(`${selectedFiles.size} files deleted successfully`);
       setSelectedFiles(new Set());
       setSelectionMode(false);
+      setShowBulkDeleteModal(false);
       loadFiles();
     } catch {
       // Non-critical: Error handled via UI state
@@ -503,7 +514,7 @@ function BinderContent() {
                 </button>
                 {selectedFiles.size > 0 && (
                   <button
-                    onClick={handleBulkDelete}
+                    onClick={handleBulkDeleteClick}
                     className="bg-danger/20 hover:bg-danger/30 ml-auto flex items-center gap-2 rounded-lg px-4 py-2 text-red-400 transition-colors"
                   >
                     <Icon name="Trash2" className="h-4 w-4" />
@@ -600,7 +611,7 @@ function BinderContent() {
                             }
                           : undefined
                       }
-                      onDelete={handleDelete}
+                      onDelete={handleDeleteClick}
                       isPremium={storage?.isPremium || false}
                       isSelected={selectedFiles.has(file.id)}
                       onSelect={toggleFileSelection}
@@ -774,6 +785,23 @@ function BinderContent() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        fileName={selectedFile?.display_name || ""}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+
+      {/* Bulk Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showBulkDeleteModal}
+        fileName=""
+        fileCount={selectedFiles.size}
+        onConfirm={handleBulkDelete}
+        onCancel={() => setShowBulkDeleteModal(false)}
+      />
 
       <Footer />
     </>

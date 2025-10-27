@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { toast } from 'sonner';
+import { useState, useRef } from "react";
+import { toast } from "sonner";
 
-import Icon from '../ui/Icon';
+import Icon from "../ui/Icon";
 
 interface Folder {
   name: string;
-  icon: 'Target' | 'Truck' | 'DollarSign' | 'House' | 'Shield';
+  icon: "Target" | "Truck" | "DollarSign" | "House" | "Shield";
   color: string;
 }
 
@@ -39,15 +39,15 @@ export default function UploadModal({
   onUpload,
   folders,
   docTypes,
-  initialFolder = 'Personal Records',
+  initialFolder = "Personal Records",
   storageLimit,
   storageUsed,
 }: UploadModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadFolder, setUploadFolder] = useState(initialFolder);
-  const [uploadDocType, setUploadDocType] = useState('other');
-  const [uploadExpiryDate, setUploadExpiryDate] = useState('');
+  const [uploadDocType, setUploadDocType] = useState("other");
+  const [uploadExpiryDate, setUploadExpiryDate] = useState("");
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
@@ -55,14 +55,14 @@ export default function UploadModal({
 
   const handleFileSelect = (file: File | null) => {
     if (!file) return;
-    
+
     if (file.size > storageLimit - storageUsed) {
       toast.error(
         `Storage limit exceeded. You need ${formatFileSize(file.size - (storageLimit - storageUsed))} more space. Upgrade to Premium for more storage.`
       );
       return;
     }
-    
+
     setUploadFile(file);
   };
 
@@ -102,10 +102,10 @@ export default function UploadModal({
       await onUpload(uploadFile, uploadFolder, uploadDocType, uploadExpiryDate);
       // Reset form
       setUploadFile(null);
-      setUploadExpiryDate('');
-      setUploadDocType('other');
+      setUploadExpiryDate("");
+      setUploadDocType("other");
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
     } finally {
       setUploading(false);
@@ -113,52 +113,53 @@ export default function UploadModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-gradient-to-br from-[#1A1F2E] to-[#141824] rounded-2xl border border-[#2A2F3E] max-w-2xl w-full shadow-2xl animate-slideInUp">
+    <div className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-2xl animate-slideInUp rounded-2xl border border-[#2A2F3E] bg-gradient-to-br from-[#1A1F2E] to-[#141824] shadow-2xl">
         {/* Header */}
-        <div className="p-6 border-b border-[#2A2F3E] flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-[#2A2F3E] p-6">
           <div>
             <h2 className="text-2xl font-bold text-white">Upload Document</h2>
-            <p className="text-sm text-muted mt-1">
-              Add a new file to your secure binder
-            </p>
+            <p className="mt-1 text-sm text-muted">Add a new file to your secure binder</p>
           </div>
           <button
             onClick={onClose}
             disabled={uploading}
-            className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-colors"
+            className="rounded-lg p-2 transition-colors hover:bg-[#2A2F3E]"
           >
-            <Icon name="X" className="w-5 h-5 text-muted" />
+            <Icon name="X" className="h-5 w-5 text-muted" />
           </button>
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-5">
+        <div className="space-y-5 p-6">
           {/* Drag & Drop Zone */}
           <div
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-xl p-8 transition-all ${
+            className={`rounded-xl border-2 border-dashed p-8 transition-all ${
               dragActive
-                ? 'border-[#00E5A0] bg-[#00E5A0]/10'
-                : 'border-[#2A2F3E] hover:border-[#3A3F4E]'
+                ? "border-[#00E5A0] bg-[#00E5A0]/10"
+                : "border-[#2A2F3E] hover:border-[#3A3F4E]"
             }`}
           >
             <div className="text-center">
-              <div className={`inline-block p-4 rounded-full mb-4 ${
-                dragActive ? 'bg-[#00E5A0]/20' : 'bg-[#2A2F3E]'
-              }`}>
-                <Icon name="Upload" className={`w-8 h-8 ${
-                  dragActive ? 'text-[#00E5A0]' : 'text-gray-400'
-                }`} />
+              <div
+                className={`mb-4 inline-block rounded-full p-4 ${
+                  dragActive ? "bg-[#00E5A0]/20" : "bg-[#2A2F3E]"
+                }`}
+              >
+                <Icon
+                  name="Upload"
+                  className={`h-8 w-8 ${dragActive ? "text-[#00E5A0]" : "text-gray-400"}`}
+                />
               </div>
-              <p className="text-muted mb-2">
-                {dragActive ? 'Drop file here' : 'Drag and drop your file here'}
+              <p className="mb-2 text-muted">
+                {dragActive ? "Drop file here" : "Drag and drop your file here"}
               </p>
-              <p className="text-sm text-muted mb-4">or</p>
-              <label className="cursor-pointer inline-block">
+              <p className="mb-4 text-sm text-muted">or</p>
+              <label className="inline-block cursor-pointer">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -166,16 +167,16 @@ export default function UploadModal({
                   className="hidden"
                   disabled={uploading}
                 />
-                <span className="px-6 py-2.5 bg-[#2A2F3E] text-white rounded-lg hover:bg-[#3A3F4E] transition-colors font-medium inline-block">
+                <span className="inline-block rounded-lg bg-[#2A2F3E] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#3A3F4E]">
                   Choose File
                 </span>
               </label>
-              
+
               {uploadFile && (
-                <div className="mt-4 p-3 bg-[#0A0F1E] rounded-lg border border-[#2A2F3E]">
+                <div className="mt-4 rounded-lg border border-[#2A2F3E] bg-[#0A0F1E] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Icon name="File" className="w-5 h-5 text-[#00E5A0]" />
+                      <Icon name="File" className="h-5 w-5 text-[#00E5A0]" />
                       <div className="text-left">
                         <p className="text-sm font-medium text-white">{uploadFile.name}</p>
                         <p className="text-xs text-muted">{formatFileSize(uploadFile.size)}</p>
@@ -185,12 +186,12 @@ export default function UploadModal({
                       onClick={() => {
                         setUploadFile(null);
                         if (fileInputRef.current) {
-                          fileInputRef.current.value = '';
+                          fileInputRef.current.value = "";
                         }
                       }}
-                      className="p-1.5 hover:bg-[#2A2F3E] rounded-lg transition-colors"
+                      className="rounded-lg p-1.5 transition-colors hover:bg-[#2A2F3E]"
                     >
-                      <Icon name="X" className="w-4 h-4 text-muted" />
+                      <Icon name="X" className="h-4 w-4 text-muted" />
                     </button>
                   </div>
                 </div>
@@ -200,14 +201,12 @@ export default function UploadModal({
 
           {/* Folder Selection */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-disabled">
-              Folder
-            </label>
+            <label className="text-disabled mb-2 block text-sm font-semibold">Folder</label>
             <select
               value={uploadFolder}
               onChange={(e) => setUploadFolder(e.target.value)}
               disabled={uploading}
-              className="w-full px-4 py-2.5 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-white focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0] transition-colors"
+              className="w-full rounded-lg border border-[#2A2F3E] bg-[#0A0F1E] px-4 py-2.5 text-white transition-colors focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0]"
             >
               {folders.map((folder) => (
                 <option key={folder.name} value={folder.name}>
@@ -219,14 +218,12 @@ export default function UploadModal({
 
           {/* Document Type */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-disabled">
-              Document Type
-            </label>
+            <label className="text-disabled mb-2 block text-sm font-semibold">Document Type</label>
             <select
               value={uploadDocType}
               onChange={(e) => setUploadDocType(e.target.value)}
               disabled={uploading}
-              className="w-full px-4 py-2.5 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-white focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0] transition-colors"
+              className="w-full rounded-lg border border-[#2A2F3E] bg-[#0A0F1E] px-4 py-2.5 text-white transition-colors focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0]"
             >
               {docTypes.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -238,41 +235,41 @@ export default function UploadModal({
 
           {/* Expiry Date */}
           <div>
-            <label className="block text-sm font-semibold mb-2 text-disabled">
-              Expiry Date <span className="text-muted font-normal">(optional)</span>
+            <label className="text-disabled mb-2 block text-sm font-semibold">
+              Expiry Date <span className="font-normal text-muted">(optional)</span>
             </label>
             <input
               type="date"
               value={uploadExpiryDate}
               onChange={(e) => setUploadExpiryDate(e.target.value)}
               disabled={uploading}
-              className="w-full px-4 py-2.5 bg-[#0A0F1E] border border-[#2A2F3E] rounded-lg text-white focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0] transition-colors [color-scheme:dark]"
+              className="w-full rounded-lg border border-[#2A2F3E] bg-[#0A0F1E] px-4 py-2.5 text-white transition-colors [color-scheme:dark] focus:border-[#00E5A0] focus:ring-1 focus:ring-[#00E5A0]"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[#2A2F3E] flex gap-3">
+        <div className="flex gap-3 border-t border-[#2A2F3E] p-6">
           <button
             onClick={onClose}
             disabled={uploading}
-            className="flex-1 px-6 py-2.5 bg-[#2A2F3E] text-white rounded-lg hover:bg-[#3A3F4E] transition-colors font-medium disabled:opacity-50"
+            className="flex-1 rounded-lg bg-[#2A2F3E] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#3A3F4E] disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={uploading || !uploadFile}
-            className="flex-1 px-6 py-2.5 bg-gradient-to-r from-[#00E5A0] to-[#00CC8E] text-[#0A0F1E] rounded-lg hover:shadow-lg hover:scale-[1.02] transition-all font-semibold disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#00E5A0] to-[#00CC8E] px-6 py-2.5 font-semibold text-[#0A0F1E] transition-all hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
           >
             {uploading ? (
               <>
-                <div className="w-4 h-4 border-2 border-[#0A0F1E]/30 border-t-[#0A0F1E] rounded-full animate-spin" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#0A0F1E]/30 border-t-[#0A0F1E]" />
                 Uploading...
               </>
             ) : (
               <>
-                <Icon name="Upload" className="w-4 h-4" />
+                <Icon name="Upload" className="h-4 w-4" />
                 Upload File
               </>
             )}
@@ -282,4 +279,3 @@ export default function UploadModal({
     </div>
   );
 }
-

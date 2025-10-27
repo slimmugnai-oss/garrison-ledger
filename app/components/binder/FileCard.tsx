@@ -89,6 +89,9 @@ export default function FileCard({
             <button
               onClick={() => onSelect(file)}
               className="flex-shrink-0 mr-3"
+              aria-label={isSelected ? `Deselect ${file.display_name}` : `Select ${file.display_name}`}
+              role="checkbox"
+              aria-checked={isSelected}
             >
               <div
                 className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
@@ -108,6 +111,8 @@ export default function FileCard({
           <button
             onClick={() => !selectionMode && onPreview(file)}
             className="flex items-center flex-1 min-w-0 text-left group-hover:scale-[1.01] transition-transform"
+            aria-label={`Open ${file.display_name}`}
+            tabIndex={0}
           >
             <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#2A2F3E] to-[#1F2433] rounded-xl flex items-center justify-center mr-3 group-hover:shadow-lg transition-all">
               <Icon
@@ -152,21 +157,24 @@ export default function FileCard({
             <button
               onClick={() => onRename(file)}
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
-              title="Rename"
+              title="Rename file"
+              aria-label={`Rename ${file.display_name}`}
             >
               <Icon name="Edit" className="w-4 h-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onMove(file)}
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
-              title="Move"
+              title="Move to folder"
+              aria-label={`Move ${file.display_name} to another folder`}
             >
               <Icon name="Folder" className="w-4 h-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onSetExpiry(file)}
               className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
-              title="Set Expiry"
+              title="Set expiry date"
+              aria-label={`Set expiry date for ${file.display_name}`}
             >
               <Icon name="Calendar" className="w-4 h-4 text-muted hover:text-white" />
             </button>
@@ -174,7 +182,8 @@ export default function FileCard({
               <button
                 onClick={() => onShare(file)}
                 className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
-                title="Share"
+                title="Create share link"
+                aria-label={`Share ${file.display_name}`}
               >
                 <Icon name="Share2" className="w-4 h-4 text-muted hover:text-white" />
               </button>
@@ -182,7 +191,8 @@ export default function FileCard({
             <button
               onClick={() => onDelete(file)}
               className="p-2 hover:bg-danger/20 rounded-lg transition-all hover:scale-110 text-red-400"
-              title="Delete"
+              title="Delete file"
+              aria-label={`Delete ${file.display_name}`}
             >
               <Icon name="Trash2" className="w-4 h-4" />
             </button>
