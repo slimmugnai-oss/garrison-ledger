@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import Explainer from "@/app/components/ai/Explainer";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
 
@@ -311,6 +312,17 @@ export default function HouseHack() {
             for unexpected expenses and consult with a real estate professional and financial
             advisor before purchasing.
           </p>
+        </div>
+
+        {/* AI Explainer - Provides context on whether this investment makes sense */}
+        <div className="mt-6">
+          <Explainer
+            payload={{
+              tool: "house-hacking-calculator",
+              inputs: { propertyPrice, interestRate, monthlyBAH, monthlyRent },
+              outputs: { monthlyPITI, monthlyIncome, monthlyCashFlow },
+            }}
+          />
         </div>
       </div>
 

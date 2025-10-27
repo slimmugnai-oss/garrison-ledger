@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import Explainer from "@/app/components/ai/Explainer";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
 
@@ -533,6 +534,17 @@ export default function PcsFinancialPlanner() {
             consult your Transportation Office (TMO) for official entitlement calculations and
             reimbursement guidance.
           </p>
+        </div>
+
+        {/* AI Explainer - Provides PCS planning insights and tips based on the user's budget */}
+        <div className="mt-6">
+          <Explainer
+            payload={{
+              tool: "pcs-budget-calculator",
+              inputs: { rank, dependencyStatus, dla, perDiem },
+              outputs: { totalIncome, totalExpenses, netEstimate },
+            }}
+          />
         </div>
       </div>
 

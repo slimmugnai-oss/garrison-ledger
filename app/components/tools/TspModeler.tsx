@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import Explainer from "@/app/components/ai/Explainer";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
 
@@ -360,6 +361,29 @@ export default function TspModeler() {
             will vary based on market conditions. Consider your risk tolerance, time horizon, and
             financial goals. Consult with a financial advisor for personalized guidance.
           </p>
+        </div>
+
+        {/* AI Explainer - Helps users understand their allocation strategy and results */}
+        <div className="mt-6">
+          <Explainer
+            payload={{
+              tool: "tsp-calculator",
+              inputs: {
+                age,
+                retirementAge,
+                currentBalance,
+                monthlyContribution,
+                allocation: { C: allocC, S: allocS, I: allocI, F: allocF, G: allocG },
+              },
+              outputs: {
+                customBalance,
+                l2050Balance,
+                difference,
+                customReturn: (customReturn * 100).toFixed(2),
+                yearsToRetirement,
+              },
+            }}
+          />
         </div>
       </div>
 

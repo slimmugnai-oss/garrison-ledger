@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import Explainer from "@/app/components/ai/Explainer";
 import CitySearchInput from "@/app/components/ui/CitySearchInput";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
@@ -437,6 +438,27 @@ export default function CareerOpportunityAnalyzer() {
               This is a planning tool only. Consult with a financial advisor before making major
               career decisions.
             </p>
+          </div>
+
+          {/* AI Explainer - Provides career decision insights and non-financial factors to consider */}
+          <div className="mt-6">
+            <Explainer
+              payload={{
+                tool: "career-comparison-calculator",
+                inputs: {
+                  currentCity: currentJob.city?.city,
+                  currentSalary: currentJob.salary,
+                  newCity: newOffer.city?.city,
+                  newSalary: newOffer.salary,
+                },
+                outputs: {
+                  currentAfterTax,
+                  newAfterTax,
+                  netDifference,
+                  percentChange,
+                },
+              }}
+            />
           </div>
         </div>
       )}

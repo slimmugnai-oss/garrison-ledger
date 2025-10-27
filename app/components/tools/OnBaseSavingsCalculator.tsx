@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import Explainer from "@/app/components/ai/Explainer";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
 
@@ -302,6 +303,27 @@ export default function OnBaseSavingsCalculator() {
             averages and may not reflect your specific purchases. Use this as a general planning
             tool only.
           </p>
+        </div>
+
+        {/* AI Explainer - Provides personalized shopping strategy tips based on the user's spending */}
+        <div className="mt-6">
+          <Explainer
+            payload={{
+              tool: "on-base-savings-calculator",
+              inputs: {
+                monthlyGroceries,
+                annualMajorPurchases,
+                annualClothing,
+                weeklyGasGallons,
+                salesTaxRate,
+              },
+              outputs: {
+                annualCommissarySavings,
+                totalExchangeSavings,
+                totalAnnualSavings,
+              },
+            }}
+          />
         </div>
       </div>
 
