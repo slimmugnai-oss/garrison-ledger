@@ -22,7 +22,7 @@ import {
   type FormData,
   type CalculationResult,
 } from "@/lib/pcs/calculation-engine";
-import { 
+import {
   calculatePPMWithholding,
   type PPMWithholdingResult,
 } from "@/lib/pcs/ppm-withholding-calculator";
@@ -92,7 +92,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const [ocrData, setOcrData] = useState<any>(null);
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
-  
+
   // PPM withholding calculator state
   const [ppmDisclaimerAccepted, setPpmDisclaimerAccepted] = useState(false);
   const [ppmMode, setPpmMode] = useState<"official" | "estimator" | null>(null);
@@ -104,6 +104,11 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
     laborCosts: 0,
     tollsAndFees: 0,
   });
+
+  // MUST DECLARE updateFormData BEFORE useEffect hooks that depend on it
+  const updateFormData = (updates: Partial<WizardFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
 
   /**
    * Extract ZIP code from military base name
@@ -309,17 +314,13 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
     return () => clearTimeout(timer);
   }, [calculateEstimates]);
 
-  const updateFormData = (updates: Partial<WizardFormData>) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
-  };
-
   /**
    * Handle PPM mode selection and calculate withholding
    */
   const handlePPMCalculation = async (mode: "official" | "estimator", data: any) => {
     setPpmMode(mode);
     setPpmGccAmount(data.gccAmount);
-    
+
     if (data.movingExpenses !== undefined) {
       setPpmExpenses({
         movingCosts: data.movingExpenses,
@@ -328,12 +329,12 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         tollsAndFees: data.tollsAndFees || 0,
       });
     }
-    
+
     // Calculate withholding
     try {
       // Extract destination state from base
       const destState = extractStateFromBase(formData.destination_base || "");
-      
+
       const withholdingResult = await calculatePPMWithholding({
         gccAmount: data.gccAmount,
         incentivePercentage: 100, // Current rate (admin can override later)
@@ -345,14 +346,14 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         },
         destinationState: destState,
       });
-      
+
       setPpmWithholding(withholdingResult);
-      
+
       // Update form data with PPM amount for overall calculation
       updateFormData({
         actual_weight: data.weight || formData.actual_weight,
       });
-      
+
       logger.info("PPM withholding calculated:", {
         mode,
         gcc: data.gccAmount,
@@ -369,7 +370,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
    */
   const extractStateFromBase = useCallback((baseName: string): string => {
     if (!baseName) return "TX"; // Default fallback
-    
+
     const normalizedInput = baseName.toLowerCase().trim();
     const base = militaryBasesData.bases.find(
       (b: any) =>
@@ -377,7 +378,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         normalizedInput.includes(b.name.toLowerCase()) ||
         b.city.toLowerCase().includes(normalizedInput)
     );
-    
+
     return base?.state || "TX"; // Default to TX (no state tax)
   }, []);
 
@@ -982,7 +983,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                       setPpmWithholding(updated);
                     }}
                   />
-                  
+
                   <Button
                     variant="outline"
                     size="sm"

@@ -28,11 +28,15 @@ interface PPMData {
 
 /**
  * PPM Mode Selector - Choose between official GCC entry or estimator
- * 
+ *
  * Official Path (Recommended): User enters GCC from MilMove
  * Estimator Path: Planning estimate when GCC not available yet
  */
-export default function PPMModeSelector({ onModeSelected, weight, distance }: PPMModeSelectorProps) {
+export default function PPMModeSelector({
+  onModeSelected,
+  weight,
+  distance,
+}: PPMModeSelectorProps) {
   const [selectedMode, setSelectedMode] = useState<"official" | "estimator" | null>(null);
   const [gccAmount, setGccAmount] = useState<string>("");
   const [movingExpenses, setMovingExpenses] = useState<string>("0");
@@ -60,9 +64,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
             <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3">
               <Icon name="CheckCircle" className="h-8 w-8 text-green-600" />
             </div>
-            <h4 className="mb-2 text-lg font-bold text-slate-900">
-              I Have My GCC from MilMove
-            </h4>
+            <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from MilMove</h4>
             <p className="mb-4 text-sm text-slate-600">
               Enter the Government Constructed Cost from your MilMove estimate. This provides the
               most accurate payout calculation.
@@ -93,8 +95,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
             </div>
             <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
             <p className="mb-4 text-sm text-slate-600">
-              Get a rough estimate for early planning. Uses weight and distance to approximate
-              GCC.
+              Get a rough estimate for early planning. Uses weight and distance to approximate GCC.
             </p>
             <ul className="space-y-2 text-xs text-slate-600">
               <li className="flex items-center gap-2">
@@ -125,11 +126,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
               <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
               Enter Your GCC from MilMove
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedMode(null)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSelectedMode(null)}>
               Change Method
             </Button>
           </div>
@@ -158,7 +155,17 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
             <div className="mt-2 rounded-lg bg-blue-50 p-3">
               <p className="mb-2 text-xs font-semibold text-blue-900">How to find your GCC:</p>
               <ol className="ml-4 list-decimal space-y-1 text-xs text-blue-800">
-                <li>Visit <a href="https://www.move.mil/moving-guide/ppm" target="_blank" rel="noopener noreferrer" className="underline">move.mil PPM calculator</a></li>
+                <li>
+                  Visit{" "}
+                  <a
+                    href="https://www.move.mil/moving-guide/ppm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    move.mil PPM calculator
+                  </a>
+                </li>
                 <li>Enter your move details (weight, origin, destination, dates)</li>
                 <li>Click "Calculate" to get your GCC estimate</li>
                 <li>Copy the GCC dollar amount and paste it above</li>
@@ -175,7 +182,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
             <p className="mb-3 text-xs text-slate-600">
               Track your moving expenses - these reduce your taxable income and save on taxes!
             </p>
-            
+
             <div className="space-y-3">
               <Input
                 label="Moving Costs (truck rental, equipment, supplies)"
@@ -214,12 +221,13 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
                 step="0.01"
               />
             </div>
-            
+
             <div className="mt-3 rounded-lg bg-green-50 p-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-green-900">Total Deductible Expenses:</span>
                 <span className="text-lg font-bold text-green-700">
-                  ${(
+                  $
+                  {(
                     parseFloat(movingExpenses || "0") +
                     parseFloat(fuelReceipts || "0") +
                     parseFloat(laborCosts || "0") +
@@ -268,21 +276,15 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
               <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600" />
               Planning Estimate Mode
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedMode(null)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setSelectedMode(null)}>
               Change Method
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Warning */}
-          <div className="rounded-lg bg-amber-50 border-2 border-amber-600 p-4">
-            <p className="text-sm font-bold text-amber-900">
-              ⚠️  PLANNING ESTIMATE ONLY
-            </p>
+          <div className="rounded-lg border-2 border-amber-600 bg-amber-50 p-4">
+            <p className="text-sm font-bold text-amber-900">⚠️ PLANNING ESTIMATE ONLY</p>
             <p className="mt-1 text-xs text-amber-800">
               This is NOT your official reimbursement. Actual GCC may vary by ±30% based on route
               complexity, seasonal demand, and contract pricing. For accurate calculation, get your
@@ -314,12 +316,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Cost per Pound-Mile (Industry Average)
               </label>
-              <Input
-                type="number"
-                value="0.50"
-                disabled
-                className="bg-slate-100"
-              />
+              <Input type="number" value="0.50" disabled className="bg-slate-100" />
               <p className="mt-1 text-xs text-slate-500">
                 Industry average. Actual DoD contract rates are proprietary.
               </p>
@@ -328,13 +325,15 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
             <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-4">
               <div className="mb-2 text-sm font-medium text-slate-700">Estimated GCC:</div>
               <div className="text-3xl font-black text-slate-900">
-                ${((weight || 0) * (distance || 0) * 0.50).toLocaleString()}
+                ${((weight || 0) * (distance || 0) * 0.5).toLocaleString()}
               </div>
               <div className="mt-2 text-xs text-slate-600">
-                Formula: {weight?.toLocaleString()} lbs × {distance?.toLocaleString()} mi × $0.50/lb-mi
+                Formula: {weight?.toLocaleString()} lbs × {distance?.toLocaleString()} mi ×
+                $0.50/lb-mi
               </div>
               <div className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-900">
-                ⚠️ Variance: ±30% (${(((weight || 0) * (distance || 0) * 0.50) * 0.7).toLocaleString()} - ${(((weight || 0) * (distance || 0) * 0.50) * 1.3).toLocaleString()})
+                ⚠️ Variance: ±30% (${((weight || 0) * (distance || 0) * 0.5 * 0.7).toLocaleString()}{" "}
+                - ${((weight || 0) * (distance || 0) * 0.5 * 1.3).toLocaleString()})
               </div>
             </div>
           </div>
@@ -343,7 +342,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
           <div className="space-y-3">
             <Button
               onClick={() => {
-                const estimatedGCC = (weight || 0) * (distance || 0) * 0.50;
+                const estimatedGCC = (weight || 0) * (distance || 0) * 0.5;
                 if (estimatedGCC > 0) {
                   onModeSelected("estimator", {
                     mode: "estimator",
@@ -359,7 +358,7 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
               <Icon name="Calculator" className="mr-2 h-5 w-5" />
               Use Planning Estimate
             </Button>
-            
+
             <Button
               variant="outline"
               className="w-full"
@@ -376,4 +375,3 @@ export default function PPMModeSelector({ onModeSelected, weight, distance }: PP
 
   return null;
 }
-
