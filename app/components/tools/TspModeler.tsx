@@ -461,14 +461,16 @@ export default function TspModeler() {
           <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <h2 className="text-2xl font-bold text-primary mb-6">Growth Projection</h2>
             {loading ? (
-              <div className="flex items-center justify-center h-60">
+              <div className="flex items-center justify-center h-80">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
-            ) : apiData ? (
-              <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
+            ) : apiData && apiData.seriesDefault && apiData.seriesCustom ? (
+              <div className="w-full" style={{ height: '400px' }}>
+                <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
+              </div>
             ) : (
-              <div className="flex items-center justify-center h-60 text-muted">
-                Enter your information above to see projections
+              <div className="flex items-center justify-center h-80 text-muted">
+                {apiData ? 'Chart data is loading...' : 'Enter your information above to see projections'}
               </div>
             )}
           </div>
