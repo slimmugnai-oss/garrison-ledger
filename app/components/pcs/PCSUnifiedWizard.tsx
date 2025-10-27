@@ -392,14 +392,22 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
   const handleOCRComplete = (extractedData: any) => {
     setOcrData(extractedData);
-    // Populate form with OCR data
+    
+    // Populate form with OCR data (handle both snake_case and camelCase)
     updateFormData({
-      pcs_orders_date: extractedData.ordersDate,
-      departure_date: extractedData.departureDate,
-      origin_base: extractedData.originBase,
-      destination_base: extractedData.destinationBase,
+      pcs_orders_date: extractedData.orders_date || extractedData.ordersDate,
+      departure_date: extractedData.departure_date || extractedData.departureDate,
+      arrival_date: extractedData.report_date || extractedData.reportDate,
+      origin_base: extractedData.origin_base || extractedData.originBase,
+      destination_base: extractedData.destination_base || extractedData.destinationBase,
       rank_at_pcs: extractedData.rank,
+      dependents_count: extractedData.dependents_authorized || 0,
     });
+    
+    // Show success message
+    toast.success("PCS orders data extracted! Review and continue to next step.");
+    
+    // Move to basic info step
     setCurrentStep("basic-info");
   };
 
