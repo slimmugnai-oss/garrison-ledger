@@ -1,261 +1,161 @@
 # GARRISON LEDGER - SYSTEM STATUS
 
-**Last Updated:** 2025-10-26  
-**Version:** 4.0.0 (from ssot.ts)  
+**Last Updated:** 2025-10-27  
+**Version:** 6.1.0 (PCS Copilot UX Overhaul)  
 **Environment:** Production
 
 ---
 
-## 🎯 PRODUCTION FEATURES (from sitemap.ts)
+## 🎯 CURRENT STATE
 
-### Public Pages
-- **Homepage** (`/`) - Tools-first landing page
-- **Sign In/Up** (`/sign-in`, `/sign-up`) - Clerk authentication
-- **Privacy & Disclosures** (`/privacy`, `/disclosures`) - Legal compliance
+| Component | Status |
+|-----------|--------|
+| **Deployment** | ✅ Live on Vercel |
+| **Database** | ✅ Supabase (28 tables, 4 users) |
+| **Authentication** | ✅ Clerk integration |
+| **Build** | ✅ Successful (198 pages) |
+| **TypeScript** | ✅ Zero errors |
 
-### Hub Pages (Public, High-Value Content)
-- **PCS Hub** (`/pcs-hub`) - PCS planning resources
-- **Career Hub** (`/career-hub`) - Military career guidance
-- **Deployment** (`/deployment`) - Deployment preparation
-- **On-Base Shopping** (`/on-base-shopping`) - Shopping guides
-- **Base Guides** (`/base-guides`) - 203 bases (163 CONUS, 40 OCONUS)
+---
 
-### Premium Tools (Dashboard - Auth Required)
+## 🛠️ PREMIUM TOOLS (5)
 
-#### 1. **LES Auditor** (`/dashboard/paycheck-audit`) - BETA
-- **Status:** Beta testing
-- **Tier:** Free + Premium
-- **Free:** 1 upload/month, 5MB max, PDF only
-- **Premium:** Unlimited uploads
-- **Features:** OCR processing, pay error detection, LES validation
+### 1. **LES Auditor** (`/dashboard/paycheck-audit`)
+- **Status:** Beta
+- **Tier:** Free (1/month) + Premium (unlimited)
+- **Features:** PDF OCR, pay validation, tax verification
+- **Tech:** Google Vision API for OCR
 
-#### 2. **Ask Assistant** (`/dashboard/ask`) - ACTIVE
-- **Status:** Production stable
-- **Tier:** All tiers
-- **Free:** 5 questions/month, 3072 tokens
-- **Premium:** 50 questions/month, 6144 tokens
-- **Credit packs:** 25/$1.99, 100/$5.99, 250/$9.99
-- **Features:** RAG-enabled with pgvector, official data queries
-
-#### 3. **PCS Copilot** (`/dashboard/pcs-copilot`) - ACTIVE
-- **Status:** Production stable
+### 2. **PCS Copilot** (`/dashboard/pcs-copilot`) 🆕 OVERHAULED
+- **Status:** Production - MAJOR UX UPDATE (Oct 27, 2025)
 - **Tier:** Premium exclusive
-- **Features:** 
-  - DITY calculations and entitlements
-  - OCR document processing
-  - Assignment planner (base comparison)
-  - Claim management and validation
+- **New Features:**
+  - Unified responsive wizard (OCR-first or manual entry)
+  - Real-time ROI display (updates as you type)
+  - Plain English tooltips for all military jargon
+  - Professional PDF export (military-grade formatting)
+  - Progress indicators throughout
+  - Conservative messaging (no dollar claims)
+- **Removed:** Comparison tool, Assignment planner (separate scope)
+- **Tech:** Google Vision OCR, JTR validation (54 rules), official 2025 rates
 
-#### 4. **Base Navigator** (`/dashboard/navigator`) - ACTIVE
-- **Status:** Production stable
+### 3. **Base Navigator** (`/dashboard/navigator`)
+- **Status:** Production
+- **Tier:** Premium exclusive  
+- **Features:** 203 bases, weather, housing, schools
+- **Tech:** Google Weather, Zillow, GreatSchools APIs
+
+### 4. **TDY Copilot** (`/dashboard/tdy-voucher`)
+- **Status:** Production
 - **Tier:** Premium exclusive
-- **Features:**
-  - External data: Weather (Google), Housing (Zillow), Schools (GreatSchools)
-  - 30-day cache with provenance tracking
-  - Neighborhood analysis
+- **Features:** Per diem, lodging, voucher generation
 
-#### 5. **TDY Voucher** (`/dashboard/tdy-voucher`) - ACTIVE
-- **Status:** Production stable
-- **Tier:** All tiers
-- **Features:** Per diem calculations, voucher generation
-
-### Core Calculators (Dashboard Tools)
-- **TSP Modeler** (`/dashboard/tools/tsp-modeler`)
-- **SDP Strategist** (`/dashboard/tools/sdp-strategist`)
-- **House Hacking Calculator** (`/dashboard/tools/house-hacking`)
-- **Salary Calculator** (`/dashboard/tools/salary-calculator`)
-- **PCS Planner** (`/dashboard/tools/pcs-planner`)
-- **On-Base Savings** (`/dashboard/tools/on-base-savings`)
-
-### Deprecated/Removed Features
-- **Intel Library** → Ask Assistant (deprecated 2025-01-23)
-- **Base Comparison Feature** (removed, factual-only policy)
-- **Natural Search** (removed, cost optimization)
+### 5. **Ask Military Expert** (`/dashboard/ask`)
+- **Status:** Production
+- **Tier:** All users (with limits)
+- **Free:** 5 questions/month
+- **Premium:** 50 questions/month  
+- **Tech:** RAG system with 410 content blocks + 34 premium guides
+- **Note:** Formerly "Intel Library" - transformed into Ask Assistant
 
 ---
 
-## 🗄️ DATA SYSTEMS (4 Subsystems)
+## 🧮 FREE CALCULATORS (6)
 
-### 1. **LES Auditor Data** - Annual/Quarterly Updates
-- `military_pay_tables` - Base pay (E01-O10)
-- `bah_rates` - Housing allowance (14,352 rates)
-- `sgli_rates` - Life insurance premiums
-- `payroll_tax_constants` - FICA/Medicare rates
-- `state_tax_rates` - State tax information
-- `conus_cola_rates` / `oconus_cola_rates` - Cost of living
-
-### 2. **Base Navigator Data** - External APIs, 30-day Auto-refresh
-- `base_external_data_cache` - Weather, schools, housing data
-- `neighborhood_profiles` - ZIP analysis
-- **Sources:** Google Weather, Zillow (RapidAPI), GreatSchools
-
-### 3. **PCS Copilot Data** - Annual Updates
-- `entitlements_data` - DLA, weight allowances
-- `jtr_rules` - Joint Travel Regulations
-- **Sources:** JTR, DFAS, DTMO
-
-### 4. **Content Data** - Hand-curated
-- `content_blocks` - 410 expert content blocks
-- `feed_items` - RSS articles
+1. TSP Modeler
+2. SDP Strategist
+3. House Hacking Calculator
+4. Military Salary Calculator
+5. PCS Planner (basic estimates)
+6. On-Base Savings Calculator
 
 ---
 
-## 🤖 AI MODELS & COSTS (from ssot.ts)
+## 🔐 ENVIRONMENT VARIABLES
 
-### Primary Models
-- **Provider:** Google Gemini 2.5 Flash
-- **Plan generation:** $0.02/plan
-- **Ask Assistant:** RAG-enabled with text-embedding-3-small
-- **PCS OCR:** $0.0003/document
+**Required:**
+- `GOOGLE_API_KEY` - Used for Vision (OCR), Distance, Places, Weather (unified key)
+- `CLERK_SECRET_KEY` - Authentication
+- `SUPABASE_SERVICE_ROLE_KEY` - Database
+- `STRIPE_SECRET_KEY` - Payments
+- `RAPIDAPI_KEY` - Zillow housing data
 
-### Cost Structure
-- **Per user monthly:** $0.35 (AI + API costs)
-- **Margin:** 96.5%
-- **Weather API:** $0.10 per 1000 requests
-- **Housing API:** $0.50 per 1000 requests
-- **Schools API:** $0.25 per 1000 requests
+**Optional:**
+- `GREAT_SCHOOLS_API_KEY` - School ratings (premium feature)
 
 ---
 
-## 🛠️ TECH STACK
+## 📊 DATABASE (28 Tables)
 
-### Core Framework
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript 5.x
-- **Styling:** Tailwind CSS
-- **Hosting:** Vercel
-
-### Authentication & Database
-- **Auth:** Clerk (with Supabase user sync via webhook)
-- **Database:** Supabase (PostgreSQL + pgvector)
-- **RLS:** Row Level Security enabled on all tables
-
-### Payments & Integrations
-- **Payments:** Stripe
-- **APIs:** Google Weather, Zillow (RapidAPI), GreatSchools
-- **AI:** Google Gemini 2.5 Flash
+**Core:** user_profiles, entitlements, ask_credits, user_gamification  
+**Premium:** les_uploads, pcs_claims, tdy_trips, base_external_data_cache  
+**Content:** content_blocks (410), feed_items, intel_cards  
+**Data:** military_pay_tables (282), bah_rates (14,352), jtr_rules (54), entitlements_data (44)  
+**System:** analytics_events, error_logs, site_pages
 
 ---
 
-## 💰 PRICING (from ssot.ts)
+## 🎖️ LATEST SESSION UPDATES (2025-10-27)
 
-### Subscription
-- **Premium Monthly:** $9.99/month
-- **Premium Annual:** $99/year (20% savings)
+### **PCS Copilot - Complete UX Overhaul**
 
-### Ask Assistant Credit Packs
-- **25 Questions:** $1.99 (7.96¢ per question)
-- **100 Questions:** $5.99 (5.99¢ per question)
-- **250 Questions:** $9.99 (3.996¢ per question)
+**What Changed:**
+- Simplified from 4 modes to 1 unified wizard
+- Added real-time ROI display at top
+- Plain English tooltips for all jargon (DLA, TLE, MALT, PPM)
+- Professional PDF with military-grade formatting
+- Removed "maximum profit" messaging → "calculate entitlements"
+- Deleted unused code (comparison, planner, debug tools)
+- 74% code reduction in main client (958 lines → 245 lines)
 
----
+**Why:**
+- Military users want ONE clear path, not options
+- Value must be visible immediately (not at end of flow)
+- Jargon creates barriers (E1-E5 don't know TLE/MALT)
+- Professional output builds trust
 
-## 📊 KEY METRICS (from ssot.ts)
+**Conservative Messaging Audit:**
+- ❌ Removed: "$8,000 saved", "maximum profit", "guaranteed"
+- ✅ Replaced: "Calculate entitlements", "official 2025 rates", "JTR-compliant"
 
-### Platform Scale
-- **Pages:** 130
-- **API Routes:** 98
-- **Military Bases:** 203 (163 CONUS, 40 OCONUS)
-- **BAH Rates:** 14,352 (2025)
-- **Content Blocks:** 410
+### **Bug Fixes (Deployed)**
+- Middleware: Fixed `await auth.protect()` (stops 404 errors)
+- Analytics: Removed event_type column (database schema match)
+- Google API: Unified to GOOGLE_API_KEY for all services
+- Base Guides: Added redirect to navigator (fixes 404)
 
-### Performance Targets
-- **Page Load:** < 3 seconds
-- **Core Web Vitals:** LCP < 2.5s, FID < 0.1s, CLS < 0.1
-- **Bundle Size:** < 200KB first load, < 50KB per route
-- **Mobile:** < 5s load on 3G
-
----
-
-## 📚 DOCUMENTATION MAP
-
-### Active Operational Docs (`docs/active/`)
-- `ASK_ASSISTANT_FEATURE.md` - Ask Assistant implementation
-- `PCS_COPILOT_ARCHITECTURE_MAP.md` - Comprehensive PCS system guide
-- `LES_AUDITOR_*` - Testing, implementation, user guides
-- `BASE_NAVIGATOR_*` - Setup, API, troubleshooting
-- `PREMIUM_TOOL_AUDIT_TEMPLATE.md` - Tool evaluation framework
-- `REAL_DATA_COLLECTION_PLAN.md` - Data sourcing strategy
-- `AI_COST_*` - Cost monitoring and analysis
-- `MOBILE_*` - Mobile optimization guides
-- `ANNUAL_BAS_UPDATE_REMINDER.md` - Recurring maintenance
-
-### Master References
-- `lib/ssot.ts` - Single Source of Truth for all constants
-- `app/sitemap.ts` - Production routes and priorities
-- `docs/DATA_SOURCES_REFERENCE.md` - Data source details
-- `docs/MILITARY_AUDIENCE_GUIDE.md` - Audience psychology
-- `docs/CLERK_SUPABASE_INTEGRATION.md` - Auth integration
-
-### Archived Docs (`docs/archive/`)
-- Historical audits and session notes
-- Completed migrations and implementations
-- Deprecated feature documentation
-- Project management artifacts
+### **Deprecated Features Removed**
+- `/dashboard/assessment` - Financial assessment questionnaire (DELETED)
+- `/dashboard/plan` - AI plan generation (DELETED)
+- `/dashboard/intel` - Intel Library (TRANSFORMED → `/dashboard/ask`)
 
 ---
 
-## 🔒 SECURITY & COMPLIANCE
+## 📈 STANDARDS ESTABLISHED (Oct 2025)
 
-### Data Protection
-- **RLS Policies:** All user data protected by Row Level Security
-- **Authentication:** Clerk integration with Supabase user sync
-- **API Security:** Rate limiting and authentication on all endpoints
-- **Encryption:** At rest and in transit
+### **Conservative Messaging**
+- No dollar amount claims
+- No "savings" or "profit" language
+- Always cite official sources
+- Include confidence scores
+- Show data provenance
 
-### Compliance
-- **WCAG Level:** AA accessibility compliance
-- **Data Policy:** Factual-only, provenance required
-- **Military Standards:** Professional, no-BS approach
+### **UX Excellence**
+- One clear path to value
+- Progressive disclosure
+- Remove jargon barriers
+- Mobile-first responsive
+- Professional output
 
----
-
-## 🚀 DEPLOYMENT & MONITORING
-
-### Deployment
-- **Platform:** Vercel (automatic deployments)
-- **Environment:** Production environment active
-- **CI/CD:** GitHub integration with automated builds
-
-### Monitoring
-- **Error Tracking:** Comprehensive error logging
-- **Performance:** Core Web Vitals monitoring
-- **Analytics:** User engagement and conversion tracking
-- **Health Checks:** Automated system health monitoring
+### **Code Quality**
+- TypeScript strict mode (0 errors)
+- Icon validation before deploy
+- Build must succeed
+- Conservative messaging audit
+- Delete unused code
 
 ---
 
-## 📞 SUPPORT & CONTACT
-
-### Support Channels
-- **Email:** support@garrisonledger.com
-- **Founder:** hello@garrisonledger.com
-- **Team:** Veteran-founded, military spouse team
-
-### External Resources
-- **DFAS:** https://www.dfas.mil
-- **DoDEA:** https://www.dodea.edu
-- **TSP:** https://www.tsp.gov
-- **VA:** https://www.va.gov
-
----
-
-## 🔄 MAINTENANCE SCHEDULE
-
-### Regular Updates
-- **BAH Rates:** Annual (January)
-- **BAS Rates:** Annual (January)
-- **JTR Rates:** Quarterly
-- **Military Bases:** As needed (openings/closures)
-- **External Data:** 30-day cache refresh
-
-### System Maintenance
-- **Database:** Regular backups and optimization
-- **Security:** Regular security audits
-- **Performance:** Continuous monitoring and optimization
-
----
-
-**This document serves as the single source of truth for Garrison Ledger's current system state. It should be updated whenever significant changes are made to features, infrastructure, or documentation.**
-
-**Last verification:** All active features cross-referenced with `app/sitemap.ts` and `lib/ssot.ts`
+**Document Version:** 6.1.0  
+**Last Updated:** 2025-10-27  
+**Maintained by:** Garrison Ledger Development Team

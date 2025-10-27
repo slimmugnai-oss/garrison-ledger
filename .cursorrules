@@ -37,6 +37,24 @@ Before shipping any copy/feature/design, Cursor must verify:
 
 If any fail → do **not** ship; propose a compliant alternative.
 
+### **CONSERVATIVE MESSAGING STANDARD** (Est. Oct 2025)
+
+**NEVER claim:**
+- Specific dollar amounts ("save $8,000", "recover $X")
+- "Maximum profit" or "maximize savings"  
+- Guarantees of financial outcomes
+- Superlatives without proof ("best", "guaranteed")
+
+**ALWAYS state:**
+- "Calculate your entitlements" (not "savings")
+- "Based on official 2025 rates" (with verification date)
+- "JTR-compliant" or cite specific regulations
+- Show confidence scores (excellent/good/fair/needs work)
+- Include data provenance (source + last verified)
+
+**Example - Bad:** "Turn your PCS into maximum profit. Save $8,000!"  
+**Example - Good:** "Calculate your official PCS entitlements in 15 minutes. Based on 2025 DFAS rates with JTR validation."
+
 **For detailed military audience psychology, content creation, and conversion optimization, see: `docs/MILITARY_AUDIENCE_GUIDE.md`**
 
 ---
@@ -208,11 +226,13 @@ You are a **Multi-Domain Master Expert** with deep expertise across technical, b
    - **New Users Get:** `user_profiles`, `entitlements`, `ask_credits` (5 free), `user_gamification`
    - **DO NOT** modify webhook or RLS policies without understanding impact
 
-2. **AI Master Curator System**
-   - Two-phase: Curator (select blocks) → Weaver (create narrative)
-   - Uses Gemini 2.5 Flash, costs ~$0.02/plan
-   - Saves to `user_plans` table
-   - DO NOT modify without discussing impact
+2. **Premium Tools (5 Total)**
+   - LES Auditor (`/dashboard/paycheck-audit`)
+   - PCS Copilot (`/dashboard/pcs-copilot`)
+   - Base Navigator (`/dashboard/navigator`)
+   - TDY Copilot (`/dashboard/tdy-voucher`)
+   - Ask Military Expert (`/dashboard/ask`) - RAG system with 410 content blocks + 34 premium guides
+   - All require premium subscription ($9.99/month or $99/year)
 
 3. **Content Intelligence**
    - 410 hand-curated content blocks
@@ -220,11 +240,12 @@ You are a **Multi-Domain Master Expert** with deep expertise across technical, b
    - Vector search infrastructure ready
    - DO NOT modify content blocks without migration
 
-4. **Dual Assessment System**
-   - Old: `assessments` table (backward compatibility)
-   - New: `user_assessments` table (AI system)
-   - Dashboard checks BOTH for `hasAssessment`
-   - MAINTAIN both systems
+4. **Data Sources (4 Subsystems)**
+   - LES Auditor Data: Military pay tables, BAH rates, tax rates (official DFAS/IRS)
+   - Base Navigator Data: Weather, housing, schools (Google/Zillow/GreatSchools APIs)
+   - PCS Copilot Data: JTR rules, entitlements, per diem rates (JTR/DTMO)
+   - Content Data: 410 curated blocks, 34 premium guides, 15 RSS feeds
+   - See memory for complete breakdown
 
 ---
 
@@ -272,6 +293,38 @@ You are a **Multi-Domain Master Expert** with deep expertise across technical, b
 - Follow Tailwind design system
 - Ensure mobile responsiveness
 - Use Icon component with type-safe icon names
+
+### **UX EXCELLENCE STANDARD** (Est. Oct 2025)
+
+**Simplicity Over Features:**
+- ONE clear path to value (not 3-4 options)
+- Progressive disclosure (show next step only)
+- Remove "mode switchers" - build responsive components instead
+- Default to the BEST option, offer alternatives if needed
+
+**Value Visibility:**
+- Lead with ROI/outcome (not features)
+- Show progress indicators (completion %, step X of Y)
+- Real-time updates as user types
+- Confidence scores on calculations
+
+**Remove Jargon Barriers:**
+- Plain English labels FIRST, acronyms second
+- Tooltip on EVERY military term (hover = explanation + JTR citation)
+- Auto-calculate everything possible
+- Don't ask for data we can compute (distance, travel days, etc.)
+
+**Mobile-First:**
+- Build ONE responsive component (not separate mobile/desktop)
+- Touch targets minimum 44px (WCAG AAA)
+- Test on actual devices
+- No mode selection - adapt automatically
+
+**Professional Output:**
+- PDFs must be military-grade (clean formatting, citations, provenance)
+- Export buttons: ONE primary CTA (not 3 options)
+- Include data sources and verification dates
+- Finance office submission-ready
 
 ---
 
