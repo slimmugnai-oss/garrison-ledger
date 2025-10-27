@@ -250,12 +250,21 @@ export default function TspModeler() {
 
   // Lightweight SVG line plot
   const Chart = ({ seriesA, seriesB }: { seriesA: number[]; seriesB: number[] }) => {
+    console.log('[TSP Chart] Component called with:', { 
+      seriesALength: seriesA.length, 
+      seriesBLength: seriesB.length,
+      firstDataPoint: seriesA[0],
+      lastDataPoint: seriesA[seriesA.length - 1]
+    });
+    
     // Transform data for Recharts
     const chartData = seriesA.map((defaultVal, index) => ({
       year: index,
       "Default Mix": Math.round(defaultVal),
       "Your Custom Mix": Math.round(seriesB[index] || 0),
     }));
+    
+    console.log('[TSP Chart] chartData created:', chartData.length, 'points');
 
     return (
       <div className="mt-6 h-80 w-full">
