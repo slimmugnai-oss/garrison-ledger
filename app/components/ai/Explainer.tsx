@@ -7,6 +7,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
   const [fullText, setFullText] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [error, setError] = useState<string>("");
   const abortRef = useRef<AbortController | null>(null);
 
   // Check premium status on mount
@@ -29,6 +30,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
     if (loading) return;
     setText("");
     setFullText("");
+    setError("");
     setLoading(true);
     const ctrl = new AbortController();
     abortRef.current = ctrl;
@@ -36,6 +38,7 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
     let accumulated = "";
     
     try {
+      console.log('[Explainer] Calling API with payload:', payload);
       const res = await fetch("/api/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,7 +46,19 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
         signal: ctrl.signal
       });
       
+      console.log('[Explainer] API response status:', res.status);
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('[Explainer] API error:', errorText);
+        setError(`API Error: ${res.status} - ${errorText.substring(0, 200)}`);
+        setLoading(false);
+        return;
+      }
+      
       if (!res.body) {
+        console.error('[Explainer] No response body');
+        setError("No response from server");
         setLoading(false);
         return;
       }
@@ -68,8 +83,13 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
           setFullText(accumulated);
         }
       }
+      
+      console.log('[Explainer] Final accumulated length:', accumulated.length, 'chars');
+      console.log('[Explainer] Premium status:', isPremium);
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('[Explainer] Error:', error);
+        setError(error.message || "Failed to generate explanation");
       }
     } finally {
       setLoading(false);
@@ -88,6 +108,17 @@ export default function Explainer({ payload }: { payload: Record<string, unknown
       >
         {loading ? "✨ Generating explanation..." : "✨ Explain these results"}
       </button>
+      
+      {error && (
+        <div className="mt-4 rounded-lg border-2 border-red-200 bg-red-50 p-5">
+          <p className="text-sm text-red-800">
+            <strong>Error:</strong> {error}
+          </p>
+          <p className="text-xs text-red-600 mt-2">
+            Please try again. If the problem persists, contact support.
+          </p>
+        </div>
+      )}
       
       {text && (
         <div className="mt-4">
