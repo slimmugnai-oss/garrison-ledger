@@ -291,29 +291,28 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",  // Using stable model instead of experimental
       generationConfig: {
-        temperature: 0.8, // Slightly more creative for explanations
-        maxOutputTokens: 8000, // Significantly increased for detailed explanations
+        temperature: 1.0,
+        maxOutputTokens: 8192,
         topP: 0.95,
-        topK: 40,
       },
       safetySettings: [
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
+          threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         },
         {
           category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
+          threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         },
         {
           category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
+          threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         },
         {
           category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
+          threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         },
       ],
     });
@@ -344,11 +343,11 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
       logger.info("[Explain] Sending prompt to Gemini", {
         userId,
         tool,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-1.5-flash",
         promptLength: fullPrompt.length,
-        maxOutputTokens: 8000,
-        modelConfig: { temperature: 0.8, maxOutputTokens: 8000, topP: 0.95, topK: 40 },
-        hasSafetyOverrides: true,
+        promptPreview: fullPrompt.substring(0, 200),
+        maxOutputTokens: 8192,
+        modelConfig: { temperature: 1.0, maxOutputTokens: 8192, topP: 0.95 },
       });
 
       const result = await model.generateContent(fullPrompt);

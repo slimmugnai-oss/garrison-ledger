@@ -270,9 +270,7 @@ export default function TspModeler() {
     // Show data table instead until we fix the chart library issue
     return (
       <div className="mt-6 rounded-lg border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50 p-6">
-        <h3 className="mb-4 text-xl font-bold text-blue-900">
-          Growth Projection - Year by Year
-        </h3>
+        <h3 className="mb-4 text-xl font-bold text-blue-900">Growth Projection - Year by Year</h3>
         <p className="mb-4 text-sm text-blue-800">
           Your custom allocation vs. default lifecycle fund over {chartData.length - 1} years
         </p>
@@ -298,7 +296,9 @@ export default function TspModeler() {
                     <td className="p-3 text-right font-bold text-blue-900">
                       ${d["Your Custom Mix"].toLocaleString()}
                     </td>
-                    <td className={`p-3 text-right font-bold ${diff >= 0 ? "text-green-700" : "text-red-600"}`}>
+                    <td
+                      className={`p-3 text-right font-bold ${diff >= 0 ? "text-green-700" : "text-red-600"}`}
+                    >
                       {diff >= 0 ? "+" : ""}${diff.toLocaleString()}
                     </td>
                   </tr>
@@ -307,7 +307,7 @@ export default function TspModeler() {
             </tbody>
           </table>
         </div>
-        <p className="mt-4 text-xs text-gray-600 italic">
+        <p className="mt-4 text-xs italic text-gray-600">
           Note: Chart visualization temporarily unavailable. Table shows all projection data.
         </p>
       </div>
