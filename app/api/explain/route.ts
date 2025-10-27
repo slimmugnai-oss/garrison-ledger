@@ -279,11 +279,31 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash-exp",
       generationConfig: {
         temperature: 0.8, // Slightly more creative for explanations
-        maxOutputTokens: 3000, // Increased for detailed, caring explanations
-      }
+        maxOutputTokens: 8000, // Significantly increased for detailed explanations
+        topP: 0.95,
+        topK: 40,
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_NONE",
+        },
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_NONE",
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_NONE",
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_NONE",
+        },
+      ],
     });
 
     const systemPrompt = SYSTEM_PROMPTS[tool as ToolType] || SYSTEM_PROMPTS.tsp;
@@ -306,17 +326,45 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
 
     try {
       const startTime = Date.now();
-      const result = await model.generateContent(`${systemPrompt}\n\n${userPrompt}`);
+      const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+      
+      // Log prompt length to diagnose issues
+      logger.info('[Explain] Sending prompt to Gemini', {
+        userId,
+        tool,
+        model: 'gemini-2.0-flash-exp',
+        promptLength: fullPrompt.length,
+        maxOutputTokens: 8000,
+        modelConfig: { temperature: 0.8, maxOutputTokens: 8000, topP: 0.95, topK: 40 },
+        hasSafetyOverrides: true
+      });
+      
+      const result = await model.generateContent(fullPrompt);
       const duration = Date.now() - startTime;
       
       const response = result.response;
       const text = response.text();
+      
+      // Log finish reason and safety ratings to diagnose truncation
+      const candidates = response.candidates || [];
+      const finishReason = candidates[0]?.finishReason || 'UNKNOWN';
+      const safetyRatings = candidates[0]?.safetyRatings || [];
 
       logger.info('[Explain] AI explanation generated', { 
         userId, 
         tool, 
         duration, 
-        charCount: text.length 
+        charCount: text.length,
+        wordCount: text.split(/\s+/).length,
+        expectedMinChars: 2000,
+        actualChars: text.length,
+        isShort: text.length < 500,
+        finishReason,
+        wasTruncated: finishReason !== 'STOP',
+        safetyRatings: safetyRatings.map((sr: any) => ({
+          category: sr.category,
+          probability: sr.probability
+        }))
       });
 
       // Stream the HTML response
