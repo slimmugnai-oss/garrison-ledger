@@ -6,13 +6,16 @@ export default function PrivacyPage() {
       <section id="who-we-are">
         <h2>1) Who We Are</h2>
         <p>
-          This Privacy Policy explains how <strong>Family Media, LLC</strong> (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) collects,
-          uses, and shares information about you when you use <strong>Garrison Ledger</strong> and related sites,
-          apps, and services (collectively, the &quot;Services&quot;). If you do not agree with this Policy, do not use the Services.
+          This Privacy Policy explains how <strong>Family Media, LLC</strong> (&quot;we&quot;,
+          &quot;us&quot;, &quot;our&quot;) collects, uses, and shares information about you when you
+          use <strong>Garrison Ledger</strong> and related sites, apps, and services (collectively,
+          the &quot;Services&quot;). If you do not agree with this Policy, do not use the Services.
         </p>
         <ul>
           <li>Legal entity: Family Media, LLC</li>
-          <li>Contact: <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a></li>
+          <li>
+            Contact: <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>
+          </li>
           <li>Postal address: 33 Walt Whitman Rd, Suite 201e, Huntington Station, NY 11746</li>
         </ul>
       </section>
@@ -20,9 +23,10 @@ export default function PrivacyPage() {
       <section id="scope">
         <h2>2) Scope & Audience</h2>
         <p>
-          This Policy applies to end users, subscribers, site visitors, and provider directory contacts.
-          We do not target or knowingly collect data from children under 13 (or 16 where applicable). If you believe
-          we collected a child&apos;s data, contact us to request deletion.
+          This Policy applies to end users, subscribers, site visitors, and provider directory
+          contacts. We do not target or knowingly collect data from children under 13 (or 16 where
+          applicable). If you believe we collected a child&apos;s data, contact us to request
+          deletion.
         </p>
       </section>
 
@@ -30,13 +34,33 @@ export default function PrivacyPage() {
         <h2>3) Information We Collect</h2>
         <p>We collect information in the following categories:</p>
         <ul>
-          <li><strong>Account & Auth:</strong> name, email, auth IDs and metadata from Clerk.</li>
-          <li><strong>Subscription & Billing:</strong> limited Stripe metadata (customer id, status, period end). We do not store full card numbers.</li>
-          <li><strong>Assessment & Saved Models:</strong> your questionnaire answers and tool inputs/outputs (TSP/SDP/house-hacking scenarios) saved to Supabase.</li>
-          <li><strong>Directory Data:</strong> provider submissions (name, business details, contact info) and admin notes.</li>
-          <li><strong>Support & Refunds:</strong> messages and fields you submit in support/refund forms.</li>
-          <li><strong>Usage & Analytics:</strong> page views, events, device/browser data, timestamps, IP (short-retained), and coarse location inferred from IP.</li>
-          <li><strong>Cookies & Similar Tech:</strong> session, auth, preference, and analytics cookies.</li>
+          <li>
+            <strong>Account & Auth:</strong> name, email, auth IDs and metadata from Clerk.
+          </li>
+          <li>
+            <strong>Subscription & Billing:</strong> limited Stripe metadata (customer id, status,
+            period end). We do not store full card numbers.
+          </li>
+          <li>
+            <strong>Assessment & Saved Models:</strong> your questionnaire answers and tool
+            inputs/outputs (TSP/SDP/house-hacking scenarios) saved to Supabase.
+          </li>
+          <li>
+            <strong>Directory Data:</strong> provider submissions (name, business details, contact
+            info) and admin notes.
+          </li>
+          <li>
+            <strong>Support & Refunds:</strong> messages and fields you submit in support/refund
+            forms.
+          </li>
+          <li>
+            <strong>Usage & Analytics:</strong> page views, events, device/browser data, timestamps,
+            IP (short-retained), and coarse location inferred from IP.
+          </li>
+          <li>
+            <strong>Cookies & Similar Tech:</strong> session, auth, preference, and analytics
+            cookies.
+          </li>
         </ul>
       </section>
 
@@ -66,76 +90,106 @@ export default function PrivacyPage() {
         <h2>6) When We Share Information</h2>
         <p>We share limited data with service providers who help us operate the Services:</p>
         <ul>
-          <li><strong>Clerk</strong> (authentication & user management)</li>
-          <li><strong>Supabase</strong> (database, Row Level Security)</li>
-          <li><strong>Stripe</strong> (payments & subscription status)</li>
-          <li><strong>Vercel</strong> (hosting & CDN)</li>
+          <li>
+            <strong>Clerk</strong> (authentication & user management)
+          </li>
+          <li>
+            <strong>Supabase</strong> (database, Row Level Security)
+          </li>
+          <li>
+            <strong>Stripe</strong> (payments & subscription status)
+          </li>
+          <li>
+            <strong>Vercel</strong> (hosting & CDN)
+          </li>
         </ul>
         <p>
-          We may also share when required by law, in a merger or acquisition, or with your explicit direction.
-          We do not sell personal information, and we do not share it for cross-context behavioral advertising without your consent.
+          We may also share when required by law, in a merger or acquisition, or with your explicit
+          direction. We do not sell personal information, and we do not share it for cross-context
+          behavioral advertising without your consent.
         </p>
       </section>
 
       <section id="retention">
         <h2>7) Retention</h2>
         <p>
-          We keep personal data only as long as needed for the purposes in this Policy, then delete or de-identify it.
-          You may delete your account or request deletion of assessment/saved models at any time.
+          We keep personal data only as long as needed for the purposes in this Policy, then delete
+          or de-identify it. You may delete your account or request deletion of assessment/saved
+          models at any time.
         </p>
       </section>
 
       <section id="security">
         <h2>8) Security</h2>
         <p>
-          We use reasonable administrative, technical, and organizational measures, including HTTPS, access controls,
-          database RLS, key management, and least-privilege principles. No method is 100% secure.
+          We use reasonable administrative, technical, and organizational measures, including HTTPS,
+          access controls, database RLS, key management, and least-privilege principles. No method
+          is 100% secure.
         </p>
 
-        <h3 className="mt-6 text-xl font-semibold text-slate-900">LES Auditor - Zero Storage Policy</h3>
+        <h3 className="mt-6 text-xl font-semibold text-slate-900">
+          LES Auditor - Zero Storage Policy
+        </h3>
         <p className="mt-3">
           When you upload your Leave and Earnings Statement (LES) to our LES Auditor tool:
         </p>
         <ol className="mt-3 space-y-2">
-          <li><strong>1.</strong> Your PDF is processed <strong>in-memory only</strong> on our secure servers</li>
-          <li><strong>2.</strong> We extract ONLY line item codes and amounts (e.g., BAH, BAS, FICA)</li>
-          <li><strong>3.</strong> Your PDF is <strong>immediately deleted</strong> after processing - we NEVER store it</li>
-          <li><strong>4.</strong> We <strong>DO NOT</strong> store: SSN, name, address, bank account, routing number, or any personally identifiable information</li>
-          <li><strong>5.</strong> Only non-sensitive pay line items are kept for your audit history</li>
+          <li>
+            <strong>1.</strong> Your PDF is processed <strong>in-memory only</strong> on our secure
+            servers
+          </li>
+          <li>
+            <strong>2.</strong> We extract ONLY line item codes and amounts (e.g., BAH, BAS, FICA)
+          </li>
+          <li>
+            <strong>3.</strong> Your PDF is <strong>immediately deleted</strong> after processing -
+            we NEVER store it
+          </li>
+          <li>
+            <strong>4.</strong> We <strong>DO NOT</strong> store: SSN, name, address, bank account,
+            routing number, or any personally identifiable information
+          </li>
+          <li>
+            <strong>5.</strong> Only non-sensitive pay line items are kept for your audit history
+          </li>
         </ol>
         <div className="mt-4 rounded-lg border-2 border-green-600 bg-green-50 p-4">
           <p className="text-sm font-semibold text-green-900">
-            ✅ This means: Zero risk of SSN/bank account breach • GDPR/CCPA compliant by design • No long-term PII retention • You control your data completely
+            ✅ This means: Zero risk of SSN/bank account breach • GDPR/CCPA compliant by design • No
+            long-term PII retention • You control your data completely
           </p>
         </div>
         <p className="mt-3 text-sm text-gray-600">
-          If you delete your account, all audit history (including line items) is immediately purged from our database.
+          If you delete your account, all audit history (including line items) is immediately purged
+          from our database.
         </p>
       </section>
 
       <section id="your-rights">
         <h2>9) Your Rights</h2>
         <p>
-          Depending on where you live (EEA/UK, California, Virginia, Colorado), you may have rights to access,
-          correct, delete, port, or restrict processing of your data; to opt-out of selling/sharing; and to appeal denials.
-          To exercise rights, contact <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>.
+          Depending on where you live (EEA/UK, California, Virginia, Colorado), you may have rights
+          to access, correct, delete, port, or restrict processing of your data; to opt-out of
+          selling/sharing; and to appeal denials. To exercise rights, contact{" "}
+          <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>.
         </p>
       </section>
 
       <section id="changes">
         <h2>10) Changes to this Policy</h2>
         <p>
-          We may update this Policy. We will post the updated version with a new &quot;Effective&quot; date and, when appropriate, notify you.
+          We may update this Policy. We will post the updated version with a new
+          &quot;Effective&quot; date and, when appropriate, notify you.
         </p>
       </section>
 
       <section id="contact">
         <h2>11) Contact</h2>
         <p>
-          Questions or requests: <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>
+          Questions or requests:{" "}
+          <a href="mailto:support@garrisonledger.com">support@garrisonledger.com</a>
         </p>
       </section>
     </LegalLayout>
   );
 }
-

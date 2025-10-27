@@ -40,12 +40,14 @@ If any fail → do **not** ship; propose a compliant alternative.
 ### **CONSERVATIVE MESSAGING STANDARD** (Est. Oct 2025)
 
 **NEVER claim:**
+
 - Specific dollar amounts ("save $8,000", "recover $X")
-- "Maximum profit" or "maximize savings"  
+- "Maximum profit" or "maximize savings"
 - Guarantees of financial outcomes
 - Superlatives without proof ("best", "guaranteed")
 
 **ALWAYS state:**
+
 - "Calculate your entitlements" (not "savings")
 - "Based on official 2025 rates" (with verification date)
 - "JTR-compliant" or cite specific regulations
@@ -72,6 +74,7 @@ If any fail → do **not** ship; propose a compliant alternative.
 **CRITICAL: Military LES documents contain SSN, bank accounts, and addresses - we NEVER store them.**
 
 **Parse-and-Purge Architecture:**
+
 - LES PDF processed in-memory ONLY
 - Extract line items (BAH, BAS, FICA, etc.) with amounts
 - Store ONLY parsed line items in database (no PII)
@@ -79,12 +82,14 @@ If any fail → do **not** ship; propose a compliant alternative.
 - ZERO retention of SSN, bank account, routing number, name, or address
 
 **What WE Store:**
+
 - ✅ Line codes (BAH, BAS, COLA, etc.)
 - ✅ Amounts in cents (150000 = $1,500.00)
 - ✅ Descriptions ("Basic Allowance for Housing")
 - ✅ Section categorization (ALLOWANCE, TAX, DEDUCTION)
 
 **What WE DON'T Store:**
+
 - ❌ Raw PDF files
 - ❌ SSN (Social Security Number)
 - ❌ Bank account / routing numbers
@@ -93,12 +98,14 @@ If any fail → do **not** ship; propose a compliant alternative.
 - ❌ Any PII from LES header
 
 **Security Benefits:**
+
 - GDPR/CCPA compliant by design
 - Zero breach exposure for SSN/bank accounts
 - SOC 2 certifiable architecture
 - Military audience trust
 
 **Implementation:**
+
 - File: `app/api/les/upload/route.ts`
 - Method: Gemini Vision OCR for scanned LES, pdf-parse for text-based
 - Storage bucket: `les_raw` - DEPRECATED, not used
@@ -334,30 +341,35 @@ You are a **Multi-Domain Master Expert** with deep expertise across technical, b
 ### **UX EXCELLENCE STANDARD** (Est. Oct 2025)
 
 **Simplicity Over Features:**
+
 - ONE clear path to value (not 3-4 options)
 - Progressive disclosure (show next step only)
 - Remove "mode switchers" - build responsive components instead
 - Default to the BEST option, offer alternatives if needed
 
 **Value Visibility:**
+
 - Lead with ROI/outcome (not features)
 - Show progress indicators (completion %, step X of Y)
 - Real-time updates as user types
 - Confidence scores on calculations
 
 **Remove Jargon Barriers:**
+
 - Plain English labels FIRST, acronyms second
 - Tooltip on EVERY military term (hover = explanation + JTR citation)
 - Auto-calculate everything possible
 - Don't ask for data we can compute (distance, travel days, etc.)
 
 **Mobile-First:**
+
 - Build ONE responsive component (not separate mobile/desktop)
 - Touch targets minimum 44px (WCAG AAA)
 - Test on actual devices
 - No mode selection - adapt automatically
 
 **Professional Output:**
+
 - PDFs must be military-grade (clean formatting, citations, provenance)
 - Export buttons: ONE primary CTA (not 3 options)
 - Include data sources and verification dates

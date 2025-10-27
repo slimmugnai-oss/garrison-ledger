@@ -92,7 +92,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
-  const [entryMode, setEntryMode] = useState<'upload' | 'manual'>('upload');
+  const [entryMode, setEntryMode] = useState<"upload" | "manual">("upload");
   const [uploading, setUploading] = useState(false);
 
   // ============================================================================
@@ -556,25 +556,25 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const uploadRes = await fetch('/api/les/upload', {
-        method: 'POST',
-        body: formData
+      const uploadRes = await fetch("/api/les/upload", {
+        method: "POST",
+        body: formData,
       });
 
       if (!uploadRes.ok) {
         const err = await uploadRes.json();
-        throw new Error(err.error || 'Upload failed');
+        throw new Error(err.error || "Upload failed");
       }
 
       const { uploadId } = await uploadRes.json();
-      
+
       // Reload the page to show audit results
       window.location.href = `/dashboard/paycheck-audit/${uploadId}`;
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Upload failed. Please try manual entry.');
-      setEntryMode('manual');
+      alert(error instanceof Error ? error.message : "Upload failed. Please try manual entry.");
+      setEntryMode("manual");
     } finally {
       setUploading(false);
     }
@@ -590,32 +590,32 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       <div className="mb-8">
         <div className="flex gap-2 border-b border-gray-200">
           <button
-            onClick={() => setEntryMode('upload')}
-            className={`px-6 py-3 font-medium transition-colors relative ${
-              entryMode === 'upload'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+            onClick={() => setEntryMode("upload")}
+            className={`relative px-6 py-3 font-medium transition-colors ${
+              entryMode === "upload"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
-            <Icon name="Upload" className="inline-block w-4 h-4 mr-2" />
+            <Icon name="Upload" className="mr-2 inline-block h-4 w-4" />
             Upload PDF
           </button>
           <button
-            onClick={() => setEntryMode('manual')}
-            className={`px-6 py-3 font-medium transition-colors relative ${
-              entryMode === 'manual'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+            onClick={() => setEntryMode("manual")}
+            className={`relative px-6 py-3 font-medium transition-colors ${
+              entryMode === "manual"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
-            <Icon name="Edit" className="inline-block w-4 h-4 mr-2" />
+            <Icon name="Edit" className="mr-2 inline-block h-4 w-4" />
             Manual Entry
           </button>
         </div>
       </div>
 
       {/* Military-Grade Security Badge (Upload Mode) */}
-      {entryMode === 'upload' && (
+      {entryMode === "upload" && (
         <div className="mb-6 rounded-xl border-2 border-green-600 bg-gradient-to-r from-green-50 to-emerald-50 p-6">
           <div className="flex items-start gap-4">
             <div className="rounded-full bg-green-600 p-3">
@@ -626,7 +626,9 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 Military-Grade Zero-Storage Security
               </h3>
               <p className="mb-3 text-sm leading-relaxed text-green-800">
-                Your LES is processed in-memory and <strong>immediately deleted</strong>. We NEVER store your SSN, bank account, or personal information. Only line items (BAH, BAS, etc.) are kept for audit history.
+                Your LES is processed in-memory and <strong>immediately deleted</strong>. We NEVER
+                store your SSN, bank account, or personal information. Only line items (BAH, BAS,
+                etc.) are kept for audit history.
               </p>
               <div className="flex flex-wrap gap-3 text-sm">
                 <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5">
@@ -652,19 +654,18 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       )}
 
       {/* Upload UI */}
-      {entryMode === 'upload' && (
+      {entryMode === "upload" && (
         <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
           <div className="text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
               <Icon name="Upload" className="h-10 w-10 text-blue-600" />
             </div>
-            <h3 className="mb-2 text-2xl font-semibold text-gray-900">
-              Upload Your LES PDF
-            </h3>
+            <h3 className="mb-2 text-2xl font-semibold text-gray-900">Upload Your LES PDF</h3>
             <p className="mx-auto mb-6 max-w-md text-gray-600">
-              We'll automatically extract your pay line items and compare to official DFAS rates. Supports both digital and scanned LES.
+              We'll automatically extract your pay line items and compare to official DFAS rates.
+              Supports both digital and scanned LES.
             </p>
-            
+
             {/* File Drop Zone */}
             <label
               htmlFor="les-upload"
@@ -682,9 +683,12 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 }}
               />
               <div className="text-center">
-                <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-400 transition-colors group-hover:text-blue-500" />
+                <Icon
+                  name="File"
+                  className="mx-auto mb-4 h-16 w-16 text-gray-400 transition-colors group-hover:text-blue-500"
+                />
                 <p className="mb-2 text-xl font-semibold text-gray-700">
-                  {uploading ? 'Processing...' : 'Click to upload or drag and drop'}
+                  {uploading ? "Processing..." : "Click to upload or drag and drop"}
                 </p>
                 <p className="mb-4 text-sm text-gray-500">
                   PDF only • Max 5MB • Works with digital or scanned LES
@@ -699,13 +703,14 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
               <Icon name="Lock" className="h-3.5 w-3.5 text-green-600" />
               <span>
-                <strong className="text-green-600">Zero PII storage:</strong> Your LES is parsed and deleted immediately
+                <strong className="text-green-600">Zero PII storage:</strong> Your LES is parsed and
+                deleted immediately
               </span>
             </div>
 
             <div className="mt-4 text-center">
               <button
-                onClick={() => setEntryMode('manual')}
+                onClick={() => setEntryMode("manual")}
                 className="text-sm text-blue-600 hover:underline"
               >
                 Prefer manual entry instead? Click here
@@ -716,648 +721,660 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       )}
 
       {/* Manual Entry UI (existing) */}
-      {entryMode === 'manual' && (
+      {entryMode === "manual" && (
         <div className="grid min-h-screen grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
           {/* LEFT PANEL: INPUTS */}
           <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
             <form
               onSubmit={(e) => e.preventDefault()}
-          aria-label="LES data entry form"
-          className="mx-auto max-w-2xl space-y-6"
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
-            <button
-              onClick={() => {
-                if (confirm("Clear all entered data and start over?")) {
-                  setBasePay(0);
-                  setBah(0);
-                  setBas(0);
-                  setCola(0);
-                  setTsp(0);
-                  setSgli(0);
-                  setDental(0);
-                  setFederalTax(0);
-                  setStateTax(0);
-                  setFica(0);
-                  setMedicare(0);
-                  setNetPay(undefined);
-                }
-              }}
-              className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+              aria-label="LES data entry form"
+              className="mx-auto max-w-2xl space-y-6"
             >
-              <Icon name="RefreshCw" className="h-4 w-4" />
-              <span className="hidden sm:inline">Reset Form</span>
-            </button>
-          </div>
-
-          {/* Completeness Indicator - NEW */}
-          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-medium text-blue-900">Data Completeness</span>
-              <span className="text-sm font-semibold text-blue-900">
-                {completeness.filled}/{completeness.total}
-              </span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-blue-100">
-              <div
-                className="h-full bg-blue-600 transition-all duration-300"
-                style={{ width: `${completeness.percentage}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-blue-700">
-              Fill all fields for the most accurate audit
-            </p>
-          </div>
-
-          {/* Month/Year */}
-          <div className="rounded-lg border bg-white p-4">
-            <h3 className="mb-3 font-semibold text-gray-900">Pay Period</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Month</label>
-                <select
-                  value={month || ""}
-                  onChange={(e) => setMonth(parseInt(e.target.value))}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
+                <button
+                  onClick={() => {
+                    if (confirm("Clear all entered data and start over?")) {
+                      setBasePay(0);
+                      setBah(0);
+                      setBas(0);
+                      setCola(0);
+                      setTsp(0);
+                      setSgli(0);
+                      setDental(0);
+                      setFederalTax(0);
+                      setStateTax(0);
+                      setFica(0);
+                      setMedicare(0);
+                      setNetPay(undefined);
+                    }
+                  }}
+                  className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
                 >
-                  <option value="">Select...</option>
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                    <option key={m} value={m}>
-                      {new Date(2000, m - 1).toLocaleString("default", { month: "long" })}
-                    </option>
-                  ))}
-                </select>
+                  <Icon name="RefreshCw" className="h-4 w-4" />
+                  <span className="hidden sm:inline">Reset Form</span>
+                </button>
               </div>
-              <div>
-                <label htmlFor="year" className="mb-1 block text-sm font-medium text-gray-700">Year</label>
-                <input
-                  type="number"
-                  value={year || ""}
-                  onChange={(e) => setYear(parseInt(e.target.value))}
-                  min="2020"
-                  max="2099"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Entitlements Section */}
-          <div className="rounded-lg border bg-white">
-            <button
-              onClick={() =>
-                setCollapsedSections((prev) => ({ ...prev, entitlements: !prev.entitlements }))
-              }
-              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-              aria-expanded={!collapsedSections.entitlements}
-              aria-controls="entitlements-section"
-            >
-              <div className="flex items-center gap-3">
-                <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
-                <span className="font-semibold text-gray-900">Entitlements</span>
-                <Badge variant="info">{entitlementCount}/4</Badge>
-              </div>
-              <Icon
-                name={collapsedSections.entitlements ? "ChevronDown" : "ChevronUp"}
-                className="h-5 w-5 text-gray-400"
-              />
-            </button>
-
-            {!collapsedSections.entitlements && (
-              <div
-                className="space-y-3 px-4 pb-4"
-                id="entitlements-section"
-                role="region"
-                aria-label="Entitlements input fields"
-              >
-                {loadingExpected && (
-                  <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-                    <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
-                    <span>Loading official DFAS rates...</span>
-                  </div>
-                )}
-                {/* Base Pay, BAH, BAS, COLA inputs */}
-                <CurrencyField
-                  label="Base Pay"
-                  value={basePay}
-                  onChange={setBasePay}
-                  helpText="Monthly basic pay (Entitlements section, top of LES)"
-                />
-                <CurrencyField
-                  label="BAH"
-                  value={bah}
-                  onChange={setBah}
-                  helpText="Basic Allowance for Housing (location-based)"
-                />
-                <CurrencyField
-                  label="BAS"
-                  value={bas}
-                  onChange={setBas}
-                  helpText="Basic Allowance for Subsistence (meals)"
-                />
-                <CurrencyField
-                  label="COLA"
-                  value={cola}
-                  onChange={setCola}
-                  helpText="Cost of Living Allowance (if applicable)"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Deductions Section */}
-          <div className="rounded-lg border bg-white">
-            <button
-              onClick={() =>
-                setCollapsedSections((prev) => ({ ...prev, deductions: !prev.deductions }))
-              }
-              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-            >
-              <div className="flex items-center gap-3">
-                <Icon name="Calculator" className="h-5 w-5 text-orange-600" />
-                <span className="font-semibold text-gray-900">Deductions</span>
-                <Badge variant="info">{deductionCount}/3</Badge>
-              </div>
-              <Icon
-                name={collapsedSections.deductions ? "ChevronDown" : "ChevronUp"}
-                className="h-5 w-5 text-gray-400"
-              />
-            </button>
-
-            {!collapsedSections.deductions && (
-              <div className="space-y-3 px-4 pb-4">
-                <CurrencyField
-                  label="TSP"
-                  value={tsp}
-                  onChange={setTsp}
-                  helpText="Thrift Savings Plan contribution"
-                />
-                <CurrencyField
-                  label="SGLI"
-                  value={sgli}
-                  onChange={setSgli}
-                  helpText="Servicemembers' Group Life Insurance premium"
-                />
-                <CurrencyField
-                  label="Dental"
-                  value={dental}
-                  onChange={setDental}
-                  helpText="Dental insurance premium (if enrolled)"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Taxes Section */}
-          <div className="rounded-lg border bg-white">
-            <button
-              onClick={() => setCollapsedSections((prev) => ({ ...prev, taxes: !prev.taxes }))}
-              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-            >
-              <div className="flex items-center gap-3">
-                <Icon name="Landmark" className="h-5 w-5 text-red-600" />
-                <span className="font-semibold text-gray-900">Taxes</span>
-                <Badge variant="info">{taxCount}/4</Badge>
-              </div>
-              <Icon
-                name={collapsedSections.taxes ? "ChevronDown" : "ChevronUp"}
-                className="h-5 w-5 text-gray-400"
-              />
-            </button>
-
-            {!collapsedSections.taxes && (
-              <div className="space-y-3 px-4 pb-4">
-                {/* Tax Info Banner */}
-                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                  <div className="flex items-start gap-2">
-                    <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
-                    <div className="text-xs text-blue-800">
-                      <strong>FICA and Medicare are auto-calculated</strong> at 6.2% and 1.45% of
-                      taxable gross. You can edit if your LES differs (rare).
-                    </div>
-                  </div>
+              {/* Completeness Indicator - NEW */}
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-medium text-blue-900">Data Completeness</span>
+                  <span className="text-sm font-semibold text-blue-900">
+                    {completeness.filled}/{completeness.total}
+                  </span>
                 </div>
-
-                <CurrencyField
-                  label="Federal Tax"
-                  value={federalTax}
-                  onChange={setFederalTax}
-                  helpText="Federal income tax withheld"
-                />
-                <CurrencyField
-                  label="State Tax"
-                  value={stateTax}
-                  onChange={setStateTax}
-                  helpText="State income tax withheld (if applicable)"
-                />
-                <div>
-                  <CurrencyField
-                    label="FICA / Social Security ✓ Auto-calc (6.2%)"
-                    value={fica}
-                    onChange={setFica}
-                    helpText="Auto-calculated from taxable gross - edit if your LES differs"
+                <div className="h-2 overflow-hidden rounded-full bg-blue-100">
+                  <div
+                    className="h-full bg-blue-600 transition-all duration-300"
+                    style={{ width: `${completeness.percentage}%` }}
                   />
                 </div>
-                <div>
-                  <CurrencyField
-                    label="Medicare ✓ Auto-calc (1.45%)"
-                    value={medicare}
-                    onChange={setMedicare}
-                    helpText="Auto-calculated from taxable gross - edit if your LES differs"
-                  />
-                </div>
-
-                {/* Tax Validation Warnings */}
-                {taxValidation.warnings.length > 0 && (
-                  <div className="rounded-lg border-l-4 border-red-400 bg-red-50 p-3">
-                    <div className="flex gap-2">
-                      <Icon
-                        name="AlertTriangle"
-                        className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-red-900">
-                          Tax Validation Warnings
-                        </p>
-                        <ul className="mt-1 space-y-1 text-xs text-red-800">
-                          {taxValidation.warnings.map((w, i) => (
-                            <li key={i}>• {w}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Tax Validation Advisories */}
-                {taxValidation.advisories.length > 0 && (
-                  <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-3">
-                    <div className="flex gap-2">
-                      <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-yellow-900">Advisory</p>
-                        <ul className="mt-1 space-y-1 text-xs text-yellow-800">
-                          {taxValidation.advisories.map((a, i) => (
-                            <li key={i}>• {a}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <p className="mt-2 text-xs text-blue-700">
+                  Fill all fields for the most accurate audit
+                </p>
               </div>
-            )}
-          </div>
 
-          {/* Net Pay Section - NEW */}
-          <div className="rounded-lg border bg-white p-4">
-            <h3 className="mb-3 font-semibold text-gray-900">Net Pay (Bottom Line)</h3>
-            <CurrencyField
-              label="Actual Net Pay from LES"
-              value={netPay || 0}
-              onChange={setNetPay}
-              helpText="This is your final take-home amount at the bottom of your LES"
-            />
-          </div>
-        </form>
-      </div>
-
-      {/* RIGHT PANEL: AUDIT REPORT (ALWAYS VISIBLE) */}
-      <div className="bg-white p-4 lg:overflow-y-auto lg:border-l lg:p-6">
-        <div className="mx-auto max-w-3xl space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">Audit Report</h2>
-
-          {/* Screen Reader Status Announcements */}
-          <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-            {loading && "Computing audit..."}
-            {error && `Error: ${error}`}
-            {result && `Audit complete. ${result.flags.length} findings.`}
-          </div>
-
-          {/* Loading State */}
-          {loading && (
-            <div className="animate-pulse space-y-4">
-              {/* Summary skeleton */}
-              <div className="h-32 rounded-lg bg-gray-100 p-6" />
-
-              {/* Flags skeleton */}
-              <div className="space-y-3">
-                <div className="h-24 rounded-lg bg-gray-100 p-4" />
-                <div className="h-24 rounded-lg bg-gray-100 p-4" />
-                <div className="h-24 rounded-lg bg-gray-100 p-4" />
-              </div>
-            </div>
-          )}
-
-          {/* Error State - NEW */}
-          {error && (
-            <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-              <Icon name="AlertCircle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
-              <div className="flex-1">
-                <p className="font-semibold text-red-900">Audit Failed</p>
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Summary Header */}
-          {result && (
-            <>
-              <div className="rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-6">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  {/* Expected Net */}
+              {/* Month/Year */}
+              <div className="rounded-lg border bg-white p-4">
+                <h3 className="mb-3 font-semibold text-gray-900">Pay Period</h3>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="mb-1 text-sm font-medium text-blue-700">Expected Net Pay</p>
-                    {result.totals.computed_net !== null ? (
-                      <p className="text-2xl font-bold text-blue-900">
-                        ${(result.totals.computed_net / 100).toFixed(2)}
-                      </p>
-                    ) : (
-                      <p className="text-lg text-blue-600">Premium feature</p>
-                    )}
-                  </div>
-
-                  {/* Actual Net */}
-                  <div>
-                    <p className="mb-1 text-sm font-medium text-gray-700">Your LES Net Pay</p>
-                    {tier !== "premium" && tier !== "staff" ? (
-                      <p className="text-lg text-blue-600">Premium feature</p>
-                    ) : result.totals.actual_net > 0 ? (
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${(result.totals.actual_net / 100).toFixed(2)}
-                      </p>
-                    ) : (
-                      <p className="text-sm italic text-gray-500">Enter above to compare</p>
-                    )}
-                  </div>
-
-                  {/* Variance */}
-                  <div>
-                    <p className="mb-1 text-sm font-medium text-gray-700">Variance</p>
-                    {tier !== "premium" && tier !== "staff" ? (
-                      <p className="text-lg text-blue-600">Premium feature</p>
-                    ) : result.totals.variance !== null ? (
-                      <p
-                        className={`text-2xl font-bold ${
-                          Math.abs(result.totals.variance) <= 500
-                            ? "text-green-600"
-                            : Math.abs(result.totals.variance) <= 5000
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                        }`}
-                      >
-                        ${Math.abs(result.totals.variance / 100).toFixed(2)}
-                      </p>
-                    ) : (
-                      <Badge
-                        variant={
-                          result.totals.varianceBucket === "0-5"
-                            ? "success"
-                            : result.totals.varianceBucket === "5-50"
-                              ? "warning"
-                              : "danger"
-                        }
-                      >
-                        {result.totals.varianceBucket === "0-5" && "$0-$5"}
-                        {result.totals.varianceBucket === "5-50" && "$5-$50"}
-                        {result.totals.varianceBucket === ">50" && ">$50"}
-                        {result.totals.varianceBucket === ">100" && ">$100"}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Flags List */}
-              <div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Findings</h3>
-
-                {/* Complete paywall for free users */}
-                {tier !== "premium" && tier !== "staff" ? (
-                  <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
-                    <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
-                    <h3 className="mb-3 text-xl font-semibold text-blue-900">
-                      Premium Feature: Complete LES Audit
-                    </h3>
-                    <p className="mb-2 text-sm text-blue-800">
-                      Your audit is complete, but full results are for Premium members only.
-                    </p>
-                    <p className="mb-6 text-sm text-blue-700">
-                      Premium unlocks: all flags, variance analysis, email templates, unlimited
-                      audits
-                    </p>
-                    <a
-                      href="/dashboard/upgrade?feature=paycheck-audit"
-                      className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                    <label className="mb-1 block text-sm font-medium text-gray-700">Month</label>
+                    <select
+                      value={month || ""}
+                      onChange={(e) => setMonth(parseInt(e.target.value))}
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
-                      Upgrade to Premium
-                    </a>
+                      <option value="">Select...</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                        <option key={m} value={m}>
+                          {new Date(2000, m - 1).toLocaleString("default", { month: "long" })}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                ) : (
-                  <>
-                    {/* Visible Flags */}
-                    <div className="space-y-3">
-                      {result.flags.map((flag, idx) => (
-                        <div
-                          key={idx}
-                          className={`rounded-lg border-l-4 p-4 ${
-                            flag.severity === "red"
-                              ? "border-red-500 bg-red-50"
-                              : flag.severity === "yellow"
-                                ? "border-yellow-500 bg-yellow-50"
-                                : "border-green-500 bg-green-50"
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {/* Severity Icon - NEW */}
-                            <div className="flex-shrink-0">
-                              {flag.severity === "red" ? (
-                                <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
-                              ) : flag.severity === "yellow" ? (
-                                <Icon name="AlertTriangle" className="h-6 w-6 text-yellow-600" />
-                              ) : (
-                                <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
-                              )}
-                            </div>
+                  <div>
+                    <label htmlFor="year" className="mb-1 block text-sm font-medium text-gray-700">
+                      Year
+                    </label>
+                    <input
+                      type="number"
+                      value={year || ""}
+                      onChange={(e) => setYear(parseInt(e.target.value))}
+                      min="2020"
+                      max="2099"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                            <div className="flex-1">
-                              <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
-                              <p className="text-sm text-gray-700">{flag.suggestion}</p>
+              {/* Entitlements Section */}
+              <div className="rounded-lg border bg-white">
+                <button
+                  onClick={() =>
+                    setCollapsedSections((prev) => ({ ...prev, entitlements: !prev.entitlements }))
+                  }
+                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
+                  aria-expanded={!collapsedSections.entitlements}
+                  aria-controls="entitlements-section"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                    <span className="font-semibold text-gray-900">Entitlements</span>
+                    <Badge variant="info">{entitlementCount}/4</Badge>
+                  </div>
+                  <Icon
+                    name={collapsedSections.entitlements ? "ChevronDown" : "ChevronUp"}
+                    className="h-5 w-5 text-gray-400"
+                  />
+                </button>
+
+                {!collapsedSections.entitlements && (
+                  <div
+                    className="space-y-3 px-4 pb-4"
+                    id="entitlements-section"
+                    role="region"
+                    aria-label="Entitlements input fields"
+                  >
+                    {loadingExpected && (
+                      <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+                        <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
+                        <span>Loading official DFAS rates...</span>
+                      </div>
+                    )}
+                    {/* Base Pay, BAH, BAS, COLA inputs */}
+                    <CurrencyField
+                      label="Base Pay"
+                      value={basePay}
+                      onChange={setBasePay}
+                      helpText="Monthly basic pay (Entitlements section, top of LES)"
+                    />
+                    <CurrencyField
+                      label="BAH"
+                      value={bah}
+                      onChange={setBah}
+                      helpText="Basic Allowance for Housing (location-based)"
+                    />
+                    <CurrencyField
+                      label="BAS"
+                      value={bas}
+                      onChange={setBas}
+                      helpText="Basic Allowance for Subsistence (meals)"
+                    />
+                    <CurrencyField
+                      label="COLA"
+                      value={cola}
+                      onChange={setCola}
+                      helpText="Cost of Living Allowance (if applicable)"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Deductions Section */}
+              <div className="rounded-lg border bg-white">
+                <button
+                  onClick={() =>
+                    setCollapsedSections((prev) => ({ ...prev, deductions: !prev.deductions }))
+                  }
+                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon name="Calculator" className="h-5 w-5 text-orange-600" />
+                    <span className="font-semibold text-gray-900">Deductions</span>
+                    <Badge variant="info">{deductionCount}/3</Badge>
+                  </div>
+                  <Icon
+                    name={collapsedSections.deductions ? "ChevronDown" : "ChevronUp"}
+                    className="h-5 w-5 text-gray-400"
+                  />
+                </button>
+
+                {!collapsedSections.deductions && (
+                  <div className="space-y-3 px-4 pb-4">
+                    <CurrencyField
+                      label="TSP"
+                      value={tsp}
+                      onChange={setTsp}
+                      helpText="Thrift Savings Plan contribution"
+                    />
+                    <CurrencyField
+                      label="SGLI"
+                      value={sgli}
+                      onChange={setSgli}
+                      helpText="Servicemembers' Group Life Insurance premium"
+                    />
+                    <CurrencyField
+                      label="Dental"
+                      value={dental}
+                      onChange={setDental}
+                      helpText="Dental insurance premium (if enrolled)"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Taxes Section */}
+              <div className="rounded-lg border bg-white">
+                <button
+                  onClick={() => setCollapsedSections((prev) => ({ ...prev, taxes: !prev.taxes }))}
+                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon name="Landmark" className="h-5 w-5 text-red-600" />
+                    <span className="font-semibold text-gray-900">Taxes</span>
+                    <Badge variant="info">{taxCount}/4</Badge>
+                  </div>
+                  <Icon
+                    name={collapsedSections.taxes ? "ChevronDown" : "ChevronUp"}
+                    className="h-5 w-5 text-gray-400"
+                  />
+                </button>
+
+                {!collapsedSections.taxes && (
+                  <div className="space-y-3 px-4 pb-4">
+                    {/* Tax Info Banner */}
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                      <div className="flex items-start gap-2">
+                        <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+                        <div className="text-xs text-blue-800">
+                          <strong>FICA and Medicare are auto-calculated</strong> at 6.2% and 1.45%
+                          of taxable gross. You can edit if your LES differs (rare).
+                        </div>
+                      </div>
+                    </div>
+
+                    <CurrencyField
+                      label="Federal Tax"
+                      value={federalTax}
+                      onChange={setFederalTax}
+                      helpText="Federal income tax withheld"
+                    />
+                    <CurrencyField
+                      label="State Tax"
+                      value={stateTax}
+                      onChange={setStateTax}
+                      helpText="State income tax withheld (if applicable)"
+                    />
+                    <div>
+                      <CurrencyField
+                        label="FICA / Social Security ✓ Auto-calc (6.2%)"
+                        value={fica}
+                        onChange={setFica}
+                        helpText="Auto-calculated from taxable gross - edit if your LES differs"
+                      />
+                    </div>
+                    <div>
+                      <CurrencyField
+                        label="Medicare ✓ Auto-calc (1.45%)"
+                        value={medicare}
+                        onChange={setMedicare}
+                        helpText="Auto-calculated from taxable gross - edit if your LES differs"
+                      />
+                    </div>
+
+                    {/* Tax Validation Warnings */}
+                    {taxValidation.warnings.length > 0 && (
+                      <div className="rounded-lg border-l-4 border-red-400 bg-red-50 p-3">
+                        <div className="flex gap-2">
+                          <Icon
+                            name="AlertTriangle"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-red-900">
+                              Tax Validation Warnings
+                            </p>
+                            <ul className="mt-1 space-y-1 text-xs text-red-800">
+                              {taxValidation.warnings.map((w, i) => (
+                                <li key={i}>• {w}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tax Validation Advisories */}
+                    {taxValidation.advisories.length > 0 && (
+                      <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-3">
+                        <div className="flex gap-2">
+                          <Icon
+                            name="Info"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-yellow-900">Advisory</p>
+                            <ul className="mt-1 space-y-1 text-xs text-yellow-800">
+                              {taxValidation.advisories.map((a, i) => (
+                                <li key={i}>• {a}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Net Pay Section - NEW */}
+              <div className="rounded-lg border bg-white p-4">
+                <h3 className="mb-3 font-semibold text-gray-900">Net Pay (Bottom Line)</h3>
+                <CurrencyField
+                  label="Actual Net Pay from LES"
+                  value={netPay || 0}
+                  onChange={setNetPay}
+                  helpText="This is your final take-home amount at the bottom of your LES"
+                />
+              </div>
+            </form>
+          </div>
+
+          {/* RIGHT PANEL: AUDIT REPORT (ALWAYS VISIBLE) */}
+          <div className="bg-white p-4 lg:overflow-y-auto lg:border-l lg:p-6">
+            <div className="mx-auto max-w-3xl space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900">Audit Report</h2>
+
+              {/* Screen Reader Status Announcements */}
+              <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+                {loading && "Computing audit..."}
+                {error && `Error: ${error}`}
+                {result && `Audit complete. ${result.flags.length} findings.`}
+              </div>
+
+              {/* Loading State */}
+              {loading && (
+                <div className="animate-pulse space-y-4">
+                  {/* Summary skeleton */}
+                  <div className="h-32 rounded-lg bg-gray-100 p-6" />
+
+                  {/* Flags skeleton */}
+                  <div className="space-y-3">
+                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
+                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
+                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
+                  </div>
+                </div>
+              )}
+
+              {/* Error State - NEW */}
+              {error && (
+                <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+                  <Icon name="AlertCircle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-red-900">Audit Failed</p>
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Summary Header */}
+              {result && (
+                <>
+                  <div className="rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      {/* Expected Net */}
+                      <div>
+                        <p className="mb-1 text-sm font-medium text-blue-700">Expected Net Pay</p>
+                        {result.totals.computed_net !== null ? (
+                          <p className="text-2xl font-bold text-blue-900">
+                            ${(result.totals.computed_net / 100).toFixed(2)}
+                          </p>
+                        ) : (
+                          <p className="text-lg text-blue-600">Premium feature</p>
+                        )}
+                      </div>
+
+                      {/* Actual Net */}
+                      <div>
+                        <p className="mb-1 text-sm font-medium text-gray-700">Your LES Net Pay</p>
+                        {tier !== "premium" && tier !== "staff" ? (
+                          <p className="text-lg text-blue-600">Premium feature</p>
+                        ) : result.totals.actual_net > 0 ? (
+                          <p className="text-2xl font-bold text-gray-900">
+                            ${(result.totals.actual_net / 100).toFixed(2)}
+                          </p>
+                        ) : (
+                          <p className="text-sm italic text-gray-500">Enter above to compare</p>
+                        )}
+                      </div>
+
+                      {/* Variance */}
+                      <div>
+                        <p className="mb-1 text-sm font-medium text-gray-700">Variance</p>
+                        {tier !== "premium" && tier !== "staff" ? (
+                          <p className="text-lg text-blue-600">Premium feature</p>
+                        ) : result.totals.variance !== null ? (
+                          <p
+                            className={`text-2xl font-bold ${
+                              Math.abs(result.totals.variance) <= 500
+                                ? "text-green-600"
+                                : Math.abs(result.totals.variance) <= 5000
+                                  ? "text-yellow-600"
+                                  : "text-red-600"
+                            }`}
+                          >
+                            ${Math.abs(result.totals.variance / 100).toFixed(2)}
+                          </p>
+                        ) : (
+                          <Badge
+                            variant={
+                              result.totals.varianceBucket === "0-5"
+                                ? "success"
+                                : result.totals.varianceBucket === "5-50"
+                                  ? "warning"
+                                  : "danger"
+                            }
+                          >
+                            {result.totals.varianceBucket === "0-5" && "$0-$5"}
+                            {result.totals.varianceBucket === "5-50" && "$5-$50"}
+                            {result.totals.varianceBucket === ">50" && ">$50"}
+                            {result.totals.varianceBucket === ">100" && ">$100"}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Flags List */}
+                  <div>
+                    <h3 className="mb-3 text-lg font-semibold text-gray-900">Findings</h3>
+
+                    {/* Complete paywall for free users */}
+                    {tier !== "premium" && tier !== "staff" ? (
+                      <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
+                        <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+                        <h3 className="mb-3 text-xl font-semibold text-blue-900">
+                          Premium Feature: Complete LES Audit
+                        </h3>
+                        <p className="mb-2 text-sm text-blue-800">
+                          Your audit is complete, but full results are for Premium members only.
+                        </p>
+                        <p className="mb-6 text-sm text-blue-700">
+                          Premium unlocks: all flags, variance analysis, email templates, unlimited
+                          audits
+                        </p>
+                        <a
+                          href="/dashboard/upgrade?feature=paycheck-audit"
+                          className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                        >
+                          Upgrade to Premium
+                        </a>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Visible Flags */}
+                        <div className="space-y-3">
+                          {result.flags.map((flag, idx) => (
+                            <div
+                              key={idx}
+                              className={`rounded-lg border-l-4 p-4 ${
+                                flag.severity === "red"
+                                  ? "border-red-500 bg-red-50"
+                                  : flag.severity === "yellow"
+                                    ? "border-yellow-500 bg-yellow-50"
+                                    : "border-green-500 bg-green-50"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                {/* Severity Icon - NEW */}
+                                <div className="flex-shrink-0">
+                                  {flag.severity === "red" ? (
+                                    <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
+                                  ) : flag.severity === "yellow" ? (
+                                    <Icon
+                                      name="AlertTriangle"
+                                      className="h-6 w-6 text-yellow-600"
+                                    />
+                                  ) : (
+                                    <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+                                  )}
+                                </div>
+
+                                <div className="flex-1">
+                                  <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
+                                  <p className="text-sm text-gray-700">{flag.suggestion}</p>
+                                </div>
+                              </div>
                             </div>
+                          ))}
+                        </div>
+
+                        {/* Hidden Flags (Free Tier) */}
+                        {result.hiddenFlagCount > 0 && (
+                          <PremiumCurtain
+                            tier={tier}
+                            feature="flags"
+                            hiddenCount={result.hiddenFlagCount}
+                          >
+                            <div className="rounded-lg bg-gray-100 p-4 text-center text-gray-500">
+                              {result.hiddenFlagCount} more findings hidden
+                            </div>
+                          </PremiumCurtain>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Waterfall (Premium Only) */}
+                  {tier !== "premium" && tier !== "staff" ? (
+                    <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
+                      <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+                      <h3 className="mb-3 text-xl font-semibold text-blue-900">
+                        Premium Feature: Detailed Reconciliation
+                      </h3>
+                      <p className="mb-2 text-sm text-blue-800">
+                        Line-by-line variance breakdown is for Premium members only.
+                      </p>
+                      <p className="mb-6 text-sm text-blue-700">
+                        Premium unlocks: detailed reconciliation, all flags, variance analysis,
+                        unlimited audits
+                      </p>
+                      <a
+                        href="/dashboard/upgrade?feature=paycheck-audit"
+                        className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                      >
+                        Upgrade to Premium
+                      </a>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                        Detailed Reconciliation
+                      </h3>
+                      {result.waterfall && result.waterfall.length > 0 ? (
+                        <div className="rounded-lg bg-gray-50 p-4 font-mono text-sm">
+                          {result.waterfall.map((row, idx) => (
+                            <div key={idx} className="flex justify-between">
+                              <span>{row.label}</span>
+                              <span>${(row.amount / 100).toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-lg bg-gray-100 p-8 text-center">
+                          <p className="text-gray-600">Detailed line-by-line reconciliation</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Action Bar */}
+                  <div className="flex items-center gap-4 border-t pt-6">
+                    {tier === "premium" || tier === "staff" ? (
+                      <button
+                        onClick={handleSavePDF}
+                        disabled={saving}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                      >
+                        <Icon name="Download" className="h-5 w-5" />
+                        {saving ? "Saving..." : "Save Audit"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => (window.location.href = "/dashboard/upgrade")}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                      >
+                        <Icon name="Zap" className="h-5 w-5" />
+                        Upgrade to Save Audit
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Empty State */}
+              {!result && !loading && !error && (
+                <div className="py-12 text-center">
+                  <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                    Ready to Audit Your LES
+                  </h3>
+                  <p className="mb-4 text-gray-600">
+                    Enter your pay period and LES values on the left
+                  </p>
+                  <div className="inline-flex max-w-md items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left">
+                    <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+                    <div className="text-sm text-blue-900">
+                      <p className="mb-1 font-semibold">Quick Start:</p>
+                      <ol className="list-inside list-decimal space-y-1 text-blue-800">
+                        <li>Select month/year from your LES</li>
+                        <li>Auto-filled values will load</li>
+                        <li>Enter taxes and net pay from your LES</li>
+                        <li>Report updates in real-time</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Audit History (Premium Only) */}
+              {tier === "premium" && history.length > 0 && (
+                <div className="mt-8 border-t pt-6">
+                  <button
+                    onClick={() => setHistoryExpanded(!historyExpanded)}
+                    className="flex w-full items-center justify-between text-left"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900">Saved Audits</h3>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="info">{history.length}</Badge>
+                      <Icon
+                        name={historyExpanded ? "ChevronUp" : "ChevronDown"}
+                        className="h-5 w-5 text-gray-400"
+                      />
+                    </div>
+                  </button>
+
+                  {historyExpanded && (
+                    <div className="mt-4 space-y-2">
+                      {history.map((audit) => (
+                        <div
+                          key={audit.id}
+                          className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                        >
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900">
+                              {new Date(2000, audit.month - 1).toLocaleString("default", {
+                                month: "long",
+                              })}{" "}
+                              {audit.year}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {new Date(audit.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleLoadAudit(audit.id)}
+                              className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
+                            >
+                              <Icon name="Upload" className="h-4 w-4" />
+                              Load
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteAudit(
+                                  audit.id,
+                                  `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`
+                                )
+                              }
+                              className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
+                            >
+                              <Icon name="Trash2" className="h-4 w-4" />
+                              Delete
+                            </button>
                           </div>
                         </div>
                       ))}
                     </div>
-
-                    {/* Hidden Flags (Free Tier) */}
-                    {result.hiddenFlagCount > 0 && (
-                      <PremiumCurtain
-                        tier={tier}
-                        feature="flags"
-                        hiddenCount={result.hiddenFlagCount}
-                      >
-                        <div className="rounded-lg bg-gray-100 p-4 text-center text-gray-500">
-                          {result.hiddenFlagCount} more findings hidden
-                        </div>
-                      </PremiumCurtain>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Waterfall (Premium Only) */}
-              {tier !== "premium" && tier !== "staff" ? (
-                <div className="rounded-lg border border-blue-300 bg-blue-50 p-8 text-center">
-                  <Icon name="Lock" className="mx-auto mb-4 h-12 w-12 text-blue-600" />
-                  <h3 className="mb-3 text-xl font-semibold text-blue-900">
-                    Premium Feature: Detailed Reconciliation
-                  </h3>
-                  <p className="mb-2 text-sm text-blue-800">
-                    Line-by-line variance breakdown is for Premium members only.
-                  </p>
-                  <p className="mb-6 text-sm text-blue-700">
-                    Premium unlocks: detailed reconciliation, all flags, variance analysis,
-                    unlimited audits
-                  </p>
-                  <a
-                    href="/dashboard/upgrade?feature=paycheck-audit"
-                    className="inline-block rounded-md bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-                  >
-                    Upgrade to Premium
-                  </a>
-                </div>
-              ) : (
-                <div>
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">
-                    Detailed Reconciliation
-                  </h3>
-                  {result.waterfall && result.waterfall.length > 0 ? (
-                    <div className="rounded-lg bg-gray-50 p-4 font-mono text-sm">
-                      {result.waterfall.map((row, idx) => (
-                        <div key={idx} className="flex justify-between">
-                          <span>{row.label}</span>
-                          <span>${(row.amount / 100).toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="rounded-lg bg-gray-100 p-8 text-center">
-                      <p className="text-gray-600">Detailed line-by-line reconciliation</p>
-                    </div>
                   )}
                 </div>
               )}
-
-              {/* Action Bar */}
-              <div className="flex items-center gap-4 border-t pt-6">
-                {tier === "premium" || tier === "staff" ? (
-                  <button
-                    onClick={handleSavePDF}
-                    disabled={saving}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
-                  >
-                    <Icon name="Download" className="h-5 w-5" />
-                    {saving ? "Saving..." : "Save Audit"}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => (window.location.href = "/dashboard/upgrade")}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-                  >
-                    <Icon name="Zap" className="h-5 w-5" />
-                    Upgrade to Save Audit
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Empty State */}
-          {!result && !loading && !error && (
-            <div className="py-12 text-center">
-              <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">Ready to Audit Your LES</h3>
-              <p className="mb-4 text-gray-600">Enter your pay period and LES values on the left</p>
-              <div className="inline-flex max-w-md items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left">
-                <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-                <div className="text-sm text-blue-900">
-                  <p className="mb-1 font-semibold">Quick Start:</p>
-                  <ol className="list-inside list-decimal space-y-1 text-blue-800">
-                    <li>Select month/year from your LES</li>
-                    <li>Auto-filled values will load</li>
-                    <li>Enter taxes and net pay from your LES</li>
-                    <li>Report updates in real-time</li>
-                  </ol>
-                </div>
-              </div>
             </div>
-          )}
-
-          {/* Audit History (Premium Only) */}
-          {tier === "premium" && history.length > 0 && (
-            <div className="mt-8 border-t pt-6">
-              <button
-                onClick={() => setHistoryExpanded(!historyExpanded)}
-                className="flex w-full items-center justify-between text-left"
-              >
-                <h3 className="text-lg font-semibold text-gray-900">Saved Audits</h3>
-                <div className="flex items-center gap-2">
-                  <Badge variant="info">{history.length}</Badge>
-                  <Icon
-                    name={historyExpanded ? "ChevronUp" : "ChevronDown"}
-                    className="h-5 w-5 text-gray-400"
-                  />
-                </div>
-              </button>
-
-              {historyExpanded && (
-                <div className="mt-4 space-y-2">
-                  {history.map((audit) => (
-                    <div
-                      key={audit.id}
-                      className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 transition-colors hover:bg-gray-100"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">
-                          {new Date(2000, audit.month - 1).toLocaleString("default", {
-                            month: "long",
-                          })}{" "}
-                          {audit.year}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {new Date(audit.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleLoadAudit(audit.id)}
-                          className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
-                        >
-                          <Icon name="Upload" className="h-4 w-4" />
-                          Load
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleDeleteAudit(
-                              audit.id,
-                              `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`
-                            )
-                          }
-                          className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
-                        >
-                          <Icon name="Trash2" className="h-4 w-4" />
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
         </div>
       )}
     </div>
