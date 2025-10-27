@@ -123,6 +123,7 @@ export interface FormData {
   estimated_weight: number;
   actual_weight: number;
   distance_miles: number;
+  destination_zip?: string; // ZIP code for per diem locality lookup
 }
 
 /**
@@ -400,7 +401,9 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
   }
 
   try {
-    perDiem = await calculatePerDiem(formData.per_diem_days, "00000", effectiveDate);
+    // Use destination ZIP if provided, otherwise fallback to "00000"
+    const zipCode = formData.destination_zip || "00000";
+    perDiem = await calculatePerDiem(formData.per_diem_days, zipCode, effectiveDate);
   } catch (error) {
     logger.error("Per diem calculation failed:", error);
     // Use fallback per diem calculation

@@ -20,6 +20,7 @@ import {
   type CalculationResult,
 } from "@/lib/pcs/calculation-engine";
 import { logger } from "@/lib/logger";
+import militaryBasesData from "@/lib/data/military-bases.json";
 
 interface PCSUnifiedWizardProps {
   userProfile: {
@@ -82,6 +83,174 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [ocrData, setOcrData] = useState<any>(null);
+  const [isLoadingDistance, setIsLoadingDistance] = useState(false);
+  const [isLoadingRates, setIsLoadingRates] = useState(false);
+
+  /**
+   * Extract ZIP code from military base name
+   * Uses military-bases.json which contains ZIP codes for ~400 bases
+   */
+  const extractZipFromBase = useCallback((baseName: string): string => {
+    if (!baseName) return "00000";
+
+    const normalizedInput = baseName.toLowerCase().trim();
+    const base = militaryBasesData.bases.find(
+      (b: any) =>
+        b.name.toLowerCase().includes(normalizedInput) ||
+        normalizedInput.includes(b.name.toLowerCase()) ||
+        b.city.toLowerCase().includes(normalizedInput)
+    );
+
+    return base?.zip || "00000";
+  }, []);
+
+  /**
+   * Auto-calculate distance when origin/destination bases change
+   * Calls existing /api/pcs/calculate-distance endpoint
+   */
+  useEffect(() => {
+    if (formData.origin_base && formData.destination_base && !isLoadingDistance) {
+      const fetchDistance = async () => {
+        setIsLoadingDistance(true);
+        try {
+          const response = await fetch("/api/pcs/calculate-distance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              origin: formData.origin_base,
+              destination: formData.destination_base,
+              useGoogleMaps: false, // Use cached/haversine first for speed
+            }),
+          });
+
+          if (response.ok) {
+            const { distance } = await response.json();
+            updateFormData({
+              malt_distance: distance,
+              distance_miles: distance,
+            });
+            logger.info("Auto-calculated distance:", {
+              distance,
+              origin: formData.origin_base,
+              destination: formData.destination_base,
+            });
+          }
+        } catch (error) {
+          logger.error("Failed to auto-calculate distance:", error);
+        } finally {
+          setIsLoadingDistance(false);
+        }
+      };
+
+      // Debounce to avoid excessive API calls
+      const timer = setTimeout(fetchDistance, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [formData.origin_base, formData.destination_base, isLoadingDistance, updateFormData]);
+
+  /**
+   * Auto-calculate travel days from departure and arrival dates
+   * Simple date math: arrival_date - departure_date
+   */
+  useEffect(() => {
+    if (formData.departure_date && formData.arrival_date) {
+      const departure = new Date(formData.departure_date);
+      const arrival = new Date(formData.arrival_date);
+      const days = Math.ceil((arrival.getTime() - departure.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (days > 0 && days !== formData.per_diem_days) {
+        updateFormData({ per_diem_days: days });
+        logger.info("Auto-calculated travel days:", {
+          days,
+          departure: formData.departure_date,
+          arrival: formData.arrival_date,
+        });
+      }
+    }
+  }, [formData.departure_date, formData.arrival_date, formData.per_diem_days, updateFormData]);
+
+  /**
+   * Auto-fill TLE rates from per diem locality data
+   * Fetches per diem rates for origin/destination and suggests as TLE daily rate
+   */
+  useEffect(() => {
+    const fetchTLERates = async () => {
+      if (!formData.pcs_orders_date) return;
+
+      setIsLoadingRates(true);
+      const effectiveDate = formData.pcs_orders_date || new Date().toISOString().split("T")[0];
+
+      try {
+        // Fetch origin TLE rate
+        if (formData.origin_base) {
+          const originZip = extractZipFromBase(formData.origin_base);
+          if (originZip !== "00000") {
+            const response = await fetch("/api/pcs/per-diem-lookup", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ zip: originZip, effectiveDate }),
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              // Use lodging component of per diem as suggested TLE rate
+              const suggestedRate = data.lodgingRate || data.totalRate || 150;
+              if (formData.tle_origin_rate === 0) {
+                updateFormData({ tle_origin_rate: suggestedRate });
+                logger.info("Auto-filled origin TLE rate:", {
+                  rate: suggestedRate,
+                  zip: originZip,
+                });
+              }
+            }
+          }
+        }
+
+        // Fetch destination TLE rate
+        if (formData.destination_base) {
+          const destZip = extractZipFromBase(formData.destination_base);
+          if (destZip !== "00000") {
+            const response = await fetch("/api/pcs/per-diem-lookup", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ zip: destZip, effectiveDate }),
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              const suggestedRate = data.lodgingRate || data.totalRate || 150;
+              if (formData.tle_destination_rate === 0) {
+                updateFormData({ tle_destination_rate: suggestedRate });
+                logger.info("Auto-filled destination TLE rate:", {
+                  rate: suggestedRate,
+                  zip: destZip,
+                });
+              }
+            }
+          }
+        }
+      } catch (error) {
+        logger.error("Failed to fetch TLE rates:", error);
+      } finally {
+        setIsLoadingRates(false);
+      }
+    };
+
+    // Only fetch if we have bases and haven't set rates yet
+    if ((formData.origin_base || formData.destination_base) && !isLoadingRates) {
+      const timer = setTimeout(fetchTLERates, 1500); // Debounce
+      return () => clearTimeout(timer);
+    }
+  }, [
+    formData.origin_base,
+    formData.destination_base,
+    formData.pcs_orders_date,
+    formData.tle_origin_rate,
+    formData.tle_destination_rate,
+    extractZipFromBase,
+    isLoadingRates,
+    updateFormData,
+  ]);
 
   // Calculate estimates when relevant fields change
   const calculateEstimates = useCallback(async () => {
@@ -97,14 +266,20 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
     setIsCalculating(true);
     try {
-      const result = await calculatePCSClaim(formData as FormData);
+      // Extract destination ZIP for per diem locality lookup
+      const destinationZip = extractZipFromBase(formData.destination_base);
+
+      const result = await calculatePCSClaim({
+        ...formData,
+        destination_zip: destinationZip,
+      } as FormData);
       setCalculations(result);
     } catch (error) {
       logger.error("Failed to calculate estimates:", error);
     } finally {
       setIsCalculating(false);
     }
-  }, [formData]);
+  }, [formData, extractZipFromBase]);
 
   // Auto-calculate when data changes
   useEffect(() => {
@@ -149,7 +324,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
       if (result.success) {
         const claimId = result.claim.id;
-        
+
         // 2. Generate and download PDF
         const pdfResponse = await fetch("/api/pcs/export/pdf", {
           method: "POST",
@@ -159,12 +334,12 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
         if (pdfResponse.ok) {
           const pdfBlob = await pdfResponse.blob();
-          
+
           // 3. Trigger browser download
           const url = URL.createObjectURL(pdfBlob);
-          const a = document.createElement('a');
+          const a = document.createElement("a");
           a.href = url;
-          a.download = `PCS_Claim_${new Date().toISOString().split('T')[0]}.pdf`;
+          a.download = `PCS_Claim_${new Date().toISOString().split("T")[0]}.pdf`;
           a.click();
           URL.revokeObjectURL(url);
         }
@@ -923,7 +1098,8 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         </div>
         <h2 className="mb-4 text-4xl font-bold text-slate-900">Claim Package Ready!</h2>
         <p className="mb-8 text-lg text-slate-600">
-          Your PCS calculation has been saved. Use this worksheet when completing your DD Form 1351-2.
+          Your PCS calculation has been saved. Use this worksheet when completing your DD Form
+          1351-2.
         </p>
 
         <div className="mb-8">

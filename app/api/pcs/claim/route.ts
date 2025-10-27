@@ -1,15 +1,15 @@
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { errorResponse, Errors } from '@/lib/api-errors';
-import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { errorResponse, Errors } from "@/lib/api-errors";
+import { logger } from "@/lib/logger";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 /**
  * PCS CLAIM MANAGEMENT
- * 
+ *
  * GET: Fetch user's claims
  * POST: Create new claim
  * PATCH: Update claim details
@@ -22,33 +22,32 @@ export async function GET() {
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
-      .from('entitlements')
-      .select('tier, status')
-      .eq('user_id', userId)
+      .from("entitlements")
+      .select("tier, status")
+      .eq("user_id", userId)
       .maybeSingle();
 
-    const tier = entitlement?.tier || 'free';
-    const isPremium = tier === 'premium' && entitlement?.status === 'active';
+    const tier = entitlement?.tier || "free";
+    const isPremium = tier === "premium" && entitlement?.status === "active";
 
     if (!isPremium) {
-      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
+      throw Errors.premiumRequired("PCS Money Copilot is available for Premium members only");
     }
 
     // Get all claims for user
     const { data: claims, error } = await supabaseAdmin
-      .from('pcs_claims')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .from("pcs_claims")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      logger.error('[PCSClaim] Failed to fetch claims', error, { userId });
-      throw Errors.databaseError('Failed to fetch claims');
+      logger.error("[PCSClaim] Failed to fetch claims", error, { userId });
+      throw Errors.databaseError("Failed to fetch claims");
     }
 
-    logger.info('[PCSClaim] Claims fetched', { userId, count: claims?.length || 0 });
+    logger.info("[PCSClaim] Claims fetched", { userId, count: claims?.length || 0 });
     return NextResponse.json({ claims });
-
   } catch (error) {
     return errorResponse(error);
   }
@@ -61,78 +60,140 @@ export async function POST(req: NextRequest) {
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
-      .from('entitlements')
-      .select('tier, status')
-      .eq('user_id', userId)
+      .from("entitlements")
+      .select("tier, status")
+      .eq("user_id", userId)
       .maybeSingle();
 
-    const tier = entitlement?.tier || 'free';
-    const isPremium = tier === 'premium' && entitlement?.status === 'active';
+    const tier = entitlement?.tier || "free";
+    const isPremium = tier === "premium" && entitlement?.status === "active";
 
     if (!isPremium) {
-      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
+      throw Errors.premiumRequired("PCS Money Copilot is available for Premium members only");
     }
 
     const body = await req.json();
 
     // Get user profile for defaults
     const { data: profile } = await supabaseAdmin
-      .from('user_profiles')
-      .select('rank, branch, current_base, pcs_date')
-      .eq('user_id', userId)
+      .from("user_profiles")
+      .select("rank, branch, current_base, pcs_date")
+      .eq("user_id", userId)
       .maybeSingle();
 
     // Create new claim
     const { data: claim, error } = await supabaseAdmin
-      .from('pcs_claims')
+      .from("pcs_claims")
       .insert({
         user_id: userId,
-        claim_name: body.claim_name || 'My PCS Claim',
+        claim_name: body.claim_name || "My PCS Claim",
         pcs_orders_date: body.pcs_orders_date,
         departure_date: body.departure_date,
         arrival_date: body.arrival_date || body.pcs_date,
         origin_base: body.origin_base || profile?.current_base,
         destination_base: body.destination_base,
-        travel_method: body.travel_method || 'ppm',
+        travel_method: body.travel_method || "ppm",
         dependents_count: body.dependents_count || 0,
         rank_at_pcs: body.rank_at_pcs || profile?.rank,
         branch: body.branch || profile?.branch,
-        status: 'draft',
+        status: "draft",
         readiness_score: 0,
-        completion_percentage: 0
+        completion_percentage: 0,
       })
       .select()
       .single();
 
     if (error) {
-      logger.error('[PCSClaim] Failed to create claim', error, { userId });
-      throw Errors.databaseError('Failed to create claim');
+      logger.error("[PCSClaim] Failed to create claim", error, { userId });
+      throw Errors.databaseError("Failed to create claim");
+    }
+
+    // Save calculations to pcs_entitlement_snapshots if provided
+    if (body.calculations) {
+      const calculations = body.calculations;
+
+      try {
+        await supabaseAdmin.from("pcs_entitlement_snapshots").insert({
+          claim_id: claim.id,
+          user_id: userId,
+          dla_amount: calculations.dla?.amount || 0,
+          tle_days:
+            (calculations.tle?.origin?.days || 0) + (calculations.tle?.destination?.days || 0),
+          tle_amount: calculations.tle?.total || 0,
+          malt_miles: calculations.malt?.distance || 0,
+          malt_amount: calculations.malt?.amount || 0,
+          per_diem_days: calculations.perDiem?.days || 0,
+          per_diem_amount: calculations.perDiem?.amount || 0,
+          ppm_weight: calculations.ppm?.weight || 0,
+          ppm_estimate: calculations.ppm?.amount || 0,
+          total_estimated: calculations.total || 0,
+          calculation_details: calculations,
+          rates_used: {
+            dla: calculations.dla?.rateUsed || 0,
+            malt: calculations.malt?.ratePerMile || 0,
+            perDiem: calculations.perDiem?.rate || 0,
+            ppm: calculations.ppm?.rate || 0,
+          },
+          confidence_scores: calculations.confidence,
+          jtr_rule_version: calculations.jtrRuleVersion || "2025-01-25",
+          data_sources: calculations.dataSources,
+        });
+
+        // Update claim with entitlement total
+        await supabaseAdmin
+          .from("pcs_claims")
+          .update({
+            entitlements: { total: calculations.total || 0 },
+            readiness_score: calculations.confidence?.overall || 0,
+            completion_percentage: calculations.confidence?.overall || 0,
+          })
+          .eq("id", claim.id);
+
+        logger.info("[PCSClaim] Calculations saved to snapshot", {
+          userId,
+          claimId: claim.id,
+          total: calculations.total,
+        });
+      } catch (snapshotError) {
+        logger.error("[PCSClaim] Failed to save calculation snapshot", snapshotError, {
+          userId,
+          claimId: claim.id,
+        });
+        // Don't fail the claim creation if snapshot fails
+      }
     }
 
     // Track analytics (fire and forget)
     supabaseAdmin
-      .from('pcs_analytics')
+      .from("pcs_analytics")
       .insert({
         user_id: userId,
         claim_id: claim.id,
-        event_type: 'claim_created',
+        event_type: "claim_created",
         event_data: {
           travel_method: claim.travel_method,
-          dependents: claim.dependents_count
-        }
+          dependents: claim.dependents_count,
+        },
       })
       .then(({ error: analyticsError }) => {
         if (analyticsError) {
-          logger.warn('[PCSClaim] Failed to track analytics', { userId, claimId: claim.id, error: analyticsError.message });
+          logger.warn("[PCSClaim] Failed to track analytics", {
+            userId,
+            claimId: claim.id,
+            error: analyticsError.message,
+          });
         }
       });
 
-    logger.info('[PCSClaim] Claim created', { userId, claimId: claim.id, travelMethod: claim.travel_method });
+    logger.info("[PCSClaim] Claim created", {
+      userId,
+      claimId: claim.id,
+      travelMethod: claim.travel_method,
+    });
     return NextResponse.json({
       success: true,
-      claim
+      claim,
     });
-
   } catch (error) {
     return errorResponse(error);
   }
@@ -145,50 +206,52 @@ export async function PATCH(req: NextRequest) {
 
     // PREMIUM-ONLY FEATURE: Check tier
     const { data: entitlement } = await supabaseAdmin
-      .from('entitlements')
-      .select('tier, status')
-      .eq('user_id', userId)
+      .from("entitlements")
+      .select("tier, status")
+      .eq("user_id", userId)
       .maybeSingle();
 
-    const tier = entitlement?.tier || 'free';
-    const isPremium = tier === 'premium' && entitlement?.status === 'active';
+    const tier = entitlement?.tier || "free";
+    const isPremium = tier === "premium" && entitlement?.status === "active";
 
     if (!isPremium) {
-      throw Errors.premiumRequired('PCS Money Copilot is available for Premium members only');
+      throw Errors.premiumRequired("PCS Money Copilot is available for Premium members only");
     }
 
     const body = await req.json();
     const { claimId, ...updates } = body;
 
     if (!claimId) {
-      throw Errors.invalidInput('claimId is required');
+      throw Errors.invalidInput("claimId is required");
     }
 
     // Update claim
     const { data: claim, error } = await supabaseAdmin
-      .from('pcs_claims')
+      .from("pcs_claims")
       .update({
         ...updates,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', claimId)
-      .eq('user_id', userId)
+      .eq("id", claimId)
+      .eq("user_id", userId)
       .select()
       .single();
 
     if (error) {
-      logger.error('[PCSClaim] Failed to update claim', error, { userId, claimId });
-      throw Errors.databaseError('Failed to update claim');
+      logger.error("[PCSClaim] Failed to update claim", error, { userId, claimId });
+      throw Errors.databaseError("Failed to update claim");
     }
 
-    logger.info('[PCSClaim] Claim updated', { userId, claimId, updatedFields: Object.keys(updates) });
+    logger.info("[PCSClaim] Claim updated", {
+      userId,
+      claimId,
+      updatedFields: Object.keys(updates),
+    });
     return NextResponse.json({
       success: true,
-      claim
+      claim,
     });
-
   } catch (error) {
     return errorResponse(error);
   }
 }
-
