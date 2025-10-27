@@ -25,13 +25,9 @@ const lora = Lora({
 export const metadata: Metadata = {
   ...DEFAULT_META,
   icons: {
-    icon: [
-      { url: "/next.svg", sizes: "any" },
-      { url: "/next.svg", sizes: "16x16", type: "image/svg+xml" },
-      { url: "/next.svg", sizes: "32x32", type: "image/svg+xml" },
-    ],
-    shortcut: "/next.svg",
-    apple: "/next.svg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   ...(process.env.NEXT_PUBLIC_ENV !== "production"
     ? { robots: { index: false, follow: false } }
