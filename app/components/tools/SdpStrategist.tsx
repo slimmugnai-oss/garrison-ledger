@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-import Explainer from "@/app/components/ai/Explainer";
 import Icon from "@/app/components/ui/Icon";
 import { track } from "@/lib/track";
 
@@ -190,17 +189,6 @@ export default function SdpStrategist() {
               decisions.
             </strong>
           </p>
-        </div>
-
-        {/* AI Explainer - Provides context on what these numbers mean for the user's situation */}
-        <div className="mt-6">
-          <Explainer
-            payload={{
-              tool: "sdp",
-              inputs: { amount, deploymentMonths, accrualMonths },
-              outputs: { interestEarned, totalPayout },
-            }}
-          />
         </div>
       </div>
 
