@@ -104,7 +104,7 @@ export default function TdyVoucherChecklist({ tripId, isPremium }: Props) {
       <div className="p-6 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900">Final Voucher Package</h3>
         <p className="text-sm text-gray-600 mt-1">
-          Ready to submit to finance
+          Calculations complete - reference for DTS entry
         </p>
       </div>
 

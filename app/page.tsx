@@ -484,7 +484,7 @@ export default function Home() {
 
               <p className="mb-6 text-xl leading-relaxed text-slate-200">
                 Stop spending hours on DTS vouchers. Track receipts, calculate per diem, and build
-                submission-ready vouchers in 20 minutes instead of 2+ hours.
+                JTR-compliant calculation worksheets in 20 minutes to help complete vouchers accurately.
               </p>
 
               <ul className="mb-8 space-y-3 text-lg">

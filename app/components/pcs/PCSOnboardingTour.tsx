@@ -61,7 +61,7 @@ export function PCSOnboardingTour({
         id: "what-you-get",
         title: "What You'll Get",
         content:
-          "A professional PDF package with: DLA, TLE, MALT, and Per Diem calculations based on official 2025 DFAS rates. All calculations include JTR citations for finance office submission.",
+          "A professional calculation worksheet with DLA, TLE, MALT, and Per Diem based on official 2025 DFAS rates. Use this as your reference guide when completing DD Form 1351-2 in DTS. All calculations include JTR citations.",
         target: "body",
         position: "top",
       },
@@ -298,7 +298,7 @@ export function PCSOnboardingChecklist({ onComplete }: { onComplete: () => void 
     {
       id: "export-claim",
       title: "Export Claim Package",
-      description: "Generate PDF and Excel packages for finance office submission",
+      description: "Download calculation worksheet to help complete your DD-1351-2",
       action: "Export Claim",
     },
   ];
@@ -407,7 +407,7 @@ export function PCSFeatureHighlights() {
       icon: "File",
       title: "Export Packages",
       description:
-        "Generate professional PDF and Excel claim packages for finance office submission",
+        "Download professional calculation worksheets to help you complete DD Form 1351-2 in DTS",
     },
   ];
 

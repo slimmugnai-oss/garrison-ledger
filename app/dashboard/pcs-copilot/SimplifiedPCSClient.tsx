@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import PCSUnifiedWizard from "@/app/components/pcs/PCSUnifiedWizard";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
@@ -41,10 +42,35 @@ export default function SimplifiedPCSClient({
 }: SimplifiedPCSClientProps) {
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
   const [showWizard, setShowWizard] = useState(true); // Default to wizard, user can switch to list
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleWizardComplete = (claimId: string) => {
     // Refresh the page to show updated claims list
     window.location.reload();
+  };
+
+  const handleDeleteClaim = async (claimId: string) => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/pcs/claim/${claimId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        // Remove claim from state
+        setClaims(claims.filter((c) => c.id !== claimId));
+        toast.success("Claim deleted successfully");
+        setDeleteConfirmId(null);
+      } else {
+        toast.error("Failed to delete claim");
+      }
+    } catch (error) {
+      console.error("Failed to delete claim:", error);
+      toast.error("An error occurred while deleting the claim");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Show wizard (default view)
@@ -144,19 +170,19 @@ export default function SimplifiedPCSClient({
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {claims.map((claim) => (
-            <Link key={claim.id} href={`/dashboard/pcs-copilot/${claim.id}`}>
-              <AnimatedCard className="group cursor-pointer hover:shadow-xl">
-                <div className="p-6">
-                  {/* Header */}
-                  <div className="mb-4 flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="mb-1 font-bold text-slate-900 group-hover:text-blue-600">
-                        {claim.claim_name}
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        {new Date(claim.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
+            <AnimatedCard key={claim.id} className="group relative hover:shadow-xl">
+              <div className="p-6">
+                {/* Header */}
+                <div className="mb-4 flex items-start justify-between">
+                  <Link href={`/dashboard/pcs-copilot/${claim.id}`} className="flex-1">
+                    <h3 className="mb-1 cursor-pointer font-bold text-slate-900 group-hover:text-blue-600">
+                      {claim.claim_name}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {new Date(claim.created_at).toLocaleDateString()}
+                    </p>
+                  </Link>
+                  <div className="flex items-center gap-2">
                     <Badge
                       variant={
                         claim.status === "completed"
@@ -168,8 +194,22 @@ export default function SimplifiedPCSClient({
                     >
                       {claim.status}
                     </Badge>
+                    {/* Delete button */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteConfirmId(claim.id);
+                      }}
+                      className="rounded p-1 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                      title="Delete claim"
+                    >
+                      <Icon name="Trash2" className="h-4 w-4" />
+                    </button>
                   </div>
+                </div>
 
+                <Link href={`/dashboard/pcs-copilot/${claim.id}`} className="block">
                   {/* Total Entitlement */}
                   {claim.entitlements?.total && (
                     <div className="mb-4 rounded-lg bg-green-50 p-4">
@@ -216,10 +256,47 @@ export default function SimplifiedPCSClient({
                       )}
                     </div>
                   </div>
-                </div>
-              </AnimatedCard>
-            </Link>
+                </Link>
+              </div>
+            </AnimatedCard>
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <AnimatedCard className="max-w-md">
+            <div className="p-6">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="rounded-full bg-red-100 p-3">
+                  <Icon name="AlertTriangle" className="h-6 w-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Delete Claim?</h3>
+              </div>
+              <p className="mb-6 text-slate-600">
+                Are you sure you want to delete "
+                {claims.find((c) => c.id === deleteConfirmId)?.claim_name}"? This action cannot be
+                undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteConfirmId(null)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleDeleteClaim(deleteConfirmId)}
+                  disabled={isDeleting}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </div>
+          </AnimatedCard>
         </div>
       )}
 

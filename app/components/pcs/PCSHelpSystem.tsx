@@ -206,7 +206,7 @@ Our AI validates your claim against current Joint Travel Regulations.
       content: `
 # Export and Claim Packages
 
-Generate professional claim packages for finance office submission.
+Generate calculation worksheets to help complete your DD Form 1351-2.
 
 ## PDF Export
 - **Claim Summary**: Complete overview of entitlements

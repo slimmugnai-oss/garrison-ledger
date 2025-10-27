@@ -65,7 +65,7 @@ export default async function PCSCopilotPage() {
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
                 Calculate your official PCS entitlements in 15 minutes. Based on 2025 DFAS rates
-                with JTR validation. Professional PDF ready for finance office submission.
+                with JTR validation. Professional calculation worksheet for your DD Form 1351-2.
               </p>
 
               {/* Enhanced Features */}

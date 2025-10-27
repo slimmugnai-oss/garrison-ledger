@@ -10,6 +10,7 @@ import PCSDocumentLibrary from "@/app/components/pcs/PCSDocumentLibrary";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import PCSHelpSystem, { PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
 import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
+import PCSHelpAnswerModal from "@/app/components/pcs/PCSHelpAnswerModal";
 import PCSLoadingOverlay, { usePCSLoadingStates } from "@/app/components/pcs/PCSLoadingOverlay";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
 import PCSMobileInterface from "@/app/components/pcs/PCSMobileInterface";
@@ -105,6 +106,9 @@ export default function EnhancedPCSCopilotClient({
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [helpContext, setHelpContext] = useState("general");
+  const [helpAnswer, setHelpAnswer] = useState<any>(null);
+  const [helpQuestion, setHelpQuestion] = useState<string>("");
+  const [showHelpAnswerModal, setShowHelpAnswerModal] = useState(false);
 
   // Loading state management
   const loadingStates = usePCSLoadingStates();
@@ -243,6 +247,9 @@ export default function EnhancedPCSCopilotClient({
 
   const handleAskQuestion = async (question: string) => {
     try {
+      setHelpQuestion(question);
+      toast.info("Getting answer...");
+
       const response = await fetch("/api/ask/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -254,20 +261,17 @@ export default function EnhancedPCSCopilotClient({
 
       const result = await response.json();
 
-      if (result.success) {
-        // Show response in a modal or notification
-        console.log("AI Response:", result.response);
-        // You could implement a modal here to show the response
-        alert(
-          `Answer: ${result.response.bottomLine?.join(" ") || result.response.answer || "No answer available"}`
-        );
+      if (result.success && result.answer) {
+        setHelpAnswer(result.answer);
+        setShowHelpAnswerModal(true);
+        toast.success("Answer ready!");
       } else {
         console.error("Ask Assistant error:", result.error);
-        alert("Sorry, I couldn't answer that question. Please try again.");
+        toast.error("Sorry, I couldn't answer that question. Please try again.");
       }
     } catch (error) {
       console.error("Failed to ask question:", error);
-      alert("Sorry, there was an error. Please try again.");
+      toast.error("Sorry, there was an error. Please try again.");
     }
   };
 
@@ -895,6 +899,14 @@ export default function EnhancedPCSCopilotClient({
 
       {/* Help Widget */}
       <PCSHelpWidget claimContext={getClaimContext()} onAskQuestion={handleAskQuestion} />
+
+      {/* Help Answer Modal */}
+      <PCSHelpAnswerModal
+        isOpen={showHelpAnswerModal}
+        onClose={() => setShowHelpAnswerModal(false)}
+        answer={helpAnswer}
+        question={helpQuestion}
+      />
 
       {/* New Claim Modal */}
       {showNewClaimModal && (

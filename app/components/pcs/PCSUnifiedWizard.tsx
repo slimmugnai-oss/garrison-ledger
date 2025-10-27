@@ -7,6 +7,7 @@ import PCSDocumentUploader from "./PCSDocumentUploader";
 import PCSProvenanceDisplay from "./PCSProvenanceDisplay";
 import PCSROIDisplay from "./PCSROIDisplay";
 import PCSTermTooltip from "./PCSTermTooltip";
+import DD1351Explainer from "./DD1351Explainer";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
@@ -733,7 +734,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="Check" className="h-4 w-4" />
-                    Ready for finance office submission
+                    Reference guide for DD-1351-2 completion
                   </li>
                 </ul>
               </div>
@@ -900,36 +901,12 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         </div>
         <h2 className="mb-4 text-4xl font-bold text-slate-900">Claim Package Ready!</h2>
         <p className="mb-8 text-lg text-slate-600">
-          Your PCS claim has been saved and is ready for finance office submission.
+          Your PCS calculation has been saved. Use this worksheet when completing your DD Form 1351-2.
         </p>
 
-        <Card className="mb-8 bg-blue-50 text-left">
-          <CardContent className="p-6">
-            <h3 className="mb-4 font-bold text-slate-900">Next Steps:</h3>
-            <ol className="space-y-3 text-sm text-slate-700">
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                  1
-                </span>
-                <span>Download your PDF claim package</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                  2
-                </span>
-                <span>
-                  Gather your receipts (PCS orders, lodging receipts, weigh tickets if PPM)
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                  3
-                </span>
-                <span>Submit to your finance office for processing</span>
-              </li>
-            </ol>
-          </CardContent>
-        </Card>
+        <div className="mb-8">
+          <DD1351Explainer />
+        </div>
 
         <div className="flex justify-center gap-4">
           <Button
