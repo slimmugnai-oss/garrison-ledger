@@ -890,6 +890,13 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   Maximum 10 nights. You'll need receipts for actual costs.
                 </PCSTermTooltip>
               </label>
+              <div className="mb-3 rounded-lg bg-blue-50 p-3">
+                <p className="text-sm text-blue-900">
+                  <strong>💡 Instructions:</strong> Enter the <strong>total nightly rate</strong>{" "}
+                  including all taxes and fees (what you'll actually pay). Finance reimburses based
+                  on your receipts, up to the locality per diem limit.
+                </p>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1 block text-xs text-slate-600">
@@ -906,17 +913,22 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                 </div>
                 <div>
                   <label className="mb-1 block text-xs text-slate-600">
-                    Daily Rate (per night)
+                    Daily Rate (including tax/fees)
                   </label>
                   <Input
                     type="number"
-                    placeholder="e.g., 150"
+                    placeholder="e.g., 165"
                     value={formData.tle_origin_rate?.toString() || ""}
                     onChange={(value) =>
                       updateFormData({ tle_origin_rate: parseFloat(value) || 0 })
                     }
                     className="w-full"
                   />
+                  {formData.tle_origin_rate && formData.tle_origin_rate > 0 && (
+                    <p className="mt-1 text-xs text-slate-500">
+                      Total: ${(formData.tle_origin_rate * (formData.tle_origin_nights || 0)).toFixed(2)}
+                    </p>
+                  )}
                 </div>
               </div>
               {formData.tle_origin_nights && formData.tle_origin_nights > 10 && (
@@ -951,17 +963,22 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                 </div>
                 <div>
                   <label className="mb-1 block text-xs text-slate-600">
-                    Daily Rate (per night)
+                    Daily Rate (including tax/fees)
                   </label>
                   <Input
                     type="number"
-                    placeholder="e.g., 150"
+                    placeholder="e.g., 165"
                     value={formData.tle_destination_rate?.toString() || ""}
                     onChange={(value) =>
                       updateFormData({ tle_destination_rate: parseFloat(value) || 0 })
                     }
                     className="w-full"
                   />
+                  {formData.tle_destination_rate && formData.tle_destination_rate > 0 && (
+                    <p className="mt-1 text-xs text-slate-500">
+                      Total: ${(formData.tle_destination_rate * (formData.tle_destination_nights || 0)).toFixed(2)}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -1058,7 +1075,6 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   </Button>
                 </div>
               )}
-
             </div>
 
             {/* Clear Instructions */}
@@ -1071,8 +1087,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                 <li>✓ Your calculations are ready for review</li>
                 <li>✓ You can download a PDF worksheet for your records</li>
                 <li>
-                  ✓ Submit the official DD Form 1351-2 in DTS with your receipts for
-                  reimbursement
+                  ✓ Submit the official DD Form 1351-2 in DTS with your receipts for reimbursement
                 </li>
               </ul>
             </div>
