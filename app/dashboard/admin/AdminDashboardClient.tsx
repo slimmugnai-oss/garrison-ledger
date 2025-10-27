@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 
 import AdminTabNavigation from "./components/AdminTabNavigation";
 import { Alert } from "./components/AlertPanel";
-import AnalyticsTab from "./tabs/AnalyticsTab";
 import ContentTab from "./tabs/ContentTab";
 import OverviewTab from "./tabs/OverviewTab";
 import SitemapTab from "./tabs/SitemapTab";
@@ -56,7 +55,7 @@ export default function AdminDashboardClient({
     const tabFromUrl = searchParams?.get("tab");
     if (
       tabFromUrl &&
-      ["overview", "analytics", "users", "content", "system", "sitemap"].includes(tabFromUrl)
+      ["overview", "users", "content", "system", "sitemap"].includes(tabFromUrl)
     ) {
       setActiveTab(tabFromUrl);
     }
@@ -80,8 +79,6 @@ export default function AdminDashboardClient({
             initialActivity={recentActivity}
           />
         );
-      case "analytics":
-        return <AnalyticsTab />;
       case "users":
         return <UsersTab />;
       case "content":

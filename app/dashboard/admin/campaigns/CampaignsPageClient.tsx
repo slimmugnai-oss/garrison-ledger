@@ -27,20 +27,13 @@ export default function CampaignsPageClient() {
             <div className="flex items-center gap-3">
               <Link href="/dashboard/admin" className="text-text-muted hover:text-text-body">
                 <Icon name="ChevronLeft" className="h-6 w-6" />
-              </Link>
-              <PageHeader 
-                title="Email Campaign Manager" 
-                subtitle="Manage automated sequences and send manual campaigns"
-              />
-            </div>
-            <Link
-              href="/dashboard/admin/campaigns/analytics"
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
-            >
-              <Icon name="BarChart" className="h-5 w-5" />
-              View Analytics
             </Link>
+            <PageHeader 
+              title="Email Campaign Manager" 
+              subtitle="Manage automated sequences and send manual campaigns"
+            />
           </div>
+        </div>
 
           {/* Automated Sequences Status */}
           <AnimatedCard delay={0} className="mb-8">

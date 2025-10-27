@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-
 export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
