@@ -15,7 +15,7 @@ export const maxDuration = 30;
  */
 
 // Type definitions
-type ToolType = 'tsp' | 'sdp' | 'house';
+type ToolType = 'tsp' | 'sdp' | 'house' | 'on-base-savings' | 'pcs' | 'salary' | 'career-analyzer';
 
 interface AssessmentAnswers {
   comprehensive?: {
@@ -103,7 +103,63 @@ RULES:
 - Clean HTML (<p>, <strong>, <ul><li>)
 
 GOOD example:
-"<p><strong>+\$450/month positive cash flow</strong>—this property could pay you while building equity. With a PCS in 6-12 months and young kids, timing is tight but doable.</p><ul><li>Talk to VA lender THIS WEEK—get pre-approval at current rates (they're rising) and understand your BAH at new location</li><li>Research actual rental rates (not Zillow estimates)—call 3 property managers for reality check on \$2,200/mo rent assumption</li><li>Budget 10% for vacancy/maintenance (\$220/mo)—your \$450 cushion covers this, but reduces to \$230 net</li></ul><p>Risk: If you PCS again in 3 years, you're a long-distance landlord with young kids. Factor in property management costs (\$200/mo) which turns this barely positive. Only worth it if you plan 5+ years at this base or are committed to being a landlord.</p>"`
+"<p><strong>+\$450/month positive cash flow</strong>—this property could pay you while building equity. With a PCS in 6-12 months and young kids, timing is tight but doable.</p><ul><li>Talk to VA lender THIS WEEK—get pre-approval at current rates (they're rising) and understand your BAH at new location</li><li>Research actual rental rates (not Zillow estimates)—call 3 property managers for reality check on \$2,200/mo rent assumption</li><li>Budget 10% for vacancy/maintenance (\$220/mo)—your \$450 cushion covers this, but reduces to \$230 net</li></ul><p>Risk: If you PCS again in 3 years, you're a long-distance landlord with young kids. Factor in property management costs (\$200/mo) which turns this barely positive. Only worth it if you plan 5+ years at this base or are committed to being a landlord.</p>"`,
+
+  'on-base-savings': `Analyze on-base savings results. Give tactical advice. NO greetings.
+
+RULES:
+- Start with total annual savings potential
+- Break down commissary vs exchange vs benefits
+- Reference family situation (kids = more commissary savings)
+- 2-3 tactical next steps
+- Be realistic - savings estimates vary by shopping habits
+- 200-250 words MAX
+- Clean HTML (<p>, <strong>, <ul><li>)
+
+GOOD example:
+"<p><strong>\$4,200/year potential savings</strong>—that's \$350/month back in your pocket just by using on-base benefits. With young kids, your commissary savings (\$2,400) are your biggest win.</p><ul><li>Start with commissary for ALL meat, produce, and diapers—30% average savings on these items add up fast with a family</li><li>Use Military Star Card for gas—5¢/gallon × 2,000 gallons/year = \$100 saved, plus no sales tax on exchange purchases</li><li>Focus on high-impact items: baby formula, diapers, fresh meat—skip shelf-stable items where savings are minimal</li></ul><p>Reality check: \$4,200 assumes you shop on-base for everything. Start with 60% of groceries on-base (saves \$2,500), then expand if it fits your schedule.</p>"`,
+
+  pcs: `Analyze PCS financial planner results. Give tactical advice. NO greetings.
+
+RULES:
+- Start with net estimate (income minus expenses)
+- Reference DLA, per diem, PPM if applicable
+- Be realistic about timing and paperwork
+- 2-3 tactical next steps
+- Mention common mistakes (saving receipts, filing deadlines)
+- 200-250 words MAX
+- Clean HTML (<p>, <strong>, <ul><li>)
+
+GOOD example:
+"<p><strong>Net estimate: +\$2,400</strong> after all PCS entitlements and expenses. Your DLA (\$3,500) and per diem (\$2,800) cover most costs, with PPM adding \$1,200 if you self-move.</p><ul><li>File DLA claim WITHIN 90 DAYS of PCS orders—many troops miss this deadline and lose \$3,500</li><li>Save ALL receipts for lodging, rental truck, storage—per diem is yours regardless, but backup docs prevent audits</li><li>Do PPM math carefully: \$1,200 incentive sounds good, but factor in gas (\$600), lodging (\$400), truck rental (\$800)—net is only \$200-300</li></ul><p>With young kids, professional movers (HHG) might beat PPM stress vs. money tradeoff. Run the numbers at current gas prices.</p>"`,
+
+  salary: `Analyze salary relocation calculator results. Give tactical advice. NO greetings.
+
+RULES:
+- Start with equivalent salary and cost difference
+- Reference housing, taxes, COL
+- Be realistic about quality of life tradeoffs
+- 2-3 tactical next steps
+- Mention non-financial factors (schools, commute, family)
+- 200-250 words MAX
+- Clean HTML (<p>, <strong>, <ul><li>)
+
+GOOD example:
+"<p><strong>\$75,000 in Austin = \$95,000 in San Diego</strong> to maintain the same lifestyle. You'd need a 27% raise just to break even due to housing (\$2,400 vs. \$3,600/month) and CA state taxes.</p><ul><li>Housing is the killer—Austin \$2,400 rent gets you a house, San Diego \$3,600 gets you a 2BR apartment</li><li>Factor in 9.3% CA income tax (\$7,000/year) vs. 0% TX—that's a hidden pay cut</li><li>Research schools if you have kids—San Diego schools might justify the cost, but Austin has strong districts too</li></ul><p>Non-financial reality: San Diego weather and ocean vs. Austin heat and no beach. With young kids, consider which city has better family support (nearby relatives, etc.).</p>"`,
+
+  'career-analyzer': `Analyze career opportunity results. Give tactical advice. NO greetings.
+
+RULES:
+- Start with total compensation difference
+- Reference base pay, bonus, equity, benefits
+- Factor in career growth and industry trends
+- 2-3 tactical next steps
+- Be realistic about job security and satisfaction
+- 200-250 words MAX
+- Clean HTML (<p>, <strong>, <ul><li>)
+
+GOOD example:
+"<p><strong>Total comp difference: +\$32,000/year</strong> for the new role (\$95K base + \$15K bonus + \$10K equity vs. current \$88K total). But location matters—new city has 15% higher COL, reducing real gain to \$22K.</p><ul><li>Equity vesting matters—\$10K/year paper equity means nothing if company isn't IPO-track or profitable</li><li>New industry (tech) has growth potential but higher risk than current stable role—factor in recession layoffs</li><li>Career trajectory: new role as Senior Engineer opens doors to Staff/Principal (\$150K+) faster than staying IC at current company</li></ul><p>With young kids and deployment stress, consider job stability vs. upside. \$22K real gain is significant, but if new role means 60hr weeks vs. current 40hr, calculate hourly rate difference.</p>"`
 };
 
 export async function POST(req: NextRequest) {
@@ -127,7 +183,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate tool type
-    const validTools: ToolType[] = ['tsp', 'sdp', 'house'];
+    const validTools: ToolType[] = ['tsp', 'sdp', 'house', 'on-base-savings', 'pcs', 'salary', 'career-analyzer'];
     if (!validTools.includes(tool as ToolType)) {
       throw Errors.invalidInput(`Invalid tool type. Must be one of: ${validTools.join(', ')}`);
     }
@@ -168,9 +224,9 @@ export async function POST(req: NextRequest) {
     };
 
     // Initialize Gemini
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
-      logger.error('[Explain] GEMINI_API_KEY not configured');
+      logger.error('[Explain] GOOGLE_API_KEY not configured');
       throw Errors.externalApiError("Gemini", "API key not configured");
     }
 
@@ -289,6 +345,24 @@ function generateFallbackExplanation(
       const verdict = Number(outputs.verdict) || 0;
       const isPositive = verdict >= 0;
       return `<p><strong>Monthly cash flow:</strong> ${fmt(verdict)} ${isPositive ? '(Positive)' : '(Negative)'}</p><p>${isPositive ? 'This property could generate income.' : 'This property would require additional funds monthly.'}</p>`;
+    }
+    case "on-base-savings": {
+      const totalSavings = Number(outputs.totalSavings) || 0;
+      return `<p><strong>Annual savings potential:</strong> ${fmt(totalSavings)}</p><p>Maximize on-base benefits by focusing on commissary and exchange purchases.</p>`;
+    }
+    case "pcs": {
+      const netEstimate = Number(outputs.netEstimate) || 0;
+      const isPositive = netEstimate >= 0;
+      return `<p><strong>Net PCS estimate:</strong> ${fmt(netEstimate)} ${isPositive ? '(Surplus)' : '(Deficit)'}</p><p>${isPositive ? 'Your entitlements should cover PCS costs.' : 'Budget carefully for out-of-pocket expenses.'}</p>`;
+    }
+    case "salary": {
+      const equivalentSalary = Number(outputs.equivalentSalary) || 0;
+      return `<p><strong>Equivalent salary:</strong> ${fmt(equivalentSalary)}</p><p>This accounts for cost of living differences between locations.</p>`;
+    }
+    case "career-analyzer": {
+      const totalCompDiff = Number(outputs.totalCompDiff) || 0;
+      const isPositive = totalCompDiff >= 0;
+      return `<p><strong>Total compensation difference:</strong> ${fmt(Math.abs(totalCompDiff))} ${isPositive ? 'higher' : 'lower'}</p><p>Consider both financial and career growth factors when deciding.</p>`;
     }
     default:
       return "<p>Explanation unavailable.</p>";

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Icon from '../ui/Icon';
+import Icon from "../ui/Icon";
 
 interface BinderFile {
   id: string;
@@ -40,8 +40,8 @@ function formatDate(dateString: string): string {
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
   if (diffDays < 7) return `${diffDays}d ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
   if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
@@ -62,47 +62,46 @@ export default function FileCard({
   selectionMode = false,
 }: FileCardProps) {
   const isExpiringSoon =
-    file.expires_on &&
-    new Date(file.expires_on) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    file.expires_on && new Date(file.expires_on) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
   const isExpired = file.expires_on && new Date(file.expires_on) < new Date();
 
   const getFileIcon = () => {
-    if (file.content_type.startsWith('image/')) return 'Image';
-    if (file.content_type === 'application/pdf') return 'File';
-    return 'File';
+    if (file.content_type.startsWith("image/")) return "Image";
+    if (file.content_type === "application/pdf") return "File";
+    return "File";
   };
 
   return (
     <div
-      className={`bg-gradient-to-br from-[#1A1F2E] to-[#151924] rounded-xl border transition-all group ${
+      className={`group rounded-xl border bg-gradient-to-br from-[#1A1F2E] to-[#151924] transition-all ${
         isSelected
-          ? 'border-[#00E5A0] shadow-lg shadow-[#00E5A0]/20'
-          : 'border-[#2A2F3E] hover:border-[#3A3F4E] hover:shadow-lg'
+          ? "border-[#00E5A0] shadow-lg shadow-[#00E5A0]/20"
+          : "border-[#2A2F3E] hover:border-[#3A3F4E] hover:shadow-lg"
       } p-4`}
     >
       <div className="flex items-center justify-between">
         {/* File Info */}
-        <div className="flex items-center flex-1 min-w-0">
+        <div className="flex min-w-0 flex-1 items-center">
           {/* Selection Checkbox */}
           {selectionMode && onSelect && (
             <button
               onClick={() => onSelect(file)}
-              className="flex-shrink-0 mr-3"
-              aria-label={isSelected ? `Deselect ${file.display_name}` : `Select ${file.display_name}`}
+              className="mr-3 flex-shrink-0"
+              aria-label={
+                isSelected ? `Deselect ${file.display_name}` : `Select ${file.display_name}`
+              }
               role="checkbox"
               aria-checked={isSelected}
             >
               <div
-                className={`w-5 h-5 rounded border-2 transition-all flex items-center justify-center ${
+                className={`flex h-5 w-5 items-center justify-center rounded border-2 transition-all ${
                   isSelected
-                    ? 'bg-[#00E5A0] border-[#00E5A0]'
-                    : 'border-gray-400 hover:border-[#00E5A0]'
+                    ? "border-[#00E5A0] bg-[#00E5A0]"
+                    : "border-gray-400 hover:border-[#00E5A0]"
                 }`}
               >
-                {isSelected && (
-                  <Icon name="Check" className="w-3 h-3 text-[#0A0F1E]" />
-                )}
+                {isSelected && <Icon name="Check" className="h-3 w-3 text-[#0A0F1E]" />}
               </div>
             </button>
           )}
@@ -110,23 +109,23 @@ export default function FileCard({
           {/* File Icon */}
           <button
             onClick={() => !selectionMode && onPreview(file)}
-            className="flex items-center flex-1 min-w-0 text-left group-hover:scale-[1.01] transition-transform"
+            className="flex min-w-0 flex-1 items-center text-left transition-transform group-hover:scale-[1.01]"
             aria-label={`Open ${file.display_name}`}
             tabIndex={0}
           >
-            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#2A2F3E] to-[#1F2433] rounded-xl flex items-center justify-center mr-3 group-hover:shadow-lg transition-all">
+            <div className="mr-3 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2A2F3E] to-[#1F2433] transition-all group-hover:shadow-lg">
               <Icon
                 name={getFileIcon()}
-                className="w-6 h-6 text-[#00E5A0] group-hover:scale-110 transition-transform"
+                className="h-6 w-6 text-[#00E5A0] transition-transform group-hover:scale-110"
               />
             </div>
 
             {/* File Details */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold truncate text-white group-hover:text-[#00E5A0] transition-colors">
+            <div className="min-w-0 flex-1">
+              <h3 className="truncate font-semibold text-white transition-colors group-hover:text-[#00E5A0]">
                 {file.display_name}
               </h3>
-              <div className="flex items-center gap-3 text-xs text-muted mt-1">
+              <div className="mt-1 flex items-center gap-3 text-xs text-muted">
                 <span className="font-medium">{formatFileSize(file.size_bytes)}</span>
                 <span>•</span>
                 <span>{formatDate(file.created_at)}</span>
@@ -136,13 +135,15 @@ export default function FileCard({
                     <span
                       className={`font-medium ${
                         isExpired
-                          ? 'text-red-400'
+                          ? "text-red-400"
                           : isExpiringSoon
-                          ? 'text-yellow-400'
-                          : 'text-gray-400'
+                            ? "text-yellow-400"
+                            : "text-gray-400"
                       }`}
                     >
-                      {isExpired ? '⚠️ Expired' : `Expires ${new Date(file.expires_on).toLocaleDateString()}`}
+                      {isExpired
+                        ? "⚠️ Expired"
+                        : `Expires ${new Date(file.expires_on).toLocaleDateString()}`}
                     </span>
                   </>
                 )}
@@ -153,48 +154,48 @@ export default function FileCard({
 
         {/* Action Buttons */}
         {!selectionMode && (
-          <div className="flex items-center gap-1.5 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="ml-4 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={() => onRename(file)}
-              className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
+              className="rounded-lg p-2 transition-all hover:scale-110 hover:bg-[#2A2F3E]"
               title="Rename file"
               aria-label={`Rename ${file.display_name}`}
             >
-              <Icon name="Edit" className="w-4 h-4 text-muted hover:text-white" />
+              <Icon name="Edit" className="h-4 w-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onMove(file)}
-              className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
+              className="rounded-lg p-2 transition-all hover:scale-110 hover:bg-[#2A2F3E]"
               title="Move to folder"
               aria-label={`Move ${file.display_name} to another folder`}
             >
-              <Icon name="Folder" className="w-4 h-4 text-muted hover:text-white" />
+              <Icon name="Folder" className="h-4 w-4 text-muted hover:text-white" />
             </button>
             <button
               onClick={() => onSetExpiry(file)}
-              className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
+              className="rounded-lg p-2 transition-all hover:scale-110 hover:bg-[#2A2F3E]"
               title="Set expiry date"
               aria-label={`Set expiry date for ${file.display_name}`}
             >
-              <Icon name="Calendar" className="w-4 h-4 text-muted hover:text-white" />
+              <Icon name="Calendar" className="h-4 w-4 text-muted hover:text-white" />
             </button>
             {isPremium && onShare && (
               <button
                 onClick={() => onShare(file)}
-                className="p-2 hover:bg-[#2A2F3E] rounded-lg transition-all hover:scale-110"
+                className="rounded-lg p-2 transition-all hover:scale-110 hover:bg-[#2A2F3E]"
                 title="Create share link"
                 aria-label={`Share ${file.display_name}`}
               >
-                <Icon name="Share2" className="w-4 h-4 text-muted hover:text-white" />
+                <Icon name="Share2" className="h-4 w-4 text-muted hover:text-white" />
               </button>
             )}
             <button
               onClick={() => onDelete(file)}
-              className="p-2 hover:bg-danger/20 rounded-lg transition-all hover:scale-110 text-red-400"
+              className="hover:bg-danger/20 rounded-lg p-2 text-red-400 transition-all hover:scale-110"
               title="Delete file"
               aria-label={`Delete ${file.display_name}`}
             >
-              <Icon name="Trash2" className="w-4 h-4" />
+              <Icon name="Trash2" className="h-4 w-4" />
             </button>
           </div>
         )}
@@ -202,4 +203,3 @@ export default function FileCard({
     </div>
   );
 }
-

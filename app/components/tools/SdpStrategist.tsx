@@ -379,41 +379,41 @@ export default function SdpStrategist() {
                   <h2 className="text-2xl font-bold text-primary mb-6">Investment Scenarios</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
+                      <div className="text-lg font-semibold text-primary mb-3">SDP - Official Rate (10%)</div>
+                      <div className="text-3xl font-bold text-success mb-2">$40,000</div>
+                      <div className="text-sm text-body font-medium">Savings Deposit Program - 10% APR (10 USC § 1035). Only available during deployment.</div>
+                    </div>
+                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
+                      <div className="text-lg font-semibold text-primary mb-3">Conservative Investment (8%)</div>
+                      <div className="text-3xl font-bold text-success mb-2">$32,000</div>
+                      <div className="text-sm text-body font-medium">Stock/bond mix for comparison purposes.</div>
+                    </div>
+                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
                       <div className="text-lg font-semibold text-primary mb-3">High-Yield Savings (4%)</div>
                       <div className="text-3xl font-bold text-success mb-2">$18,000</div>
-                      <div className="text-sm text-body font-medium">Safe, liquid savings for emergencies.</div>
-                    </div>
-                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                      <div className="text-lg font-semibold text-primary mb-3">Conservative Growth (6%)</div>
-                      <div className="text-3xl font-bold text-success mb-2">$24,000</div>
-                      <div className="text-sm text-body font-medium">Balanced stock/bond index mix.</div>
-                    </div>
-                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                      <div className="text-lg font-semibold text-primary mb-3">Moderate Growth (8%)</div>
-                      <div className="text-3xl font-bold text-success mb-2">$32,000</div>
-                      <div className="text-sm text-body font-medium">Stock-heavy mix for long horizons.</div>
+                      <div className="text-sm text-body font-medium">Safe, liquid savings alternative.</div>
                     </div>
                   </div>
                 </div>
 
                 {/* ROI Analysis */}
                 <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
-                  <h3 className="text-2xl font-bold text-primary mb-6">15-Year ROI Analysis</h3>
+                  <h3 className="text-2xl font-bold text-primary mb-6">15-Year Comparison</h3>
                   <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-info-subtle p-6 rounded-lg">
-                      <h4 className="text-lg font-semibold text-blue-900 mb-3">Conservative Strategy</h4>
-                      <div className="text-3xl font-bold text-info mb-2">$24,000</div>
-                      <p className="text-sm text-info">6% annual return</p>
-                    </div>
                     <div className="bg-success-subtle p-6 rounded-lg">
-                      <h4 className="text-lg font-semibold text-success mb-3">Growth Strategy</h4>
-                      <div className="text-3xl font-bold text-success mb-2">$32,000</div>
-                      <p className="text-sm text-success">8% annual return</p>
+                      <h4 className="text-lg font-semibold text-green-900 mb-3">SDP Official (10%)</h4>
+                      <div className="text-3xl font-bold text-success mb-2">$40,000</div>
+                      <p className="text-sm text-success">Official military benefit during deployment</p>
+                    </div>
+                    <div className="bg-info-subtle p-6 rounded-lg">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-3">High-Yield Savings (4%)</h4>
+                      <div className="text-3xl font-bold text-info mb-2">$18,000</div>
+                      <p className="text-sm text-info">Civilian alternative for comparison</p>
                     </div>
                   </div>
                   <div className="mt-6 bg-warning-subtle border border-warning rounded-lg p-4">
                     <p className="text-sm text-warning">
-                      <strong>Note:</strong> These are estimates based on historical averages. Actual returns may vary.
+                      <strong>Note:</strong> SDP rate is fixed by law (10 USC § 1035). Comparison scenarios are for reference only.
                     </p>
                   </div>
                 </div>
