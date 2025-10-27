@@ -265,81 +265,53 @@ export default function TspModeler() {
     }));
 
     console.log("[TSP Chart] chartData created:", chartData.length, "points");
-    console.log("[TSP Chart] Attempting to render Recharts...");
 
-    try {
-      return (
-        <div className="mt-6 w-full bg-white rounded-lg p-4" style={{ height: "500px", minHeight: "500px" }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="year"
-                label={{ value: "Years from Now", position: "insideBottom", offset: -10 }}
-                stroke="#6b7280"
-              />
-              <YAxis
-                tickFormatter={(val: number) => `$${(val / 1000).toFixed(0)}K`}
-                stroke="#6b7280"
-              />
-              <Tooltip
-                formatter={(value: number) => [`$${value.toLocaleString()}`, ""]}
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="Default Mix"
-                stroke="#94a3b8"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="Your Custom Mix"
-                stroke="#0A2463"
-                strokeWidth={3}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      );
-    } catch (error) {
-      console.error("[TSP Chart] Recharts rendering error:", error);
-      // Fallback: Simple table if Recharts fails
-      return (
-        <div className="mt-6 p-6 bg-white rounded-lg border-2 border-amber-200">
-          <p className="text-amber-800 mb-4">
-            <strong>Chart rendering issue detected.</strong> Here's your data in table format:
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b-2">
-                  <th className="p-2 text-left">Year</th>
-                  <th className="p-2 text-right">Default Mix</th>
-                  <th className="p-2 text-right">Your Custom Mix</th>
-                </tr>
-              </thead>
-              <tbody>
-                {chartData.slice(0, 11).map((d, i) => (
-                  <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : ""}>
-                    <td className="p-2">{d.year}</td>
-                    <td className="p-2 text-right">${d["Default Mix"].toLocaleString()}</td>
-                    <td className="p-2 text-right font-bold text-blue-900">${d["Your Custom Mix"].toLocaleString()}</td>
+    // TEMPORARY FIX: Recharts isn't rendering (invisible rendering bug)
+    // Show data table instead until we fix the chart library issue
+    return (
+      <div className="mt-6 rounded-lg border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50 p-6">
+        <h3 className="mb-4 text-xl font-bold text-blue-900">
+          Growth Projection - Year by Year
+        </h3>
+        <p className="mb-4 text-sm text-blue-800">
+          Your custom allocation vs. default lifecycle fund over {chartData.length - 1} years
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b-2 border-blue-300 bg-blue-100">
+                <th className="p-3 text-left font-bold text-blue-900">Year</th>
+                <th className="p-3 text-right font-bold text-gray-600">Default Mix (L2050)</th>
+                <th className="p-3 text-right font-bold text-blue-900">Your Custom Mix</th>
+                <th className="p-3 text-right font-bold text-green-700">Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chartData.map((d, i) => {
+                const diff = d["Your Custom Mix"] - d["Default Mix"];
+                return (
+                  <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50/30"}>
+                    <td className="p-3 font-medium">{d.year}</td>
+                    <td className="p-3 text-right text-gray-700">
+                      ${d["Default Mix"].toLocaleString()}
+                    </td>
+                    <td className="p-3 text-right font-bold text-blue-900">
+                      ${d["Your Custom Mix"].toLocaleString()}
+                    </td>
+                    <td className={`p-3 text-right font-bold ${diff >= 0 ? "text-green-700" : "text-red-600"}`}>
+                      {diff >= 0 ? "+" : ""}${diff.toLocaleString()}
+                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      );
-    }
+        <p className="mt-4 text-xs text-gray-600 italic">
+          Note: Chart visualization temporarily unavailable. Table shows all projection data.
+        </p>
+      </div>
+    );
   };
 
   return (
