@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     // Save document record to database
     // For wizard mode (temp-wizard), skip database insert - OCR will happen in-memory
     let documentData: any;
-    
+
     if (claimId === "temp-wizard") {
       // Wizard mode: Return temp document for OCR processing only
       documentData = {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         upload_status: "temp",
         created_at: new Date().toISOString(),
       };
-      
+
       logger.info("PCS document uploaded (wizard mode - temp)", {
         userId,
         claimId,
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
         logger.error("Database insert error:", dbError);
         return NextResponse.json({ error: "Failed to save document record" }, { status: 500 });
       }
-      
+
       documentData = data;
     }
 
