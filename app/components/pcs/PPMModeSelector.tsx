@@ -43,6 +43,10 @@ export default function PPMModeSelector({
   const [fuelReceipts, setFuelReceipts] = useState<string>("0");
   const [laborCosts, setLaborCosts] = useState<string>("0");
   const [tollsAndFees, setTollsAndFees] = useState<string>("0");
+  
+  // Estimator mode state
+  const [estimatorWeight, setEstimatorWeight] = useState<string>(weight?.toString() || "");
+  const [estimatorDistance, setEstimatorDistance] = useState<string>(distance?.toString() || "");
 
   if (selectedMode === null) {
     return (
@@ -289,21 +293,38 @@ export default function PPMModeSelector({
 
           {/* Estimator Inputs */}
           <div className="space-y-4">
-            <div className="rounded-lg bg-slate-50 p-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <div className="text-sm font-medium text-slate-700">Weight</div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    {weight?.toLocaleString() || "---"} lbs
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-slate-700">Distance</div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    {distance?.toLocaleString() || "---"} miles
-                  </div>
-                  <div className="text-xs text-slate-600">Planning estimate (Google Maps)</div>
-                </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Weight (pounds)
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <Input
+                  type="number"
+                  value={estimatorWeight}
+                  onChange={setEstimatorWeight}
+                  placeholder="8000"
+                  className="text-lg font-semibold"
+                />
+                <p className="mt-1 text-xs text-slate-500">
+                  Household goods weight from weigh ticket
+                </p>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Distance (miles)
+                  {distance && <Badge variant="success" className="ml-2 text-xs">Auto-calculated</Badge>}
+                </label>
+                <Input
+                  type="number"
+                  value={estimatorDistance}
+                  onChange={setEstimatorDistance}
+                  placeholder="1000"
+                  className="text-lg font-semibold"
+                />
+                <p className="mt-1 text-xs text-slate-500">
+                  {distance ? "Auto-calculated from bases (editable)" : "Door-to-door moving distance"}
+                </p>
               </div>
             </div>
 
@@ -320,15 +341,15 @@ export default function PPMModeSelector({
             <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-4">
               <div className="mb-2 text-sm font-medium text-slate-700">Estimated GCC:</div>
               <div className="text-3xl font-black text-slate-900">
-                ${((weight || 0) * (distance || 0) * 0.5).toLocaleString()}
+                ${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5).toLocaleString()}
               </div>
               <div className="mt-2 text-xs text-slate-600">
-                Formula: {weight?.toLocaleString()} lbs × {distance?.toLocaleString()} mi ×
+                Formula: {parseFloat(estimatorWeight || "0").toLocaleString()} lbs × {parseFloat(estimatorDistance || "0").toLocaleString()} mi ×
                 $0.50/lb-mi
               </div>
               <div className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-900">
-                ⚠️ Variance: ±30% (${((weight || 0) * (distance || 0) * 0.5 * 0.7).toLocaleString()}{" "}
-                - ${((weight || 0) * (distance || 0) * 0.5 * 1.3).toLocaleString()})
+                ⚠️ Variance: ±30% (${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5 * 0.7).toLocaleString()}{" "}
+                - ${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5 * 1.3).toLocaleString()})
               </div>
             </div>
           </div>
@@ -337,17 +358,24 @@ export default function PPMModeSelector({
           <div className="space-y-3">
             <Button
               onClick={() => {
-                const estimatedGCC = (weight || 0) * (distance || 0) * 0.5;
+                const weightValue = parseFloat(estimatorWeight);
+                const distanceValue = parseFloat(estimatorDistance);
+                const estimatedGCC = weightValue * distanceValue * 0.5;
                 if (estimatedGCC > 0) {
                   onModeSelected("estimator", {
                     mode: "estimator",
                     gccAmount: estimatedGCC,
-                    weight,
-                    distance,
+                    weight: weightValue,
+                    distance: distanceValue,
                   });
                 }
               }}
-              disabled={!weight || !distance || weight === 0 || distance === 0}
+              disabled={
+                !estimatorWeight || 
+                !estimatorDistance || 
+                parseFloat(estimatorWeight) === 0 || 
+                parseFloat(estimatorDistance) === 0
+              }
               className="w-full bg-amber-600 hover:bg-amber-700"
             >
               <Icon name="Calculator" className="mr-2 h-5 w-5" />

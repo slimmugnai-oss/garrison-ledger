@@ -926,7 +926,8 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   />
                   {formData.tle_origin_rate && formData.tle_origin_rate > 0 && (
                     <p className="mt-1 text-xs text-slate-500">
-                      Total: ${(formData.tle_origin_rate * (formData.tle_origin_nights || 0)).toFixed(2)}
+                      Total: $
+                      {(formData.tle_origin_rate * (formData.tle_origin_nights || 0)).toFixed(2)}
                     </p>
                   )}
                 </div>
@@ -976,7 +977,10 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   />
                   {formData.tle_destination_rate && formData.tle_destination_rate > 0 && (
                     <p className="mt-1 text-xs text-slate-500">
-                      Total: ${(formData.tle_destination_rate * (formData.tle_destination_nights || 0)).toFixed(2)}
+                      Total: $
+                      {(
+                        formData.tle_destination_rate * (formData.tle_destination_nights || 0)
+                      ).toFixed(2)}
                     </p>
                   )}
                 </div>
