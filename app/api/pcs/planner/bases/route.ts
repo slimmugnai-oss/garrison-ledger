@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { NextRequest, NextResponse } from "next/server";
+
 import militaryBasesData from "@/lib/data/military-bases.json";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 interface MilitaryBase {
   id: string;

@@ -43,7 +43,7 @@ export default async function IntelCardEmbed({ slug, compact = false }: IntelCar
               {card.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
             </p>
             <a
-              href={`/dashboard/intel/${slug}`}
+              href={`/dashboard/ask/${slug}`}
               className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
             >
               Learn More
@@ -74,7 +74,7 @@ export default async function IntelCardEmbed({ slug, compact = false }: IntelCar
           </div>
         </div>
         <a
-          href={`/dashboard/intel/${slug}`}
+          href={`/dashboard/ask/${slug}`}
           target="_blank"
           className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium"
         >

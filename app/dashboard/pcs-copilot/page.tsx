@@ -7,7 +7,7 @@ import Header from "@/app/components/Header";
 import Icon from "@/app/components/ui/Icon";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-import EnhancedPCSCopilotClient from "./EnhancedPCSCopilotClient";
+import SimplifiedPCSClient from "./SimplifiedPCSClient";
 
 export const metadata: Metadata = {
   title: "PCS Copilot | Garrison Ledger",
@@ -61,30 +61,30 @@ export default async function PCSCopilotPage() {
                 <span className="text-sm font-semibold text-yellow-400">PCS COPILOT</span>
               </div>
 
-              <h1 className="font-lora mb-6 text-5xl font-bold leading-tight">PCS Money Copilot</h1>
+              <h1 className="font-lora mb-6 text-5xl font-bold leading-tight">PCS Copilot</h1>
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
-                Manual entry, real-time validation, and AI-powered guidance. Turn your PCS move into
-                maximum profit.
+                Calculate your official PCS entitlements in 15 minutes. Based on 2025 DFAS rates
+                with JTR validation. Professional PDF ready for finance office submission.
               </p>
 
               {/* Enhanced Features */}
               <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>Manual entry</span>
+                  <span>15-minute calculation</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>Real-time validation</span>
+                  <span>100% JTR compliant</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>AI explanations</span>
+                  <span>Official 2025 rates</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>JTR compliance</span>
+                  <span>Finance office ready</span>
                 </div>
               </div>
             </div>
@@ -92,7 +92,7 @@ export default async function PCSCopilotPage() {
         </section>
 
         {/* Main Content */}
-        <EnhancedPCSCopilotClient
+        <SimplifiedPCSClient
           initialClaims={claims || []}
           isPremium={isPremium}
           tier={tier}

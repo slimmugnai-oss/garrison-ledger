@@ -9,9 +9,9 @@
  * - staff: Internal/QA bypass (all premium features)
  */
 
+import { logger } from "@/lib/logger";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-import { logger } from "@/lib/logger";
 
 export type Tier = "free" | "premium" | "staff";
 

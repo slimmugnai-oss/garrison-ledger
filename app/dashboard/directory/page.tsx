@@ -1,10 +1,10 @@
 "use client";
+import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 
 import DirectoryFilters from "@/app/components/directory/DirectoryFilters";
 import Header from "@/app/components/Header";
 import { track } from "@/lib/track";
-import { SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 
 type Provider = {
   id: string;

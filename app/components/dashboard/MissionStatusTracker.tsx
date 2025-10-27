@@ -73,7 +73,7 @@ export default function MissionStatusTracker({
                 title: 'Browse Intel',
                 completed: true,
                 progress: 100,
-                link: '/dashboard/intel',
+                link: '/dashboard/ask',
                 icon: 'BookOpen',
                 description: 'Live financial data'
               },

@@ -23,7 +23,7 @@ export default function IntelCardLink({ flagCode }: { flagCode: string }) {
   return (
     <div className="mt-3 pt-3 border-t border-gray-200">
       <a
-        href={`/dashboard/intel/${card.slug}`}
+        href={`/dashboard/ask/${card.slug}`}
         className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
       >
         <Icon name="BookOpen" className="w-4 h-4" />

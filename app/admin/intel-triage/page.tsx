@@ -200,7 +200,7 @@ export default async function IntelTriagePage() {
                     </div>
 
                     <a
-                      href={`/dashboard/intel/${block.slug || block.id}`}
+                      href={`/dashboard/ask/${block.slug || block.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"

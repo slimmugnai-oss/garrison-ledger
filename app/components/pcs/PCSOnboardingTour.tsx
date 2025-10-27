@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
-import Button from "@/app/components/ui/Button";
+
 import Badge from "@/app/components/ui/Badge";
+import Button from "@/app/components/ui/Button";
+import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 
 interface TourStep {
@@ -42,29 +43,45 @@ export function PCSOnboardingTour({
     const baseSteps: TourStep[] = [
       {
         id: "welcome",
-        title: "Welcome to PCS Copilot",
+        title: "Calculate Your PCS Entitlements",
         content:
-          "Your AI-powered assistant for maximizing PCS entitlements. Let's take a quick tour to get you started.",
+          "This takes about 15 minutes. You'll get a finance office-ready PDF with all your official PCS reimbursement calculations.",
         target: "body",
         position: "top",
       },
       {
-        id: "claims-overview",
-        title: "Your PCS Claims",
+        id: "what-you-need",
+        title: "What You'll Need",
         content:
-          "Here you'll see all your PCS claims with status, entitlements, and completion progress. Each claim represents a different PCS move.",
-        target: "[data-tour='claims-list']",
+          "PCS orders with dates, origin and destination bases, and any receipts you have (lodging, fuel, etc.). Don't worry - we'll guide you through each step.",
+        target: "body",
+        position: "top",
+      },
+      {
+        id: "what-you-get",
+        title: "What You'll Get",
+        content:
+          "A professional PDF package with: DLA, TLE, MALT, and Per Diem calculations based on official 2025 DFAS rates. All calculations include JTR citations for finance office submission.",
+        target: "body",
+        position: "top",
+      },
+      {
+        id: "start-method",
+        title: "Two Ways to Start",
+        content:
+          "Upload your PCS orders (we'll extract details automatically) or enter information manually. Either way, we'll calculate everything for you.",
+        target: "[data-tour='new-claim-button']",
         position: "bottom",
       },
       {
-        id: "new-claim",
-        title: "Create New Claim",
+        id: "ready",
+        title: "Let's Get Started",
         content:
-          "Start a new PCS claim by clicking this button. We'll guide you through the process step by step.",
+          "Click 'New PCS Claim' to begin. We'll walk you through each step and show your estimated entitlement in real-time.",
         target: "[data-tour='new-claim-button']",
         position: "bottom",
         action: {
-          label: "Try It",
+          label: "Start Calculation",
           onClick: () => {
             // Trigger new claim creation
             const button = document.querySelector(
@@ -73,54 +90,6 @@ export function PCSOnboardingTour({
             button?.click();
           },
         },
-      },
-      {
-        id: "manual-entry",
-        title: "Manual Entry",
-        content:
-          "Use manual entry for detailed claim information. Perfect for when you have all your PCS details ready.",
-        target: "[data-tour='manual-entry']",
-        position: "right",
-      },
-      {
-        id: "mobile-wizard",
-        title: "Mobile Wizard",
-        content:
-          "The mobile wizard guides you through PCS claim creation step by step. Great for on-the-go planning.",
-        target: "[data-tour='mobile-wizard']",
-        position: "left",
-      },
-      {
-        id: "documents",
-        title: "Document Management",
-        content:
-          "Upload receipts, orders, and other PCS documents. Our AI will extract key information automatically.",
-        target: "[data-tour='documents']",
-        position: "top",
-      },
-      {
-        id: "calculations",
-        title: "AI Calculations",
-        content:
-          "Get instant calculations for DLA, TLE, MALT, Per Diem, and more using real 2025 JTR rates and regulations.",
-        target: "[data-tour='calculations']",
-        position: "bottom",
-      },
-      {
-        id: "validation",
-        title: "JTR Validation",
-        content:
-          "Our AI validates your claim against current JTR regulations and provides suggestions for optimization.",
-        target: "[data-tour='validation']",
-        position: "right",
-      },
-      {
-        id: "export",
-        title: "Export & Submit",
-        content:
-          "Generate professional PDF and Excel claim packages ready for submission to your finance office.",
-        target: "[data-tour='export']",
-        position: "left",
       },
     ];
 

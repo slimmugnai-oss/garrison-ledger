@@ -1,8 +1,8 @@
 'use client';
 
+import { SignUpButton } from '@clerk/nextjs';
 import { useState } from 'react';
 
-import { SignUpButton } from '@clerk/nextjs';
 
 import Icon from '../ui/Icon';
 

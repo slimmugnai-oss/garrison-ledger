@@ -6,19 +6,19 @@ import { toast } from "sonner";
 
 import PCSAIExplanation from "@/app/components/pcs/PCSAIExplanation";
 import PCSConfidenceDisplay from "@/app/components/pcs/PCSConfidenceDisplay";
-import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import PCSDocumentLibrary from "@/app/components/pcs/PCSDocumentLibrary";
 import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
+import PCSHelpSystem, { PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
+import PCSHelpWidget from "@/app/components/pcs/PCSHelpWidget";
 import PCSLoadingOverlay, { usePCSLoadingStates } from "@/app/components/pcs/PCSLoadingOverlay";
 import PCSManualEntry from "@/app/components/pcs/PCSManualEntry";
-import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
 import PCSMobileInterface from "@/app/components/pcs/PCSMobileInterface";
+import PCSMobileWizard from "@/app/components/pcs/PCSMobileWizard";
 import {
   PCSOnboardingTour,
   PCSOnboardingChecklist,
   PCSFeatureHighlights,
 } from "@/app/components/pcs/PCSOnboardingTour";
-import PCSHelpSystem, { PCSQuickHelp } from "@/app/components/pcs/PCSHelpSystem";
 // import { PCSOptimisticUI } from "@/app/components/pcs/PCSOptimisticUI";
 import PCSRecommendationCards from "@/app/components/pcs/PCSRecommendationCards";
 import PCSValidationResults from "@/app/components/pcs/PCSValidationResults";
@@ -410,7 +410,7 @@ export default function EnhancedPCSCopilotClient({
           </div>
           <PageHeader
             title="PCS Money Copilot Elite"
-            subtitle="Manual entry, real-time validation, and AI-powered guidance for maximum PCS profit"
+            subtitle="Calculate your official PCS entitlements with JTR-compliant validation"
           />
 
           {/* Navigation Tabs */}

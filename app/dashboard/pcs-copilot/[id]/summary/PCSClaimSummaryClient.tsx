@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+
+import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
 import Card from "@/app/components/ui/Card";
-import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import { logger } from "@/lib/logger";
 

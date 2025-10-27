@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
 import { ImageAnnotatorClient } from "@google-cloud/vision";
+import { NextRequest, NextResponse } from "next/server";
+
+import { logger } from "@/lib/logger";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import { validatePCSClaim } from "@/lib/pcs/validation-engine";
+import { NextRequest, NextResponse } from "next/server";
+
 import { logger } from "@/lib/logger";
+import { validatePCSClaim } from "@/lib/pcs/validation-engine";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {

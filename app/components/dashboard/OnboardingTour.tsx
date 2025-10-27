@@ -69,7 +69,7 @@ export default function OnboardingTour({ userId, hasProfile, hasAssessment, hasP
       description: 'Access live BAH, BAS, and TSP data',
       icon: '📊',
       status: 'complete',
-      link: '/dashboard/intel',
+      link: '/dashboard/ask',
       estimatedTime: '2 minutes'
     }
   ];

@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function isAllowed(email?: string | null) {

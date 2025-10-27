@@ -58,7 +58,7 @@ export default function ShoppingHub() {
                 Calculate Annual Savings
               </Link>
               <Link
-                href="/dashboard/intel"
+                href="/dashboard/ask"
                 className="inline-flex items-center justify-center gap-2 bg-orange-500/20 backdrop-blur border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-500/30 transition-all"
               >
                 Get Shopping Strategy
@@ -503,7 +503,7 @@ export default function ShoppingHub() {
                 </Link>
                 
                 <Link
-                  href="/dashboard/intel"
+                  href="/dashboard/ask"
                   className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 text-left group border-2 border-slate-700"
                 >
                   <Icon name="Sparkles" className="h-8 w-8 mb-3" />

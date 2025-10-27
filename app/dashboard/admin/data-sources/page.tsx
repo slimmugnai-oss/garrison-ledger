@@ -10,13 +10,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = {
   title: "Data Sources - Admin | Garrison Ledger",

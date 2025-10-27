@@ -32,7 +32,7 @@ export default async function IntelCardSidebar({ baseName: _baseName, mha: _mha 
       ))}
 
       <Link
-        href="/dashboard/intel?domain=pcs"
+        href="/dashboard/ask?domain=pcs"
         className="block text-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm"
       >
         View All PCS Intel →

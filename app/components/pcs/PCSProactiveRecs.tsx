@@ -244,8 +244,8 @@ function generateRecommendations(
     recs.push({
       id: "halfway-milestone",
       severity: "tip",
-      title: "🎉 Halfway There!",
-      message: `You're 50% done with your claim! Keep going - you're on track to recover an estimated $${context.estimatedTotal?.toLocaleString() || "8,000"}. Finish strong!`,
+      title: "Halfway Complete",
+      message: `You're 50% done with your claim! ${context.estimatedTotal ? `Your estimated entitlement: $${context.estimatedTotal.toLocaleString()}.` : ""} Keep going to finish your calculation.`,
       dismissible: true,
     });
   }

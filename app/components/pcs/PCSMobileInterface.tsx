@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
-import Button from "@/app/components/ui/Button";
+
 import Badge from "@/app/components/ui/Badge";
+import Button from "@/app/components/ui/Button";
+import Card, { CardContent, CardHeader } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
-import { PCSMobileWizardOptimized } from "./PCSMobileWizardOptimized";
-import { PCSMobileOptimizer } from "./PCSMobileOptimizer";
 import { FormData } from "@/lib/pcs/calculation-engine";
+
+import { PCSMobileWizardOptimized } from "./PCSMobileWizardOptimized";
 
 interface PCSMobileInterfaceProps {
   onSave: (data: FormData) => void;
@@ -25,7 +26,6 @@ export function PCSMobileInterface({
   initialData,
   showDebugTools = false,
 }: PCSMobileInterfaceProps) {
-  const [activeTab, setActiveTab] = useState<"wizard" | "debug">("wizard");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -56,59 +56,17 @@ export function PCSMobileInterface({
       <div className="sticky top-0 z-10 border-b border-gray-200 bg-white p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold">PCS Copilot</h1>
-          <div className="flex items-center gap-2">
-            <Badge variant="primary">Mobile</Badge>
-            {showDebugTools && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setActiveTab(activeTab === "wizard" ? "debug" : "wizard")}
-              >
-                <Icon name="Settings" className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          <Badge variant="primary">Mobile</Badge>
         </div>
       </div>
 
       {/* Mobile Content */}
       <div className="space-y-4 p-4">
-        {activeTab === "wizard" ? (
-          <PCSMobileWizardOptimized
-            onSave={onSave}
-            onValidate={onValidate}
-            initialData={initialData}
-          />
-        ) : (
-          <PCSMobileOptimizer />
-        )}
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-4">
-        <div className="flex justify-center space-x-4">
-          <Button
-            variant={activeTab === "wizard" ? "primary" : "ghost"}
-            size="sm"
-            onClick={() => setActiveTab("wizard")}
-            className="flex items-center gap-2"
-          >
-            <Icon name="User" className="h-4 w-4" />
-            <span className="hidden sm:inline">Wizard</span>
-          </Button>
-
-          {showDebugTools && (
-            <Button
-              variant={activeTab === "debug" ? "primary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("debug")}
-              className="flex items-center gap-2"
-            >
-              <Icon name="Settings" className="h-4 w-4" />
-              <span className="hidden sm:inline">Debug</span>
-            </Button>
-          )}
-        </div>
+        <PCSMobileWizardOptimized
+          onSave={onSave}
+          onValidate={onValidate}
+          initialData={initialData}
+        />
       </div>
 
       <style jsx>{`

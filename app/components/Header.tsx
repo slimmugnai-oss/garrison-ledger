@@ -1,10 +1,9 @@
 "use client";
 
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-
-import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 import Icon from "./ui/Icon";
 
@@ -301,7 +300,7 @@ export default function Header() {
                       isActivePath("/dashboard/navigator") ||
                       isActivePath("/dashboard/tdy-copilot") ||
                       isActivePath("/dashboard/tdy-voucher") ||
-                      isActivePath("/dashboard/intel")
+                      isActivePath("/dashboard/ask")
                         ? "text-slate-900 dark:text-white"
                         : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
@@ -317,7 +316,7 @@ export default function Header() {
                       isActivePath("/dashboard/navigator") ||
                       isActivePath("/dashboard/tdy-copilot") ||
                       isActivePath("/dashboard/tdy-voucher") ||
-                      isActivePath("/dashboard/intel")) && (
+                      isActivePath("/dashboard/ask")) && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
                     )}
                   </button>
