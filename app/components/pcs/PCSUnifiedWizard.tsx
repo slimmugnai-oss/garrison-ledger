@@ -22,10 +22,7 @@ import {
   type FormData,
   type CalculationResult,
 } from "@/lib/pcs/calculation-engine";
-import {
-  calculatePPMWithholding,
-  type PPMWithholdingResult,
-} from "@/lib/pcs/ppm-withholding-calculator";
+import type { PPMWithholdingResult } from "@/lib/pcs/ppm-withholding-calculator";
 import { logger } from "@/lib/logger";
 import militaryBasesData from "@/lib/data/military-bases.json";
 
@@ -330,23 +327,33 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       });
     }
 
-    // Calculate withholding
+    // Calculate withholding via API (server-side only)
     try {
       // Extract destination state from base
       const destState = extractStateFromBase(formData.destination_base || "");
 
-      const withholdingResult = await calculatePPMWithholding({
-        gccAmount: data.gccAmount,
-        incentivePercentage: 100, // Current rate (admin can override later)
-        mode, // Pass through official vs. estimator mode
-        allowedExpenses: {
-          movingCosts: data.movingExpenses || 0,
-          fuelReceipts: data.fuelReceipts || 0,
-          laborCosts: data.laborCosts || 0,
-          tollsAndFees: data.tollsAndFees || 0,
-        },
-        destinationState: destState,
+      const response = await fetch("/api/pcs/calculate-ppm-withholding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gccAmount: data.gccAmount,
+          incentivePercentage: 100, // Current rate (admin can override later)
+          mode, // Pass through official vs. estimator mode
+          allowedExpenses: {
+            movingCosts: data.movingExpenses || 0,
+            fuelReceipts: data.fuelReceipts || 0,
+            laborCosts: data.laborCosts || 0,
+            tollsAndFees: data.tollsAndFees || 0,
+          },
+          destinationState: destState,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to calculate PPM withholding");
+      }
+
+      const withholdingResult: PPMWithholdingResult = await response.json();
 
       setPpmWithholding(withholdingResult);
 
@@ -966,23 +973,32 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                     result={ppmWithholding}
                     allowEdit={true}
                     onUpdateRates={async (federal, state) => {
-                      // Recalculate with custom rates
+                      // Recalculate with custom rates via API
                       const destState = extractStateFromBase(formData.destination_base || "");
-                      const updated = await calculatePPMWithholding({
-                        gccAmount: ppmGccAmount!,
-                        incentivePercentage: 100,
-                        mode: ppmMode!, // Pass the mode through
-                        allowedExpenses: {
-                          movingCosts: ppmExpenses.movingCosts,
-                          fuelReceipts: ppmExpenses.fuelReceipts,
-                          laborCosts: ppmExpenses.laborCosts,
-                          tollsAndFees: ppmExpenses.tollsAndFees,
-                        },
-                        destinationState: destState,
-                        customFederalRate: federal,
-                        customStateRate: state,
+                      
+                      const response = await fetch("/api/pcs/calculate-ppm-withholding", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          gccAmount: ppmGccAmount!,
+                          incentivePercentage: 100,
+                          mode: ppmMode!, // Pass the mode through
+                          allowedExpenses: {
+                            movingCosts: ppmExpenses.movingCosts,
+                            fuelReceipts: ppmExpenses.fuelReceipts,
+                            laborCosts: ppmExpenses.laborCosts,
+                            tollsAndFees: ppmExpenses.tollsAndFees,
+                          },
+                          destinationState: destState,
+                          customFederalRate: federal,
+                          customStateRate: state,
+                        }),
                       });
-                      setPpmWithholding(updated);
+                      
+                      if (response.ok) {
+                        const updated: PPMWithholdingResult = await response.json();
+                        setPpmWithholding(updated);
+                      }
                     }}
                   />
 
