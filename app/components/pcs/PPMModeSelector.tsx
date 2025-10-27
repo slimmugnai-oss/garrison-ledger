@@ -98,7 +98,8 @@ export default function PPMModeSelector({
               </div>
               <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
               <p className="mb-4 text-sm text-slate-600">
-                Get a rough estimate for early planning. Uses weight and distance to approximate GCC.
+                Get a rough estimate for early planning. Uses weight and distance to approximate
+                GCC.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -152,8 +153,6 @@ export default function PPMModeSelector({
                 onChange={setGccAmount}
                 placeholder="8500"
                 className="pl-8 text-lg font-semibold"
-                min="0"
-                step="0.01"
               />
             </div>
             <div className="mt-2 rounded-lg bg-blue-50 p-3">
@@ -194,8 +193,6 @@ export default function PPMModeSelector({
                 value={movingExpenses}
                 onChange={setMovingExpenses}
                 placeholder="1200"
-                min="0"
-                step="0.01"
               />
               <Input
                 label="Fuel Receipts (gas/diesel)"
@@ -203,8 +200,6 @@ export default function PPMModeSelector({
                 value={fuelReceipts}
                 onChange={setFuelReceipts}
                 placeholder="800"
-                min="0"
-                step="0.01"
               />
               <Input
                 label="Labor Costs (hired help, packing materials)"
@@ -212,8 +207,6 @@ export default function PPMModeSelector({
                 value={laborCosts}
                 onChange={setLaborCosts}
                 placeholder="300"
-                min="0"
-                step="0.01"
               />
               <Input
                 label="Tolls & Fees (toll roads, parking, weigh station)"
@@ -221,8 +214,6 @@ export default function PPMModeSelector({
                 value={tollsAndFees}
                 onChange={setTollsAndFees}
                 placeholder="100"
-                min="0"
-                step="0.01"
               />
             </div>
 

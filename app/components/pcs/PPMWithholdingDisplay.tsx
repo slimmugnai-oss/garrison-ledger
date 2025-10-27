@@ -15,7 +15,7 @@ interface PPMWithholdingDisplayProps {
 /**
  * Display PPM withholding breakdown
  * Shows gross payout, deductions, withholding, and net payout
- * 
+ *
  * With strong disclaimers that this is withholding estimate, not tax advice
  */
 export default function PPMWithholdingDisplay({
@@ -75,9 +75,7 @@ export default function PPMWithholdingDisplay({
                 <div className="border-t border-blue-200 pt-2">
                   <div className="flex justify-between font-medium">
                     <span className="text-slate-700">Taxable Amount:</span>
-                    <span className="text-blue-900">
-                      ${result.taxableAmount.toLocaleString()}
-                    </span>
+                    <span className="text-blue-900">${result.taxableAmount.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -96,7 +94,7 @@ export default function PPMWithholdingDisplay({
               {result.effectiveWithholdingRate.toFixed(1)}% effective rate
             </span>
           </div>
-          
+
           <div className="space-y-3 rounded-lg bg-slate-50 p-4">
             {/* Federal */}
             <div className="flex items-center justify-between text-sm">
@@ -187,11 +185,10 @@ export default function PPMWithholdingDisplay({
             <Icon name="Wallet" className="h-5 w-5" />
             <div className="text-sm font-medium opacity-90">Estimated Take-Home</div>
           </div>
-          <div className="text-4xl font-black">
-            ${result.estimatedNetPayout.toLocaleString()}
-          </div>
+          <div className="text-4xl font-black">${result.estimatedNetPayout.toLocaleString()}</div>
           <div className="mt-2 text-sm opacity-90">
-            After estimated DFAS withholding ({result.effectiveWithholdingRate.toFixed(1)}% of gross)
+            After estimated DFAS withholding ({result.effectiveWithholdingRate.toFixed(1)}% of
+            gross)
           </div>
         </div>
 
@@ -202,7 +199,7 @@ export default function PPMWithholdingDisplay({
             <h4 className="text-sm font-bold text-amber-900">Not Tax Advice</h4>
           </div>
           <p className="text-xs leading-relaxed text-amber-900">{result.disclaimer}</p>
-          
+
           <div className="mt-3 space-y-1 text-xs text-amber-800">
             <p className="font-medium">Your actual tax liability may differ based on:</p>
             <ul className="ml-4 list-disc space-y-0.5">
@@ -212,7 +209,7 @@ export default function PPMWithholdingDisplay({
               <li>Total deductions and credits</li>
             </ul>
           </div>
-          
+
           <div className="mt-3 text-xs text-amber-900">
             <strong>For tax questions:</strong> Consult a licensed tax professional or use{" "}
             <a
@@ -236,7 +233,7 @@ export default function PPMWithholdingDisplay({
               Default rates shown are standard DFAS supplemental withholding. You can adjust based
               on your W-4 elections if known.
             </p>
-            
+
             <div className="grid gap-3 sm:grid-cols-2">
               <Input
                 label="Federal Rate (%)"
@@ -246,9 +243,6 @@ export default function PPMWithholdingDisplay({
                   const newFederal = parseFloat(val) || 22;
                   onUpdateRates(newFederal, result.estimatedWithholding.state.rate);
                 }}
-                min="0"
-                max="37"
-                step="0.1"
               />
               <Input
                 label={`${result.estimatedWithholding.state.stateName} State Rate (%)`}
@@ -258,12 +252,9 @@ export default function PPMWithholdingDisplay({
                   const newState = parseFloat(val) || 0;
                   onUpdateRates(result.estimatedWithholding.federal.rate, newState);
                 }}
-                min="0"
-                max="15"
-                step="0.1"
               />
             </div>
-            
+
             <p className="mt-2 text-xs text-slate-500">
               <Icon name="Info" className="mr-1 inline h-3 w-3" />
               Check your LES to see your typical withholding rates, or leave defaults.
@@ -274,4 +265,3 @@ export default function PPMWithholdingDisplay({
     </Card>
   );
 }
-
