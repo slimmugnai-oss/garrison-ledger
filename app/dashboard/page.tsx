@@ -365,46 +365,46 @@ export default async function Dashboard() {
             <h2 className="mb-6 text-2xl font-semibold text-gray-900">Financial Calculators</h2>
 
             <div className="grid gap-4 md:grid-cols-3">
-              {/* TSP Modeler */}
+              {/* TSP Calculator */}
               <Link
                 href="/dashboard/tools/tsp-modeler"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="TrendingUp" className="mb-3 h-8 w-8 text-blue-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">TSP Modeler</h3>
+                <h3 className="mb-1 font-semibold text-gray-900">TSP Calculator</h3>
                 <p className="text-sm text-gray-600">
-                  Project retirement balance with BRS matching
+                  Model fund allocations and project retirement growth
                 </p>
               </Link>
 
-              {/* SDP Strategist */}
+              {/* SDP Calculator */}
               <Link
                 href="/dashboard/tools/sdp-strategist"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="DollarSign" className="mb-3 h-8 w-8 text-green-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">SDP Strategist</h3>
-                <p className="text-sm text-gray-600">10% deployment savings calculator</p>
+                <h3 className="mb-1 font-semibold text-gray-900">SDP Calculator</h3>
+                <p className="text-sm text-gray-600">Calculate deployment savings returns</p>
               </Link>
 
-              {/* House Hacking */}
+              {/* House Hacking Calculator */}
               <Link
                 href="/dashboard/tools/house-hacking"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="Home" className="mb-3 h-8 w-8 text-purple-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">House Hacking</h3>
-                <p className="text-sm text-gray-600">BAH arbitrage calculator</p>
+                <h3 className="mb-1 font-semibold text-gray-900">House Hacking Calculator</h3>
+                <p className="text-sm text-gray-600">Estimate VA loan rental cash flow</p>
               </Link>
 
-              {/* PCS Planner */}
+              {/* PCS Budget Calculator */}
               <Link
                 href="/dashboard/tools/pcs-planner"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="Truck" className="mb-3 h-8 w-8 text-orange-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">PCS Planner</h3>
-                <p className="text-sm text-gray-600">Move cost estimator and timeline</p>
+                <h3 className="mb-1 font-semibold text-gray-900">PCS Budget Calculator</h3>
+                <p className="text-sm text-gray-600">Estimate move costs using official rates</p>
               </Link>
 
               {/* On-Base Savings */}
@@ -413,18 +413,20 @@ export default async function Dashboard() {
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="Shield" className="mb-3 h-8 w-8 text-indigo-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">On-Base Savings</h3>
-                <p className="text-sm text-gray-600">Compare on-base vs off-base living costs</p>
+                <h3 className="mb-1 font-semibold text-gray-900">On-Base Savings Calculator</h3>
+                <p className="text-sm text-gray-600">Estimate commissary and exchange savings</p>
               </Link>
 
-              {/* Military Salary Calculator */}
+              {/* Career Comparison Calculator */}
               <Link
                 href="/dashboard/tools/salary-calculator"
                 className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md"
               >
                 <Icon name="Calculator" className="mb-3 h-8 w-8 text-cyan-600" />
-                <h3 className="mb-1 font-semibold text-gray-900">Military Salary Calculator</h3>
-                <p className="text-sm text-gray-600">Total compensation by rank and location</p>
+                <h3 className="mb-1 font-semibold text-gray-900">Career Comparison Calculator</h3>
+                <p className="text-sm text-gray-600">
+                  Compare job offers with COL and tax adjustments
+                </p>
               </Link>
             </div>
           </div>

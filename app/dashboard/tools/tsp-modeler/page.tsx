@@ -1,18 +1,27 @@
-import { SignedIn, SignedOut } from '@clerk/nextjs';
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import Link from 'next/link';
+import Link from "next/link";
 
-import Footer from '@/app/components/Footer';
-import Header from '@/app/components/Header';
-import TspModeler from '@/app/components/tools/TspModeler';
-import Icon from '@/app/components/ui/Icon';
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import TspModeler from "@/app/components/tools/TspModeler";
+import Icon from "@/app/components/ui/Icon";
 import { generatePageMeta } from "@/lib/seo-config";
 
 export const metadata: Metadata = generatePageMeta({
-  title: "TSP Allocation Modeler - Optimize Your Thrift Savings Plan",
-  description: "Interactive TSP calculator for military members. Model different fund allocations, compare BRS scenarios, and project long-term retirement growth with historical data analysis.",
+  title: "TSP Calculator - Model Your Thrift Savings Plan Growth",
+  description:
+    "Free TSP calculator for military members. Model fund allocations and project retirement growth using official TSP historical performance data. Compare custom allocations vs lifecycle funds.",
   path: "/dashboard/tools/tsp-modeler",
-  keywords: ["TSP calculator", "Thrift Savings Plan", "military TSP", "BRS calculator", "retirement planning", "TSP allocation", "C fund S fund"]
+  keywords: [
+    "TSP calculator",
+    "Thrift Savings Plan",
+    "military TSP",
+    "BRS calculator",
+    "retirement planning",
+    "TSP allocation",
+    "C fund S fund",
+  ],
 });
 
 export default function Page() {
@@ -20,75 +29,84 @@ export default function Page() {
     <>
       <Header />
       <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
           {/* Hero Header */}
-          <div className="text-center mb-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold text-green-700 uppercase tracking-wider mb-4">
+          <div className="mb-8 text-center">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-green-700">
               ✓ Free Tool
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary mb-3">
-              TSP Allocation Modeler
+            <h1 className="mb-3 font-serif text-4xl font-bold text-primary md:text-5xl">
+              TSP Calculator
             </h1>
-            <p className="text-xl text-body max-w-3xl mx-auto">
-              Model different fund allocations, compare scenarios, and project your long-term retirement growth.
+            <p className="text-body mx-auto max-w-3xl text-xl">
+              Model fund allocations and project your retirement growth using official TSP
+              historical data.
             </p>
           </div>
 
           <SignedOut>
-            <div className="max-w-2xl mx-auto bg-card rounded-xl p-10 shadow-lg border border-border text-center">
-              <Icon name="Calculator" className="h-16 w-16 text-primary mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-primary mb-3">Ready to Model Your TSP?</h2>
-              <p className="text-lg text-body mb-2">
-                Sign in to access this free calculator and optimize your retirement allocation
+            <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-10 text-center shadow-lg">
+              <Icon name="Calculator" className="mx-auto mb-4 h-16 w-16 text-primary" />
+              <h2 className="mb-3 text-3xl font-bold text-primary">Calculate Your TSP Growth</h2>
+              <p className="text-body mb-2 text-lg">
+                Sign in to access this free calculator and model your retirement projections
               </p>
-              <p className="text-sm text-body mb-6">
-                💡 See exactly how different fund mixes impact your 30-year projections
+              <p className="text-body mb-6 text-sm">
+                Project your TSP balance using official historical performance data
               </p>
               <Link
                 href="/sign-in"
-                className="btn-primary inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 mb-4"
+                className="btn-primary mb-4 inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-bold shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
               >
                 Sign In to Get Started
               </Link>
-              <p className="text-sm text-muted">
-                Free account • No credit card required
-              </p>
+              <p className="text-sm text-muted">Free account • No credit card required</p>
             </div>
           </SignedOut>
 
           <SignedIn>
             <TspModeler />
-            
+
             {/* Educational Content */}
-            <div className="mt-16 grid md:grid-cols-2 gap-8">
-              <div className="bg-info-subtle border border-info rounded-xl p-6">
-                <h3 className="text-xl font-bold text-blue-900 mb-3">📚 Understanding TSP Funds</h3>
-                <ul className="space-y-2 text-info">
+            <div className="mt-16 grid gap-8 md:grid-cols-2">
+              <div className="bg-info-subtle border-info rounded-xl border p-6">
+                <h3 className="mb-3 text-xl font-bold text-blue-900">Understanding TSP Funds</h3>
+                <ul className="text-info space-y-2">
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span><strong>C Fund:</strong> Tracks S&P 500, large-cap US stocks</span>
+                    <span>
+                      <strong>C Fund:</strong> Tracks S&P 500, large-cap US stocks
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span><strong>S Fund:</strong> Small/mid-cap US stocks, higher growth potential</span>
+                    <span>
+                      <strong>S Fund:</strong> Small/mid-cap US stocks, higher growth potential
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span><strong>I Fund:</strong> International stocks, geographic diversification</span>
+                    <span>
+                      <strong>I Fund:</strong> International stocks, geographic diversification
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span><strong>G Fund:</strong> Government securities, stable but low returns</span>
+                    <span>
+                      <strong>G Fund:</strong> Government securities, stable but low returns
+                    </span>
                   </li>
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span><strong>F Fund:</strong> Bond index, more stable than stocks</span>
+                    <span>
+                      <strong>F Fund:</strong> Bond index, more stable than stocks
+                    </span>
                   </li>
                 </ul>
               </div>
 
-              <div className="bg-success-subtle border border-success rounded-xl p-6">
-                <h3 className="text-xl font-bold text-success mb-3">💡 BRS Matching Tips</h3>
+              <div className="bg-success-subtle rounded-xl border border-success p-6">
+                <h3 className="mb-3 text-xl font-bold text-success">BRS Matching Tips</h3>
                 <ul className="space-y-2 text-success">
                   <li className="flex items-start">
                     <span className="mr-2">•</span>
@@ -111,9 +129,9 @@ export default function Page() {
             </div>
 
             {/* Pro Tips */}
-            <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-xl p-8">
-              <h3 className="text-2xl font-bold text-indigo-900 mb-4">🎯 TSP Strategy Tips</h3>
-              <div className="grid md:grid-cols-2 gap-6">
+            <div className="mt-8 rounded-xl border border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100 p-8">
+              <h3 className="mb-4 text-2xl font-bold text-indigo-900">TSP Strategy Tips</h3>
+              <div className="grid gap-6 md:grid-cols-2">
                 <ul className="space-y-2 text-indigo-800">
                   <li className="flex items-start">
                     <span className="mr-2 font-bold">•</span>

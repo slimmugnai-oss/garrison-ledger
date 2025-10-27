@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from "react";
 
-import Explainer from '@/app/components/ai/Explainer';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import Icon from '@/app/components/ui/Icon';
-import { pcsTimingAdvice } from '@/app/data/bah-rates';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import { track } from '@/lib/track';
+import Icon from "@/app/components/ui/Icon";
+import { track } from "@/lib/track";
 
-type TabMode = 'basic' | 'ppm';
+const fmt = (v: number) =>
+  v.toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 
 type EntitlementData = {
   rank_group: string;
@@ -21,128 +21,59 @@ type EntitlementData = {
 };
 
 const RANKS = [
-  { value: '', label: 'Select your rank...' },
-  { value: 'E-1', label: 'E-1' },
-  { value: 'E-2', label: 'E-2' },
-  { value: 'E-3', label: 'E-3' },
-  { value: 'E-4', label: 'E-4' },
-  { value: 'E-5', label: 'E-5' },
-  { value: 'E-6', label: 'E-6' },
-  { value: 'E-7', label: 'E-7' },
-  { value: 'E-8', label: 'E-8' },
-  { value: 'E-9', label: 'E-9' },
-  { value: 'W-1', label: 'W-1' },
-  { value: 'W-2', label: 'W-2' },
-  { value: 'W-3', label: 'W-3' },
-  { value: 'W-4', label: 'W-4' },
-  { value: 'W-5', label: 'W-5' },
-  { value: 'O-1', label: 'O-1' },
-  { value: 'O-2', label: 'O-2' },
-  { value: 'O-3', label: 'O-3' },
-  { value: 'O-4', label: 'O-4' },
-  { value: 'O-5', label: 'O-5' },
-  { value: 'O-6', label: 'O-6' },
-  { value: 'O-7', label: 'O-7' },
-  { value: 'O-8', label: 'O-8' },
-  { value: 'O-9', label: 'O-9' },
-  { value: 'O-10', label: 'O-10' },
+  { value: "", label: "Select your rank..." },
+  { value: "E-1", label: "E-1" },
+  { value: "E-2", label: "E-2" },
+  { value: "E-3", label: "E-3" },
+  { value: "E-4", label: "E-4" },
+  { value: "E-5", label: "E-5" },
+  { value: "E-6", label: "E-6" },
+  { value: "E-7", label: "E-7" },
+  { value: "E-8", label: "E-8" },
+  { value: "E-9", label: "E-9" },
+  { value: "W-1", label: "W-1" },
+  { value: "W-2", label: "W-2" },
+  { value: "W-3", label: "W-3" },
+  { value: "W-4", label: "W-4" },
+  { value: "W-5", label: "W-5" },
+  { value: "O-1", label: "O-1" },
+  { value: "O-2", label: "O-2" },
+  { value: "O-3", label: "O-3" },
+  { value: "O-4", label: "O-4" },
+  { value: "O-5", label: "O-5" },
+  { value: "O-6", label: "O-6" },
+  { value: "O-7", label: "O-7" },
+  { value: "O-8", label: "O-8" },
+  { value: "O-9", label: "O-9" },
+  { value: "O-10", label: "O-10" },
 ];
 
 export default function PcsFinancialPlanner() {
-  const { isPremium } = usePremiumStatus();
-  const [activeTab, setActiveTab] = useState<TabMode>('basic');
-  
-  // Step 1: Profile Input
-  const [rankGroup, setRankGroup] = useState('');
-  const [dependencyStatus, setDependencyStatus] = useState<'with' | 'without' | ''>('');
+  const [rank, setRank] = useState("");
+  const [dependencyStatus, setDependencyStatus] = useState<"with" | "without" | "">("");
   const [entitlementData, setEntitlementData] = useState<EntitlementData | null>(null);
   const [loadingEntitlements, setLoadingEntitlements] = useState(false);
-  
-  // Basic Calculator state
+
+  // Income
   const [dla, setDla] = useState(0);
   const [perDiem, setPerDiem] = useState(800);
-  const [ppmIncentive, setPpmIncentive] = useState(0);
   const [otherIncome, setOtherIncome] = useState(0);
+
+  // Expenses
   const [travelCosts, setTravelCosts] = useState(600);
   const [lodging, setLodging] = useState(1200);
   const [deposits, setDeposits] = useState(2000);
   const [otherExpenses, setOtherExpenses] = useState(500);
-  
-  // PPM Profit Estimator state
-  const [ppmWeight, setPpmWeight] = useState(0);
-  const [ppmDistance, setPpmDistance] = useState(1200);
-  const [truckRental, setTruckRental] = useState(800);
-  const [gas, setGas] = useState(400);
-  const [supplies, setSupplies] = useState(200);
-  const [ppmOther, setPpmOther] = useState(100);
-  
-  // Enhanced features
-  const [pcsMonth, setPcsMonth] = useState('June');
-  const [storageMonths, setStorageMonths] = useState(0);
-  const [storageCubicFeet, setStorageCubicFeet] = useState(0);
-
-  // Save state functionality
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Track page view on mount
   useEffect(() => {
-    track('pcs_financial_planner_view');
+    track("pcs_planner_view");
   }, []);
-
-  // Auto-populate from profile (CRITICAL UX IMPROVEMENT)
-  useEffect(() => {
-    fetch('/api/user-profile')
-      .then(res => res.json())
-      .then(profile => {
-        if (profile) {
-          // Auto-fill rank from paygrade
-          if (profile.paygrade && !rankGroup) {
-            setRankGroup(profile.paygrade); // E-5, O-3, etc.
-          }
-          // Auto-fill dependency status from has_dependents
-          if (profile.has_dependents !== null && profile.has_dependents !== undefined && !dependencyStatus) {
-            setDependencyStatus(profile.has_dependents ? 'with' : 'without');
-          }
-        }
-      })
-      .catch(() => {
-        // Profile fetch failed - user will enter manually
-      });
-  }, []);
-
-  // Load saved model on mount (premium only) - takes precedence over profile
-  useEffect(() => {
-    if (isPremium) {
-      fetch('/api/saved-models?tool=pcs')
-        .then(res => res.json())
-        .then(data => {
-          if (data.input) {
-            setActiveTab(data.input.activeTab || 'basic');
-            setRankGroup(data.input.rankGroup || '');
-            setDependencyStatus(data.input.dependencyStatus || '');
-            setDla(data.input.dla || 0);
-            setPerDiem(data.input.perDiem || 800);
-            setPpmIncentive(data.input.ppmIncentive || 0);
-            setOtherIncome(data.input.otherIncome || 0);
-            setTravelCosts(data.input.travelCosts || 600);
-            setLodging(data.input.lodging || 1200);
-            setDeposits(data.input.deposits || 2000);
-            setOtherExpenses(data.input.otherExpenses || 500);
-            setPpmWeight(data.input.ppmWeight || 0);
-            setPpmDistance(data.input.ppmDistance || 1200);
-            setTruckRental(data.input.truckRental || 800);
-            setGas(data.input.gas || 400);
-            setSupplies(data.input.supplies || 200);
-            setPpmOther(data.input.ppmOther || 100);
-          }
-        })
-    }
-  }, [isPremium]);
 
   // Fetch entitlement data when rank and dependency are selected
   useEffect(() => {
     async function fetchEntitlements() {
-      if (!rankGroup || !dependencyStatus) {
+      if (!rank || !dependencyStatus) {
         setEntitlementData(null);
         return;
       }
@@ -150,127 +81,101 @@ export default function PcsFinancialPlanner() {
       setLoadingEntitlements(true);
       try {
         const params = new URLSearchParams({
-          rank_group: rankGroup,
-          dependency_status: dependencyStatus
+          rank_group: rank,
+          dependency_status: dependencyStatus,
         });
-        
+
         const response = await fetch(`/api/entitlements?${params.toString()}`);
         const result = await response.json();
 
         if (response.ok && result.success) {
           setEntitlementData(result.data);
-          // Auto-populate DLA and weight allowance
           setDla(result.data.dla_rate);
-          setPpmWeight(result.data.weight_allowance);
-          track('entitlements_fetched', { rank: rankGroup, dependency: dependencyStatus });
-        } else {
+          track("entitlements_fetched", { rank, dependency: dependencyStatus });
         }
-          } catch {
-            // Error already handled via UI state
-          } finally {
+      } catch {
+        // Error handled silently - user will enter manually
+      } finally {
         setLoadingEntitlements(false);
       }
     }
 
     fetchEntitlements();
-  }, [rankGroup, dependencyStatus]);
+  }, [rank, dependencyStatus]);
 
-  // Basic Calculator calculations
-  const totalIncome = dla + perDiem + ppmIncentive + otherIncome;
+  // Calculate totals
+  const totalIncome = dla + perDiem + otherIncome;
   const totalExpenses = travelCosts + lodging + deposits + otherExpenses;
   const netEstimate = totalIncome - totalExpenses;
 
-  // PPM calculations (simplified estimation)
-  // Government typically pays ~95% of what it would cost them to move you
-  // Rough estimate: $0.16 per pound per 1000 miles
-  const govtPayment = (ppmWeight / 1000) * (ppmDistance / 1000) * 160 * 0.95;
-  const yourCosts = truckRental + gas + supplies + ppmOther;
-  const netProfit = govtPayment - yourCosts;
-
-  // Auto-save (debounced, premium only)
-  useEffect(() => {
-    if (isPremium && (rankGroup || dla > 0 || ppmWeight > 0)) {
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      const timeout = setTimeout(() => {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tool: 'pcs',
-            input: {
-              activeTab,
-              rankGroup,
-              dependencyStatus,
-              dla,
-              perDiem,
-              ppmIncentive,
-              otherIncome,
-              travelCosts,
-              lodging,
-              deposits,
-              otherExpenses,
-              ppmWeight,
-              ppmDistance,
-              truckRental,
-              gas,
-              supplies,
-              ppmOther
-            },
-            output: {
-              totalIncome,
-              totalExpenses,
-              netEstimate,
-              govtPayment,
-              yourCosts,
-              netProfit
-            }
-          })
-        });
-      }, 2000);
-      saveTimeoutRef.current = timeout;
-    }
-  }, [isPremium, activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther, totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit]);
-
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Step 1: Profile Input */}
-      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-300 rounded-xl p-8 mb-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="bg-indigo-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
-            1
+    <div className="mx-auto max-w-4xl space-y-8">
+      {/* Data Provenance Banner */}
+      <div className="rounded-xl border-2 border-indigo-300 bg-gradient-to-r from-indigo-50 to-purple-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="rounded-full bg-indigo-600 p-3">
+            <Icon name="Shield" className="h-6 w-6 text-white" />
           </div>
-          <div>
-            <h3 className="text-2xl font-bold text-primary">Your Profile</h3>
-            <p className="text-sm text-body">We&apos;ll auto-calculate your entitlements</p>
+          <div className="flex-1">
+            <h3 className="mb-2 text-xl font-bold text-indigo-900">
+              Official PCS Entitlements Calculator
+            </h3>
+            <p className="mb-3 text-sm text-indigo-800">
+              This calculator uses official DoD entitlement rates from DTMO (Defense Travel
+              Management Office). DLA and weight allowances are based on current Joint Travel
+              Regulations (JTR).
+            </p>
+            <div className="grid gap-3 text-xs md:grid-cols-3">
+              <div className="rounded-lg border border-indigo-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-indigo-700">Data Source</p>
+                <p className="text-indigo-900">DTMO / JTR</p>
+              </div>
+              <div className="rounded-lg border border-indigo-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-indigo-700">Last Updated</p>
+                <p className="text-indigo-900">2025 Rates</p>
+              </div>
+              <div className="rounded-lg border border-indigo-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-indigo-700">Confidence</p>
+                <p className="font-bold text-indigo-900">Excellent</p>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+      {/* Profile Input */}
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Your Profile</h2>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-semibold text-body mb-2">
+            <label htmlFor="rank_select" className="mb-2 block text-sm font-semibold text-gray-700">
               Your Rank
             </label>
             <select
-              value={rankGroup}
-              onChange={(e) => setRankGroup(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+              value={rank}
+              onChange={(e) => setRank(e.target.value)}
+              className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
             >
-              {RANKS.map((rank) => (
-                <option key={rank.value} value={rank.value}>
-                  {rank.label}
+              {RANKS.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-body mb-2">
+            <label
+              htmlFor="dependency_status"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
               Dependency Status
             </label>
             <select
               value={dependencyStatus}
-              onChange={(e) => setDependencyStatus(e.target.value as 'with' | 'without')}
-              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-indigo-600 focus:outline-none text-base"
+              onChange={(e) => setDependencyStatus(e.target.value as "with" | "without")}
+              className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">Select...</option>
               <option value="with">With Dependents</option>
@@ -279,669 +184,450 @@ export default function PcsFinancialPlanner() {
           </div>
         </div>
 
-        {/* Loading State */}
         {loadingEntitlements && (
-          <div className="mt-6 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <p className="text-sm text-body mt-2">Fetching your entitlements...</p>
+          <div className="text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-600"></div>
+            <p className="mt-2 text-sm text-gray-600">Fetching your official entitlements...</p>
           </div>
         )}
 
-        {/* Entitlements Briefing Card */}
         {entitlementData && !loadingEntitlements && (
-          <div className="mt-6 bg-surface border-2 border-indigo-400 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Icon name="ClipboardList" className="h-6 w-6 text-body" />
-              <h4 className="text-xl font-bold text-primary">Your PCS Entitlements</h4>
+          <div className="rounded-xl border-2 border-indigo-400 bg-indigo-50 p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <Icon name="CheckCircle" className="h-6 w-6 text-indigo-600" />
+              <h4 className="text-xl font-bold text-indigo-900">Your Official PCS Entitlements</h4>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-info-subtle border border-info rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold text-info uppercase mb-1">DLA Rate</p>
-                <p className="text-2xl font-black text-info">
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-lg border border-indigo-300 bg-white p-4 text-center">
+                <p className="mb-1 text-xs font-semibold uppercase text-indigo-600">DLA Rate</p>
+                <p className="text-2xl font-black text-indigo-900">
                   ${entitlementData.dla_rate.toLocaleString()}
                 </p>
               </div>
-              
-              <div className="bg-success-subtle border border-success rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold text-success uppercase mb-1">Weight Allowance</p>
-                <p className="text-2xl font-black text-success">
+
+              <div className="rounded-lg border border-indigo-300 bg-white p-4 text-center">
+                <p className="mb-1 text-xs font-semibold uppercase text-indigo-600">
+                  Weight Allowance
+                </p>
+                <p className="text-2xl font-black text-indigo-900">
                   {entitlementData.weight_allowance.toLocaleString()} lbs
                 </p>
               </div>
-              
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold text-purple-700 uppercase mb-1">Effective Year</p>
-                <p className="text-2xl font-black text-purple-600">
+
+              <div className="rounded-lg border border-indigo-300 bg-white p-4 text-center">
+                <p className="mb-1 text-xs font-semibold uppercase text-indigo-600">
+                  Effective Year
+                </p>
+                <p className="text-2xl font-black text-indigo-900">
                   {entitlementData.effective_year}
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-muted mt-4 text-center">
-              <Icon name="Check" className="h-4 w-4 inline mr-1" /> Data auto-populated below based on current DoD rates
+            <p className="mt-4 text-center text-xs text-indigo-700">
+              <Icon name="Check" className="mr-1 inline h-4 w-4" />
+              Based on official DoD rates from DTMO
+            </p>
+          </div>
+        )}
+
+        {!entitlementData && !loadingEntitlements && rank && dependencyStatus && (
+          <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+            <p className="text-sm text-amber-800">
+              <Icon name="AlertTriangle" className="mr-1 inline h-4 w-4" />
+              Unable to fetch entitlements. Please enter your DLA manually below.
             </p>
           </div>
         )}
       </div>
 
-      {/* PCS Timing Optimizer */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mb-8">
-        <h3 className="text-xl font-bold text-blue-900 mb-4">
-          <Icon name="Calendar" className="h-5 w-5 inline mr-2" />
-          PCS Timing Strategy
-        </h3>
-        
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-blue-900 mb-2">
-            Planned PCS Month
-          </label>
-          <select
-            value={pcsMonth}
-            onChange={(e) => setPcsMonth(e.target.value)}
-            className="w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(month => (
-              <option key={month} value={month}>{month}</option>
-            ))}
-          </select>
-        </div>
+      {/* Budget Calculator */}
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">PCS Budget Estimate</h2>
 
-        {(() => {
-          const advice = [...pcsTimingAdvice.best, ...pcsTimingAdvice.avoid, ...pcsTimingAdvice.decent]
-            .find(a => a.month === pcsMonth);
-          
-          if (!advice) return null;
-          
-          const isBest = pcsTimingAdvice.best.some(b => b.month === pcsMonth);
-          const isAvoid = pcsTimingAdvice.avoid.some(b => b.month === pcsMonth);
-          
-          return (
-            <div className={`rounded-lg p-4 border-2 ${
-              isBest ? 'bg-green-50 border-green-300' :
-              isAvoid ? 'bg-red-50 border-red-300' :
-              'bg-amber-50 border-amber-300'
-            }`}>
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`text-3xl font-bold ${
-                  isBest ? 'text-success' :
-                  isAvoid ? 'text-danger' :
-                  'text-warning'
-                }`}>
-                  {advice.score}/100
-                </div>
-                <div>
-                  <p className={`font-bold ${
-                    isBest ? 'text-success' :
-                    isAvoid ? 'text-danger' :
-                    'text-warning'
-                  }`}>
-                    {isBest ? '✓ Excellent Choice' : isAvoid ? '⚠ Challenging Month' : '○ Decent Option'}
-                  </p>
-                  <p className="text-sm text-body">{advice.reason}</p>
-                </div>
-              </div>
+        {/* Income Section */}
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
+              +
             </div>
-          );
-        })()}
-        
-        <p className="text-xs text-blue-700 mt-4">
-          <Icon name="Info" className="h-3 w-3 inline mr-1" />
-          Off-season PCS can save thousands on housing costs and moving expenses
-        </p>
-      </div>
-
-      {/* Storage Calculator */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-8">
-        <h3 className="text-xl font-bold text-purple-900 mb-4">
-          <Icon name="Archive" className="h-5 w-5 inline mr-2" />
-          Storage Cost Calculator
-        </h3>
-        
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="storage_duration_months" className="block text-sm font-semibold text-purple-900 mb-2">Storage Duration (months)</label>
-                <input
-              type="number"
-              min={0}
-              max={24}
-              value={storageMonths}
-              onChange={(e) => setStorageMonths(Number(e.target.value))}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg"
-            />
+            <h3 className="text-xl font-semibold text-gray-900">Expected Income</h3>
           </div>
-          <div>
-            <label htmlFor="estimated_cubic_feet" className="block text-sm font-semibold text-purple-900 mb-2">Estimated Cubic Feet</label>
-                <input
-              type="number"
-              min={0}
-              step={100}
-              value={storageCubicFeet}
-              onChange={(e) => setStorageCubicFeet(Number(e.target.value))}
-              className="w-full px-4 py-2 border-2 border-purple-300 rounded-lg"
-            />
-            <p className="text-xs text-purple-700 mt-1">1BR apt ≈ 400 ft³, 3BR house ≈ 1,200 ft³</p>
-          </div>
-        </div>
 
-        {storageMonths > 0 && storageCubicFeet > 0 && (() => {
-          const onBaseMonthly = 50; // On-base storage very cheap/free
-          const privateMonthly = storageCubicFeet * 0.75; // ~$0.75/ft³ typical rate
-          const onBaseTotal = onBaseMonthly * storageMonths;
-          const privateTotal = privateMonthly * storageMonths;
-          const savings = privateTotal - onBaseTotal;
-          
-          return (
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-lg p-4 border border-purple-300">
-                <p className="text-sm text-purple-700 mb-1">On-Base Storage</p>
-                <p className="text-2xl font-bold text-success">{fmt(onBaseTotal)}</p>
-                <p className="text-xs text-purple-700">{storageMonths} months × ${onBaseMonthly}/mo</p>
-              </div>
-              <div className="bg-white rounded-lg p-4 border border-purple-300">
-                <p className="text-sm text-purple-700 mb-1">Private Storage</p>
-                <p className="text-2xl font-bold text-danger">{fmt(privateTotal)}</p>
-                <p className="text-xs text-purple-700">{storageCubicFeet} ft³ × ${privateMonthly.toFixed(0)}/mo</p>
-              </div>
-              {savings > 0 && (
-                <div className="md:col-span-2 bg-success-subtle rounded-lg p-4 border border-success text-center">
-                  <p className="text-sm text-success mb-1">Potential Savings (On-Base)</p>
-                  <p className="text-3xl font-bold text-success">{fmt(savings)}</p>
-                </div>
-              )}
-            </div>
-          );
-        })()}
-        
-        <p className="text-xs text-purple-700 mt-4">
-          <Icon name="Info" className="h-3 w-3 inline mr-1" />
-          On-base storage is often free or low-cost. Check availability with your TMO.
-        </p>
-      </div>
-
-      {/* Show message if no entitlements selected */}
-      {!entitlementData && !loadingEntitlements && (
-        <div className="bg-amber-50 border border-amber-300 rounded-xl p-6 mb-8 text-center">
-          <p className="text-amber-800 font-medium">
-            👆 Select your rank and dependency status above to auto-populate your PCS entitlements
-          </p>
-        </div>
-      )}
-
-      {/* Tab Navigation */}
-      <div className="mb-8">
-        <div className="border-b border-subtle">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('basic')}
-              className={`py-4 px-1 border-b-2 font-medium text-lg transition-colors ${
-                activeTab === 'basic'
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Icon name="BarChart" className="h-5 w-5 inline mr-1" /> Basic PCS Calculator
-            </button>
-            <button
-              onClick={() => setActiveTab('ppm')}
-              className={`py-4 px-1 border-b-2 font-medium text-lg transition-colors ${
-                activeTab === 'ppm'
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <Icon name="Truck" className="h-5 w-5 inline mr-1" /> PPM Profit Estimator
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      {/* Basic Calculator Tab */}
-      {activeTab === 'basic' && (
-        <div className="bg-surface rounded-xl border border-subtle p-8 shadow-sm">
-          <h3 className="text-2xl font-bold text-primary mb-2">PCS Budget Calculator</h3>
-          <p className="text-body mb-8">
-            Estimate your net financial position during a PCS move by tracking income and expenses.
-          </p>
-
-          <div className="space-y-8">
-            {/* Income Section */}
+          <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <h4 className="text-xl font-semibold text-primary mb-4 flex items-center">
-                <span className="bg-success-subtle text-success rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
-                  +
+              <label
+                htmlFor="dla_amount"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Dislocation Allowance (DLA)
+                {entitlementData && (
+                  <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+                    Auto-filled
+                  </span>
+                )}
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
                 </span>
-                Estimated Income
-              </h4>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Dislocation Allowance (DLA)
-                    {entitlementData && (
-                      <span className="ml-2 text-xs bg-success-subtle text-success px-2 py-0.5 rounded-full font-semibold">
-                        Auto-filled <Icon name="Check" className="h-3 w-3 inline" />
-                      </span>
-                    )}
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={dla}
-                      onChange={(e) => setDla(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="Enter rank above for auto-fill"
-                      disabled={!rankGroup}
-                    />
-                  </div>
-                  <p className="text-xs text-muted mt-1">Based on your rank and dependents</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Per Diem / Travel Allowance
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={perDiem}
-                      onChange={(e) => setPerDiem(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="800"
-                    />
-                  </div>
-                  <p className="text-xs text-muted mt-1">Varies by travel days and location</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    PPM Incentive (if applicable)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={ppmIncentive}
-                      onChange={(e) => setPpmIncentive(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="0"
-                    />
-                  </div>
-                  <p className="text-xs text-muted mt-1">Use PPM tab to estimate</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Other Allowances
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={otherIncome}
-                      onChange={(e) => setOtherIncome(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Expenses Section */}
-            <div>
-              <h4 className="text-xl font-semibold text-primary mb-4 flex items-center">
-                <span className="bg-danger-subtle text-danger rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
-                  −
-                </span>
-                Estimated Expenses
-              </h4>
-              
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Travel Costs (Gas, Food, etc.)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={travelCosts}
-                      onChange={(e) => setTravelCosts(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="600"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Temporary Lodging
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={lodging}
-                      onChange={(e) => setLodging(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="1200"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Housing Deposits & Fees
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={deposits}
-                      onChange={(e) => setDeposits(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="2000"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Other Expenses
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={otherExpenses}
-                      onChange={(e) => setOtherExpenses(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-indigo-600 focus:outline-none"
-                      placeholder="500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Results - Available to ALL users */}
-            <div className="pt-6 border-t-2 border-subtle">
-              <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-2 border-indigo-200">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-body font-semibold mb-1">Net PCS Financial Estimate</p>
-                    <p className="text-xs text-body">Total Income: ${totalIncome.toLocaleString()} − Total Expenses: ${totalExpenses.toLocaleString()}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-4xl font-black ${netEstimate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {netEstimate >= 0 ? '+' : ''}${netEstimate.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-xs text-muted mt-4 text-center">
-                  This is an estimate for planning purposes only. Actual costs may vary.
-                </p>
-              </div>
-
-              {/* AI Explainer */}
-              <Explainer payload={{
-                tool: "pcs",
-                inputs: { rankGroup, dependencyStatus, dla, perDiem, ppmIncentive },
-                outputs: { totalIncome, totalExpenses, netEstimate }
-              }} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* PPM Profit Estimator Tab */}
-      {activeTab === 'ppm' && (
-        <div className="bg-surface rounded-xl border border-subtle p-8 shadow-sm">
-          <div className="bg-success-subtle border border-success rounded-lg p-4 mb-6">
-            <h3 className="text-xl font-bold text-success mb-2">PPM Profit Estimator</h3>
-            <p className="text-sm text-success">
-              Calculate your potential profit from a Personally Procured Move (PPM/DITY Move). 
-              The government typically pays ~95% of what it would cost them to move you.
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {/* Move Details */}
-            <div>
-              <h4 className="text-lg font-semibold text-primary mb-4">Move Details</h4>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Estimated Weight (lbs)
-                    {entitlementData && (
-                      <span className="ml-2 text-xs bg-success-subtle text-success px-2 py-0.5 rounded-full font-semibold">
-                        Max: {entitlementData.weight_allowance.toLocaleString()} <Icon name="Check" className="h-3 w-3 inline" />
-                      </span>
-                    )}
-                  </label>
-                  <input
-                    type="number"
-                    value={ppmWeight}
-                    onChange={(e) => setPpmWeight(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                    placeholder={entitlementData ? entitlementData.weight_allowance.toString() : "Enter rank above for auto-fill"}
-                    disabled={!rankGroup}
-                  />
-                  <p className="text-xs text-muted mt-1">Get weigh tickets before and after loading</p>
-                </div>
-
-                <div>
-                  <label htmlFor="distance_miles" className="block text-sm font-medium text-body mb-1">Distance (miles)</label>
                 <input
-                    type="number"
-                    value={ppmDistance}
-                    onChange={(e) => setPpmDistance(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                    placeholder="1200"
-                  />
-                  <p className="text-xs text-muted mt-1">Official mileage per TMO</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Your Costs */}
-            <div>
-              <h4 className="text-lg font-semibold text-primary mb-4">Your Expected Costs</h4>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Truck Rental Cost
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={truckRental}
-                      onChange={(e) => setTruckRental(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                      placeholder="800"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Gas & Fuel
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={gas}
-                      onChange={(e) => setGas(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                      placeholder="400"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Moving Supplies
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={supplies}
-                      onChange={(e) => setSupplies(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                      placeholder="200"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-body mb-1">
-                    Other Expenses
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">$</span>
-                    <input
-                      type="number"
-                      value={ppmOther}
-                      onChange={(e) => setPpmOther(Number(e.target.value))}
-                      className="w-full pl-8 pr-4 py-2 border border-default rounded-lg focus:border-green-600 focus:outline-none"
-                      placeholder="100"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="pt-6 border-t-2 border-subtle">
-              <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                <div className="bg-info-subtle p-5 rounded-xl text-center border-2 border-info">
-                  <h5 className="text-sm font-semibold text-info mb-2">Government Payment</h5>
-                  <p className="text-3xl font-bold text-info">
-                    ${Math.round(govtPayment).toLocaleString()}
-                  </p>
-                </div>
-
-                <div className="bg-danger-subtle p-5 rounded-xl text-center border-2 border-danger">
-                  <h5 className="text-sm font-semibold text-danger mb-2">Your Costs</h5>
-                  <p className="text-3xl font-bold text-danger">
-                    ${Math.round(yourCosts).toLocaleString()}
-                  </p>
-                </div>
-
-                <div className={`p-5 rounded-xl text-center border-2 ${
-                  netProfit >= 0 
-                    ? 'bg-green-50 border-green-300' 
-                    : 'bg-red-50 border-red-300'
-                }`}>
-                  <h5 className={`text-sm font-semibold mb-2 ${
-                    netProfit >= 0 ? 'text-green-800' : 'text-red-800'
-                  }`}>
-                    Net Profit/Loss
-                  </h5>
-                  <p className={`text-3xl font-bold ${
-                    netProfit >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {netProfit >= 0 ? '+' : ''}${Math.round(netProfit).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              {entitlementData && ppmWeight > entitlementData.weight_allowance && (
-                <div className="bg-danger-subtle border-l-4 border-red-400 p-4 rounded-r-lg mb-4">
-                  <p className="text-sm font-semibold text-danger mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Weight Limit Exceeded</p>
-                  <p className="text-xs text-danger">
-                    Your estimated weight ({ppmWeight.toLocaleString()} lbs) exceeds your allowance ({entitlementData.weight_allowance.toLocaleString()} lbs). 
-                    You may incur excess weight charges of approximately ${Math.round((ppmWeight - entitlementData.weight_allowance) * 0.75).toLocaleString()}.
-                  </p>
-                </div>
-              )}
-
-              <div className="bg-warning-subtle border-l-4 border-yellow-400 p-4 rounded-r-lg">
-                <p className="text-sm font-semibold text-warning mb-1"><Icon name="AlertTriangle" className="h-4 w-4 inline mr-1" /> Important Disclaimer</p>
-                <p className="text-xs text-warning">
-                  This is a simplified, unofficial estimate for planning purposes only. 
-                  Actual PPM rates vary by weight, distance, and current DoD rate schedules. 
-                  <strong> Always consult your Transportation Office (TMO) for official rate calculations before making a decision.</strong>
-                </p>
-              </div>
-              
-              {/* Export Options */}
-              <div className="mt-8 pt-6 border-t border-border">
-                <ExportButtons 
-                  tool="pcs-planner"
-                  resultsElementId="pcs-results"
-                  data={{
-                    inputs: { activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther },
-                    outputs: { totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit }
-                  }}
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={dla}
+                  onChange={(e) => setDla(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                  placeholder="Enter rank above for auto-fill"
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-600">Based on rank and dependents</p>
             </div>
-            
-            {/* Comparison Mode */}
-            <ComparisonMode
-              tool="pcs-planner"
-              currentInput={{ activeTab, rankGroup, dependencyStatus, dla, perDiem, ppmIncentive, otherIncome, travelCosts, lodging, deposits, otherExpenses, ppmWeight, ppmDistance, truckRental, gas, supplies, ppmOther }}
-              currentOutput={{ totalIncome, totalExpenses, netEstimate, govtPayment, yourCosts, netProfit }}
-              onLoadScenario={(input) => {
-                // Load scenario - note: some setters may not be accessible depending on component structure
-                if (input.dla !== undefined) setDla(input.dla);
-                if (input.perDiem !== undefined) setPerDiem(input.perDiem);
-                if (input.ppmWeight !== undefined) setPpmWeight(input.ppmWeight);
-                if (input.ppmDistance !== undefined) setPpmDistance(input.ppmDistance);
-                alert('Scenario loaded! Some values restored.');
-              }}
-              renderComparison={(scenarios) => (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b-2 border-border">
-                        <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Total Income</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Total Expenses</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Net Result</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">PPM Profit</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {scenarios.map((scenario, idx) => (
-                        <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                          <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                          <td className="p-3 text-right font-bold text-info">
-                            {fmt(scenario.output.totalIncome || 0)}
-                          </td>
-                          <td className="p-3 text-right font-bold text-warning">
-                            {fmt(scenario.output.totalExpenses || 0)}
-                          </td>
-                          <td className={`p-3 text-right font-bold ${
-                            (scenario.output.netEstimate || 0) >= 0 ? 'text-success' : 'text-danger'
-                          }`}>
-                            {fmt(scenario.output.netEstimate || 0)}
-                          </td>
-                          <td className="p-3 text-right font-bold text-success">
-                            {fmt(scenario.output.netProfit || 0)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            />
+
+            <div>
+              <label
+                htmlFor="per_diem_estimate"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Per Diem / Travel Allowance
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={perDiem}
+                  onChange={(e) => setPerDiem(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">Varies by travel days and location</p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="other_income"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Other Allowances
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={otherIncome}
+                  onChange={(e) => setOtherIncome(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">MALT, advance pay, etc.</p>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Expenses Section */}
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">
+              −
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">Expected Expenses</h3>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="travel_costs"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Travel Costs
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={travelCosts}
+                  onChange={(e) => setTravelCosts(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">Gas, food, tolls</p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="lodging_costs"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Temporary Lodging
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={lodging}
+                  onChange={(e) => setLodging(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">Hotels during transition</p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="deposits_fees"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Housing Deposits & Fees
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={deposits}
+                  onChange={(e) => setDeposits(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">Security deposit, utilities setup</p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="other_expenses"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Other Expenses
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={otherExpenses}
+                  onChange={(e) => setOtherExpenses(Number(e.target.value))}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-red-500 focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-600">Unexpected costs</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="rounded-xl border-2 border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-lg">
+        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">PCS Budget Estimate</h2>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-2">
+          <div className="rounded-lg border-2 border-green-300 bg-white p-6 text-center">
+            <p className="mb-2 text-sm text-gray-600">Total Income</p>
+            <p className="mb-2 text-4xl font-bold text-green-700">{fmt(totalIncome)}</p>
+            <div className="mt-3 space-y-1 text-xs text-gray-600">
+              <div className="flex justify-between">
+                <span>DLA:</span>
+                <span className="font-semibold">{fmt(dla)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Per Diem:</span>
+                <span className="font-semibold">{fmt(perDiem)}</span>
+              </div>
+              {otherIncome > 0 && (
+                <div className="flex justify-between">
+                  <span>Other:</span>
+                  <span className="font-semibold">{fmt(otherIncome)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-lg border-2 border-red-300 bg-white p-6 text-center">
+            <p className="mb-2 text-sm text-gray-600">Total Expenses</p>
+            <p className="mb-2 text-4xl font-bold text-red-700">{fmt(totalExpenses)}</p>
+            <div className="mt-3 space-y-1 text-xs text-gray-600">
+              <div className="flex justify-between">
+                <span>Travel:</span>
+                <span className="font-semibold">{fmt(travelCosts)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Lodging:</span>
+                <span className="font-semibold">{fmt(lodging)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Deposits:</span>
+                <span className="font-semibold">{fmt(deposits)}</span>
+              </div>
+              {otherExpenses > 0 && (
+                <div className="flex justify-between">
+                  <span>Other:</span>
+                  <span className="font-semibold">{fmt(otherExpenses)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`rounded-lg border-2 p-6 ${
+            netEstimate >= 0 ? "border-green-300 bg-green-50" : "border-red-300 bg-red-50"
+          }`}
+        >
+          <div className="text-center">
+            <p
+              className={`mb-2 text-2xl font-bold ${netEstimate >= 0 ? "text-green-700" : "text-red-700"}`}
+            >
+              {netEstimate >= 0 ? (
+                <>
+                  <Icon name="TrendingUp" className="mr-2 inline h-6 w-6" />
+                  Estimated Surplus
+                </>
+              ) : (
+                <>
+                  <Icon name="TrendingDown" className="mr-2 inline h-6 w-6" />
+                  Estimated Shortfall
+                </>
+              )}
+            </p>
+            <p
+              className={`mb-4 text-5xl font-bold ${netEstimate >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {netEstimate >= 0 ? "+" : ""}
+              {fmt(netEstimate)}
+            </p>
+            <p className="text-sm text-gray-700">Net PCS budget estimate</p>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-r-lg border-l-4 border-amber-400 bg-amber-50 p-4">
+          <p className="mb-1 text-sm font-semibold text-amber-900">
+            <Icon name="AlertTriangle" className="mr-1 inline h-4 w-4" />
+            Important Disclaimer
+          </p>
+          <p className="text-xs text-amber-800">
+            This is an estimate for planning purposes only.{" "}
+            <strong>Actual PCS costs vary significantly</strong> based on distance, move type,
+            family size, and unexpected expenses. Build in a 20-30% buffer for safety. Always
+            consult your Transportation Office (TMO) for official entitlement calculations and
+            reimbursement guidance.
+          </p>
+        </div>
+      </div>
+
+      {/* Educational Content */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-blue-900">PCS Entitlements</h3>
+          <ul className="space-y-2 text-sm text-blue-800">
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>DLA:</strong> One-time payment to offset relocation costs (varies by rank)
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>Per Diem:</strong> Daily allowance for meals and lodging during travel
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>MALT:</strong> Mileage reimbursement if driving personally owned vehicle
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>Weight Allowance:</strong> Maximum household goods weight you can move
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-purple-200 bg-purple-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-purple-900">PCS Planning Tips</h3>
+          <ul className="space-y-2 text-sm text-purple-800">
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Keep ALL receipts - even for items you think might not be reimbursable</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Build in 20-30% buffer for unexpected expenses and delays</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Check new location housing deposit requirements early</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Coordinate with TMO at least 90 days before move date</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Official Resources */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+          <Icon name="ExternalLink" className="h-5 w-5 text-gray-600" />
+          Official PCS Resources
+        </h3>
+        <div className="space-y-3">
+          <a
+            href="https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/DLA/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            DFAS - Dislocation Allowance (DLA) Rates →
+          </a>
+          <a
+            href="https://www.move.mil/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            Move.mil - Official Military Moving Portal →
+          </a>
+          <a
+            href="https://www.defensetravel.dod.mil/site/perdiemCalc.cfm"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            DTMO - Per Diem Rate Calculator →
+          </a>
+        </div>
+        <p className="mt-4 text-xs text-gray-600">
+          Entitlement data sourced from official DoD databases. DLA rates and weight allowances from
+          DTMO. Last updated: 2025.
+        </p>
+      </div>
     </div>
   );
 }
-
-const fmt = (v: number) => v.toLocaleString(undefined, { 
-  style: 'currency', 
-  currency: 'USD', 
-  maximumFractionDigits: 0 
-});

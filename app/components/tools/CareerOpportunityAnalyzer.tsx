@@ -1,18 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect } from "react";
 
-import Explainer from '@/app/components/ai/Explainer';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import CitySearchInput from '@/app/components/ui/CitySearchInput';
-import Icon from '@/app/components/ui/Icon';
-import PageHeader from '@/app/components/ui/PageHeader';
-import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
-import Section from '@/app/components/ui/Section';
-import { getSkillsGap, remoteWorkPremiums } from '@/app/data/mos-translator';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import { track } from '@/lib/track';
+import CitySearchInput from "@/app/components/ui/CitySearchInput";
+import Icon from "@/app/components/ui/Icon";
+import { track } from "@/lib/track";
+
+const fmt = (v: number) =>
+  v.toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 
 interface City {
   city: string;
@@ -20,875 +19,521 @@ interface City {
   cost_of_living_index: number;
 }
 
-interface CompensationData {
+interface JobData {
   salary: number;
   bonus: number;
-  retirementMatchPercent: number;
-  stateTaxPercent: number;
+  retirementMatch: number;
+  stateTax: number;
   city: City | null;
 }
 
 export default function CareerOpportunityAnalyzer() {
-  const { isPremium } = usePremiumStatus();
-  
-  const [currentData, setCurrentData] = useState<CompensationData>({
+  const [currentJob, setCurrentJob] = useState<JobData>({
     salary: 60000,
     bonus: 0,
-    retirementMatchPercent: 5,
-    stateTaxPercent: 5,
-    city: { city: 'National Average', state: 'US', cost_of_living_index: 100.0 }
+    retirementMatch: 5,
+    stateTax: 5,
+    city: { city: "National Average", state: "US", cost_of_living_index: 100.0 },
   });
 
-  const [newData, setNewData] = useState<CompensationData>({
+  const [newOffer, setNewOffer] = useState<JobData>({
     salary: 70000,
     bonus: 5000,
-    retirementMatchPercent: 6,
-    stateTaxPercent: 0,
-    city: { city: 'San Antonio', state: 'TX', cost_of_living_index: 86.9 }
+    retirementMatch: 6,
+    stateTax: 0,
+    city: { city: "San Antonio", state: "TX", cost_of_living_index: 86.9 },
   });
-
-  // Enhanced features
-  const [isRemote, setIsRemote] = useState(false);
-  const [showSkillsGap, setShowSkillsGap] = useState(false);
-
-  // Save state functionality
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Track page view on mount
   useEffect(() => {
-    track('career_opportunity_analyzer_view');
+    track("career_analyzer_view");
   }, []);
 
-  // Auto-populate from profile (UX IMPROVEMENT)
-  useEffect(() => {
-    fetch('/api/user-profile')
-      .then(res => res.json())
-      .then(profile => {
-        if (profile && profile.current_base) {
-          // Try to set current location from profile
-          // Extract city and state from current_base (e.g., "Fort Liberty, NC" → "Fayetteville, NC")
-          const baseToCity: Record<string, { city: string; state: string }> = {
-            'West Point': { city: 'West Point', state: 'NY' },
-            'Fort Liberty, NC': { city: 'Fayetteville', state: 'NC' },
-            'Fort Bragg, NC': { city: 'Fayetteville', state: 'NC' },
-            'Fort Cavazos, TX': { city: 'Killeen', state: 'TX' },
-            'Fort Hood, TX': { city: 'Killeen', state: 'TX' },
-            // Can expand this mapping as needed
-          };
-          
-          const cityData = baseToCity[profile.current_base];
-          if (cityData) {
-            setCurrentData(prev => ({
-              ...prev,
-              city: { 
-                city: cityData.city, 
-                state: cityData.state, 
-                cost_of_living_index: prev.city?.cost_of_living_index || 100 
-              }
-            }));
-          }
-        }
-      })
-      .catch(() => {
-        // Profile fetch failed - user will enter manually
-      });
-  }, []);
+  // Calculate total compensation
+  const currentTotal =
+    currentJob.salary + currentJob.bonus + currentJob.salary * (currentJob.retirementMatch / 100);
+  const newTotal =
+    newOffer.salary + newOffer.bonus + newOffer.salary * (newOffer.retirementMatch / 100);
 
-  // Load saved model on mount (premium only) - takes precedence over profile
-  useEffect(() => {
-    if (isPremium) {
-      fetch('/api/saved-models?tool=career')
-        .then(res => res.json())
-        .then(data => {
-          if (data.input) {
-            if (data.input.currentData) {
-              setCurrentData(data.input.currentData);
-            }
-            if (data.input.newData) {
-              setNewData(data.input.newData);
-            }
-          }
-        })
-    }
-  }, [isPremium]);
+  // Calculate after-tax income (simplified federal ~15% effective + state tax)
+  const federalRate = 0.15;
+  const currentAfterTax = currentTotal * (1 - federalRate - currentJob.stateTax / 100);
+  const newAfterTax = newTotal * (1 - federalRate - newOffer.stateTax / 100);
 
-  // Format currency
-  const fmt = (value: number) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
+  // Adjust for cost of living
+  const currentCOL = currentJob.city?.cost_of_living_index || 100;
+  const newCOL = newOffer.city?.cost_of_living_index || 100;
 
-  // Calculate total compensation for a scenario
-  const calculateTotalCompensation = (data: CompensationData): number => {
-    const retirementMatch = data.salary * (data.retirementMatchPercent / 100);
-    return data.salary + data.bonus + retirementMatch;
-  };
-
-  // Calculate after-tax income
-  const calculateAfterTaxIncome = (totalComp: number, stateTaxPercent: number): number => {
-    // Simplified calculation: deduct state tax and estimated federal tax (~15% effective)
-    const federalTaxRate = 0.15;
-    const stateTaxRate = stateTaxPercent / 100;
-    return totalComp * (1 - federalTaxRate - stateTaxRate);
-  };
-
-  // Real-time analysis calculation
-  const analysis = useMemo(() => {
-    if (!currentData.city || !newData.city) {
-      return null;
-    }
-
-    // Total compensation
-    const currentTotalComp = calculateTotalCompensation(currentData);
-    const newTotalComp = calculateTotalCompensation(newData);
-
-    // After-tax income
-    const currentAfterTax = calculateAfterTaxIncome(currentTotalComp, currentData.stateTaxPercent);
-    const newAfterTax = calculateAfterTaxIncome(newTotalComp, newData.stateTaxPercent);
-
-    // Cost of living adjustment
-    const currentCOL = currentData.city.cost_of_living_index;
-    const newCOL = newData.city.cost_of_living_index;
-    
-    // Adjust new offer to current city's cost of living for comparison
-    const adjustedNewOffer = newAfterTax * (currentCOL / newCOL);
-    
-    // Net financial difference
-    const netDifference = adjustedNewOffer - currentAfterTax;
-
-    // Generate executive summary
-    let executiveSummary = '';
-    const percentDifference = ((netDifference / currentAfterTax) * 100).toFixed(1);
-    
-    if (netDifference > 5000) {
-      executiveSummary = `Excellent opportunity! After accounting for cost of living differences and tax implications, this new offer would give you approximately ${fmt(netDifference)} more in effective annual purchasing power (${percentDifference}% increase). `;
-      
-      if (newCOL < currentCOL) {
-        executiveSummary += `The lower cost of living in ${newData.city.city}, ${newData.city.state} significantly boosts the real value of this offer.`;
-      }
-      
-      if (newData.stateTaxPercent < currentData.stateTaxPercent) {
-        const taxSavings = currentAfterTax * ((currentData.stateTaxPercent - newData.stateTaxPercent) / 100);
-        executiveSummary += ` You'll also save approximately ${fmt(taxSavings)} annually in state income taxes.`;
-      }
-    } else if (netDifference > 1000) {
-      executiveSummary = `Solid opportunity. This offer provides approximately ${fmt(netDifference)} more in effective annual income (${percentDifference}% increase) after adjusting for cost of living and taxes. The financial improvement is modest but meaningful.`;
-    } else if (netDifference > -1000) {
-      executiveSummary = `This offer is financially comparable to your current situation. After adjusting for cost of living and tax differences, the effective annual income is within ${fmt(Math.abs(netDifference))} of your current compensation. The decision should be based on non-financial factors like career growth, quality of life, and personal goals.`;
-    } else if (netDifference > -5000) {
-      executiveSummary = `Exercise caution. This offer would result in approximately ${fmt(Math.abs(netDifference))} less in effective annual purchasing power (${Math.abs(parseFloat(percentDifference))}% decrease). `;
-      
-      if (newCOL > currentCOL) {
-        executiveSummary += `The higher cost of living in ${newData.city.city}, ${newData.city.state} significantly impacts the real value of this offer.`;
-      }
-      
-      executiveSummary += ` If you're considering this move, ensure the intangible benefits (career advancement, better work-life balance, etc.) justify the financial trade-off.`;
-    } else {
-      executiveSummary = `Strong caution advised. This offer would result in a significant reduction of approximately ${fmt(Math.abs(netDifference))} in effective annual purchasing power (${Math.abs(parseFloat(percentDifference))}% decrease). `;
-      
-      if (newCOL > currentCOL) {
-        const colImpact = ((newCOL - currentCOL) / currentCOL * 100).toFixed(0);
-        executiveSummary += `The ${colImpact}% higher cost of living in ${newData.city.city}, ${newData.city.state} dramatically erodes the nominal salary increase.`;
-      }
-      
-      executiveSummary += ` Unless there are compelling strategic career reasons, this move would significantly harm your financial position.`;
-    }
-
-    return {
-      currentTotalComp,
-      newTotalComp,
-      currentAfterTax,
-      newAfterTax,
-      adjustedNewOffer,
-      netDifference,
-      executiveSummary,
-      isPositive: netDifference > 0
-    };
-  }, [currentData, newData]);
-
-  // Auto-save (debounced, premium only)
-  useEffect(() => {
-    if (isPremium && (currentData.salary > 0 || newData.salary > 0)) {
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      const timeout = setTimeout(() => {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tool: 'career',
-            input: {
-              currentData,
-              newData
-            },
-            output: analysis
-          })
-        });
-      }, 2000);
-      saveTimeoutRef.current = timeout;
-    }
-  }, [isPremium, currentData, newData, analysis]);
-
-  // Format percentage (currently unused but available for future use)
-  // const fmtPercent = (value: number) => {
-  //   return `${value.toFixed(1)}%`;
-  // };
+  // Adjust new offer to current city's COL for apples-to-apples comparison
+  const adjustedNewOffer = newAfterTax * (currentCOL / newCOL);
+  const netDifference = adjustedNewOffer - currentAfterTax;
+  const percentChange = ((netDifference / currentAfterTax) * 100).toFixed(1);
 
   return (
-    <Section>
-      <PageHeader 
-        title="Career Opportunity Analyzer"
-        subtitle="Compare total compensation, state taxes, and cost of living to understand your real earning power"
-      />
-      
-      <div id="career-results" className="calculator-results">
-      
-      <div className="bg-card rounded-xl border border-border shadow-sm">
-
-        <div className="p-8">
-          {/* Input Grid */}
-          <div className="grid lg:grid-cols-2 gap-8 mb-8">
-            {/* Current Situation */}
-            <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-info rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-info rounded-full"></div>
-                <h3 className="text-xl font-bold text-text-headings">Current Situation</h3>
+    <div className="mx-auto max-w-5xl space-y-8">
+      {/* Data Provenance Banner */}
+      <div className="rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="rounded-full bg-blue-600 p-3">
+            <Icon name="Shield" className="h-6 w-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="mb-2 text-xl font-bold text-blue-900">Total Compensation Comparison</h3>
+            <p className="mb-3 text-sm text-blue-800">
+              This calculator compares total compensation adjusted for cost of living and taxes.
+              Uses simplified tax calculations (~15% federal effective rate) and COL index data from
+              multiple sources. Actual results may vary significantly.
+            </p>
+            <div className="grid gap-3 text-xs md:grid-cols-3">
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">COL Data</p>
+                <p className="text-blue-900">Multiple Sources</p>
               </div>
-              
-              <div className="space-y-4">
-                {/* Current City */}
-                <CitySearchInput
-                  value={currentData.city ? `${currentData.city.city}, ${currentData.city.state}` : ''}
-                  onSelect={(city) => setCurrentData({ ...currentData, city })}
-                  label="Current City"
-                  placeholder="Start typing a city name..."
-                  accentColor="blue"
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">Tax Model</p>
+                <p className="text-blue-900">Simplified</p>
+              </div>
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">Confidence</p>
+                <p className="font-bold text-blue-900">Fair</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Input Section */}
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* Current Job */}
+        <div className="rounded-xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white p-6">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="h-4 w-4 rounded-full bg-blue-600"></div>
+            <h3 className="text-xl font-bold text-gray-900">Current Job</h3>
+          </div>
+
+          <div className="space-y-4">
+            <CitySearchInput
+              value={currentJob.city ? `${currentJob.city.city}, ${currentJob.city.state}` : ""}
+              onSelect={(city) => setCurrentJob({ ...currentJob, city })}
+              label="City/Location"
+              placeholder="Start typing..."
+              accentColor="blue"
+            />
+
+            {currentJob.city && (
+              <div className="rounded-lg border border-blue-300 bg-blue-100 p-3">
+                <p className="text-xs font-semibold text-blue-900">
+                  COL Index: {currentJob.city.cost_of_living_index}
+                  {currentJob.city.cost_of_living_index !== 100 &&
+                    ` (${currentJob.city.cost_of_living_index > 100 ? "+" : ""}${(currentJob.city.cost_of_living_index - 100).toFixed(0)}% vs national avg)`}
+                </p>
+              </div>
+            )}
+
+            <div>
+              <label
+                htmlFor="current_salary"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Base Annual Salary
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={currentJob.salary}
+                  onChange={(e) => setCurrentJob({ ...currentJob, salary: Number(e.target.value) })}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
-                
-                {currentData.city && (
-                  <div className="bg-info-subtle border border-blue-300 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-blue-900">
-                      Cost of Living Index: {currentData.city.cost_of_living_index}
-                      {currentData.city.cost_of_living_index > 100 && 
-                        ` (${(currentData.city.cost_of_living_index - 100).toFixed(0)}% above national average)`}
-                      {currentData.city.cost_of_living_index < 100 && 
-                        ` (${(100 - currentData.city.cost_of_living_index).toFixed(0)}% below national average)`}
-                      {currentData.city.cost_of_living_index === 100 && 
-                        ` (national average)`}
-                    </p>
-                  </div>
-                )}
-
-                {/* Current Salary */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Base Annual Salary
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
-                    <input
-                      type="number"
-                      value={currentData.salary}
-                      onChange={(e) => setCurrentData({ ...currentData, salary: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
-                      placeholder="60000"
-                    />
-                  </div>
-                </div>
-
-                {/* Current Bonus */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Annual Bonus (if applicable)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
-                    <input
-                      type="number"
-                      value={currentData.bonus}
-                      onChange={(e) => setCurrentData({ ...currentData, bonus: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-
-                {/* Current Retirement Match */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Retirement Match (e.g., 401k match %)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={currentData.retirementMatchPercent}
-                      onChange={(e) => setCurrentData({ ...currentData, retirementMatchPercent: Number(e.target.value) })}
-                      step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
-                      placeholder="5"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
-                  </div>
-                  <p className="text-xs text-muted mt-1">
-                    Value: {fmt(currentData.salary * (currentData.retirementMatchPercent / 100))}
-                  </p>
-                </div>
-
-                {/* Current State Tax */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Estimated State Income Tax (%)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={currentData.stateTaxPercent}
-                      onChange={(e) => setCurrentData({ ...currentData, stateTaxPercent: Number(e.target.value) })}
-                      step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-base"
-                      placeholder="5"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
-                  </div>
-                  <p className="text-xs text-muted mt-1">
-                    Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
-                  </p>
-                </div>
-
               </div>
             </div>
 
-            {/* New Offer */}
-            <div className="bg-gradient-to-br from-green-50 to-white border-2 border-success rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-4 h-4 bg-success rounded-full"></div>
-                <h3 className="text-xl font-bold text-text-headings">New Offer</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {/* New City */}
-                <CitySearchInput
-                  value={newData.city ? `${newData.city.city}, ${newData.city.state}` : ''}
-                  onSelect={(city) => setNewData({ ...newData, city })}
-                  label="New City"
-                  placeholder="Start typing a city name..."
-                  accentColor="green"
+            <div>
+              <label
+                htmlFor="current_bonus"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Annual Bonus
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={currentJob.bonus}
+                  onChange={(e) => setCurrentJob({ ...currentJob, bonus: Number(e.target.value) })}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-base font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 />
-                
-                {newData.city && (
-                  <div className="bg-success-subtle border border-green-300 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-success">
-                      Cost of Living Index: {newData.city.cost_of_living_index}
-                      {newData.city.cost_of_living_index > 100 && 
-                        ` (${(newData.city.cost_of_living_index - 100).toFixed(0)}% above national average)`}
-                      {newData.city.cost_of_living_index < 100 && 
-                        ` (${(100 - newData.city.cost_of_living_index).toFixed(0)}% below national average)`}
-                      {newData.city.cost_of_living_index === 100 && 
-                        ` (national average)`}
-                    </p>
-                  </div>
-                )}
+              </div>
+            </div>
 
-                {/* New Salary */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Base Annual Salary
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
-                    <input
-                      type="number"
-                      value={newData.salary}
-                      onChange={(e) => setNewData({ ...newData, salary: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
-                      placeholder="70000"
-                    />
-                  </div>
+            <div>
+              <label
+                htmlFor="current_retirement_match"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Retirement Match (%)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                step={0.5}
+                value={currentJob.retirementMatch}
+                onChange={(e) =>
+                  setCurrentJob({ ...currentJob, retirementMatch: Number(e.target.value) })
+                }
+                className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-1 text-xs text-gray-600">
+                Value: {fmt(currentJob.salary * (currentJob.retirementMatch / 100))}
+              </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="current_state_tax"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                State Income Tax (%)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={15}
+                step={0.5}
+                value={currentJob.stateTax}
+                onChange={(e) => setCurrentJob({ ...currentJob, stateTax: Number(e.target.value) })}
+                className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-1 text-xs text-gray-600">TX/FL/WA: 0%, CA: ~9%, NY: ~7%</p>
+            </div>
+          </div>
+        </div>
+
+        {/* New Offer */}
+        <div className="rounded-xl border-2 border-green-300 bg-gradient-to-br from-green-50 to-white p-6">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="h-4 w-4 rounded-full bg-green-600"></div>
+            <h3 className="text-xl font-bold text-gray-900">New Offer</h3>
+          </div>
+
+          <div className="space-y-4">
+            <CitySearchInput
+              value={newOffer.city ? `${newOffer.city.city}, ${newOffer.city.state}` : ""}
+              onSelect={(city) => setNewOffer({ ...newOffer, city })}
+              label="City/Location"
+              placeholder="Start typing..."
+              accentColor="green"
+            />
+
+            {newOffer.city && (
+              <div className="rounded-lg border border-green-300 bg-green-100 p-3">
+                <p className="text-xs font-semibold text-green-900">
+                  COL Index: {newOffer.city.cost_of_living_index}
+                  {newOffer.city.cost_of_living_index !== 100 &&
+                    ` (${newOffer.city.cost_of_living_index > 100 ? "+" : ""}${(newOffer.city.cost_of_living_index - 100).toFixed(0)}% vs national avg)`}
+                </p>
+              </div>
+            )}
+
+            <div>
+              <label
+                htmlFor="new_salary"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Base Annual Salary
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={newOffer.salary}
+                  onChange={(e) => setNewOffer({ ...newOffer, salary: Number(e.target.value) })}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="new_bonus" className="mb-2 block text-sm font-semibold text-gray-700">
+                Annual Bonus
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                  $
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={1000}
+                  value={newOffer.bonus}
+                  onChange={(e) => setNewOffer({ ...newOffer, bonus: Number(e.target.value) })}
+                  className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-base font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="new_retirement_match"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                Retirement Match (%)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                step={0.5}
+                value={newOffer.retirementMatch}
+                onChange={(e) =>
+                  setNewOffer({ ...newOffer, retirementMatch: Number(e.target.value) })
+                }
+                className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+              />
+              <p className="mt-1 text-xs text-gray-600">
+                Value: {fmt(newOffer.salary * (newOffer.retirementMatch / 100))}
+              </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="new_state_tax"
+                className="mb-2 block text-sm font-semibold text-gray-700"
+              >
+                State Income Tax (%)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={15}
+                step={0.5}
+                value={newOffer.stateTax}
+                onChange={(e) => setNewOffer({ ...newOffer, stateTax: Number(e.target.value) })}
+                className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-base font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+              />
+              <p className="mt-1 text-xs text-gray-600">TX/FL/WA: 0%, CA: ~9%, NY: ~7%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      {currentJob.city && newOffer.city && (
+        <div className="rounded-xl border-2 border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-lg">
+          <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
+            Compensation Comparison
+          </h2>
+
+          <div className="mb-6 grid gap-6 md:grid-cols-2">
+            <div className="rounded-lg border-2 border-blue-400 bg-white p-6">
+              <p className="mb-3 text-sm font-semibold text-gray-600">Current Job</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Total Compensation:</span>
+                  <span className="font-bold text-blue-900">{fmt(currentTotal)}</span>
                 </div>
-
-                {/* New Bonus */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Annual Bonus (if applicable)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
-                    <input
-                      type="number"
-                      value={newData.bonus}
-                      onChange={(e) => setNewData({ ...newData, bonus: Number(e.target.value) })}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
-                      placeholder="0"
-                    />
-                  </div>
+                <div className="flex justify-between border-t border-gray-200 pt-2">
+                  <span className="text-gray-700">After Taxes:</span>
+                  <span className="font-bold text-blue-900">{fmt(currentAfterTax)}</span>
                 </div>
+              </div>
+            </div>
 
-                {/* New Retirement Match */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Retirement Match (e.g., 401k match %)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={newData.retirementMatchPercent}
-                      onChange={(e) => setNewData({ ...newData, retirementMatchPercent: Number(e.target.value) })}
-                      step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
-                      placeholder="5"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
-                  </div>
-                  <p className="text-xs text-muted mt-1">
-                    Value: {fmt(newData.salary * (newData.retirementMatchPercent / 100))}
-                  </p>
+            <div className="rounded-lg border-2 border-green-400 bg-white p-6">
+              <p className="mb-3 text-sm font-semibold text-gray-600">New Offer</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Total Compensation:</span>
+                  <span className="font-bold text-green-900">{fmt(newTotal)}</span>
                 </div>
-
-                {/* New State Tax */}
-                <div>
-                  <label className="block text-sm font-semibold text-text-body mb-2">
-                    Estimated State Income Tax (%)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={newData.stateTaxPercent}
-                      onChange={(e) => setNewData({ ...newData, stateTaxPercent: Number(e.target.value) })}
-                      step="0.5"
-                      className="w-full pl-4 pr-10 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-base"
-                      placeholder="0"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted font-medium">%</span>
-                  </div>
-                  <p className="text-xs text-muted mt-1">
-                    Popular rates: CA ~9%, NY ~7%, TX/FL/WA 0%
-                  </p>
+                <div className="flex justify-between border-t border-gray-200 pt-2">
+                  <span className="text-gray-700">After Taxes:</span>
+                  <span className="font-bold text-green-900">{fmt(newAfterTax)}</span>
                 </div>
-
               </div>
             </div>
           </div>
 
-          {/* Results Section with Single Paywall */}
-          {analysis && (
-            <PaywallWrapper
-              isPremium={isPremium}
-              title="Your Complete Analysis is Ready!"
-              description="Unlock to see your total compensation breakdowns, net financial difference, and AI-powered insights"
-              toolName="Career Opportunity Analyzer"
-              sampleData={
-                <div className="space-y-8">
-                  {/* Sample Current Situation Summary */}
-                  <div className="bg-info-subtle border-2 border-blue-300 rounded-lg p-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-body">Total Compensation:</span>
-                        <span className="font-bold text-blue-900">$63,000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-body">After Taxes:</span>
-                        <span className="font-bold text-blue-900">$60,000</span>
-                      </div>
-                    </div>
-                  </div>
+          <div
+            className={`rounded-lg border-2 p-6 ${
+              netDifference >= 0 ? "border-green-300 bg-green-50" : "border-red-300 bg-red-50"
+            }`}
+          >
+            <div className="text-center">
+              <p
+                className={`mb-2 text-2xl font-bold ${netDifference >= 0 ? "text-green-700" : "text-red-700"}`}
+              >
+                {netDifference >= 0 ? (
+                  <>
+                    <Icon name="TrendingUp" className="mr-2 inline h-6 w-6" />
+                    Better Purchasing Power
+                  </>
+                ) : (
+                  <>
+                    <Icon name="TrendingDown" className="mr-2 inline h-6 w-6" />
+                    Lower Purchasing Power
+                  </>
+                )}
+              </p>
+              <p
+                className={`mb-4 text-5xl font-bold ${netDifference >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {netDifference >= 0 ? "+" : ""}
+                {fmt(netDifference)}
+              </p>
+              <p className="text-sm text-gray-700">
+                Annual difference after taxes and cost of living adjustment (
+                {netDifference >= 0 ? "+" : ""}
+                {percentChange}%)
+              </p>
+            </div>
 
-                  {/* Sample New Offer Summary */}
-                  <div className="bg-success-subtle border-2 border-green-300 rounded-lg p-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-body">Total Compensation:</span>
-                        <span className="font-bold text-success">$79,200</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-semibold text-body">After Taxes:</span>
-                        <span className="font-bold text-success">$67,320</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sample Executive Summary */}
-                  <div className="rounded-xl border-4 p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-green-400">
-                    <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold text-primary mb-4">Executive Summary</h3>
-                      <div className="mb-6">
-                        <div className="text-sm font-semibold text-body mb-2">NET FINANCIAL DIFFERENCE</div>
-                        <div className="text-6xl font-black mb-2 text-success">+$7,320</div>
-                        <div className="text-sm text-body">After Taxes & Cost of Living Adjustment</div>
-                      </div>
-                    </div>
-                  </div>
+            <div className="mt-6 rounded-lg border border-gray-300 bg-white p-4">
+              <h4 className="mb-3 text-sm font-bold text-gray-900">How We Calculate This:</h4>
+              <div className="space-y-2 text-xs text-gray-700">
+                <div className="flex justify-between">
+                  <span>Current after-tax income:</span>
+                  <span className="font-semibold">{fmt(currentAfterTax)}</span>
                 </div>
-              }
-            >
-              <div className="space-y-8">
-                {/* Current Situation Summary */}
-                <div className="bg-info-subtle border-2 border-blue-300 rounded-lg p-4">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-body">Total Compensation:</span>
-                      <span className="font-bold text-blue-900">{fmt(analysis.currentTotalComp)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-body">After Taxes:</span>
-                      <span className="font-bold text-blue-900">{fmt(analysis.currentAfterTax)}</span>
-                    </div>
-                  </div>
+                <div className="flex justify-between">
+                  <span>New offer adjusted to your COL:</span>
+                  <span className="font-semibold">{fmt(adjustedNewOffer)}</span>
                 </div>
-
-                {/* New Offer Summary */}
-                <div className="bg-success-subtle border-2 border-green-300 rounded-lg p-4">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-body">Total Compensation:</span>
-                      <span className="font-bold text-success">{fmt(analysis.newTotalComp)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-body">After Taxes:</span>
-                      <span className="font-bold text-success">{fmt(analysis.newAfterTax)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Executive Summary */}
-                <div className={`rounded-xl border-4 p-8 ${
-                  analysis.isPositive 
-                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400' 
-                    : 'bg-gradient-to-br from-slate-50 to-slate-100 border-slate-400'
-                }`}>
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-text-headings mb-4">
-                      <Icon name="BarChart" className="h-6 w-6 inline mr-2" /> Executive Summary
-                    </h3>
-                    <div className="mb-6">
-                      <div className="text-sm font-semibold text-body mb-2">
-                        NET FINANCIAL DIFFERENCE
-                      </div>
-                      <div className={`text-6xl font-black mb-2 ${
-                        analysis.isPositive ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)}
-                      </div>
-                      <div className="text-sm text-body">
-                        After Taxes & Cost of Living Adjustment
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Breakdown */}
-                  <div className="bg-card rounded-lg p-6 mb-6 border border-border">
-                    <h4 className="font-bold text-text-headings mb-4 text-lg">Financial Breakdown</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-sm text-body mb-1">Your Current After-Tax Income</div>
-                        <div className="text-2xl font-bold text-info">{fmt(analysis.currentAfterTax)}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-body mb-1">New Offer (Adjusted to Your City&apos;s COL)</div>
-                        <div className="text-2xl font-bold text-success">{fmt(analysis.adjustedNewOffer)}</div>
-                      </div>
-                      <div className="md:col-span-2 pt-4 border-t border-subtle">
-                        <div className="text-sm text-body mb-1">Effective Change in Purchasing Power</div>
-                        <div className={`text-3xl font-black ${analysis.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                          {analysis.isPositive ? '+' : ''}{fmt(analysis.netDifference)} 
-                          <span className="text-xl ml-2">
-                            ({analysis.isPositive ? '+' : ''}{((analysis.netDifference / analysis.currentAfterTax) * 100).toFixed(1)}%)
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="flex justify-between border-t border-gray-200 pt-2">
+                  <span className="font-semibold">Net purchasing power change:</span>
+                  <span
+                    className={`font-bold ${netDifference >= 0 ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {netDifference >= 0 ? "+" : ""}
+                    {fmt(netDifference)}
+                  </span>
                 </div>
               </div>
-            </PaywallWrapper>
-          )}
-
-          {/* AI Explainer */}
-          {analysis && (
-            <Explainer payload={{
-              tool: "career-analyzer",
-              inputs: {
-                currentJob: { salary: currentData.salary, bonus: currentData.bonus, city: currentData.city?.city },
-                newOffer: { salary: newData.salary, bonus: newData.bonus, city: newData.city?.city }
-              },
-              outputs: {
-                currentTotal: analysis.currentTotalComp,
-                newTotal: analysis.newTotalComp,
-                netDifference: analysis.netDifference,
-                executiveSummary: analysis.executiveSummary,
-                isPositive: analysis.isPositive
-              }
-            }} />
-          )}
-          
-          {/* Export Options */}
-          {analysis && (
-            <div className="mt-8 pt-6 border-t border-border">
-              <ExportButtons 
-                tool="salary-calculator"
-                resultsElementId="career-results"
-                data={{
-                  inputs: { currentData, newData },
-                  outputs: analysis
-                }}
-              />
             </div>
-          )}
+          </div>
+
+          <div className="mt-6 rounded-r-lg border-l-4 border-amber-400 bg-amber-50 p-4">
+            <p className="mb-1 text-sm font-semibold text-amber-900">
+              <Icon name="AlertTriangle" className="mr-1 inline h-4 w-4" />
+              Important Disclaimer
+            </p>
+            <p className="text-xs text-amber-800">
+              This calculator uses simplified tax estimates and generalized cost of living data.{" "}
+              <strong>Actual financial outcomes vary significantly</strong> based on personal
+              circumstances, deductions, housing costs, lifestyle choices, and local variations.
+              This is a planning tool only. Consult with a financial advisor before making major
+              career decisions.
+            </p>
+          </div>
         </div>
-      </div>
-      </div>
+      )}
 
       {/* Educational Content */}
-      <div className="mt-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-amber-900 mb-3 flex items-center gap-2">
-          <Icon name="Lightbulb" className="h-5 w-5 inline mr-2" /> Understanding Your Real Earning Power
-        </h3>
-        <div className="space-y-3 text-sm text-amber-900">
-          <p>
-            <strong>Cost of Living Index:</strong> Measures how expensive it is to live in a city compared to the national average (100). 
-            A city at 120 is 20% more expensive, while 80 is 20% less expensive.
-          </p>
-          <p>
-            <strong>Total Compensation:</strong> Your base salary is just the beginning. Bonuses and retirement matching 
-            can add thousands to your effective annual income.
-          </p>
-          <p>
-            <strong>State Tax Impact:</strong> State income taxes vary dramatically—from 0% in Texas, Florida, and Washington 
-            to over 9% in California. This difference alone can represent thousands of dollars annually.
-          </p>
-          <p className="text-xs text-amber-800 pt-2 border-t border-amber-200">
-            <strong>Disclaimer:</strong> This analyzer uses simplified tax calculations and general cost of living data. 
-            Your actual financial outcome may vary based on personal circumstances, deductions, local taxes, housing costs, 
-            and lifestyle choices. Always consult with a financial advisor for personalized guidance on major career decisions.
-          </p>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-blue-900">Understanding Total Compensation</h3>
+          <ul className="space-y-2 text-sm text-blue-800">
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>Base salary</strong> is just the starting point - bonuses and retirement
+                matching add significant value
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>State taxes</strong> vary from 0% (TX, FL, WA) to 9%+ (CA) - can be
+                thousands annually
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>
+                <strong>Cost of living</strong> dramatically impacts purchasing power - same salary
+                goes further in low-COL areas
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-purple-200 bg-purple-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-purple-900">Career Decision Factors</h3>
+          <ul className="space-y-2 text-sm text-purple-800">
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Consider non-financial factors: career growth, work-life balance, commute</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>
+                Research actual housing costs in new location (rentals or purchase prices)
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>Factor in healthcare costs, childcare, and other family-specific expenses</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="AlertTriangle" className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600" />
+              <span>
+                Military transition: Consider GI Bill, SkillBridge, and veteran hiring programs
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
-      
-      {/* Comparison Mode */}
-      {analysis && (
-        <ComparisonMode
-          tool="salary-calculator"
-          currentInput={{ currentData, newData }}
-          currentOutput={analysis}
-          onLoadScenario={(input) => {
-            if (input.currentData) setCurrentData(input.currentData);
-            if (input.newData) setNewData(input.newData);
-          }}
-          renderComparison={(scenarios) => (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-border">
-                    <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">Current Salary</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">New Salary</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">Difference</th>
-                    <th className="text-right p-3 text-sm font-bold text-primary">Verdict</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {scenarios.map((scenario, idx) => (
-                    <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                      <td className="p-3 text-right text-body">
-                        {fmt(scenario.input.currentData.salary)}
-                      </td>
-                      <td className="p-3 text-right text-body">
-                        {fmt(scenario.input.newData.salary)}
-                      </td>
-                      <td className={`p-3 text-right font-bold ${
-                        scenario.output.isPositive ? 'text-success' : 'text-danger'
-                      }`}>
-                        {scenario.output.isPositive ? '+' : ''}{fmt(scenario.output.netDifference || 0)}
-                      </td>
-                      <td className={`p-3 text-right text-sm ${
-                        scenario.output.isPositive ? 'text-success' : 'text-danger'
-                      }`}>
-                        {scenario.output.isPositive ? '✓ Better' : '⚠ Worse'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        />
-      )}
 
-      {/* Remote Work Premium Calculator */}
-      {analysis && (
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mt-8">
-          <h3 className="text-xl font-bold text-purple-900 mb-4">
-            <Icon name="Monitor" className="h-5 w-5 inline mr-2" />
-            Remote Work Calculator
-          </h3>
-          
-          <div className="mb-4">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isRemote}
-                onChange={(e) => setIsRemote(e.target.checked)}
-                className="w-5 h-5 accent-purple-600"
-              />
-              <span className="text-lg font-semibold text-purple-900">
-                This is a remote position
-              </span>
-            </label>
-          </div>
-
-          {isRemote && newData.city && (() => {
-            const remotePremium = remoteWorkPremiums.average; // 8% average
-            const adjustedNewSalary = Math.round(newData.salary * remotePremium);
-            const premiumAmount = adjustedNewSalary - newData.salary;
-            const colaAdjusted = adjustedNewSalary * (100 / newData.city.cost_of_living_index);
-            
-            return (
-              <div className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-white rounded-lg p-4 border border-purple-300">
-                    <p className="text-sm text-purple-700 mb-1">Standard Salary</p>
-                    <p className="text-2xl font-bold text-purple-900">{fmt(newData.salary)}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 border border-success">
-                    <p className="text-sm text-success mb-1">Remote Premium (+{Math.round((remotePremium - 1) * 100)}%)</p>
-                    <p className="text-2xl font-bold text-success">{fmt(adjustedNewSalary)}</p>
-                  </div>
-                </div>
-
-                <div className="bg-success-subtle rounded-lg p-4 border border-success">
-                  <p className="text-sm font-semibold text-success mb-2">Remote Work Benefits:</p>
-                  <ul className="space-y-1 text-sm text-success">
-                    <li>• Extra {fmt(premiumAmount)}/year in compensation</li>
-                    <li>• Save ~$5,000/year on commuting costs</li>
-                    <li>• Save ~$2,000/year on work clothing & meals</li>
-                    <li>• Geographic flexibility (live anywhere!)</li>
-                    <li>• Better work-life balance</li>
-                  </ul>
-                </div>
-
-                <div className="bg-white rounded-lg p-4 border border-purple-300">
-                  <p className="text-sm font-semibold text-purple-900 mb-2">Cost-of-Living Adjusted Remote Salary:</p>
-                  <p className="text-3xl font-bold text-success">{fmt(colaAdjusted)}</p>
-                  <p className="text-xs text-purple-700 mt-1">
-                    Equivalent purchasing power in {newData.city.city}, {newData.city.state} (COLA: {newData.city.cost_of_living_index})
-                  </p>
-                </div>
-              </div>
-            );
-          })()}
-
-          {!isRemote && (
-            <p className="text-sm text-purple-700">
-              <Icon name="Info" className="h-3 w-3 inline mr-1" />
-              Remote positions typically pay 5-15% more due to nationwide competition for talent
-            </p>
-          )}
+      {/* Official Resources */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+          <Icon name="ExternalLink" className="h-5 w-5 text-gray-600" />
+          Career Transition Resources
+        </h3>
+        <div className="space-y-3">
+          <a
+            href="https://www.hiringourheroes.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            Hiring Our Heroes - Military Transition Program →
+          </a>
+          <a
+            href="https://skillbridge.osd.mil/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            SkillBridge - Pre-Separation Training Program →
+          </a>
+          <a
+            href="https://www.nerdwallet.com/cost-of-living-calculator"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            Cost of Living Calculator (NerdWallet) →
+          </a>
         </div>
-      )}
-
-      {/* Skills Gap Analysis */}
-      {analysis && (
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-blue-900">
-              <Icon name="Target" className="h-5 w-5 inline mr-2" />
-              Skills Gap & Career Roadmap
-            </h3>
-            <button
-              onClick={() => setShowSkillsGap(!showSkillsGap)}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-800"
-            >
-              {showSkillsGap ? 'Hide' : 'Show'} Analysis
-            </button>
-          </div>
-
-          {showSkillsGap && (() => {
-            const currentMilitarySalary = currentData.salary; // Current military compensation
-            const targetCivilianSalary = newData.salary;
-            const gap = getSkillsGap(currentMilitarySalary, targetCivilianSalary);
-            const salaryIncrease = targetCivilianSalary - currentMilitarySalary;
-            const percentIncrease = (salaryIncrease / currentMilitarySalary) * 100;
-            
-            return (
-              <div className="space-y-4">
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-white rounded-lg p-4 border border-blue-300">
-                    <p className="text-sm text-blue-700 mb-1">Current Military Pay</p>
-                    <p className="text-2xl font-bold text-blue-900">{fmt(currentMilitarySalary)}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 border border-blue-300">
-                    <p className="text-sm text-blue-700 mb-1">Target Civilian Salary</p>
-                    <p className="text-2xl font-bold text-blue-900">{fmt(targetCivilianSalary)}</p>
-                  </div>
-                  <div className={`bg-white rounded-lg p-4 border ${
-                    salaryIncrease > 0 ? 'border-success' : 'border-warning'
-                  }`}>
-                    <p className="text-sm text-blue-700 mb-1">Salary Change</p>
-                    <p className={`text-2xl font-bold ${salaryIncrease > 0 ? 'text-success' : 'text-warning'}`}>
-                      {salaryIncrease > 0 ? '+' : ''}{fmt(salaryIncrease)}
-                    </p>
-                    <p className="text-xs text-blue-700">({percentIncrease > 0 ? '+' : ''}{percentIncrease.toFixed(1)}%)</p>
-                  </div>
-                </div>
-
-                <div className={`rounded-lg p-4 border-2 ${
-                  gap.level === 'Small Gap' ? 'bg-green-50 border-green-300' :
-                  gap.level === 'Moderate Gap' ? 'bg-amber-50 border-amber-300' :
-                  'bg-red-50 border-red-300'
-                }`}>
-                  <h4 className="font-bold text-lg mb-2">
-                    Gap Assessment: <span className={
-                      gap.level === 'Small Gap' ? 'text-success' :
-                      gap.level === 'Moderate Gap' ? 'text-warning' :
-                      'text-danger'
-                    }>{gap.level}</span>
-                  </h4>
-                  <p className="text-sm mb-3">
-                    <strong>Timeline to Achieve:</strong> {gap.timeline}
-                  </p>
-                  <p className="text-sm font-semibold mb-2">Recommended Action Steps:</p>
-                  <ul className="space-y-1 text-sm">
-                    {gap.recommendations.map((rec, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="font-bold">•</span>
-                        <span>{rec}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs mt-3 font-semibold">
-                    Certifications: {gap.certifications}
-                  </p>
-                </div>
-
-                <div className="bg-info-subtle rounded-lg p-4 border border-info">
-                  <p className="text-sm font-semibold text-info mb-2">
-                    <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" />
-                    Military Transition Resources:
-                  </p>
-                  <ul className="text-xs text-info space-y-1">
-                    <li>• Use GI Bill for certifications or degree programs</li>
-                    <li>• SkillBridge: 180-day internship before separation</li>
-                    <li>• VA VR&E: Vocational rehab & employment services</li>
-                    <li>• Hiring Our Heroes: Career fairs & mentorship</li>
-                    <li>• LinkedIn for Veterans: Free Premium access</li>
-                  </ul>
-                </div>
-              </div>
-            );
-          })()}
-
-          {!showSkillsGap && (
-            <p className="text-sm text-blue-700">
-              Click "Show Analysis" to see your personalized career transition roadmap
-            </p>
-          )}
-        </div>
-      )}
-    </Section>
+        <p className="mt-4 text-xs text-gray-600">
+          Cost of living data from multiple public sources. Tax calculations are simplified
+          estimates. Consult a financial advisor for personalized career guidance.
+        </p>
+      </div>
+    </div>
   );
 }
-

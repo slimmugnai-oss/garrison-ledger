@@ -1,561 +1,281 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from "react";
 
-import Explainer from '@/app/components/ai/Explainer';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import FootNote from '@/app/components/layout/FootNote';
-import Icon from '@/app/components/ui/Icon';
-import PageHeader from '@/app/components/ui/PageHeader';
-import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
-import Section from '@/app/components/ui/Section';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import { track } from '@/lib/track';
+import Icon from "@/app/components/ui/Icon";
+import { track } from "@/lib/track";
 
-type Scenario = {
-  key: 'A' | 'B' | 'C';
-  title: string;
-  rate: number; // annual
-  desc: string;
-  value?: number;
-};
-
-const SCENARIOS: Scenario[] = [
-  { key: 'A', title: 'SDP - Official Rate (10%)', rate: 0.10, desc: 'Savings Deposit Program - 10% APR (10 USC § 1035). Only available during deployment.' },
-  { key: 'B', title: 'Conservative Investment (8%)', rate: 0.08, desc: 'Stock/bond mix for comparison purposes.' },
-  { key: 'C', title: 'High-Yield Savings (4%)', rate: 0.04, desc: 'Safe, liquid savings alternative.' }
-];
-
-type ApiResponse = {
-  partial: boolean;
-  sdp?: number;  // Official SDP at 10% APR
-  hy: number;    // High-yield savings at 4%
-  cons?: number; // Conservative investment at 8%
-};
+const fmt = (v: number) =>
+  v.toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 
 export default function SdpStrategist() {
   const [amount, setAmount] = useState<number>(10000);
   const [deploymentMonths, setDeploymentMonths] = useState<number>(9);
-  const [basePay, setBasePay] = useState<number>(4000);
-  const [stateTax, setStateTax] = useState<number>(5);
-  const { isPremium } = usePremiumStatus();
-  const [apiData, setApiData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [_showEnhancements, _setShowEnhancements] = useState(true);
 
   // Track page view on mount
   useEffect(() => {
-    track('sdp_view');
+    track("sdp_calculator_view");
   }, []);
 
-  // Load saved model on mount (premium only)
-  useEffect(() => {
-    if (isPremium) {
-      fetch('/api/saved-models?tool=sdp')
-        .then(res => res.json())
-        .then(data => {
-          if (data.input && data.input.amount) {
-            setAmount(data.input.amount);
-          }
-        })
-    }
-  }, [isPremium]);
-
-  // Calculate on amount change
-  useEffect(() => {
-    const calculate = async () => {
-      setLoading(true);
-      track('sdp_input_change');
-      try {
-        const response = await fetch('/api/tools/sdp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount })
-        });
-        const data = await response.json();
-        setApiData(data);
-        
-        // Track analytics based on premium status
-        if (data.partial && !isPremium) {
-          track('sdp_preview_gate_view');
-        } else if (isPremium && data.sdp) {
-          track('sdp_roi_view');
-        }
-        
-        // Debounced save for premium users
-        if (isPremium && data) {
-          if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-          const timeout = setTimeout(() => {
-            fetch('/api/saved-models', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                tool: 'sdp',
-                input: { amount },
-                output: { sdp: data.sdp, hy: data.hy, cons: data.cons }
-              })
-            });
-          }, 1000);
-          saveTimeoutRef.current = timeout;
-        }
-            } catch {
-      // Non-critical: Error handled via UI state
-              // Error already handled silently - saving is non-blocking
-            } finally {
-        setLoading(false);
-      }
-    };
-
-    calculate();
-  }, [amount, isPremium, saveTimeoutRef]);
-
-  // Create results array with API data
-  const results = SCENARIOS.map(s => ({
-    ...s,
-    value: s.key === 'A' ? apiData?.sdp :  // SDP Official 10%
-           s.key === 'B' ? apiData?.cons : // Conservative 8%
-           s.key === 'C' ? apiData?.hy : undefined  // High-Yield 4%
-  }));
-
-  const fmt = (v: number) => v.toLocaleString(undefined, { 
-    style: 'currency', 
-    currency: 'USD', 
-    maximumFractionDigits: 0 
-  });
+  // Calculate SDP returns
+  // Official formula: Principal × 10% APR × (accrual_months / 12)
+  // Accrual period = deployment months + 90 days (3 months)
+  const accrualMonths = deploymentMonths + 3;
+  const interestEarned = amount * 0.1 * (accrualMonths / 12);
+  const totalPayout = amount + interestEarned;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
-      
-      <Section>
-        <PageHeader 
-          title="SDP Strategist"
-          subtitle="Maximize your Savings Deposit Program returns with strategic investment planning"
-          right={<Icon name="DollarSign" className="h-10 w-10 text-text-headings" />}
-        />
-
-        <div className="space-y-8">
-          {/* Enhanced Input Section */}
-          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <h2 className="text-2xl font-bold text-primary mb-6">Deployment & SDP Information</h2>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="sdp_payout_amount" className="block text-sm font-semibold text-body mb-2">SDP Payout Amount</label>
-                <input
-                  type="number"
-                  min={0}
-                  step={100}
-                  value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  className="block w-full px-4 py-3 border-2 border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface"
-                />
-                <p className="text-xs text-muted mt-1">Max: $10,000 per deployment</p>
+    <div className="mx-auto max-w-4xl space-y-8">
+      {/* Official SDP Rate Banner */}
+      <div className="rounded-xl border-2 border-green-300 bg-gradient-to-r from-green-50 to-emerald-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="rounded-full bg-green-600 p-3">
+            <Icon name="Shield" className="h-6 w-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="mb-2 text-xl font-bold text-green-900">Official SDP Rate: 10% APR</h3>
+            <p className="mb-3 text-sm text-green-800">
+              The Savings Deposit Program offers a guaranteed 10% annual percentage rate,
+              established by federal law (10 USC § 1035). This rate is fixed and applies to all
+              eligible service members during qualified deployments.
+            </p>
+            <div className="grid gap-3 text-xs md:grid-cols-3">
+              <div className="rounded-lg border border-green-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-green-700">Data Source</p>
+                <p className="text-green-900">10 USC § 1035</p>
               </div>
-
-              <div>
-                <label htmlFor="deployment_duration_months" className="block text-sm font-semibold text-body mb-2">Deployment Duration (months)</label>
-                <input
-                  type="number"
-                  min={3}
-                  max={24}
-                  value={deploymentMonths}
-                  onChange={(e) => setDeploymentMonths(Number(e.target.value))}
-                  className="block w-full px-4 py-3 border-2 border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface"
-                />
-                <p className="text-xs text-muted mt-1">Typical: 6-12 months</p>
+              <div className="rounded-lg border border-green-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-green-700">Last Verified</p>
+                <p className="text-green-900">January 2025</p>
               </div>
-
-              <div>
-                <label htmlFor="monthly_base_pay" className="block text-sm font-semibold text-body mb-2">Monthly Base Pay</label>
-                <input
-                  type="number"
-                  min={0}
-                  step={100}
-                  value={basePay}
-                  onChange={(e) => setBasePay(Number(e.target.value))}
-                  className="block w-full px-4 py-3 border-2 border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface"
-                />
-                <p className="text-xs text-muted mt-1">For tax savings calculation</p>
+              <div className="rounded-lg border border-green-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-green-700">Confidence</p>
+                <p className="font-bold text-green-900">Excellent</p>
               </div>
-
-              <div>
-                <label htmlFor="state_tax_rate_" className="block text-sm font-semibold text-body mb-2">State Tax Rate (%)</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={15}
-                  step={0.5}
-                  value={stateTax}
-                  onChange={(e) => setStateTax(Number(e.target.value))}
-                  className="block w-full px-4 py-3 border-2 border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-info transition-colors text-lg font-medium text-primary bg-surface"
-                />
-                <p className="text-xs text-muted mt-1">Combat zone = 0% tax</p>
-              </div>
-            </div>
-
-            <div className="mt-6 bg-info-subtle border border-info rounded-lg p-4">
-              <p className="text-sm text-info">
-                <Icon name="Info" className="h-4 w-4 inline mr-1" />
-                <strong>SDP Basics:</strong> Earn guaranteed 10% annual return while deployed. Interest accrues for up to 90 days after return. Maximum $10,000 per deployment.
-              </p>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Deployment Timeline Visualizer */}
-          {deploymentMonths > 0 && (
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-green-900 mb-4">
-                <Icon name="Calendar" className="h-5 w-5 inline mr-2" />
-                Deployment Timeline
-              </h3>
-              
-              <div className="relative">
-                {/* Timeline visualization */}
-                <div className="flex items-center justify-between mb-8">
-                  <div className="text-center flex-1">
-                    <div className="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
-                      1
-                    </div>
-                    <p className="text-sm font-semibold text-green-900">Deployment Start</p>
-                    <p className="text-xs text-green-700">Deposit SDP funds</p>
-                  </div>
-                  
-                  <div className="flex-1 h-1 bg-green-300 relative">
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-50 px-3 py-1 rounded-full border border-green-300">
-                      <p className="text-xs font-semibold text-green-800">{deploymentMonths} months</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center flex-1">
-                    <div className="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
-                      2
-                    </div>
-                    <p className="text-sm font-semibold text-green-900">Return Home</p>
-                    <p className="text-xs text-green-700">+90 days interest</p>
-                  </div>
-                  
-                  <div className="flex-1 h-1 bg-green-300"></div>
-                  
-                  <div className="text-center flex-1">
-                    <div className="bg-success text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
-                      3
-                    </div>
-                    <p className="text-sm font-semibold text-green-900">Payout</p>
-                    <p className="text-xs text-green-700">~120 days after</p>
-                  </div>
-                </div>
+      {/* Input Section */}
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Calculate Your SDP Returns</h2>
 
-                {/* Calculate actual dates and amounts */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-white rounded-lg p-4 border border-green-300">
-                    <p className="text-sm text-green-700 mb-1">Total Accrual Period</p>
-                    <p className="text-2xl font-bold text-green-900">{deploymentMonths + 3} months</p>
-                    <p className="text-xs text-green-700">Deployment + 90 days</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 border border-green-300">
-                    <p className="text-sm text-green-700 mb-1">Interest Earned</p>
-                    <p className="text-2xl font-bold text-green-900">
-                      {fmt(amount * 0.10 * ((deploymentMonths + 3) / 12))}
-                    </p>
-                    <p className="text-xs text-green-700">At 10% APR</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 border border-success">
-                    <p className="text-sm text-success mb-1">Total Payout</p>
-                    <p className="text-2xl font-bold text-success">
-                      {fmt(amount + (amount * 0.10 * ((deploymentMonths + 3) / 12)))}
-                    </p>
-                    <p className="text-xs text-success">Principal + Interest</p>
-                  </div>
-                </div>
-              </div>
+        <div className="space-y-6">
+          <div>
+            <label
+              htmlFor="sdp_deposit_amount"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
+              SDP Deposit Amount
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                $
+              </span>
+              <input
+                type="number"
+                min={0}
+                max={10000}
+                step={100}
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
+              />
             </div>
-          )}
-
-          {/* Combat Zone Tax Savings Calculator */}
-          {basePay > 0 && (
-            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">
-                <Icon name="Calculator" className="h-5 w-5 inline mr-2" />
-                Combat Zone Tax Savings
-              </h3>
-              
-              {(() => {
-                const monthlyIncome = basePay;
-                const deploymentIncome = monthlyIncome * deploymentMonths;
-                const federalTaxRate = 0.22; // Typical military tax bracket
-                const stateTaxRate = stateTax / 100;
-                const totalTaxRate = federalTaxRate + stateTaxRate;
-                const taxSavings = deploymentIncome * totalTaxRate;
-                
-                return (
-                  <div className="space-y-4">
-                    <p className="text-amber-800">
-                      While deployed to a combat zone, your income is <strong>completely tax-free</strong>. Here's what that means for you:
-                    </p>
-                    
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-white rounded-lg p-4 border border-amber-300">
-                        <p className="text-sm text-amber-700 mb-1">Total Deployment Income</p>
-                        <p className="text-2xl font-bold text-amber-900">{fmt(deploymentIncome)}</p>
-                        <p className="text-xs text-amber-700">{deploymentMonths} months × {fmt(monthlyIncome)}</p>
-                      </div>
-                      <div className="bg-white rounded-lg p-4 border border-success">
-                        <p className="text-sm text-success mb-1">Tax Savings</p>
-                        <p className="text-2xl font-bold text-success">{fmt(taxSavings)}</p>
-                        <p className="text-xs text-success">Federal + State taxes avoided</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4 border border-amber-300">
-                      <p className="text-sm text-amber-700 mb-2">Tax Breakdown:</p>
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-amber-800">Federal Tax (22%):</span>
-                          <span className="font-bold">{fmt(deploymentIncome * 0.22)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-amber-800">State Tax ({stateTax}%):</span>
-                          <span className="font-bold">{fmt(deploymentIncome * stateTaxRate)}</span>
-                        </div>
-                        <div className="flex justify-between border-t border-amber-200 pt-1">
-                          <span className="text-amber-900 font-semibold">Total Saved:</span>
-                          <span className="font-bold text-success">{fmt(taxSavings)}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-amber-700">
-                      <Icon name="Info" className="h-3 w-3 inline mr-1" />
-                      Combat zone tax exclusion applies to all income earned while deployed in designated hostile fire/imminent danger zones
-                    </p>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* Generate Button */}
-          <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <div className="text-center">
-              <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  setLoading(true);
-                  try {
-                    const response = await fetch('/api/tools/sdp', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ amount })
-                    });
-                    const data = await response.json();
-                    setApiData(data);
-                  } catch {
-      // Non-critical: Error handled via UI state
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                disabled={loading}
-                className="bg-success hover:bg-success text-white font-semibold py-4 px-8 rounded-lg transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? '🔄 Calculating...' : '🚀 Generate SDP Analysis'}
-              </button>
-            </div>
+            <p className="mt-1 text-xs text-gray-600">Maximum: $10,000 per deployment</p>
           </div>
 
-          {/* Results Section - Single Comprehensive Paywall */}
-          <PaywallWrapper
-            isPremium={isPremium}
-            title="Your SDP Analysis is Ready!"
-            description="Unlock to see your complete 15-year deployment savings analysis with detailed ROI breakdowns"
-            toolName="SDP Strategist"
-            sampleData={
-              <div className="space-y-8">
-                {/* Investment Scenarios */}
-                <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-                  <h2 className="text-2xl font-bold text-primary mb-6">Investment Scenarios</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                      <div className="text-lg font-semibold text-primary mb-3">SDP - Official Rate (10%)</div>
-                      <div className="text-3xl font-bold text-success mb-2">$40,000</div>
-                      <div className="text-sm text-body font-medium">Savings Deposit Program - 10% APR (10 USC § 1035). Only available during deployment.</div>
-                    </div>
-                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                      <div className="text-lg font-semibold text-primary mb-3">Conservative Investment (8%)</div>
-                      <div className="text-3xl font-bold text-success mb-2">$32,000</div>
-                      <div className="text-sm text-body font-medium">Stock/bond mix for comparison purposes.</div>
-                    </div>
-                    <div className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                      <div className="text-lg font-semibold text-primary mb-3">High-Yield Savings (4%)</div>
-                      <div className="text-3xl font-bold text-success mb-2">$18,000</div>
-                      <div className="text-sm text-body font-medium">Safe, liquid savings alternative.</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ROI Analysis */}
-                <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
-                  <h3 className="text-2xl font-bold text-primary mb-6">15-Year Comparison</h3>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-success-subtle p-6 rounded-lg">
-                      <h4 className="text-lg font-semibold text-green-900 mb-3">SDP Official (10%)</h4>
-                      <div className="text-3xl font-bold text-success mb-2">$40,000</div>
-                      <p className="text-sm text-success">Official military benefit during deployment</p>
-                    </div>
-                    <div className="bg-info-subtle p-6 rounded-lg">
-                      <h4 className="text-lg font-semibold text-blue-900 mb-3">High-Yield Savings (4%)</h4>
-                      <div className="text-3xl font-bold text-info mb-2">$18,000</div>
-                      <p className="text-sm text-info">Civilian alternative for comparison</p>
-                    </div>
-                  </div>
-                  <div className="mt-6 bg-warning-subtle border border-warning rounded-lg p-4">
-                    <p className="text-sm text-warning">
-                      <strong>Note:</strong> SDP rate is fixed by law (10 USC § 1035). Comparison scenarios are for reference only.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            }
-          >
-            {/* Investment Scenarios */}
-            <div className="bg-card rounded-xl p-8 border border-border" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-              <h2 className="text-2xl font-bold text-primary mb-6">Investment Scenarios</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {results.map((r) => (
-                  <div key={r.key} className="p-6 bg-surface-hover rounded-lg border border-subtle">
-                    <div className="text-lg font-semibold text-primary mb-3">{r.title}</div>
-                    {loading ? (
-                      <div className="text-3xl font-bold mb-2">
-                        <span className="inline-block h-8 w-32 bg-surface-hover rounded animate-pulse" />
-                      </div>
-                    ) : r.value !== undefined ? (
-                      <div className="text-3xl font-bold text-success mb-2">{fmt(r.value)}</div>
-                    ) : (
-                      <div className="text-3xl font-bold mb-2">
-                        <span className="inline-block h-8 w-32 bg-surface-hover rounded animate-pulse" />
-                      </div>
-                    )}
-                    <div className="text-sm text-body font-medium">{r.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ROI Analysis */}
-            <RoiBox apiData={apiData} fmt={fmt} amount={amount} />
-          </PaywallWrapper>
-
-          {/* Comparison Mode - Moved out of RoiBox for state access */}
-          {apiData && (
-            <ComparisonMode
-              tool="sdp-strategist"
-              currentInput={{ amount }}
-              currentOutput={{ sdp: apiData.sdp, hy: apiData.hy, cons: apiData.cons }}
-              onLoadScenario={(input) => {
-                setAmount(input.amount || 10000);
-              }}
-              renderComparison={(scenarios) => (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b-2 border-border">
-                        <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Amount</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Conservative</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">Moderate</th>
-                        <th className="text-right p-3 text-sm font-bold text-primary">High-Yield</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {scenarios.map((scenario, idx) => (
-                        <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                          <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                          <td className="p-3 text-right text-body">{fmt(scenario.input.amount)}</td>
-                          <td className="p-3 text-right font-bold text-info">
-                            {fmt(scenario.output.cons || 0)}
-                          </td>
-                          <td className="p-3 text-right font-bold text-success">
-                            {fmt(scenario.output.sdp || 0)}
-                          </td>
-                          <td className="p-3 text-right font-bold text-warning">
-                            {fmt(scenario.output.hy || 0)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+          <div>
+            <label
+              htmlFor="deployment_duration"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
+              Deployment Duration (months)
+            </label>
+            <input
+              type="number"
+              min={3}
+              max={24}
+              value={deploymentMonths}
+              onChange={(e) => setDeploymentMonths(Number(e.target.value))}
+              className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-medium text-gray-900 transition-colors focus:border-green-500 focus:ring-2 focus:ring-green-500"
             />
-          )}
+            <p className="mt-1 text-xs text-gray-600">
+              Interest accrues for deployment duration + 90 days after return
+            </p>
+          </div>
         </div>
-      </Section>
+
+        <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="text-sm text-blue-800">
+            <Icon name="Info" className="mr-1 inline h-4 w-4" />
+            <strong>How SDP Works:</strong> Deposit up to $10,000 during deployment to earn 10% APR.
+            Interest continues for 90 days after you return home, then you receive your full payout
+            approximately 120 days after deployment ends.
+          </p>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="rounded-xl border-2 border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-lg">
+        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">Your SDP Calculation</h2>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-3">
+          <div className="rounded-lg border-2 border-blue-300 bg-white p-5 text-center">
+            <p className="mb-2 text-sm text-gray-600">Deposit Amount</p>
+            <p className="text-3xl font-bold text-blue-900">{fmt(amount)}</p>
+          </div>
+
+          <div className="rounded-lg border-2 border-green-300 bg-white p-5 text-center">
+            <p className="mb-2 text-sm text-gray-600">Interest Earned</p>
+            <p className="text-3xl font-bold text-green-700">{fmt(interestEarned)}</p>
+            <p className="mt-1 text-xs text-gray-600">{accrualMonths} months at 10% APR</p>
+          </div>
+
+          <div className="rounded-lg border-2 border-green-500 bg-white p-5 text-center">
+            <p className="mb-2 text-sm text-gray-600">Total Payout</p>
+            <p className="text-3xl font-bold text-green-600">{fmt(totalPayout)}</p>
+            <p className="mt-1 text-xs text-gray-600">Principal + Interest</p>
+          </div>
+        </div>
+
+        <div className="rounded-lg border-2 border-gray-200 bg-white p-6">
+          <h3 className="mb-3 flex items-center gap-2 font-bold text-gray-900">
+            <Icon name="Calculator" className="h-5 w-5 text-green-600" />
+            Calculation Breakdown
+          </h3>
+          <div className="space-y-2 text-sm text-gray-700">
+            <div className="flex justify-between">
+              <span>Deployment duration:</span>
+              <span className="font-semibold">{deploymentMonths} months</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Post-deployment accrual:</span>
+              <span className="font-semibold">3 months (90 days)</span>
+            </div>
+            <div className="flex justify-between border-t border-gray-200 pt-2">
+              <span>Total accrual period:</span>
+              <span className="font-semibold">{accrualMonths} months</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Annual rate:</span>
+              <span className="font-semibold">10.00%</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Interest calculation:</span>
+              <span className="font-semibold">
+                {fmt(amount)} × 10% × ({accrualMonths}/12)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-r-lg border-l-4 border-amber-400 bg-amber-50 p-4">
+          <p className="mb-1 text-sm font-semibold text-amber-900">
+            <Icon name="AlertTriangle" className="mr-1 inline h-4 w-4" />
+            Important Disclaimer
+          </p>
+          <p className="text-xs text-amber-800">
+            This calculator provides estimates based on official SDP regulations (10 USC § 1035).
+            Actual payout amounts may vary based on exact deployment dates, deposit timing, and
+            administrative processing.{" "}
+            <strong>
+              Always consult your finance office for official calculations before making financial
+              decisions.
+            </strong>
+          </p>
+        </div>
+      </div>
+
+      {/* Educational Content */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-blue-900">SDP Eligibility</h3>
+          <ul className="space-y-2 text-sm text-blue-800">
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>Must be deployed to a combat zone or qualified hazardous duty area</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>Maximum deposit of $10,000 per deployment</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>Deposits must be made during deployment period</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
+              <span>Interest continues for 90 days after deployment ends</span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-green-200 bg-green-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-green-900">Key Benefits</h3>
+          <ul className="space-y-2 text-sm text-green-800">
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Guaranteed 10% annual return by federal law</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Tax-free earnings in combat zones</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>No market risk - rate is fixed and guaranteed</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Automatic payout approximately 120 days after return</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Official Resources */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+          <Icon name="ExternalLink" className="h-5 w-5 text-gray-600" />
+          Official Resources
+        </h3>
+        <div className="space-y-3">
+          <a
+            href="https://www.dfas.mil/militarymembers/payentitlements/sdp/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            DFAS - Savings Deposit Program Overview →
+          </a>
+          <a
+            href="https://www.dfas.mil/militarymembers/payentitlements/sdp/SDPCalculator/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            DFAS Official SDP Calculator →
+          </a>
+          <a
+            href="https://comptroller.defense.gov/FMR/fmr-vol7a.aspx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            DoD Financial Management Regulation (Volume 7A) →
+          </a>
+        </div>
+        <p className="mt-4 text-xs text-gray-600">
+          All calculations based on official Department of Defense regulations. Data sources:
+          DFAS.mil, 10 USC § 1035, DoD FMR Volume 7A.
+        </p>
+      </div>
     </div>
   );
 }
-
-function RoiBox({ 
-  apiData,
-  fmt,
-  amount
-}: { 
-  apiData: ApiResponse | null;
-  fmt: (n: number) => string;
-  amount: number;
-}) {
-  if (!apiData || apiData.partial || !apiData.sdp) {
-    return (
-      <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
-        <div className="text-center text-muted py-8">
-          Enter an amount above to see ROI analysis
-        </div>
-      </div>
-    );
-  }
-
-  const diff = apiData.sdp - apiData.hy;
-  
-  return (
-    <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
-      <h2 className="text-2xl font-bold text-primary mb-6">ROI Analysis</h2>
-      <div className={`p-6 rounded-lg border-2 ${diff >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-        <div className={`text-3xl font-bold mb-2 ${diff >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-          {diff >= 0 ? <><Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Potential Gain</> : <><Icon name="TrendingDown" className="h-5 w-5 inline mr-1" /> Potential Loss</>}
-        </div>
-        <div className={`text-4xl font-bold mb-4 ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {diff >= 0 ? '+' : ''}{fmt(diff)}
-        </div>
-        <div className="text-sm text-body mb-4">
-          <strong>15-year comparison:</strong> SDP Official Rate (10%) vs High-Yield Savings (4%)
-        </div>
-      </div>
-      <Explainer payload={{ 
-        tool: "sdp", 
-        inputs: { amount }, 
-        outputs: { sdp: apiData.sdp, hy: apiData.hy, cons: apiData.cons } 
-      }} />
-      
-      {/* Export Options */}
-      <div className="mt-8 pt-6 border-t border-border">
-        <ExportButtons 
-          tool="sdp-strategist"
-          resultsElementId="sdp-results"
-          data={{
-            inputs: { amount },
-            outputs: apiData
-          }}
-        />
-      </div>
-      
-      <div className="text-sm text-body mt-4 p-4 bg-surface-hover rounded-lg">
-        <strong>Note:</strong> This is for educational purposes only. Past performance is not predictive of future results. 
-        Consider factors like your risk tolerance, time horizon, and other investment accounts when making decisions.
-      </div>
-      <FootNote />
-    </div>
-  );
-}
-

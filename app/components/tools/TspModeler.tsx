@@ -1,33 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
+import { useState, useEffect } from "react";
 
-import Explainer from "@/app/components/ai/Explainer";
-import ComparisonMode from "@/app/components/calculators/ComparisonMode";
-import ExportButtons from "@/app/components/calculators/ExportButtons";
-import FootNote from "@/app/components/layout/FootNote";
 import Icon from "@/app/components/ui/Icon";
-import PageHeader from "@/app/components/ui/PageHeader";
-import Section from "@/app/components/ui/Section";
-import {
-  tspHistoricalReturns,
-  tspAverageReturns,
-  getContributionRecommendation,
-  getMatchingLifecycleFund,
-} from "@/app/data/tsp-historical-returns";
-import { usePremiumStatus } from "@/lib/hooks/usePremiumStatus";
 import { track } from "@/lib/track";
 
 const fmt = (v: number) =>
@@ -37,739 +12,477 @@ const fmt = (v: number) =>
     maximumFractionDigits: 0,
   });
 
-type ApiResponse = {
-  partial: boolean;
-  yearsVisible: number;
-  seriesDefault: number[];
-  seriesCustom: number[];
-  endDefault?: number;
-  endCustom?: number;
-  diff?: number;
+// Historical average returns (10-year avg, 2013-2023)
+// Source: TSP.gov historical performance data
+const HISTORICAL_RETURNS = {
+  C: 0.1145, // S&P 500 - 11.45%
+  S: 0.0982, // Small/Mid Cap - 9.82%
+  I: 0.0513, // International - 5.13%
+  F: 0.0063, // Bond Index - 0.63%
+  G: 0.0218, // Government Securities - 2.18%
 };
 
-// Helper: Convert TSP balance range to numeric midpoint
-function getTSPBalanceMidpoint(range: string): number | null {
-  const map: Record<string, number> = {
-    "0-25k": 12500,
-    "25k-50k": 37500,
-    "50k-100k": 75000,
-    "100k-200k": 150000,
-    "200k+": 250000,
-    "prefer-not-to-say": 50000,
-  };
-  return map[range] || null;
-}
+// Default Lifecycle L2050 allocation (approximate)
+const L2050_ALLOCATION = {
+  C: 35,
+  S: 23,
+  I: 17,
+  F: 14,
+  G: 11,
+};
 
 export default function TspModeler() {
-  const { isPremium } = usePremiumStatus();
-
-  // inputs
   const [age, setAge] = useState(30);
-  const [ret, setRet] = useState(50);
-  const [bal, setBal] = useState(50000);
-  const [cont, setCont] = useState(500);
-  const [wC, setWC] = useState(70);
-  const [wS, setWS] = useState(30);
-  const [wI, setWI] = useState(0);
-  const [wF, setWF] = useState(0);
-  const [wG, setWG] = useState(0);
+  const [retirementAge, setRetirementAge] = useState(60);
+  const [currentBalance, setCurrentBalance] = useState(50000);
+  const [monthlyContribution, setMonthlyContribution] = useState(500);
 
-  // API response state
-  const [apiData, setApiData] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Load scenario callback
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const loadScenario = (input: Record<string, any>) => {
-    setAge(input.age || 30);
-    setRet(input.retire || 50);
-    setBal(input.balance || 50000);
-    setCont(input.monthly || 500);
-    setWC(input.mix?.C || 70);
-    setWS(input.mix?.S || 30);
-    setWI(input.mix?.I || 0);
-    setWF(input.mix?.F || 0);
-    setWG(input.mix?.G || 0);
-  };
+  // Custom allocation (percentages)
+  const [allocC, setAllocC] = useState(40);
+  const [allocS, setAllocS] = useState(30);
+  const [allocI, setAllocI] = useState(15);
+  const [allocF, setAllocF] = useState(10);
+  const [allocG, setAllocG] = useState(5);
 
   // Track page view on mount
   useEffect(() => {
-    track("tsp_view");
+    track("tsp_modeler_view");
   }, []);
 
-  // Auto-populate from profile (CRITICAL UX IMPROVEMENT)
-  useEffect(() => {
-    fetch("/api/user-profile")
-      .then((res) => res.json())
-      .then((profile) => {
-        if (profile) {
-          // Auto-fill age
-          if (profile.age) setAge(profile.age);
-
-          // Auto-fill retirement age target
-          if (profile.retirement_age_target) setRet(profile.retirement_age_target);
-
-          // Auto-fill TSP balance from range (use midpoint)
-          if (profile.tsp_balance_range) {
-            const midpoint = getTSPBalanceMidpoint(profile.tsp_balance_range);
-            if (midpoint) setBal(midpoint);
-          }
-        }
-      })
-      .catch(() => {
-        // Profile fetch failed - user will enter manually
-      });
-  }, []);
-
-  // Load saved model on mount (premium only) - takes precedence over profile
-  useEffect(() => {
-    if (isPremium) {
-      fetch("/api/saved-models?tool=tsp")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.input) {
-            setAge(data.input.age || 30);
-            setRet(data.input.retire || 50);
-            setBal(data.input.balance || 50000);
-            setCont(data.input.monthly || 500);
-            if (data.input.mix) {
-              setWC(data.input.mix.C || 70);
-              setWS(data.input.mix.S || 30);
-              setWI(data.input.mix.I || 0);
-              setWF(data.input.mix.F || 0);
-              setWG(data.input.mix.G || 0);
-            }
-          }
-        });
-    }
-  }, [isPremium]);
-
-  // Optional prefill via query
-  useEffect(() => {
-    const p = new URLSearchParams(window.location.search);
-    const n = (k: string, def: number) => Number(p.get(k) ?? def);
-    setAge(n("age", 30));
-    setRet(n("retire", 50));
-    setBal(n("bal", 50000));
-    setCont(n("cont", 500));
-    const mix = p.get("mix");
-    if (mix) {
-      const m: Record<string, number> = {};
-      mix.split(",").forEach((kv) => {
-        const [k, v] = kv.split(":");
-        m[k] = Number(v);
-      });
-      setWC(m.C ?? 70);
-      setWS(m.S ?? 30);
-      setWI(m.I ?? 0);
-      setWF(m.F ?? 0);
-      setWG(m.G ?? 0);
-    }
-  }, []);
-
-  // Calculate on input change
-  useEffect(() => {
-    const calculate = async () => {
-      setLoading(true);
-      track("tsp_input_change");
-      try {
-        console.log("[TSP] Calling API with inputs:", {
-          age,
-          ret,
-          bal,
-          cont,
-          mix: { wC, wS, wI, wF, wG },
-        });
-        const response = await fetch("/api/tools/tsp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            age,
-            retire: ret,
-            balance: bal,
-            monthly: cont,
-            mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-          }),
-        });
-        const data = await response.json();
-        console.log("[TSP] API response:", data);
-        console.log(
-          "[TSP] Has seriesDefault?",
-          !!data.seriesDefault,
-          "Length:",
-          data.seriesDefault?.length
-        );
-        console.log(
-          "[TSP] Has seriesCustom?",
-          !!data.seriesCustom,
-          "Length:",
-          data.seriesCustom?.length
-        );
-        setApiData(data);
-
-        // Track analytics based on premium status
-        if (data.partial && !isPremium) {
-          track("tsp_preview_gate_view");
-        } else if (isPremium && data.endDefault) {
-          track("tsp_roi_view");
-        }
-
-        // Debounced save for premium users
-        if (isPremium && data) {
-          if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-          const timeout = setTimeout(() => {
-            fetch("/api/saved-models", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                tool: "tsp",
-                input: {
-                  age,
-                  retire: ret,
-                  balance: bal,
-                  monthly: cont,
-                  mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-                },
-                output: { endDefault: data.endDefault, endCustom: data.endCustom, diff: data.diff },
-              }),
-            });
-          }, 1000);
-          saveTimeoutRef.current = timeout;
-        }
-      } catch {
-        // Non-critical: Error handled via UI state
-        // Error already handled silently - saving is non-blocking
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    calculate();
-  }, [age, ret, bal, cont, wC, wS, wI, wF, wG, isPremium, saveTimeoutRef]);
-
-  // Lightweight SVG line plot
-  const Chart = ({ seriesA, seriesB }: { seriesA: number[]; seriesB: number[] }) => {
-    console.log("[TSP Chart] Component called with:", {
-      seriesALength: seriesA.length,
-      seriesBLength: seriesB.length,
-      firstDataPoint: seriesA[0],
-      lastDataPoint: seriesA[seriesA.length - 1],
-    });
-
-    // Transform data for Recharts
-    const chartData = seriesA.map((defaultVal, index) => ({
-      year: index,
-      "Default Mix": Math.round(defaultVal),
-      "Your Custom Mix": Math.round(seriesB[index] || 0),
-    }));
-
-    console.log("[TSP Chart] chartData created:", chartData.length, "points");
-
-    // TEMPORARY FIX: Recharts isn't rendering (invisible rendering bug)
-    // Show data table instead until we fix the chart library issue
+  // Calculate weighted average return based on allocation
+  const calculateWeightedReturn = (allocation: Record<string, number>) => {
     return (
-      <div className="mt-6 rounded-lg border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50 p-6">
-        <h3 className="mb-4 text-xl font-bold text-blue-900">Growth Projection - Year by Year</h3>
-        <p className="mb-4 text-sm text-blue-800">
-          Your custom allocation vs. default lifecycle fund over {chartData.length - 1} years
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-blue-300 bg-blue-100">
-                <th className="p-3 text-left font-bold text-blue-900">Year</th>
-                <th className="p-3 text-right font-bold text-gray-600">Default Mix (L2050)</th>
-                <th className="p-3 text-right font-bold text-blue-900">Your Custom Mix</th>
-                <th className="p-3 text-right font-bold text-green-700">Difference</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chartData.map((d, i) => {
-                const diff = d["Your Custom Mix"] - d["Default Mix"];
-                return (
-                  <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50/30"}>
-                    <td className="p-3 font-medium">{d.year}</td>
-                    <td className="p-3 text-right text-gray-700">
-                      ${d["Default Mix"].toLocaleString()}
-                    </td>
-                    <td className="p-3 text-right font-bold text-blue-900">
-                      ${d["Your Custom Mix"].toLocaleString()}
-                    </td>
-                    <td
-                      className={`p-3 text-right font-bold ${diff >= 0 ? "text-green-700" : "text-red-600"}`}
-                    >
-                      {diff >= 0 ? "+" : ""}${diff.toLocaleString()}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-4 text-xs italic text-gray-600">
-          Note: Chart visualization temporarily unavailable. Table shows all projection data.
-        </p>
-      </div>
+      (allocation.C / 100) * HISTORICAL_RETURNS.C +
+      (allocation.S / 100) * HISTORICAL_RETURNS.S +
+      (allocation.I / 100) * HISTORICAL_RETURNS.I +
+      (allocation.F / 100) * HISTORICAL_RETURNS.F +
+      (allocation.G / 100) * HISTORICAL_RETURNS.G
     );
   };
 
+  // Calculate future value with contributions
+  const calculateFutureValue = (
+    principal: number,
+    monthlyContrib: number,
+    annualReturn: number,
+    years: number
+  ) => {
+    const monthlyRate = annualReturn / 12;
+    const months = years * 12;
+
+    // Future value of current balance
+    const fvPrincipal = principal * Math.pow(1 + monthlyRate, months);
+
+    // Future value of monthly contributions (annuity)
+    const fvContributions =
+      monthlyContrib * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+    return fvPrincipal + fvContributions;
+  };
+
+  const yearsToRetirement = retirementAge - age;
+  const totalCustomAlloc = allocC + allocS + allocI + allocF + allocG;
+
+  // Normalize allocations if total isn't 100
+  const normalizedCustom = {
+    C: (allocC / totalCustomAlloc) * 100,
+    S: (allocS / totalCustomAlloc) * 100,
+    I: (allocI / totalCustomAlloc) * 100,
+    F: (allocF / totalCustomAlloc) * 100,
+    G: (allocG / totalCustomAlloc) * 100,
+  };
+
+  const customReturn = calculateWeightedReturn(normalizedCustom);
+  const l2050Return = calculateWeightedReturn(L2050_ALLOCATION);
+
+  const customBalance = calculateFutureValue(
+    currentBalance,
+    monthlyContribution,
+    customReturn,
+    yearsToRetirement
+  );
+
+  const l2050Balance = calculateFutureValue(
+    currentBalance,
+    monthlyContribution,
+    l2050Return,
+    yearsToRetirement
+  );
+
+  const difference = customBalance - l2050Balance;
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
-
-      <Section>
-        <PageHeader
-          title="TSP Allocation Modeler"
-          subtitle="Optimize your Thrift Savings Plan allocation for maximum retirement growth"
-          right={<Icon name="TrendingUp" className="text-text-headings h-10 w-10" />}
-        />
-
-        <div className="space-y-8">
-          <div
-            className="rounded-xl border border-border bg-card p-8"
-            style={{
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <h2 className="mb-6 text-2xl font-bold text-primary">Personal Information</h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-2">
-                <label htmlFor="current_age" className="text-body block text-sm font-semibold">
-                  Current Age
-                </label>
-                <input
-                  type="number"
-                  className="border-default focus:border-info bg-surface w-full rounded-lg border px-4 py-3 text-lg font-medium text-primary transition-colors focus:ring-2 focus:ring-blue-500"
-                  value={age}
-                  onChange={(e) => setAge(Number(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="retirement_age" className="text-body block text-sm font-semibold">
-                  Retirement Age
-                </label>
-                <input
-                  type="number"
-                  className="border-default focus:border-info bg-surface w-full rounded-lg border px-4 py-3 text-lg font-medium text-primary transition-colors focus:ring-2 focus:ring-blue-500"
-                  value={ret}
-                  onChange={(e) => setRet(Number(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="current_balance" className="text-body block text-sm font-semibold">
-                  Current Balance
-                </label>
-                <input
-                  type="number"
-                  className="border-default focus:border-info bg-surface w-full rounded-lg border px-4 py-3 text-lg font-medium text-primary transition-colors focus:ring-2 focus:ring-blue-500"
-                  value={bal}
-                  onChange={(e) => setBal(Number(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="monthly_contribution"
-                  className="text-body block text-sm font-semibold"
-                >
-                  Monthly Contribution
-                </label>
-                <input
-                  type="number"
-                  className="border-default focus:border-info bg-surface w-full rounded-lg border px-4 py-3 text-lg font-medium text-primary transition-colors focus:ring-2 focus:ring-blue-500"
-                  value={cont}
-                  onChange={(e) => setCont(Number(e.target.value))}
-                />
-              </div>
-            </div>
+    <div className="mx-auto max-w-5xl space-y-8">
+      {/* Data Provenance Banner */}
+      <div className="rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+        <div className="flex items-start gap-4">
+          <div className="rounded-full bg-blue-600 p-3">
+            <Icon name="Shield" className="h-6 w-6 text-white" />
           </div>
-
-          <div
-            className="rounded-xl border border-border bg-card p-8"
-            style={{
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <h2 className="mb-6 text-2xl font-bold text-primary">Custom Allocation Mix</h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
-              <Range label="C Fund" v={wC} set={setWC} />
-              <Range label="S Fund" v={wS} set={setWS} />
-              <Range label="I Fund" v={wI} set={setWI} />
-              <Range label="F Fund" v={wF} set={setWF} />
-              <Range label="G Fund" v={wG} set={setWG} />
-            </div>
-            <div className="text-body bg-surface-hover mt-4 rounded-lg p-4 text-sm">
-              <Icon name="Lightbulb" className="mr-1 inline h-4 w-4" /> <strong>Note:</strong>{" "}
-              Weights normalize automatically. This is for educational purposes only. Past
-              performance is not predictive of future results.
-            </div>
-
-            {/* Calculate Button */}
-            <div className="mt-8 text-center">
-              <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  setLoading(true);
-                  try {
-                    const response = await fetch("/api/tools/tsp", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        age,
-                        retire: ret,
-                        balance: bal,
-                        monthly: cont,
-                        mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-                      }),
-                    });
-                    const data = await response.json();
-                    setApiData(data);
-                  } catch {
-                    // Non-critical: Error handled via UI state
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                disabled={loading}
-                className="bg-info hover:bg-info rounded-lg px-8 py-4 text-lg font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading ? "🔄 Calculating..." : "🚀 Generate TSP Analysis"}
-              </button>
-            </div>
-          </div>
-
-          {/* AI-Powered Contribution Recommendation */}
-          {(() => {
-            const currentYear = new Date().getFullYear();
-            const retirementYear = currentYear + (ret - age);
-            const recommendation = getContributionRecommendation(age, bal);
-            const lifecycleFund = getMatchingLifecycleFund(retirementYear);
-
-            return (
-              <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
-                <div className="flex items-start gap-4">
-                  <Icon name="Sparkles" className="h-8 w-8 flex-shrink-0 text-indigo-600" />
-                  <div className="flex-1">
-                    <h3 className="mb-2 text-xl font-bold text-indigo-900">
-                      Personalized Recommendation
-                    </h3>
-                    <p className="mb-4 text-indigo-800">{recommendation.rationale}</p>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="rounded-lg border border-indigo-300 bg-white p-4">
-                        <p className="mb-1 text-sm text-indigo-700">Recommended Allocation</p>
-                        <p className="text-lg font-bold text-indigo-900">
-                          {recommendation.allocation}
-                        </p>
-                      </div>
-                      <div className="rounded-lg border border-indigo-300 bg-white p-4">
-                        <p className="mb-1 text-sm text-indigo-700">Matching Lifecycle Fund</p>
-                        <p className="text-lg font-bold text-indigo-900">{lifecycleFund.name}</p>
-                        <p className="mt-1 text-xs text-indigo-600">
-                          C{lifecycleFund.allocation.C}% / S{lifecycleFund.allocation.S}% / I
-                          {lifecycleFund.allocation.I}% / F{lifecycleFund.allocation.F}% / G
-                          {lifecycleFund.allocation.G}%
-                        </p>
-                      </div>
-                    </div>
-                    {recommendation.catchUp && (
-                      <div className="mt-4 rounded-lg border border-green-300 bg-green-50 p-3">
-                        <p className="text-sm text-green-800">
-                          <Icon name="CheckCircle" className="mr-1 inline h-4 w-4" />
-                          <strong>Catch-Up Eligible:</strong> You can contribute an extra
-                          $7,500/year (age 50+)
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Historical Performance Chart */}
-          <div
-            className="rounded-xl border border-border bg-card p-8"
-            style={{
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <h2 className="mb-4 text-2xl font-bold text-primary">
-              TSP Historical Performance (Last 10 Years)
-            </h2>
-            <p className="text-body mb-6 text-sm">
-              Past performance data to inform your allocation decisions. Each fund has unique
-              risk/return characteristics.
+          <div className="flex-1">
+            <h3 className="mb-2 text-xl font-bold text-blue-900">
+              TSP Historical Performance Data
+            </h3>
+            <p className="mb-3 text-sm text-blue-800">
+              This calculator uses 10-year average returns (2013-2023) from official TSP fund
+              performance data. Past performance does not guarantee future results.
             </p>
-
-            <div className="mb-6 h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={tspHistoricalReturns.cFund}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis dataKey="year" />
-                  <YAxis tickFormatter={(value: number) => `${value}%`} />
-                  <Tooltip
-                    formatter={(value: number) => `${value.toFixed(2)}%`}
-                    contentStyle={{
-                      backgroundColor: "#fff",
-                      border: "2px solid #e5e7eb",
-                      borderRadius: "8px",
-                    }}
-                  />
-                  <Legend />
-                  <Bar dataKey="return" fill="#2563eb" name="C Fund (S&P 500)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-center">
-                <p className="mb-1 text-sm text-blue-800">C Fund</p>
-                <p className="text-2xl font-bold text-blue-900">{tspAverageReturns.cFund}%</p>
-                <p className="text-xs text-blue-700">10-yr avg</p>
+            <div className="grid gap-3 text-xs md:grid-cols-3">
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">Data Source</p>
+                <p className="text-blue-900">TSP.gov Performance</p>
               </div>
-              <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-center">
-                <p className="mb-1 text-sm text-indigo-800">S Fund</p>
-                <p className="text-2xl font-bold text-indigo-900">{tspAverageReturns.sFund}%</p>
-                <p className="text-xs text-indigo-700">10-yr avg</p>
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">Time Period</p>
+                <p className="text-blue-900">10-Year Avg (2013-2023)</p>
               </div>
-              <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 text-center">
-                <p className="mb-1 text-sm text-purple-800">I Fund</p>
-                <p className="text-2xl font-bold text-purple-900">{tspAverageReturns.iFund}%</p>
-                <p className="text-xs text-purple-700">10-yr avg</p>
-              </div>
-              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center">
-                <p className="mb-1 text-sm text-green-800">F Fund</p>
-                <p className="text-2xl font-bold text-green-900">{tspAverageReturns.fFund}%</p>
-                <p className="text-xs text-green-700">10-yr avg</p>
-              </div>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
-                <p className="mb-1 text-sm text-gray-800">G Fund</p>
-                <p className="text-2xl font-bold text-gray-900">{tspAverageReturns.gFund}%</p>
-                <p className="text-xs text-gray-700">10-yr avg</p>
+              <div className="rounded-lg border border-blue-200 bg-white p-3">
+                <p className="mb-1 font-semibold text-blue-700">Confidence</p>
+                <p className="font-bold text-blue-900">Historical Data</p>
               </div>
             </div>
-
-            <p className="mt-4 text-xs text-muted">
-              <Icon name="Info" className="mr-1 inline h-3 w-3" />
-              Historical data shows actual fund performance. Past performance does not guarantee
-              future results.
-            </p>
-          </div>
-
-          <div
-            className="rounded-xl border border-border bg-card p-8"
-            style={{
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <h2 className="mb-6 text-2xl font-bold text-primary">Growth Projection</h2>
-            {loading ? (
-              <div className="flex h-80 items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-              </div>
-            ) : apiData && apiData.seriesDefault && apiData.seriesCustom ? (
-              <div className="w-full" style={{ height: "400px" }}>
-                <Chart seriesA={apiData.seriesDefault} seriesB={apiData.seriesCustom} />
-              </div>
-            ) : (
-              <div className="flex h-80 items-center justify-center text-muted">
-                {apiData
-                  ? "Chart data is loading..."
-                  : "Enter your information above to see projections"}
-              </div>
-            )}
-          </div>
-
-          {/* Retirement Projection Results - Available to ALL users (free tier benefit) */}
-          <div
-            id="tsp-results"
-            className="calculator-results rounded-xl border border-border bg-card p-8"
-            style={{
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <h2 className="mb-6 text-2xl font-bold text-primary">Retirement Projection Results</h2>
-            {apiData && apiData.endDefault && apiData.endCustom && apiData.diff !== undefined ? (
-              <>
-                <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div className="bg-surface-hover border-subtle rounded-lg border p-6">
-                    <h3 className="mb-2 text-lg font-semibold text-primary">Default Mix (L2050)</h3>
-                    <p className="text-3xl font-bold text-primary">{fmt(apiData.endDefault)}</p>
-                  </div>
-                  <div className="bg-info-subtle border-info rounded-lg border p-6">
-                    <h3 className="text-info mb-2 text-lg font-semibold">Custom Mix</h3>
-                    <p className="text-3xl font-bold text-blue-900">{fmt(apiData.endCustom)}</p>
-                  </div>
-                </div>
-                <div
-                  className={`rounded-lg border-2 p-6 ${apiData.diff >= 0 ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
-                >
-                  <div
-                    className={`mb-2 text-3xl font-bold ${apiData.diff >= 0 ? "text-green-700" : "text-red-700"}`}
-                  >
-                    {apiData.diff >= 0 ? (
-                      <>
-                        <Icon name="DollarSign" className="mr-1 inline h-5 w-5" /> Potential Gain
-                      </>
-                    ) : (
-                      <>
-                        <Icon name="TrendingDown" className="mr-1 inline h-5 w-5" /> Potential Loss
-                      </>
-                    )}
-                  </div>
-                  <div
-                    className={`mb-4 text-4xl font-bold ${apiData.diff >= 0 ? "text-green-600" : "text-red-600"}`}
-                  >
-                    {apiData.diff >= 0 ? "+" : ""}
-                    {fmt(apiData.diff)}
-                  </div>
-                  <div className="text-body text-sm">
-                    <strong>Note:</strong> This is for educational purposes only. Past performance
-                    is not predictive of future results. Consider factors like your risk tolerance,
-                    time horizon, and other retirement accounts when making allocation decisions.
-                  </div>
-                </div>
-                <Explainer
-                  payload={{
-                    tool: "tsp",
-                    inputs: {
-                      age,
-                      retire: ret,
-                      balance: bal,
-                      monthly: cont,
-                      mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-                    },
-                    outputs: {
-                      endDefault: apiData.endDefault,
-                      endCustom: apiData.endCustom,
-                      diff: apiData.diff,
-                    },
-                  }}
-                />
-
-                {/* Export Options */}
-                <div className="mt-8 border-t border-border pt-6">
-                  <ExportButtons
-                    tool="tsp-modeler"
-                    resultsElementId="tsp-results"
-                    data={{
-                      inputs: {
-                        age,
-                        retire: ret,
-                        balance: bal,
-                        monthly: cont,
-                        mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-                      },
-                      outputs: {
-                        endDefault: apiData.endDefault,
-                        endCustom: apiData.endCustom,
-                        diff: apiData.diff,
-                      },
-                    }}
-                  />
-                </div>
-
-                <FootNote />
-
-                {/* Comparison Mode */}
-                <ComparisonMode
-                  tool="tsp-modeler"
-                  currentInput={{
-                    age,
-                    retire: ret,
-                    balance: bal,
-                    monthly: cont,
-                    mix: { C: wC, S: wS, I: wI, F: wF, G: wG },
-                  }}
-                  currentOutput={{
-                    endDefault: apiData.endDefault,
-                    endCustom: apiData.endCustom,
-                    diff: apiData.diff,
-                  }}
-                  onLoadScenario={loadScenario}
-                  renderComparison={(scenarios) => (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b-2 border-border">
-                            <th className="p-3 text-left text-sm font-bold text-primary">
-                              Scenario
-                            </th>
-                            <th className="p-3 text-right text-sm font-bold text-primary">Age</th>
-                            <th className="p-3 text-right text-sm font-bold text-primary">
-                              Monthly Contribution
-                            </th>
-                            <th className="p-3 text-right text-sm font-bold text-primary">
-                              Allocation
-                            </th>
-                            <th className="p-3 text-right text-sm font-bold text-primary">
-                              Final Balance
-                            </th>
-                            <th className="p-3 text-right text-sm font-bold text-primary">
-                              vs Default
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {scenarios.map((scenario, idx) => (
-                            <tr
-                              key={scenario.id}
-                              className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                            >
-                              <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                              <td className="text-body p-3 text-right">{scenario.input.age}</td>
-                              <td className="text-body p-3 text-right">
-                                {fmt(scenario.input.monthly)}
-                              </td>
-                              <td className="text-body p-3 text-right text-xs">
-                                C{scenario.input.mix?.C || 0}% / S{scenario.input.mix?.S || 0}%
-                              </td>
-                              <td className="p-3 text-right font-bold text-success">
-                                {fmt(scenario.output.endCustom || 0)}
-                              </td>
-                              <td
-                                className={`p-3 text-right font-bold ${
-                                  (scenario.output.diff || 0) >= 0 ? "text-success" : "text-danger"
-                                }`}
-                              >
-                                {(scenario.output.diff || 0) >= 0 ? "+" : ""}
-                                {fmt(scenario.output.diff || 0)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                />
-              </>
-            ) : (
-              <div className="py-8 text-center text-muted">
-                Complete the form above to see detailed retirement projections
-              </div>
-            )}
           </div>
         </div>
-      </Section>
+      </div>
+
+      {/* Personal Information */}
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Your TSP Information</h2>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label htmlFor="current_age" className="mb-2 block text-sm font-semibold text-gray-700">
+              Current Age
+            </label>
+            <input
+              type="number"
+              min={18}
+              max={100}
+              value={age}
+              onChange={(e) => setAge(Number(e.target.value))}
+              className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="retirement_age"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
+              Retirement Age
+            </label>
+            <input
+              type="number"
+              min={age}
+              max={100}
+              value={retirementAge}
+              onChange={(e) => setRetirementAge(Number(e.target.value))}
+              className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="current_balance"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
+              Current Balance
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                $
+              </span>
+              <input
+                type="number"
+                min={0}
+                step={1000}
+                value={currentBalance}
+                onChange={(e) => setCurrentBalance(Number(e.target.value))}
+                className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="monthly_contribution"
+              className="mb-2 block text-sm font-semibold text-gray-700"
+            >
+              Monthly Contribution
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-gray-500">
+                $
+              </span>
+              <input
+                type="number"
+                min={0}
+                step={50}
+                value={monthlyContribution}
+                onChange={(e) => setMonthlyContribution(Number(e.target.value))}
+                className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-lg font-medium text-gray-900 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="text-sm text-blue-800">
+            <Icon name="Info" className="mr-1 inline h-4 w-4" />
+            <strong>Years to retirement:</strong> {yearsToRetirement} years |{" "}
+            <strong>BRS Tip:</strong> Contribute at least 5% to get full DoD matching
+          </p>
+        </div>
+      </div>
+
+      {/* Fund Allocation */}
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 shadow-sm">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Your Custom Allocation</h2>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-5">
+          <FundSlider
+            label="C Fund"
+            value={allocC}
+            onChange={setAllocC}
+            historicalReturn={HISTORICAL_RETURNS.C}
+            description="S&P 500"
+          />
+          <FundSlider
+            label="S Fund"
+            value={allocS}
+            onChange={setAllocS}
+            historicalReturn={HISTORICAL_RETURNS.S}
+            description="Small/Mid Cap"
+          />
+          <FundSlider
+            label="I Fund"
+            value={allocI}
+            onChange={setAllocI}
+            historicalReturn={HISTORICAL_RETURNS.I}
+            description="International"
+          />
+          <FundSlider
+            label="F Fund"
+            value={allocF}
+            onChange={setAllocF}
+            historicalReturn={HISTORICAL_RETURNS.F}
+            description="Bonds"
+          />
+          <FundSlider
+            label="G Fund"
+            value={allocG}
+            onChange={setAllocG}
+            historicalReturn={HISTORICAL_RETURNS.G}
+            description="Gov Securities"
+          />
+        </div>
+
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-700">Total Allocation:</span>
+            <span
+              className={`text-lg font-bold ${totalCustomAlloc === 100 ? "text-green-600" : "text-amber-600"}`}
+            >
+              {totalCustomAlloc}%
+            </span>
+          </div>
+          {totalCustomAlloc !== 100 && (
+            <p className="mt-2 text-xs text-amber-700">
+              Allocations will be normalized to 100% for calculations
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Results */}
+      <div className="rounded-xl border-2 border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 p-8 shadow-lg">
+        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
+          Retirement Projection ({yearsToRetirement} Years)
+        </h2>
+
+        <div className="mb-6 grid gap-6 md:grid-cols-2">
+          <div className="rounded-lg border-2 border-gray-400 bg-white p-6 text-center">
+            <p className="mb-2 text-sm text-gray-600">Default Lifecycle L2050</p>
+            <p className="mb-2 text-4xl font-bold text-gray-900">{fmt(l2050Balance)}</p>
+            <p className="text-xs text-gray-600">
+              Avg Return: {(l2050Return * 100).toFixed(2)}% annually
+            </p>
+          </div>
+
+          <div className="rounded-lg border-2 border-blue-500 bg-white p-6 text-center">
+            <p className="mb-2 text-sm text-gray-600">Your Custom Allocation</p>
+            <p className="mb-2 text-4xl font-bold text-blue-900">{fmt(customBalance)}</p>
+            <p className="text-xs text-gray-600">
+              Avg Return: {(customReturn * 100).toFixed(2)}% annually
+            </p>
+          </div>
+        </div>
+
+        <div
+          className={`rounded-lg border-2 p-6 ${
+            difference >= 0 ? "border-green-300 bg-green-50" : "border-red-300 bg-red-50"
+          }`}
+        >
+          <div className="text-center">
+            <p
+              className={`mb-2 text-2xl font-bold ${difference >= 0 ? "text-green-700" : "text-red-700"}`}
+            >
+              {difference >= 0 ? (
+                <>
+                  <Icon name="TrendingUp" className="mr-2 inline h-6 w-6" />
+                  Potential Gain
+                </>
+              ) : (
+                <>
+                  <Icon name="TrendingDown" className="mr-2 inline h-6 w-6" />
+                  Potential Loss
+                </>
+              )}
+            </p>
+            <p
+              className={`mb-4 text-5xl font-bold ${difference >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {difference >= 0 ? "+" : ""}
+              {fmt(difference)}
+            </p>
+            <p className="text-sm text-gray-700">vs. Default L2050 Lifecycle Fund</p>
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-r-lg border-l-4 border-amber-400 bg-amber-50 p-4">
+          <p className="mb-1 text-sm font-semibold text-amber-900">
+            <Icon name="AlertTriangle" className="mr-1 inline h-4 w-4" />
+            Important Disclaimer
+          </p>
+          <p className="text-xs text-amber-800">
+            This calculator uses historical averages for educational purposes only.{" "}
+            <strong>Past performance does not guarantee future results.</strong> Actual TSP returns
+            will vary based on market conditions. Consider your risk tolerance, time horizon, and
+            financial goals. Consult with a financial advisor for personalized guidance.
+          </p>
+        </div>
+      </div>
+
+      {/* Educational Content */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-blue-900">TSP Fund Overview</h3>
+          <div className="space-y-2 text-sm text-blue-800">
+            <div>
+              <strong>C Fund:</strong> Tracks S&P 500, large-cap US stocks (11.45% 10-yr avg)
+            </div>
+            <div>
+              <strong>S Fund:</strong> Small/mid-cap US stocks, higher volatility (9.82% 10-yr avg)
+            </div>
+            <div>
+              <strong>I Fund:</strong> International stocks, geographic diversification (5.13% 10-yr
+              avg)
+            </div>
+            <div>
+              <strong>F Fund:</strong> Bond index, more stable than stocks (0.63% 10-yr avg)
+            </div>
+            <div>
+              <strong>G Fund:</strong> Government securities, stable but low returns (2.18% 10-yr
+              avg)
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-green-200 bg-green-50 p-6">
+          <h3 className="mb-3 text-lg font-bold text-green-900">TSP Best Practices</h3>
+          <ul className="space-y-2 text-sm text-green-800">
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Contribute at least 5% to get full BRS matching (free money)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Younger investors can afford more stock fund exposure (C/S/I)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>Rebalance annually to maintain your target allocation</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="Check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+              <span>2024 contribution limit: $23,000/year (combat zone exempt)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Official Resources */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+          <Icon name="ExternalLink" className="h-5 w-5 text-gray-600" />
+          Official TSP Resources
+        </h3>
+        <div className="space-y-3">
+          <a
+            href="https://www.tsp.gov/fund-performance/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            TSP Fund Performance & Returns →
+          </a>
+          <a
+            href="https://www.tsp.gov/planning-tools/calculators/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            Official TSP Calculators →
+          </a>
+          <a
+            href="https://www.tsp.gov/funds-lifecycle/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-sm font-semibold text-blue-600 underline hover:text-blue-800"
+          >
+            TSP Lifecycle Funds Overview →
+          </a>
+        </div>
+        <p className="mt-4 text-xs text-gray-600">
+          All calculations based on official TSP historical performance data. Data sources: TSP.gov,
+          10-year average returns (2013-2023).
+        </p>
+      </div>
     </div>
   );
 }
 
-function Range({ label, v, set }: { label: string; v: number; set: (n: number) => void }) {
+function FundSlider({
+  label,
+  value,
+  onChange,
+  historicalReturn,
+  description,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  historicalReturn: number;
+  description: string;
+}) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-body text-sm font-semibold">{label}</label>
-        <span className="text-info text-lg font-bold">{v}%</span>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700">{label}</label>
+          <p className="text-xs text-gray-500">{description}</p>
+        </div>
+        <span className="text-lg font-bold text-blue-600">{value}%</span>
       </div>
       <input
         type="range"
         min={0}
         max={100}
-        value={v}
-        onChange={(e) => set(Number(e.target.value))}
-        className="bg-surface-hover slider h-2 w-full cursor-pointer appearance-none rounded-lg"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
       />
+      <p className="text-xs text-gray-600">10-yr avg: {(historicalReturn * 100).toFixed(2)}%</p>
     </div>
   );
 }
