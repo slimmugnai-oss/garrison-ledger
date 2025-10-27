@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { toast } from 'sonner';
 
 import Icon from '../ui/Icon';
 
@@ -56,8 +57,8 @@ export default function UploadModal({
     if (!file) return;
     
     if (file.size > storageLimit - storageUsed) {
-      alert(
-        `Storage limit exceeded. You need ${formatFileSize(file.size - (storageLimit - storageUsed))} more space.`
+      toast.error(
+        `Storage limit exceeded. You need ${formatFileSize(file.size - (storageLimit - storageUsed))} more space. Upgrade to Premium for more storage.`
       );
       return;
     }

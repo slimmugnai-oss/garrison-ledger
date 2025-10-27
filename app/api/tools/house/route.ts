@@ -20,7 +20,8 @@ const schema = z.object({
 // Standard mortgage payment formula (PMT)
 // Formula: (Principal * MonthlyRate) / (1 - (1 + MonthlyRate)^-NumberOfPayments)
 // This is the same formula used by financial institutions
-const pmt = (rateMo:number, nper:number, pv:number)=> (pv*rateMo)/(1 - Math.pow(1+rateMo, -nper));
+const pmt = (rateMo: number, nper: number, pv: number) =>
+  (pv * rateMo) / (1 - Math.pow(1 + rateMo, -nper));
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,26 +35,26 @@ export async function POST(req: NextRequest) {
     const raw = await req.json().catch(() => null);
     const parsed = schema.safeParse(raw);
     if (!parsed.success) {
-      logger.warn('[HouseHack] Invalid input', { userId, errors: parsed.error.errors });
+      logger.warn("[HouseHack] Invalid input", { userId, errors: parsed.error.errors });
       throw Errors.invalidInput("Invalid calculator input", { validation: parsed.error.errors });
     }
-    
+
     const { price, rate, tax, ins, bah, rent } = parsed.data;
-    const rMo = (rate / 100) / 12;
+    const rMo = rate / 100 / 12;
     const piti = pmt(rMo, 360, price) + tax / 12 + ins / 12;
     const income = bah + rent;
 
     // ALL USERS GET FULL ACCESS (freemium model v2.2.0)
     // Calculators are free for everyone - no premium checks needed
-    
-    const result = { 
-      partial: false, 
-      costs: piti, 
-      income, 
-      verdict: income - piti 
+
+    const result = {
+      partial: false,
+      costs: piti,
+      income,
+      verdict: income - piti,
     };
 
-    logger.info('[HouseHack] Calculation completed', { userId, price, verdict: result.verdict });
+    logger.info("[HouseHack] Calculation completed", { userId, price, verdict: result.verdict });
     return NextResponse.json(result);
   } catch (error) {
     return errorResponse(error);

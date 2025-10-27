@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback, Suspense } from "react";
+import { toast } from "sonner";
 
 import BinderEmptyState from "@/app/components/binder/BinderEmptyState";
 import BinderLoadingSkeleton from "@/app/components/binder/BinderLoadingSkeleton";
@@ -209,7 +210,7 @@ function BinderContent() {
       const uploadData = await uploadResponse.json();
 
       if (!uploadResponse.ok) {
-        alert(uploadData.error || "Failed to prepare upload");
+        toast.error(uploadData.error || "Failed to prepare upload");
         return;
       }
 
@@ -220,15 +221,16 @@ function BinderContent() {
       });
 
       if (storageResponse.status >= 400) {
-        alert(`Failed to upload file: ${storageResponse.status} ${storageResponse.statusText}`);
+        toast.error(`Failed to upload file: ${storageResponse.status} ${storageResponse.statusText}`);
         return;
       }
 
+      toast.success(`File uploaded successfully to ${folder}`);
       setShowUploadModal(false);
       await loadFiles();
     } catch {
       // Non-critical: Error handled via UI state
-      alert("Failed to upload file");
+      toast.error("Failed to upload file. Please try again.");
     }
   };
 
@@ -243,9 +245,12 @@ function BinderContent() {
       });
 
       if (response.ok) {
+        toast.success(`File renamed to "${newName}"`);
         setShowRenameModal(false);
         setNewName("");
         loadFiles();
+      } else {
+        toast.error("Failed to rename file");
       }
     } catch {
       // Non-critical: Error handled via UI state
@@ -264,9 +269,12 @@ function BinderContent() {
       });
 
       if (response.ok) {
+        toast.success(`File moved to "${newFolder}"`);
         setShowMoveModal(false);
         setNewFolder("");
         loadFiles();
+      } else {
+        toast.error("Failed to move file");
       }
     } catch {
       // Non-critical: Error handled via UI state
@@ -288,9 +296,12 @@ function BinderContent() {
       });
 
       if (response.ok) {
+        toast.success(expiryDate ? "Expiry date set" : "Expiry date removed");
         setShowExpiryModal(false);
         setExpiryDate("");
         loadFiles();
+      } else {
+        toast.error("Failed to update expiry date");
       }
     } catch {
       // Non-critical: Error handled via UI state
@@ -299,7 +310,9 @@ function BinderContent() {
   };
 
   const handleDelete = async (file: BinderFile) => {
-    if (!confirm(`Delete "${file.display_name}"?`)) return;
+    // Use toast for confirmation instead of confirm()
+    const confirmDelete = window.confirm(`Delete "${file.display_name}"? This cannot be undone.`);
+    if (!confirmDelete) return;
 
     try {
       const response = await fetch("/api/binder/delete", {
@@ -309,17 +322,21 @@ function BinderContent() {
       });
 
       if (response.ok) {
+        toast.success("File deleted successfully");
         loadFiles();
+      } else {
+        toast.error("Failed to delete file");
       }
     } catch {
       // Non-critical: Error handled via UI state
-      // Error handled - failed delete is non-critical
+      toast.error("Failed to delete file");
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedFiles.size === 0) return;
-    if (!confirm(`Delete ${selectedFiles.size} files?`)) return;
+    const confirmDelete = window.confirm(`Delete ${selectedFiles.size} files? This cannot be undone.`);
+    if (!confirmDelete) return;
 
     try {
       await Promise.all(
@@ -331,11 +348,13 @@ function BinderContent() {
           })
         )
       );
+      toast.success(`${selectedFiles.size} files deleted successfully`);
       setSelectedFiles(new Set());
       setSelectionMode(false);
       loadFiles();
     } catch {
       // Non-critical: Error handled via UI state
+      toast.error("Failed to delete files");
     }
   };
 
@@ -353,8 +372,9 @@ function BinderContent() {
 
       if (response.ok) {
         setShareUrl(data.share.url);
+        toast.success("Share link created successfully");
       } else {
-        alert(data.error || "Failed to create share link");
+        toast.error(data.error || "Failed to create share link");
       }
     } catch {
       // Non-critical: Error handled via UI state
@@ -724,7 +744,7 @@ function BinderContent() {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(shareUrl);
-                      alert("Copied to clipboard!");
+                      toast.success("Share link copied to clipboard!");
                     }}
                     className="rounded-lg bg-[#2A2F3E] px-4 py-2 text-white transition-colors hover:bg-[#3A3F4E]"
                   >

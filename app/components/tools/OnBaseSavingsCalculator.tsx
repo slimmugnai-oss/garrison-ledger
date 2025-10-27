@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
-import Explainer from '@/app/components/ai/Explainer';
-import ComparisonMode from '@/app/components/calculators/ComparisonMode';
-import ExportButtons from '@/app/components/calculators/ExportButtons';
-import Icon from '@/app/components/ui/Icon';
-import PaywallWrapper from '@/app/components/ui/PaywallWrapper';
-import { usePremiumStatus } from '@/lib/hooks/usePremiumStatus';
-import { track } from '@/lib/track';
+import Explainer from "@/app/components/ai/Explainer";
+import ComparisonMode from "@/app/components/calculators/ComparisonMode";
+import ExportButtons from "@/app/components/calculators/ExportButtons";
+import Icon from "@/app/components/ui/Icon";
+import PaywallWrapper from "@/app/components/ui/PaywallWrapper";
+import { usePremiumStatus } from "@/lib/hooks/usePremiumStatus";
+import { track } from "@/lib/track";
 
 export default function OnBaseSavingsCalculator() {
   const { isPremium } = usePremiumStatus();
-  
+
   // Commissary state - granular breakdown
   const [meatProduce, setMeatProduce] = useState(250);
   const [pantryStaples, setPantryStaples] = useState(200);
   const [diapersBaby, setDiapersBaby] = useState(100);
-  
+
   // Exchange state - integrated approach
   const [majorPurchases, setMajorPurchases] = useState(2000);
   const [clothingApparel, setClothingApparel] = useState(1200);
@@ -29,15 +29,15 @@ export default function OnBaseSavingsCalculator() {
 
   // Track page view on mount
   useEffect(() => {
-    track('annual_savings_command_center_view');
+    track("annual_savings_command_center_view");
   }, []);
 
   // Load saved model on mount (premium only)
   useEffect(() => {
     if (isPremium) {
-      fetch('/api/saved-models?tool=savings')
-        .then(res => res.json())
-        .then(data => {
+      fetch("/api/saved-models?tool=savings")
+        .then((res) => res.json())
+        .then((data) => {
           if (data.input) {
             setMeatProduce(data.input.meatProduce || 250);
             setPantryStaples(data.input.pantryStaples || 200);
@@ -47,7 +47,7 @@ export default function OnBaseSavingsCalculator() {
             setWeeklyGasGallons(data.input.weeklyGasGallons || 15);
             setSalesTaxRate(data.input.salesTaxRate || 7);
           }
-        })
+        });
     }
   }, [isPremium]);
 
@@ -55,9 +55,9 @@ export default function OnBaseSavingsCalculator() {
   // Higher savings on meat/produce (~30%), standard on others (~25%)
   // Source: DeCA (Defense Commissary Agency) savings estimates - commissaries.com
   // Note: Actual savings vary by location and shopping habits
-  const meatProduceSavings = (meatProduce * 12 * 0.30);
-  const pantryStaplesSavings = (pantryStaples * 12 * 0.25);
-  const diapersBabySavings = (diapersBaby * 12 * 0.25);
+  const meatProduceSavings = meatProduce * 12 * 0.3;
+  const pantryStaplesSavings = pantryStaples * 12 * 0.25;
+  const diapersBabySavings = diapersBaby * 12 * 0.25;
   const totalCommissarySavings = meatProduceSavings + pantryStaplesSavings + diapersBabySavings;
 
   // EXCHANGE CALCULATIONS
@@ -65,12 +65,12 @@ export default function OnBaseSavingsCalculator() {
   const taxRateDecimal = salesTaxRate / 100;
   const totalTaxableSpending = majorPurchases + clothingApparel;
   const taxSavings = totalTaxableSpending * taxRateDecimal;
-  
+
   // MILITARY STAR® savings (5¢/gallon on gas)
   // Source: Official Military Star Card benefits (shopmyexchange.com)
   const annualGasGallons = weeklyGasGallons * 52;
   const starCardSavings = annualGasGallons * 0.05;
-  
+
   const totalExchangeSavings = taxSavings + starCardSavings;
 
   // TOTAL COMBINED SAVINGS
@@ -81,11 +81,11 @@ export default function OnBaseSavingsCalculator() {
     if (isPremium && (meatProduce > 0 || majorPurchases > 0)) {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       const timeout = setTimeout(() => {
-        fetch('/api/saved-models', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        fetch("/api/saved-models", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            tool: 'savings',
+            tool: "savings",
             input: {
               meatProduce,
               pantryStaples,
@@ -93,7 +93,7 @@ export default function OnBaseSavingsCalculator() {
               majorPurchases,
               clothingApparel,
               weeklyGasGallons,
-              salesTaxRate
+              salesTaxRate,
             },
             output: {
               totalCommissarySavings,
@@ -103,157 +103,190 @@ export default function OnBaseSavingsCalculator() {
               pantryStaplesSavings,
               diapersBabySavings,
               taxSavings,
-              starCardSavings
-            }
-          })
+              starCardSavings,
+            },
+          }),
         });
       }, 2000);
       saveTimeoutRef.current = timeout;
     }
-  }, [isPremium, meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate, totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings]);
+  }, [
+    isPremium,
+    meatProduce,
+    pantryStaples,
+    diapersBaby,
+    majorPurchases,
+    clothingApparel,
+    weeklyGasGallons,
+    salesTaxRate,
+    totalCommissarySavings,
+    totalExchangeSavings,
+    grandTotal,
+    meatProduceSavings,
+    pantryStaplesSavings,
+    diapersBabySavings,
+    taxSavings,
+    starCardSavings,
+  ]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10">
-      
+    <div className="mx-auto max-w-6xl space-y-10">
       {/* Section 1: Commissary Savings Plan */}
-      <div id="savings-results" className="bg-surface rounded-2xl border-2 border-blue-300 p-8 shadow-lg calculator-results">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="bg-info text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
+      <div
+        id="savings-results"
+        className="bg-surface calculator-results rounded-2xl border-2 border-blue-300 p-8 shadow-lg"
+      >
+        <div className="mb-6 flex items-center gap-3">
+          <div className="bg-info flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold text-white">
             1
           </div>
           <div>
             <h2 className="text-3xl font-bold text-primary">Your Commissary Savings Plan</h2>
-            <p className="text-body">Break down your grocery spending for accurate savings estimates</p>
+            <p className="text-body">
+              Break down your grocery spending for accurate savings estimates
+            </p>
           </div>
         </div>
 
-        <div className="bg-info-subtle border border-info rounded-lg p-4 mb-6">
-          <p className="text-sm text-info">
-            <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Pro Tip:</strong> Different categories have different savings rates. Meat & produce typically save you 30%, while pantry staples average 25%.
+        <div className="bg-info-subtle border-info mb-6 rounded-lg border p-4">
+          <p className="text-info text-sm">
+            <Icon name="Lightbulb" className="mr-1 inline h-4 w-4" /> <strong>Pro Tip:</strong>{" "}
+            Different categories have different savings rates. Meat & produce typically save you
+            30%, while pantry staples average 25%.
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Meat & Produce */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <label className="block text-base font-semibold text-primary">
                 🥩 Monthly Meat & Produce Spending
               </label>
-              <span className="text-sm font-medium text-info">~30% savings</span>
+              <span className="text-info text-sm font-medium">~30% savings</span>
             </div>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted">
+                $
+              </span>
               <input
                 type="number"
                 value={meatProduce}
                 onChange={(e) => setMeatProduce(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                className="border-default w-full rounded-lg border-2 py-3 pl-10 pr-4 text-lg focus:border-blue-600 focus:outline-none"
                 placeholder="250"
               />
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="mt-1 text-xs text-muted">
               Includes: Fresh meats, poultry, seafood, fruits, vegetables
             </p>
           </div>
 
           {/* Pantry Staples */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <label className="block text-base font-semibold text-primary">
                 🥫 Monthly Pantry Staples Spending
               </label>
-              <span className="text-sm font-medium text-info">~25% savings</span>
+              <span className="text-info text-sm font-medium">~25% savings</span>
             </div>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted">
+                $
+              </span>
               <input
                 type="number"
                 value={pantryStaples}
                 onChange={(e) => setPantryStaples(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                className="border-default w-full rounded-lg border-2 py-3 pl-10 pr-4 text-lg focus:border-blue-600 focus:outline-none"
                 placeholder="200"
               />
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="mt-1 text-xs text-muted">
               Includes: Canned goods, dry goods, paper products, cleaning supplies
             </p>
           </div>
 
           {/* Diapers & Baby */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <label className="block text-base font-semibold text-primary">
                 👶 Monthly Diapers & Baby Supplies Spending
               </label>
-              <span className="text-sm font-medium text-info">~25% savings</span>
+              <span className="text-info text-sm font-medium">~25% savings</span>
             </div>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted">
+                $
+              </span>
               <input
                 type="number"
                 value={diapersBaby}
                 onChange={(e) => setDiapersBaby(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-blue-600 focus:outline-none text-lg"
+                className="border-default w-full rounded-lg border-2 py-3 pl-10 pr-4 text-lg focus:border-blue-600 focus:outline-none"
                 placeholder="100"
               />
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="mt-1 text-xs text-muted">
               Includes: Diapers, wipes, formula, baby food (enter 0 if not applicable)
             </p>
           </div>
 
           {/* Commissary Results Preview */}
-          <div className="mt-8 pt-6 border-t-2 border-subtle">
+          <div className="border-subtle mt-8 border-t-2 pt-6">
             <PaywallWrapper
               isPremium={isPremium}
               title="Your Commissary Savings Revealed!"
               description="Unlock to see your detailed commissary savings breakdown by category"
               toolName="On-Base Savings"
               sampleData={
-                <div className="bg-info-subtle rounded-xl p-6 border-2 border-info">
-                  <p className="text-sm text-body mb-2 font-medium text-center">
+                <div className="bg-info-subtle border-info rounded-xl border-2 p-6">
+                  <p className="text-body mb-2 text-center text-sm font-medium">
                     Estimated Annual Commissary Savings
                   </p>
-                  <p className="text-5xl font-black text-info text-center mb-3">
-                    $1,800
-                  </p>
-                  <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
+                  <p className="text-info mb-3 text-center text-5xl font-black">$1,800</p>
+                  <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs">
                     <div>
                       <p className="text-body">Meat/Produce</p>
-                      <p className="font-bold text-info">$900</p>
+                      <p className="text-info font-bold">$900</p>
                     </div>
                     <div>
                       <p className="text-body">Pantry Staples</p>
-                      <p className="font-bold text-info">$600</p>
+                      <p className="text-info font-bold">$600</p>
                     </div>
                     <div>
                       <p className="text-body">Baby Supplies</p>
-                      <p className="font-bold text-info">$300</p>
+                      <p className="text-info font-bold">$300</p>
                     </div>
                   </div>
                 </div>
               }
             >
-              <div className="bg-info-subtle rounded-xl p-6 border-2 border-info">
-                <p className="text-sm text-body mb-2 font-medium text-center">
+              <div className="bg-info-subtle border-info rounded-xl border-2 p-6">
+                <p className="text-body mb-2 text-center text-sm font-medium">
                   Estimated Annual Commissary Savings
                 </p>
-                <p className="text-5xl font-black text-info text-center mb-3">
+                <p className="text-info mb-3 text-center text-5xl font-black">
                   ${Math.round(totalCommissarySavings).toLocaleString()}
                 </p>
-                <div className="grid grid-cols-3 gap-3 text-xs text-center mt-4">
+                <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs">
                   <div>
                     <p className="text-body">Meat/Produce</p>
-                    <p className="font-bold text-info">${Math.round(meatProduceSavings).toLocaleString()}</p>
+                    <p className="text-info font-bold">
+                      ${Math.round(meatProduceSavings).toLocaleString()}
+                    </p>
                   </div>
                   <div>
                     <p className="text-body">Pantry Staples</p>
-                    <p className="font-bold text-info">${Math.round(pantryStaplesSavings).toLocaleString()}</p>
+                    <p className="text-info font-bold">
+                      ${Math.round(pantryStaplesSavings).toLocaleString()}
+                    </p>
                   </div>
                   <div>
                     <p className="text-body">Baby Supplies</p>
-                    <p className="font-bold text-info">${Math.round(diapersBabySavings).toLocaleString()}</p>
+                    <p className="text-info font-bold">
+                      ${Math.round(diapersBabySavings).toLocaleString()}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -264,8 +297,8 @@ export default function OnBaseSavingsCalculator() {
 
       {/* Section 2: Exchange Savings Plan */}
       <div className="bg-surface rounded-2xl border-2 border-green-300 p-8 shadow-lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="bg-success text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success text-xl font-bold text-white">
             2
           </div>
           <div>
@@ -274,26 +307,33 @@ export default function OnBaseSavingsCalculator() {
           </div>
         </div>
 
-        <div className="bg-success-subtle border border-success rounded-lg p-4 mb-6">
+        <div className="bg-success-subtle mb-6 rounded-lg border border-success p-4">
           <p className="text-sm text-success">
-            <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> <strong>Remember:</strong> Exchange shopping is tax-free! Plus, MILITARY STAR® cardholders get 5¢/gallon fuel discounts.
+            <Icon name="Lightbulb" className="mr-1 inline h-4 w-4" /> <strong>Remember:</strong>{" "}
+            Exchange shopping is tax-free! Plus, MILITARY STAR® cardholders get 5¢/gallon fuel
+            discounts.
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Sales Tax Rate */}
           <div>
-            <label htmlFor="_your_local_sales_tax_rate_" className="block text-base font-semibold text-primary mb-2">💳 Your Local Sales Tax Rate (%)</label>
-                <input
+            <label
+              htmlFor="_your_local_sales_tax_rate_"
+              className="mb-2 block text-base font-semibold text-primary"
+            >
+              💳 Your Local Sales Tax Rate (%)
+            </label>
+            <input
               type="number"
               value={salesTaxRate}
               onChange={(e) => setSalesTaxRate(Number(e.target.value))}
               step="0.01"
-              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
+              className="border-default w-full rounded-lg border-2 px-4 py-3 text-lg focus:border-green-600 focus:outline-none"
               placeholder="7.25"
             />
-            <p className="text-xs text-muted mt-1">
-              Not sure?{' '}
+            <p className="mt-1 text-xs text-muted">
+              Not sure?{" "}
               <a
                 href="https://www.avalara.com/taxrates/en/state-rates.html"
                 target="_blank"
@@ -307,133 +347,129 @@ export default function OnBaseSavingsCalculator() {
 
           {/* Major Annual Purchases */}
           <div>
-            <label className="block text-base font-semibold text-primary mb-2">
-              <Icon name="Monitor" className="h-4 w-4 inline mr-1" /> Major Annual Purchases (Electronics, Furniture, Appliances)
+            <label className="mb-2 block text-base font-semibold text-primary">
+              <Icon name="Monitor" className="mr-1 inline h-4 w-4" /> Major Annual Purchases
+              (Electronics, Furniture, Appliances)
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted">
+                $
+              </span>
               <input
                 type="number"
                 value={majorPurchases}
                 onChange={(e) => setMajorPurchases(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                className="border-default w-full rounded-lg border-2 py-3 pl-10 pr-4 text-lg focus:border-green-600 focus:outline-none"
                 placeholder="2000"
               />
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="mt-1 text-xs text-muted">
               Examples: TVs, laptops, phones, furniture, appliances (annual total)
             </p>
           </div>
 
           {/* Clothing & Apparel */}
           <div>
-            <label className="block text-base font-semibold text-primary mb-2">
+            <label className="mb-2 block text-base font-semibold text-primary">
               👕 Annual Clothing & Apparel Spending
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-medium text-muted">
+                $
+              </span>
               <input
                 type="number"
                 value={clothingApparel}
                 onChange={(e) => setClothingApparel(Number(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
+                className="border-default w-full rounded-lg border-2 py-3 pl-10 pr-4 text-lg focus:border-green-600 focus:outline-none"
                 placeholder="1200"
               />
             </div>
-            <p className="text-xs text-muted mt-1">
+            <p className="mt-1 text-xs text-muted">
               Includes: Clothing, shoes, accessories for entire family
             </p>
           </div>
 
           {/* Weekly Gas */}
           <div>
-            <label htmlFor="_average_weekly_gas_gallons" className="block text-base font-semibold text-primary mb-2">⛽ Average Weekly Gas (Gallons)</label>
-                <input
+            <label
+              htmlFor="_average_weekly_gas_gallons"
+              className="mb-2 block text-base font-semibold text-primary"
+            >
+              ⛽ Average Weekly Gas (Gallons)
+            </label>
+            <input
               type="number"
               value={weeklyGasGallons}
               onChange={(e) => setWeeklyGasGallons(Number(e.target.value))}
               step="0.1"
-              className="w-full px-4 py-3 border-2 border-default rounded-lg focus:border-green-600 focus:outline-none text-lg"
+              className="border-default w-full rounded-lg border-2 px-4 py-3 text-lg focus:border-green-600 focus:outline-none"
               placeholder="15"
             />
-            <p className="text-xs text-muted mt-1">
-              MILITARY STAR® card saves you 5¢ per gallon
-            </p>
+            <p className="mt-1 text-xs text-muted">MILITARY STAR® card saves you 5¢ per gallon</p>
           </div>
 
           {/* Exchange Results Preview */}
-          <div className="mt-8 pt-6 border-t-2 border-subtle">
+          <div className="border-subtle mt-8 border-t-2 pt-6">
             <PaywallWrapper
               isPremium={isPremium}
               title="Your Exchange Savings Revealed!"
               description="Unlock to see your detailed exchange savings breakdown including tax savings and STAR card benefits"
               toolName="On-Base Savings"
               sampleData={
-                <div className="bg-success-subtle rounded-xl p-6 border-2 border-success">
-                  <p className="text-sm text-body mb-4 font-medium text-center">
+                <div className="bg-success-subtle rounded-xl border-2 border-success p-6">
+                  <p className="text-body mb-4 text-center text-sm font-medium">
                     Estimated Annual Exchange Savings Breakdown
                   </p>
-                  
-                  <div className="grid md:grid-cols-2 gap-4 mb-4">
-                    <div className="bg-surface rounded-lg p-4 border border-green-300">
-                      <p className="text-xs text-body mb-1">Tax Savings (Non-Fuel)</p>
-                      <p className="text-3xl font-bold text-success">
-                        $224
-                      </p>
-                      <p className="text-xs text-muted mt-1">
-                        Based on 7% local rate
-                      </p>
+
+                  <div className="mb-4 grid gap-4 md:grid-cols-2">
+                    <div className="bg-surface rounded-lg border border-green-300 p-4">
+                      <p className="text-body mb-1 text-xs">Tax Savings (Non-Fuel)</p>
+                      <p className="text-3xl font-bold text-success">$224</p>
+                      <p className="mt-1 text-xs text-muted">Based on 7% local rate</p>
                     </div>
-                    
-                    <div className="bg-surface rounded-lg p-4 border border-blue-300">
-                      <p className="text-xs text-body mb-1">MILITARY STAR® Fuel Savings</p>
-                      <p className="text-3xl font-bold text-info">
-                        $39
-                      </p>
-                      <p className="text-xs text-muted mt-1">
-                        780 gallons × 5¢
-                      </p>
+
+                    <div className="bg-surface rounded-lg border border-blue-300 p-4">
+                      <p className="text-body mb-1 text-xs">MILITARY STAR® Fuel Savings</p>
+                      <p className="text-info text-3xl font-bold">$39</p>
+                      <p className="mt-1 text-xs text-muted">780 gallons × 5¢</p>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
-                    <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
-                    <p className="text-4xl font-black">
-                      $263
-                    </p>
+                  <div className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 p-5 text-center text-white">
+                    <p className="mb-1 text-sm opacity-90">Total Exchange Savings</p>
+                    <p className="text-4xl font-black">$263</p>
                   </div>
                 </div>
               }
             >
-              <div className="bg-success-subtle rounded-xl p-6 border-2 border-success">
-                <p className="text-sm text-body mb-4 font-medium text-center">
+              <div className="bg-success-subtle rounded-xl border-2 border-success p-6">
+                <p className="text-body mb-4 text-center text-sm font-medium">
                   Estimated Annual Exchange Savings Breakdown
                 </p>
-                
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                  <div className="bg-surface rounded-lg p-4 border border-green-300">
-                    <p className="text-xs text-body mb-1">Tax Savings (Non-Fuel)</p>
+
+                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                  <div className="bg-surface rounded-lg border border-green-300 p-4">
+                    <p className="text-body mb-1 text-xs">Tax Savings (Non-Fuel)</p>
                     <p className="text-3xl font-bold text-success">
                       ${Math.round(taxSavings).toLocaleString()}
                     </p>
-                    <p className="text-xs text-muted mt-1">
-                      Based on {salesTaxRate}% local rate
-                    </p>
+                    <p className="mt-1 text-xs text-muted">Based on {salesTaxRate}% local rate</p>
                   </div>
-                  
-                  <div className="bg-surface rounded-lg p-4 border border-blue-300">
-                    <p className="text-xs text-body mb-1">MILITARY STAR® Fuel Savings</p>
-                    <p className="text-3xl font-bold text-info">
+
+                  <div className="bg-surface rounded-lg border border-blue-300 p-4">
+                    <p className="text-body mb-1 text-xs">MILITARY STAR® Fuel Savings</p>
+                    <p className="text-info text-3xl font-bold">
                       ${Math.round(starCardSavings).toLocaleString()}
                     </p>
-                    <p className="text-xs text-muted mt-1">
+                    <p className="mt-1 text-xs text-muted">
                       {annualGasGallons.toLocaleString()} gallons × 5¢
                     </p>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-5 text-center">
-                  <p className="text-sm mb-1 opacity-90">Total Exchange Savings</p>
+                <div className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 p-5 text-center text-white">
+                  <p className="mb-1 text-sm opacity-90">Total Exchange Savings</p>
                   <p className="text-4xl font-black">
                     ${Math.round(totalExchangeSavings).toLocaleString()}
                   </p>
@@ -451,47 +487,43 @@ export default function OnBaseSavingsCalculator() {
         description="Unlock to see your complete on-base savings analysis with detailed breakdowns and personalized strategy"
         toolName="On-Base Savings"
         sampleData={
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
-                <Icon name="Star" className="h-6 w-6 text-body" />
-                <span className="text-sm font-black text-amber-900 uppercase tracking-wider">
+          <div className="rounded-2xl border-4 border-amber-400 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 p-10 shadow-2xl">
+            <div className="mb-8 text-center">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border-2 border-amber-400 bg-amber-100 px-4 py-2">
+                <Icon name="Star" className="text-body h-6 w-6" />
+                <span className="text-sm font-black uppercase tracking-wider text-amber-900">
                   Executive Summary
                 </span>
               </div>
-              <h2 className="text-4xl font-serif font-black text-text-headings mb-3">
+              <h2 className="text-text-headings mb-3 font-serif text-4xl font-black">
                 Your Annual Savings Command Center
               </h2>
-              <p className="text-lg text-body max-w-2xl mx-auto">
+              <p className="text-body mx-auto max-w-2xl text-lg">
                 Here&apos;s the complete picture of your on-base shopping benefits
               </p>
             </div>
 
             {/* Breakdown Cards */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="mb-8 grid gap-6 md:grid-cols-2">
               <div className="bg-surface rounded-xl border-2 border-blue-400 p-6 text-center">
-                <Icon name="ShoppingCart" className="h-10 w-10 text-body mb-3" />
-                <p className="text-sm font-semibold text-body uppercase tracking-wider mb-2">
+                <Icon name="ShoppingCart" className="text-body mb-3 h-10 w-10" />
+                <p className="text-body mb-2 text-sm font-semibold uppercase tracking-wider">
                   Commissary Savings
                 </p>
-                <p className="text-4xl font-black text-info mb-2">
-                  $2,847
-                </p>
-                <div className="flex justify-center gap-4 text-xs text-body">
+                <p className="text-info mb-2 text-4xl font-black">$2,847</p>
+                <div className="text-body flex justify-center gap-4 text-xs">
                   <span>Meat: $1,200</span>
                   <span>Pantry: $1,647</span>
                 </div>
               </div>
 
               <div className="bg-surface rounded-xl border-2 border-green-400 p-6 text-center">
-                <div className="text-4xl mb-3">🏪</div>
-                <p className="text-sm font-semibold text-body uppercase tracking-wider mb-2">
+                <div className="mb-3 text-4xl">🏪</div>
+                <p className="text-body mb-2 text-sm font-semibold uppercase tracking-wider">
                   Exchange Savings
                 </p>
-                <p className="text-4xl font-black text-success mb-2">
-                  $1,753
-                </p>
-                <div className="flex justify-center gap-4 text-xs text-body">
+                <p className="mb-2 text-4xl font-black text-success">$1,753</p>
+                <div className="text-body flex justify-center gap-4 text-xs">
                   <span>Tax: $1,400</span>
                   <span>STAR®: $353</span>
                 </div>
@@ -499,91 +531,90 @@ export default function OnBaseSavingsCalculator() {
             </div>
 
             {/* Grand Total */}
-            <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
-              <p className="text-center text-lg font-semibold mb-3 opacity-90">
-                <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
+            <div className="rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 p-8 text-white shadow-xl">
+              <p className="mb-3 text-center text-lg font-semibold opacity-90">
+                <Icon name="DollarSign" className="mr-1 inline h-5 w-5" /> Total Combined Annual
+                Savings
               </p>
-              <p className="text-center text-6xl font-black mb-6">
-                $4,600
-              </p>
-              <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
-                <p className="text-white text-center text-base leading-relaxed">
-                  <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
-                  <span className="text-2xl font-black">$4,600</span> this year.</strong>
+              <p className="mb-6 text-center text-6xl font-black">$4,600</p>
+              <div className="rounded-xl border border-white/40 bg-white/20 p-4 backdrop-blur">
+                <p className="text-center text-base leading-relaxed text-white">
+                  <strong>
+                    By strategically using your on-base benefits, your family could save an
+                    estimated <span className="text-2xl font-black">$4,600</span> this year.
+                  </strong>
                 </p>
               </div>
             </div>
 
             {/* Context */}
-            <div className="mt-6 grid md:grid-cols-3 gap-4 text-center">
-              <div className="bg-white/50 rounded-lg p-3">
-                <p className="text-xs text-body mb-1">Monthly Equivalent</p>
-                <p className="text-lg font-bold text-primary">
-                  $383/mo
-                </p>
+            <div className="mt-6 grid gap-4 text-center md:grid-cols-3">
+              <div className="rounded-lg bg-white/50 p-3">
+                <p className="text-body mb-1 text-xs">Monthly Equivalent</p>
+                <p className="text-lg font-bold text-primary">$383/mo</p>
               </div>
-              <div className="bg-white/50 rounded-lg p-3">
-                <p className="text-xs text-body mb-1">Weekly Equivalent</p>
-                <p className="text-lg font-bold text-primary">
-                  $88/wk
-                </p>
+              <div className="rounded-lg bg-white/50 p-3">
+                <p className="text-body mb-1 text-xs">Weekly Equivalent</p>
+                <p className="text-lg font-bold text-primary">$88/wk</p>
               </div>
-              <div className="bg-white/50 rounded-lg p-3">
-                <p className="text-xs text-body mb-1">Per Paycheck (24/year)</p>
-                <p className="text-lg font-bold text-primary">
-                  $192
-                </p>
+              <div className="rounded-lg bg-white/50 p-3">
+                <p className="text-body mb-1 text-xs">Per Paycheck (24/year)</p>
+                <p className="text-lg font-bold text-primary">$192</p>
               </div>
             </div>
 
-            <p className="text-xs text-muted mt-6 text-center">
-              <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
+            <p className="mt-6 text-center text-xs text-muted">
+              <Icon name="Lightbulb" className="mr-1 inline h-4 w-4" /> These estimates use
+              DeCA&apos;s published averages and your local tax rate. Actual savings may vary based
+              on shopping habits and product choices.
             </p>
           </div>
         }
       >
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl border-4 border-amber-400 p-10 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border-2 border-amber-400 rounded-full mb-4">
-              <Icon name="Star" className="h-6 w-6 text-body" />
-              <span className="text-sm font-black text-amber-900 uppercase tracking-wider">
+        <div className="rounded-2xl border-4 border-amber-400 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 p-10 shadow-2xl">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border-2 border-amber-400 bg-amber-100 px-4 py-2">
+              <Icon name="Star" className="text-body h-6 w-6" />
+              <span className="text-sm font-black uppercase tracking-wider text-amber-900">
                 Executive Summary
               </span>
             </div>
-            <h2 className="text-4xl font-serif font-black text-text-headings mb-3">
+            <h2 className="text-text-headings mb-3 font-serif text-4xl font-black">
               Your Annual Savings Command Center
             </h2>
-            <p className="text-lg text-body max-w-2xl mx-auto">
+            <p className="text-body mx-auto max-w-2xl text-lg">
               Here&apos;s the complete picture of your on-base shopping benefits
             </p>
           </div>
 
           {/* Breakdown Cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="mb-8 grid gap-6 md:grid-cols-2">
             <div className="bg-surface rounded-xl border-2 border-blue-400 p-6 text-center">
-              <Icon name="ShoppingCart" className="h-10 w-10 text-body mb-3" />
-              <p className="text-sm font-semibold text-body uppercase tracking-wider mb-2">
+              <Icon name="ShoppingCart" className="text-body mb-3 h-10 w-10" />
+              <p className="text-body mb-2 text-sm font-semibold uppercase tracking-wider">
                 Commissary Savings
               </p>
-              <p className="text-4xl font-black text-info mb-2">
+              <p className="text-info mb-2 text-4xl font-black">
                 ${Math.round(totalCommissarySavings).toLocaleString()}
               </p>
-              <div className="flex justify-center gap-4 text-xs text-body">
+              <div className="text-body flex justify-center gap-4 text-xs">
                 <span>Meat: ${Math.round(meatProduceSavings).toLocaleString()}</span>
                 <span>Pantry: ${Math.round(pantryStaplesSavings).toLocaleString()}</span>
-                {diapersBabySavings > 0 && <span>Baby: ${Math.round(diapersBabySavings).toLocaleString()}</span>}
+                {diapersBabySavings > 0 && (
+                  <span>Baby: ${Math.round(diapersBabySavings).toLocaleString()}</span>
+                )}
               </div>
             </div>
 
             <div className="bg-surface rounded-xl border-2 border-green-400 p-6 text-center">
-              <div className="text-4xl mb-3">🏪</div>
-              <p className="text-sm font-semibold text-body uppercase tracking-wider mb-2">
+              <div className="mb-3 text-4xl">🏪</div>
+              <p className="text-body mb-2 text-sm font-semibold uppercase tracking-wider">
                 Exchange Savings
               </p>
-              <p className="text-4xl font-black text-success mb-2">
+              <p className="mb-2 text-4xl font-black text-success">
                 ${Math.round(totalExchangeSavings).toLocaleString()}
               </p>
-              <div className="flex justify-center gap-4 text-xs text-body">
+              <div className="text-body flex justify-center gap-4 text-xs">
                 <span>Tax: ${Math.round(taxSavings).toLocaleString()}</span>
                 <span>STAR®: ${Math.round(starCardSavings).toLocaleString()}</span>
               </div>
@@ -591,115 +622,145 @@ export default function OnBaseSavingsCalculator() {
           </div>
 
           {/* Grand Total */}
-          <div className="bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-2xl p-8 shadow-xl">
-            <p className="text-center text-lg font-semibold mb-3 opacity-90">
-              <Icon name="DollarSign" className="h-5 w-5 inline mr-1" /> Total Combined Annual Savings
+          <div className="rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 p-8 text-white shadow-xl">
+            <p className="mb-3 text-center text-lg font-semibold opacity-90">
+              <Icon name="DollarSign" className="mr-1 inline h-5 w-5" /> Total Combined Annual
+              Savings
             </p>
-            <p className="text-center text-6xl font-black mb-6">
+            <p className="mb-6 text-center text-6xl font-black">
               ${Math.round(grandTotal).toLocaleString()}
             </p>
-            <div className="bg-white/20 backdrop-blur border border-white/40 rounded-xl p-4">
-              <p className="text-white text-center text-base leading-relaxed">
-                <strong>By strategically using your on-base benefits, your family could save an estimated{' '}
-                <span className="text-2xl font-black">${Math.round(grandTotal).toLocaleString()}</span> this year.</strong>
+            <div className="rounded-xl border border-white/40 bg-white/20 p-4 backdrop-blur">
+              <p className="text-center text-base leading-relaxed text-white">
+                <strong>
+                  By strategically using your on-base benefits, your family could save an estimated{" "}
+                  <span className="text-2xl font-black">
+                    ${Math.round(grandTotal).toLocaleString()}
+                  </span>{" "}
+                  this year.
+                </strong>
               </p>
             </div>
           </div>
 
           {/* Context */}
-          <div className="mt-6 grid md:grid-cols-3 gap-4 text-center">
-            <div className="bg-white/50 rounded-lg p-3">
-              <p className="text-xs text-body mb-1">Monthly Equivalent</p>
+          <div className="mt-6 grid gap-4 text-center md:grid-cols-3">
+            <div className="rounded-lg bg-white/50 p-3">
+              <p className="text-body mb-1 text-xs">Monthly Equivalent</p>
               <p className="text-lg font-bold text-primary">
                 ${Math.round(grandTotal / 12).toLocaleString()}/mo
               </p>
             </div>
-            <div className="bg-white/50 rounded-lg p-3">
-              <p className="text-xs text-body mb-1">Weekly Equivalent</p>
+            <div className="rounded-lg bg-white/50 p-3">
+              <p className="text-body mb-1 text-xs">Weekly Equivalent</p>
               <p className="text-lg font-bold text-primary">
                 ${Math.round(grandTotal / 52).toLocaleString()}/wk
               </p>
             </div>
-            <div className="bg-white/50 rounded-lg p-3">
-              <p className="text-xs text-body mb-1">Per Paycheck (24/year)</p>
+            <div className="rounded-lg bg-white/50 p-3">
+              <p className="text-body mb-1 text-xs">Per Paycheck (24/year)</p>
               <p className="text-lg font-bold text-primary">
                 ${Math.round(grandTotal / 24).toLocaleString()}
               </p>
             </div>
           </div>
 
-          <p className="text-xs text-muted mt-6 text-center">
-            <Icon name="Lightbulb" className="h-4 w-4 inline mr-1" /> These estimates use DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on shopping habits and product choices.
+          <p className="mt-6 text-center text-xs text-muted">
+            <Icon name="Lightbulb" className="mr-1 inline h-4 w-4" /> These estimates use
+            DeCA&apos;s published averages and your local tax rate. Actual savings may vary based on
+            shopping habits and product choices.
           </p>
         </div>
       </PaywallWrapper>
 
       {/* AI Explainer */}
-      <Explainer payload={{
-        tool: "on-base-savings",
-        inputs: {
-          commissary: { meatProduce, pantryStaples, diapersBaby },
-          exchange: { majorPurchases, clothingApparel, weeklyGasGallons }
-        },
-        outputs: {
-          commissarySavings: totalCommissarySavings,
-          exchangeSavings: totalExchangeSavings,
-          grandTotal
-        }
-      }} />
-      
+      <Explainer
+        payload={{
+          tool: "on-base-savings",
+          inputs: {
+            commissary: { meatProduce, pantryStaples, diapersBaby },
+            exchange: { majorPurchases, clothingApparel, weeklyGasGallons },
+          },
+          outputs: {
+            commissarySavings: totalCommissarySavings,
+            exchangeSavings: totalExchangeSavings,
+            grandTotal,
+          },
+        }}
+      />
+
       {/* Export Options */}
-      <div className="mt-8 pt-6 border-t border-border">
-        <ExportButtons 
+      <div className="mt-8 border-t border-border pt-6">
+        <ExportButtons
           tool="on-base-savings"
           resultsElementId="savings-results"
           data={{
-            inputs: { meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate },
-            outputs: { totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings }
+            inputs: {
+              meatProduce,
+              pantryStaples,
+              diapersBaby,
+              majorPurchases,
+              clothingApparel,
+              weeklyGasGallons,
+              salesTaxRate,
+            },
+            outputs: {
+              totalCommissarySavings,
+              totalExchangeSavings,
+              grandTotal,
+              meatProduceSavings,
+              pantryStaplesSavings,
+              diapersBabySavings,
+              taxSavings,
+              starCardSavings,
+            },
           }}
         />
       </div>
 
       {/* Weekly Shopping Planner */}
       {grandTotal > 0 && (
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
-          <h3 className="text-xl font-bold text-green-900 mb-4">
-            <Icon name="Calendar" className="h-5 w-5 inline mr-2" />
+        <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6">
+          <h3 className="mb-4 text-xl font-bold text-green-900">
+            <Icon name="Calendar" className="mr-2 inline h-5 w-5" />
             Optimized Shopping Strategy
           </h3>
-          
+
           <div className="space-y-4">
-            <div className="bg-white rounded-lg p-5 border border-green-300">
-              <h4 className="font-bold text-green-900 mb-3">Weekly Shopping Plan:</h4>
+            <div className="rounded-lg border border-green-300 bg-white p-5">
+              <h4 className="mb-3 font-bold text-green-900">Weekly Shopping Plan:</h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-bold text-white">
                     1
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-green-900">Commissary (Tuesday-Thursday)</p>
                     <p className="text-sm text-green-800">
-                      Meat, produce, pantry staples: {fmt((meatProduce + pantryStaples + diapersBaby) / 4)}/week
+                      Meat, produce, pantry staples:{" "}
+                      {fmt((meatProduce + pantryStaples + diapersBaby) / 4)}/week
                     </p>
-                    <p className="text-xs text-green-700">Best selection, shortest lines, freshest produce</p>
+                    <p className="text-xs text-green-700">
+                      Best selection, shortest lines, freshest produce
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
-                  <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
                     2
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-blue-900">Exchange (As Needed)</p>
-                    <p className="text-sm text-blue-800">
-                      Clothing, electronics, major purchases
+                    <p className="text-sm text-blue-800">Clothing, electronics, major purchases</p>
+                    <p className="text-xs text-blue-700">
+                      Tax-free shopping saves {salesTaxRate}% on every purchase
                     </p>
-                    <p className="text-xs text-blue-700">Tax-free shopping saves {salesTaxRate}% on every purchase</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
-                  <div className="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
                     3
                   </div>
                   <div className="flex-1">
@@ -707,22 +768,28 @@ export default function OnBaseSavingsCalculator() {
                     <p className="text-sm text-purple-800">
                       Fill up with MILITARY STAR®: Save {fmt(starCardSavings)}/year
                     </p>
-                    <p className="text-xs text-purple-700">5¢/gallon discount = ${(weeklyGasGallons * 0.05).toFixed(2)}/week</p>
+                    <p className="text-xs text-purple-700">
+                      5¢/gallon discount = ${(weeklyGasGallons * 0.05).toFixed(2)}/week
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-lg p-4 border border-green-300">
-                <p className="text-sm font-semibold text-green-900 mb-2">Monthly Savings Goal:</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg border border-green-300 bg-white p-4">
+                <p className="mb-2 text-sm font-semibold text-green-900">Monthly Savings Goal:</p>
                 <p className="text-3xl font-bold text-success">{fmt(grandTotal / 12)}</p>
-                <p className="text-xs text-green-700 mt-1">Track this in your budget to ensure you're maximizing benefits</p>
+                <p className="mt-1 text-xs text-green-700">
+                  Track this in your budget to ensure you're maximizing benefits
+                </p>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-green-300">
-                <p className="text-sm font-semibold text-green-900 mb-2">Weekly Budget Impact:</p>
+              <div className="rounded-lg border border-green-300 bg-white p-4">
+                <p className="mb-2 text-sm font-semibold text-green-900">Weekly Budget Impact:</p>
                 <p className="text-3xl font-bold text-success">{fmt(grandTotal / 52)}</p>
-                <p className="text-xs text-green-700 mt-1">Extra cash for family activities or emergency fund</p>
+                <p className="mt-1 text-xs text-green-700">
+                  Extra cash for family activities or emergency fund
+                </p>
               </div>
             </div>
           </div>
@@ -731,48 +798,82 @@ export default function OnBaseSavingsCalculator() {
 
       {/* Category Performance Breakdown */}
       {grandTotal > 0 && (
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl p-6">
-          <h3 className="text-xl font-bold text-indigo-900 mb-4">
-            <Icon name="BarChart" className="h-5 w-5 inline mr-2" />
+        <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+          <h3 className="mb-4 text-xl font-bold text-indigo-900">
+            <Icon name="BarChart" className="mr-2 inline h-5 w-5" />
             Savings Breakdown by Category
           </h3>
-          
+
           <div className="space-y-3">
             {[
-              { name: 'Meat & Produce', amount: meatProduceSavings, percent: (meatProduceSavings / grandTotal) * 100, color: 'bg-red-500' },
-              { name: 'Pantry Staples', amount: pantryStaplesSavings, percent: (pantryStaplesSavings / grandTotal) * 100, color: 'bg-amber-500' },
-              { name: 'Baby/Diapers', amount: diapersBabySavings, percent: (diapersBabySavings / grandTotal) * 100, color: 'bg-pink-500' },
-              { name: 'Exchange Tax Savings', amount: taxSavings, percent: (taxSavings / grandTotal) * 100, color: 'bg-blue-500' },
-              { name: 'Gas Station Rewards', amount: starCardSavings, percent: (starCardSavings / grandTotal) * 100, color: 'bg-purple-500' }
-            ].sort((a, b) => b.amount - a.amount).map((category) => (
-              <div key={category.name} className="bg-white rounded-lg p-4 border border-indigo-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-indigo-900">{category.name}</span>
-                  <span className="text-2xl font-bold text-indigo-900">{fmt(category.amount)}</span>
+              {
+                name: "Meat & Produce",
+                amount: meatProduceSavings,
+                percent: (meatProduceSavings / grandTotal) * 100,
+                color: "bg-red-500",
+              },
+              {
+                name: "Pantry Staples",
+                amount: pantryStaplesSavings,
+                percent: (pantryStaplesSavings / grandTotal) * 100,
+                color: "bg-amber-500",
+              },
+              {
+                name: "Baby/Diapers",
+                amount: diapersBabySavings,
+                percent: (diapersBabySavings / grandTotal) * 100,
+                color: "bg-pink-500",
+              },
+              {
+                name: "Exchange Tax Savings",
+                amount: taxSavings,
+                percent: (taxSavings / grandTotal) * 100,
+                color: "bg-blue-500",
+              },
+              {
+                name: "Gas Station Rewards",
+                amount: starCardSavings,
+                percent: (starCardSavings / grandTotal) * 100,
+                color: "bg-purple-500",
+              },
+            ]
+              .sort((a, b) => b.amount - a.amount)
+              .map((category) => (
+                <div
+                  key={category.name}
+                  className="rounded-lg border border-indigo-200 bg-white p-4"
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-semibold text-indigo-900">{category.name}</span>
+                    <span className="text-2xl font-bold text-indigo-900">
+                      {fmt(category.amount)}
+                    </span>
+                  </div>
+                  <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className={`${category.color} h-full rounded-full transition-all`}
+                      style={{ width: `${category.percent}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-indigo-700">
+                    {category.percent.toFixed(1)}% of total savings
+                  </p>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                  <div 
-                    className={`${category.color} h-full rounded-full transition-all`}
-                    style={{ width: `${category.percent}%` }}
-                  />
-                </div>
-                <p className="text-xs text-indigo-700 mt-1">{category.percent.toFixed(1)}% of total savings</p>
-              </div>
-            ))}
+              ))}
           </div>
 
-          <div className="mt-4 bg-white rounded-lg p-4 border border-success">
-            <p className="text-sm font-semibold text-success mb-2">Top Opportunity:</p>
+          <div className="mt-4 rounded-lg border border-success bg-white p-4">
+            <p className="mb-2 text-sm font-semibold text-success">Top Opportunity:</p>
             <p className="text-lg font-bold text-success">
               {(() => {
                 const top = [
-                  { name: 'Meat & Produce', amount: meatProduceSavings },
-                  { name: 'Pantry Staples', amount: pantryStaplesSavings },
-                  { name: 'Baby/Diapers', amount: diapersBabySavings },
-                  { name: 'Exchange Purchases', amount: taxSavings },
-                  { name: 'Gas Rewards', amount: starCardSavings }
+                  { name: "Meat & Produce", amount: meatProduceSavings },
+                  { name: "Pantry Staples", amount: pantryStaplesSavings },
+                  { name: "Baby/Diapers", amount: diapersBabySavings },
+                  { name: "Exchange Purchases", amount: taxSavings },
+                  { name: "Gas Rewards", amount: starCardSavings },
                 ].sort((a, b) => b.amount - a.amount)[0];
-                
+
                 return `${top.name} - Focus here for maximum impact`;
               })()}
             </p>
@@ -781,9 +882,11 @@ export default function OnBaseSavingsCalculator() {
       )}
 
       {/* Educational Tips */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
-        <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2"><Icon name="Lightbulb" className="h-5 w-5" /> Maximize Your Savings</h3>
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50 p-6">
+        <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-indigo-900">
+          <Icon name="Lightbulb" className="h-5 w-5" /> Maximize Your Savings
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2">
           <ul className="space-y-2 text-sm text-indigo-800">
             <li className="flex items-start gap-2">
               <span className="font-bold">•</span>
@@ -814,12 +917,29 @@ export default function OnBaseSavingsCalculator() {
           </ul>
         </div>
       </div>
-      
+
       {/* Comparison Mode */}
       <ComparisonMode
         tool="on-base-savings"
-        currentInput={{ meatProduce, pantryStaples, diapersBaby, majorPurchases, clothingApparel, weeklyGasGallons, salesTaxRate }}
-        currentOutput={{ totalCommissarySavings, totalExchangeSavings, grandTotal, meatProduceSavings, pantryStaplesSavings, diapersBabySavings, taxSavings, starCardSavings }}
+        currentInput={{
+          meatProduce,
+          pantryStaples,
+          diapersBaby,
+          majorPurchases,
+          clothingApparel,
+          weeklyGasGallons,
+          salesTaxRate,
+        }}
+        currentOutput={{
+          totalCommissarySavings,
+          totalExchangeSavings,
+          grandTotal,
+          meatProduceSavings,
+          pantryStaplesSavings,
+          diapersBabySavings,
+          taxSavings,
+          starCardSavings,
+        }}
         onLoadScenario={(input) => {
           setMeatProduce(input.meatProduce || 250);
           setPantryStaples(input.pantryStaples || 200);
@@ -834,17 +954,23 @@ export default function OnBaseSavingsCalculator() {
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-border">
-                  <th className="text-left p-3 text-sm font-bold text-primary">Scenario</th>
-                  <th className="text-right p-3 text-sm font-bold text-primary">Commissary Savings</th>
-                  <th className="text-right p-3 text-sm font-bold text-primary">Exchange Savings</th>
-                  <th className="text-right p-3 text-sm font-bold text-primary">Total Annual Savings</th>
+                  <th className="p-3 text-left text-sm font-bold text-primary">Scenario</th>
+                  <th className="p-3 text-right text-sm font-bold text-primary">
+                    Commissary Savings
+                  </th>
+                  <th className="p-3 text-right text-sm font-bold text-primary">
+                    Exchange Savings
+                  </th>
+                  <th className="p-3 text-right text-sm font-bold text-primary">
+                    Total Annual Savings
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {scenarios.map((scenario, idx) => (
-                  <tr key={scenario.id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                  <tr key={scenario.id} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                     <td className="p-3 font-semibold text-primary">{scenario.name}</td>
-                    <td className="p-3 text-right font-bold text-info">
+                    <td className="text-info p-3 text-right font-bold">
                       {fmt(scenario.output.totalCommissarySavings || 0)}
                     </td>
                     <td className="p-3 text-right font-bold text-blue-600">
@@ -864,8 +990,9 @@ export default function OnBaseSavingsCalculator() {
   );
 }
 
-const fmt = (v: number) => v.toLocaleString(undefined, { 
-  style: 'currency', 
-  currency: 'USD', 
-  maximumFractionDigits: 0 
-});
+const fmt = (v: number) =>
+  v.toLocaleString(undefined, {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });

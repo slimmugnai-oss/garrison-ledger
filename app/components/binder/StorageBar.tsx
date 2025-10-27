@@ -17,6 +17,8 @@ export default function StorageBar({ used, limit, isPremium: _isPremium }: Stora
   const storagePercent = Math.round((used / limit) * 100);
   
   // Determine tier based on limit
+  // Limits defined in /api/binder/list/route.ts
+  const FREE_LIMIT = 1 * 1024 * 1024 * 1024; // 1 GB
   const PREMIUM_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   
   let tierLabel = '1 GB Free Storage';
