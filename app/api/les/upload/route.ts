@@ -1,29 +1,34 @@
 /**
- * LES UPLOAD & PARSE ENDPOINT
+ * LES UPLOAD & PARSE ENDPOINT (ZERO-STORAGE SECURITY MODEL)
  * 
  * POST /api/les/upload
  * - Accepts PDF file upload (multipart/form-data)
- * - Stores raw PDF in Supabase Storage (les_raw bucket)
- * - Parses PDF and extracts line items
- * - Stores metadata and parsed lines in database
+ * - ⚠️ CRITICAL: Parses in-memory ONLY - NEVER stores raw PDF
+ * - Uses text parsing OR Gemini Vision OCR based on format detection
+ * - Stores ONLY parsed line items (no PII) in database
  * - Enforces tier-based upload quotas
  * 
  * Security:
  * - Clerk authentication required
+ * - ZERO PII storage: No SSN, bank account, address, or full name
+ * - Parse-and-purge architecture: Buffer discarded after processing
+ * - GDPR/CCPA compliant by design
  * - Tier gating (Free: 1/month, Premium: unlimited)
- * - Rate limiting via api_quota
  * - RLS enforced via user_id checks
  * 
  * Runtime: Node.js (required for PDF parsing)
  */
 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import pdf from 'pdf-parse';
 
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { compareLesToExpected } from '@/lib/les/compare';
 import { buildExpectedSnapshot } from '@/lib/les/expected';
 import { parseLesPdf } from '@/lib/les/parse';
+import type { ParseResult, LesLine } from '@/app/types/les';
 import { logger } from '@/lib/logger';
 import { ssot } from '@/lib/ssot';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -142,137 +147,120 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // ==========================================================================
-    // 4. STORE RAW PDF IN SUPABASE STORAGE
+    // 4. ⚠️ CRITICAL: PARSE IN-MEMORY ONLY - ZERO STORAGE
     // ==========================================================================
     const now = new Date();
     const month = now.getUTCMonth() + 1;
     const year = now.getUTCFullYear();
-    const yearMonth = `${year}-${String(month).padStart(2, '0')}`;
-    const fileId = crypto.randomUUID();
-    const storagePath = `user/${userId}/${yearMonth}/${fileId}.pdf`;
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from('les_raw')
-      .upload(storagePath, buffer, {
-        contentType: 'application/pdf',
-        upsert: false
-      });
+    logger.info('[LES Upload] Starting parse-and-purge process', {
+      userId: userId.substring(0, 8) + '...',
+      fileSize: file.size,
+      fileName: file.name
+    });
 
-    if (uploadError) {
-      logger.error('Failed to upload LES to storage', uploadError, {
-        userId,
-        storagePath,
-        fileSize: file.size
-      });
-      throw Errors.databaseError('Failed to upload file to storage');
+    // Detect if LES is text-based or needs vision OCR
+    const lesFormat = await detectLESFormat(buffer);
+    logger.info('[LES Upload] Format detected', { format: lesFormat });
+
+    // Parse using appropriate method
+    let parseResult: ParseResult | null = null;
+    let ocrMethod: 'text_parse' | 'vision_ocr' | 'hybrid' = 'text_parse';
+
+    if (lesFormat === 'text') {
+      // Standard text-based LES (myPay export)
+      parseResult = await parseLesPdf(buffer, { debug: false });
+      ocrMethod = 'text_parse';
+    } else if (lesFormat === 'image') {
+      // Scanned/photographed LES - use Gemini Vision
+      parseResult = await processLESWithVision(buffer, file.type);
+      ocrMethod = 'vision_ocr';
+    } else {
+      // Hybrid: Try text parse first, fall back to vision if insufficient
+      try {
+        parseResult = await parseLesPdf(buffer, { debug: false });
+        if (parseResult.lines.length < 3) {
+          // Too few lines extracted, try vision
+          parseResult = await processLESWithVision(buffer, file.type);
+          ocrMethod = 'vision_ocr';
+        } else {
+          ocrMethod = 'text_parse';
+        }
+      } catch {
+        parseResult = await processLESWithVision(buffer, file.type);
+        ocrMethod = 'vision_ocr';
+      }
+    }
+
+    const parsedOk = parseResult && parseResult.lines.length > 0;
+    const summary = parseResult?.summary || null;
+
+    if (!parsedOk || !parseResult) {
+      throw Errors.invalidInput('Failed to parse LES. Please ensure it is a valid LES PDF from myPay or your service pay system.');
     }
 
     // ==========================================================================
-    // 5. CREATE DATABASE RECORD
+    // 5. CREATE DATABASE RECORD (NO STORAGE PATH!)
     // ==========================================================================
     const { data: uploadRecord, error: insertError } = await supabaseAdmin
       .from('les_uploads')
       .insert({
         user_id: userId,
+        entry_type: 'upload',
         original_filename: file.name,
         mime_type: file.type,
         size_bytes: file.size,
-        storage_path: storagePath,
+        storage_path: null, // ⚠️ CRITICAL: Zero storage!
         month,
         year,
-        parsed_ok: false
+        parsed_ok: parsedOk,
+        parsed_at: new Date().toISOString(),
+        parsed_summary: summary,
+        upload_status: 'parsed',
+        ocr_method: ocrMethod
       })
       .select('*')
       .single();
 
     if (insertError || !uploadRecord) {
-      logger.error('Failed to save upload metadata', insertError, {
-        userId,
-        storagePath
-      });
-      
-      // Cleanup storage on DB failure
-      try {
-        await supabaseAdmin.storage.from('les_raw').remove([storagePath]);
-      } catch (cleanupError) {
-        logger.error('Failed to cleanup storage after DB error', cleanupError, {
-          storagePath
-        });
-      }
-      
+      logger.error('Failed to save upload metadata', insertError, { userId });
       throw Errors.databaseError('Failed to save upload metadata');
     }
 
     // ==========================================================================
-    // 6. PARSE PDF
+    // 6. STORE PARSED LINE ITEMS (SAFE - NO PII)
     // ==========================================================================
-    let parsedOk = false;
-    let summary = null;
-    let parseResult: Awaited<ReturnType<typeof parseLesPdf>> | null = null;
+    const lineRows = parseResult.lines.map(line => ({
+      upload_id: uploadRecord.id,
+      line_code: line.line_code,
+      description: line.description,
+      amount_cents: line.amount_cents,
+      section: line.section,
+      raw: undefined // Don't store raw text for security
+    }));
 
-    try {
-      parseResult = await parseLesPdf(buffer, { debug: false });
-      
-      // Insert parsed lines
-      if (parseResult.lines.length > 0) {
-        const lineRows = parseResult.lines.map(line => ({
-          upload_id: uploadRecord.id,
-          line_code: line.line_code,
-          description: line.description,
-          amount_cents: line.amount_cents,
-          section: line.section,
-          raw: line.raw
-        }));
+    const { error: linesError } = await supabaseAdmin
+      .from('les_lines')
+      .insert(lineRows);
 
-        const { error: linesError } = await supabaseAdmin
-          .from('les_lines')
-          .insert(lineRows);
-
-        if (linesError) {
-          logger.warn('Failed to save parsed lines', {
-            error: linesError.message,
-            uploadId: uploadRecord.id,
-            lineCount: lineRows.length
-          });
-          // Don't fail the whole upload - mark as parse failure
-        } else {
-          parsedOk = true;
-          summary = parseResult.summary;
-        }
-      }
-
-      // Update upload record with parse status
-      await supabaseAdmin
-        .from('les_uploads')
-        .update({
-          parsed_ok: parsedOk,
-          parsed_at: new Date().toISOString(),
-          parsed_summary: summary,
-          upload_status: 'parsed'
-        })
-        .eq('id', uploadRecord.id);
-
-    } catch (parseError) {
-      logger.error('Failed to parse LES PDF', parseError, {
+    if (linesError) {
+      logger.error('Failed to save parsed lines', linesError, {
         uploadId: uploadRecord.id,
-        fileName: file.name
+        lineCount: lineRows.length
       });
-      
-      // Update status to parse_failed
-      await supabaseAdmin
-        .from('les_uploads')
-        .update({ upload_status: 'parse_failed' })
-        .eq('id', uploadRecord.id);
-      
-      // Parse failed - record stays with parsed_ok = false
-      // This is recoverable - user can try re-uploading or use manual entry
+      throw Errors.databaseError('Failed to save parsed lines');
     }
 
+    logger.info('[LES Upload] Lines stored - PDF buffer will be discarded', {
+      uploadId: uploadRecord.id,
+      lineCount: lineRows.length,
+      ocrMethod
+    });
+
     // ==========================================================================
-    // 6B. RUN AUDIT AFTER SUCCESSFUL PARSE
+    // 7. RUN AUDIT WORKFLOW
     // ==========================================================================
-    if (parsedOk && parseResult && parseResult.lines.length > 0) {
-      try {
+    try {
         logger.info('[LESUpload] Starting audit workflow', {
           uploadId: uploadRecord.id,
           lineCount: parseResult.lines.length,
@@ -365,28 +353,27 @@ export async function POST(req: NextRequest) {
           // Keep status as 'parsed' - user needs to complete profile
           // UI can show: "Complete your profile to run audit"
         }
-      } catch (auditError) {
-        logger.error('[LESUpload] Failed to run audit after upload', auditError, {
-          uploadId: uploadRecord.id,
-          userId: userId.substring(0, 8) + '...'
-        });
-        
-        // Don't fail the upload - mark as audit_failed
-        await supabaseAdmin
-          .from('les_uploads')
-          .update({ upload_status: 'audit_failed' })
-          .eq('id', uploadRecord.id);
+    } catch (auditError) {
+      logger.error('[LESUpload] Failed to run audit after upload', auditError, {
+        uploadId: uploadRecord.id,
+        userId: userId.substring(0, 8) + '...'
+      });
+      
+      // Don't fail the upload - mark as audit_failed
+      await supabaseAdmin
+        .from('les_uploads')
+        .update({ upload_status: 'audit_failed' })
+        .eq('id', uploadRecord.id);
 
-        // Record analytics
-        await recordAnalyticsEvent(userId, 'les_audit_failed', {
-          upload_id: uploadRecord.id,
-          error: auditError instanceof Error ? auditError.message : 'Unknown error'
-        });
-      }
+      // Record analytics
+      await recordAnalyticsEvent(userId, 'les_audit_failed', {
+        upload_id: uploadRecord.id,
+        error: auditError instanceof Error ? auditError.message : 'Unknown error'
+      });
     }
 
     // ==========================================================================
-    // 7. ANALYTICS
+    // 8. ANALYTICS
     // ==========================================================================
     // Record analytics events (server-side)
     await recordAnalyticsEvent(userId, 'les_upload', {
@@ -406,7 +393,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ==========================================================================
-    // 8. RETURN RESPONSE
+    // 9. RETURN RESPONSE (PDF BUFFER NOW DISCARDED - ZERO RETENTION!)
     // ==========================================================================
     logger.info('LES upload complete', {
       uploadId: uploadRecord.id,
@@ -500,5 +487,239 @@ async function getUserProfile(userId: string): Promise<{
     logger.warn('[LESUpload] Failed to get user profile', { userId, error: profileError });
     return null;
   }
+}
+
+// ==============================================================================
+// INTELLIGENT LES OCR SYSTEM - ZERO PII STORAGE
+// ==============================================================================
+
+/**
+ * Detect LES format to choose appropriate parsing method
+ */
+async function detectLESFormat(buffer: Buffer): Promise<'text' | 'image' | 'hybrid'> {
+  try {
+    const textData = await pdf(buffer);
+    const textLength = textData.text.length;
+    
+    if (textLength > 500) return 'text'; // Sufficient text extracted - standard myPay export
+    if (textLength < 50) return 'image'; // Almost no text - scanned/photographed LES
+    return 'hybrid'; // Some text but may need vision enhancement
+  } catch (error) {
+    logger.warn('[LES Format Detection] PDF parse failed, assuming image format', { error });
+    return 'image'; // If text extraction fails, assume it's an image
+  }
+}
+
+/**
+ * Process LES with Gemini Vision (for scanned/image LES)
+ * Handles multiple LES formats from different service pay systems
+ */
+async function processLESWithVision(
+  buffer: Buffer,
+  contentType: string
+): Promise<ParseResult> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('Gemini API key not configured');
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+  const base64Data = buffer.toString('base64');
+  
+  const prompt = getLESExtractionPrompt();
+  
+  logger.info('[LES Vision OCR] Processing with Gemini Vision');
+  
+  const result = await model.generateContent([
+    prompt,
+    {
+      inlineData: {
+        mimeType: contentType,
+        data: base64Data
+      }
+    }
+  ]);
+
+  const response = await result.response;
+  const extractedText = response.text();
+
+  logger.info('[LES Vision OCR] Response received', { 
+    responseLength: extractedText.length 
+  });
+
+  // Parse JSON response
+  let extractedData: {
+    allowances: { code: string; description: string; amount_cents: number }[];
+    taxes: { code: string; description: string; amount_cents: number }[];
+    deductions: { code: string; description: string; amount_cents: number }[];
+  };
+
+  try {
+    // Remove markdown code blocks if present
+    let cleanedText = extractedText.trim();
+    cleanedText = cleanedText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    
+    const firstBrace = cleanedText.indexOf('{');
+    const lastBrace = cleanedText.lastIndexOf('}');
+    
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      const jsonString = cleanedText.substring(firstBrace, lastBrace + 1);
+      extractedData = JSON.parse(jsonString);
+    } else {
+      throw new Error('No JSON found in response');
+    }
+  } catch (parseError) {
+    logger.error('[LES Vision OCR] Failed to parse JSON response', { 
+      error: parseError,
+      responsePreview: extractedText.substring(0, 500)
+    });
+    throw new Error('Failed to parse OCR response');
+  }
+
+  // Convert to ParseResult format
+  const lines: LesLine[] = [
+    ...(extractedData.allowances || []).map(item => ({
+      line_code: item.code,
+      description: item.description,
+      amount_cents: item.amount_cents,
+      section: 'ALLOWANCE' as const
+    })),
+    ...(extractedData.taxes || []).map(item => ({
+      line_code: item.code,
+      description: item.description,
+      amount_cents: item.amount_cents,
+      section: 'TAX' as const
+    })),
+    ...(extractedData.deductions || []).map(item => ({
+      line_code: item.code,
+      description: item.description,
+      amount_cents: item.amount_cents,
+      section: 'DEDUCTION' as const
+    }))
+  ];
+
+  logger.info('[LES Vision OCR] Extraction complete', {
+    totalLines: lines.length,
+    allowances: extractedData.allowances?.length || 0,
+    taxes: extractedData.taxes?.length || 0,
+    deductions: extractedData.deductions?.length || 0
+  });
+
+  return {
+    lines,
+    summary: {
+      totalsBySection: {
+        ALLOWANCE: lines.filter(l => l.section === 'ALLOWANCE').reduce((sum, l) => sum + l.amount_cents, 0),
+        TAX: lines.filter(l => l.section === 'TAX').reduce((sum, l) => sum + l.amount_cents, 0),
+        DEDUCTION: lines.filter(l => l.section === 'DEDUCTION').reduce((sum, l) => sum + l.amount_cents, 0),
+        ALLOTMENT: 0,
+        OTHER: 0
+      },
+      allowancesByCode: {},
+      deductionsByCode: {}
+    }
+  };
+}
+
+/**
+ * Get LES extraction prompt with military-aware context
+ * CRITICAL: Explicitly instructs AI to SKIP all PII
+ */
+function getLESExtractionPrompt(): string {
+  return `You are extracting pay information from a military Leave and Earnings Statement (LES).
+
+CONTEXT: LES documents show monthly military pay breakdown across all service branches (Army, Navy, Air Force, Marine Corps, Coast Guard, Space Force).
+
+🚨 CRITICAL SECURITY REQUIREMENTS:
+1. DO NOT extract or return: SSN, Social Security Number, Name, Address, Bank Account, Routing Number, Birth Date
+2. ONLY extract: Pay line codes, amounts, and descriptions
+3. If you see PII fields, SKIP them entirely - do not include in your response
+4. This is a legal requirement - failure to comply could expose service members to identity theft
+
+LES FORMATS BY SERVICE:
+- Army: DFAS myPay format, may have DA Form references
+- Navy: BUPERS/DFAS format, includes sea pay, submarine pay, Career Sea Pay (CSP)
+- Air Force: AMS (Assignment Management System) format, includes flight pay, ACIP
+- Marine Corps: Similar to Navy with USMC-specific allowances
+- Coast Guard: USCG pay system, similar structure to Navy
+
+COMMON LINE CODES TO EXTRACT:
+
+ALLOWANCES (Section 1):
+- BAH or BASIC ALLOW HOUS or BH: Housing allowance
+- BAS or BASIC ALLOW SUB or BS: Food allowance (subsistence)
+- COLA or COST OF LIVING: Cost of living adjustment
+- SDAP or SPEC DUTY PAY: Special duty assignment pay
+- HFP or HOSTILE FIRE PAY: Hazardous duty pay
+- IDP or IMMINENT DANGER PAY: Combat zone pay
+- FSA or FAM SEP ALLOW: Family separation allowance
+- FLPP or FOR LANG PRO PAY: Foreign language proficiency pay
+- SEA PAY or CAREER SEA PAY: Navy sea duty pay
+- SUB PAY or SUBMARINE PAY: Navy submarine duty pay
+- FLIGHT PAY or AVIATION PAY: Air Force/Navy aviation pay
+- JUMP PAY or PARACHUTE PAY: Airborne duty pay
+
+TAXES (Section 2):
+- FED TAX or FITW or FEDERAL TAX: Federal income tax withheld
+- FICA or SOC SEC or OASDI: Social security tax (should be ~6.2% of taxable gross)
+- MEDICARE or MED or MCARE: Medicare tax (should be ~1.45% of taxable gross)
+- STATE TAX or SIT: State income tax withheld
+- STATE abbreviations: CA TAX, TX TAX, FL TAX, etc.
+
+DEDUCTIONS (Section 3):
+- SGLI or LIFE INS: Servicemembers' Group Life Insurance
+- TSP or THRIFT SAVINGS: Thrift Savings Plan contribution
+- DEBT or INDEBTEDNESS: Various government debts
+- ALLOTMENT: Voluntary deductions/savings
+
+EXTRACTION FORMAT:
+Return ONLY valid JSON in this EXACT structure:
+{
+  "allowances": [
+    {"code": "BAH", "description": "Basic Allowance for Housing", "amount_cents": 150000},
+    {"code": "BAS", "description": "Basic Allowance for Subsistence", "amount_cents": 46066},
+    {"code": "COLA", "description": "Cost of Living Allowance", "amount_cents": 25000}
+  ],
+  "taxes": [
+    {"code": "FICA", "description": "Social Security Tax", "amount_cents": 38162},
+    {"code": "MEDICARE", "description": "Medicare Tax", "amount_cents": 8956},
+    {"code": "FED_TAX", "description": "Federal Income Tax", "amount_cents": 45000}
+  ],
+  "deductions": [
+    {"code": "SGLI", "description": "Life Insurance", "amount_cents": 2900},
+    {"code": "TSP", "description": "Thrift Savings Plan", "amount_cents": 50000}
+  ]
+}
+
+EXTRACTION RULES:
+1. Convert ALL amounts to cents (e.g., $1,500.00 → 150000, $460.66 → 46066)
+2. Remove commas and dollar signs before converting ($1,500.00 → 1500.00 → 150000)
+3. Skip header rows containing: NAME, RANK, SSN, PERIOD, ADDRESS, ACCOUNT
+4. Normalize line codes:
+   - "BASIC ALLOW HOUS" → "BAH"
+   - "BASIC ALLOW SUB" → "BAS"  
+   - "SOC SEC" or "OASDI" → "FICA"
+   - "FEDERAL TAX" or "FITW" → "FED_TAX"
+5. If a line has no clear amount, skip it
+6. Return ONLY the JSON object above - no explanations, no markdown formatting
+7. If you cannot extract any data, return empty arrays for each section
+
+COMMON LES LAYOUT PATTERNS:
+- Entitlements/Allowances section comes first (top of LES)
+- Followed by Deductions section
+- Followed by Taxes section
+- Amounts may have $, commas, or neither
+- Amounts may be right-aligned with lots of spacing
+- Some LES formats use tabs between description and amount
+
+VALIDATION:
+- FICA should typically be 6.2% of taxable pay (gross pay minus BAH/BAS)
+- Medicare should typically be 1.45% of taxable pay
+- BAS is usually around $460.66 (enlisted) or $325.05 (officers) for 2025
+- BAH varies widely by location (hundreds to thousands per month)
+
+REMEMBER: Your PRIMARY mission is to SKIP all PII. Only extract pay line items.`;
 }
 

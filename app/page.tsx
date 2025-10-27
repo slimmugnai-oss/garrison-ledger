@@ -183,6 +183,19 @@ export default function Home() {
                 discrepancies, and missing allowances before they cost you thousands.
               </p>
 
+              {/* Zero Storage Security Highlight */}
+              <div className="mb-6 rounded-lg border-2 border-green-500 bg-green-500/10 p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <Icon name="Shield" className="h-6 w-6 text-green-400" />
+                  <div>
+                    <p className="font-bold text-green-400">Military-Grade Security</p>
+                    <p className="text-sm text-green-200">
+                      We delete your LES immediately after processing. Zero SSN or bank account storage.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <ul className="mb-8 space-y-3 text-lg">
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />

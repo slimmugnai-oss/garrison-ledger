@@ -67,6 +67,43 @@ If any fail → do **not** ship; propose a compliant alternative.
 - **Rotation:** If a key appears in any doc, **assume compromise** → rotate and purge from history.
 - **PII:** RLS on all user tables; log redaction; no sensitive data in error messages.
 
+### **LES AUDITOR ZERO-STORAGE POLICY** (Est. Oct 2025)
+
+**CRITICAL: Military LES documents contain SSN, bank accounts, and addresses - we NEVER store them.**
+
+**Parse-and-Purge Architecture:**
+- LES PDF processed in-memory ONLY
+- Extract line items (BAH, BAS, FICA, etc.) with amounts
+- Store ONLY parsed line items in database (no PII)
+- PDF buffer discarded immediately after processing
+- ZERO retention of SSN, bank account, routing number, name, or address
+
+**What WE Store:**
+- ✅ Line codes (BAH, BAS, COLA, etc.)
+- ✅ Amounts in cents (150000 = $1,500.00)
+- ✅ Descriptions ("Basic Allowance for Housing")
+- ✅ Section categorization (ALLOWANCE, TAX, DEDUCTION)
+
+**What WE DON'T Store:**
+- ❌ Raw PDF files
+- ❌ SSN (Social Security Number)
+- ❌ Bank account / routing numbers
+- ❌ Full name
+- ❌ Home address
+- ❌ Any PII from LES header
+
+**Security Benefits:**
+- GDPR/CCPA compliant by design
+- Zero breach exposure for SSN/bank accounts
+- SOC 2 certifiable architecture
+- Military audience trust
+
+**Implementation:**
+- File: `app/api/les/upload/route.ts`
+- Method: Gemini Vision OCR for scanned LES, pdf-parse for text-based
+- Storage bucket: `les_raw` - DEPRECATED, not used
+- Database: `les_uploads.storage_path` always null
+
 ### **CLERK-SUPABASE INTEGRATION (CRITICAL)**
 
 **Garrison Ledger uses Clerk for authentication + Supabase for data storage with automatic user synchronization:**

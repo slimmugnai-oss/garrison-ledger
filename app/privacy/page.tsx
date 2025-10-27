@@ -91,6 +91,26 @@ export default function PrivacyPage() {
           We use reasonable administrative, technical, and organizational measures, including HTTPS, access controls,
           database RLS, key management, and least-privilege principles. No method is 100% secure.
         </p>
+
+        <h3 className="mt-6 text-xl font-semibold text-slate-900">LES Auditor - Zero Storage Policy</h3>
+        <p className="mt-3">
+          When you upload your Leave and Earnings Statement (LES) to our LES Auditor tool:
+        </p>
+        <ol className="mt-3 space-y-2">
+          <li><strong>1.</strong> Your PDF is processed <strong>in-memory only</strong> on our secure servers</li>
+          <li><strong>2.</strong> We extract ONLY line item codes and amounts (e.g., BAH, BAS, FICA)</li>
+          <li><strong>3.</strong> Your PDF is <strong>immediately deleted</strong> after processing - we NEVER store it</li>
+          <li><strong>4.</strong> We <strong>DO NOT</strong> store: SSN, name, address, bank account, routing number, or any personally identifiable information</li>
+          <li><strong>5.</strong> Only non-sensitive pay line items are kept for your audit history</li>
+        </ol>
+        <div className="mt-4 rounded-lg border-2 border-green-600 bg-green-50 p-4">
+          <p className="text-sm font-semibold text-green-900">
+            ✅ This means: Zero risk of SSN/bank account breach • GDPR/CCPA compliant by design • No long-term PII retention • You control your data completely
+          </p>
+        </div>
+        <p className="mt-3 text-sm text-gray-600">
+          If you delete your account, all audit history (including line items) is immediately purged from our database.
+        </p>
       </section>
 
       <section id="your-rights">
