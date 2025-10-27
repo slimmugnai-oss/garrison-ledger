@@ -968,12 +968,30 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
             {/* PPM Section */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="mb-4 text-lg font-bold text-slate-900">
-                <PCSTermTooltip term="DIY Move (PPM/DITY)" citation="JTR 054703">
-                  Personally Procured Move - when you move yourself instead of using government
-                  movers. You get reimbursed based on what it would cost the government (GCC).
-                </PCSTermTooltip>
-              </h3>
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    <PCSTermTooltip term="DIY Move (PPM/DITY)" citation="JTR 054703">
+                      Personally Procured Move - when you move yourself instead of using government
+                      movers. You get reimbursed based on what it would cost the government (GCC).
+                    </PCSTermTooltip>
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-600">
+                    <strong>Optional:</strong> Only complete this if you're moving yourself. Using
+                    government movers? Skip to review.
+                  </p>
+                </div>
+                {!ppmWithholding && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentStep("review")}
+                    className="shrink-0"
+                  >
+                    Skip PPM →
+                  </Button>
+                )}
+              </div>
 
               {/* Step 1: Accept Disclaimer */}
               {!ppmDisclaimerAccepted && (
@@ -1041,12 +1059,22 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                 </div>
               )}
 
-              {!ppmDisclaimerAccepted && (
-                <p className="mt-4 text-xs text-slate-600">
-                  💡 Tip: If you're not doing a DIY move (using government movers instead), you can
-                  skip this section and continue to review.
-                </p>
-              )}
+            </div>
+
+            {/* Clear Instructions */}
+            <div className="rounded-lg bg-blue-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Icon name="Info" className="h-5 w-5 text-blue-600" />
+                <span className="font-semibold text-blue-900">What happens next?</span>
+              </div>
+              <ul className="ml-7 space-y-1 text-sm text-blue-800">
+                <li>✓ Your calculations are ready for review</li>
+                <li>✓ You can download a PDF worksheet for your records</li>
+                <li>
+                  ✓ Submit the official DD Form 1351-2 in DTS with your receipts for
+                  reimbursement
+                </li>
+              </ul>
             </div>
 
             {/* Navigation */}

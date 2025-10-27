@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (isWizardMode) {
       // Wizard mode: Get document from storage directly (no database record)
       logger.info("Processing temp document for wizard mode", { userId, documentId });
-      
+
       // For wizard mode, return mock PCS ORDERS data
       // This simulates what Gemini Vision would extract from real PCS orders
       const ocrResult = await processDocumentOCRMock({
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
         file_name: "PCS-ORDERS.pdf", // Force PCS orders detection
         file_type: "application/pdf",
       });
-      
+
       logger.info("Wizard mode OCR completed (mock PCS orders)", {
         userId,
         claimId,
         documentId,
         fieldsExtracted: Object.keys(ocrResult.extractedData).length,
       });
-      
+
       return NextResponse.json({
         success: true,
         ocrText: ocrResult.text,
