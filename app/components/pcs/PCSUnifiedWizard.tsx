@@ -8,6 +8,9 @@ import PCSProvenanceDisplay from "./PCSProvenanceDisplay";
 import PCSROIDisplay from "./PCSROIDisplay";
 import PCSTermTooltip from "./PCSTermTooltip";
 import DD1351Explainer from "./DD1351Explainer";
+import PPMDisclaimer from "./PPMDisclaimer";
+import PPMModeSelector from "./PPMModeSelector";
+import PPMWithholdingDisplay from "./PPMWithholdingDisplay";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
@@ -19,6 +22,10 @@ import {
   type FormData,
   type CalculationResult,
 } from "@/lib/pcs/calculation-engine";
+import { 
+  calculatePPMWithholding,
+  type PPMWithholdingResult,
+} from "@/lib/pcs/ppm-withholding-calculator";
 import { logger } from "@/lib/logger";
 import militaryBasesData from "@/lib/data/military-bases.json";
 
@@ -85,6 +92,18 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const [ocrData, setOcrData] = useState<any>(null);
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
+  
+  // PPM withholding calculator state
+  const [ppmDisclaimerAccepted, setPpmDisclaimerAccepted] = useState(false);
+  const [ppmMode, setPpmMode] = useState<"official" | "estimator" | null>(null);
+  const [ppmGccAmount, setPpmGccAmount] = useState<number | null>(null);
+  const [ppmWithholding, setPpmWithholding] = useState<PPMWithholdingResult | null>(null);
+  const [ppmExpenses, setPpmExpenses] = useState({
+    movingCosts: 0,
+    fuelReceipts: 0,
+    laborCosts: 0,
+    tollsAndFees: 0,
+  });
 
   /**
    * Extract ZIP code from military base name
@@ -293,6 +312,74 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const updateFormData = (updates: Partial<WizardFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
+
+  /**
+   * Handle PPM mode selection and calculate withholding
+   */
+  const handlePPMCalculation = async (mode: "official" | "estimator", data: any) => {
+    setPpmMode(mode);
+    setPpmGccAmount(data.gccAmount);
+    
+    if (data.movingExpenses !== undefined) {
+      setPpmExpenses({
+        movingCosts: data.movingExpenses,
+        fuelReceipts: data.fuelReceipts || 0,
+        laborCosts: data.laborCosts || 0,
+        tollsAndFees: data.tollsAndFees || 0,
+      });
+    }
+    
+    // Calculate withholding
+    try {
+      // Extract destination state from base
+      const destState = extractStateFromBase(formData.destination_base || "");
+      
+      const withholdingResult = await calculatePPMWithholding({
+        gccAmount: data.gccAmount,
+        incentivePercentage: 100, // Current rate (admin can override later)
+        allowedExpenses: {
+          movingCosts: data.movingExpenses || 0,
+          fuelReceipts: data.fuelReceipts || 0,
+          laborCosts: data.laborCosts || 0,
+          tollsAndFees: data.tollsAndFees || 0,
+        },
+        destinationState: destState,
+      });
+      
+      setPpmWithholding(withholdingResult);
+      
+      // Update form data with PPM amount for overall calculation
+      updateFormData({
+        actual_weight: data.weight || formData.actual_weight,
+      });
+      
+      logger.info("PPM withholding calculated:", {
+        mode,
+        gcc: data.gccAmount,
+        netPayout: withholdingResult.estimatedNetPayout,
+      });
+    } catch (error) {
+      logger.error("Failed to calculate PPM withholding:", error);
+      toast.error("Failed to calculate PPM withholding");
+    }
+  };
+
+  /**
+   * Extract state code from base name
+   */
+  const extractStateFromBase = useCallback((baseName: string): string => {
+    if (!baseName) return "TX"; // Default fallback
+    
+    const normalizedInput = baseName.toLowerCase().trim();
+    const base = militaryBasesData.bases.find(
+      (b: any) =>
+        b.name.toLowerCase().includes(normalizedInput) ||
+        normalizedInput.includes(b.name.toLowerCase()) ||
+        b.city.toLowerCase().includes(normalizedInput)
+    );
+    
+    return base?.state || "TX"; // Default to TX (no state tax)
+  }, []);
 
   const handleOCRComplete = (extractedData: any) => {
     setOcrData(extractedData);
@@ -847,24 +934,77 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
               </div>
             </div>
 
-            {/* PPM Weight (Optional) */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                <PCSTermTooltip term="DIY Move Weight (Optional)" citation="JTR 054703">
-                  If you're moving yourself (PPM/DITY), enter the weight from your weigh tickets.
-                  You'll be reimbursed based on the government's cost to move that weight.
+            {/* PPM Section */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="mb-4 text-lg font-bold text-slate-900">
+                <PCSTermTooltip term="DIY Move (PPM/DITY)" citation="JTR 054703">
+                  Personally Procured Move - when you move yourself instead of using government
+                  movers. You get reimbursed based on what it would cost the government (GCC).
                 </PCSTermTooltip>
-              </label>
-              <Input
-                type="number"
-                placeholder="e.g., 8000 (pounds)"
-                value={formData.actual_weight?.toString() || ""}
-                onChange={(value) => updateFormData({ actual_weight: parseInt(value, 10) || 0 })}
-                className="w-full"
-              />
-              <p className="mt-1 text-xs text-slate-500">
-                Leave blank if not doing a DIY move (PPM/DITY)
-              </p>
+              </h3>
+
+              {/* Step 1: Accept Disclaimer */}
+              {!ppmDisclaimerAccepted && (
+                <PPMDisclaimer onAccept={() => setPpmDisclaimerAccepted(true)} />
+              )}
+
+              {/* Step 2: Choose Mode & Enter Data */}
+              {ppmDisclaimerAccepted && !ppmWithholding && (
+                <PPMModeSelector
+                  onModeSelected={handlePPMCalculation}
+                  weight={formData.actual_weight || formData.estimated_weight}
+                  distance={formData.distance_miles}
+                />
+              )}
+
+              {/* Step 3: Show Results */}
+              {ppmWithholding && (
+                <div className="space-y-4">
+                  <PPMWithholdingDisplay
+                    result={ppmWithholding}
+                    allowEdit={true}
+                    onUpdateRates={async (federal, state) => {
+                      // Recalculate with custom rates
+                      const destState = extractStateFromBase(formData.destination_base || "");
+                      const updated = await calculatePPMWithholding({
+                        gccAmount: ppmGccAmount!,
+                        incentivePercentage: 100,
+                        allowedExpenses: {
+                          movingCosts: ppmExpenses.movingCosts,
+                          fuelReceipts: ppmExpenses.fuelReceipts,
+                          laborCosts: ppmExpenses.laborCosts,
+                          tollsAndFees: ppmExpenses.tollsAndFees,
+                        },
+                        destinationState: destState,
+                        customFederalRate: federal,
+                        customStateRate: state,
+                      });
+                      setPpmWithholding(updated);
+                    }}
+                  />
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setPpmMode(null);
+                      setPpmGccAmount(null);
+                      setPpmWithholding(null);
+                      setPpmDisclaimerAccepted(false);
+                    }}
+                    className="w-full"
+                  >
+                    Recalculate PPM
+                  </Button>
+                </div>
+              )}
+
+              {!ppmDisclaimerAccepted && (
+                <p className="mt-4 text-xs text-slate-600">
+                  💡 Tip: If you're not doing a DIY move (using government movers instead), you can
+                  skip this section and continue to review.
+                </p>
+              )}
             </div>
 
             {/* Navigation */}
