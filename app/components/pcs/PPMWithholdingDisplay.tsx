@@ -94,7 +94,7 @@ export default function PPMWithholdingDisplay({
               {result.effectiveWithholdingRate.toFixed(1)}% effective rate
             </span>
           </div>
-          
+
           <div className="mb-3 rounded-lg bg-blue-50 p-3">
             <p className="text-xs text-blue-900">
               <Icon name="Info" className="mr-1 inline h-3 w-3" />
@@ -192,13 +192,15 @@ export default function PPMWithholdingDisplay({
         {/* Net Payout */}
         <div className="rounded-lg bg-gradient-to-br from-green-600 to-green-700 p-6 text-white">
           <div className="mb-2 flex items-center gap-2">
-            <Icon name="Wallet" className="h-5 w-5" />
-            <div className="text-sm font-medium opacity-90">Estimated Take-Home</div>
+            <Icon name="DollarSign" className="h-5 w-5" />
+            <div className="text-sm font-medium opacity-90">Estimated Net Payout</div>
           </div>
           <div className="text-4xl font-black">${result.estimatedNetPayout.toLocaleString()}</div>
           <div className="mt-2 text-sm opacity-90">
-            After estimated DFAS withholding ({result.effectiveWithholdingRate.toFixed(1)}% of
-            gross)
+            After typical DFAS withholding ({result.effectiveWithholdingRate.toFixed(1)}% of gross)
+          </div>
+          <div className="mt-2 text-xs opacity-75">
+            Your actual payout may vary based on your W-4 elections
           </div>
         </div>
 
@@ -226,7 +228,7 @@ export default function PPMWithholdingDisplay({
               <li>Combat zone tax exclusions or other military benefits</li>
             </ul>
           </div>
-          
+
           <div className="mt-3 rounded-lg bg-amber-100 p-2 text-xs text-amber-900">
             <p className="font-bold">For accurate tax planning:</p>
             <ul className="mt-1 space-y-1">
@@ -252,7 +254,9 @@ export default function PPMWithholdingDisplay({
                   Withholding Estimator
                 </a>
               </li>
-              <li>• <strong>myPay:</strong> Adjust W-4 elections if needed</li>
+              <li>
+                • <strong>myPay:</strong> Adjust W-4 elections if needed
+              </li>
             </ul>
           </div>
         </div>

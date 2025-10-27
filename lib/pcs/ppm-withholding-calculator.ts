@@ -1,11 +1,11 @@
 /**
  * PPM WITHHOLDING CALCULATOR
- * 
+ *
  * Estimates DFAS withholding on PPM incentive payments using IRS supplemental wage rates.
- * 
+ *
  * ⚠️  IMPORTANT: This is NOT tax advice. Shows estimated withholding only.
  * Actual tax liability depends on total annual income, filing status, and deductions.
- * 
+ *
  * Uses:
  * - IRS flat supplemental rate: 22% federal (public knowledge)
  * - State supplemental rates from state_tax_rates table
@@ -17,27 +17,33 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
 export interface PPMWithholdingInput {
-  gccAmount: number;              // From MilMove or estimator
-  incentivePercentage: number;    // 100% current (or admin override)
+  gccAmount: number; // From MilMove or estimator
+  incentivePercentage: number; // 100% current (or admin override)
+  mode?: "official" | "estimator"; // Track source for confidence scoring
   allowedExpenses: {
-    movingCosts: number;          // Truck rental, equipment, supplies
-    fuelReceipts: number;         // Gas/diesel costs
-    laborCosts: number;           // Hired help, packing materials
-    tollsAndFees: number;         // Toll roads, parking, weigh tickets
+    movingCosts: number; // Truck rental, equipment, supplies
+    fuelReceipts: number; // Gas/diesel costs
+    laborCosts: number; // Hired help, packing materials
+    tollsAndFees: number; // Toll roads, parking, weigh tickets
   };
-  destinationState: string;       // Two-letter code (NC, CA, TX, etc.)
-  
+  destinationState: string; // Two-letter code (NC, CA, TX, etc.)
+
   // Optional: User can override default rates
-  customFederalRate?: number;     // Default: 22%
-  customStateRate?: number;       // Default: from database
-  yearToDateFICA?: number;        // For FICA cap calculation
+  customFederalRate?: number; // Default: 22%
+  customStateRate?: number; // Default: from database
+  yearToDateFICA?: number; // For FICA cap calculation
 }
 
 export interface PPMWithholdingResult {
+  gccAmount: number;
+  incentivePercentage: number;
+  source: string; // "MilMove (user-entered)" or "Estimator"
+  confidence: number; // 100 for official, 50 for estimator
+  
   grossPayout: number;
   totalAllowedExpenses: number;
   taxableAmount: number;
-  
+
   estimatedWithholding: {
     federal: {
       amount: number;
@@ -64,11 +70,11 @@ export interface PPMWithholdingResult {
       basis: string;
     };
   };
-  
+
   totalWithholding: number;
   estimatedNetPayout: number;
   effectiveWithholdingRate: number; // % of gross withheld
-  
+
   // Legal protection
   disclaimer: string;
   isEstimate: true;
@@ -84,26 +90,26 @@ export async function calculatePPMWithholding(
 ): Promise<PPMWithholdingResult> {
   // 1. Calculate gross PPM payout
   const grossPayout = input.gccAmount * (input.incentivePercentage / 100);
-  
+
   // 2. Sum allowed operating expenses (reduce taxable amount)
-  const totalExpenses = 
+  const totalExpenses =
     input.allowedExpenses.movingCosts +
     input.allowedExpenses.fuelReceipts +
     input.allowedExpenses.laborCosts +
     input.allowedExpenses.tollsAndFees;
-  
+
   // 3. Calculate taxable amount (gross - allowed deductions)
   const taxableAmount = Math.max(0, grossPayout - totalExpenses);
-  
+
   // 4. Federal withholding (IRS supplemental rate - flat 22%)
   const federalRate = input.customFederalRate ?? 22;
   const federalWithholding = taxableAmount * (federalRate / 100);
-  
+
   // 5. State withholding (query from state_tax_rates table)
   const { stateRate, stateName } = await getStateWithholdingRate(input.destinationState);
   const actualStateRate = input.customStateRate ?? stateRate;
   const stateWithholding = taxableAmount * (actualStateRate / 100);
-  
+
   // 6. FICA withholding (6.2% up to annual cap)
   const FICA_CAP_2025 = 168600; // IRS 2025 Social Security wage base
   const yearToDateFICA = input.yearToDateFICA || 0;
@@ -111,21 +117,22 @@ export async function calculatePPMWithholding(
   const ficaBase = Math.min(taxableAmount, remainingFICABase);
   const ficaWithholding = ficaBase * 0.062;
   const ficaCapped = taxableAmount > remainingFICABase;
-  
+
   // 7. Medicare withholding (1.45% no cap)
   const medicareWithholding = taxableAmount * 0.0145;
-  
+
   // 8. Calculate totals
-  const totalWithholding = 
-    federalWithholding + 
-    stateWithholding + 
-    ficaWithholding + 
-    medicareWithholding;
-  
+  const totalWithholding =
+    federalWithholding + stateWithholding + ficaWithholding + medicareWithholding;
+
   const estimatedNetPayout = grossPayout - totalWithholding;
   const effectiveRate = (totalWithholding / grossPayout) * 100;
-  
+
   return {
+    gccAmount: input.gccAmount,
+    incentivePercentage: input.incentivePercentage,
+    source: input.mode === "estimator" ? "Estimator (planning only)" : "MilMove (user-entered)",
+    confidence: input.mode === "estimator" ? 50 : 100,
     grossPayout,
     totalAllowedExpenses: totalExpenses,
     taxableAmount,
@@ -158,7 +165,8 @@ export async function calculatePPMWithholding(
     totalWithholding,
     estimatedNetPayout,
     effectiveWithholdingRate: effectiveRate,
-    disclaimer: "WITHHOLDING ESTIMATE ONLY - This shows typical DFAS withholding using IRS standard supplemental wage rates (22% federal flat per IRS Publication 15). This is NOT your actual tax liability and NOT tax advice. Actual withholding varies based on W-4 elections. Actual tax liability depends on total annual income, filing status, and deductions. Adjust rates above if you know your specific withholding percentages. Consult a tax professional or use IRS.gov tools for personalized tax planning.",
+    disclaimer:
+      "WITHHOLDING ESTIMATE ONLY - This shows typical DFAS withholding using IRS standard supplemental wage rates (22% federal flat per IRS Publication 15). This is NOT your actual tax liability and NOT tax advice. Actual withholding varies based on W-4 elections. Actual tax liability depends on total annual income, filing status, and deductions. Adjust rates above if you know your specific withholding percentages. Consult a tax professional or use IRS.gov tools for personalized tax planning.",
     isEstimate: true,
     notTaxAdvice: true,
   };
@@ -179,7 +187,7 @@ async function getStateWithholdingRate(stateCode: string): Promise<{
       .eq("state_code", stateCode.toUpperCase())
       .eq("effective_year", 2025)
       .maybeSingle();
-    
+
     if (error || !data) {
       logger.warn("State tax rate not found, using 5% default", { stateCode });
       return {
@@ -187,11 +195,11 @@ async function getStateWithholdingRate(stateCode: string): Promise<{
         stateName: stateCode,
       };
     }
-    
+
     // Use flat_rate if available (some states have flat tax)
     // Otherwise use avg_rate_mid (midpoint for progressive states)
     const rate = parseFloat(data.flat_rate || data.avg_rate_mid || "5.0");
-    
+
     return {
       stateRate: rate,
       stateName: data.state_name,
@@ -231,12 +239,12 @@ export interface PPMFromGCCResult {
 
 export function calculatePPMFromGCC(input: PPMFromGCCInput): PPMFromGCCResult {
   const grossPayout = input.gccAmount * (input.incentivePercentage / 100);
-  
+
   // Determine which incentive period applies
   const moveDate = new Date(input.moveDate);
   const peakStart = new Date("2025-05-15");
   const peakEnd = new Date("2025-09-30");
-  
+
   let incentivePeriod;
   if (moveDate >= peakStart && moveDate <= peakEnd) {
     incentivePeriod = {
@@ -251,7 +259,7 @@ export function calculatePPMFromGCC(input: PPMFromGCCInput): PPMFromGCCResult {
       description: "Standard PPM Incentive Rate",
     };
   }
-  
+
   return {
     gccAmount: input.gccAmount,
     incentivePercentage: input.incentivePercentage,
@@ -270,7 +278,7 @@ export function calculatePPMFromGCC(input: PPMFromGCCInput): PPMFromGCCResult {
 export interface PPMEstimatorInput {
   weight: number;
   distance: number;
-  costPerPoundMile?: number;  // Default: $0.50 industry average
+  costPerPoundMile?: number; // Default: $0.50 industry average
   incentivePercentage?: number;
 }
 
@@ -282,8 +290,8 @@ export interface PPMEstimatorResult {
   incentivePercentage: number;
   estimatedPayout: number;
   varianceRange: {
-    min: number;  // -30%
-    max: number;  // +30%
+    min: number; // -30%
+    max: number; // +30%
   };
   confidence: 50; // Low - not official
   disclaimer: string;
@@ -291,16 +299,16 @@ export interface PPMEstimatorResult {
 }
 
 export function estimatePPMPayout(input: PPMEstimatorInput): PPMEstimatorResult {
-  const costPerLbMi = input.costPerPoundMile || 0.50;
+  const costPerLbMi = input.costPerPoundMile || 0.5;
   const incentivePercent = input.incentivePercentage || 100;
-  
+
   // Formula: weight (lbs) × distance (mi) × cost per lb-mi
   const estimatedGCC = input.weight * input.distance * costPerLbMi;
   const estimatedPayout = estimatedGCC * (incentivePercent / 100);
-  
+
   // Show ±30% variance (real GCC varies significantly)
-  const variance = estimatedPayout * 0.30;
-  
+  const variance = estimatedPayout * 0.3;
+
   return {
     weight: input.weight,
     distance: input.distance,
@@ -313,8 +321,8 @@ export function estimatePPMPayout(input: PPMEstimatorInput): PPMEstimatorResult 
       max: estimatedPayout + variance,
     },
     confidence: 50,
-    disclaimer: "PLANNING ESTIMATE ONLY. Actual GCC may vary by ±30% based on route complexity, seasonal demand, and contract pricing. This is NOT your official reimbursement. Get official GCC from move.mil.",
+    disclaimer:
+      "PLANNING ESTIMATE ONLY. Actual GCC may vary by ±30% based on route complexity, seasonal demand, and contract pricing. This is NOT your official reimbursement. Get official GCC from move.mil.",
     recommendedAction: "Visit move.mil PPM calculator for official GCC estimate",
   };
 }
-

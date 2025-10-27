@@ -13,12 +13,12 @@ interface PPMDisclaimerProps {
 /**
  * Required disclaimer for PPM calculations
  * Must be acknowledged before using PPM withholding estimator
- * 
+ *
  * Legal protection: Makes clear this is not tax advice
  */
 export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
   const [checked, setChecked] = useState(false);
-  
+
   return (
     <Card className="border-2 border-amber-600 bg-amber-50">
       <CardContent className="p-6">
@@ -32,8 +32,8 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
             </h3>
             <div className="space-y-3 text-sm text-amber-900">
               <p>
-                <strong>This tool is NOT affiliated with DoD.</strong> PPM payout estimates are
-                for planning purposes only. Your actual reimbursement is determined by your
+                <strong>This tool is NOT affiliated with DoD.</strong> PPM payout estimates are for
+                planning purposes only. Your actual reimbursement is determined by your
                 Transportation Office using official Government Constructed Cost and DTOD distances.
               </p>
               <p>
@@ -44,8 +44,8 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
               </p>
               <p className="rounded bg-amber-100 p-2 text-xs font-semibold">
                 💡 Pro Tip: Check your most recent LES to see YOUR actual federal and state
-                withholding percentages. You can adjust the default rates in the calculator to
-                match your specific situation.
+                withholding percentages. You can adjust the default rates in the calculator to match
+                your specific situation.
               </p>
               <p>
                 Entering a GCC amount from MilMove provides the most accurate gross payout estimate.{" "}
@@ -62,7 +62,7 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="mb-4 flex items-start gap-3 border-t border-amber-200 pt-4">
           <input
             type="checkbox"
@@ -77,7 +77,7 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
             tax planning.
           </label>
         </div>
-        
+
         <Button
           onClick={onAccept}
           disabled={!checked}
@@ -85,7 +85,7 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
         >
           Continue to PPM Calculator
         </Button>
-        
+
         <p className="mt-3 text-center text-xs text-amber-800">
           For tax assistance:{" "}
           <a
@@ -101,4 +101,3 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
     </Card>
   );
 }
-

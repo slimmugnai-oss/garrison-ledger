@@ -338,6 +338,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       const withholdingResult = await calculatePPMWithholding({
         gccAmount: data.gccAmount,
         incentivePercentage: 100, // Current rate (admin can override later)
+        mode, // Pass through official vs. estimator mode
         allowedExpenses: {
           movingCosts: data.movingExpenses || 0,
           fuelReceipts: data.fuelReceipts || 0,
@@ -970,6 +971,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                       const updated = await calculatePPMWithholding({
                         gccAmount: ppmGccAmount!,
                         incentivePercentage: 100,
+                        mode: ppmMode!, // Pass the mode through
                         allowedExpenses: {
                           movingCosts: ppmExpenses.movingCosts,
                           fuelReceipts: ppmExpenses.fuelReceipts,
