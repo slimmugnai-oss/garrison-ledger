@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     // Convert to buffer
     const pdfBuffer = Buffer.from(pdf.output("arraybuffer"));
 
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="pcs-claims-${new Date().toISOString().split("T")[0]}.pdf"`,

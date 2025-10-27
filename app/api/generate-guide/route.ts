@@ -95,7 +95,7 @@ export async function POST() {
       duration,
     });
 
-    return new NextResponse(new Uint8Array(buffer), {
+    return new NextResponse(buffer, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="Your-AI-Curated-Plan-${new Date().toISOString().slice(0, 10)}.pdf"`,

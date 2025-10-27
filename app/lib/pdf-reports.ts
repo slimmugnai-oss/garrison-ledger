@@ -64,7 +64,7 @@ const fmt = (value: number) => {
 /**
  * Generate TSP Modeler Report
  */
-export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): string {
+export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): Buffer {
   const doc = initializePDF("TSP Allocation Modeler Report");
 
   let yPos = HEADER_HEIGHT + 15;
@@ -153,13 +153,13 @@ export function generateTSPReport(inputs: TSPInputs, outputs: TSPOutputs): strin
     { align: "center", maxWidth: 170 }
   );
 
-  return doc.output("dataurlstring");
+  return Buffer.from(doc.output("arraybuffer"));
 }
 
 /**
  * Generate PCS Planner Report
  */
-export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): string {
+export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): Buffer {
   const doc = initializePDF("PCS Financial Planner Report");
 
   let yPos = HEADER_HEIGHT + 15;
@@ -218,7 +218,7 @@ export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): strin
   doc.text("Total Estimated Value:", 25, yPos + 10);
   doc.text(fmt(outputs.totalValue || 0), 25, yPos + 20);
 
-  return doc.output("dataurlstring");
+  return Buffer.from(doc.output("arraybuffer"));
 }
 
 /**
@@ -227,7 +227,7 @@ export function generatePCSReport(inputs: PCSInputs, outputs: PCSOutputs): strin
 export function generateHouseHackingReport(
   inputs: HouseHackInputs,
   outputs: HouseHackOutputs
-): string {
+): Buffer {
   const doc = initializePDF("House Hacking Analysis Report");
 
   let yPos = HEADER_HEIGHT + 15;
@@ -276,7 +276,7 @@ export function generateHouseHackingReport(
     headStyles: { fillColor: BRAND_COLOR },
   });
 
-  return doc.output("dataurlstring");
+  return Buffer.from(doc.output("arraybuffer"));
 }
 
 /**
@@ -289,7 +289,7 @@ export function generateGenericReport(
   inputs: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   outputs: any
-): string {
+): Buffer {
   const doc = initializePDF(title);
 
   let yPos = HEADER_HEIGHT + 15;
@@ -340,7 +340,7 @@ export function generateGenericReport(
     });
   }
 
-  return doc.output("dataurlstring");
+  return Buffer.from(doc.output("arraybuffer"));
 }
 
 /**
@@ -353,7 +353,7 @@ export function generateCalculatorReport(
   inputs: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   outputs: any
-): string {
+): Buffer {
   switch (calculatorName) {
     case "tsp":
       return generateTSPReport(inputs, outputs);

@@ -37,14 +37,21 @@ export default function ExportButtons({ tool, resultsElementId: _resultsElementI
     track(`${tool}_pdf_export`);
 
     try {
-      // Generate PDF using our library
-      const pdfDataUrl = generateCalculatorReport(tool, data.inputs, data.outputs);
+      // Generate PDF using our library (returns Buffer)
+      const pdfBuffer = generateCalculatorReport(tool, data.inputs, data.outputs);
       
-      // Convert data URL to blob and download
+      // Convert Buffer to Blob and create download URL
+      const pdfBlob = new Blob([new Uint8Array(pdfBuffer)], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      
+      // Trigger download
       const link = document.createElement('a');
       link.download = `garrison-ledger-${tool}-report-${new Date().toISOString().split('T')[0]}.pdf`;
-      link.href = pdfDataUrl;
+      link.href = blobUrl;
       link.click();
+      
+      // Clean up blob URL
+      URL.revokeObjectURL(blobUrl);
 
       // Show success message
       alert('✅ Professional PDF report downloaded! Check your downloads folder.');

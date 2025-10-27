@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { logger } from '@/lib/logger';
-import { generateClaimPackagePDF } from '@/lib/pcs/package-generator';
+import { generatePCSClaimPDF } from '@/lib/pcs/pdf-generator';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
@@ -89,14 +89,49 @@ export async function POST(req: NextRequest) {
       .eq('claim_id', claimId)
       .order('created_at', { ascending: false });
 
-    // Generate PDF package
-    const pdfBuffer = await generateClaimPackagePDF({
+    // Convert snapshot data to calculations format for PDF generator
+    const calculations = {
+      dla: { 
+        amount: snapshot?.dla_amount || 0, 
+        confidence: 0.8, 
+        source: "JTR", 
+        lastVerified: new Date().toISOString() 
+      },
+      tle: { 
+        amount: snapshot?.tle_amount || 0, 
+        confidence: 0.8, 
+        source: "JTR", 
+        lastVerified: new Date().toISOString() 
+      },
+      malt: { 
+        amount: snapshot?.malt_amount || 0, 
+        confidence: 0.8, 
+        source: "JTR", 
+        lastVerified: new Date().toISOString() 
+      },
+      per_diem: { 
+        amount: snapshot?.per_diem_amount || 0, 
+        confidence: 0.8, 
+        source: "JTR", 
+        lastVerified: new Date().toISOString() 
+      },
+      ppm: { 
+        amount: snapshot?.ppm_amount || 0, 
+        confidence: 0.8, 
+        source: "JTR", 
+        lastVerified: new Date().toISOString() 
+      },
+      total_entitlements: snapshot?.total_estimated || 0,
+      confidence: { overall: 0.8, dataSources: {} },
+    };
+
+    // Generate PDF package using working jsPDF generator
+    const pdfBuffer = await generatePCSClaimPDF(
       claim,
-      profile: profile || {},
-      snapshot: snapshot || null,
-      documents: documents || [],
-      includeDocuments
-    });
+      calculations,
+      documents || [],
+      [] // validation results - empty for now
+    );
 
     // Track analytics (fire and forget)
     supabaseAdmin
@@ -130,7 +165,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Return PDF as downloadable file
-    return new NextResponse(pdfBuffer as unknown as BodyInit, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

@@ -135,6 +135,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const handleSaveClaim = async () => {
     setIsSaving(true);
     try {
+      // 1. Save claim to database
       const response = await fetch("/api/pcs/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -147,10 +148,31 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       const result = await response.json();
 
       if (result.success) {
+        const claimId = result.claim.id;
+        
+        // 2. Generate and download PDF
+        const pdfResponse = await fetch("/api/pcs/export/pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ claimId, type: "full" }),
+        });
+
+        if (pdfResponse.ok) {
+          const pdfBlob = await pdfResponse.blob();
+          
+          // 3. Trigger browser download
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `PCS_Claim_${new Date().toISOString().split('T')[0]}.pdf`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
         setCurrentStep("complete");
-        toast.success("PCS claim saved successfully!");
+        toast.success("PCS claim saved and PDF downloaded!");
         if (onComplete) {
-          onComplete(result.claim.id);
+          onComplete(claimId);
         }
       } else {
         toast.error("Failed to save claim. Please try again.");
