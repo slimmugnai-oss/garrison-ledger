@@ -39,7 +39,7 @@ export interface PPMWithholdingResult {
   incentivePercentage: number;
   source: string; // "MilMove (user-entered)" or "Estimator"
   confidence: number; // 100 for official, 50 for estimator
-  
+
   grossPayout: number;
   totalAllowedExpenses: number;
   taxableAmount: number;
