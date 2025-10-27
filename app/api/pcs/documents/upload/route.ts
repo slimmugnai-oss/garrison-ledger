@@ -84,9 +84,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Save document record to database
-    const { data: documentData, error: dbError } = await supabaseAdmin
-      .from("pcs_claim_documents")
-      .insert({
+    // For wizard mode (temp-wizard), skip database insert - OCR will happen in-memory
+    let documentData: any;
+    
+    if (claimId === "temp-wizard") {
+      // Wizard mode: Return temp document for OCR processing only
+      documentData = {
+        id: `temp-${timestamp}`,
         claim_id: claimId,
         user_id: userId,
         file_name: file.name,
@@ -95,26 +99,42 @@ export async function POST(request: NextRequest) {
         file_type: file.type,
         storage_url: urlData.publicUrl,
         thumbnail_url: thumbnailUrl,
-        upload_status: "uploaded",
+        upload_status: "temp",
         created_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
+      };
+      
+      logger.info("PCS document uploaded (wizard mode - temp)", {
+        userId,
+        claimId,
+        fileName: file.name,
+        fileSize: file.size,
+      });
+    } else {
+      // Real claim mode: Save to database
+      const { data, error: dbError } = await supabaseAdmin
+        .from("pcs_claim_documents")
+        .insert({
+          claim_id: claimId,
+          user_id: userId,
+          file_name: file.name,
+          file_path: fileName,
+          file_size: file.size,
+          file_type: file.type,
+          storage_url: urlData.publicUrl,
+          thumbnail_url: thumbnailUrl,
+          upload_status: "uploaded",
+          created_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
-    if (dbError) {
-      logger.error("Database insert error:", dbError);
-      return NextResponse.json({ error: "Failed to save document record" }, { status: 500 });
+      if (dbError) {
+        logger.error("Database insert error:", dbError);
+        return NextResponse.json({ error: "Failed to save document record" }, { status: 500 });
+      }
+      
+      documentData = data;
     }
-
-    // Log successful upload
-    logger.info("PCS document uploaded successfully", {
-      userId,
-      claimId,
-      documentId: documentData.id,
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type,
-    });
 
     return NextResponse.json({
       success: true,
