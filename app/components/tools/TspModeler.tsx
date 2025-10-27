@@ -174,6 +174,7 @@ export default function TspModeler() {
       setLoading(true);
       track("tsp_input_change");
       try {
+        console.log('[TSP] Calling API with inputs:', { age, ret, bal, cont, mix: { wC, wS, wI, wF, wG } });
         const response = await fetch("/api/tools/tsp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -186,6 +187,9 @@ export default function TspModeler() {
           }),
         });
         const data = await response.json();
+        console.log('[TSP] API response:', data);
+        console.log('[TSP] Has seriesDefault?', !!data.seriesDefault, 'Length:', data.seriesDefault?.length);
+        console.log('[TSP] Has seriesCustom?', !!data.seriesCustom, 'Length:', data.seriesCustom?.length);
         setApiData(data);
 
         // Track analytics based on premium status

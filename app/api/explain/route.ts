@@ -15,7 +15,7 @@ export const maxDuration = 30;
  */
 
 // Type definitions
-type ToolType = 'tsp' | 'sdp' | 'house' | 'on-base-savings' | 'pcs' | 'salary' | 'career-analyzer';
+type ToolType = "tsp" | "sdp" | "house" | "on-base-savings" | "pcs" | "salary" | "career-analyzer";
 
 interface AssessmentAnswers {
   comprehensive?: {
@@ -124,7 +124,7 @@ STRUCTURE:
 GOOD example:
 "<p><strong>+\$450/month positive cash flow</strong> on paper—this property could pay you while building equity, but let's reality-check these numbers because there's a big difference between theoretical cash flow and actual money in your pocket. With a PCS coming in 6-12 months and young kids to manage, the timing is tight but potentially doable if you move fast and are realistic about the risks.</p><p>Here's the breakdown: your mortgage payment is \$1,800 (including taxes and insurance), you're estimating \$2,250/month in rent, which gives you that \$450 cushion. BUT reality is messier. Maintenance averages 1% of home value per year (that's \$200/month), vacancy averages 5-8% annually (another \$180/month), and property management is 8-10% of rent (\$225/month). When you factor in ALL the real costs, your \$450 positive cash flow drops to -\$155/month NEGATIVE. This is why most house hacking deals that look good on Zillow fall apart under scrutiny.</p><ul><li><strong>Talk to a VA lender THIS WEEK</strong>—rates are at 7% now and could hit 8% in 6 months. Get pre-approved immediately and lock your rate for 60 days. Also confirm you qualify for 0% down VA loan (you should based on service) and understand your BAH at the NEW duty station—if it's lower, that impacts your budget.</li><li><strong>Research ACTUAL rental rates, not Zillow</strong>—call 3-5 property managers in the area and ask what similar homes ACTUALLY rent for (not listed at, but ACTUALLY closed at). Zillow rent estimates are notoriously 15-20% optimistic. If real rent is \$1,900 instead of \$2,250, this deal goes from barely positive to deeply negative.</li><li><strong>Run the 1% rule stress test</strong>—monthly rent should be at least 1% of purchase price for cash flow positive deals. Your \$225K house needs \$2,250/month rent just to break even with all costs. You're right at the edge, which is risky.</li><li><strong>Budget for reality, not best-case</strong>—assume 10% vacancy (\$225/mo), 1% maintenance (\$200/mo), and 10% property management (\$225/mo). That's \$650/month in hidden costs. Your \$450 cushion doesn't cover this—you'd be -\$200/month negative unless rent is higher or mortgage is lower.</li><li><strong>Consider the long-distance landlord reality</strong>—when you PCS in 6-12 months, you're managing this property from 800 miles away with young kids. One emergency plumbing call at 10pm will cost you \$500 and massive stress. Property management is REQUIRED, not optional, which kills your cash flow.</li></ul><p>Real talk on PCS risk: if you PCS again in 3 years (which is likely in the military), you're a long-distance landlord for potentially your entire career. With young kids and deployment uncertainty, this adds stress you might not want. Also, if you HAVE to sell during a market downturn or can't find tenants, you're stuck with a -\$200/month loss every month until it sells. The VA loan is great because it's 0% down, but that also means you have almost no equity cushion if property values drop 5-10%.</p><p>Final verdict: this deal is marginal at best with your numbers. ONLY do this if: (1) you're committed to being a landlord long-term, (2) you verify rent is truly \$2,250+ and not Zillow fantasy, (3) you plan to stay at this base 3+ years or are OK losing \$200/month for a while, and (4) you have 6 months of emergency fund to cover vacancies. If any of those are no, walk away and just keep renting—there's no shame in that, and it's way less risky with a PCS coming up.</p>"`,
 
-  'on-base-savings': `Analyze on-base savings results. Give tactical, detailed advice. NO greetings.
+  "on-base-savings": `Analyze on-base savings results. Give tactical, detailed advice. NO greetings.
 
 CRITICAL RULES:
 - Start with total annual savings potential
@@ -187,7 +187,7 @@ STRUCTURE:
 GOOD example:
 "<p><strong>\$75,000 in Austin = \$95,000 in San Diego</strong> to maintain the exact same lifestyle—you'd need a 27% raise just to break even financially. The new job offer of \$85,000 sounds like a raise, but it's actually a PAY CUT in real purchasing power terms because you're losing \$10,000/year in buying power due to San Diego's insane housing costs and California state taxes.</p><p>Here's the brutal breakdown: Austin rent for a decent 3BR house in a good school district is \$2,400/month. In San Diego, that same quality of housing costs \$3,600/month minimum—that's an extra \$14,400/year just in rent. Then there's California state income tax at 9.3% on income over \$61K, which costs you \$7,000/year, while Texas has ZERO state income tax. Add in higher gas prices (\$5.50/gallon vs \$3.20 in TX = \$1,200/year more), higher car insurance (\$2,400/year vs \$1,400 in TX), and higher sales tax (7.75% vs 6.25%), and you're bleeding an extra \$25,000/year in San Diego just to live the same lifestyle. That Austin \$75K salary has the buying power of \$95K in San Diego—your \$85K offer is \$10K SHORT of break-even.</p><ul><li><strong>Negotiate the offer to \$95K minimum</strong>—show them this cost-of-living analysis and explain you need \$95K just to break even with your current Austin lifestyle. If they can't budge past \$85K, you're taking a real \$10K pay cut to move. Many companies have COL adjustment budgets for relocations—ask for it.</li><li><strong>Housing will EAT your budget</strong>—in San Diego, \$3,600/month is the floor for a 3BR in a safe area with decent schools. In Austin, \$2,400 gets you a nice house. That's \$1,200/month or \$14,400/year difference. If you downsize to a 2BR apartment in San Diego to save money, you're sacrificing living space for your family, which impacts quality of life with young kids.</li><li><strong>CA tax bite is permanent</strong>—9.3% state income tax is \$7,000/year GONE forever. Texas has no state income tax, so your \$75K in Austin = \$81,000 take-home, while \$85K in San Diego = \$73,000 take-home after CA taxes. You're literally making LESS money after taxes despite the higher salary number.</li><li><strong>Research schools THOROUGHLY</strong>—San Diego Unified has some great schools (Torrey Pines, La Jolla High) but also some struggling ones. Austin ISD has excellent schools (Westlake, Lake Travis) too. Don't assume San Diego = better schools just because it's California. Check GreatSchools ratings for specific neighborhoods you can afford on \$85K.</li><li><strong>Factor in career growth trajectory</strong>—is this San Diego job a stepping stone to \$120K+ in 2-3 years? If yes, maybe the short-term pay cut is worth it for long-term growth. If it's a lateral move with no clear path to higher comp, you're just accepting less money for beach access.</li></ul><p>Non-financial reality check: San Diego has perfect weather (70°F year-round, no humidity) and beach access, while Austin has brutal summers (100°F+ for months) and no ocean. With young kids, beach weekends and outdoor activities year-round are huge quality of life wins. HOWEVER, if your parents/family are in Austin and provide free childcare or emotional support, moving to San Diego means you're alone 1,500 miles away—that's stressful with kids. Also consider: Austin's tech scene is BOOMING (Tesla, Oracle, Apple all there), while San Diego's job market is smaller. If you lose this San Diego job, finding another comparable role might be harder than in Austin.</p><p>Final recommendation: this move only makes sense financially if you can negotiate to \$95K+, or if the non-financial factors (beach lifestyle, specific career opportunity, family already in San Diego) are worth a \$10K/year pay cut. If money is your priority, stay in Austin. If quality of life and beach access are worth \$10K/year to you, move to San Diego but know what you're signing up for financially.</p>"`,
 
-  'career-analyzer': `Analyze career opportunity results. Give tactical, detailed advice. NO greetings.
+  "career-analyzer": `Analyze career opportunity results. Give tactical, detailed advice. NO greetings.
 
 CRITICAL RULES:
 - Start with total compensation difference
@@ -206,7 +206,7 @@ STRUCTURE:
 5. Final recommendation based on their situation (1-2 sentences)
 
 GOOD example:
-"<p><strong>Total comp difference: +\$32,000/year</strong> for the new role (\$95K base + \$15K bonus + \$10K equity vs. current \$88K total)—that's a 36% raise on paper and sounds incredible. BUT location matters: the new city has 15% higher cost of living, which eats \$10K of that gain, reducing your REAL purchasing power increase to \$22K/year. Still significant, but not as amazing as it first appears.</p><p>Here's the compensation breakdown you need to understand: your current role pays \$75K base + \$13K benefits (health insurance, 401k match) = \$88K total. The new role pays \$95K base + \$15K annual bonus (vesting quarterly, 75% guaranteed) + \$10K equity (4-year vest with 1-year cliff) + \$12K benefits = \$132K total on paper. BUT equity is only worth something if the company IPOs or gets acquired, which statistically happens to <5% of startups. So realistic comp is \$95K + \$15K + \$12K = \$122K guaranteed. That's \$34K more than current, minus \$10K COL adjustment = \$24K real gain after accounting for higher rent/taxes in the new city.</p><ul><li><strong>Evaluate equity REALISTICALLY</strong>—\$10K/year in stock options sounds great, but with a 4-year vest and 1-year cliff, you get ZERO equity if you leave before year 1, and only 25% if you leave after year 2. Plus, if the company doesn't IPO (90% chance it won't), those options are worthless. Don't count on equity as real money—treat it as a lottery ticket and focus on base + bonus.</li><li><strong>Calculate hourly rate for workload expectations</strong>—if the new role is \$122K but expects 60 hours/week (standard at startups), your hourly rate is \$39/hour. Your current role at \$88K for 40 hours/week is \$42/hour. You'd be making LESS per hour despite higher total comp. With young kids and deployment stress, is working 50% more hours worth 38% more money? Your family time has value too.</li><li><strong>Industry risk matters</strong>—tech startups have high growth potential (\$150K+ in 3 years if company scales) but also high failure risk (60% of startups fold within 3 years). Your current stable job in defense contracting is boring but recession-proof. With a mortgage and kids, can you afford a 12-month job search if the startup implodes?</li><li><strong>Career trajectory analysis</strong>—the new role as Senior Engineer opens doors to Staff Engineer (\$180K+) or Engineering Manager (\$200K+) paths within 2-3 years IF the company grows. Your current role caps at Senior Engineer II (\$110K max) with no management path. Long-term, the new role has 2x the upside, but only if you execute well and the company survives.</li><li><strong>Negotiate the offer</strong>—you have leverage because they want you. Ask for \$105K base instead of \$95K (they'll likely say yes because tech companies have hiring budgets). That extra \$10K/year compounds over your career—over 20 years at 3% raises, that's \$300K+ in extra earnings. ALWAYS negotiate, especially in tech.</li></ul><p>Career trajectory reality: this new role is higher risk but higher reward. If you're risk-averse (military background suggests you might be), the stable defense job is safer. If you're ambitious and willing to bet on yourself, the startup could 5x your compensation in 5 years—but it could also fold and leave you scrambling for a new job. With young kids, deployment uncertainty, and a mortgage, ask yourself: can you handle 3-6 months of job hunting if this doesn't work out? Do you have 6-12 months of emergency fund? If yes, take the risk. If no, the stable job might be smarter.</p><p>Final recommendation: if you can negotiate to \$105K base and you have 6+ months emergency fund, take the new role—the upside justifies the risk and you're young enough to recover if it fails. If they won't budge from \$95K or you don't have savings cushion, stay at your current job and keep interviewing—better offers will come. Don't make a risky career move from a position of financial weakness.</p>"`
+"<p><strong>Total comp difference: +\$32,000/year</strong> for the new role (\$95K base + \$15K bonus + \$10K equity vs. current \$88K total)—that's a 36% raise on paper and sounds incredible. BUT location matters: the new city has 15% higher cost of living, which eats \$10K of that gain, reducing your REAL purchasing power increase to \$22K/year. Still significant, but not as amazing as it first appears.</p><p>Here's the compensation breakdown you need to understand: your current role pays \$75K base + \$13K benefits (health insurance, 401k match) = \$88K total. The new role pays \$95K base + \$15K annual bonus (vesting quarterly, 75% guaranteed) + \$10K equity (4-year vest with 1-year cliff) + \$12K benefits = \$132K total on paper. BUT equity is only worth something if the company IPOs or gets acquired, which statistically happens to <5% of startups. So realistic comp is \$95K + \$15K + \$12K = \$122K guaranteed. That's \$34K more than current, minus \$10K COL adjustment = \$24K real gain after accounting for higher rent/taxes in the new city.</p><ul><li><strong>Evaluate equity REALISTICALLY</strong>—\$10K/year in stock options sounds great, but with a 4-year vest and 1-year cliff, you get ZERO equity if you leave before year 1, and only 25% if you leave after year 2. Plus, if the company doesn't IPO (90% chance it won't), those options are worthless. Don't count on equity as real money—treat it as a lottery ticket and focus on base + bonus.</li><li><strong>Calculate hourly rate for workload expectations</strong>—if the new role is \$122K but expects 60 hours/week (standard at startups), your hourly rate is \$39/hour. Your current role at \$88K for 40 hours/week is \$42/hour. You'd be making LESS per hour despite higher total comp. With young kids and deployment stress, is working 50% more hours worth 38% more money? Your family time has value too.</li><li><strong>Industry risk matters</strong>—tech startups have high growth potential (\$150K+ in 3 years if company scales) but also high failure risk (60% of startups fold within 3 years). Your current stable job in defense contracting is boring but recession-proof. With a mortgage and kids, can you afford a 12-month job search if the startup implodes?</li><li><strong>Career trajectory analysis</strong>—the new role as Senior Engineer opens doors to Staff Engineer (\$180K+) or Engineering Manager (\$200K+) paths within 2-3 years IF the company grows. Your current role caps at Senior Engineer II (\$110K max) with no management path. Long-term, the new role has 2x the upside, but only if you execute well and the company survives.</li><li><strong>Negotiate the offer</strong>—you have leverage because they want you. Ask for \$105K base instead of \$95K (they'll likely say yes because tech companies have hiring budgets). That extra \$10K/year compounds over your career—over 20 years at 3% raises, that's \$300K+ in extra earnings. ALWAYS negotiate, especially in tech.</li></ul><p>Career trajectory reality: this new role is higher risk but higher reward. If you're risk-averse (military background suggests you might be), the stable defense job is safer. If you're ambitious and willing to bet on yourself, the startup could 5x your compensation in 5 years—but it could also fold and leave you scrambling for a new job. With young kids, deployment uncertainty, and a mortgage, ask yourself: can you handle 3-6 months of job hunting if this doesn't work out? Do you have 6-12 months of emergency fund? If yes, take the risk. If no, the stable job might be smarter.</p><p>Final recommendation: if you can negotiate to \$105K base and you have 6+ months emergency fund, take the new role—the upside justifies the risk and you're young enough to recover if it fails. If they won't budge from \$95K or you don't have savings cushion, stay at your current job and keep interviewing—better offers will come. Don't make a risky career move from a position of financial weakness.</p>"`,
 };
 
 export async function POST(req: NextRequest) {
@@ -215,11 +215,15 @@ export async function POST(req: NextRequest) {
     if (!userId) throw Errors.unauthorized();
 
     // Parse request
-    let body: { tool?: string; inputs?: Record<string, unknown>; outputs?: Record<string, unknown> };
+    let body: {
+      tool?: string;
+      inputs?: Record<string, unknown>;
+      outputs?: Record<string, unknown>;
+    };
     try {
       body = await req.json();
     } catch {
-      logger.warn('[Explain] Invalid JSON in request', { userId });
+      logger.warn("[Explain] Invalid JSON in request", { userId });
       throw Errors.invalidInput("Invalid JSON in request body");
     }
 
@@ -230,9 +234,17 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate tool type
-    const validTools: ToolType[] = ['tsp', 'sdp', 'house', 'on-base-savings', 'pcs', 'salary', 'career-analyzer'];
+    const validTools: ToolType[] = [
+      "tsp",
+      "sdp",
+      "house",
+      "on-base-savings",
+      "pcs",
+      "salary",
+      "career-analyzer",
+    ];
     if (!validTools.includes(tool as ToolType)) {
-      throw Errors.invalidInput(`Invalid tool type. Must be one of: ${validTools.join(', ')}`);
+      throw Errors.invalidInput(`Invalid tool type. Must be one of: ${validTools.join(", ")}`);
     }
 
     // Get user context from assessment (for personalization)
@@ -248,7 +260,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (assessmentError) {
-      logger.warn('[Explain] Failed to fetch assessment', { userId, error: assessmentError });
+      logger.warn("[Explain] Failed to fetch assessment", { userId, error: assessmentError });
       // Continue without assessment data - use defaults
     }
 
@@ -259,26 +271,26 @@ export async function POST(req: NextRequest) {
     const deployment = comprehensive.deployment || {};
     const career = comprehensive.career || {};
     const finance = comprehensive.finance || {};
-    
+
     // Build user context with proper type safety
     const userContext: UserContext = {
-      serviceYears: String(foundation.serviceYears || 'unknown'),
-      familySnapshot: String(foundation.familySnapshot || 'none'),
-      pcsSituation: String(move.pcsSituation || 'none'),
-      deploymentStatus: String(deployment.status || 'none'),
+      serviceYears: String(foundation.serviceYears || "unknown"),
+      familySnapshot: String(foundation.familySnapshot || "none"),
+      pcsSituation: String(move.pcsSituation || "none"),
+      deploymentStatus: String(deployment.status || "none"),
       careerAmbitions: Array.isArray(career.ambitions) ? career.ambitions : [],
-      financialPriority: String(finance.priority || 'unknown')
+      financialPriority: String(finance.priority || "unknown"),
     };
 
     // Initialize Gemini
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
-      logger.error('[Explain] GOOGLE_API_KEY not configured');
+      logger.error("[Explain] GOOGLE_API_KEY not configured");
       throw Errors.externalApiError("Gemini", "API key not configured");
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-exp",
       generationConfig: {
         temperature: 0.8, // Slightly more creative for explanations
@@ -327,44 +339,44 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
     try {
       const startTime = Date.now();
       const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
-      
+
       // Log prompt length to diagnose issues
-      logger.info('[Explain] Sending prompt to Gemini', {
+      logger.info("[Explain] Sending prompt to Gemini", {
         userId,
         tool,
-        model: 'gemini-2.0-flash-exp',
+        model: "gemini-2.0-flash-exp",
         promptLength: fullPrompt.length,
         maxOutputTokens: 8000,
         modelConfig: { temperature: 0.8, maxOutputTokens: 8000, topP: 0.95, topK: 40 },
-        hasSafetyOverrides: true
+        hasSafetyOverrides: true,
       });
-      
+
       const result = await model.generateContent(fullPrompt);
       const duration = Date.now() - startTime;
-      
+
       const response = result.response;
       const text = response.text();
-      
+
       // Log finish reason and safety ratings to diagnose truncation
       const candidates = response.candidates || [];
-      const finishReason = candidates[0]?.finishReason || 'UNKNOWN';
+      const finishReason = candidates[0]?.finishReason || "UNKNOWN";
       const safetyRatings = candidates[0]?.safetyRatings || [];
 
-      logger.info('[Explain] AI explanation generated', { 
-        userId, 
-        tool, 
-        duration, 
+      logger.info("[Explain] AI explanation generated", {
+        userId,
+        tool,
+        duration,
         charCount: text.length,
         wordCount: text.split(/\s+/).length,
         expectedMinChars: 2000,
         actualChars: text.length,
         isShort: text.length < 500,
         finishReason,
-        wasTruncated: finishReason !== 'STOP',
+        wasTruncated: finishReason !== "STOP",
         safetyRatings: safetyRatings.map((sr: any) => ({
           category: sr.category,
-          probability: sr.probability
-        }))
+          probability: sr.probability,
+        })),
       });
 
       // Stream the HTML response
@@ -374,7 +386,7 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
           // Split into chunks for smooth streaming
           const chunks = text.match(/.{1,100}/g) || [text];
           let i = 0;
-          
+
           const push = () => {
             if (i >= chunks.length) {
               controller.close();
@@ -384,28 +396,27 @@ Please provide a personalized, actionable explanation of these ${tool.toUpperCas
             i++;
             setTimeout(push, 30); // Smooth streaming effect
           };
-          
+
           push();
-        }
+        },
       });
 
       return new Response(stream, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "Cache-Control": "no-store",
-        }
+        },
       });
-
     } catch (aiError) {
-      logger.error('[Explain] AI generation failed, using fallback', aiError, { userId, tool });
-      
+      logger.error("[Explain] AI generation failed, using fallback", aiError, { userId, tool });
+
       // Fallback to deterministic if AI fails
       const fallback = generateFallbackExplanation(tool as ToolType, inputs, outputs);
       return new Response(fallback, {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "Cache-Control": "no-store",
-        }
+        },
       });
     }
   } catch (error) {
@@ -421,11 +432,12 @@ function generateFallbackExplanation(
   inputs: Record<string, unknown>,
   outputs: Record<string, unknown>
 ): string {
-  const fmt = (n: number) => new Intl.NumberFormat('en-US', { 
-    style: 'currency', 
-    currency: 'USD', 
-    maximumFractionDigits: 0 
-  }).format(n);
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(n);
 
   switch (tool) {
     case "tsp": {
@@ -439,7 +451,7 @@ function generateFallbackExplanation(
     case "house": {
       const verdict = Number(outputs.verdict) || 0;
       const isPositive = verdict >= 0;
-      return `<p><strong>Monthly cash flow:</strong> ${fmt(verdict)} ${isPositive ? '(Positive)' : '(Negative)'}</p><p>${isPositive ? 'This property could generate income.' : 'This property would require additional funds monthly.'}</p>`;
+      return `<p><strong>Monthly cash flow:</strong> ${fmt(verdict)} ${isPositive ? "(Positive)" : "(Negative)"}</p><p>${isPositive ? "This property could generate income." : "This property would require additional funds monthly."}</p>`;
     }
     case "on-base-savings": {
       const totalSavings = Number(outputs.totalSavings) || 0;
@@ -448,7 +460,7 @@ function generateFallbackExplanation(
     case "pcs": {
       const netEstimate = Number(outputs.netEstimate) || 0;
       const isPositive = netEstimate >= 0;
-      return `<p><strong>Net PCS estimate:</strong> ${fmt(netEstimate)} ${isPositive ? '(Surplus)' : '(Deficit)'}</p><p>${isPositive ? 'Your entitlements should cover PCS costs.' : 'Budget carefully for out-of-pocket expenses.'}</p>`;
+      return `<p><strong>Net PCS estimate:</strong> ${fmt(netEstimate)} ${isPositive ? "(Surplus)" : "(Deficit)"}</p><p>${isPositive ? "Your entitlements should cover PCS costs." : "Budget carefully for out-of-pocket expenses."}</p>`;
     }
     case "salary": {
       const equivalentSalary = Number(outputs.equivalentSalary) || 0;
@@ -457,7 +469,7 @@ function generateFallbackExplanation(
     case "career-analyzer": {
       const totalCompDiff = Number(outputs.totalCompDiff) || 0;
       const isPositive = totalCompDiff >= 0;
-      return `<p><strong>Total compensation difference:</strong> ${fmt(Math.abs(totalCompDiff))} ${isPositive ? 'higher' : 'lower'}</p><p>Consider both financial and career growth factors when deciding.</p>`;
+      return `<p><strong>Total compensation difference:</strong> ${fmt(Math.abs(totalCompDiff))} ${isPositive ? "higher" : "lower"}</p><p>Consider both financial and career growth factors when deciding.</p>`;
     }
     default:
       return "<p>Explanation unavailable.</p>";
