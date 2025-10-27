@@ -13,13 +13,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Check premium access
-    const { data: profile } = await supabaseAdmin
-      .from("user_profiles")
-      .select("tier")
+    const { data: entitlement } = await supabaseAdmin
+      .from("entitlements")
+      .select("tier, status")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
-    if (!profile || (profile.tier !== "premium" && profile.tier !== "enterprise")) {
+    const tier = entitlement?.tier || "free";
+    const isPremium = tier === "premium" && entitlement?.status === "active";
+
+    if (!isPremium) {
       return NextResponse.json({ error: "Premium access required" }, { status: 403 });
     }
 

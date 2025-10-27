@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
@@ -24,15 +23,15 @@ export async function POST(request: NextRequest) {
     // Handle wizard mode (temp documents) vs real claims differently
     let document: any;
     const isWizardMode = claimId === "temp-wizard" || documentId.startsWith("temp-");
-    
+
     if (isWizardMode) {
       // Wizard mode: Get document from storage directly (no database record)
       logger.info("Processing temp document for wizard mode", { userId, documentId });
-      
+
       // For temp documents, we need the file path from the documentId
       // The uploader should have saved it to storage already
-      const filePath = `${userId}/pcs-claims/${claimId}/${documentId.replace('temp-', '')}-*`;
-      
+      const filePath = `${userId}/pcs-claims/${claimId}/${documentId.replace("temp-", "")}-*`;
+
       // Since we don't have the exact file path, we'll process from the uploaded storage
       // For wizard mode, just return mock OCR data for now
       const ocrResult = await processDocumentOCRMock({
@@ -40,13 +39,13 @@ export async function POST(request: NextRequest) {
         file_name: "temp-document",
         file_type: "application/pdf",
       });
-      
+
       logger.info("Wizard mode OCR completed (mock)", {
         userId,
         claimId,
         documentId,
       });
-      
+
       return NextResponse.json({
         success: true,
         ocrText: ocrResult.text,
@@ -54,7 +53,7 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
       });
     }
-    
+
     // Real claim mode: Get document from database
     const { data: doc, error: docError } = await supabaseAdmin
       .from("pcs_claim_documents")
@@ -67,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (docError || !doc) {
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
-    
+
     document = doc;
 
     // Check if already processed
@@ -236,10 +235,11 @@ async function processDocumentOCRMock(document: any): Promise<{
   // Mock OCR text based on file type and name
   let mockText = "";
   let extractedData: any = {};
-  
+
   // Check if this looks like PCS orders
-  const isPCSOrders = document.file_name?.toLowerCase().includes('order') || 
-                      document.file_name?.toLowerCase().includes('pcs');
+  const isPCSOrders =
+    document.file_name?.toLowerCase().includes("order") ||
+    document.file_name?.toLowerCase().includes("pcs");
 
   if (isPCSOrders) {
     // Mock PCS Orders extraction for wizard testing
