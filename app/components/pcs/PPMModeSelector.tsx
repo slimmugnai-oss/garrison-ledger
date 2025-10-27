@@ -43,7 +43,7 @@ export default function PPMModeSelector({
   const [fuelReceipts, setFuelReceipts] = useState<string>("0");
   const [laborCosts, setLaborCosts] = useState<string>("0");
   const [tollsAndFees, setTollsAndFees] = useState<string>("0");
-  
+
   // Estimator mode state
   const [estimatorWeight, setEstimatorWeight] = useState<string>(weight?.toString() || "");
   const [estimatorDistance, setEstimatorDistance] = useState<string>(distance?.toString() || "");
@@ -313,7 +313,11 @@ export default function PPMModeSelector({
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Distance (miles)
-                  {distance && <Badge variant="success" className="ml-2 text-xs">Auto-calculated</Badge>}
+                  {distance && (
+                    <Badge variant="success" className="ml-2 text-xs">
+                      Auto-calculated
+                    </Badge>
+                  )}
                 </label>
                 <Input
                   type="number"
@@ -323,33 +327,53 @@ export default function PPMModeSelector({
                   className="text-lg font-semibold"
                 />
                 <p className="mt-1 text-xs text-slate-500">
-                  {distance ? "Auto-calculated from bases (editable)" : "Door-to-door moving distance"}
+                  {distance
+                    ? "Auto-calculated from bases (editable)"
+                    : "Door-to-door moving distance"}
                 </p>
               </div>
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Cost per Pound-Mile (Industry Average)
+                Rate per CWT (Hundred-Weight) per Mile
               </label>
-              <Input type="number" value="0.50" disabled className="bg-slate-100" />
+              <Input type="number" value="0.60" disabled className="bg-slate-100" />
               <p className="mt-1 text-xs text-slate-500">
-                Industry average. Actual DoD contract rates are proprietary.
+                Industry average: $0.60 per 100 lbs per mile. Actual DoD contract rates are proprietary.
               </p>
             </div>
 
             <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-4">
               <div className="mb-2 text-sm font-medium text-slate-700">Estimated GCC:</div>
               <div className="text-3xl font-black text-slate-900">
-                ${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5).toLocaleString()}
+                $
+                {(
+                  ((parseFloat(estimatorWeight) || 0) / 100) *
+                  (parseFloat(estimatorDistance) || 0) *
+                  0.6
+                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="mt-2 text-xs text-slate-600">
-                Formula: {parseFloat(estimatorWeight || "0").toLocaleString()} lbs × {parseFloat(estimatorDistance || "0").toLocaleString()} mi ×
-                $0.50/lb-mi
+                Formula: ({parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
+                {parseFloat(estimatorDistance || "0").toLocaleString()} mi × $0.60/cwt
               </div>
               <div className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-900">
-                ⚠️ Variance: ±30% (${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5 * 0.7).toLocaleString()}{" "}
-                - ${((parseFloat(estimatorWeight) || 0) * (parseFloat(estimatorDistance) || 0) * 0.5 * 1.3).toLocaleString()})
+                ⚠️ Variance: ±30% ($
+                {(
+                  ((parseFloat(estimatorWeight) || 0) / 100) *
+                  (parseFloat(estimatorDistance) || 0) *
+                  0.6 *
+                  0.7
+                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
+                - $
+                {(
+                  ((parseFloat(estimatorWeight) || 0) / 100) *
+                  (parseFloat(estimatorDistance) || 0) *
+                  0.6 *
+                  1.3
+                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                )
               </div>
             </div>
           </div>
@@ -360,7 +384,8 @@ export default function PPMModeSelector({
               onClick={() => {
                 const weightValue = parseFloat(estimatorWeight);
                 const distanceValue = parseFloat(estimatorDistance);
-                const estimatedGCC = weightValue * distanceValue * 0.5;
+                // Correct formula: (weight / 100) × distance × rate_per_cwt
+                const estimatedGCC = (weightValue / 100) * distanceValue * 0.6;
                 if (estimatedGCC > 0) {
                   onModeSelected("estimator", {
                     mode: "estimator",
@@ -371,9 +396,9 @@ export default function PPMModeSelector({
                 }
               }}
               disabled={
-                !estimatorWeight || 
-                !estimatorDistance || 
-                parseFloat(estimatorWeight) === 0 || 
+                !estimatorWeight ||
+                !estimatorDistance ||
+                parseFloat(estimatorWeight) === 0 ||
                 parseFloat(estimatorDistance) === 0
               }
               className="w-full bg-amber-600 hover:bg-amber-700"
