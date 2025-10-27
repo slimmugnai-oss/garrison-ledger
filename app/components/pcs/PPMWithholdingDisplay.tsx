@@ -88,11 +88,20 @@ export default function PPMWithholdingDisplay({
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Icon name="Calculator" className="h-4 w-4" />
-              Estimated DFAS Withholding
+              Typical DFAS Withholding (Estimate)
             </div>
             <span className="text-xs text-slate-500">
               {result.effectiveWithholdingRate.toFixed(1)}% effective rate
             </span>
+          </div>
+          
+          <div className="mb-3 rounded-lg bg-blue-50 p-3">
+            <p className="text-xs text-blue-900">
+              <Icon name="Info" className="mr-1 inline h-3 w-3" />
+              <strong>Default rates shown:</strong> Federal 22% (IRS Pub 15 supplemental), State
+              from database, FICA 6.2%, Medicare 1.45%. You can adjust below if you know your
+              specific W-4 withholding rates.
+            </p>
           </div>
 
           <div className="space-y-3 rounded-lg bg-slate-50 p-4">
@@ -102,6 +111,7 @@ export default function PPMWithholdingDisplay({
                 <div className="font-medium text-slate-900">Federal Income Tax</div>
                 <div className="text-xs text-slate-600">
                   {result.estimatedWithholding.federal.basis}
+                  {!result.estimatedWithholding.federal.isCustom && " (IRS Pub 15)"}
                 </div>
               </div>
               <div className="text-right">
@@ -200,38 +210,63 @@ export default function PPMWithholdingDisplay({
           </div>
           <p className="text-xs leading-relaxed text-amber-900">{result.disclaimer}</p>
 
-          <div className="mt-3 space-y-1 text-xs text-amber-800">
-            <p className="font-medium">Your actual tax liability may differ based on:</p>
+          <div className="mt-3 space-y-2 text-xs text-amber-800">
+            <p className="font-medium">Why actual withholding may differ:</p>
             <ul className="ml-4 list-disc space-y-0.5">
-              <li>Total annual income (all sources)</li>
-              <li>Filing status (single, married, etc.)</li>
-              <li>W-4 withholding elections</li>
-              <li>Total deductions and credits</li>
+              <li>Your W-4 elections (single vs. married, allowances claimed)</li>
+              <li>Year-to-date income and prior withholding</li>
+              <li>State residency vs. duty station differences</li>
+              <li>Additional withholding requests or exemptions</li>
+            </ul>
+            <p className="mt-2 font-medium">Why actual tax liability may differ:</p>
+            <ul className="ml-4 list-disc space-y-0.5">
+              <li>Total annual income from all sources (base pay, bonuses, spouse income, etc.)</li>
+              <li>Filing status and dependents</li>
+              <li>Total deductions and credits you claim at tax time</li>
+              <li>Combat zone tax exclusions or other military benefits</li>
             </ul>
           </div>
-
-          <div className="mt-3 text-xs text-amber-900">
-            <strong>For tax questions:</strong> Consult a licensed tax professional or use{" "}
-            <a
-              href="https://www.irs.gov/individuals/tax-withholding-estimator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold underline hover:text-amber-950"
-            >
-              IRS.gov Withholding Estimator
-            </a>
+          
+          <div className="mt-3 rounded-lg bg-amber-100 p-2 text-xs text-amber-900">
+            <p className="font-bold">For accurate tax planning:</p>
+            <ul className="mt-1 space-y-1">
+              <li>
+                • <strong>Free for military:</strong>{" "}
+                <a
+                  href="https://www.militaryonesource.mil/financial-legal/tax-resource-center/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-amber-950"
+                >
+                  Military OneSource Tax Prep
+                </a>
+              </li>
+              <li>
+                • <strong>IRS tool:</strong>{" "}
+                <a
+                  href="https://www.irs.gov/individuals/tax-withholding-estimator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-amber-950"
+                >
+                  Withholding Estimator
+                </a>
+              </li>
+              <li>• <strong>myPay:</strong> Adjust W-4 elections if needed</li>
+            </ul>
           </div>
         </div>
 
         {/* Adjust Rates (Optional) */}
         {allowEdit && onUpdateRates && (
-          <div className="rounded-lg border border-slate-200 bg-white p-4">
-            <h4 className="mb-3 text-sm font-semibold text-slate-900">
-              Adjust Withholding Rates (Optional)
+          <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+            <h4 className="mb-3 text-sm font-semibold text-blue-900">
+              Know Your Withholding Rates? Adjust Here
             </h4>
-            <p className="mb-4 text-xs text-slate-600">
-              Default rates shown are standard DFAS supplemental withholding. You can adjust based
-              on your W-4 elections if known.
+            <p className="mb-4 text-xs text-blue-800">
+              <strong>Default rates shown:</strong> Federal 22% (IRS supplemental wage rate), State
+              from average database rates. If you know YOUR specific withholding percentages from
+              recent LES statements, adjust them below for a more accurate estimate.
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">

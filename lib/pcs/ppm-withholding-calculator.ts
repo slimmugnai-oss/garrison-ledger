@@ -133,14 +133,14 @@ export async function calculatePPMWithholding(
       federal: {
         amount: federalWithholding,
         rate: federalRate,
-        basis: "IRS supplemental wage withholding rate (flat 22%)",
+        basis: "IRS Pub 15: Supplemental wage withholding (22% flat for payments under $1M)",
         isCustom: !!input.customFederalRate,
       },
       state: {
         amount: stateWithholding,
         rate: actualStateRate,
         stateName,
-        basis: `${stateName} supplemental withholding rate`,
+        basis: `${stateName} average rate (2025) - Verify with state tax authority`,
         isCustom: !!input.customStateRate,
       },
       fica: {
@@ -158,7 +158,7 @@ export async function calculatePPMWithholding(
     totalWithholding,
     estimatedNetPayout,
     effectiveWithholdingRate: effectiveRate,
-    disclaimer: "This shows typical DFAS withholding using IRS supplemental wage rates. NOT your actual tax liability. Actual taxes depend on total annual income, filing status, and deductions. This is NOT tax advice. Consult a tax professional or use IRS.gov tools.",
+    disclaimer: "WITHHOLDING ESTIMATE ONLY - This shows typical DFAS withholding using IRS standard supplemental wage rates (22% federal flat per IRS Publication 15). This is NOT your actual tax liability and NOT tax advice. Actual withholding varies based on W-4 elections. Actual tax liability depends on total annual income, filing status, and deductions. Adjust rates above if you know your specific withholding percentages. Consult a tax professional or use IRS.gov tools for personalized tax planning.",
     isEstimate: true,
     notTaxAdvice: true,
   };

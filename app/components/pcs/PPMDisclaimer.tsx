@@ -28,7 +28,7 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
           </div>
           <div className="flex-1">
             <h3 className="mb-3 text-lg font-bold text-amber-900">
-              Important: Unofficial Planning Tool
+              Important: Planning Estimate Only - Not Official Calculation
             </h3>
             <div className="space-y-3 text-sm text-amber-900">
               <p>
@@ -37,12 +37,18 @@ export default function PPMDisclaimer({ onAccept }: PPMDisclaimerProps) {
                 Transportation Office using official Government Constructed Cost and DTOD distances.
               </p>
               <p>
-                <strong>This is NOT tax advice.</strong> Withholding estimates use standard IRS
-                supplemental wage rates. Actual tax liability depends on your total annual income,
-                filing status, W-4 elections, and deductions.
+                <strong>This is NOT tax advice.</strong> Withholding estimates show TYPICAL DFAS
+                withholding using IRS standard supplemental wage rates (22% federal flat). Your
+                ACTUAL withholding depends on your W-4 elections. Your ACTUAL tax liability depends
+                on your total annual income, filing status, and deductions.
+              </p>
+              <p className="rounded bg-amber-100 p-2 text-xs font-semibold">
+                💡 Pro Tip: Check your most recent LES to see YOUR actual federal and state
+                withholding percentages. You can adjust the default rates in the calculator to
+                match your specific situation.
               </p>
               <p>
-                Entering a GCC amount from MilMove provides the most accurate estimate.{" "}
+                Entering a GCC amount from MilMove provides the most accurate gross payout estimate.{" "}
                 <strong>Do not make financial decisions solely on these results.</strong>
               </p>
               <div className="rounded-lg border border-amber-700 bg-amber-100 p-3">
