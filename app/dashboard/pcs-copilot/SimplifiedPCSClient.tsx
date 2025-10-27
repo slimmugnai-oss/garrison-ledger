@@ -40,17 +40,28 @@ export default function SimplifiedPCSClient({
   userProfile,
 }: SimplifiedPCSClientProps) {
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
-  const [showWizard, setShowWizard] = useState(claims.length === 0);
+  const [showWizard, setShowWizard] = useState(true); // Default to wizard, user can switch to list
 
   const handleWizardComplete = (claimId: string) => {
     // Refresh the page to show updated claims list
     window.location.reload();
   };
 
-  // First-time user: Show wizard immediately
+  // Show wizard (default view)
   if (showWizard) {
     return (
       <div className="pb-16">
+        {/* Switch to Claims List (if user has claims) */}
+        {claims.length > 0 && (
+          <div className="mb-6 text-center">
+            <button
+              onClick={() => setShowWizard(false)}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              ← View your {claims.length} existing claim{claims.length > 1 ? "s" : ""}
+            </button>
+          </div>
+        )}
         <PCSUnifiedWizard userProfile={userProfile} onComplete={handleWizardComplete} />
       </div>
     );
