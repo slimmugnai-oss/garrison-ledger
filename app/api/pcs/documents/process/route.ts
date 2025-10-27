@@ -27,25 +27,22 @@ export async function POST(request: NextRequest) {
     if (isWizardMode) {
       // Wizard mode: Get document from storage directly (no database record)
       logger.info("Processing temp document for wizard mode", { userId, documentId });
-
-      // For temp documents, we need the file path from the documentId
-      // The uploader should have saved it to storage already
-      const filePath = `${userId}/pcs-claims/${claimId}/${documentId.replace("temp-", "")}-*`;
-
-      // Since we don't have the exact file path, we'll process from the uploaded storage
-      // For wizard mode, just return mock OCR data for now
+      
+      // For wizard mode, return mock PCS ORDERS data
+      // This simulates what Gemini Vision would extract from real PCS orders
       const ocrResult = await processDocumentOCRMock({
         id: documentId,
-        file_name: "temp-document",
+        file_name: "PCS-ORDERS.pdf", // Force PCS orders detection
         file_type: "application/pdf",
       });
-
-      logger.info("Wizard mode OCR completed (mock)", {
+      
+      logger.info("Wizard mode OCR completed (mock PCS orders)", {
         userId,
         claimId,
         documentId,
+        fieldsExtracted: Object.keys(ocrResult.extractedData).length,
       });
-
+      
       return NextResponse.json({
         success: true,
         ocrText: ocrResult.text,

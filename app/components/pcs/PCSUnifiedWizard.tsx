@@ -392,14 +392,12 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
   const handleOCRComplete = (extractedData: any) => {
     console.log("🔍 OCR Complete - Raw extracted data:", extractedData);
-    
+
     setOcrData(extractedData);
-    
+
     // Build update object
     const updates = {
-      claim_name: extractedData.member_name 
-        ? `PCS - ${extractedData.member_name}` 
-        : undefined,
+      claim_name: extractedData.member_name ? `PCS - ${extractedData.member_name}` : undefined,
       pcs_orders_date: extractedData.orders_date || extractedData.ordersDate,
       departure_date: extractedData.departure_date || extractedData.departureDate,
       arrival_date: extractedData.report_date || extractedData.reportDate,
@@ -409,19 +407,21 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       dependents_count: extractedData.dependents_authorized || 0,
       branch: extractedData.branch || formData.branch,
     };
-    
+
     console.log("🔍 OCR Complete - Update object:", updates);
     console.log("🔍 OCR Complete - Current formData before update:", formData);
-    
+
     // Populate form with OCR data
     updateFormData(updates);
-    
+
     console.log("🔍 OCR Complete - FormData updated, advancing to basic-info step");
-    
+
     // Show success message with details
-    const fieldsExtracted = Object.values(updates).filter(v => v !== undefined).length;
-    toast.success(`PCS orders data extracted! ${fieldsExtracted} fields populated. Review and continue.`);
-    
+    const fieldsExtracted = Object.values(updates).filter((v) => v !== undefined).length;
+    toast.success(
+      `PCS orders data extracted! ${fieldsExtracted} fields populated. Review and continue.`
+    );
+
     // Move to basic info step
     setCurrentStep("basic-info");
   };
