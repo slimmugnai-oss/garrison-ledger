@@ -196,7 +196,7 @@ export default function SdpStrategist() {
         <div className="mt-6">
           <Explainer
             payload={{
-              tool: "sdp-calculator",
+              tool: "sdp",
               inputs: { amount, deploymentMonths, accrualMonths },
               outputs: { interestEarned, totalPayout },
             }}

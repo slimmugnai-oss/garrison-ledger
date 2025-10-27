@@ -540,7 +540,7 @@ export default function PcsFinancialPlanner() {
         <div className="mt-6">
           <Explainer
             payload={{
-              tool: "pcs-budget-calculator",
+              tool: "pcs",
               inputs: { rank, dependencyStatus, dla, perDiem },
               outputs: { totalIncome, totalExpenses, netEstimate },
             }}

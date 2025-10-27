@@ -318,7 +318,7 @@ export default function HouseHack() {
         <div className="mt-6">
           <Explainer
             payload={{
-              tool: "house-hacking-calculator",
+              tool: "house",
               inputs: { propertyPrice, interestRate, monthlyBAH, monthlyRent },
               outputs: { monthlyPITI, monthlyIncome, monthlyCashFlow },
             }}

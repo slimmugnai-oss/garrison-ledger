@@ -444,7 +444,7 @@ export default function CareerOpportunityAnalyzer() {
           <div className="mt-6">
             <Explainer
               payload={{
-                tool: "career-comparison-calculator",
+                tool: "career-analyzer",
                 inputs: {
                   currentCity: currentJob.city?.city,
                   currentSalary: currentJob.salary,

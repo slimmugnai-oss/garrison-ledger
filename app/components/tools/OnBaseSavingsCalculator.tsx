@@ -309,7 +309,7 @@ export default function OnBaseSavingsCalculator() {
         <div className="mt-6">
           <Explainer
             payload={{
-              tool: "on-base-savings-calculator",
+              tool: "on-base-savings",
               inputs: {
                 monthlyGroceries,
                 annualMajorPurchases,

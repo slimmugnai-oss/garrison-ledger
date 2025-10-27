@@ -367,7 +367,7 @@ export default function TspModeler() {
         <div className="mt-6">
           <Explainer
             payload={{
-              tool: "tsp-calculator",
+              tool: "tsp",
               inputs: {
                 age,
                 retirementAge,
