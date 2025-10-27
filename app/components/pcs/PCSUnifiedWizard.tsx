@@ -975,7 +975,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                     onUpdateRates={async (federal, state) => {
                       // Recalculate with custom rates via API
                       const destState = extractStateFromBase(formData.destination_base || "");
-                      
+
                       const response = await fetch("/api/pcs/calculate-ppm-withholding", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -994,7 +994,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                           customStateRate: state,
                         }),
                       });
-                      
+
                       if (response.ok) {
                         const updated: PPMWithholdingResult = await response.json();
                         setPpmWithholding(updated);

@@ -1,6 +1,6 @@
 /**
  * API ROUTE: Calculate PPM Withholding
- * 
+ *
  * Server-side endpoint for PPM tax withholding calculations
  * (Cannot be called directly from client due to Supabase admin usage)
  */
@@ -45,4 +45,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to calculate PPM withholding" }, { status: 500 });
   }
 }
-

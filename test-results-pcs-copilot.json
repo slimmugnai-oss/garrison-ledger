@@ -1,0 +1,355 @@
+{
+  "results": [
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/claim/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Premium Enforcement",
+      "test": "app/api/pcs/claim/route.ts",
+      "status": "PASS",
+      "details": "Premium tier check found"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/claim/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/calculate-distance/route.ts",
+      "status": "WARN",
+      "details": "No authentication found",
+      "recommendation": "Add auth() check"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/calculate-distance/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/per-diem-lookup/route.ts",
+      "status": "WARN",
+      "details": "No authentication found",
+      "recommendation": "Add auth() check"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/per-diem-lookup/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/calculate-ppm-withholding/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/calculate-ppm-withholding/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/check/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Premium Enforcement",
+      "test": "app/api/pcs/check/route.ts",
+      "status": "PASS",
+      "details": "Premium tier check found"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/check/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/estimate/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Premium Enforcement",
+      "test": "app/api/pcs/estimate/route.ts",
+      "status": "PASS",
+      "details": "Premium tier check found"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/estimate/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/validate/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/validate/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/explain/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/explain/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/package/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Premium Enforcement",
+      "test": "app/api/pcs/package/route.ts",
+      "status": "PASS",
+      "details": "Premium tier check found"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/package/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "API Security",
+      "test": "app/api/pcs/upload/route.ts",
+      "status": "PASS",
+      "details": "Authentication implemented"
+    },
+    {
+      "category": "Premium Enforcement",
+      "test": "app/api/pcs/upload/route.ts",
+      "status": "PASS",
+      "details": "Premium tier check found"
+    },
+    {
+      "category": "Error Handling",
+      "test": "app/api/pcs/upload/route.ts",
+      "status": "PASS",
+      "details": "Try-catch blocks found"
+    },
+    {
+      "category": "Client Components",
+      "test": "app/components/pcs/PCSUnifiedWizard.tsx",
+      "status": "PASS",
+      "details": "Marked as client component"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PCSUnifiedWizard.tsx",
+      "status": "PASS",
+      "details": "No server-side imports detected"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PCSUnifiedWizard.tsx",
+      "status": "PASS",
+      "details": "No direct server function imports"
+    },
+    {
+      "category": "Client Components",
+      "test": "app/components/pcs/PPMDisclaimer.tsx",
+      "status": "PASS",
+      "details": "Marked as client component"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMDisclaimer.tsx",
+      "status": "PASS",
+      "details": "No server-side imports detected"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMDisclaimer.tsx",
+      "status": "PASS",
+      "details": "No direct server function imports"
+    },
+    {
+      "category": "Client Components",
+      "test": "app/components/pcs/PPMModeSelector.tsx",
+      "status": "PASS",
+      "details": "Marked as client component"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMModeSelector.tsx",
+      "status": "PASS",
+      "details": "No server-side imports detected"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMModeSelector.tsx",
+      "status": "PASS",
+      "details": "No direct server function imports"
+    },
+    {
+      "category": "Client Components",
+      "test": "app/components/pcs/PPMWithholdingDisplay.tsx",
+      "status": "PASS",
+      "details": "Marked as client component"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMWithholdingDisplay.tsx",
+      "status": "PASS",
+      "details": "No server-side imports detected"
+    },
+    {
+      "category": "Client-Server Boundary",
+      "test": "app/components/pcs/PPMWithholdingDisplay.tsx",
+      "status": "PASS",
+      "details": "No direct server function imports"
+    },
+    {
+      "category": "Calculation Engine",
+      "test": "Rate Lookups",
+      "status": "PASS",
+      "details": "All rate lookup functions present"
+    },
+    {
+      "category": "Calculation Engine",
+      "test": "Confidence Scoring",
+      "status": "PASS",
+      "details": "Confidence calculation implemented"
+    },
+    {
+      "category": "Calculation Engine",
+      "test": "Provenance",
+      "status": "PASS",
+      "details": "Data sources tracked"
+    },
+    {
+      "category": "PPM Withholding",
+      "test": "Federal Rate",
+      "status": "PASS",
+      "details": "IRS 22% supplemental rate found"
+    },
+    {
+      "category": "PPM Withholding",
+      "test": "State Tax",
+      "status": "PASS",
+      "details": "State tax lookup implemented"
+    },
+    {
+      "category": "PPM Withholding",
+      "test": "FICA Cap",
+      "status": "PASS",
+      "details": "2025 FICA cap ($168,600) implemented"
+    },
+    {
+      "category": "PPM Withholding",
+      "test": "Legal Compliance",
+      "status": "PASS",
+      "details": "Disclaimers included"
+    },
+    {
+      "category": "PPM Withholding",
+      "test": "Mode Tracking",
+      "status": "PASS",
+      "details": "Official vs Estimator modes implemented"
+    },
+    {
+      "category": "Database Schema",
+      "test": "pcs_claims",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "pcs_entitlement_snapshots",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "pcs_claim_documents",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "pcs_claim_items",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "entitlements_data",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "jtr_rates_cache",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Database Schema",
+      "test": "state_tax_rates",
+      "status": "PASS",
+      "details": "Table reference found in codebase"
+    },
+    {
+      "category": "Auto-Calculations",
+      "test": "Distance",
+      "status": "PASS",
+      "details": "Auto-distance API call found"
+    },
+    {
+      "category": "Auto-Calculations",
+      "test": "ZIP Extraction",
+      "status": "PASS",
+      "details": "ZIP extraction implemented"
+    },
+    {
+      "category": "Auto-Calculations",
+      "test": "Travel Days",
+      "status": "PASS",
+      "details": "Travel days calculation found"
+    },
+    {
+      "category": "Auto-Calculations",
+      "test": "TLE Suggestions",
+      "status": "PASS",
+      "details": "TLE rate API call found"
+    },
+    {
+      "category": "Auto-Calculations",
+      "test": "PPM Withholding",
+      "status": "PASS",
+      "details": "PPM withholding API call found"
+    }
+  ],
+  "summary": {
+    "total": 57,
+    "pass": 55,
+    "warn": 2,
+    "fail": 0,
+    "score": "96.5"
+  }
+}
