@@ -92,6 +92,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
+  const [entryMode, setEntryMode] = useState<'upload' | 'manual'>('upload');
+  const [uploading, setUploading] = useState(false);
 
   // ============================================================================
   // MEMOIZED COMPUTATIONS
@@ -547,15 +549,179 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   }, [tier, handleSavePDF]);
 
   // ============================================================================
+  // UPLOAD HANDLER
+  // ============================================================================
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadRes = await fetch('/api/les/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        throw new Error(err.error || 'Upload failed');
+      }
+
+      const { uploadId } = await uploadRes.json();
+      
+      // Reload the page to show audit results
+      window.location.href = `/dashboard/paycheck-audit/${uploadId}`;
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Upload failed. Please try manual entry.');
+      setEntryMode('manual');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ============================================================================
   // RENDER: SPLIT-PANEL DESIGN
   // ============================================================================
 
   return (
-    <div className="grid min-h-screen grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
-      {/* LEFT PANEL: INPUTS */}
-      <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
-        <form
-          onSubmit={(e) => e.preventDefault()}
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      {/* Entry Mode Tabs */}
+      <div className="mb-8">
+        <div className="flex gap-2 border-b border-gray-200">
+          <button
+            onClick={() => setEntryMode('upload')}
+            className={`px-6 py-3 font-medium transition-colors relative ${
+              entryMode === 'upload'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Icon name="Upload" className="inline-block w-4 h-4 mr-2" />
+            Upload PDF
+          </button>
+          <button
+            onClick={() => setEntryMode('manual')}
+            className={`px-6 py-3 font-medium transition-colors relative ${
+              entryMode === 'manual'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Icon name="Edit" className="inline-block w-4 h-4 mr-2" />
+            Manual Entry
+          </button>
+        </div>
+      </div>
+
+      {/* Military-Grade Security Badge (Upload Mode) */}
+      {entryMode === 'upload' && (
+        <div className="mb-6 rounded-xl border-2 border-green-600 bg-gradient-to-r from-green-50 to-emerald-50 p-6">
+          <div className="flex items-start gap-4">
+            <div className="rounded-full bg-green-600 p-3">
+              <Icon name="Shield" className="h-8 w-8 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="mb-2 text-xl font-bold text-green-900">
+                Military-Grade Zero-Storage Security
+              </h3>
+              <p className="mb-3 text-sm leading-relaxed text-green-800">
+                Your LES is processed in-memory and <strong>immediately deleted</strong>. We NEVER store your SSN, bank account, or personal information. Only line items (BAH, BAS, etc.) are kept for audit history.
+              </p>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5">
+                  <Icon name="Check" className="h-4 w-4 text-green-600" />
+                  <span className="font-medium text-green-900">No SSN storage</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5">
+                  <Icon name="Check" className="h-4 w-4 text-green-600" />
+                  <span className="font-medium text-green-900">No bank info</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5">
+                  <Icon name="Check" className="h-4 w-4 text-green-600" />
+                  <span className="font-medium text-green-900">GDPR compliant</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5">
+                  <Icon name="Check" className="h-4 w-4 text-green-600" />
+                  <span className="font-medium text-green-900">Parse & purge</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload UI */}
+      {entryMode === 'upload' && (
+        <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+          <div className="text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+              <Icon name="Upload" className="h-10 w-10 text-blue-600" />
+            </div>
+            <h3 className="mb-2 text-2xl font-semibold text-gray-900">
+              Upload Your LES PDF
+            </h3>
+            <p className="mx-auto mb-6 max-w-md text-gray-600">
+              We'll automatically extract your pay line items and compare to official DFAS rates. Supports both digital and scanned LES.
+            </p>
+            
+            {/* File Drop Zone */}
+            <label
+              htmlFor="les-upload"
+              className="group mx-auto block max-w-2xl cursor-pointer rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-12 transition-all hover:border-blue-500 hover:bg-blue-50"
+            >
+              <input
+                id="les-upload"
+                type="file"
+                accept="application/pdf,.pdf"
+                className="hidden"
+                disabled={uploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUpload(file);
+                }}
+              />
+              <div className="text-center">
+                <Icon name="File" className="mx-auto mb-4 h-16 w-16 text-gray-400 transition-colors group-hover:text-blue-500" />
+                <p className="mb-2 text-xl font-semibold text-gray-700">
+                  {uploading ? 'Processing...' : 'Click to upload or drag and drop'}
+                </p>
+                <p className="mb-4 text-sm text-gray-500">
+                  PDF only • Max 5MB • Works with digital or scanned LES
+                </p>
+                <div className="mx-auto max-w-md rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
+                  <Icon name="Info" className="mr-1 inline-block h-3 w-3" />
+                  Supports myPay, AMS, BUPERS, and scanned paper LES from all service branches
+                </div>
+              </div>
+            </label>
+
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <Icon name="Lock" className="h-3.5 w-3.5 text-green-600" />
+              <span>
+                <strong className="text-green-600">Zero PII storage:</strong> Your LES is parsed and deleted immediately
+              </span>
+            </div>
+
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setEntryMode('manual')}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Prefer manual entry instead? Click here
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manual Entry UI (existing) */}
+      {entryMode === 'manual' && (
+        <div className="grid min-h-screen grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
+          {/* LEFT PANEL: INPUTS */}
+          <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
+            <form
+              onSubmit={(e) => e.preventDefault()}
           aria-label="LES data entry form"
           className="mx-auto max-w-2xl space-y-6"
         >
@@ -1192,6 +1358,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           )}
         </div>
       </div>
+        </div>
+      )}
     </div>
   );
 }
