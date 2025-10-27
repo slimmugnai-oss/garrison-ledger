@@ -22,16 +22,16 @@ type Scenario = {
 };
 
 const SCENARIOS: Scenario[] = [
-  { key: 'A', title: 'High-Yield Savings (4%)', rate: 0.04, desc: 'Safe, liquid savings for emergencies.' },
-  { key: 'B', title: 'Conservative Growth (6%)', rate: 0.06, desc: 'Balanced stock/bond index mix.' },
-  { key: 'C', title: 'Moderate Growth (8%)', rate: 0.08, desc: 'Stock-heavy mix for long horizons.' }
+  { key: 'A', title: 'SDP - Official Rate (10%)', rate: 0.10, desc: 'Savings Deposit Program - 10% APR (10 USC § 1035). Only available during deployment.' },
+  { key: 'B', title: 'Conservative Investment (8%)', rate: 0.08, desc: 'Stock/bond mix for comparison purposes.' },
+  { key: 'C', title: 'High-Yield Savings (4%)', rate: 0.04, desc: 'Safe, liquid savings alternative.' }
 ];
 
 type ApiResponse = {
   partial: boolean;
-  hy: number;
-  cons?: number;
-  mod?: number;
+  sdp?: number;  // Official SDP at 10% APR
+  hy: number;    // High-yield savings at 4%
+  cons?: number; // Conservative investment at 8%
 };
 
 export default function SdpStrategist() {
@@ -80,7 +80,7 @@ export default function SdpStrategist() {
         // Track analytics based on premium status
         if (data.partial && !isPremium) {
           track('sdp_preview_gate_view');
-        } else if (isPremium && data.mod) {
+        } else if (isPremium && data.sdp) {
           track('sdp_roi_view');
         }
         
@@ -94,7 +94,7 @@ export default function SdpStrategist() {
               body: JSON.stringify({
                 tool: 'sdp',
                 input: { amount },
-                output: { hy: data.hy, cons: data.cons, mod: data.mod }
+                output: { sdp: data.sdp, hy: data.hy, cons: data.cons }
               })
             });
           }, 1000);
@@ -114,9 +114,9 @@ export default function SdpStrategist() {
   // Create results array with API data
   const results = SCENARIOS.map(s => ({
     ...s,
-    value: s.key === 'A' ? apiData?.hy : 
-           s.key === 'B' ? apiData?.cons : 
-           s.key === 'C' ? apiData?.mod : undefined
+    value: s.key === 'A' ? apiData?.sdp :  // SDP Official 10%
+           s.key === 'B' ? apiData?.cons : // Conservative 8%
+           s.key === 'C' ? apiData?.hy : undefined  // High-Yield 4%
   }));
 
   const fmt = (v: number) => v.toLocaleString(undefined, { 
@@ -453,7 +453,7 @@ export default function SdpStrategist() {
             <ComparisonMode
               tool="sdp-strategist"
               currentInput={{ amount }}
-              currentOutput={{ hy: apiData.hy, cons: apiData.cons, mod: apiData.mod }}
+              currentOutput={{ sdp: apiData.sdp, hy: apiData.hy, cons: apiData.cons }}
               onLoadScenario={(input) => {
                 setAmount(input.amount || 10000);
               }}
@@ -478,7 +478,7 @@ export default function SdpStrategist() {
                             {fmt(scenario.output.cons || 0)}
                           </td>
                           <td className="p-3 text-right font-bold text-success">
-                            {fmt(scenario.output.mod || 0)}
+                            {fmt(scenario.output.sdp || 0)}
                           </td>
                           <td className="p-3 text-right font-bold text-warning">
                             {fmt(scenario.output.hy || 0)}
@@ -506,7 +506,7 @@ function RoiBox({
   fmt: (n: number) => string;
   amount: number;
 }) {
-  if (!apiData || apiData.partial || !apiData.mod) {
+  if (!apiData || apiData.partial || !apiData.sdp) {
     return (
       <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
         <div className="text-center text-muted py-8">
@@ -516,7 +516,7 @@ function RoiBox({
     );
   }
 
-  const diff = apiData.mod - apiData.hy;
+  const diff = apiData.sdp - apiData.hy;
   
   return (
     <div className="bg-surface rounded-xl shadow-lg p-8 border border-subtle">
@@ -529,13 +529,13 @@ function RoiBox({
           {diff >= 0 ? '+' : ''}{fmt(diff)}
         </div>
         <div className="text-sm text-body mb-4">
-          <strong>15-year comparison:</strong> Moderate Growth (8%) vs High-Yield Savings (4%)
+          <strong>15-year comparison:</strong> SDP Official Rate (10%) vs High-Yield Savings (4%)
         </div>
       </div>
       <Explainer payload={{ 
         tool: "sdp", 
         inputs: { amount }, 
-        outputs: { hy: apiData.hy, cons: apiData.cons, mod: apiData.mod } 
+        outputs: { sdp: apiData.sdp, hy: apiData.hy, cons: apiData.cons } 
       }} />
       
       {/* Export Options */}

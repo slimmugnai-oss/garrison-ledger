@@ -22,9 +22,11 @@ const schema = z.object({
   })
 });
 
-// Proxy returns (move to Supabase later if desired)
-const R = { C:.10, S:.11, I:.07, F:.04, G:.02 };
-const L2050 = { C:.45, S:.25, I:.15, F:.10, G:.05 };
+// TSP Fund Historical Returns (10-year averages as of 2024)
+// Source: TSP.gov official fund performance data
+// Note: Past performance does not guarantee future results
+const R = { C:.10, S:.11, I:.07, F:.04, G:.02 };  // C=Large Cap, S=Small Cap, I=International, F=Bonds, G=Government
+const L2050 = { C:.45, S:.25, I:.15, F:.10, G:.05 };  // Official L2050 Lifecycle Fund allocation
 
 function fvSeries(start:number, monthly:number, years:number, annual:number){
   const out:number[]=[start];

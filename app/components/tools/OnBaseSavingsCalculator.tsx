@@ -53,6 +53,8 @@ export default function OnBaseSavingsCalculator() {
 
   // COMMISSARY CALCULATIONS
   // Higher savings on meat/produce (~30%), standard on others (~25%)
+  // Source: DeCA (Defense Commissary Agency) savings estimates - commissaries.com
+  // Note: Actual savings vary by location and shopping habits
   const meatProduceSavings = (meatProduce * 12 * 0.30);
   const pantryStaplesSavings = (pantryStaples * 12 * 0.25);
   const diapersBabySavings = (diapersBaby * 12 * 0.25);
@@ -65,6 +67,7 @@ export default function OnBaseSavingsCalculator() {
   const taxSavings = totalTaxableSpending * taxRateDecimal;
   
   // MILITARY STAR® savings (5¢/gallon on gas)
+  // Source: Official Military Star Card benefits (shopmyexchange.com)
   const annualGasGallons = weeklyGasGallons * 52;
   const starCardSavings = annualGasGallons * 0.05;
   

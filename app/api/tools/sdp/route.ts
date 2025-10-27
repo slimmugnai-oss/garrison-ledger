@@ -37,18 +37,20 @@ export async function POST(req: NextRequest) {
     // Calculators are free for everyone - no premium checks needed
     
     // Calculate all scenarios
-    const hy = fv(amount||0, 0.04, years);
-    const cons = fv(amount||0, 0.06, years);
-    const mod  = fv(amount||0, 0.08, years);
+    // SDP (Savings Deposit Program) official rate: 10% APR (10 USC § 1035)
+    // Comparison scenarios for context
+    const sdp = fv(amount||0, 0.10, years);  // Official SDP rate: 10% APR
+    const hy = fv(amount||0, 0.04, years);   // High-yield savings comparison
+    const cons = fv(amount||0, 0.08, years); // Conservative investment comparison
     
     const result = { 
       partial: false, 
-      hy, 
-      cons, 
-      mod 
+      sdp,  // Official SDP at 10% APR
+      hy,   // High-yield savings at 4% 
+      cons  // Conservative investment at 8%
     };
 
-    logger.info('[SDP] Calculation completed', { userId, amount, modScenario: mod });
+    logger.info('[SDP] Calculation completed', { userId, amount, sdpValue: sdp });
     return NextResponse.json(result);
   } catch (error) {
     return errorResponse(error);

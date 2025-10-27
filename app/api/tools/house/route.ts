@@ -17,6 +17,9 @@ const schema = z.object({
   rent: z.number().min(0).max(50_000),
 });
 
+// Standard mortgage payment formula (PMT)
+// Formula: (Principal * MonthlyRate) / (1 - (1 + MonthlyRate)^-NumberOfPayments)
+// This is the same formula used by financial institutions
 const pmt = (rateMo:number, nper:number, pv:number)=> (pv*rateMo)/(1 - Math.pow(1+rateMo, -nper));
 
 export async function POST(req: NextRequest) {
