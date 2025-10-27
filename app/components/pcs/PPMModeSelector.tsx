@@ -54,64 +54,68 @@ export default function PPMModeSelector({
 
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Official Path */}
-          <AnimatedCard
-            className="cursor-pointer border-2 border-green-600 p-6 hover:shadow-xl"
+          <button
             onClick={() => setSelectedMode("official")}
+            className="text-left transition-transform hover:scale-[1.02]"
           >
-            <Badge variant="success" className="mb-4">
-              Recommended
-            </Badge>
-            <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3">
-              <Icon name="CheckCircle" className="h-8 w-8 text-green-600" />
-            </div>
-            <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from MilMove</h4>
-            <p className="mb-4 text-sm text-slate-600">
-              Enter the Government Constructed Cost from your MilMove estimate. This provides the
-              most accurate payout calculation.
-            </p>
-            <ul className="space-y-2 text-xs text-slate-600">
-              <li className="flex items-center gap-2">
-                <Icon name="Check" className="h-3 w-3 text-green-600" />
-                Most accurate (uses official GCC)
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="Check" className="h-3 w-3 text-green-600" />
-                Matches Transportation Office calculation
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="Check" className="h-3 w-3 text-green-600" />
-                Includes tax withholding estimate
-              </li>
-            </ul>
-          </AnimatedCard>
+            <AnimatedCard className="h-full border-2 border-green-600 p-6">
+              <Badge variant="success" className="mb-4">
+                Recommended
+              </Badge>
+              <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3">
+                <Icon name="CheckCircle" className="h-8 w-8 text-green-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from MilMove</h4>
+              <p className="mb-4 text-sm text-slate-600">
+                Enter the Government Constructed Cost from your MilMove estimate. This provides the
+                most accurate payout calculation.
+              </p>
+              <ul className="space-y-2 text-xs text-slate-600">
+                <li className="flex items-center gap-2">
+                  <Icon name="Check" className="h-3 w-3 text-green-600" />
+                  Most accurate (uses official GCC)
+                </li>
+                <li className="flex items-center gap-2">
+                  <Icon name="Check" className="h-3 w-3 text-green-600" />
+                  Matches Transportation Office calculation
+                </li>
+                <li className="flex items-center gap-2">
+                  <Icon name="Check" className="h-3 w-3 text-green-600" />
+                  Includes tax withholding estimate
+                </li>
+              </ul>
+            </AnimatedCard>
+          </button>
 
           {/* Estimator Path */}
-          <AnimatedCard
-            className="cursor-pointer border border-slate-300 p-6 hover:shadow-xl"
+          <button
             onClick={() => setSelectedMode("estimator")}
+            className="text-left transition-transform hover:scale-[1.02]"
           >
-            <div className="mb-4 inline-flex rounded-xl bg-slate-100 p-3">
-              <Icon name="Calculator" className="h-8 w-8 text-slate-600" />
-            </div>
-            <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
-            <p className="mb-4 text-sm text-slate-600">
-              Get a rough estimate for early planning. Uses weight and distance to approximate GCC.
-            </p>
-            <ul className="space-y-2 text-xs text-slate-600">
-              <li className="flex items-center gap-2">
-                <Icon name="Check" className="h-3 w-3 text-slate-600" />
-                For early planning only
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="Check" className="h-3 w-3 text-slate-600" />
-                ±30% variance range shown
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="AlertTriangle" className="h-3 w-3 text-amber-600" />
-                Not official - verify with MilMove
-              </li>
-            </ul>
-          </AnimatedCard>
+            <AnimatedCard className="h-full border border-slate-300 p-6">
+              <div className="mb-4 inline-flex rounded-xl bg-slate-100 p-3">
+                <Icon name="Calculator" className="h-8 w-8 text-slate-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
+              <p className="mb-4 text-sm text-slate-600">
+                Get a rough estimate for early planning. Uses weight and distance to approximate GCC.
+              </p>
+              <ul className="space-y-2 text-xs text-slate-600">
+                <li className="flex items-center gap-2">
+                  <Icon name="Check" className="h-3 w-3 text-slate-600" />
+                  For early planning only
+                </li>
+                <li className="flex items-center gap-2">
+                  <Icon name="Check" className="h-3 w-3 text-slate-600" />
+                  ±30% variance range shown
+                </li>
+                <li className="flex items-center gap-2">
+                  <Icon name="AlertTriangle" className="h-3 w-3 text-amber-600" />
+                  Not official - verify with MilMove
+                </li>
+              </ul>
+            </AnimatedCard>
+          </button>
         </div>
       </div>
     );
