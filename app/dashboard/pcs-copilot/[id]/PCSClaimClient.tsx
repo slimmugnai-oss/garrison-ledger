@@ -130,9 +130,47 @@ export default function PCSClaimClient({
 
     setIsCalculating(true);
     try {
-      const distance = claim.malt_distance || claim.distance_miles || 0;
-      const weight = claim.actual_weight || claim.estimated_weight || 0;
-
+      // Calculate missing values from available data
+      let distance = claim.malt_distance || claim.distance_miles || 0;
+      let weight = claim.actual_weight || claim.estimated_weight || 0;
+      let perDiemDays = claim.per_diem_days || 0;
+      
+      // Calculate distance if missing
+      if (!distance && claim.origin_base && claim.destination_base) {
+        try {
+          const distResponse = await fetch(`/api/pcs/calculate-distance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              origin: claim.origin_base,
+              destination: claim.destination_base,
+            }),
+          });
+          if (distResponse.ok) {
+            const distData = await distResponse.json();
+            distance = distData.miles || 0;
+            console.log("[PCSClaim] Calculated distance:", distance);
+          }
+        } catch (err) {
+          console.warn("[PCSClaim] Failed to calculate distance:", err);
+        }
+      }
+      
+      // Calculate per diem days from dates if missing
+      if (!perDiemDays && claim.departure_date && claim.arrival_date) {
+        const depDate = new Date(claim.departure_date);
+        const arrDate = new Date(claim.arrival_date);
+        const diffTime = Math.abs(arrDate.getTime() - depDate.getTime());
+        perDiemDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log("[PCSClaim] Calculated per diem days:", perDiemDays);
+      }
+      
+      // Use default weight if missing (prompt user in future)
+      if (!weight) {
+        weight = 5000; // Default PPM weight for E1-E5 without dependents
+        console.warn("[PCSClaim] No weight provided, using default:", weight);
+      }
+      
       const response = await fetch(`/api/pcs/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -151,12 +189,12 @@ export default function PCSClaimClient({
           tle_destination_nights: claim.tle_destination_nights || 0,
           tle_origin_rate: claim.tle_origin_rate || 0, // Required by FormData
           tle_destination_rate: claim.tle_destination_rate || 0, // Required by FormData
-          per_diem_days: claim.per_diem_days || 0,
-          malt_distance: distance, // Required by FormData (for MALT calculation)
-          distance_miles: distance, // Alternative field
+          per_diem_days: perDiemDays,
+          malt_distance: distance,
+          distance_miles: distance,
           estimated_weight: weight,
           actual_weight: weight,
-          fuel_receipts: claim.fuel_receipts || 0, // Required by FormData
+          fuel_receipts: claim.fuel_receipts || 0,
           origin_zip: claim.origin_zip,
           destination_zip: claim.destination_zip,
         }),
