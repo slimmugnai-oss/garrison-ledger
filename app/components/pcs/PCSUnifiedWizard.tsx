@@ -107,6 +107,57 @@ export default function PCSUnifiedWizard({
   const [editingClaimId, setEditingClaimId] = useState<string | null>(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
 
+  // Auto-save form data to localStorage (debounced)
+  useEffect(() => {
+    // Don't auto-save if editing existing claim
+    if (editingClaimId) return;
+
+    // Don't auto-save on start screen
+    if (currentStep === "start") return;
+
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem("pcs-wizard-draft", JSON.stringify(formData));
+        logger.info("Auto-saved wizard draft to localStorage");
+      } catch (error) {
+        logger.warn("Failed to auto-save to localStorage", error);
+      }
+    }, 1000); // Debounce 1 second
+
+    return () => clearTimeout(timeoutId);
+  }, [formData, currentStep, editingClaimId]);
+
+  // Restore draft from localStorage on mount (if not editing)
+  useEffect(() => {
+    // Don't restore if editing or if form already has data
+    if (editingClaimId || formData.origin_base || formData.destination_base) return;
+
+    try {
+      const saved = localStorage.getItem("pcs-wizard-draft");
+      if (saved) {
+        const savedData = JSON.parse(saved);
+        // Only restore if we have some meaningful data
+        if (savedData.origin_base || savedData.destination_base || savedData.claim_name) {
+          setFormData((prev) => ({ ...prev, ...savedData }));
+          toast.info("Restored your draft claim", { duration: 3000 });
+          logger.info("Restored wizard draft from localStorage");
+        }
+      }
+    } catch (error) {
+      logger.warn("Failed to restore draft from localStorage", error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingClaimId]);
+
+  // Clear localStorage when claim is successfully saved
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem("pcs-wizard-draft");
+    } catch (error) {
+      // Ignore localStorage errors
+    }
+  };
+
   // Load claim for editing if editClaimId prop or ?edit query param is present
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -747,6 +798,19 @@ export default function PCSUnifiedWizard({
         <div className="text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
           <p className="text-slate-600">Loading claim for editing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If editing, skip start screen - go directly to review
+  if (currentStep === "start" && editingClaimId) {
+    // This shouldn't happen, but just in case
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+          <p className="text-slate-600">Loading claim data...</p>
         </div>
       </div>
     );
