@@ -1,18 +1,32 @@
 # Client-Server Boundary Rules (CRITICAL)
 
 **Created:** October 27, 2025  
-**After:** Production incident - PCS Copilot page breakage  
-**Commit:** `c0bc939` (fix) / `deca908` (bug introduced)
+**Updated:** October 28, 2025 (INCIDENT #2: Same issue, different function)  
+**Incidents:**
+- **#1:** PPM Withholding Calculator - `c0bc939` (fix) / `deca908` (bug)
+- **#2:** PCS Calculation Engine - `ebe100e` (fix) / Same pattern
 
 ---
 
-## 🚨 THE INCIDENT
+## 🚨 THE INCIDENTS
+
+### Incident #1: PPM Withholding (Oct 27, 2025)
 
 **Symptom:** "supabaseKey is required" error, PCS Copilot page showing "Something went wrong"
 
-**Root Cause:** Client component directly imported server-side function using `supabaseAdmin`
+**Root Cause:** Client component directly imported `calculatePPMWithholding()` which uses `supabaseAdmin`
 
 **Impact:** Production breakage, PCS Copilot completely broken for all users
+
+### Incident #2: PCS Calculations (Oct 28, 2025)
+
+**Symptom:** "MALT rate not found", "DLA $0", "PPM stuck at 5000 lbs"
+
+**Root Cause:** Client component directly called `calculatePCSClaim()` which uses `supabaseAdmin` for rate lookups
+
+**Impact:** All PCS calculations broken, rates couldn't be fetched from database
+
+**Pattern:** SAME MISTAKE, DIFFERENT FUNCTION. We need better safeguards!
 
 ---
 
@@ -20,28 +34,36 @@
 
 **File:** `app/components/pcs/PCSUnifiedWizard.tsx` (client component with `"use client"`)
 
-**Bad Code:**
+**Incident #1 - Bad Code:**
 ```typescript
 import {
   calculatePPMWithholding,  // ❌ WRONG! This uses supabaseAdmin
   type PPMWithholdingResult,
 } from "@/lib/pcs/ppm-withholding-calculator";
 
-// Later in component:
 const result = await calculatePPMWithholding({ ... }); // ❌ Breaks on client!
 ```
 
-**Why it broke:**
-1. `calculatePPMWithholding()` uses `supabaseAdmin` internally
+**Incident #2 - Bad Code:**
+```typescript
+import { calculatePCSClaim } from "@/lib/pcs/calculation-engine";
+
+const result = await calculatePCSClaim(formData); // ❌ Breaks on client!
+// Internally calls: getDLARate(), getMALTRate(), getPerDiemRate()
+// All use supabaseAdmin to query jtr_rates_cache table
+```
+
+**Why both broke:**
+1. Both functions use `supabaseAdmin` internally (directly or via `jtr-api.ts`)
 2. `supabaseAdmin` requires `SUPABASE_SERVICE_ROLE_KEY` (server env var)
 3. Client components run in browser (no access to server env vars)
-4. Result: "supabaseKey is required" error
+4. Result: "supabaseKey is required" or "MALT rate not found" errors
 
 ---
 
-## ✅ THE FIX
+## ✅ THE FIX (Both Incidents)
 
-### Step 1: Create Server-Side API Route
+### Incident #1 Fix: PPM Withholding API Route
 
 **File:** `app/api/pcs/calculate-ppm-withholding/route.ts`
 
@@ -68,15 +90,40 @@ export async function POST(req: NextRequest) {
 }
 ```
 
-### Step 2: Update Client to Use Type-Only Import
+### Incident #2 Fix: PCS Calculation API Route
+
+**File:** `app/api/pcs/calculate/route.ts`
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { calculatePCSClaim, type FormData } from "@/lib/pcs/calculation-engine";
+
+export async function POST(req: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData: FormData = await req.json();
+  
+  // ✅ Runs server-side, can access supabaseAdmin for rate lookups
+  const calculations = await calculatePCSClaim(formData);
+  
+  return NextResponse.json(calculations);
+}
+```
+
+### Client Update (Both Incidents)
 
 **File:** `app/components/pcs/PCSUnifiedWizard.tsx`
 
 ```typescript
-// ✅ Type-only import (no runtime code bundled)
+// ✅ Type-only imports (no runtime code bundled)
 import type { PPMWithholdingResult } from "@/lib/pcs/ppm-withholding-calculator";
+import type { CalculationResult } from "@/lib/pcs/calculation-engine";
 
-// ✅ Call API instead of direct function
+// Incident #1: PPM Withholding
 const response = await fetch("/api/pcs/calculate-ppm-withholding", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -87,8 +134,15 @@ const response = await fetch("/api/pcs/calculate-ppm-withholding", {
     destinationState: "NC",
   }),
 });
-
 const result: PPMWithholdingResult = await response.json();
+
+// Incident #2: PCS Calculations
+const response2 = await fetch("/api/pcs/calculate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(formData),
+});
+const calculations: CalculationResult = await response2.json();
 ```
 
 ---
@@ -207,8 +261,16 @@ Before using ANY function in a client component, ask:
 - [ ] Does it access environment variables?
 - [ ] Does it make direct database queries?
 - [ ] Does it use Node.js APIs (fs, path, etc.)?
+- [ ] Does it call JTR rate lookups (`getDLARate`, `getMALTRate`, `getPerDiemRate`)?
+- [ ] Does it call calculation functions (`calculatePCSClaim`, `calculatePPMWithholding`)?
 
 **If ANY answer is YES:** Create an API route, don't call it directly from client!
+
+**Known Server-Only Functions in Garrison Ledger:**
+- `calculatePCSClaim()` - Uses supabaseAdmin for rate lookups
+- `calculatePPMWithholding()` - Queries state_tax_rates table
+- `getDLARate()`, `getMALTRate()`, `getPerDiemRate()` - Query jtr_rates_cache
+- Any function in `lib/pcs/jtr-api.ts` - All use supabaseAdmin
 
 ---
 
@@ -351,6 +413,10 @@ Before deploying code with new client components:
 
 **Remember: When in doubt, create an API route. It's safer than debugging production breakage at midnight.** 🎖️
 
-**Last Updated:** October 27, 2025  
-**Incident Fix:** Commit `c0bc939`
+**LESSON LEARNED:** If we made this mistake TWICE in 24 hours, we need to audit ALL client components that import from `lib/` to ensure no other violations exist.
+
+**Last Updated:** October 28, 2025  
+**Incident Fixes:**
+- Incident #1 (PPM Withholding): Commit `c0bc939`
+- Incident #2 (PCS Calculations): Commits `8aa03a3` (query fix) + `ebe100e` (API route)
 
