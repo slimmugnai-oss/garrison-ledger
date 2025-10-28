@@ -631,6 +631,11 @@ async function getPerDiemRateFromDB(
       zipCode: zipCode,
       city: "Standard CONUS",
       state: "",
+      // Ensure all required fields are present
+      effectiveDate: rateData.effectiveDate || effectiveDate,
+      lodgingRate: rateData.lodgingRate || 96,
+      mealRate: rateData.mealRate || 70,
+      totalRate: rateData.totalRate || 166,
     };
   }
 
