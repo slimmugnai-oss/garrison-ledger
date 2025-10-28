@@ -54,43 +54,93 @@ export async function POST(request: NextRequest) {
 
     let calculations;
     if (snapshotsError || !snapshots || snapshots.length === 0) {
-      // No snapshots, use basic calculations
+      // No snapshots, calculate fresh or use claim entitlements
+      logger.warn("No snapshots found, using claim entitlements or defaults", { claimId });
+      
       calculations = {
         dla: {
-          amount: 0,
-          confidence: 0.5,
-          source: "Manual Entry",
+          amount: claim.entitlements?.dla || 0,
+          confidence: 0.8,
+          source: "Claim Data",
           lastVerified: new Date().toISOString(),
         },
         tle: {
-          amount: 0,
-          confidence: 0.5,
-          source: "Manual Entry",
+          amount: claim.entitlements?.tle || 0,
+          confidence: 0.8,
+          source: "Claim Data",
           lastVerified: new Date().toISOString(),
         },
         malt: {
-          amount: 0,
-          confidence: 0.5,
-          source: "Manual Entry",
+          amount: claim.entitlements?.malt || 0,
+          confidence: 0.8,
+          source: "Claim Data",
           lastVerified: new Date().toISOString(),
         },
         per_diem: {
-          amount: 0,
-          confidence: 0.5,
-          source: "Manual Entry",
+          amount: claim.entitlements?.per_diem || 0,
+          confidence: 0.8,
+          source: "Claim Data",
           lastVerified: new Date().toISOString(),
         },
         ppm: {
-          amount: 0,
-          confidence: 0.5,
-          source: "Manual Entry",
+          amount: claim.entitlements?.ppm || 0,
+          confidence: 0.8,
+          source: "Claim Data",
           lastVerified: new Date().toISOString(),
         },
-        total_entitlements: 0,
-        confidence: { overall: 0.5, dataSources: {} },
+        total_entitlements: claim.entitlements?.total || 0,
+        confidence: { overall: 0.8, dataSources: {} },
       };
     } else {
-      calculations = snapshots[0].calculation_results;
+      // Build calculations from snapshot data
+      const snapshot = snapshots[0];
+      
+      // Extract confidence from snapshot if available
+      const confidences = snapshot.confidence_scores || {};
+      
+      calculations = {
+        dla: {
+          amount: Number(snapshot.dla_amount) || 0,
+          confidence: Number(confidences.dla) || 0.8,
+          source: "Calculation Snapshot",
+          lastVerified: snapshot.created_at || new Date().toISOString(),
+        },
+        tle: {
+          amount: Number(snapshot.tle_amount) || 0,
+          confidence: Number(confidences.tle) || 0.8,
+          source: "Calculation Snapshot",
+          lastVerified: snapshot.created_at || new Date().toISOString(),
+        },
+        malt: {
+          amount: Number(snapshot.malt_amount) || 0,
+          confidence: Number(confidences.malt) || 0.8,
+          source: "Calculation Snapshot",
+          lastVerified: snapshot.created_at || new Date().toISOString(),
+        },
+        per_diem: {
+          amount: Number(snapshot.per_diem_amount) || 0,
+          confidence: Number(confidences.perDiem) || 0.8,
+          source: "Calculation Snapshot",
+          lastVerified: snapshot.created_at || new Date().toISOString(),
+        },
+        ppm: {
+          amount: Number(snapshot.ppm_estimate) || 0,
+          confidence: Number(confidences.ppm) || 0.8,
+          source: "Calculation Snapshot",
+          lastVerified: snapshot.created_at || new Date().toISOString(),
+        },
+        total_entitlements: Number(snapshot.total_estimated) || 0,
+        confidence: {
+          overall: Number(confidences.overall) || snapshot.confidence_score || 0.8,
+          dataSources: {},
+        },
+      };
+      
+      logger.info("Using snapshot calculations for PDF", {
+        claimId,
+        total: calculations.total_entitlements,
+        dla: calculations.dla.amount,
+      });
     }
 
     // Get validation results

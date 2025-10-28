@@ -49,7 +49,6 @@ export default function PCSClaimClient({
   tier: _tier,
   userProfile: _userProfile 
 }: PCSClaimClientProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -232,12 +231,12 @@ export default function PCSClaimClient({
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            <Link
+              href={`/dashboard/pcs-copilot?edit=${claim.id}`}
+              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center justify-center"
             >
-              {isEditing ? 'Cancel Edit' : 'Edit Claim'}
-            </button>
+              Edit Claim
+            </Link>
           </div>
 
           {/* Stats Cards */}

@@ -1,6 +1,6 @@
 /**
  * DEEP INTERNAL TESTING FOR PCS COPILOT CRITICAL FIXES
- * 
+ *
  * Tests:
  * 1. DLA calculation with supabaseAdmin fix
  * 2. PPM weight allowance with rank format fix
@@ -42,7 +42,7 @@ describe("PCS Copilot Critical Fixes", () => {
       expect(results.dla.amount).toBeGreaterThanOrEqual(3500);
       expect(results.dla.amount).toBeLessThanOrEqual(3600);
       expect(results.dla.confidence).toBeGreaterThan(0);
-      
+
       console.log(`✅ DLA Amount: $${results.dla.amount.toFixed(2)}`);
     });
 
@@ -76,7 +76,7 @@ describe("PCS Copilot Critical Fixes", () => {
       // DLA should be ~$2950 for E-5 without dependents
       expect(results.dla.amount).toBeGreaterThanOrEqual(2900);
       expect(results.dla.amount).toBeLessThanOrEqual(3000);
-      
+
       console.log(`✅ DLA Amount: $${results.dla.amount.toFixed(2)}`);
     });
 
@@ -110,7 +110,7 @@ describe("PCS Copilot Critical Fixes", () => {
       // DLA should be ~$3540 for O-3 with dependents
       expect(results.dla.amount).toBeGreaterThanOrEqual(3500);
       expect(results.dla.amount).toBeLessThanOrEqual(3600);
-      
+
       console.log(`✅ DLA Amount: $${results.dla.amount.toFixed(2)}`);
     });
   });
@@ -147,7 +147,7 @@ describe("PCS Copilot Critical Fixes", () => {
       expect(results.ppm.weight).toBe(7000);
       expect(results.ppm.maxWeight).toBe(7000);
       expect(results.ppm.amount).toBeGreaterThan(0);
-      
+
       console.log(`✅ PPM Weight: ${results.ppm.weight} lbs (capped from 8250)`);
       console.log(`✅ PPM Amount: $${results.ppm.amount.toFixed(2)}`);
     });
@@ -182,7 +182,7 @@ describe("PCS Copilot Critical Fixes", () => {
       // E-1 max weight is 5000, so should cap at 5000
       expect(results.ppm.weight).toBe(5000);
       expect(results.ppm.maxWeight).toBe(5000);
-      
+
       console.log(`✅ PPM Weight: ${results.ppm.weight} lbs (capped from 6000)`);
     });
 
@@ -216,7 +216,7 @@ describe("PCS Copilot Critical Fixes", () => {
       // O-3 max is 13000, user enters 12000, should use 12000
       expect(results.ppm.weight).toBe(12000);
       expect(results.ppm.maxWeight).toBe(13000);
-      
+
       console.log(`✅ PPM Weight: ${results.ppm.weight} lbs (under max of 13000)`);
     });
 
@@ -251,7 +251,7 @@ describe("PCS Copilot Critical Fixes", () => {
       expect(results.ppm.weight).toBe(0);
       expect(results.ppm.amount).toBe(0);
       expect(results.ppm.confidence).toBe(0);
-      
+
       console.log(`✅ PPM correctly zero (no weight entered)`);
     });
   });
@@ -287,7 +287,7 @@ describe("PCS Copilot Critical Fixes", () => {
       // Should still calculate correctly
       expect(results.ppm.maxWeight).toBe(7000); // E6 allowance
       expect(results.dla.amount).toBeGreaterThan(0);
-      
+
       console.log(`✅ Handled rank without dash: max weight = ${results.ppm.maxWeight} lbs`);
     });
 
@@ -322,7 +322,7 @@ describe("PCS Copilot Critical Fixes", () => {
       expect(results.ppm.weight).toBe(11000);
       expect(results.ppm.maxWeight).toBe(11000);
       expect(results.dla.amount).toBeGreaterThanOrEqual(3500);
-      
+
       console.log(`✅ E-9: PPM weight capped at ${results.ppm.weight} lbs`);
       console.log(`✅ E-9: DLA = $${results.dla.amount.toFixed(2)}`);
     });
@@ -367,11 +367,14 @@ describe("PCS Copilot Critical Fixes", () => {
       console.log("\n📊 COMPLETE CALCULATION RESULTS:");
       console.log(`  DLA: $${results.dla.amount.toFixed(2)}`);
       console.log(`  MALT: $${results.malt.amount.toFixed(2)} (${results.malt.distance} miles)`);
-      console.log(`  Per Diem: $${results.perDiem.amount.toFixed(2)} (${results.perDiem.days} days)`);
-      console.log(`  PPM: $${results.ppm.amount.toFixed(2)} (${results.ppm.weight} lbs × ${results.ppm.distance} mi)`);
+      console.log(
+        `  Per Diem: $${results.perDiem.amount.toFixed(2)} (${results.perDiem.days} days)`
+      );
+      console.log(
+        `  PPM: $${results.ppm.amount.toFixed(2)} (${results.ppm.weight} lbs × ${results.ppm.distance} mi)`
+      );
       console.log(`  TLE: $${results.tle.total.toFixed(2)}`);
       console.log(`  TOTAL: $${results.total.toFixed(2)}`);
     });
   });
 });
-

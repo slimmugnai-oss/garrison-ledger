@@ -521,11 +521,15 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
           URL.revokeObjectURL(url);
         }
 
-        setCurrentStep("complete");
         toast.success("PCS claim saved and PDF downloaded!");
-        if (onComplete) {
-          onComplete(claimId);
-        }
+        
+        // Only call onComplete if user wants to exit wizard
+        // Don't reset wizard state immediately - let user stay on review screen
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete(claimId);
+          }
+        }, 100);
       } else {
         toast.error("Failed to save claim. Please try again.");
       }
