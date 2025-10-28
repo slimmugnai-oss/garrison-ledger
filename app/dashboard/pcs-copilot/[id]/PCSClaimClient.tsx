@@ -132,8 +132,17 @@ export default function PCSClaimClient({
     try {
       // Calculate missing values from available data
       let distance = claim.malt_distance || claim.distance_miles || 0;
-      let weight = claim.actual_weight || claim.estimated_weight || 0;
+      // Try to get weight from snapshot first, then fall back to defaults
+      let weight = snapshot?.ppm_weight || 
+                   snapshot?.calculation_details?.ppm?.weight || 
+                   0;
       let perDiemDays = claim.per_diem_days || 0;
+      
+      console.log("[PCSClaim] Weight lookup:", {
+        snapshot_weight: snapshot?.ppm_weight,
+        details_weight: snapshot?.calculation_details?.ppm?.weight,
+        final_weight: weight,
+      });
 
       // Calculate distance if missing
       if (!distance && claim.origin_base && claim.destination_base) {
@@ -181,35 +190,41 @@ export default function PCSClaimClient({
       if (!weight && claim.rank_at_pcs) {
         const hasDeps = (claim.dependents_count || 0) > 0;
         const rankDefaults: Record<string, { without: number; with: number }> = {
-          "E1": { without: 5000, with: 8000 },
-          "E2": { without: 5000, with: 8000 },
-          "E3": { without: 5000, with: 8000 },
-          "E4": { without: 7000, with: 8000 },
-          "E5": { without: 7000, with: 9000 },
-          "E6": { without: 8000, with: 11000 },
-          "E7": { without: 11000, with: 13000 },
-          "E8": { without: 12000, with: 14000 },
-          "E9": { without: 13000, with: 15000 },
-          "W1": { without: 10000, with: 12000 },
-          "W2": { without: 11000, with: 13000 },
-          "W3": { without: 12000, with: 14000 },
-          "W4": { without: 13000, with: 15000 },
-          "W5": { without: 13000, with: 16000 },
-          "O1": { without: 10000, with: 12000 },
-          "O2": { without: 10000, with: 12000 },
-          "O3": { without: 11000, with: 13000 },
-          "O4": { without: 12000, with: 14000 },
-          "O5": { without: 13000, with: 16000 },
-          "O6": { without: 14000, with: 18000 },
-          "O7": { without: 15000, with: 18000 },
-          "O8": { without: 16000, with: 18000 },
-          "O9": { without: 17000, with: 18000 },
-          "O10": { without: 18000, with: 18000 },
+          E1: { without: 5000, with: 8000 },
+          E2: { without: 5000, with: 8000 },
+          E3: { without: 5000, with: 8000 },
+          E4: { without: 7000, with: 8000 },
+          E5: { without: 7000, with: 9000 },
+          E6: { without: 8000, with: 11000 },
+          E7: { without: 11000, with: 13000 },
+          E8: { without: 12000, with: 14000 },
+          E9: { without: 13000, with: 15000 },
+          W1: { without: 10000, with: 12000 },
+          W2: { without: 11000, with: 13000 },
+          W3: { without: 12000, with: 14000 },
+          W4: { without: 13000, with: 15000 },
+          W5: { without: 13000, with: 16000 },
+          O1: { without: 10000, with: 12000 },
+          O2: { without: 10000, with: 12000 },
+          O3: { without: 11000, with: 13000 },
+          O4: { without: 12000, with: 14000 },
+          O5: { without: 13000, with: 16000 },
+          O6: { without: 14000, with: 18000 },
+          O7: { without: 15000, with: 18000 },
+          O8: { without: 16000, with: 18000 },
+          O9: { without: 17000, with: 18000 },
+          O10: { without: 18000, with: 18000 },
         };
         const normalizedRank = claim.rank_at_pcs.replace(/[^EWO0-9]/g, "").toUpperCase();
         const defaults = rankDefaults[normalizedRank] || { without: 8000, with: 11000 };
         weight = hasDeps ? defaults.with : defaults.without;
-        console.warn("[PCSClaim] No weight provided, using rank-based default:", weight, "for rank", claim.rank_at_pcs, hasDeps ? "with dependents" : "without dependents");
+        console.warn(
+          "[PCSClaim] No weight provided, using rank-based default:",
+          weight,
+          "for rank",
+          claim.rank_at_pcs,
+          hasDeps ? "with dependents" : "without dependents"
+        );
       }
 
       console.log("[PCSClaim] Calling calculation API with:", {
@@ -269,7 +284,7 @@ export default function PCSClaimClient({
             per_diem_amount: calc.perDiem?.amount || 0,
             per_diem_days: calc.perDiem?.days || 0,
             ppm_estimate: calc.ppm?.amount || 0,
-            ppm_weight: calc.ppm?.weight || 0,
+            ppm_weight: calc.ppm?.weight || weight || 0, // Use calculated weight or fall back to entered weight
             total_estimated: calc.total || 0,
             calculation_details: calc,
             confidence_scores: calc.confidence || {},
