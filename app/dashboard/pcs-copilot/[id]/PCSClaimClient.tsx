@@ -137,7 +137,7 @@ export default function PCSClaimClient({
   // If missing, it's a data integrity issue - log warning but proceed with form_data fallback
   useEffect(() => {
     if (!snapshot && claim.form_data) {
-      console.warn(
+      logger.warn(
         "[PCSClaimClient] No snapshot found for claim - snapshot should exist after save",
         { claimId: claim.id }
       );
