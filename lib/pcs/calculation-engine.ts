@@ -9,6 +9,7 @@
  */
 
 import { logger } from "@/lib/logger";
+import { getRankPaygrade } from "@/lib/data/rank-paygrade-map";
 
 // Use admin client for server-side analytics, null for client-side
 function getSupabaseClient() {
@@ -135,7 +136,21 @@ async function calculateDLA(
   effectiveDate: string
 ): Promise<CalculationResult["dla"]> {
   try {
-    const amount = await getDLARate(rank, hasDependents, effectiveDate);
+    // CRITICAL FIX: Convert rank title to paygrade
+    // "Sergeant (SGT)" → "E05" → "E-5" for database lookup
+    let paygrade = rank;
+    
+    // If rank is a title (contains letters/spaces), convert to paygrade
+    if (rank && !rank.match(/^[EWO]-?\d{1,2}$/i)) {
+      const converted = getRankPaygrade(rank);
+      if (converted) {
+        // Convert E05 → E-5 format for database
+        paygrade = converted.replace(/^([EWO])0?(\d+)$/i, "$1-$2");
+        logger.info("Converted rank for DLA lookup", { originalRank: rank, paygrade });
+      }
+    }
+    
+    const amount = await getDLARate(paygrade, hasDependents, effectiveDate);
 
     return {
       amount,
@@ -145,7 +160,7 @@ async function calculateDLA(
       citation: "JTR 050302.B",
       source: "DFAS Pay Tables API",
       lastVerified: new Date().toISOString(),
-      confidence: 100,
+      confidence: amount > 0 ? 100 : 0,
     };
   } catch (error) {
     logger.error("DLA calculation failed:", error);

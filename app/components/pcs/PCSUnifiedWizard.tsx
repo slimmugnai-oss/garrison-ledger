@@ -344,11 +344,23 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
     setPpmGccAmount(data.gccAmount);
 
     // CRITICAL: Save weight and distance to formData so they appear in review/calculations
-    if (data.weight) {
-      updateFormData({ actual_weight: data.weight });
+    const updates: Partial<WizardFormData> = {};
+    
+    if (data.weight && data.weight > 0) {
+      updates.actual_weight = data.weight;
     }
-    if (data.distance) {
-      updateFormData({ distance_miles: data.distance });
+    if (data.distance && data.distance > 0) {
+      updates.distance_miles = data.distance;
+    }
+    
+    // Update formData if we have changes
+    if (Object.keys(updates).length > 0) {
+      updateFormData(updates);
+      
+      // Force immediate recalculation with new weight/distance
+      setTimeout(() => {
+        calculateEstimates();
+      }, 100);
     }
 
     if (data.movingExpenses !== undefined) {
