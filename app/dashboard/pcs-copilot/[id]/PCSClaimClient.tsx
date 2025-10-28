@@ -224,38 +224,6 @@ export default function PCSClaimClient({
     }
   };
 
-  const handleDownloadPackage = async () => {
-    setIsDownloading(true);
-
-    try {
-      const response = await fetch("/api/pcs/export/pdf", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ claimId: claim.id, type: "full" }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Download failed");
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `PCS_Claim_${claim.claim_name.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      alert(`Download failed: ${err instanceof Error ? err.message : "Unknown error"}`);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   const tabs: { id: Tab; label: string; icon: string; count?: number }[] = [
     { id: "overview", label: "Overview", icon: "Info" },
@@ -327,15 +295,7 @@ export default function PCSClaimClient({
                 className="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
               >
                 <Icon name="Download" className="mr-2 h-4 w-4" />
-                {isDownloading ? "Opening..." : "Print/Export (Fast)"}
-              </button>
-              <button
-                onClick={handleDownloadPackage}
-                disabled={isDownloading}
-                className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
-              >
-                <Icon name="Download" className="mr-2 h-4 w-4" />
-                {isDownloading ? "Generating..." : "Download PDF (Slow)"}
+                {isDownloading ? "Opening..." : "Print/Export"}
               </button>
             </div>
           </div>
