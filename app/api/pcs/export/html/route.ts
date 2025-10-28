@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     let calculations;
     if (snapshot && snapshot.calculation_details) {
       const details = snapshot.calculation_details;
-      
+
       logger.info("HTML Export: Using snapshot calculation_details", {
         dla_from_details: details.dla?.amount,
         tle_from_details: details.tle?.total,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
           dataSources: snapshot.data_sources || details.dataSources || {},
         },
       };
-      
+
       logger.info("HTML Export: Final calculations", {
         dla: calculations.dla.amount,
         tle: calculations.tle.amount,

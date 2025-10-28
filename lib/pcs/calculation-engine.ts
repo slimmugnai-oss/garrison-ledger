@@ -8,8 +8,8 @@
  * - JTR compliance
  */
 
-import { logger } from "@/lib/logger";
 import { getRankPaygrade } from "@/lib/data/rank-paygrade-map";
+import { logger } from "@/lib/logger";
 
 // Use admin client for server-side analytics, null for client-side
 function getSupabaseClient() {

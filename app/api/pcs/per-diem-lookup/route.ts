@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getPerDiemRate } from "@/lib/pcs/jtr-api";
 import { logger } from "@/lib/logger";
+import { getPerDiemRate } from "@/lib/pcs/jtr-api";
 
 /**
  * PER DIEM RATE LOOKUP API

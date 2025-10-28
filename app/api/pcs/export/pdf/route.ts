@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { logger } from "@/lib/logger";
 import { generatePCSClaimPDF, generateClaimSummaryPDF } from "@/lib/pcs/pdf-generator";
+import { generatePCSClaimPDFReact } from "@/lib/pcs/pdf-generator-react";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
@@ -441,13 +442,20 @@ export async function POST(request: NextRequest) {
     if (type === "summary") {
       pdfBuffer = await generateClaimSummaryPDF(claimDataForPDF, calculations);
     } else {
-      // Full claim package
-      pdfBuffer = await generatePCSClaimPDF(
-        claimDataForPDF,
-        calculations,
-        documents || [],
-        validationResults || []
-      );
+      // Use React-PDF for faster generation (no html2canvas)
+      try {
+        pdfBuffer = await generatePCSClaimPDFReact(claimDataForPDF, calculations);
+        logger.info("PDF generated using React-PDF (fast)", { claimId });
+      } catch (error) {
+        // Fallback to old method if React-PDF fails
+        logger.warn("React-PDF failed, falling back to jsPDF", { error });
+        pdfBuffer = await generatePCSClaimPDF(
+          claimDataForPDF,
+          calculations,
+          documents || [],
+          validationResults || []
+        );
+      }
     }
 
     // Log the export

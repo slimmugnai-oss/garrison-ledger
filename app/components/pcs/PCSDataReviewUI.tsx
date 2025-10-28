@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
+import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
 import Card, { CardContent, CardHeader, CardTitle } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
-import Badge from "@/app/components/ui/Badge";
 
 interface FieldScore {
   value: any;
