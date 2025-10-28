@@ -144,9 +144,11 @@ async function calculateDLA(
     if (rank && !rank.match(/^[EWO]-?\d{1,2}$/i)) {
       const converted = getRankPaygrade(rank);
       if (converted) {
-        // Convert E05 → E-5 format for database
-        paygrade = converted.replace(/^([EWO])0?(\d+)$/i, "$1-$2");
-        logger.info("Converted rank for DLA lookup", { originalRank: rank, paygrade });
+        // Convert E06 → E-6 format for database (strip leading zero)
+        const letter = converted.charAt(0); // E, W, or O
+        const number = parseInt(converted.substring(1), 10); // 06 → 6
+        paygrade = `${letter}-${number}`;
+        logger.info("[PCS Calc] Converted rank for DLA lookup", { originalRank: rank, converted, paygrade });
       }
     }
 
@@ -460,8 +462,8 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
     formData.distance_miles,
     formData.rank_at_pcs
   );
-  
-  logger.info("🔍 PPM Calculated", { 
+
+  logger.info("🔍 PPM Calculated", {
     weight: formData.actual_weight || formData.estimated_weight,
     distance: formData.distance_miles,
     ppmWeight: ppm.weight,
