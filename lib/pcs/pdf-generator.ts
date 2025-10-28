@@ -181,24 +181,24 @@ async function addHeader(pdf: jsPDF, claimData: PCSClaimData): Promise<number> {
 
   // IMPORTANT NOTICE - Yellow box with better text wrapping
   pdf.setFillColor(254, 240, 138); // yellow-200
-  pdf.rect(10, 36, 190, 15, "F"); // Increase height from 12 to 15mm
-  pdf.setFontSize(8);
+  pdf.rect(10, 36, 190, 16, "F"); // Increased height for better spacing
+  pdf.setFontSize(7.5); // Slightly smaller font
   pdf.setTextColor(133, 77, 14); // yellow-900
   pdf.setFont("helvetica", "bold");
-  pdf.text("⚠ IMPORTANT:", 15, 40);
+  pdf.text("⚠ IMPORTANT:", 15, 41);
   pdf.setFont("helvetica", "normal");
 
   // Split long text into two lines
   const line1 = "This is a CALCULATION WORKSHEET, not an official voucher.";
   const line2 = "Submit DD Form 1351-2 through DTS for reimbursement.";
-  pdf.text(line1, 15, 44);
-  pdf.text(line2, 15, 48);
+  pdf.text(line1, 15, 45);
+  pdf.text(line2, 15, 49);
 
   // Reset text color for body
   pdf.setTextColor(0, 0, 0);
 
   // Member Information Section (moved down to avoid overlap)
-  const memberInfoStartY = 56;
+  const memberInfoStartY = 58; // Increased from 56 to give more space
   pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
   pdf.text("MEMBER INFORMATION", 20, memberInfoStartY);
@@ -247,13 +247,13 @@ async function addHeader(pdf: jsPDF, claimData: PCSClaimData): Promise<number> {
   pdf.text(`Distance: ${claimData.distance || 0} miles`, 110, currentY);
 
   // Separator line (moved down to accommodate taller IMPORTANT box)
-  const separatorY = memberInfoStartY + 35;
+  const separatorY = memberInfoStartY + 38; // Increased spacing to prevent overlap
   pdf.setLineWidth(0.5);
   pdf.setDrawColor(226, 232, 240); // slate-200
   pdf.line(20, separatorY, 190, separatorY);
 
   // Return Y position after header (for next section)
-  return separatorY + 5;
+  return separatorY + 8; // Increased from 5 to give more space before next section
 }
 
 /**

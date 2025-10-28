@@ -152,10 +152,17 @@ export default function PCSClaimClient({
 
       if (response.ok) {
         const calc = await response.json();
-        // The API returns calculations directly
+        console.log("[PCSClaim] Calculation response:", calc);
+        
+        // The API returns calculations directly (or error object)
+        if (calc?.error) {
+          console.error("[PCSClaim] Calculation error:", calc.error);
+          return;
+        }
+        
         if (calc && calc.dla) {
           // Transform to Snapshot format
-          setCalculatedSnapshot({
+          const snapshot = {
             dla_amount: calc.dla?.amount || 0,
             tle_amount: calc.tle?.total || 0,
             tle_days: (calc.tle?.origin?.days || 0) + (calc.tle?.destination?.days || 0),
@@ -167,9 +174,16 @@ export default function PCSClaimClient({
             ppm_weight: calc.ppm?.weight || 0,
             total_estimated: calc.total || 0,
             calculation_details: calc,
-            confidence_scores: calc.confidence,
-          });
+            confidence_scores: calc.confidence || {},
+          };
+          console.log("[PCSClaim] Setting calculated snapshot:", snapshot);
+          setCalculatedSnapshot(snapshot);
+        } else {
+          console.warn("[PCSClaim] Invalid calculation response:", calc);
         }
+      } else {
+        const errorText = await response.text();
+        console.error("[PCSClaim] Calculation API error:", response.status, errorText);
       }
     } catch (error) {
       console.error("Failed to calculate snapshot:", error);
@@ -557,25 +571,25 @@ export default function PCSClaimClient({
                       {
                         label: "Temporary Lodging Expense (TLE)",
                         amount: claim.entitlements?.tle || displaySnapshot?.tle_amount || 0,
-                        description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0} destination nights`,
+                        description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days ?? claim.tle_origin_nights ?? 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days ?? claim.tle_destination_nights ?? 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",
                         amount: claim.entitlements?.malt || displaySnapshot?.malt_amount || 0,
-                        description: `${displaySnapshot?.malt_miles || displaySnapshot?.calculation_details?.malt?.distance || claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
+                        description: `${displaySnapshot?.malt_miles ?? displaySnapshot?.calculation_details?.malt?.distance ?? claim.malt_distance ?? claim.distance_miles ?? 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
                         amount:
                           claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
-                        description: `${displaySnapshot?.per_diem_days || displaySnapshot?.calculation_details?.perDiem?.days || claim.per_diem_days || 0} days of meals & incidentals`,
+                        description: `${displaySnapshot?.per_diem_days ?? displaySnapshot?.calculation_details?.perDiem?.days ?? claim.per_diem_days ?? 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
                               amount: claim.entitlements?.ppm || displaySnapshot?.ppm_estimate || 0,
-                              description: `Based on ${displaySnapshot?.ppm_weight || displaySnapshot?.calculation_details?.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0} lbs`,
+                              description: `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
                             },
                           ]
                         : []),
@@ -595,19 +609,22 @@ export default function PCSClaimClient({
                           {displaySnapshot?.confidence_scores && (
                             <div className="text-xs text-gray-500">
                               Confidence:{" "}
-                              {Math.round(
-                                ((displaySnapshot.confidence_scores[
-                                  item.label.toLowerCase().includes("dla")
-                                    ? "dla"
-                                    : item.label.toLowerCase().includes("tle")
-                                      ? "tle"
-                                      : item.label.toLowerCase().includes("malt")
-                                        ? "malt"
-                                        : item.label.toLowerCase().includes("per diem")
-                                          ? "perDiem"
-                                          : "ppm"
-                                ] as number) || 0.8) * 100
-                              )}
+                              {(() => {
+                                const key = item.label.toLowerCase().includes("dla")
+                                  ? "dla"
+                                  : item.label.toLowerCase().includes("tle")
+                                    ? "tle"
+                                    : item.label.toLowerCase().includes("malt")
+                                      ? "malt"
+                                      : item.label.toLowerCase().includes("per diem")
+                                        ? "perDiem"
+                                        : "ppm";
+                                const confidence = displaySnapshot.confidence_scores?.[key];
+                                if (typeof confidence === "number") {
+                                  return Math.round(confidence * 100);
+                                }
+                                return 80; // default
+                              })()}
                               %
                             </div>
                           )}
