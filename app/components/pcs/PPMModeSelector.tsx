@@ -102,7 +102,9 @@ export default function PPMModeSelector({
               </div>
               <h4 className="mb-2 text-lg font-bold text-slate-900">Rough Ballpark Estimate</h4>
               <p className="mb-4 text-sm text-slate-600">
-                Get a very rough order-of-magnitude estimate for budgeting. <strong>Not accurate</strong> - DoD uses proprietary DP3/GHC rate tables we can't replicate.
+                Get a very rough order-of-magnitude estimate for budgeting.{" "}
+                <strong>Not accurate</strong> - DoD uses proprietary DP3/GHC rate tables we can't
+                replicate.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -284,7 +286,11 @@ export default function PPMModeSelector({
           <div className="rounded-lg border-2 border-red-600 bg-red-50 p-4">
             <p className="text-sm font-bold text-red-900">⚠️ ROUGH BALLPARK ONLY - NOT ACCURATE</p>
             <p className="mt-1 text-xs text-red-800">
-              <strong>This is NOT how DoD calculates PPM.</strong> Actual GCC uses proprietary DP3/GHC household goods rate tables with banded rates by mileage range and weight brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50% or more. <strong>Always get your official GCC from move.mil before making decisions.</strong>
+              <strong>This is NOT how DoD calculates PPM.</strong> Actual GCC uses proprietary
+              DP3/GHC household goods rate tables with banded rates by mileage range and weight
+              brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50%
+              or more.{" "}
+              <strong>Always get your official GCC from move.mil before making decisions.</strong>
             </p>
           </div>
 
@@ -337,43 +343,29 @@ export default function PPMModeSelector({
               </label>
               <Input type="number" value="0.60" disabled className="bg-slate-100" />
               <p className="mt-1 text-xs text-slate-500">
-                <strong>Note:</strong> DoD doesn't use a flat $/mile rate. Real GCC uses DP3/GHC banded rate tables (proprietary). This is a rough approximation only.
+                <strong>Note:</strong> DoD doesn't use a flat $/mile rate. Real GCC uses DP3/GHC
+                banded rate tables (proprietary). This is a rough approximation only.
               </p>
             </div>
 
-            <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-4">
-              <div className="mb-2 text-sm font-medium text-slate-700">Estimated GCC:</div>
-              <div className="text-3xl font-black text-slate-900">
-                $
+            <div className="rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+              <div className="mb-2 text-sm font-medium text-amber-900">
+                Rough Ballpark Estimate:
+              </div>
+              <div className="text-3xl font-black text-amber-900">
+                ~$
                 {(
                   ((parseFloat(estimatorWeight) || 0) / 100) *
                   (parseFloat(estimatorDistance) || 0) *
                   0.6
                 ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className="mt-2 text-xs text-slate-600">
-                Formula: ({parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
+              <div className="mt-2 text-xs text-slate-700">
+                <strong>Simplified formula:</strong> ({parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
                 {parseFloat(estimatorDistance || "0").toLocaleString()} mi × $0.60/cwt
               </div>
-              <div className="mt-2 rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-900">
-                ⚠️ Variance: ±30% ($
-                {(
-                  ((parseFloat(estimatorWeight) || 0) / 100) *
-                  (parseFloat(estimatorDistance) || 0) *
-                  0.6 *
-                  0.7
-                ).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}{" "}
-                - $
-                {(
-                  ((parseFloat(estimatorWeight) || 0) / 100) *
-                  (parseFloat(estimatorDistance) || 0) *
-                  0.6 *
-                  1.3
-                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                )
+              <div className="mt-2 rounded bg-red-100 border border-red-300 px-2 py-1 text-xs font-medium text-red-900">
+                ⚠️ <strong>Could be ±50% off or more!</strong> Actual GCC uses DP3/GHC banded rate tables, not linear math. Use move.mil for real calculation.
               </div>
             </div>
           </div>
@@ -388,7 +380,7 @@ export default function PPMModeSelector({
               <Icon name="ExternalLink" className="mr-2 h-4 w-4" />
               Get Official GCC from move.mil (RECOMMENDED)
             </Button>
-            
+
             <Button
               onClick={() => {
                 const weightValue = parseFloat(estimatorWeight);
