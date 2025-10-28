@@ -16,7 +16,6 @@ interface Claim {
   id: string;
   claim_name: string;
   status: string;
-  readiness_score: number;
   completion_percentage: number;
   pcs_orders_date: string;
   departure_date: string;
@@ -324,19 +323,6 @@ export default function PCSClaimClient({
 
           {/* Stats Cards */}
           <div className="mb-6 grid gap-6 sm:grid-cols-3">
-            <AnimatedCard className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="rounded-xl bg-blue-50 p-3">
-                  <Icon name="Shield" className="h-6 w-6 text-blue-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-slate-900">
-                    {claim.readiness_score}/100
-                  </div>
-                  <div className="text-sm text-slate-600">Readiness Score</div>
-                </div>
-              </div>
-            </AnimatedCard>
 
             <AnimatedCard className="p-6">
               <div className="flex items-center gap-4">
