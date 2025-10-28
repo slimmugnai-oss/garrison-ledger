@@ -544,12 +544,9 @@ async function getPerDiemRateFromDB(
   effectiveDate: string
 ): Promise<PerDiemRate | null> {
   // Query REAL 2025 per diem rates from jtr_rates_cache (300 verified locations)
-  const supabase = await getSupabaseClient();
-  if (!supabase) {
-    return null;
-  }
+  // CRITICAL: This MUST run server-side, use supabaseAdmin
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "per_diem")
@@ -569,7 +566,7 @@ async function getPerDiemRateFromDB(
 
   // If specific location not found, try to find standard CONUS rate
   // Most locations use the standard rate, so this is a legitimate fallback
-  const { data: standardRate } = await supabase
+  const { data: standardRate } = await supabaseAdmin
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "per_diem")
@@ -596,14 +593,10 @@ async function getPerDiemRateFromDB(
 
 async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
   // Query REAL 2025 DLA rates from entitlements_data table (44 rows, all ranks)
-  const supabase = await getSupabaseClient();
-  if (!supabase) {
-    return [];
-  }
-
+  // CRITICAL: This MUST run server-side, use supabaseAdmin
   const year = parseInt(effectiveDate.split("-")[0]);
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("entitlements_data")
     .select("rank_group, dependency_status, dla_rate, effective_year")
     .eq("effective_year", year)
@@ -631,12 +624,9 @@ async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
 
 async function getMALTRateFromDB(effectiveDate: string): Promise<MALTRate | null> {
   // Query REAL 2025 MALT rate from jtr_rates_cache (verified IRS data)
-  const supabase = await getSupabaseClient();
-  if (!supabase) {
-    return null;
-  }
+  // CRITICAL: This MUST run server-side, use supabaseAdmin
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "malt")
