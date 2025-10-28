@@ -92,19 +92,33 @@ export function getProfileRecommendations(profile: UserProfile): Recommendation[
     });
   }
 
-  // PCS Copilot readiness (optional)
-  if (profile.current_base && !profile.next_base) {
+  // PCS Copilot readiness - Core requirement
+  if (!profile.current_base && !profile.next_base) {
     recommendations.push({
       tool: "PCS Copilot",
-      status: "optional",
-      message: "Add next PCS base for move planning and DITY calculations",
+      status: "incomplete",
+      message: "Add current and next base to calculate PCS entitlements",
+      fields: ["current_base", "next_base"],
+    });
+  } else if (!profile.current_base) {
+    recommendations.push({
+      tool: "PCS Copilot",
+      status: "incomplete",
+      message: "Add current base to enable PCS calculations",
+      fields: ["current_base"],
+    });
+  } else if (!profile.next_base) {
+    recommendations.push({
+      tool: "PCS Copilot",
+      status: "incomplete",
+      message: "Add next PCS base to start planning your move",
       fields: ["next_base"],
     });
-  } else if (profile.next_base) {
+  } else {
     recommendations.push({
       tool: "PCS Copilot",
       status: "ready",
-      message: "Plan your PCS and maximize DITY move profit",
+      message: "Profile complete - ready for PCS planning",
     });
   }
 
