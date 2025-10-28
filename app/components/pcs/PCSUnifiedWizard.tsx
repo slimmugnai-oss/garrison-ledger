@@ -296,10 +296,22 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       // Extract destination ZIP for per diem locality lookup
       const destinationZip = extractZipFromBase(formData.destination_base);
 
-      const result = await calculatePCSClaim({
-        ...formData,
-        destination_zip: destinationZip,
-      } as FormData);
+      // CRITICAL FIX: Call server-side API instead of direct function
+      // calculatePCSClaim uses supabaseAdmin, so MUST run server-side
+      const response = await fetch("/api/pcs/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          destination_zip: destinationZip,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Calculation failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
       setCalculations(result);
     } catch (error) {
       logger.error("Failed to calculate estimates:", error);
