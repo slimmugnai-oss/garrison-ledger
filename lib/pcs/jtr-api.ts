@@ -96,7 +96,7 @@ export async function fetchPerDiemRates(
       .select("*")
       .eq("rate_type", "per_diem")
       .eq("rate_data->>zipCode", zipCode)
-      .gte("effective_date", effectiveDate)
+      .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
       .order("effective_date", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -143,7 +143,7 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "dla")
-      .gte("effective_date", effectiveDate)
+      .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
       .order("effective_date", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -208,7 +208,7 @@ export async function fetchMALTRate(effectiveDate: string): Promise<MALTRate | n
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "malt")
-      .gte("effective_date", effectiveDate)
+      .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
       .order("effective_date", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -289,7 +289,7 @@ export async function getBAHRate(
       .eq("paygrade", paygrade)
       .eq("mha", mhaCode)
       .eq("with_dependents", withDependents)
-      .gte("effective_date", effectiveDate)
+      .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
       .order("effective_date", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -554,7 +554,7 @@ async function getPerDiemRateFromDB(
     .select("*")
     .eq("rate_type", "per_diem")
     .eq("rate_data->>zipCode", zipCode)
-    .gte("effective_date", effectiveDate)
+    .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
     .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -574,7 +574,7 @@ async function getPerDiemRateFromDB(
     .select("*")
     .eq("rate_type", "per_diem")
     .ilike("rate_data->>city", "%Standard%")
-    .gte("effective_date", effectiveDate)
+    .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
     .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -640,7 +640,7 @@ async function getMALTRateFromDB(effectiveDate: string): Promise<MALTRate | null
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "malt")
-    .gte("effective_date", effectiveDate)
+    .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
     .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
