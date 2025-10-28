@@ -561,7 +561,8 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       // Prepare claim data with entitlements
       const claimData = {
         ...formData,
-        calculations,
+        // Include calculations for snapshot creation
+        calculations: calculations || undefined,
         // Explicitly include entitlements from calculations for PDF export
         entitlements: calculations
           ? {
@@ -572,7 +573,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
               ppm: calculations.ppm?.amount || 0,
               total: calculations.total || 0,
             }
-          : undefined,
+          : null,
       };
 
       // 1. Save claim to database
