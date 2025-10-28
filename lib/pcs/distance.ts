@@ -94,7 +94,7 @@ function findBase(identifier: string): MilitaryBase | undefined {
     const baseName = base.name.toLowerCase();
     const baseCity = base.city.toLowerCase();
     const baseId = base.id.toLowerCase();
-    
+
     // Strategy: Multiple matching methods to handle OCR variations
 
     // 1. Exact ID match (e.g., "jblm" → Joint Base Lewis-McChord)
@@ -103,7 +103,7 @@ function findBase(identifier: string): MilitaryBase | undefined {
     // 2. Extract base name without parentheses for clean comparison
     const baseNameCore = baseName.split("(")[0].trim();
     let cleanedIdCore = cleanedId.split("(")[0].trim();
-    
+
     // 2a. Handle "AFB" abbreviation → "Air Force Base"
     // e.g., "Eglin AFB" should match "Eglin Air Force Base"
     if (cleanedIdCore.includes(" afb")) {
