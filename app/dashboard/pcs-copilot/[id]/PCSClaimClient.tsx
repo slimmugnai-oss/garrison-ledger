@@ -117,7 +117,7 @@ interface PCSClaimClientProps {
   };
 }
 
-type Tab = "overview" | "entitlements" | "documents" | "validation";
+type Tab = "overview" | "entitlements" | "validation";
 
 export default function PCSClaimClient({
   claim,
@@ -224,16 +224,9 @@ export default function PCSClaimClient({
     }
   };
 
-
   const tabs: { id: Tab; label: string; icon: string; count?: number }[] = [
     { id: "overview", label: "Overview", icon: "Info" },
     { id: "entitlements", label: "Entitlements", icon: "DollarSign" },
-    {
-      id: "documents",
-      label: "Documents",
-      icon: "File",
-      count: documents.length,
-    },
     {
       id: "validation",
       label: "Validation",
@@ -297,6 +290,13 @@ export default function PCSClaimClient({
                 <Icon name="Download" className="mr-2 h-4 w-4" />
                 {isDownloading ? "Opening..." : "Print/Export"}
               </button>
+              <Link
+                href="/dashboard/binder"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
+              >
+                <Icon name="Upload" className="mr-2 h-4 w-4" />
+                Manage Documents
+              </Link>
             </div>
           </div>
 
@@ -629,73 +629,6 @@ export default function PCSClaimClient({
                       </div>
                     </div>
                   </div>
-                </AnimatedCard>
-
-                {/* Action Buttons */}
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleExportHTML}
-                    disabled={isDownloading}
-                    className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Icon name="Download" className="h-5 w-5" />
-                    {isDownloading ? "Opening..." : "Print/Export"}
-                  </button>
-                  <Link
-                    href="/dashboard/binder"
-                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-                  >
-                    <Icon name="Upload" className="h-5 w-5" />
-                    Manage Documents
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* DOCUMENTS TAB */}
-            {activeTab === "documents" && (
-              <div className="space-y-6">
-                <AnimatedCard className="p-6">
-                  <div className="mb-6 flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-slate-900">Uploaded Documents</h3>
-                    <Link
-                      href="/dashboard/binder"
-                      className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-                    >
-                      Manage in Binder →
-                    </Link>
-                  </div>
-                  {documents.length === 0 ? (
-                    <div className="py-12 text-center">
-                      <Icon name="File" className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                      <p className="text-gray-600">No documents uploaded yet</p>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Use the Binder to organize your PCS documents
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {documents.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="flex items-center justify-between rounded-lg border border-gray-200 p-4"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon name="File" className="h-5 w-5 text-gray-500" />
-                            <div>
-                              <div className="font-semibold capitalize text-slate-900">
-                                {doc.document_type.replace("_", " ")}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                Uploaded {formatDate(doc.uploaded_at)}
-                              </div>
-                            </div>
-                          </div>
-                          <Badge variant="secondary">{doc.document_type}</Badge>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </AnimatedCard>
               </div>
             )}
