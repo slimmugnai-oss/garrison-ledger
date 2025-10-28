@@ -117,7 +117,7 @@ export default function PPMModeSelector({
                 </li>
                 <li className="flex items-center gap-2">
                   <Icon name="AlertTriangle" className="h-3 w-3 text-red-600" />
-                  Must verify with move.mil
+                  Must verify with my.move.mil
                 </li>
               </ul>
             </AnimatedCard>
@@ -292,7 +292,7 @@ export default function PPMModeSelector({
               DP3/GHC household goods rate tables with banded rates by mileage range and weight
               brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50%
               or more.{" "}
-              <strong>Always get your official GCC from move.mil before making decisions.</strong>
+              <strong>Always get your official GCC from my.move.mil before making decisions.</strong>
             </p>
           </div>
 
