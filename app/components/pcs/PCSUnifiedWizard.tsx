@@ -328,7 +328,13 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
     }, 500); // Debounce
 
     return () => clearTimeout(timer);
-  }, [calculateEstimates, formData.origin_base, formData.destination_base, formData.malt_distance, isLoadingDistance]);
+  }, [
+    calculateEstimates,
+    formData.origin_base,
+    formData.destination_base,
+    formData.malt_distance,
+    isLoadingDistance,
+  ]);
 
   /**
    * Handle PPM mode selection and calculate withholding
@@ -336,6 +342,14 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const handlePPMCalculation = async (mode: "official" | "estimator", data: any) => {
     setPpmMode(mode);
     setPpmGccAmount(data.gccAmount);
+
+    // CRITICAL: Save weight and distance to formData so they appear in review/calculations
+    if (data.weight) {
+      updateFormData({ actual_weight: data.weight });
+    }
+    if (data.distance) {
+      updateFormData({ distance_miles: data.distance });
+    }
 
     if (data.movingExpenses !== undefined) {
       setPpmExpenses({
