@@ -265,10 +265,30 @@ export default function PCSClaimClient({
                 subtitle={`PCS from ${claim.origin_base} to ${claim.destination_base}`}
               />
               <div className="mt-4 flex items-center gap-4">
-                <Badge variant={getStatusColor(claim.status)}>
-                  {claim.status === "draft" && claim.completion_percentage === 100
-                    ? "Ready"
-                    : claim.status.replace("_", " ")}
+                <Badge
+                  variant={
+                    claim.status === "completed"
+                      ? "success"
+                      : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                        ? "success"
+                        : claim.status === "ready_to_submit"
+                          ? "success"
+                          : claim.status === "in_progress"
+                            ? "primary"
+                            : "secondary"
+                  }
+                >
+                  {claim.status === "completed"
+                    ? "Completed"
+                    : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                      ? "Ready to Submit"
+                      : claim.status === "ready_to_submit"
+                        ? "Ready to Submit"
+                        : claim.status === "in_progress"
+                          ? "In Progress"
+                          : claim.status === "draft"
+                            ? "Draft"
+                            : claim.status.replace("_", " ")}
                 </Badge>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Icon name="Calendar" className="h-4 w-4" />
