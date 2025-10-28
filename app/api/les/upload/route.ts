@@ -26,6 +26,7 @@ import pdf from "pdf-parse";
 
 import type { ParseResult, LesLine } from "@/app/types/les";
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { getUserTier } from "@/lib/auth/subscription";
 import { compareLesToExpected } from "@/lib/les/compare";
 import { buildExpectedSnapshot } from "@/lib/les/expected";
 import { parseLesPdf } from "@/lib/les/parse";
@@ -84,7 +85,9 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 2. TIER GATING & QUOTA CHECK
     // ==========================================================================
-    const tier = await getUserTier(userId);
+    const userTier = await getUserTier(userId);
+    // Map staff tier to premium for upload quotas
+    const tier = userTier === "free" ? "free" : "premium";
     const monthlyQuota =
       tier === "free"
         ? ssot.features.lesAuditor.freeUploadsPerMonth
@@ -177,8 +180,22 @@ export async function POST(req: NextRequest) {
 
     if (lesFormat === "text") {
       // Standard text-based LES (myPay export)
-      parseResult = await parseLesPdf(buffer, { debug: false });
-      ocrMethod = "text_parse";
+      try {
+        parseResult = await Promise.race([
+          parseLesPdf(buffer, { debug: false }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("PDF parsing timed out after 30 seconds")), 30000)
+          ),
+        ]);
+        ocrMethod = "text_parse";
+      } catch (parseError) {
+        logger.error("[LES Upload] Text parsing failed or timed out", {
+          error: parseError instanceof Error ? parseError.message : "Unknown error",
+        });
+        // Fall back to vision OCR
+        parseResult = await processLESWithVision(buffer, file.type);
+        ocrMethod = "vision_ocr";
+      }
     } else if (lesFormat === "image") {
       // Scanned/photographed LES - use Gemini Vision
       parseResult = await processLESWithVision(buffer, file.type);
@@ -186,28 +203,40 @@ export async function POST(req: NextRequest) {
     } else {
       // Hybrid: Try text parse first, fall back to vision if insufficient
       try {
-        parseResult = await parseLesPdf(buffer, { debug: false });
+        parseResult = await Promise.race([
+          parseLesPdf(buffer, { debug: false }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("PDF parsing timed out after 30 seconds")), 30000)
+          ),
+        ]);
         if (parseResult.lines.length < 3) {
           // Too few lines extracted, try vision
+          logger.info("[LES Upload] Text parse yielded too few lines, trying vision OCR");
           parseResult = await processLESWithVision(buffer, file.type);
           ocrMethod = "vision_ocr";
         } else {
           ocrMethod = "text_parse";
         }
       } catch {
+        logger.info("[LES Upload] Text parse failed, falling back to vision OCR");
         parseResult = await processLESWithVision(buffer, file.type);
         ocrMethod = "vision_ocr";
       }
     }
 
-    const parsedOk = parseResult && parseResult.lines.length > 0;
-    const summary = parseResult?.summary || null;
-
-    if (!parsedOk || !parseResult) {
+    // Handle case where both text and vision parsing failed
+    if (!parseResult || parseResult.lines.length === 0) {
+      logger.error("[LES Upload] All parsing methods failed", {
+        format: lesFormat,
+        ocrMethod,
+      });
       throw Errors.invalidInput(
-        "Failed to parse LES. Please ensure it is a valid LES PDF from myPay or your service pay system."
+        "Failed to parse LES. Please ensure it is a valid LES PDF from myPay or your service pay system. If you're uploading a scanned LES, ensure the image is clear and readable."
       );
     }
+
+    const parsedOk = parseResult.lines.length > 0;
+    const summary = parseResult.summary || null;
 
     // ==========================================================================
     // 5. CREATE DATABASE RECORD (NO STORAGE PATH!)
@@ -413,33 +442,11 @@ export async function POST(req: NextRequest) {
       year,
     });
   } catch (error) {
-    return errorResponse(error);
-  }
-}
-
-/**
- * Get user's subscription tier
- * TODO: Integrate with your premium status system
- */
-async function getUserTier(userId: string): Promise<"free" | "premium"> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from("entitlements")
-      .select("tier")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (error || !data) {
-      return "free";
-    }
-
-    return (data.tier as "free" | "premium") || "free";
-  } catch (error) {
-    logger.warn("Failed to get user tier, defaulting to free", {
-      error: error instanceof Error ? error.message : "Unknown",
-      userId: userId.substring(0, 8) + "...",
+    logger.error("[LES Upload] Unhandled error", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
     });
-    return "free";
+    return errorResponse(error);
   }
 }
 
@@ -531,7 +538,8 @@ async function processLESWithVision(buffer: Buffer, contentType: string): Promis
 
   logger.info("[LES Vision OCR] Processing with Gemini Vision");
 
-  const result = await model.generateContent([
+  // Add timeout wrapper for Gemini API call
+  const visionPromise = model.generateContent([
     prompt,
     {
       inlineData: {
@@ -540,6 +548,20 @@ async function processLESWithVision(buffer: Buffer, contentType: string): Promis
       },
     },
   ]);
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error("Vision OCR request timed out after 60 seconds")), 60000);
+  });
+
+  let result;
+  try {
+    result = await Promise.race([visionPromise, timeoutPromise]);
+  } catch (visionError) {
+    logger.error("[LES Vision OCR] Failed or timed out", {
+      error: visionError instanceof Error ? visionError.message : "Unknown error",
+    });
+    throw new Error("LES processing timed out. Please try a smaller file or contact support.");
+  }
 
   const response = await result.response;
   const extractedText = response.text();
