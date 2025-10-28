@@ -45,6 +45,8 @@ interface WizardFormData extends Partial<FormData> {
   arrival_date?: string;
   origin_base?: string;
   destination_base?: string;
+  origin_zip?: string;
+  destination_zip?: string;
   rank_at_pcs?: string;
   branch?: string;
   dependents_count?: number;
