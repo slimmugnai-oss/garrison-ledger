@@ -709,7 +709,7 @@ export default function PCSClaimClient({
               <Icon name="X" className="h-5 w-5" />
             </button>
             <PCSUnifiedWizard
-              userProfile={userProfile || {}}
+              userProfile={_userProfile || {}}
               onComplete={(claimId) => {
                 setShowEditWizard(false);
                 // Reload page to show updated claim
