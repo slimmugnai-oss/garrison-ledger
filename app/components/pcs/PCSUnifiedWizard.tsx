@@ -574,6 +574,9 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
               total: calculations.total || 0,
             }
           : null,
+        // CRITICAL: Include actual_weight and estimated_weight so snapshot stores the entered weight
+        actual_weight: formData.actual_weight,
+        estimated_weight: formData.estimated_weight,
       };
 
       // 1. Save claim to database

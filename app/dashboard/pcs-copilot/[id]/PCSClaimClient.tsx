@@ -133,10 +133,14 @@ export default function PCSClaimClient({
       // Calculate missing values from available data
       let distance = claim.malt_distance || claim.distance_miles || 0;
       // Try to get weight from snapshot first, then fall back to defaults
-      let weight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || 0;
+      // IMPORTANT: ppm_weight stores the ENTERED weight, not the calculation weight
+      let weight = snapshot?.ppm_weight || 
+                   snapshot?.calculation_details?.ppm?.weight || 
+                   0;
       let perDiemDays = claim.per_diem_days || 0;
-
+      
       console.log("[PCSClaim] Weight lookup:", {
+        snapshot: snapshot ? "exists" : "null",
         snapshot_weight: snapshot?.ppm_weight,
         details_weight: snapshot?.calculation_details?.ppm?.weight,
         final_weight: weight,
@@ -247,10 +251,18 @@ export default function PCSClaimClient({
           pcs_orders_date: claim.pcs_orders_date,
           travel_method: claim.travel_method || "ppm",
           // Get TLE data from snapshot or claim
-          tle_origin_nights: snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0,
-          tle_destination_nights: snapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0,
-          tle_origin_rate: snapshot?.calculation_details?.tle?.origin?.rate || claim.tle_origin_rate || 0,
-          tle_destination_rate: snapshot?.calculation_details?.tle?.destination?.rate || claim.tle_destination_rate || 0,
+          tle_origin_nights:
+            snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0,
+          tle_destination_nights:
+            snapshot?.calculation_details?.tle?.destination?.days ||
+            claim.tle_destination_nights ||
+            0,
+          tle_origin_rate:
+            snapshot?.calculation_details?.tle?.origin?.rate || claim.tle_origin_rate || 0,
+          tle_destination_rate:
+            snapshot?.calculation_details?.tle?.destination?.rate ||
+            claim.tle_destination_rate ||
+            0,
           per_diem_days: perDiemDays,
           malt_distance: distance,
           distance_miles: distance, // CRITICAL: Both fields needed for PPM
@@ -277,7 +289,7 @@ export default function PCSClaimClient({
           // Use the weight from calculation result if we had to use a default
           // This ensures we display the actual weight that was used in calculation
           const actualWeight = calc.ppm?.weight || weight || 0;
-          
+
           // Transform to Snapshot format
           const snapshot = {
             dla_amount: calc.dla?.amount || 0,
