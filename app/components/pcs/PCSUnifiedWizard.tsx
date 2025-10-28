@@ -228,7 +228,7 @@ export default function PCSUnifiedWizard({
 
       // Ensure we're on review step (should already be set, but ensure)
       setCurrentStep("review");
-      
+
       // Clear loading states
       setIsLoadingEdit(false);
       setIsCalculating(false);
@@ -759,15 +759,16 @@ export default function PCSUnifiedWizard({
         // Clear localStorage draft since claim is now saved
         clearDraft();
 
-        // If editing in modal, call onComplete callback instead of redirecting
-        if (onComplete) {
-          onComplete(claimId);
-        } else {
-          // Small delay to let toast show, then redirect
-          setTimeout(() => {
-            window.location.href = `/dashboard/pcs-copilot/${claimId}`;
-          }, 500);
-        }
+            // If editing in modal, call onComplete callback instead of redirecting
+            if (onComplete) {
+              onComplete(claimId);
+            } else {
+              // Small delay to let toast show, then redirect
+              setTimeout(() => {
+                // Redirect to claim view page
+                window.location.href = `/dashboard/pcs-copilot/${claimId}`;
+              }, 500);
+            }
       } else {
         logger.error("Failed to save claim - invalid response", { result });
         toast.error("Failed to save claim. Please try again.");
