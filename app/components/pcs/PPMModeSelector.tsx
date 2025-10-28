@@ -100,23 +100,22 @@ export default function PPMModeSelector({
               <div className="mb-4 inline-flex rounded-xl bg-slate-100 p-3">
                 <Icon name="Calculator" className="h-8 w-8 text-slate-600" />
               </div>
-              <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">Rough Ballpark Estimate</h4>
               <p className="mb-4 text-sm text-slate-600">
-                Get a rough estimate for early planning. Uses weight and distance to approximate
-                GCC.
+                Get a very rough order-of-magnitude estimate for budgeting. <strong>Not accurate</strong> - DoD uses proprietary DP3/GHC rate tables we can't replicate.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <Icon name="Check" className="h-3 w-3 text-slate-600" />
-                  For early planning only
+                  Order-of-magnitude only
                 </li>
                 <li className="flex items-center gap-2">
-                  <Icon name="Check" className="h-3 w-3 text-slate-600" />
-                  ±30% variance range shown
+                  <Icon name="AlertTriangle" className="h-3 w-3 text-red-600" />
+                  Can be ±50%+ off actual GCC
                 </li>
                 <li className="flex items-center gap-2">
-                  <Icon name="AlertTriangle" className="h-3 w-3 text-amber-600" />
-                  Not official - verify with MilMove
+                  <Icon name="AlertTriangle" className="h-3 w-3 text-red-600" />
+                  Must verify with move.mil
                 </li>
               </ul>
             </AnimatedCard>
@@ -282,12 +281,10 @@ export default function PPMModeSelector({
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Warning */}
-          <div className="rounded-lg border-2 border-amber-600 bg-amber-50 p-4">
-            <p className="text-sm font-bold text-amber-900">⚠️ PLANNING ESTIMATE ONLY</p>
-            <p className="mt-1 text-xs text-amber-800">
-              This is NOT your official reimbursement. Actual GCC may vary by ±30% based on route
-              complexity, seasonal demand, and contract pricing. For accurate calculation, get your
-              GCC from move.mil.
+          <div className="rounded-lg border-2 border-red-600 bg-red-50 p-4">
+            <p className="text-sm font-bold text-red-900">⚠️ ROUGH BALLPARK ONLY - NOT ACCURATE</p>
+            <p className="mt-1 text-xs text-red-800">
+              <strong>This is NOT how DoD calculates PPM.</strong> Actual GCC uses proprietary DP3/GHC household goods rate tables with banded rates by mileage range and weight brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50% or more. <strong>Always get your official GCC from move.mil before making decisions.</strong>
             </p>
           </div>
 
@@ -336,11 +333,11 @@ export default function PPMModeSelector({
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Rate per CWT (Hundred-Weight) per Mile
+                Simplified Rate (for estimation only)
               </label>
               <Input type="number" value="0.60" disabled className="bg-slate-100" />
               <p className="mt-1 text-xs text-slate-500">
-                Industry average: $0.60 per 100 lbs per mile. Actual DoD contract rates are proprietary.
+                <strong>Note:</strong> DoD doesn't use a flat $/mile rate. Real GCC uses DP3/GHC banded rate tables (proprietary). This is a rough approximation only.
               </p>
             </div>
 
@@ -365,7 +362,10 @@ export default function PPMModeSelector({
                   (parseFloat(estimatorDistance) || 0) *
                   0.6 *
                   0.7
-                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
+                ).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{" "}
                 - $
                 {(
                   ((parseFloat(estimatorWeight) || 0) / 100) *
@@ -381,10 +381,20 @@ export default function PPMModeSelector({
           {/* CTA */}
           <div className="space-y-3">
             <Button
+              variant="outline"
+              className="w-full border-2 border-green-600 bg-green-50 text-green-900 hover:bg-green-100"
+              onClick={() => window.open("https://www.move.mil/moving-guide/ppm", "_blank")}
+            >
+              <Icon name="ExternalLink" className="mr-2 h-4 w-4" />
+              Get Official GCC from move.mil (RECOMMENDED)
+            </Button>
+            
+            <Button
               onClick={() => {
                 const weightValue = parseFloat(estimatorWeight);
                 const distanceValue = parseFloat(estimatorDistance);
-                // Correct formula: (weight / 100) × distance × rate_per_cwt
+                // ROUGH approximation: (weight / 100) × distance × avg_rate
+                // This is NOT how DoD calculates GCC (they use DP3/GHC banded tables)
                 const estimatedGCC = (weightValue / 100) * distanceValue * 0.6;
                 if (estimatedGCC > 0) {
                   onModeSelected("estimator", {
@@ -403,17 +413,8 @@ export default function PPMModeSelector({
               }
               className="w-full bg-amber-600 hover:bg-amber-700"
             >
-              <Icon name="Calculator" className="mr-2 h-5 w-5" />
-              Use Planning Estimate
-            </Button>
-
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => window.open("https://www.move.mil/moving-guide/ppm", "_blank")}
-            >
-              <Icon name="ExternalLink" className="mr-2 h-4 w-4" />
-              Get Official GCC from move.mil
+              <Icon name="AlertTriangle" className="mr-2 h-5 w-5" />
+              Use Rough Estimate Anyway
             </Button>
           </div>
         </CardContent>
