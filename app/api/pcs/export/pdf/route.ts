@@ -54,43 +54,119 @@ export async function POST(request: NextRequest) {
 
     let calculations;
     if (snapshotsError || !snapshots || snapshots.length === 0) {
-      // No snapshots, calculate fresh or use claim entitlements
-      logger.warn("No snapshots found, using claim entitlements or defaults", { claimId });
+      // No snapshots, check if claim has entitlements, otherwise calculate fresh
+      const hasEntitlements = claim.entitlements && claim.entitlements.total > 0;
 
-      calculations = {
-        dla: {
-          amount: claim.entitlements?.dla || 0,
-          confidence: 0.8,
-          source: "Claim Data",
-          lastVerified: new Date().toISOString(),
-        },
-        tle: {
-          amount: claim.entitlements?.tle || 0,
-          confidence: 0.8,
-          source: "Claim Data",
-          lastVerified: new Date().toISOString(),
-        },
-        malt: {
-          amount: claim.entitlements?.malt || 0,
-          confidence: 0.8,
-          source: "Claim Data",
-          lastVerified: new Date().toISOString(),
-        },
-        per_diem: {
-          amount: claim.entitlements?.per_diem || 0,
-          confidence: 0.8,
-          source: "Claim Data",
-          lastVerified: new Date().toISOString(),
-        },
-        ppm: {
-          amount: claim.entitlements?.ppm || 0,
-          confidence: 0.8,
-          source: "Claim Data",
-          lastVerified: new Date().toISOString(),
-        },
-        total_entitlements: claim.entitlements?.total || 0,
-        confidence: { overall: 0.8, dataSources: {} },
-      };
+      if (hasEntitlements) {
+        logger.info("Using claim entitlements for PDF", { claimId });
+        calculations = {
+          dla: {
+            amount: claim.entitlements?.dla || 0,
+            confidence: 0.8,
+            source: "Claim Data",
+            lastVerified: new Date().toISOString(),
+          },
+          tle: {
+            amount: claim.entitlements?.tle || 0,
+            confidence: 0.8,
+            source: "Claim Data",
+            lastVerified: new Date().toISOString(),
+          },
+          malt: {
+            amount: claim.entitlements?.malt || 0,
+            confidence: 0.8,
+            source: "Claim Data",
+            lastVerified: new Date().toISOString(),
+          },
+          per_diem: {
+            amount: claim.entitlements?.per_diem || 0,
+            confidence: 0.8,
+            source: "Claim Data",
+            lastVerified: new Date().toISOString(),
+          },
+          ppm: {
+            amount: claim.entitlements?.ppm || 0,
+            confidence: 0.8,
+            source: "Claim Data",
+            lastVerified: new Date().toISOString(),
+          },
+          total_entitlements: claim.entitlements?.total || 0,
+          confidence: { overall: 0.8, dataSources: {} },
+        };
+      } else {
+        // No entitlements in claim, calculate fresh
+        logger.warn("No snapshots or entitlements found, calculating fresh", { claimId });
+
+        // Import calculation engine
+        const { calculatePCSClaim } = await import("@/lib/pcs/calculation-engine");
+
+        const formDataForCalc = {
+          rank_at_pcs: claim.rank_at_pcs,
+          branch: claim.branch,
+          origin_base: claim.origin_base,
+          destination_base: claim.destination_base,
+          dependents_count: claim.dependents_count,
+          departure_date: claim.departure_date,
+          arrival_date: claim.arrival_date,
+          pcs_orders_date: claim.pcs_orders_date,
+          travel_method: claim.travel_method,
+          tle_origin_nights: claim.tle_origin_nights || 0,
+          tle_origin_rate: claim.tle_origin_rate || 0,
+          tle_destination_nights: claim.tle_destination_nights || 0,
+          tle_destination_rate: claim.tle_destination_rate || 0,
+          per_diem_days: claim.per_diem_days || 0,
+          malt_distance: claim.malt_distance || claim.distance_miles || 0,
+          distance_miles: claim.distance_miles || 0,
+          estimated_weight: claim.estimated_weight || 0,
+          actual_weight: claim.actual_weight || 0,
+          fuel_receipts: claim.fuel_receipts || 0,
+          claim_name: claim.claim_name,
+          origin_zip: claim.origin_zip,
+          destination_zip: claim.destination_zip,
+        };
+
+        const calcResult = await calculatePCSClaim(formDataForCalc);
+
+        calculations = {
+          dla: {
+            amount: calcResult.dla?.amount || 0,
+            confidence: calcResult.dla?.confidence || 0.8,
+            source: calcResult.dla?.source || "JTR",
+            lastVerified: calcResult.dla?.lastVerified || new Date().toISOString(),
+          },
+          tle: {
+            amount: calcResult.tle?.total || 0,
+            confidence: 0.8,
+            source: "JTR",
+            lastVerified: new Date().toISOString(),
+          },
+          malt: {
+            amount: calcResult.malt?.amount || 0,
+            confidence: calcResult.malt?.confidence || 0.8,
+            source: calcResult.malt?.source || "JTR",
+            lastVerified: calcResult.malt?.effectiveDate || new Date().toISOString(),
+          },
+          per_diem: {
+            amount: calcResult.perDiem?.amount || 0,
+            confidence: calcResult.perDiem?.confidence || 0.8,
+            source: "JTR",
+            lastVerified: calcResult.perDiem?.effectiveDate || new Date().toISOString(),
+          },
+          ppm: {
+            amount: calcResult.ppm?.amount || 0,
+            confidence: calcResult.ppm?.confidence || 0.8,
+            source: "JTR",
+            lastVerified: new Date().toISOString(),
+          },
+          total_entitlements: calcResult.total || 0,
+          confidence: calcResult.confidence || { overall: 0.8, dataSources: {} },
+        };
+
+        logger.info("Calculated fresh entitlements for PDF", {
+          claimId,
+          total: calculations.total_entitlements,
+        });
+      }
     } else {
       // Build calculations from snapshot data
       const snapshot = snapshots[0];

@@ -30,13 +30,13 @@ export async function GET(req: NextRequest) {
       throw Errors.invalidInput("rank_group parameter is required");
     }
 
-    if (!dependencyStatus || !['with', 'without'].includes(dependencyStatus)) {
+    if (!dependencyStatus || !["with", "without"].includes(dependencyStatus)) {
       throw Errors.invalidInput("dependency_status must be 'with' or 'without'");
     }
 
     // Query entitlements data
     const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
-    
+
     const { data, error } = await supabase
       .from("entitlements_data")
       .select("rank_group, dependency_status, weight_allowance, dla_rate, effective_year")
@@ -46,17 +46,23 @@ export async function GET(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      logger.error('[Entitlements] Failed to fetch data', error, { rankGroup, dependencyStatus, year });
+      logger.error("[Entitlements] Failed to fetch data", error, {
+        rankGroup,
+        dependencyStatus,
+        year,
+      });
       throw Errors.databaseError("Failed to fetch entitlement data");
     }
 
     if (!data) {
-      logger.warn('[Entitlements] No data found', { rankGroup, dependencyStatus, year });
-      throw Errors.notFound("Entitlement data not found for specified parameters. Please check rank_group format (e.g., 'E-5', 'O-3', 'W-2')");
+      logger.warn("[Entitlements] No data found", { rankGroup, dependencyStatus, year });
+      throw Errors.notFound(
+        "Entitlement data not found for specified parameters. Please check rank_group format (e.g., 'E-5', 'O-3', 'W-2')"
+      );
     }
 
-    logger.info('[Entitlements] Data fetched', { rankGroup, dependencyStatus, year });
-    
+    logger.info("[Entitlements] Data fetched", { rankGroup, dependencyStatus, year });
+
     // Type assertion to help TypeScript understand the selected fields
     const entitlementData = data as {
       rank_group: string;
@@ -65,7 +71,7 @@ export async function GET(req: NextRequest) {
       dla_rate: number;
       effective_year: number;
     };
-    
+
     return NextResponse.json({
       success: true,
       data: {
@@ -73,12 +79,10 @@ export async function GET(req: NextRequest) {
         dependency_status: entitlementData.dependency_status,
         weight_allowance: entitlementData.weight_allowance,
         dla_rate: entitlementData.dla_rate,
-        effective_year: entitlementData.effective_year
-      }
+        effective_year: entitlementData.effective_year,
+      },
     });
-
   } catch (error) {
     return errorResponse(error);
   }
 }
-

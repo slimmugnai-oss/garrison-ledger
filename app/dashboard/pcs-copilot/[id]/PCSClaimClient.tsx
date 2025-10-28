@@ -49,11 +49,7 @@ export default function PCSClaimClient({
   tier: _tier,
   userProfile: _userProfile,
 }: PCSClaimClientProps) {
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [isCalculating, setIsCalculating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [selectedDocumentType, setSelectedDocumentType] = useState<string>("orders");
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -78,81 +74,6 @@ export default function PCSClaimClient({
     }
   };
 
-  const handleFileUpload = async (files: FileList) => {
-    const fileArray = Array.from(files);
-    setUploadedFiles(fileArray);
-
-    for (const file of fileArray) {
-      try {
-        const base64 = await fileToBase64(file);
-
-        const response = await fetch("/api/pcs/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            claimId: claim.id,
-            documentType: selectedDocumentType,
-            fileName: file.name,
-            fileData: base64,
-            contentType: file.type,
-          }),
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-        } else {
-          alert(`Upload failed: ${result.error}`);
-        }
-      } catch {
-        alert("Upload failed. Please try again.");
-      }
-    }
-
-    setShowUploadModal(false);
-    setUploadedFiles([]);
-  };
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  const handleCalculateEntitlements = async () => {
-    setIsCalculating(true);
-
-    try {
-      const response = await fetch("/api/pcs/estimate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          claimId: claim.id,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert("Entitlements calculated successfully! Check your claim details.");
-        // Refresh the page to show updated data
-        window.location.reload();
-      } else {
-        alert(`Calculation failed: ${result.error}`);
-      }
-    } catch {
-      alert("Calculation failed. Please try again.");
-    } finally {
-      setIsCalculating(false);
-    }
-  };
 
   const handleDownloadPackage = async () => {
     setIsDownloading(true);
@@ -442,127 +363,31 @@ export default function PCSClaimClient({
           </AnimatedCard>
 
           {/* Action Buttons */}
-          <div className="mt-8 flex gap-4">
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              <Icon name="Upload" className="h-5 w-5" />
-              Upload Documents
-            </button>
-            <button
-              onClick={handleCalculateEntitlements}
-              disabled={isCalculating}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Icon name="Calculator" className="h-5 w-5" />
-              {isCalculating ? "Calculating..." : "Calculate Entitlements"}
-            </button>
-            <button
-              onClick={handleDownloadPackage}
-              disabled={isDownloading}
-              className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Icon name="Download" className="h-5 w-5" />
-              {isDownloading ? "Generating..." : "Download Package"}
-            </button>
+          <div className="mt-8 space-y-4">
+            <div className="flex gap-4">
+              <Link
+                href="/dashboard/binder"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+              >
+                <Icon name="Upload" className="h-5 w-5" />
+                Manage Documents in Binder
+              </Link>
+              <button
+                onClick={handleDownloadPackage}
+                disabled={isDownloading}
+                className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Icon name="Download" className="h-5 w-5" />
+                {isDownloading ? "Generating..." : "Download Package"}
+              </button>
+            </div>
+            <p className="text-sm text-slate-600">
+              Use the Binder to organize all PCS-related documents (orders, receipts, weigh tickets). 
+              The PCS Copilot is a planning tool that calculates your entitlements.
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Upload Documents Modal */}
-      {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-2xl">
-            <h3 className="mb-6 text-2xl font-bold text-slate-900">Upload PCS Documents</h3>
-
-            <div className="space-y-6">
-              {/* Document Type Selection */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Document Type
-                </label>
-                <select
-                  value={selectedDocumentType}
-                  onChange={(e) => setSelectedDocumentType(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="orders">PCS Orders</option>
-                  <option value="weigh_ticket">Weigh Ticket</option>
-                  <option value="lodging_receipt">Lodging Receipt</option>
-                  <option value="fuel_receipt">Fuel Receipt</option>
-                  <option value="meal_receipt">Meal Receipt</option>
-                  <option value="other">Other Document</option>
-                </select>
-              </div>
-
-              {/* File Upload */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Select Files
-                </label>
-                <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-                  <input
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.tiff"
-                    onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="flex cursor-pointer flex-col items-center gap-4"
-                  >
-                    <Icon name="Upload" className="h-12 w-12 text-gray-400" />
-                    <div>
-                      <p className="text-lg font-semibold text-slate-700">Click to upload files</p>
-                      <p className="text-sm text-gray-500">PDF, JPG, PNG, TIFF files accepted</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* Uploaded Files Preview */}
-              {uploadedFiles.length > 0 && (
-                <div>
-                  <h4 className="mb-2 text-sm font-semibold text-slate-700">Selected Files:</h4>
-                  <div className="space-y-2">
-                    {uploadedFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 rounded-lg bg-gray-50 p-3"
-                      >
-                        <Icon name="File" className="h-5 w-5 text-gray-500" />
-                        <span className="text-sm text-slate-700">{file.name}</span>
-                        <span className="text-xs text-gray-500">
-                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Modal Actions */}
-              <div className="flex gap-4 pt-6">
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="flex-1 rounded-lg bg-gray-200 px-6 py-3 font-semibold text-slate-900 transition-colors hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </>

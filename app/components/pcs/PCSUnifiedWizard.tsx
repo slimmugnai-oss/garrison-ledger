@@ -114,6 +114,75 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   };
 
   /**
+   * Load claim for editing when ?edit={claimId} query param is present
+   */
+  useEffect(() => {
+    const loadClaimForEditing = async () => {
+      if (typeof window === "undefined") return;
+
+      const params = new URLSearchParams(window.location.search);
+      const editClaimId = params.get("edit");
+
+      if (!editClaimId) return;
+
+      try {
+        logger.info("Loading claim for editing:", { claimId: editClaimId });
+
+        // Fetch claim data
+        const response = await fetch(`/api/pcs/claims/${editClaimId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch claim");
+        }
+
+        const { claim } = await response.json();
+
+        // Load all claim data into formData
+        setFormData({
+          claim_name: claim.claim_name,
+          pcs_orders_date: claim.pcs_orders_date,
+          departure_date: claim.departure_date,
+          arrival_date: claim.arrival_date,
+          origin_base: claim.origin_base,
+          destination_base: claim.destination_base,
+          rank_at_pcs: claim.rank_at_pcs,
+          branch: claim.branch,
+          dependents_count: claim.dependents_count || 0,
+          travel_method: claim.travel_method || "ppm",
+          tle_origin_nights: claim.tle_origin_nights || 0,
+          tle_destination_nights: claim.tle_destination_nights || 0,
+          tle_origin_rate: claim.tle_origin_rate || 0,
+          tle_destination_rate: claim.tle_destination_rate || 0,
+          malt_distance: claim.malt_distance || claim.distance_miles || 0,
+          distance_miles: claim.distance_miles || 0,
+          per_diem_days: claim.per_diem_days || 0,
+          estimated_weight: claim.estimated_weight || 0,
+          actual_weight: claim.actual_weight || 0,
+          fuel_receipts: claim.fuel_receipts || 0,
+          origin_zip: claim.origin_zip,
+          destination_zip: claim.destination_zip,
+        });
+
+        // Jump to review step immediately
+        setCurrentStep("review");
+        setEntryMethod("manual"); // Set entry method so UI renders properly
+
+        toast.success("Claim loaded. Reviewing calculations...");
+
+        // Trigger calculations after a brief delay to allow formData to update
+        setTimeout(async () => {
+          await calculateEstimates();
+        }, 500);
+      } catch (error) {
+        logger.error("Failed to load claim for editing:", error);
+        toast.error("Failed to load claim. Please try again.");
+      }
+    };
+
+    loadClaimForEditing();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount
+
+  /**
    * Extract ZIP code from military base name
    * Uses military-bases.json which contains ZIP codes for ~400 bases
    */
@@ -487,14 +556,28 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const handleSaveClaim = async () => {
     setIsSaving(true);
     try {
+      // Prepare claim data with entitlements
+      const claimData = {
+        ...formData,
+        calculations,
+        // Explicitly include entitlements from calculations for PDF export
+        entitlements: calculations
+          ? {
+              dla: calculations.dla?.amount || 0,
+              tle: calculations.tle?.total || 0,
+              malt: calculations.malt?.amount || 0,
+              per_diem: calculations.perDiem?.amount || 0,
+              ppm: calculations.ppm?.amount || 0,
+              total: calculations.total || 0,
+            }
+          : undefined,
+      };
+
       // 1. Save claim to database
       const response = await fetch("/api/pcs/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          calculations,
-        }),
+        body: JSON.stringify(claimData),
       });
 
       const result = await response.json();
