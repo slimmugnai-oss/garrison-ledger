@@ -174,6 +174,13 @@ export default function PCSUnifiedWizard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editClaimId]);
 
+  // Ensure editingClaimId is set if editClaimId prop is provided
+  useEffect(() => {
+    if (editClaimId && !editingClaimId) {
+      setEditingClaimId(editClaimId);
+    }
+  }, [editClaimId, editingClaimId]);
+
   const loadClaimForEditing = async (claimId: string) => {
     try {
       setIsCalculating(true);
@@ -726,9 +733,16 @@ export default function PCSUnifiedWizard({
       // 1. Save or update claim to database
       const isEditing = !!editingClaimId;
       const method = isEditing ? "PATCH" : "POST";
-      const url = isEditing ? "/api/pcs/claim" : "/api/pcs/claim";
+      const url = "/api/pcs/claim";
 
       const requestBody = isEditing ? { claimId: editingClaimId, ...claimData } : claimData;
+
+      logger.info("Saving claim", { 
+        isEditing, 
+        claimId: editingClaimId, 
+        method,
+        hasCalculations: !!calculations 
+      });
 
       const response = await fetch(url, {
         method,
@@ -759,16 +773,16 @@ export default function PCSUnifiedWizard({
         // Clear localStorage draft since claim is now saved
         clearDraft();
 
-            // If editing in modal, call onComplete callback instead of redirecting
-            if (onComplete) {
-              onComplete(claimId);
-            } else {
-              // Small delay to let toast show, then redirect
-              setTimeout(() => {
-                // Redirect to claim view page
-                window.location.href = `/dashboard/pcs-copilot/${claimId}`;
-              }, 500);
-            }
+        // If editing in modal, call onComplete callback instead of redirecting
+        if (onComplete) {
+          onComplete(claimId);
+        } else {
+          // Small delay to let toast show, then redirect
+          setTimeout(() => {
+            // Redirect to claim view page
+            window.location.href = `/dashboard/pcs-copilot/${claimId}`;
+          }, 500);
+        }
       } else {
         logger.error("Failed to save claim - invalid response", { result });
         toast.error("Failed to save claim. Please try again.");
