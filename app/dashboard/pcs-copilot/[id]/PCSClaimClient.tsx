@@ -114,17 +114,18 @@ export default function PCSClaimClient({
   const [isDownloading, setIsDownloading] = useState(false);
   const [calculatedSnapshot, setCalculatedSnapshot] = useState<Snapshot | null>(snapshot);
   const [isCalculating, setIsCalculating] = useState(false);
-  
+
   // If no snapshot exists, calculate fresh on mount
   useEffect(() => {
     if (!snapshot && claim && !isCalculating) {
       calculateFreshSnapshot();
     }
-  }, [snapshot, claim]);
-  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const calculateFreshSnapshot = async () => {
     if (isCalculating) return;
-    
+
     setIsCalculating(true);
     try {
       const response = await fetch(`/api/pcs/calculate`, {
@@ -148,12 +149,12 @@ export default function PCSClaimClient({
           actual_weight: claim.actual_weight || claim.estimated_weight || 0,
         }),
       });
-      
+
       if (response.ok) {
-        const result = await response.json();
-        if (result.success && result.calculations) {
+        const calc = await response.json();
+        // The API returns calculations directly
+        if (calc && calc.dla) {
           // Transform to Snapshot format
-          const calc = result.calculations;
           setCalculatedSnapshot({
             dla_amount: calc.dla?.amount || 0,
             tle_amount: calc.tle?.total || 0,
@@ -176,7 +177,7 @@ export default function PCSClaimClient({
       setIsCalculating(false);
     }
   };
-  
+
   // Use calculated snapshot if available, otherwise fall back to original snapshot
   const displaySnapshot = calculatedSnapshot || snapshot;
 
@@ -355,7 +356,9 @@ export default function PCSClaimClient({
                 </div>
                 <div>
                   <div className="text-2xl font-black text-slate-900">
-                    {formatCurrency(claim.entitlements?.total || displaySnapshot?.total_estimated || 0)}
+                    {formatCurrency(
+                      claim.entitlements?.total || displaySnapshot?.total_estimated || 0
+                    )}
                   </div>
                   <div className="text-sm text-slate-600">Estimated Total</div>
                 </div>
@@ -563,7 +566,8 @@ export default function PCSClaimClient({
                       },
                       {
                         label: "Per Diem",
-                        amount: claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
+                        amount:
+                          claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
                         description: `${displaySnapshot?.per_diem_days || displaySnapshot?.calculation_details?.perDiem?.days || claim.per_diem_days || 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"

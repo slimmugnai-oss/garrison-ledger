@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       .eq("claim_id", claimId)
       .eq("user_id", userId)
       .order("uploaded_at", { ascending: true });
-    
+
     // Continue even if documents query fails - PDF can be generated without them
 
     // Get calculations (from entitlement snapshots or calculate fresh)

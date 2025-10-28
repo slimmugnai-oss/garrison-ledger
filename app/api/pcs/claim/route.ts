@@ -132,32 +132,34 @@ export async function POST(req: NextRequest) {
       const calculations = body.calculations;
 
       try {
-        const { error: snapshotError } = await supabaseAdmin.from("pcs_entitlement_snapshots").insert({
-          claim_id: claim.id,
-          user_id: userId,
-          dla_amount: calculations.dla?.amount || 0,
-          tle_days:
-            (calculations.tle?.origin?.days || 0) + (calculations.tle?.destination?.days || 0),
-          tle_amount: calculations.tle?.total || 0,
-          malt_miles: calculations.malt?.distance || 0,
-          malt_amount: calculations.malt?.amount || 0,
-          per_diem_days: calculations.perDiem?.days || 0,
-          per_diem_amount: calculations.perDiem?.amount || 0,
-          ppm_weight: calculations.ppm?.weight || 0,
-          ppm_estimate: calculations.ppm?.amount || 0,
-          total_estimated: calculations.total || 0,
-          calculation_details: calculations,
-          rates_used: {
-            dla: calculations.dla?.rateUsed || 0,
-            malt: calculations.malt?.ratePerMile || 0,
-            perDiem: calculations.perDiem?.rate || 0,
-            ppm: calculations.ppm?.rate || 0,
-          },
-          confidence_scores: calculations.confidence,
-          jtr_rule_version: calculations.jtrRuleVersion || "2025-01-25",
-          data_sources: calculations.dataSources,
-        });
-        
+        const { error: snapshotError } = await supabaseAdmin
+          .from("pcs_entitlement_snapshots")
+          .insert({
+            claim_id: claim.id,
+            user_id: userId,
+            dla_amount: calculations.dla?.amount || 0,
+            tle_days:
+              (calculations.tle?.origin?.days || 0) + (calculations.tle?.destination?.days || 0),
+            tle_amount: calculations.tle?.total || 0,
+            malt_miles: calculations.malt?.distance || 0,
+            malt_amount: calculations.malt?.amount || 0,
+            per_diem_days: calculations.perDiem?.days || 0,
+            per_diem_amount: calculations.perDiem?.amount || 0,
+            ppm_weight: calculations.ppm?.weight || 0,
+            ppm_estimate: calculations.ppm?.amount || 0,
+            total_estimated: calculations.total || 0,
+            calculation_details: calculations,
+            rates_used: {
+              dla: calculations.dla?.rateUsed || 0,
+              malt: calculations.malt?.ratePerMile || 0,
+              perDiem: calculations.perDiem?.rate || 0,
+              ppm: calculations.ppm?.rate || 0,
+            },
+            confidence_scores: calculations.confidence,
+            jtr_rule_version: calculations.jtrRuleVersion || "2025-01-25",
+            data_sources: calculations.dataSources,
+          });
+
         if (snapshotError) {
           logger.error("[PCSClaim] Failed to create snapshot", snapshotError, {
             userId,
