@@ -185,6 +185,43 @@ export default function PCSClaimClient({
     }
   };
 
+  const handleExportHTML = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/pcs/export/html", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ claimId: claim.id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to export HTML");
+
+      const html = await response.text();
+      const blob = new Blob([html], { type: "text/html" });
+      const url = window.URL.createObjectURL(blob);
+      
+      // Open in new window for printing/saving
+      const newWindow = window.open(url, "_blank");
+      if (!newWindow) {
+        // Fallback to download if popup blocked
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `pcs-claim-${claim.id}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      
+      setTimeout(() => window.URL.revokeObjectURL(url), 100);
+      toast.success("Document opened. Press Ctrl/Cmd+P to print or save as PDF.");
+    } catch (error) {
+      logger.error("Failed to export HTML", error);
+      toast.error("Failed to export document");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const handleDownloadPackage = async () => {
     setIsDownloading(true);
 
@@ -283,12 +320,20 @@ export default function PCSClaimClient({
                 Edit Claim
               </Link>
               <button
+                onClick={handleExportHTML}
+                disabled={isDownloading}
+                className="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+              >
+                <Icon name="Download" className="mr-2 h-4 w-4" />
+                {isDownloading ? "Opening..." : "Print/Export (Fast)"}
+              </button>
+              <button
                 onClick={handleDownloadPackage}
                 disabled={isDownloading}
                 className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
               >
                 <Icon name="Download" className="mr-2 h-4 w-4" />
-                {isDownloading ? "Generating..." : "Download PDF"}
+                {isDownloading ? "Generating..." : "Download PDF (Slow)"}
               </button>
             </div>
           </div>

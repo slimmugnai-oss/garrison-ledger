@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     if (snapshot && snapshot.calculation_details) {
       logger.info("Using snapshot calculation_details for PDF", { claimId });
       const details = snapshot.calculation_details;
-      
+
       // CRITICAL: Log snapshot data to debug zeros
       logger.info("PDF: Snapshot data", {
         dla_amount: snapshot.dla_amount,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         ppm_estimate: snapshot.ppm_estimate,
         total_estimated: snapshot.total_estimated,
       });
-      
+
       logger.info("PDF: Calculation details", {
         dla_amount: details.dla?.amount,
         tle_total: details.tle?.total,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         ppm_amount: details.ppm?.amount,
         total: details.total,
       });
-      
+
       // CRITICAL: Convert string numbers to actual numbers (PostgreSQL numeric returns strings)
       calculations = {
         dla: {
@@ -110,11 +110,14 @@ export async function POST(request: NextRequest) {
         },
         total_entitlements: Number(snapshot.total_estimated) || Number(details.total) || 0,
         confidence: {
-          overall: Number(snapshot.confidence_scores?.overall) || Number(details.confidence?.overall) || 0.8,
+          overall:
+            Number(snapshot.confidence_scores?.overall) ||
+            Number(details.confidence?.overall) ||
+            0.8,
           dataSources: snapshot.data_sources || details.dataSources || {},
         },
       };
-      
+
       logger.info("PDF: Final calculations object", {
         dla: calculations.dla.amount,
         tle: calculations.tle.amount,
@@ -414,9 +417,20 @@ export async function POST(request: NextRequest) {
       departure_date: claim.departure_date || "Not provided",
       dependents_authorized: (claim.dependents_count || 0) > 0,
       dependents_count: claim.dependents_count || 0,
-      estimated_weight: claim.form_data?.actual_weight || claim.form_data?.estimated_weight || claim.estimated_weight || claim.actual_weight || 0,
+      estimated_weight:
+        claim.form_data?.actual_weight ||
+        claim.form_data?.estimated_weight ||
+        claim.estimated_weight ||
+        claim.actual_weight ||
+        0,
       travel_method: (claim.travel_method || "ppm") as "dity" | "full" | "partial",
-      distance: snapshot?.malt_miles || claim.form_data?.malt_distance || claim.form_data?.distance_miles || claim.distance_miles || claim.malt_distance || 0,
+      distance:
+        snapshot?.malt_miles ||
+        claim.form_data?.malt_distance ||
+        claim.form_data?.distance_miles ||
+        claim.distance_miles ||
+        claim.malt_distance ||
+        0,
       created_at: claim.created_at || new Date().toISOString(),
       updated_at: claim.updated_at || new Date().toISOString(),
     };
