@@ -126,228 +126,27 @@ export default function PCSClaimClient({
   tier: _tier,
   userProfile: _userProfile,
 }: PCSClaimClientProps) {
-  // DEBUG: Log form_data to verify it's being passed from server
-  console.log("[PCSClaimClient] Claim form_data:", claim.form_data);
-  console.log("[PCSClaimClient] Weight from form_data:", claim.form_data?.actual_weight);
-  console.log("[PCSClaimClient] TLE nights from form_data:", claim.form_data?.tle_origin_nights);
-
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
-  const [calculatedSnapshot, setCalculatedSnapshot] = useState<Snapshot | null>(snapshot);
-  const [isCalculating, setIsCalculating] = useState(false);
 
-  // If no snapshot exists, calculate fresh on mount
+  // REACTIVE SNAPSHOT PATTERN: Snapshot should ALWAYS exist after save
+  // If missing, it's a data integrity issue - log warning but proceed with form_data fallback
   useEffect(() => {
-    if (!snapshot && claim && !isCalculating) {
-      calculateFreshSnapshot();
+    if (!snapshot && claim.form_data) {
+      console.warn(
+        "[PCSClaimClient] No snapshot found for claim - snapshot should exist after save",
+        { claimId: claim.id }
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [snapshot, claim]);
 
-  const calculateFreshSnapshot = async () => {
-    if (isCalculating) return;
+  // REACTIVE SNAPSHOT PATTERN: Removed client-side recalculation
+  // Snapshots are created server-side when claim is saved
+  // View page always uses snapshot if available, falls back to form_data
 
-    setIsCalculating(true);
-    try {
-      // Calculate missing values from available data
-      let distance = claim.malt_distance || claim.distance_miles || 0;
-      // Try to get weight from snapshot first, then fall back to defaults
-      // IMPORTANT: ppm_weight stores the ENTERED weight, not the calculation weight
-      let weight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || 0;
-      let perDiemDays = claim.per_diem_days || 0;
-
-      console.log("[PCSClaim] Weight lookup:", {
-        snapshot: snapshot ? "exists" : "null",
-        snapshot_weight: snapshot?.ppm_weight,
-        details_weight: snapshot?.calculation_details?.ppm?.weight,
-        final_weight: weight,
-      });
-
-      // Calculate distance if missing
-      if (!distance && claim.origin_base && claim.destination_base) {
-        try {
-          console.log("[PCSClaim] Calculating distance between bases...", {
-            origin: claim.origin_base,
-            destination: claim.destination_base,
-          });
-          const distResponse = await fetch(`/api/pcs/calculate-distance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              origin: claim.origin_base,
-              destination: claim.destination_base,
-            }),
-          });
-          if (distResponse.ok) {
-            const distData = await distResponse.json();
-            distance = distData.miles || distData.distance || 0;
-            console.log("[PCSClaim] Calculated distance:", distance, "miles");
-          } else {
-            const errorText = await distResponse.text();
-            console.error("[PCSClaim] Distance API error:", distResponse.status, errorText);
-          }
-        } catch (err) {
-          console.error("[PCSClaim] Failed to calculate distance:", err);
-        }
-      }
-
-      // If still no distance, log warning
-      if (!distance) {
-        console.warn("[PCSClaim] No distance available, calculations may be incomplete");
-      }
-
-      // Calculate per diem days from dates if missing
-      if (!perDiemDays && claim.departure_date && claim.arrival_date) {
-        const depDate = new Date(claim.departure_date);
-        const arrDate = new Date(claim.arrival_date);
-        const diffTime = Math.abs(arrDate.getTime() - depDate.getTime());
-        perDiemDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        console.log("[PCSClaim] Calculated per diem days:", perDiemDays);
-      }
-
-      // Use rank-based default weight if missing (with dependents if user has them)
-      if (!weight && claim.rank_at_pcs) {
-        const hasDeps = (claim.dependents_count || 0) > 0;
-        const rankDefaults: Record<string, { without: number; with: number }> = {
-          E1: { without: 5000, with: 8000 },
-          E2: { without: 5000, with: 8000 },
-          E3: { without: 5000, with: 8000 },
-          E4: { without: 7000, with: 8000 },
-          E5: { without: 7000, with: 9000 },
-          E6: { without: 8000, with: 11000 },
-          E7: { without: 11000, with: 13000 },
-          E8: { without: 12000, with: 14000 },
-          E9: { without: 13000, with: 15000 },
-          W1: { without: 10000, with: 12000 },
-          W2: { without: 11000, with: 13000 },
-          W3: { without: 12000, with: 14000 },
-          W4: { without: 13000, with: 15000 },
-          W5: { without: 13000, with: 16000 },
-          O1: { without: 10000, with: 12000 },
-          O2: { without: 10000, with: 12000 },
-          O3: { without: 11000, with: 13000 },
-          O4: { without: 12000, with: 14000 },
-          O5: { without: 13000, with: 16000 },
-          O6: { without: 14000, with: 18000 },
-          O7: { without: 15000, with: 18000 },
-          O8: { without: 16000, with: 18000 },
-          O9: { without: 17000, with: 18000 },
-          O10: { without: 18000, with: 18000 },
-        };
-        const normalizedRank = claim.rank_at_pcs.replace(/[^EWO0-9]/g, "").toUpperCase();
-        const defaults = rankDefaults[normalizedRank] || { without: 8000, with: 11000 };
-        weight = hasDeps ? defaults.with : defaults.without;
-        console.warn(
-          "[PCSClaim] No weight provided, using rank-based default:",
-          weight,
-          "for rank",
-          claim.rank_at_pcs,
-          hasDeps ? "with dependents" : "without dependents"
-        );
-      }
-
-      console.log("[PCSClaim] Calling calculation API with:", {
-        distance,
-        weight,
-        perDiemDays,
-        dependents: claim.dependents_count || 0,
-      });
-
-      const response = await fetch(`/api/pcs/calculate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          claim_name: claim.claim_name || "PCS Claim",
-          rank_at_pcs: claim.rank_at_pcs,
-          branch: claim.branch,
-          origin_base: claim.origin_base,
-          destination_base: claim.destination_base,
-          dependents_count: claim.dependents_count || 0,
-          departure_date: claim.departure_date,
-          arrival_date: claim.arrival_date,
-          pcs_orders_date: claim.pcs_orders_date,
-          travel_method: claim.travel_method || "ppm",
-          // Get TLE data from snapshot or claim
-          tle_origin_nights:
-            snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0,
-          tle_destination_nights:
-            snapshot?.calculation_details?.tle?.destination?.days ||
-            claim.tle_destination_nights ||
-            0,
-          tle_origin_rate:
-            snapshot?.calculation_details?.tle?.origin?.rate || claim.tle_origin_rate || 0,
-          tle_destination_rate:
-            snapshot?.calculation_details?.tle?.destination?.rate ||
-            claim.tle_destination_rate ||
-            0,
-          per_diem_days: perDiemDays,
-          malt_distance: distance,
-          distance_miles: distance, // CRITICAL: Both fields needed for PPM
-          // Use the weight we found (from snapshot or default)
-          estimated_weight: weight || 0,
-          actual_weight: weight || 0,
-          fuel_receipts: claim.fuel_receipts || 0,
-          origin_zip: claim.origin_zip,
-          destination_zip: claim.destination_zip,
-        }),
-      });
-
-      if (response.ok) {
-        const calc = await response.json();
-        console.log("[PCSClaim] Calculation response:", calc);
-
-        // The API returns calculations directly (or error object)
-        if (calc?.error) {
-          console.error("[PCSClaim] Calculation error:", calc.error);
-          return;
-        }
-
-        if (calc && calc.dla) {
-          // CRITICAL: If we used a default weight (11,000) because snapshot had no weight,
-          // but the original snapshot exists, use the ORIGINAL weight from the snapshot
-          // Otherwise, use the weight that was calculated (default or entered)
-          const originalWeight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight;
-          const displayWeight = originalWeight || calc.ppm?.weight || weight || 0;
-
-          // Transform to Snapshot format
-          const snapshotData = {
-            dla_amount: calc.dla?.amount || 0,
-            tle_amount: calc.tle?.total || 0,
-            tle_days: (calc.tle?.origin?.days || 0) + (calc.tle?.destination?.days || 0),
-            malt_amount: calc.malt?.amount || 0,
-            malt_miles: calc.malt?.distance || 0,
-            per_diem_amount: calc.perDiem?.amount || 0,
-            per_diem_days: calc.perDiem?.days || 0,
-            ppm_estimate: calc.ppm?.amount || 0,
-            ppm_weight: displayWeight, // Use original weight if exists, otherwise calculated weight
-            total_estimated: calc.total || 0,
-            calculation_details: calc,
-            confidence_scores: calc.confidence || {},
-          };
-          console.log("[PCSClaim] Setting calculated snapshot:", {
-            ...snapshotData,
-            original_weight_from_snapshot: originalWeight,
-            weight_from_calc: calc.ppm?.weight,
-            weight_sent_to_api: weight,
-            final_display_weight: displayWeight,
-          });
-          setCalculatedSnapshot(snapshotData);
-        } else {
-          console.warn("[PCSClaim] Invalid calculation response:", calc);
-        }
-      } else {
-        const errorText = await response.text();
-        console.error("[PCSClaim] Calculation API error:", response.status, errorText);
-      }
-    } catch (error) {
-      console.error("Failed to calculate snapshot:", error);
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-
-  // Use calculated snapshot if available, otherwise fall back to original snapshot
-  const displaySnapshot = calculatedSnapshot || snapshot;
+  // REACTIVE SNAPSHOT PATTERN: Always use snapshot from server
+  // No client-side recalculation needed - snapshot is the single source of truth
+  const displaySnapshot = snapshot;
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return "Not provided";
@@ -687,14 +486,14 @@ export default function PCSClaimClient({
                           <span className="text-sm font-semibold text-slate-700">
                             Estimated Weight
                           </span>
-                          <span className="text-lg font-bold text-slate-900">
-                            {displaySnapshot?.ppm_weight ||
-                              displaySnapshot?.calculation_details?.ppm?.weight ||
-                              claim.form_data?.actual_weight ||
-                              claim.form_data?.estimated_weight ||
-                              0}{" "}
-                            lbs
-                          </span>
+                        <span className="text-lg font-bold text-slate-900">
+                          {displaySnapshot?.ppm_weight ||
+                            displaySnapshot?.calculation_details?.ppm?.weight ||
+                            claim.form_data?.actual_weight ||
+                            claim.form_data?.estimated_weight ||
+                            0}{" "}
+                          lbs
+                        </span>
                         </div>
                       </div>
                     )}

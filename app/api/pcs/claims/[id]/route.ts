@@ -44,8 +44,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       throw Errors.notFound("Claim not found");
     }
 
-    logger.info("[PCSClaim] Claim fetched", { userId, claimId: id });
-    return NextResponse.json({ claim });
+    // ALWAYS fetch latest snapshot (reactive snapshot pattern)
+    const { data: snapshot } = await supabaseAdmin
+      .from("pcs_entitlement_snapshots")
+      .select("*")
+      .eq("claim_id", id)
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    logger.info("[PCSClaim] Claim fetched", { userId, claimId: id, hasSnapshot: !!snapshot });
+    return NextResponse.json({ claim, snapshot: snapshot || null });
   } catch (error) {
     return errorResponse(error);
   }

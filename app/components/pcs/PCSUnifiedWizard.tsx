@@ -119,10 +119,10 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         return;
       }
 
-      const { claim } = await response.json();
+      const { claim, snapshot } = await response.json();
       const formDataFromClaim = claim.form_data || {};
 
-      // Load ALL data into formData state
+      // Load ALL data into formData state from form_data (raw inputs)
       setFormData({
         claim_name: claim.claim_name || "",
         rank_at_pcs: claim.rank_at_pcs || userProfile.rank,
@@ -134,7 +134,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         arrival_date: claim.arrival_date || "",
         pcs_orders_date: claim.pcs_orders_date || "",
         travel_method: claim.travel_method || "ppm",
-        // Load from form_data JSONB
+        // Load from form_data JSONB (raw user inputs)
         tle_origin_nights: formDataFromClaim.tle_origin_nights || 0,
         tle_destination_nights: formDataFromClaim.tle_destination_nights || 0,
         tle_origin_rate: formDataFromClaim.tle_origin_rate || 0,
@@ -149,19 +149,21 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         destination_zip: formDataFromClaim.destination_zip || null,
       });
 
+      // REACTIVE SNAPSHOT PATTERN: Use pre-calculated snapshot data if available
+      // No need to recalculate - snapshot already has the correct calculations
+      if (snapshot && snapshot.calculation_details) {
+        setCalculations(snapshot.calculation_details);
+        logger.info("Loaded claim with pre-calculated snapshot", { claimId });
+      }
+
       // Jump directly to review step
       setCurrentStep("review");
-
-      // Trigger calculations
-      setTimeout(() => {
-        calculateEstimates();
-      }, 100);
+      setIsCalculating(false);
 
       toast.success("Claim loaded for editing");
     } catch (error) {
       logger.error("Failed to load claim for editing", error);
       toast.error("Failed to load claim");
-    } finally {
       setIsCalculating(false);
     }
   };
