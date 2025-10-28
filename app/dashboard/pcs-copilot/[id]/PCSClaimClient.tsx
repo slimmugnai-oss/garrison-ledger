@@ -634,12 +634,12 @@ export default function PCSClaimClient({
                 {/* Action Buttons */}
                 <div className="flex gap-4">
                   <button
-                    onClick={handleDownloadPackage}
+                    onClick={handleExportHTML}
                     disabled={isDownloading}
-                    className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Icon name="Download" className="h-5 w-5" />
-                    {isDownloading ? "Generating..." : "Download PDF Worksheet"}
+                    {isDownloading ? "Opening..." : "Print/Export"}
                   </button>
                   <Link
                     href="/dashboard/binder"
