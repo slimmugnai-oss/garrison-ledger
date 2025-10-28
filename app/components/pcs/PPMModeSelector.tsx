@@ -43,18 +43,18 @@ export default function PPMModeSelector({
   const [fuelReceipts, setFuelReceipts] = useState<string>("0");
   const [laborCosts, setLaborCosts] = useState<string>("0");
   const [tollsAndFees, setTollsAndFees] = useState<string>("0");
-  
+
   // Estimator mode state - sync with props when they change
   const [estimatorWeight, setEstimatorWeight] = useState<string>(weight?.toString() || "");
   const [estimatorDistance, setEstimatorDistance] = useState<string>(distance?.toString() || "");
-  
+
   // Update estimator fields when props change (e.g., auto-calculated distance)
   useEffect(() => {
     if (distance && distance > 0) {
       setEstimatorDistance(distance.toString());
     }
   }, [distance]);
-  
+
   useEffect(() => {
     if (weight && weight > 0) {
       setEstimatorWeight(weight.toString());
