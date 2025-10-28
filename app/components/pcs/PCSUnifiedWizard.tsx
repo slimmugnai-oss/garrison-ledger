@@ -345,18 +345,18 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
 
     // CRITICAL: Save weight and distance to formData so they appear in review/calculations
     const updates: Partial<WizardFormData> = {};
-    
+
     if (data.weight && data.weight > 0) {
       updates.actual_weight = data.weight;
     }
     if (data.distance && data.distance > 0) {
       updates.distance_miles = data.distance;
     }
-    
+
     // Update formData if we have changes
     if (Object.keys(updates).length > 0) {
       updateFormData(updates);
-      
+
       // Force immediate recalculation with new weight/distance
       setTimeout(() => {
         calculateEstimates();

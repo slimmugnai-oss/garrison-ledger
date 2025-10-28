@@ -139,7 +139,7 @@ async function calculateDLA(
     // CRITICAL FIX: Convert rank title to paygrade
     // "Sergeant (SGT)" → "E05" → "E-5" for database lookup
     let paygrade = rank;
-    
+
     // If rank is a title (contains letters/spaces), convert to paygrade
     if (rank && !rank.match(/^[EWO]-?\d{1,2}$/i)) {
       const converted = getRankPaygrade(rank);
@@ -149,7 +149,7 @@ async function calculateDLA(
         logger.info("Converted rank for DLA lookup", { originalRank: rank, paygrade });
       }
     }
-    
+
     const amount = await getDLARate(paygrade, hasDependents, effectiveDate);
 
     return {
@@ -460,6 +460,14 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
     formData.distance_miles,
     formData.rank_at_pcs
   );
+  
+  logger.info("🔍 PPM Calculated", { 
+    weight: formData.actual_weight || formData.estimated_weight,
+    distance: formData.distance_miles,
+    ppmWeight: ppm.weight,
+    ppmDistance: ppm.distance,
+    ppmAmount: ppm.amount,
+  });
 
   // Calculate total
   const total = dla.amount + tle.total + malt.amount + perDiem.amount + ppm.amount;
