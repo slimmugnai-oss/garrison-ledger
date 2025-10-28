@@ -1,15 +1,15 @@
 /**
  * GCC PLANNING ESTIMATOR
- * 
+ *
  * IMPORTANT: These are PLANNING PLACEHOLDERS only, not official DP3/GHC rates!
- * 
+ *
  * Rates are per CWT (hundred-weight) for linehaul ONLY.
  * Does NOT include OLF/DLF, fuel, SIT, packing, shuttle, or peak adjustments.
  * Results can be ±50% vs actual GCC from my.move.mil.
- * 
+ *
  * Data confidence: 70% (per domain expert)
  * Last updated: October 28, 2025
- * 
+ *
  * DO NOT use for financial decisions - get official GCC from my.move.mil
  */
 
@@ -91,12 +91,12 @@ const ADJUSTMENTS = {
     high: 1.22, // +22%
   },
   peakSeason: {
-    low: 1.10, // +10%
+    low: 1.1, // +10%
     mid: 1.15, // +15% (default)
-    high: 1.20, // +20%
+    high: 1.2, // +20%
   },
   shortHaul: {
-    low: 1.10, // +10%
+    low: 1.1, // +10%
     mid: 1.15, // +15% (default)
     high: 1.25, // +25%
   },
@@ -119,24 +119,21 @@ function isPeakSeason(moveDate: string): boolean {
  * Find distance band for given miles
  */
 function findDistanceBand(miles: number) {
-  return DISTANCE_BANDS.find(
-    (band) => miles >= band.minMiles && miles <= band.maxMiles
-  ) || DISTANCE_BANDS[DISTANCE_BANDS.length - 1]; // Default to longest band
+  return (
+    DISTANCE_BANDS.find((band) => miles >= band.minMiles && miles <= band.maxMiles) ||
+    DISTANCE_BANDS[DISTANCE_BANDS.length - 1]
+  ); // Default to longest band
 }
 
 /**
  * Estimate GCC using banded rates (NOT per-mile linear!)
- * 
+ *
  * @param weight - Household goods weight in pounds
  * @param distance - Distance in miles
  * @param moveDate - Move date (YYYY-MM-DD) for peak season detection
  * @returns GCC estimate with low/high range and midpoint
  */
-export function estimateGCC(
-  weight: number,
-  distance: number,
-  moveDate?: string
-): GCCEstimate {
+export function estimateGCC(weight: number, distance: number, moveDate?: string): GCCEstimate {
   // 1. Convert to CWT (hundred-weight)
   const cwt = weight / 100;
 
@@ -149,12 +146,8 @@ export function estimateGCC(
 
   // 4. Apply adjustment factors (multiply)
   const fuelMultiplier = ADJUSTMENTS.fuel.mid;
-  const peakMultiplier = moveDate && isPeakSeason(moveDate) 
-    ? ADJUSTMENTS.peakSeason.mid 
-    : 1.0;
-  const shortHaulMultiplier = distance <= 800 
-    ? ADJUSTMENTS.shortHaul.mid 
-    : 1.0;
+  const peakMultiplier = moveDate && isPeakSeason(moveDate) ? ADJUSTMENTS.peakSeason.mid : 1.0;
+  const shortHaulMultiplier = distance <= 800 ? ADJUSTMENTS.shortHaul.mid : 1.0;
 
   const totalMultiplier = fuelMultiplier * peakMultiplier * shortHaulMultiplier;
 
@@ -202,11 +195,11 @@ export function estimateGCC(
  */
 export function formatGCCBreakdown(estimate: GCCEstimate): string {
   const { breakdown } = estimate;
-  
+
   let text = `${breakdown.cwt.toFixed(1)} CWT × $${breakdown.ratePerCWTLow}-${breakdown.ratePerCWTHigh}/cwt\n`;
   text += `Distance band: ${breakdown.distanceBand}\n`;
   text += `Base linehaul: $${estimate.linehaulLow.toLocaleString()}-$${estimate.linehaulHigh.toLocaleString()}\n`;
-  
+
   if (breakdown.fuelMultiplier > 1.0) {
     text += `+ Fuel (${((breakdown.fuelMultiplier - 1) * 100).toFixed(0)}%)\n`;
   }
@@ -216,7 +209,6 @@ export function formatGCCBreakdown(estimate: GCCEstimate): string {
   if (breakdown.shortHaulMultiplier > 1.0) {
     text += `+ Short-haul (${((breakdown.shortHaulMultiplier - 1) * 100).toFixed(0)}%)\n`;
   }
-  
+
   return text;
 }
-

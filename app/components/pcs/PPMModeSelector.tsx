@@ -363,7 +363,7 @@ export default function PPMModeSelector({
             {(() => {
               const weight = parseFloat(estimatorWeight) || 0;
               const distance = parseFloat(estimatorDistance) || 0;
-              
+
               if (weight === 0 || distance === 0) {
                 return (
                   <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-6 text-center">
@@ -376,7 +376,7 @@ export default function PPMModeSelector({
               }
 
               const estimate = estimateGCC(weight, distance);
-              
+
               return (
                 <div className="space-y-4">
                   {/* Estimate Range */}
@@ -385,12 +385,16 @@ export default function PPMModeSelector({
                       Estimated GCC Range:
                     </div>
                     <div className="text-3xl font-black text-amber-900">
-                      ${estimate.adjustedLow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                      {" - "}
-                      ${estimate.adjustedHigh.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      $
+                      {estimate.adjustedLow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      {" - "}$
+                      {estimate.adjustedHigh.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}
                     </div>
                     <div className="mt-1 text-sm text-amber-800">
-                      Midpoint: ~${estimate.midpoint.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      Midpoint: ~$
+                      {estimate.midpoint.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </div>
                   </div>
 
@@ -398,18 +402,36 @@ export default function PPMModeSelector({
                   <div className="rounded-lg bg-slate-50 p-4 text-xs">
                     <div className="mb-2 font-semibold text-slate-900">How we calculated this:</div>
                     <div className="space-y-1 text-slate-700">
-                      <div>• Weight: {estimate.breakdown.cwt.toFixed(1)} CWT ({weight.toLocaleString()} lbs ÷ 100)</div>
+                      <div>
+                        • Weight: {estimate.breakdown.cwt.toFixed(1)} CWT ({weight.toLocaleString()}{" "}
+                        lbs ÷ 100)
+                      </div>
                       <div>• Distance band: {estimate.breakdown.distanceBand}</div>
-                      <div>• Base rate: ${estimate.breakdown.ratePerCWTLow}-${estimate.breakdown.ratePerCWTHigh} per CWT</div>
-                      <div>• Base linehaul: ${estimate.linehaulLow.toLocaleString()}-${estimate.linehaulHigh.toLocaleString()}</div>
+                      <div>
+                        • Base rate: ${estimate.breakdown.ratePerCWTLow}-$
+                        {estimate.breakdown.ratePerCWTHigh} per CWT
+                      </div>
+                      <div>
+                        • Base linehaul: ${estimate.linehaulLow.toLocaleString()}-$
+                        {estimate.linehaulHigh.toLocaleString()}
+                      </div>
                       {estimate.breakdown.fuelMultiplier > 1.0 && (
-                        <div>• + Fuel surcharge ({((estimate.breakdown.fuelMultiplier - 1) * 100).toFixed(0)}%)</div>
+                        <div>
+                          • + Fuel surcharge (
+                          {((estimate.breakdown.fuelMultiplier - 1) * 100).toFixed(0)}%)
+                        </div>
                       )}
                       {estimate.breakdown.peakMultiplier > 1.0 && (
-                        <div>• + Peak season ({((estimate.breakdown.peakMultiplier - 1) * 100).toFixed(0)}%)</div>
+                        <div>
+                          • + Peak season (
+                          {((estimate.breakdown.peakMultiplier - 1) * 100).toFixed(0)}%)
+                        </div>
                       )}
                       {estimate.breakdown.shortHaulMultiplier > 1.0 && (
-                        <div>• + Short-haul premium ({((estimate.breakdown.shortHaulMultiplier - 1) * 100).toFixed(0)}%)</div>
+                        <div>
+                          • + Short-haul premium (
+                          {((estimate.breakdown.shortHaulMultiplier - 1) * 100).toFixed(0)}%)
+                        </div>
                       )}
                     </div>
                   </div>
@@ -443,10 +465,10 @@ export default function PPMModeSelector({
               onClick={() => {
                 const weightValue = parseFloat(estimatorWeight);
                 const distanceValue = parseFloat(estimatorDistance);
-                
+
                 // Use banded GCC estimator (NOT per-mile linear!)
                 const estimate = estimateGCC(weightValue, distanceValue);
-                
+
                 if (estimate.midpoint > 0) {
                   onModeSelected("estimator", {
                     mode: "estimator",
