@@ -343,6 +343,82 @@ export async function PATCH(req: NextRequest) {
       throw Errors.databaseError("Failed to update claim");
     }
 
+    // If calculations provided, update/create snapshot (same logic as POST)
+    if (calculations) {
+      try {
+        const { error: snapshotError } = await supabaseAdmin
+          .from("pcs_entitlement_snapshots")
+          .insert({
+            claim_id: claimId,
+            dla_amount: calculations.dla?.amount || 0,
+            tle_days:
+              (calculations.tle?.origin?.days || 0) + (calculations.tle?.destination?.days || 0),
+            tle_amount: calculations.tle?.total || 0,
+            malt_miles: calculations.malt?.distance || 0,
+            malt_amount: calculations.malt?.amount || 0,
+            per_diem_days: calculations.perDiem?.days || 0,
+            per_diem_amount: calculations.perDiem?.amount || 0,
+            ppm_weight: updates.actual_weight || updates.estimated_weight || calculations.ppm?.weight || 0,
+            ppm_estimate: calculations.ppm?.amount || 0,
+            total_estimated: calculations.total || 0,
+            calculation_details: calculations,
+            rates_used: {
+              dla: calculations.dla?.rateUsed || 0,
+              malt: calculations.malt?.ratePerMile || 0,
+              perDiem: calculations.perDiem?.rate || 0,
+              ppm: calculations.ppm?.rate || 0,
+            },
+            confidence_scores: calculations.confidence,
+            jtr_rule_version: calculations.jtrRuleVersion || "2025-01-25",
+            data_sources: calculations.dataSources,
+          });
+
+        if (snapshotError) {
+          logger.error("[PCSClaim] Failed to update snapshot", snapshotError, {
+            userId,
+            claimId,
+          });
+        } else {
+          // Update claim readiness/completion scores
+          const hasCalculations = !!calculations && calculations.total > 0;
+          const essentialFields = [
+            claim.pcs_orders_date,
+            claim.origin_base,
+            claim.destination_base,
+            claim.rank_at_pcs,
+          ];
+          const hasEssentialFields = essentialFields.every(
+            (field) => field && field !== ""
+          );
+
+          const completionPercentage = hasCalculations && hasEssentialFields ? 100 : 0;
+          const readinessScore = hasCalculations
+            ? Math.round((calculations.confidence?.overall || 0.8) * 100)
+            : 0;
+
+          await supabaseAdmin
+            .from("pcs_claims")
+            .update({
+              entitlements: entitlements || { total: calculations.total || 0 },
+              readiness_score: readinessScore,
+              completion_percentage: completionPercentage,
+            })
+            .eq("id", claimId);
+
+          logger.info("[PCSClaim] Snapshot updated on edit", {
+            userId,
+            claimId,
+            total: calculations.total,
+          });
+        }
+      } catch (snapshotError) {
+        logger.error("[PCSClaim] Failed to update snapshot", snapshotError, {
+          userId,
+          claimId,
+        });
+      }
+    }
+
     logger.info("[PCSClaim] Claim updated", {
       userId,
       claimId,

@@ -110,10 +110,10 @@ export default function PCSUnifiedWizard({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlEditId = params.get("edit");
-    
+
     // Priority: prop > URL param
     const claimIdToLoad = editClaimId || urlEditId;
-    
+
     if (claimIdToLoad) {
       setEditingClaimId(claimIdToLoad);
       loadClaimForEditing(claimIdToLoad);
@@ -665,10 +665,8 @@ export default function PCSUnifiedWizard({
       const isEditing = !!editingClaimId;
       const method = isEditing ? "PATCH" : "POST";
       const url = isEditing ? "/api/pcs/claim" : "/api/pcs/claim";
-      
-      const requestBody = isEditing
-        ? { claimId: editingClaimId, ...claimData }
-        : claimData;
+
+      const requestBody = isEditing ? { claimId: editingClaimId, ...claimData } : claimData;
 
       const response = await fetch(url, {
         method,
@@ -692,7 +690,9 @@ export default function PCSUnifiedWizard({
         const claimId = result.claim.id;
 
         logger.info("Claim saved successfully", { claimId, isEditing });
-        toast.success(isEditing ? "PCS claim updated successfully!" : "PCS claim saved successfully!");
+        toast.success(
+          isEditing ? "PCS claim updated successfully!" : "PCS claim saved successfully!"
+        );
 
         // If editing in modal, call onComplete callback instead of redirecting
         if (onComplete) {
