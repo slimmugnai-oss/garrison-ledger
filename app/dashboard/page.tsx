@@ -146,19 +146,20 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Automated pay verification.</strong> Catch errors fast, verify BAH,
-                      BAS, COLA, and deductions with 12-point validation checks in seconds.
+                      <strong>Automated pay verification.</strong> Compare your LES against official
+                      2025 DFAS rates. Flags discrepancies in BAH, BAS, COLA, taxes, and deductions
+                      with JTR-cited validation checks.
                     </p>
 
                     {/* Stats */}
                     <div className="mt-auto space-y-2 border-t border-green-200 pt-3">
                       <div className="flex items-center justify-between text-xs text-gray-600">
-                        <span>🔍 12 validation checks</span>
-                        <span>⚡ ~30 sec scan</span>
+                        <span>🔍 10+ validation checks</span>
+                        <span>⚡ Instant results</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-green-700">
-                          ✓ 99.8% accurate
+                          ✓ Official DFAS rates
                         </span>
                         <span className="text-xs font-bold text-gray-900">
                           {isPremium ? "Unlimited audits" : `${lesUploads || 0}/1 free`}
@@ -201,16 +202,16 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Base intelligence made simple.</strong> Find perfect neighborhoods
-                      with real-time data on schools, rent vs BAH, commute times, and quality of
-                      life metrics.
+                      <strong>Base intelligence made simple.</strong> Compare neighborhoods near
+                      major installations with school ratings, rental market data, weather, and
+                      commute insights.
                     </p>
 
                     {/* Stats */}
                     <div className="mt-auto space-y-2 border-t border-blue-200 pt-3">
                       <div className="flex items-center justify-between text-xs text-gray-600">
-                        <span>🗺️ 1,200+ bases covered</span>
-                        <span>📊 Real-time data</span>
+                        <span>🗺️ 64 bases covered</span>
+                        <span>📊 Cached data (30-day)</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-blue-700">
@@ -257,9 +258,9 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Maximize your DITY move profit.</strong> Track receipts, calculate
-                      reimbursements, and ensure JTR compliance with automated entitlement
-                      calculations.
+                      <strong>Track PCS reimbursements & entitlements.</strong> Calculate DLA,
+                      mileage, per diem, and DITY reimbursements using official 2025 JTR rates and
+                      automated validation.
                     </p>
 
                     {/* Stats */}
@@ -270,7 +271,7 @@ export default async function Dashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-orange-700">
-                          💰 Maximize DITY profit
+                          💰 Track all entitlements
                         </span>
                         <span className="text-xs font-bold text-gray-900">
                           {isPremium ? "Unlimited claims" : "Premium only"}
@@ -316,20 +317,20 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>AI-powered travel vouchers.</strong> Auto-parse receipts, build
-                      DTS-ready vouchers, and ensure compliance with automated checks and
-                      calculations.
+                      <strong>Build travel vouchers faster.</strong> Auto-parse receipts with AI,
+                      calculate per diem using official DTMO rates, and generate submission-ready
+                      voucher packages.
                     </p>
 
                     {/* Stats */}
                     <div className="mt-auto space-y-2 border-t border-purple-200 pt-3">
                       <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>🤖 AI receipt parsing</span>
-                        <span>✅ DTS-ready</span>
+                        <span>✅ Per diem validation</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-purple-700">
-                          ✓ Compliance checks
+                          ✓ DTMO 2025 rates
                         </span>
                         <span className="text-xs font-bold text-gray-900">
                           {isPremium ? "Unlimited receipts" : `${tdyTrips || 0} trips • 3/trip`}
