@@ -97,7 +97,6 @@ export async function POST(req: NextRequest) {
         rank_at_pcs: body.rank_at_pcs || profile?.rank,
         branch: body.branch || profile?.branch,
         status: "draft",
-        readiness_score: 0,
         completion_percentage: 0,
         // CRITICAL: Save entitlements for PDF export
         entitlements: body.entitlements || null,
@@ -224,26 +223,14 @@ export async function POST(req: NextRequest) {
           completionPercentage = Math.round((filledFields / allFields.length) * 50); // 0-50%
         }
 
-        // Readiness score: 100% if all calculations successful, otherwise based on confidence
-        // Start at 100, deduct points for missing data or low confidence
-        let readinessScore = 100;
-        if (!calculations.confidence?.overall || calculations.confidence.overall < 0.8) {
-          readinessScore = Math.round((calculations.confidence?.overall || 0.8) * 100);
-        }
-        // Penalize if critical fields are missing
-        if (!claim.pcs_orders_date || !claim.origin_base || !claim.destination_base) {
-          readinessScore = Math.max(0, readinessScore - 20);
-        }
-
-        // Update claim with entitlement total, proper scores, and status
-        // If claim is complete (100% completion, good readiness), mark as ready
-        const shouldBeReady = completionPercentage === 100 && readinessScore >= 80;
+        // Update claim with entitlement total, completion percentage, and status
+        // If claim is complete (100% completion), mark as ready
+        const shouldBeReady = completionPercentage === 100;
 
         await supabaseAdmin
           .from("pcs_claims")
           .update({
             entitlements: { total: calculations.total || 0 },
-            readiness_score: readinessScore,
             completion_percentage: completionPercentage,
             status: shouldBeReady ? "ready_to_submit" : "draft",
           })
@@ -372,7 +359,6 @@ export async function PATCH(req: NextRequest) {
       "branch",
       "entitlements",
       "status",
-      "readiness_score",
       "completion_percentage",
     ];
 
@@ -465,34 +451,14 @@ export async function PATCH(req: NextRequest) {
           const hasEssentialFields = essentialFields.every((field) => field && field !== "");
 
           const completionPercentage = hasCalculations && hasEssentialFields ? 100 : 0;
-          
-          // Calculate readiness score properly (0-100 range)
-          let readinessScore = 100;
-          if (hasCalculations && calculations.confidence?.overall) {
-            // Convert confidence (0-1) to readiness score (0-100)
-            const confidenceValue = typeof calculations.confidence.overall === 'number' 
-              ? calculations.confidence.overall 
-              : 0.8;
-            readinessScore = Math.round(confidenceValue * 100);
-            // Cap at 100
-            readinessScore = Math.min(100, Math.max(0, readinessScore));
-          } else if (!hasCalculations) {
-            readinessScore = 0;
-          }
-          
-          // Penalize if critical fields are missing
-          if (!claim.pcs_orders_date || !claim.origin_base || !claim.destination_base) {
-            readinessScore = Math.max(0, readinessScore - 20);
-          }
 
           // Update status based on completeness
-          const shouldBeReady = completionPercentage === 100 && readinessScore >= 80;
+          const shouldBeReady = completionPercentage === 100;
 
           await supabaseAdmin
             .from("pcs_claims")
             .update({
               entitlements: entitlements || { total: calculations.total || 0 },
-              readiness_score: readinessScore,
               completion_percentage: completionPercentage,
               status: shouldBeReady ? "ready_to_submit" : claim.status || "draft",
             })

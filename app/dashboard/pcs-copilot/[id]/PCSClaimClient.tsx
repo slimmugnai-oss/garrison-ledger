@@ -269,7 +269,7 @@ export default function PCSClaimClient({
                   variant={
                     claim.status === "completed"
                       ? "success"
-                      : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                      : claim.completion_percentage === 100
                         ? "success"
                         : claim.status === "ready_to_submit"
                           ? "success"
