@@ -582,16 +582,30 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         body: JSON.stringify(claimData),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        logger.error("Failed to save claim - API error", {
+          status: response.status,
+          error: errorText,
+        });
+        toast.error(`Failed to save claim: ${response.statusText}`);
+        return;
+      }
+
       const result = await response.json();
 
-      if (result.success) {
+      if (result.success && result.claim) {
         const claimId = result.claim.id;
 
+        logger.info("Claim saved successfully", { claimId });
         toast.success("PCS claim saved successfully!");
 
-        // Redirect to view claim page
-        window.location.href = `/dashboard/pcs-copilot/${claimId}`;
+        // Small delay to let toast show, then redirect
+        setTimeout(() => {
+          window.location.href = `/dashboard/pcs-copilot/${claimId}`;
+        }, 500);
       } else {
+        logger.error("Failed to save claim - invalid response", { result });
         toast.error("Failed to save claim. Please try again.");
       }
     } catch (error) {
