@@ -43,6 +43,8 @@ interface Claim {
   estimated_weight?: number;
   actual_weight?: number;
   fuel_receipts?: number;
+  origin_zip?: string;
+  destination_zip?: string;
   created_at: string;
   updated_at: string;
 }
@@ -130,7 +132,7 @@ export default function PCSClaimClient({
     try {
       const distance = claim.malt_distance || claim.distance_miles || 0;
       const weight = claim.actual_weight || claim.estimated_weight || 0;
-      
+
       const response = await fetch(`/api/pcs/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
