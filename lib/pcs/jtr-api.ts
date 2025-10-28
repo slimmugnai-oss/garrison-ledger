@@ -254,10 +254,37 @@ export async function getDLARate(
 ): Promise<number> {
   try {
     const dlaRates = await fetchDLARates(effectiveDate);
-    const rate = dlaRates.find((r) => r.payGrade === rank && r.withDependents === hasDependents);
+    
+    // Try exact match first
+    let rate = dlaRates.find((r) => r.payGrade === rank && r.withDependents === hasDependents);
+    
+    // If not found, try range match (e.g., "E-6" matches "E5-E6")
+    if (!rate) {
+      rate = dlaRates.find((r) => {
+        // Check if payGrade is a range like "E5-E6"
+        if (r.payGrade.includes("-")) {
+          const [start, end] = r.payGrade.split("-");
+          const rankLetter = rank.charAt(0); // "E", "W", or "O"
+          const rankNum = parseInt(rank.replace(/[EWO-]/g, ""), 10); // "E-6" → 6
+          
+          // Extract numbers from range
+          const startNum = parseInt(start.replace(/[EWO]/g, ""), 10); // "E5" → 5
+          const endNum = parseInt(end.replace(/[EWO]/g, ""), 10); // "E6" → 6
+          
+          // Check if rank falls within range
+          return (
+            rankLetter === start.charAt(0) && // Same letter (E, W, O)
+            rankNum >= startNum &&
+            rankNum <= endNum &&
+            r.withDependents === hasDependents
+          );
+        }
+        return false;
+      });
+    }
 
     if (!rate) {
-      logger.error("DLA rate not found", { rank, hasDependents });
+      logger.error("DLA rate not found", { rank, hasDependents, availableRates: dlaRates.map(r => r.payGrade) });
       return 0;
     }
 
