@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      logger.error("[PCSClaim] Failed to create claim", error, { 
+      logger.error("[PCSClaim] Failed to create claim", error, {
         userId,
         errorCode: error.code,
         errorMessage: error.message,
@@ -130,9 +130,11 @@ export async function POST(req: NextRequest) {
           origin_base: body.origin_base,
           destination_base: body.destination_base,
           hasEntitlements: !!body.entitlements,
-        }
+        },
       });
-      throw Errors.databaseError(`Failed to create claim: ${error.message || error.code || 'Unknown error'}`);
+      throw Errors.databaseError(
+        `Failed to create claim: ${error.message || error.code || "Unknown error"}`
+      );
     }
 
     // Save calculations to pcs_entitlement_snapshots if provided

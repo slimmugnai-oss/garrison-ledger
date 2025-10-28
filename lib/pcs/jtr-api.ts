@@ -589,27 +589,43 @@ async function getPerDiemRateFromDB(
     .maybeSingle();
 
   if (error) {
-    logger.error("Failed to fetch per diem rate from jtr_rates_cache:", error);
+    logger.error("Failed to fetch per diem rate from jtr_rates_cache", error, {
+      zipCode,
+      errorCode: error.code,
+      errorMessage: error.message,
+      errorDetails: error.details,
+    });
   }
 
   if (data && data.rate_data) {
+    logger.info("Per diem rate found in cache", { 
+      zipCode, 
+      city: (data.rate_data as any)?.city || "Unknown" 
+    });
     return data.rate_data as PerDiemRate;
   }
 
   // If specific location not found, try to find standard CONUS rate
   // Most locations use the standard rate, so this is a legitimate fallback
-  const { data: standardRate } = await supabaseAdmin
+  logger.warn("Per diem rate not found for specific ZIP, trying standard CONUS", { zipCode });
+  
+  const { data: standardRate, error: standardError } = await supabaseAdmin
     .from("jtr_rates_cache")
     .select("*")
     .eq("rate_type", "per_diem")
     .ilike("rate_data->>city", "%Standard%")
-    .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
+    .lte("effective_date", effectiveDate)
     .order("effective_date", { ascending: false })
     .limit(1)
     .maybeSingle();
 
+  if (standardError) {
+    logger.error("Failed to fetch standard CONUS per diem rate", standardError, { zipCode });
+  }
+
   if (standardRate && standardRate.rate_data) {
     const rateData = standardRate.rate_data as PerDiemRate;
+    logger.info("Using standard CONUS per diem rate", { zipCode, rate: rateData.totalRate });
     return {
       ...rateData,
       zipCode: zipCode,
@@ -618,9 +634,15 @@ async function getPerDiemRateFromDB(
     };
   }
 
-  // If no rates found at all, log critical error
-  logger.error("CRITICAL: No per diem rates found", { zipCode });
-  return null;
+  // Last resort: Return hardcoded standard CONUS rate
+  // This should rarely happen - means jtr_rates_cache table is empty
+  logger.warn("No per diem rates in database, using fallback CONUS rate", { zipCode });
+  return {
+    zipCode,
+    totalRate: 166,
+    city: "Standard CONUS (Fallback)",
+    state: "",
+  };
 }
 
 async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
