@@ -522,7 +522,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
         }
 
         toast.success("PCS claim saved and PDF downloaded!");
-        
+
         // Only call onComplete if user wants to exit wizard
         // Don't reset wizard state immediately - let user stay on review screen
         setTimeout(() => {

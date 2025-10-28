@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     if (snapshotsError || !snapshots || snapshots.length === 0) {
       // No snapshots, calculate fresh or use claim entitlements
       logger.warn("No snapshots found, using claim entitlements or defaults", { claimId });
-      
+
       calculations = {
         dla: {
           amount: claim.entitlements?.dla || 0,
@@ -94,10 +94,10 @@ export async function POST(request: NextRequest) {
     } else {
       // Build calculations from snapshot data
       const snapshot = snapshots[0];
-      
+
       // Extract confidence from snapshot if available
       const confidences = snapshot.confidence_scores || {};
-      
+
       calculations = {
         dla: {
           amount: Number(snapshot.dla_amount) || 0,
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
           dataSources: {},
         },
       };
-      
+
       logger.info("Using snapshot calculations for PDF", {
         claimId,
         total: calculations.total_entitlements,
@@ -155,15 +155,35 @@ export async function POST(request: NextRequest) {
       logger.error("Failed to fetch validation results:", validationError);
     }
 
+    // Map claim data to PDF format
+    const claimDataForPDF = {
+      id: claim.id,
+      claim_name: claim.claim_name || "PCS Claim",
+      member_name: claim.member_name || claim.claim_name?.replace("PCS - ", "") || "Service Member",
+      rank: claim.rank_at_pcs || "Not provided",
+      branch: claim.branch || "Not provided",
+      origin_base: claim.origin_base || "Not provided",
+      destination_base: claim.destination_base || "Not provided",
+      pcs_orders_date: claim.pcs_orders_date || "Not provided",
+      departure_date: claim.departure_date || "Not provided",
+      dependents_authorized: (claim.dependents_count || 0) > 0,
+      dependents_count: claim.dependents_count || 0,
+      estimated_weight: claim.estimated_weight || claim.actual_weight || 0,
+      travel_method: (claim.travel_method || "ppm") as "dity" | "full" | "partial",
+      distance: claim.distance_miles || claim.malt_distance || 0,
+      created_at: claim.created_at || new Date().toISOString(),
+      updated_at: claim.updated_at || new Date().toISOString(),
+    };
+
     // Generate PDF based on type
     let pdfBuffer: Buffer;
 
     if (type === "summary") {
-      pdfBuffer = await generateClaimSummaryPDF(claim, calculations);
+      pdfBuffer = await generateClaimSummaryPDF(claimDataForPDF, calculations);
     } else {
       // Full claim package
       pdfBuffer = await generatePCSClaimPDF(
-        claim,
+        claimDataForPDF,
         calculations,
         documents || [],
         validationResults || []

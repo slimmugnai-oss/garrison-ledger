@@ -114,9 +114,9 @@ export async function generatePCSClaimPDF(
     const pageHeight = pdf.internal.pageSize.getHeight();
     let yPosition = 20;
 
-    // Add header
-    await addHeader(pdf, claimData);
-    yPosition = 40;
+    // Add header (returns starting Y position after header)
+    const headerEndY = await addHeader(pdf, claimData);
+    yPosition = headerEndY + 15; // Add spacing after header
 
     // Add claim summary
     yPosition = await addClaimSummary(pdf, claimData, calculations, yPosition);
@@ -153,8 +153,9 @@ export async function generatePCSClaimPDF(
 
 /**
  * Add professional header with branding and claim information
+ * Returns the Y position after the header for continuation
  */
-async function addHeader(pdf: jsPDF, claimData: PCSClaimData): Promise<void> {
+async function addHeader(pdf: jsPDF, claimData: PCSClaimData): Promise<number> {
   // Header background (dark professional header)
   pdf.setFillColor(30, 41, 59); // slate-800
   pdf.rect(0, 0, 210, 35, "F");
@@ -173,58 +174,77 @@ async function addHeader(pdf: jsPDF, claimData: PCSClaimData): Promise<void> {
     align: "center",
   });
 
-  // IMPORTANT NOTICE - Yellow box
+  // IMPORTANT NOTICE - Yellow box (moved up to avoid overlap)
   pdf.setFillColor(254, 240, 138); // yellow-200
-  pdf.rect(10, 36, 190, 15, "F");
-  pdf.setFontSize(9);
+  pdf.rect(10, 36, 190, 12, "F");
+  pdf.setFontSize(8);
   pdf.setTextColor(133, 77, 14); // yellow-900
   pdf.setFont("helvetica", "bold");
-  pdf.text("⚠ IMPORTANT:", 15, 42);
+  pdf.text("⚠ IMPORTANT:", 15, 41);
   pdf.setFont("helvetica", "normal");
   pdf.text(
     "This is a CALCULATION WORKSHEET, not an official voucher. Submit DD Form 1351-2 through DTS for reimbursement.",
     35,
-    42
+    41
   );
-  pdf.text("Use this guide to ensure you claim all entitled amounts correctly.", 15, 48);
+  pdf.text("Use this guide to ensure you claim all entitled amounts correctly.", 15, 46);
 
   // Reset text color for body
   pdf.setTextColor(0, 0, 0);
 
-  // Member Information Section (adjusted Y position for warning box)
-  pdf.setFontSize(14);
+  // Member Information Section (moved down to avoid overlap)
+  const memberInfoStartY = 56;
+  pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
-  pdf.text("MEMBER INFORMATION", 20, 60);
+  pdf.text("MEMBER INFORMATION", 20, memberInfoStartY);
 
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.text(`Name: ${claimData.member_name}`, 20, 68);
-  pdf.text(`Rank: ${claimData.rank}`, 20, 74);
-  pdf.text(`Branch: ${claimData.branch}`, 20, 80);
+  let currentY = memberInfoStartY + 8;
+  
+  // Handle undefined values gracefully
+  pdf.text(`Name: ${claimData.member_name || "Not provided"}`, 20, currentY);
+  currentY += 6;
+  pdf.text(`Rank: ${claimData.rank || "Not provided"}`, 20, currentY);
+  currentY += 6;
+  pdf.text(`Branch: ${claimData.branch || "Not provided"}`, 20, currentY);
+  currentY += 6;
   pdf.text(
-    `Dependents: ${claimData.dependents_authorized ? "Yes" : "No"} (${claimData.dependents_count})`,
+    `Dependents: ${claimData.dependents_authorized ? "Yes" : "No"} (${claimData.dependents_count || 0})`,
     20,
-    86
+    currentY
   );
 
-  // PCS Details Section
-  pdf.setFontSize(14);
+  // PCS Details Section (right side)
+  const pcsDetailsStartY = memberInfoStartY;
+  pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
-  pdf.text("PCS DETAILS", 110, 60);
+  pdf.text("PCS DETAILS", 110, pcsDetailsStartY);
 
-  pdf.setFontSize(11);
+  pdf.setFontSize(10);
   pdf.setFont("helvetica", "normal");
-  pdf.text(`Origin: ${claimData.origin_base}`, 110, 68);
-  pdf.text(`Destination: ${claimData.destination_base}`, 110, 74);
-  pdf.text(`Orders Date: ${claimData.pcs_orders_date}`, 110, 80);
-  pdf.text(`Departure: ${claimData.departure_date}`, 110, 86);
-  pdf.text(`Travel Method: ${claimData.travel_method.toUpperCase()}`, 110, 92);
-  pdf.text(`Distance: ${claimData.distance} miles`, 110, 98);
+  currentY = pcsDetailsStartY + 8;
+  
+  pdf.text(`Origin: ${claimData.origin_base || "Not provided"}`, 110, currentY);
+  currentY += 6;
+  pdf.text(`Destination: ${claimData.destination_base || "Not provided"}`, 110, currentY);
+  currentY += 6;
+  pdf.text(`Orders Date: ${claimData.pcs_orders_date || "Not provided"}`, 110, currentY);
+  currentY += 6;
+  pdf.text(`Departure: ${claimData.departure_date || "Not provided"}`, 110, currentY);
+  currentY += 6;
+  pdf.text(`Travel Method: ${(claimData.travel_method || "Not provided").toUpperCase()}`, 110, currentY);
+  currentY += 6;
+  pdf.text(`Distance: ${claimData.distance || 0} miles`, 110, currentY);
 
-  // Separator line
+  // Separator line (moved down)
+  const separatorY = memberInfoStartY + 32;
   pdf.setLineWidth(0.5);
   pdf.setDrawColor(226, 232, 240); // slate-200
-  pdf.line(20, 105, 190, 105);
+  pdf.line(20, separatorY, 190, separatorY);
+  
+  // Return Y position after header (for next section)
+  return separatorY + 5;
 }
 
 /**
