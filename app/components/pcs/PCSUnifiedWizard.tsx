@@ -74,7 +74,11 @@ interface WizardFormData extends Partial<FormData> {
  * Plain English throughout with tooltips for jargon
  * Real-time ROI calculation at top
  */
-export default function PCSUnifiedWizard({ userProfile, onComplete, editClaimId }: PCSUnifiedWizardProps) {
+export default function PCSUnifiedWizard({
+  userProfile,
+  onComplete,
+  editClaimId,
+}: PCSUnifiedWizardProps) {
   const [currentStep, setCurrentStep] = useState<WizardStep>("start");
   const [entryMethod, setEntryMethod] = useState<"ocr" | "manual" | null>(null);
   const [formData, setFormData] = useState<WizardFormData>({
@@ -101,16 +105,19 @@ export default function PCSUnifiedWizard({ userProfile, onComplete, editClaimId 
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
 
-  // Load claim for editing if ?edit query param is present
+  // Load claim for editing if editClaimId prop or ?edit query param is present
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const editClaimId = params.get("edit");
-
-    if (editClaimId) {
-      loadClaimForEditing(editClaimId);
+    const urlEditId = params.get("edit");
+    
+    // Priority: prop > URL param
+    const claimIdToLoad = editClaimId || urlEditId;
+    
+    if (claimIdToLoad) {
+      loadClaimForEditing(claimIdToLoad);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [editClaimId]);
 
   const loadClaimForEditing = async (claimId: string) => {
     try {

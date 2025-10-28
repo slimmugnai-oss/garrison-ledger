@@ -696,11 +696,11 @@ export default function PCSClaimClient({
           </div>
         </div>
       </div>
-      
+
       {/* Edit Wizard Modal */}
       {showEditWizard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-auto rounded-lg bg-white shadow-xl">
+          <div className="relative max-h-[90vh] w-full max-w-4xl overflow-auto rounded-lg bg-white shadow-xl">
             <button
               onClick={() => setShowEditWizard(false)}
               className="absolute right-4 top-4 z-10 rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
@@ -719,7 +719,7 @@ export default function PCSClaimClient({
           </div>
         </div>
       )}
-      
+
       <Footer />
     </>
   );
