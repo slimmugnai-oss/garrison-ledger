@@ -130,7 +130,11 @@ export default function SimplifiedPCSClient({
             </button>
           </div>
         )}
-        <PCSUnifiedWizard userProfile={userProfile} onComplete={handleWizardComplete} />
+        <PCSUnifiedWizard
+          userProfile={userProfile}
+          onComplete={handleWizardComplete}
+          editClaimId={getEditClaimId() || undefined}
+        />
       </div>
     );
   }
