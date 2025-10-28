@@ -173,7 +173,8 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       const timer = setTimeout(fetchDistance, 1000);
       return () => clearTimeout(timer);
     }
-  }, [formData.origin_base, formData.destination_base, isLoadingDistance, updateFormData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.origin_base, formData.destination_base]);
 
   /**
    * Auto-calculate travel days from departure and arrival dates
