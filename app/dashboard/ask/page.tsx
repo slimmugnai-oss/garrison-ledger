@@ -12,12 +12,13 @@ import { redirect } from "next/navigation";
 import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import Icon from "@/app/components/ui/Icon";
 
 export const metadata: Metadata = {
   title: "Ask Our Military Expert - 24/7 Military Life Advisor | Garrison Ledger",
   description:
-    "Get instant expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life. 1,410 knowledge sources + official data. ~2 second response time.",
+    "Get instant expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life. 2,300+ knowledge sources + official data. ~2 second response time.",
   keywords: [
     "military financial advisor",
     "ask military expert",
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ask Our Military Expert - 24/7 Military Life Advisor",
     description:
-      "Instant expert answers to military financial, PCS, deployment, and career questions. 1,410+ knowledge sources.",
+      "Instant expert answers to military financial, PCS, deployment, and career questions. 2,300+ knowledge sources.",
     type: "website",
     url: "https://www.garrisonledger.com/dashboard/ask",
     images: [
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ask Our Military Expert - 24/7 Military Life Advisor",
     description:
-      "Get instant expert answers to ANY military life question. 1,410+ knowledge sources.",
+      "Get instant expert answers to ANY military life question. 2,300+ knowledge sources.",
     images: ["https://www.garrisonledger.com/og-ask-expert.jpg"],
   },
 };
@@ -55,6 +56,15 @@ export const metadata: Metadata = {
 export default async function AskAssistantPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+
+  // Get knowledge sources count
+  const { count: knowledgeSources } = await supabaseAdmin
+    .from("knowledge_embeddings")
+    .select("*", { count: "exact", head: true });
+
+  const knowledgeSourcesFormatted = knowledgeSources
+    ? new Intl.NumberFormat("en-US").format(knowledgeSources)
+    : "2,300+";
 
   return (
     <>
@@ -81,10 +91,10 @@ export default async function AskAssistantPage() {
               bestRating: "10",
             },
             description:
-              "24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by 1,410 knowledge sources and official military data.",
+              `24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by ${knowledgeSourcesFormatted} knowledge sources and official military data.`,
             featureList: [
               "Instant expert answers in ~2 seconds",
-              "1,410 embedded knowledge sources",
+              `${knowledgeSourcesFormatted} embedded knowledge sources`,
               "Official DFAS, VA, TSP, JTR data integration",
               "Personalized to rank, base, and family status",
               "Financial planning guidance",
@@ -110,7 +120,7 @@ export default async function AskAssistantPage() {
                 name: "What is Ask Our Military Expert?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Ask Our Military Expert is a 24/7 AI-powered military life advisor that provides instant, personalized answers to questions about military finances, PCS moves, deployment, career progression, benefits, and base life. It's backed by 1,410 knowledge sources and official data from DFAS, VA, TSP, and JTR.",
+                  text: `Ask Our Military Expert is a 24/7 AI-powered military life advisor that provides instant, personalized answers to questions about military finances, PCS moves, deployment, career progression, benefits, and base life. It's backed by ${knowledgeSourcesFormatted} knowledge sources and official data from DFAS, VA, TSP, and JTR.`,
                 },
               },
               {
@@ -126,7 +136,7 @@ export default async function AskAssistantPage() {
                 name: "How accurate are the answers?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Our Military Expert uses official data from DFAS, VA, TSP, and JTR combined with 1,410 curated knowledge sources. Answers achieve a 9.2/10 user satisfaction rating. When official data is available (BAH rates, pay tables, etc.), answers are marked as 'Official Data' with 100% accuracy. Advisory answers are based on real military experience and best practices.",
+                  text: `Our Military Expert uses official data from DFAS, VA, TSP, and JTR combined with ${knowledgeSourcesFormatted} curated knowledge sources. Answers achieve a 9.2/10 user satisfaction rating. When official data is available (BAH rates, pay tables, etc.), answers are marked as 'Official Data' with 100% accuracy. Advisory answers are based on real military experience and best practices.`,
                 },
               },
               {
@@ -175,7 +185,7 @@ export default async function AskAssistantPage() {
               <div className="mb-8 flex flex-wrap justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>1,410 knowledge sources</span>
+                  <span>{knowledgeSourcesFormatted} knowledge sources</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
@@ -306,7 +316,7 @@ export default async function AskAssistantPage() {
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-900">Get Expert Answer</h3>
                 <p className="text-gray-600">
-                  Our AI expert analyzes 1,410+ knowledge sources + official data + your profile
+                  Our AI expert analyzes {knowledgeSourcesFormatted}+ knowledge sources + official data + your profile
                 </p>
               </div>
 
@@ -375,7 +385,7 @@ export default async function AskAssistantPage() {
                   <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                     <Icon name="Database" className="h-6 w-6 text-green-600" />
                   </div>
-                  <p className="text-sm font-semibold text-gray-900">1,410 Knowledge Sources</p>
+                  <p className="text-sm font-semibold text-gray-900">{knowledgeSourcesFormatted} Knowledge Sources</p>
                   <p className="text-xs text-gray-600">Embedded military expertise</p>
                 </div>
 

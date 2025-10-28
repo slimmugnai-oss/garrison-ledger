@@ -7,6 +7,7 @@
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -18,7 +19,16 @@ export const metadata = {
     "5 premium tools for military families: LES Auditor catches pay errors automatically, Base Navigator finds your perfect neighborhood, PCS Copilot maximizes DITY profit, TDY Copilot builds vouchers fast, Ask Assistant answers military finance questions with official data.",
 };
 
-export default function Home() {
+export default async function Home() {
+  // Get knowledge sources count
+  const { count: knowledgeSources } = await supabaseAdmin
+    .from("knowledge_embeddings")
+    .select("*", { count: "exact", head: true });
+
+  const knowledgeSourcesFormatted = knowledgeSources
+    ? new Intl.NumberFormat("en-US").format(knowledgeSources)
+    : "2,300+";
+
   return (
     <>
       <Header />
@@ -85,7 +95,7 @@ export default function Home() {
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
                   <span>
-                    <strong>1,410 knowledge sources</strong> + official DFAS/VA/TSP data
+                    <strong>{knowledgeSourcesFormatted} knowledge sources</strong> + official DFAS/VA/TSP data
                   </span>
                 </li>
                 <li className="flex items-start gap-3">

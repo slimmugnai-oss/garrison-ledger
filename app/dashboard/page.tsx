@@ -63,6 +63,15 @@ export default async function Dashboard() {
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id);
 
+  // Get knowledge sources count
+  const { count: knowledgeSources } = await supabaseAdmin
+    .from("knowledge_embeddings")
+    .select("*", { count: "exact", head: true });
+
+  const knowledgeSourcesFormatted = knowledgeSources
+    ? new Intl.NumberFormat("en-US").format(knowledgeSources)
+    : "2,300+";
+
   return (
     <>
       <Header />
@@ -366,7 +375,7 @@ export default async function Dashboard() {
                     {/* Stats Row */}
                     <div className="mt-auto space-y-2 border-t border-indigo-200 pt-3">
                       <div className="flex items-center justify-between text-xs text-gray-600">
-                        <span>📊 1,410 knowledge sources</span>
+                        <span>📊 {knowledgeSourcesFormatted} knowledge sources</span>
                         <span>⚡ ~2 sec response</span>
                       </div>
                       <div className="flex items-center justify-between">
