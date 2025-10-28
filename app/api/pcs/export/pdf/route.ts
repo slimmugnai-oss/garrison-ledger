@@ -55,9 +55,50 @@ export async function POST(request: NextRequest) {
     let calculations;
     if (snapshotsError || !snapshots || snapshots.length === 0) {
       // No snapshots, check if claim has entitlements, otherwise calculate fresh
-      const hasEntitlements = claim.entitlements && claim.entitlements.total > 0;
-
-      if (hasEntitlements) {
+      const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
+      
+      // First try to use snapshot calculation_details
+      if (snapshot && snapshot.calculation_details) {
+        logger.info("Using snapshot calculation_details for PDF", { claimId });
+        const details = snapshot.calculation_details;
+        calculations = {
+          dla: {
+            amount: snapshot.dla_amount || details.dla?.amount || 0,
+            confidence: details.dla?.confidence || 0.8,
+            source: details.dla?.source || "JTR",
+            lastVerified: details.dla?.lastVerified || new Date().toISOString(),
+          },
+          tle: {
+            amount: snapshot.tle_amount || details.tle?.total || 0,
+            confidence: details.tle?.confidence || 0.8,
+            source: "JTR",
+            lastVerified: new Date().toISOString(),
+          },
+          malt: {
+            amount: snapshot.malt_amount || details.malt?.amount || 0,
+            confidence: details.malt?.confidence || 0.8,
+            source: details.malt?.source || "JTR",
+            lastVerified: details.malt?.effectiveDate || new Date().toISOString(),
+          },
+          per_diem: {
+            amount: snapshot.per_diem_amount || details.perDiem?.amount || 0,
+            confidence: details.perDiem?.confidence || 0.8,
+            source: "JTR",
+            lastVerified: details.perDiem?.effectiveDate || new Date().toISOString(),
+          },
+          ppm: {
+            amount: snapshot.ppm_estimate || details.ppm?.amount || 0,
+            confidence: details.ppm?.confidence || 0.8,
+            source: "JTR",
+            lastVerified: new Date().toISOString(),
+          },
+          total_entitlements: snapshot.total_estimated || details.total || 0,
+          confidence: {
+            overall: snapshot.confidence_scores?.overall || details.confidence?.overall || 0.8,
+            dataSources: snapshot.data_sources || details.dataSources || {},
+          },
+        };
+      } else if (claim.entitlements && claim.entitlements.total > 0) {
         logger.info("Using claim entitlements for PDF", { claimId });
         calculations = {
           dla: {
@@ -100,29 +141,34 @@ export async function POST(request: NextRequest) {
         // Import calculation engine
         const { calculatePCSClaim } = await import("@/lib/pcs/calculation-engine");
 
+        // Extract from snapshot calculation_details if available, otherwise use claim entitlements
+        const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
+        const details = snapshot?.calculation_details || {};
+        
         const formDataForCalc = {
           rank_at_pcs: claim.rank_at_pcs,
           branch: claim.branch,
           origin_base: claim.origin_base,
           destination_base: claim.destination_base,
-          dependents_count: claim.dependents_count,
+          dependents_count: claim.dependents_count || 0,
           departure_date: claim.departure_date,
           arrival_date: claim.arrival_date,
           pcs_orders_date: claim.pcs_orders_date,
-          travel_method: claim.travel_method,
-          tle_origin_nights: claim.tle_origin_nights || 0,
-          tle_origin_rate: claim.tle_origin_rate || 0,
-          tle_destination_nights: claim.tle_destination_nights || 0,
-          tle_destination_rate: claim.tle_destination_rate || 0,
-          per_diem_days: claim.per_diem_days || 0,
-          malt_distance: claim.malt_distance || claim.distance_miles || 0,
-          distance_miles: claim.distance_miles || 0,
-          estimated_weight: claim.estimated_weight || 0,
-          actual_weight: claim.actual_weight || 0,
-          fuel_receipts: claim.fuel_receipts || 0,
+          travel_method: claim.travel_method || "ppm",
+          // Use snapshot data first, then defaults
+          tle_origin_nights: details.tle?.origin?.days || 0,
+          tle_origin_rate: details.tle?.origin?.rate || 0,
+          tle_destination_nights: details.tle?.destination?.days || 0,
+          tle_destination_rate: details.tle?.destination?.rate || 0,
+          per_diem_days: snapshot?.per_diem_days || details.perDiem?.days || 0,
+          malt_distance: snapshot?.malt_miles || details.malt?.distance || 0,
+          distance_miles: snapshot?.malt_miles || details.malt?.distance || 0,
+          estimated_weight: snapshot?.ppm_weight || details.ppm?.weight || 0,
+          actual_weight: snapshot?.ppm_weight || details.ppm?.weight || 0,
+          fuel_receipts: 0,
           claim_name: claim.claim_name,
-          origin_zip: claim.origin_zip,
-          destination_zip: claim.destination_zip,
+          origin_zip: claim.origin_zip || null,
+          destination_zip: claim.destination_zip || null,
         };
 
         const calcResult = await calculatePCSClaim(formDataForCalc);
