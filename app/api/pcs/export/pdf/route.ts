@@ -140,7 +140,8 @@ export async function POST(request: NextRequest) {
         const formData = claim.form_data || {};
 
         // Calculate missing values for PDF using form_data
-        let distance = formData.malt_distance || formData.distance_miles || claim.distance_miles || 0;
+        let distance =
+          formData.malt_distance || formData.distance_miles || claim.distance_miles || 0;
         let weight = formData.actual_weight || formData.estimated_weight || 0;
         let perDiemDays = formData.per_diem_days || 0;
 

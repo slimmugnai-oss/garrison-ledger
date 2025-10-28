@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import PCSUnifiedWizard from "@/app/components/pcs/PCSUnifiedWizard";
@@ -41,9 +41,28 @@ export default function SimplifiedPCSClient({
   userProfile,
 }: SimplifiedPCSClientProps) {
   const [claims, setClaims] = useState<Claim[]>(initialClaims);
-  const [showWizard, setShowWizard] = useState(true); // Default to wizard, user can switch to list
+  // Check if we're editing a claim from URL param
+  const [showWizard, setShowWizard] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return !!params.get("edit"); // Show wizard if ?edit param exists
+    }
+    return true; // Default to wizard, user can switch to list
+  });
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Clear ?edit param from URL when wizard is closed
+  useEffect(() => {
+    if (!showWizard && typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("edit")) {
+        params.delete("edit");
+        const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
+        window.history.replaceState({}, "", newUrl);
+      }
+    }
+  }, [showWizard]);
 
   const handleWizardComplete = (claimId: string) => {
     // Refresh the page to show updated claims list
