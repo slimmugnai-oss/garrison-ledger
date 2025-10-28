@@ -223,8 +223,8 @@ export default function PCSUnifiedWizard({
 
       // Jump directly to review step
       setCurrentStep("review");
-      setIsCalculating(false);
       setIsLoadingEdit(false);
+      setIsCalculating(false);
 
       toast.success("Claim loaded for editing");
     } catch (error) {
@@ -795,7 +795,7 @@ export default function PCSUnifiedWizard({
 
   // START SCREEN
   // Show loading state while loading claim for editing
-  if (isLoadingEdit || (editingClaimId && !calculations)) {
+  if (isLoadingEdit || (editingClaimId && !calculations && currentStep === "start")) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -806,9 +806,9 @@ export default function PCSUnifiedWizard({
     );
   }
 
-  // If editing, skip start screen - go directly to review
+  // If editing and still on start screen, skip it
   if (currentStep === "start" && editingClaimId) {
-    // This shouldn't happen, but just in case
+    // Don't render start screen, let the loading state handle it or wait for step change
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
