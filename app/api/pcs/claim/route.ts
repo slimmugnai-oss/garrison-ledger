@@ -325,38 +325,70 @@ export async function PATCH(req: NextRequest) {
       throw Errors.invalidInput("claimId is required");
     }
 
-    // Build form_data from body if fields are present
+    // Extract form data fields from body to prevent them from being in updates
+    const {
+      tle_origin_nights,
+      tle_destination_nights,
+      tle_origin_rate,
+      tle_destination_rate,
+      actual_weight,
+      estimated_weight,
+      malt_distance,
+      distance_miles,
+      per_diem_days,
+      fuel_receipts,
+      origin_zip,
+      destination_zip,
+    } = body;
+
+    // Build form_data JSONB object
     const formData: Record<string, any> = {};
-    if (body.tle_origin_nights !== undefined)
-      formData.tle_origin_nights = body.tle_origin_nights || 0;
-    if (body.tle_destination_nights !== undefined)
-      formData.tle_destination_nights = body.tle_destination_nights || 0;
-    if (body.tle_origin_rate !== undefined) formData.tle_origin_rate = body.tle_origin_rate || 0;
-    if (body.tle_destination_rate !== undefined)
-      formData.tle_destination_rate = body.tle_destination_rate || 0;
-    if (body.actual_weight !== undefined) formData.actual_weight = body.actual_weight || 0;
-    if (body.estimated_weight !== undefined) formData.estimated_weight = body.estimated_weight || 0;
-    if (body.malt_distance !== undefined)
-      formData.malt_distance = body.malt_distance || body.distance_miles || 0;
-    if (body.distance_miles !== undefined) formData.distance_miles = body.distance_miles || 0;
-    if (body.per_diem_days !== undefined) formData.per_diem_days = body.per_diem_days || 0;
-    if (body.fuel_receipts !== undefined) formData.fuel_receipts = body.fuel_receipts || 0;
-    if (body.origin_zip !== undefined) formData.origin_zip = body.origin_zip || null;
-    if (body.destination_zip !== undefined) formData.destination_zip = body.destination_zip || null;
+    if (tle_origin_nights !== undefined) formData.tle_origin_nights = tle_origin_nights || 0;
+    if (tle_destination_nights !== undefined) formData.tle_destination_nights = tle_destination_nights || 0;
+    if (tle_origin_rate !== undefined) formData.tle_origin_rate = tle_origin_rate || 0;
+    if (tle_destination_rate !== undefined) formData.tle_destination_rate = tle_destination_rate || 0;
+    if (actual_weight !== undefined) formData.actual_weight = actual_weight || 0;
+    if (estimated_weight !== undefined) formData.estimated_weight = estimated_weight || 0;
+    if (malt_distance !== undefined) formData.malt_distance = malt_distance || distance_miles || 0;
+    if (distance_miles !== undefined) formData.distance_miles = distance_miles || 0;
+    if (per_diem_days !== undefined) formData.per_diem_days = per_diem_days || 0;
+    if (fuel_receipts !== undefined) formData.fuel_receipts = fuel_receipts || 0;
+    if (origin_zip !== undefined) formData.origin_zip = origin_zip || null;
+    if (destination_zip !== undefined) formData.destination_zip = destination_zip || null;
 
-    // If we have form data fields, include form_data in update
-    const hasFormData = Object.keys(formData).length > 0;
-
-    // Build update object
+    // Only update valid database columns - remove form fields and calculations from updates
+    const validFields = [
+      'claim_name', 'pcs_orders_date', 'departure_date', 'arrival_date',
+      'origin_base', 'destination_base', 'travel_method', 'dependents_count',
+      'rank_at_pcs', 'branch', 'entitlements', 'status', 'readiness_score', 'completion_percentage'
+    ];
+    
     const updateData: Record<string, any> = {
-      ...updates,
       updated_at: new Date().toISOString(),
     };
 
-    // Add form_data if present
-    if (hasFormData) {
+    // Only include valid fields from updates (excludes form_data fields, calculations, etc.)
+    for (const key of Object.keys(updates)) {
+      if (validFields.includes(key)) {
+        updateData[key] = updates[key];
+      }
+    }
+
+    // Always include entitlements if provided
+    if (entitlements !== undefined) {
+      updateData.entitlements = entitlements;
+    }
+
+    // Add form_data JSONB if we have any form fields
+    if (Object.keys(formData).length > 0) {
       updateData.form_data = formData;
     }
+
+    logger.info("[PCSClaim] Updating claim", { 
+      claimId, 
+      updateFields: Object.keys(updateData),
+      hasFormData: Object.keys(formData).length > 0 
+    });
 
     // Update claim
     const { data: claim, error } = await supabaseAdmin
