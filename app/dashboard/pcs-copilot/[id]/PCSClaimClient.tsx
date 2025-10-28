@@ -246,10 +246,11 @@ export default function PCSClaimClient({
           arrival_date: claim.arrival_date,
           pcs_orders_date: claim.pcs_orders_date,
           travel_method: claim.travel_method || "ppm",
-          tle_origin_nights: claim.tle_origin_nights || 0,
-          tle_destination_nights: claim.tle_destination_nights || 0,
-          tle_origin_rate: claim.tle_origin_rate || 0,
-          tle_destination_rate: claim.tle_destination_rate || 0,
+          // Get TLE data from snapshot or claim
+          tle_origin_nights: snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0,
+          tle_destination_nights: snapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0,
+          tle_origin_rate: snapshot?.calculation_details?.tle?.origin?.rate || claim.tle_origin_rate || 0,
+          tle_destination_rate: snapshot?.calculation_details?.tle?.destination?.rate || claim.tle_destination_rate || 0,
           per_diem_days: perDiemDays,
           malt_distance: distance,
           distance_miles: distance, // CRITICAL: Both fields needed for PPM
@@ -273,6 +274,10 @@ export default function PCSClaimClient({
         }
 
         if (calc && calc.dla) {
+          // Use the weight from calculation result if we had to use a default
+          // This ensures we display the actual weight that was used in calculation
+          const actualWeight = calc.ppm?.weight || weight || 0;
+          
           // Transform to Snapshot format
           const snapshot = {
             dla_amount: calc.dla?.amount || 0,
@@ -283,12 +288,17 @@ export default function PCSClaimClient({
             per_diem_amount: calc.perDiem?.amount || 0,
             per_diem_days: calc.perDiem?.days || 0,
             ppm_estimate: calc.ppm?.amount || 0,
-            ppm_weight: weight || calc.ppm?.weight || 0, // Preserve the weight we used (either from snapshot or default)
+            ppm_weight: actualWeight, // Use the weight from calculation (or what we sent)
             total_estimated: calc.total || 0,
             calculation_details: calc,
             confidence_scores: calc.confidence || {},
           };
-          console.log("[PCSClaim] Setting calculated snapshot:", snapshot);
+          console.log("[PCSClaim] Setting calculated snapshot:", {
+            ...snapshot,
+            weight_used: actualWeight,
+            weight_from_calc: calc.ppm?.weight,
+            weight_sent_to_api: weight,
+          });
           setCalculatedSnapshot(snapshot);
         } else {
           console.warn("[PCSClaim] Invalid calculation response:", calc);
