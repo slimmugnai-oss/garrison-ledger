@@ -17,6 +17,7 @@ interface Claim {
   claim_name: string;
   status: string;
   completion_percentage: number;
+  readiness_score?: number;
   pcs_orders_date: string;
   departure_date: string;
   arrival_date: string;
@@ -279,7 +280,7 @@ export default function PCSClaimClient({
                 >
                   {claim.status === "completed"
                     ? "Completed"
-                    : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                    : claim.completion_percentage === 100 && (claim.readiness_score ?? 0) >= 80
                       ? "Ready to Submit"
                       : claim.status === "ready_to_submit"
                         ? "Ready to Submit"
@@ -323,7 +324,6 @@ export default function PCSClaimClient({
 
           {/* Stats Cards */}
           <div className="mb-6 grid gap-6 sm:grid-cols-3">
-
             <AnimatedCard className="p-6">
               <div className="flex items-center gap-4">
                 <div className="rounded-xl bg-green-50 p-3">
