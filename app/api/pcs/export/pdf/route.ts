@@ -53,12 +53,10 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     let calculations;
-    if (snapshotsError || !snapshots || snapshots.length === 0) {
-      // No snapshots, check if claim has entitlements, otherwise calculate fresh
-      const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
-      
-      // First try to use snapshot calculation_details
-      if (snapshot && snapshot.calculation_details) {
+    const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
+    
+    // First try to use snapshot calculation_details
+    if (snapshot && snapshot.calculation_details) {
         logger.info("Using snapshot calculation_details for PDF", { claimId });
         const details = snapshot.calculation_details;
         calculations = {
@@ -98,7 +96,9 @@ export async function POST(request: NextRequest) {
             dataSources: snapshot.data_sources || details.dataSources || {},
           },
         };
-      } else if (claim.entitlements && claim.entitlements.total > 0) {
+    } else if (snapshotsError || !snapshots || snapshots.length === 0) {
+      // No snapshots, check if claim has entitlements
+      if (claim.entitlements && claim.entitlements.total > 0) {
         logger.info("Using claim entitlements for PDF", { claimId });
         calculations = {
           dla: {
