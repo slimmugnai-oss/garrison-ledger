@@ -266,7 +266,9 @@ export default function PCSClaimClient({
               />
               <div className="mt-4 flex items-center gap-4">
                 <Badge variant={getStatusColor(claim.status)}>
-                  {claim.status.replace("_", " ")}
+                  {claim.status === "draft" && claim.completion_percentage === 100
+                    ? "Ready"
+                    : claim.status.replace("_", " ")}
                 </Badge>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Icon name="Calendar" className="h-4 w-4" />

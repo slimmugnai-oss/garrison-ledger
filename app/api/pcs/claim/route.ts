@@ -235,13 +235,17 @@ export async function POST(req: NextRequest) {
           readinessScore = Math.max(0, readinessScore - 20);
         }
 
-        // Update claim with entitlement total and proper scores
+        // Update claim with entitlement total, proper scores, and status
+        // If claim is complete (100% completion, good readiness), mark as ready
+        const shouldBeReady = completionPercentage === 100 && readinessScore >= 80;
+        
         await supabaseAdmin
           .from("pcs_claims")
           .update({
             entitlements: { total: calculations.total || 0 },
             readiness_score: readinessScore,
             completion_percentage: completionPercentage,
+            status: shouldBeReady ? "ready_to_submit" : "draft",
           })
           .eq("id", claim.id);
 
