@@ -154,13 +154,38 @@ export async function POST(req: NextRequest) {
           data_sources: calculations.dataSources,
         });
 
-        // Update claim with entitlement total
+        // Calculate completion percentage based on required fields
+        const requiredFields = [
+          claim.claim_name,
+          claim.pcs_orders_date,
+          claim.departure_date,
+          claim.arrival_date,
+          claim.origin_base,
+          claim.destination_base,
+          claim.rank_at_pcs,
+          claim.branch,
+        ];
+        const completedFields = requiredFields.filter((field) => field && field !== "").length;
+        const completionPercentage = Math.round((completedFields / requiredFields.length) * 100);
+
+        // Readiness score: 100% if all calculations successful, otherwise based on confidence
+        // Start at 100, deduct points for missing data or low confidence
+        let readinessScore = 100;
+        if (!calculations.confidence?.overall || calculations.confidence.overall < 0.8) {
+          readinessScore = Math.round((calculations.confidence?.overall || 0.8) * 100);
+        }
+        // Penalize if critical fields are missing
+        if (!claim.pcs_orders_date || !claim.origin_base || !claim.destination_base) {
+          readinessScore = Math.max(0, readinessScore - 20);
+        }
+
+        // Update claim with entitlement total and proper scores
         await supabaseAdmin
           .from("pcs_claims")
           .update({
             entitlements: { total: calculations.total || 0 },
-            readiness_score: calculations.confidence?.overall || 0,
-            completion_percentage: calculations.confidence?.overall || 0,
+            readiness_score: readinessScore,
+            completion_percentage: completionPercentage,
           })
           .eq("id", claim.id);
 
