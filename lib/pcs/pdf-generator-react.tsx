@@ -10,8 +10,8 @@
  * Replaces slow html2canvas + jsPDF approach
  */
 
+/* eslint-disable react/react-in-jsx-scope */
 import { Document, Page, Text, View, StyleSheet, pdf } from "@react-pdf/renderer";
-import React from "react";
 
 import { logger } from "@/lib/logger";
 
@@ -339,8 +339,8 @@ export async function generatePCSClaimPDFReact(
   calculations: PCSCalculations
 ): Promise<Buffer> {
   try {
-    // Use React-PDF's pdf() function to generate buffer
-    const pdfDoc = pdf(React.createElement(PCSClaimPDF, { claimData, calculations }));
+    // Use React-PDF's pdf() function with JSX
+    const pdfDoc = pdf(<PCSClaimPDF claimData={claimData} calculations={calculations} />);
 
     // Get buffer (this is async in React-PDF)
     const blob = await pdfDoc.toBlob();
