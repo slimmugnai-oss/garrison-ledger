@@ -173,7 +173,7 @@ export default async function Dashboard() {
               {/* Base Navigator */}
               <AnimatedCard delay={0.1}>
                 <Link
-                  href="/dashboard/navigator/jblm"
+                  href="/dashboard/navigator"
                   className="block h-full rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 p-6 transition-all hover:scale-105 hover:shadow-2xl"
                 >
                   <div className="flex h-full flex-col">
