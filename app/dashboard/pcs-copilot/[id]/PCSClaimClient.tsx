@@ -245,7 +245,7 @@ export default function PCSClaimClient({
                 disabled={isDownloading}
                 className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
               >
-                <Icon name="FileDown" className="mr-2 h-4 w-4" />
+                <Icon name="Download" className="mr-2 h-4 w-4" />
                 {isDownloading ? "Generating..." : "Download PDF"}
               </button>
             </div>
@@ -415,11 +415,12 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Distance</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {snapshot?.malt_miles || 
-                           snapshot?.calculation_details?.malt?.distance || 
-                           claim.malt_distance || 
-                           claim.distance_miles || 
-                           0} miles
+                          {snapshot?.malt_miles ||
+                            snapshot?.calculation_details?.malt?.distance ||
+                            claim.malt_distance ||
+                            claim.distance_miles ||
+                            0}{" "}
+                          miles
                         </span>
                       </div>
                     </div>
@@ -427,10 +428,11 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Travel Days</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {snapshot?.per_diem_days || 
-                           snapshot?.calculation_details?.perDiem?.days || 
-                           claim.per_diem_days || 
-                           0} days
+                          {snapshot?.per_diem_days ||
+                            snapshot?.calculation_details?.perDiem?.days ||
+                            claim.per_diem_days ||
+                            0}{" "}
+                          days
                         </span>
                       </div>
                     </div>
@@ -441,11 +443,12 @@ export default function PCSClaimClient({
                             Estimated Weight
                           </span>
                           <span className="text-lg font-bold text-slate-900">
-                            {snapshot?.ppm_weight || 
-                             snapshot?.calculation_details?.ppm?.weight || 
-                             claim.actual_weight || 
-                             claim.estimated_weight || 
-                             0} lbs
+                            {snapshot?.ppm_weight ||
+                              snapshot?.calculation_details?.ppm?.weight ||
+                              claim.actual_weight ||
+                              claim.estimated_weight ||
+                              0}{" "}
+                            lbs
                           </span>
                         </div>
                       </div>
