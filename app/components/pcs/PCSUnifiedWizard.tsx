@@ -748,6 +748,9 @@ export default function PCSUnifiedWizard({
           isEditing ? "PCS claim updated successfully!" : "PCS claim saved successfully!"
         );
 
+        // Clear localStorage draft since claim is now saved
+        clearDraft();
+
         // If editing in modal, call onComplete callback instead of redirecting
         if (onComplete) {
           onComplete(claimId);
