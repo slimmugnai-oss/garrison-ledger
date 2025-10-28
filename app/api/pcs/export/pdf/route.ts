@@ -159,7 +159,16 @@ export async function POST(request: NextRequest) {
             lastVerified: new Date().toISOString(),
           },
           total_entitlements: calcResult.total || 0,
-          confidence: calcResult.confidence || { overall: 0.8, dataSources: {} },
+          confidence: {
+            overall: calcResult.confidence?.overall || 0.8,
+            dataSources: calcResult.dataSources || {
+              dla: "JTR",
+              tle: "JTR",
+              malt: "JTR",
+              perDiem: "JTR",
+              ppm: "JTR",
+            },
+          },
         };
 
         logger.info("Calculated fresh entitlements for PDF", {
