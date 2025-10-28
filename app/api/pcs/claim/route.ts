@@ -154,19 +154,35 @@ export async function POST(req: NextRequest) {
           data_sources: calculations.dataSources,
         });
 
-        // Calculate completion percentage based on required fields
-        const requiredFields = [
+        // Calculate completion percentage based on usability
+        // A claim is complete if it has calculations (meaning user reached review screen)
+        // and has the minimum essential fields for a usable claim
+        const essentialFields = [
           claim.claim_name,
           claim.pcs_orders_date,
-          claim.departure_date,
-          claim.arrival_date,
           claim.origin_base,
           claim.destination_base,
           claim.rank_at_pcs,
-          claim.branch,
         ];
-        const completedFields = requiredFields.filter((field) => field && field !== "").length;
-        const completionPercentage = Math.round((completedFields / requiredFields.length) * 100);
+        const hasEssentialFields = essentialFields.every((field) => field && field !== "");
+        const hasCalculations = !!calculations && calculations.total > 0;
+        
+        // If user reached review and saved with calculations, it's 100% complete
+        // Otherwise, calculate based on essential fields filled
+        let completionPercentage = 0;
+        if (hasCalculations && hasEssentialFields) {
+          completionPercentage = 100; // Reached review screen = complete
+        } else if (hasEssentialFields) {
+          // Has essential fields but no calculations yet - partial
+          const optionalFields = [claim.departure_date, claim.arrival_date, claim.branch];
+          const optionalFieldsFilled = optionalFields.filter((field) => field && field !== "").length;
+          completionPercentage = 50 + Math.round((optionalFieldsFilled / optionalFields.length) * 40); // 50-90%
+        } else {
+          // Missing essential fields - calculate percentage based on what's filled
+          const allFields = [...essentialFields, claim.departure_date, claim.arrival_date, claim.branch];
+          const filledFields = allFields.filter((field) => field && field !== "").length;
+          completionPercentage = Math.round((filledFields / allFields.length) * 50); // 0-50%
+        }
 
         // Readiness score: 100% if all calculations successful, otherwise based on confidence
         // Start at 100, deduct points for missing data or low confidence
@@ -295,4 +311,3 @@ export async function PATCH(req: NextRequest) {
     return errorResponse(error);
   }
 }
-
