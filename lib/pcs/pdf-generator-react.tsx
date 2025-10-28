@@ -1,12 +1,12 @@
 /**
  * PCS CLAIM PDF GENERATOR (React-PDF)
- * 
+ *
  * FAST alternative using @react-pdf/renderer
  * - No canvas rendering (no html2canvas bloat)
  * - Declarative React-like components
  * - Server-side compatible
  * - Much faster generation
- * 
+ *
  * Replaces slow html2canvas + jsPDF approach
  */
 
@@ -189,7 +189,13 @@ const formatDate = (dateStr: string): string => {
 };
 
 // PDF Component
-const PCSClaimPDF = ({ claimData, calculations }: { claimData: PCSClaimData; calculations: PCSCalculations }) => (
+const PCSClaimPDF = ({
+  claimData,
+  calculations,
+}: {
+  claimData: PCSClaimData;
+  calculations: PCSCalculations;
+}) => (
   <Document>
     <Page size="LETTER" style={styles.page}>
       {/* Header */}
@@ -245,23 +251,25 @@ const PCSClaimPDF = ({ claimData, calculations }: { claimData: PCSClaimData; cal
           <View style={[styles.tableRow, styles.tableHeader]}>
             <Text style={[styles.tableCell, styles.tableHeaderText]}>Entitlement Type</Text>
             <Text style={[styles.tableCell, styles.tableHeaderText]}>Description</Text>
-            <Text style={[styles.tableCell, styles.tableHeaderText, { textAlign: "right" }]}>Amount</Text>
+            <Text style={[styles.tableCell, styles.tableHeaderText, { textAlign: "right" }]}>
+              Amount
+            </Text>
           </View>
-          
+
           {/* DLA */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, { fontWeight: "bold" }]}>DLA</Text>
             <Text style={styles.tableCell}>Dislocation Allowance (one-time payment)</Text>
             <Text style={styles.tableCellRight}>{formatCurrency(calculations.dla.amount)}</Text>
           </View>
-          
+
           {/* TLE */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, { fontWeight: "bold" }]}>TLE</Text>
             <Text style={styles.tableCell}>Temporary Lodging Expense</Text>
             <Text style={styles.tableCellRight}>{formatCurrency(calculations.tle.amount)}</Text>
           </View>
-          
+
           {/* MALT */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, { fontWeight: "bold" }]}>MALT</Text>
@@ -270,14 +278,16 @@ const PCSClaimPDF = ({ claimData, calculations }: { claimData: PCSClaimData; cal
             </Text>
             <Text style={styles.tableCellRight}>{formatCurrency(calculations.malt.amount)}</Text>
           </View>
-          
+
           {/* Per Diem */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, { fontWeight: "bold" }]}>Per Diem</Text>
             <Text style={styles.tableCell}>Meals & Incidentals</Text>
-            <Text style={styles.tableCellRight}>{formatCurrency(calculations.per_diem.amount)}</Text>
+            <Text style={styles.tableCellRight}>
+              {formatCurrency(calculations.per_diem.amount)}
+            </Text>
           </View>
-          
+
           {/* PPM */}
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, { fontWeight: "bold" }]}>PPM</Text>
@@ -286,7 +296,7 @@ const PCSClaimPDF = ({ claimData, calculations }: { claimData: PCSClaimData; cal
             </Text>
             <Text style={styles.tableCellRight}>{formatCurrency(calculations.ppm.amount)}</Text>
           </View>
-          
+
           {/* Total */}
           <View style={[styles.tableRow, styles.totalRow]}>
             <Text style={[styles.tableCell, styles.totalCell]}>Total Estimated Entitlements</Text>
@@ -302,14 +312,19 @@ const PCSClaimPDF = ({ claimData, calculations }: { claimData: PCSClaimData; cal
       <View style={styles.disclaimer}>
         <Text style={{ fontWeight: "bold", marginBottom: 5 }}>⚠️ Important Disclaimer</Text>
         <Text>
-          This worksheet is for estimation purposes only. Final reimbursement amounts are determined by your finance office based on official DD Form 1351-2 submission. All calculations are based on current JTR (Joint Travel Regulations) rates and may vary based on actual travel dates, receipts, and official orders.
+          This worksheet is for estimation purposes only. Final reimbursement amounts are determined
+          by your finance office based on official DD Form 1351-2 submission. All calculations are
+          based on current JTR (Joint Travel Regulations) rates and may vary based on actual travel
+          dates, receipts, and official orders.
         </Text>
       </View>
 
       {/* Footer */}
       <View style={styles.footer}>
         <Text>
-          Generated on {new Date().toLocaleString("en-US", { dateStyle: "long", timeStyle: "short" })} • Garrison Ledger - PCS Money Copilot
+          Generated on{" "}
+          {new Date().toLocaleString("en-US", { dateStyle: "long", timeStyle: "short" })} • Garrison
+          Ledger - PCS Money Copilot
         </Text>
       </View>
     </Page>
@@ -325,10 +340,8 @@ export async function generatePCSClaimPDFReact(
 ): Promise<Buffer> {
   try {
     // Use React-PDF's pdf() function to generate buffer
-    const pdfDoc = pdf(
-      React.createElement(PCSClaimPDF, { claimData, calculations })
-    );
-    
+    const pdfDoc = pdf(React.createElement(PCSClaimPDF, { claimData, calculations }));
+
     // Get buffer (this is async in React-PDF)
     const blob = await pdfDoc.toBlob();
     const arrayBuffer = await blob.arrayBuffer();
@@ -345,4 +358,3 @@ export async function generatePCSClaimPDFReact(
     throw error;
   }
 }
-

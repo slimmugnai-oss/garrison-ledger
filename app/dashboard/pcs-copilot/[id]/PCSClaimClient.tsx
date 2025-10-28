@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
@@ -9,6 +10,7 @@ import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
 import PageHeader from "@/app/components/ui/PageHeader";
+import { logger } from "@/lib/logger";
 
 interface Claim {
   id: string;
