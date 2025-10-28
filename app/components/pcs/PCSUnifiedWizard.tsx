@@ -857,9 +857,11 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   disabled={
                     getFieldCompletionPercentage() < 70 ||
                     isLoadingDistance ||
-                    !!(formData.origin_base &&
+                    !!(
+                      formData.origin_base &&
                       formData.destination_base &&
-                      formData.malt_distance === 0)
+                      formData.malt_distance === 0
+                    )
                   }
                   className="bg-blue-600 hover:bg-blue-700"
                 >
