@@ -13,6 +13,7 @@
  */
 
 import { logger } from "@/lib/logger";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // Use admin client for server-side operations, null for client-side
 async function getSupabaseClient() {
