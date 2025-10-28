@@ -27,13 +27,65 @@ interface Claim {
   branch: string;
   entitlements: {
     total?: number;
+    dla?: number;
+    tle?: number;
+    malt?: number;
+    per_diem?: number;
+    ppm?: number;
   } | null;
+  tle_origin_nights?: number;
+  tle_destination_nights?: number;
+  tle_origin_rate?: number;
+  tle_destination_rate?: number;
+  malt_distance?: number;
+  distance_miles?: number;
+  per_diem_days?: number;
+  estimated_weight?: number;
+  actual_weight?: number;
+  fuel_receipts?: number;
   created_at: string;
   updated_at: string;
 }
 
+interface Snapshot {
+  dla_amount: number;
+  tle_amount: number;
+  malt_amount: number;
+  per_diem_amount: number;
+  ppm_estimate: number;
+  total_estimated: number;
+  confidence_scores?: {
+    dla?: number;
+    tle?: number;
+    malt?: number;
+    perDiem?: number;
+    ppm?: number;
+    overall?: number;
+  };
+  calculation_details?: any;
+}
+
+interface Document {
+  id: string;
+  document_type: string;
+  file_path?: string;
+  uploaded_at: string;
+}
+
+interface ValidationCheck {
+  id: string;
+  rule_code: string;
+  rule_title: string;
+  severity: "critical" | "high" | "medium" | "low";
+  message: string;
+  created_at: string;
+}
+
 interface PCSClaimClientProps {
   claim: Claim;
+  snapshot: Snapshot | null;
+  documents: Document[];
+  validationChecks: ValidationCheck[];
   isPremium: boolean;
   tier: string;
   userProfile: {
@@ -43,12 +95,18 @@ interface PCSClaimClientProps {
   };
 }
 
+type Tab = "overview" | "entitlements" | "documents" | "validation";
+
 export default function PCSClaimClient({
   claim,
+  snapshot,
+  documents,
+  validationChecks,
   isPremium: _isPremium,
   tier: _tier,
   userProfile: _userProfile,
 }: PCSClaimClientProps) {
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -57,6 +115,13 @@ export default function PCSClaimClient({
       month: "long",
       day: "numeric",
     });
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
   };
 
   const getStatusColor = (status: string) => {
@@ -74,20 +139,16 @@ export default function PCSClaimClient({
     }
   };
 
-
   const handleDownloadPackage = async () => {
     setIsDownloading(true);
 
     try {
-      const response = await fetch("/api/pcs/package", {
+      const response = await fetch("/api/pcs/export/pdf", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          claimId: claim.id,
-          includeDocuments: true,
-        }),
+        body: JSON.stringify({ claimId: claim.id, type: "full" }),
       });
 
       if (!response.ok) {
@@ -95,18 +156,13 @@ export default function PCSClaimClient({
         throw new Error(error.error || "Download failed");
       }
 
-      // Get the PDF blob
       const blob = await response.blob();
-
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `PCS_Claim_${claim.claim_name.replace(/\s+/g, "_")}_${new Date().toISOString().split("T")[0]}.pdf`;
       document.body.appendChild(a);
       a.click();
-
-      // Cleanup
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
@@ -116,11 +172,27 @@ export default function PCSClaimClient({
     }
   };
 
+  const tabs: { id: Tab; label: string; icon: string; count?: number }[] = [
+    { id: "overview", label: "Overview", icon: "Info" },
+    { id: "entitlements", label: "Entitlements", icon: "DollarSign" },
+    {
+      id: "documents",
+      label: "Documents",
+      icon: "File",
+      count: documents.length,
+    },
+    {
+      id: "validation",
+      label: "Validation",
+      icon: "Shield",
+      count: validationChecks.length > 0 ? validationChecks.length : undefined,
+    },
+  ];
+
   return (
     <>
       <Header />
       <div className="min-h-screen bg-background">
-        {/* Background gradient */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_70%_at_50%_0%,rgba(10,36,99,0.08),transparent_60%)]" />
 
         <div className="mobile-container py-12 sm:py-16">
@@ -156,16 +228,19 @@ export default function PCSClaimClient({
                 </div>
               </div>
             </div>
-            <Link
-              href={`/dashboard/pcs-copilot?edit=${claim.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              Edit Claim
-            </Link>
+            <div className="flex gap-3">
+              <Link
+                href={`/dashboard/pcs-copilot?edit=${claim.id}`}
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
+              >
+                <Icon name="Edit" className="mr-2 h-4 w-4" />
+                Edit Claim
+              </Link>
+            </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="mb-8 grid gap-6 sm:grid-cols-3">
+          <div className="mb-6 grid gap-6 sm:grid-cols-3">
             <AnimatedCard className="p-6">
               <div className="flex items-center gap-4">
                 <div className="rounded-xl bg-blue-50 p-3">
@@ -201,7 +276,7 @@ export default function PCSClaimClient({
                 </div>
                 <div>
                   <div className="text-2xl font-black text-slate-900">
-                    ${claim.entitlements?.total?.toLocaleString() || "0"}
+                    {formatCurrency(claim.entitlements?.total || snapshot?.total_estimated || 0)}
                   </div>
                   <div className="text-sm text-slate-600">Estimated Total</div>
                 </div>
@@ -209,182 +284,399 @@ export default function PCSClaimClient({
             </AnimatedCard>
           </div>
 
-          {/* Claim Details */}
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* Basic Information */}
-            <AnimatedCard className="p-6">
-              <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900">
-                <Icon name="Info" className="h-5 w-5 text-blue-600" />
-                Basic Information
-              </h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      PCS Orders Date
-                    </label>
-                    <p className="text-slate-900">{formatDate(claim.pcs_orders_date)}</p>
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Travel Method
-                    </label>
-                    <p className="capitalize text-slate-900">{claim.travel_method}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Departure Date
-                    </label>
-                    <p className="text-slate-900">{formatDate(claim.departure_date)}</p>
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Arrival Date
-                    </label>
-                    <p className="text-slate-900">{formatDate(claim.arrival_date)}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Origin Base
-                    </label>
-                    <p className="text-slate-900">{claim.origin_base}</p>
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Destination Base
-                    </label>
-                    <p className="text-slate-900">{claim.destination_base}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">
-                      Rank at PCS
-                    </label>
-                    <p className="text-slate-900">{claim.rank_at_pcs}</p>
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-semibold text-gray-600">Branch</label>
-                    <p className="text-slate-900">{claim.branch}</p>
-                  </div>
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-semibold text-gray-600">
-                    Dependents
-                  </label>
-                  <p className="text-slate-900">{claim.dependents_count}</p>
-                </div>
-              </div>
-            </AnimatedCard>
-
-            {/* Next Steps */}
-            <AnimatedCard className="p-6">
-              <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900">
-                <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                Next Steps
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 rounded-lg bg-blue-50 p-4">
-                  <Icon name="Upload" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-                  <div>
-                    <h4 className="mb-1 font-semibold text-slate-900">Upload Documents</h4>
-                    <p className="text-sm text-slate-600">
-                      Upload your PCS orders, receipts, and weigh tickets
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-lg bg-yellow-50 p-4">
-                  <Icon
-                    name="Calculator"
-                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600"
-                  />
-                  <div>
-                    <h4 className="mb-1 font-semibold text-slate-900">Calculate Entitlements</h4>
-                    <p className="text-sm text-slate-600">
-                      AI will calculate DLA, TLE, MALT, and other entitlements
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 rounded-lg bg-green-50 p-4">
-                  <Icon
-                    name="CheckCircle"
-                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600"
-                  />
-                  <div>
-                    <h4 className="mb-1 font-semibold text-slate-900">Review & Submit</h4>
-                    <p className="text-sm text-slate-600">
-                      Review calculations and generate your claim package
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedCard>
+          {/* Tabs */}
+          <div className="mb-6 border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8 overflow-x-auto">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                      flex items-center gap-2 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors
+                      ${
+                        isActive
+                          ? "border-blue-600 text-blue-600"
+                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      }
+                    `}
+                  >
+                    <Icon name={tab.icon as any} className="h-4 w-4" />
+                    {tab.label}
+                    {tab.count !== undefined && (
+                      <Badge
+                        variant={tab.count > 0 ? "primary" : "secondary"}
+                        className="ml-1 text-xs"
+                      >
+                        {tab.count}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Progress Bar */}
-          <AnimatedCard className="mt-8 p-6">
-            <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900">
-              <Icon name="TrendingUp" className="h-5 w-5 text-blue-600" />
-              Claim Progress
-            </h3>
-            <div className="mb-4">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-700">Overall Completion</span>
-                <span className="text-sm font-bold text-blue-600">
-                  {claim.completion_percentage}%
-                </span>
-              </div>
-              <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500"
-                  style={{ width: `${claim.completion_percentage}%` }}
-                />
-              </div>
-            </div>
-            <p className="text-sm text-slate-600">
-              {claim.completion_percentage < 25 &&
-                "Just getting started! Upload your documents to begin."}
-              {claim.completion_percentage >= 25 &&
-                claim.completion_percentage < 50 &&
-                "Good progress! Keep uploading documents."}
-              {claim.completion_percentage >= 50 &&
-                claim.completion_percentage < 75 &&
-                "Almost there! Review your calculations."}
-              {claim.completion_percentage >= 75 &&
-                claim.completion_percentage < 100 &&
-                "Nearly complete! Final review needed."}
-              {claim.completion_percentage === 100 &&
-                "Ready to submit! Your claim package is complete."}
-            </p>
-          </AnimatedCard>
+          {/* Tab Content */}
+          <div className="space-y-6">
+            {/* OVERVIEW TAB */}
+            {activeTab === "overview" && (
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Basic Information */}
+                <AnimatedCard className="p-6">
+                  <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900">
+                    <Icon name="Info" className="h-5 w-5 text-blue-600" />
+                    Basic Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          PCS Orders Date
+                        </label>
+                        <p className="text-slate-900">{formatDate(claim.pcs_orders_date)}</p>
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Travel Method
+                        </label>
+                        <p className="capitalize text-slate-900">{claim.travel_method}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Departure Date
+                        </label>
+                        <p className="text-slate-900">{formatDate(claim.departure_date)}</p>
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Arrival Date
+                        </label>
+                        <p className="text-slate-900">{formatDate(claim.arrival_date)}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Origin Base
+                        </label>
+                        <p className="text-slate-900">{claim.origin_base}</p>
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Destination Base
+                        </label>
+                        <p className="text-slate-900">{claim.destination_base}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Rank at PCS
+                        </label>
+                        <p className="text-slate-900">{claim.rank_at_pcs}</p>
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-gray-600">
+                          Branch
+                        </label>
+                        <p className="text-slate-900">{claim.branch}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-semibold text-gray-600">
+                        Dependents
+                      </label>
+                      <p className="text-slate-900">{claim.dependents_count}</p>
+                    </div>
+                  </div>
+                </AnimatedCard>
 
-          {/* Action Buttons */}
-          <div className="mt-8 space-y-4">
-            <div className="flex gap-4">
-              <Link
-                href="/dashboard/binder"
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-              >
-                <Icon name="Upload" className="h-5 w-5" />
-                Manage Documents in Binder
-              </Link>
-              <button
-                onClick={handleDownloadPackage}
-                disabled={isDownloading}
-                className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Icon name="Download" className="h-5 w-5" />
-                {isDownloading ? "Generating..." : "Download Package"}
-              </button>
-            </div>
-            <p className="text-sm text-slate-600">
-              Use the Binder to organize all PCS-related documents (orders, receipts, weigh tickets). 
-              The PCS Copilot is a planning tool that calculates your entitlements.
-            </p>
+                {/* Quick Summary */}
+                <AnimatedCard className="p-6">
+                  <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900">
+                    <Icon name="TrendingUp" className="h-5 w-5 text-green-600" />
+                    Quick Summary
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="rounded-lg bg-blue-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-slate-700">Distance</span>
+                        <span className="text-lg font-bold text-slate-900">
+                          {claim.malt_distance || claim.distance_miles || 0} miles
+                        </span>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-green-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-slate-700">Travel Days</span>
+                        <span className="text-lg font-bold text-slate-900">
+                          {claim.per_diem_days || 0} days
+                        </span>
+                      </div>
+                    </div>
+                    {claim.travel_method === "ppm" && (
+                      <div className="rounded-lg bg-purple-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-slate-700">
+                            Estimated Weight
+                          </span>
+                          <span className="text-lg font-bold text-slate-900">
+                            {claim.actual_weight || claim.estimated_weight || 0} lbs
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="pt-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-sm font-semibold text-slate-700">Completion</span>
+                        <span className="text-sm font-bold text-blue-600">
+                          {claim.completion_percentage}%
+                        </span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500"
+                          style={{ width: `${claim.completion_percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </AnimatedCard>
+              </div>
+            )}
+
+            {/* ENTITLEMENTS TAB */}
+            {activeTab === "entitlements" && (
+              <div className="space-y-6">
+                <AnimatedCard className="p-6">
+                  <h3 className="mb-6 text-xl font-bold text-slate-900">Entitlement Breakdown</h3>
+                  <div className="space-y-4">
+                    {[
+                      {
+                        label: "Dislocation Allowance (DLA)",
+                        amount:
+                          claim.entitlements?.dla ||
+                          snapshot?.dla_amount ||
+                          0,
+                        description: "One-time payment for PCS relocation",
+                      },
+                      {
+                        label: "Temporary Lodging Expense (TLE)",
+                        amount:
+                          claim.entitlements?.tle ||
+                          snapshot?.tle_amount ||
+                          0,
+                        description: `Lodging for ${claim.tle_origin_nights || 0} origin + ${claim.tle_destination_nights || 0} destination nights`,
+                      },
+                      {
+                        label: "Mileage Allowance (MALT)",
+                        amount:
+                          claim.entitlements?.malt ||
+                          snapshot?.malt_amount ||
+                          0,
+                        description: `${claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
+                      },
+                      {
+                        label: "Per Diem",
+                        amount:
+                          claim.entitlements?.per_diem ||
+                          snapshot?.per_diem_amount ||
+                          0,
+                        description: `${claim.per_diem_days || 0} days of meals & incidentals`,
+                      },
+                      ...(claim.travel_method === "ppm"
+                        ? [
+                            {
+                              label: "Personally Procured Move (PPM)",
+                              amount:
+                                claim.entitlements?.ppm ||
+                                snapshot?.ppm_estimate ||
+                                0,
+                              description: `Based on ${claim.actual_weight || claim.estimated_weight || 0} lbs`,
+                            },
+                          ]
+                        : []),
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0"
+                      >
+                        <div>
+                          <div className="font-semibold text-slate-900">{item.label}</div>
+                          <div className="text-sm text-gray-600">{item.description}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-slate-900">
+                            {formatCurrency(item.amount)}
+                          </div>
+                          {snapshot?.confidence_scores && (
+                            <div className="text-xs text-gray-500">
+                              Confidence:{" "}
+                              {Math.round(
+                                (snapshot.confidence_scores[item.label.toLowerCase().includes("dla")
+                                  ? "dla"
+                                  : item.label.toLowerCase().includes("tle")
+                                    ? "tle"
+                                    : item.label.toLowerCase().includes("malt")
+                                      ? "malt"
+                                      : item.label.toLowerCase().includes("per diem")
+                                        ? "perDiem"
+                                        : "ppm"] as number) * 100 || 80
+                              )}
+                              %
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 border-t border-gray-200 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="text-lg font-bold text-slate-900">Total Estimated</div>
+                      <div className="text-2xl font-black text-blue-600">
+                        {formatCurrency(
+                          claim.entitlements?.total || snapshot?.total_estimated || 0
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </AnimatedCard>
+
+                {/* Action Buttons */}
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleDownloadPackage}
+                    disabled={isDownloading}
+                    className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Icon name="Download" className="h-5 w-5" />
+                    {isDownloading ? "Generating..." : "Download PDF Worksheet"}
+                  </button>
+                  <Link
+                    href="/dashboard/binder"
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
+                  >
+                    <Icon name="Upload" className="h-5 w-5" />
+                    Manage Documents
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* DOCUMENTS TAB */}
+            {activeTab === "documents" && (
+              <div className="space-y-6">
+                <AnimatedCard className="p-6">
+                  <div className="mb-6 flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-slate-900">Uploaded Documents</h3>
+                    <Link
+                      href="/dashboard/binder"
+                      className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    >
+                      Manage in Binder →
+                    </Link>
+                  </div>
+                  {documents.length === 0 ? (
+                    <div className="py-12 text-center">
+                      <Icon name="File" className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                      <p className="text-gray-600">No documents uploaded yet</p>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Use the Binder to organize your PCS documents
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {documents.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between rounded-lg border border-gray-200 p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon name="File" className="h-5 w-5 text-gray-500" />
+                            <div>
+                              <div className="font-semibold text-slate-900 capitalize">
+                                {doc.document_type.replace("_", " ")}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                Uploaded {formatDate(doc.uploaded_at)}
+                              </div>
+                            </div>
+                          </div>
+                          <Badge variant="secondary">{doc.document_type}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </AnimatedCard>
+              </div>
+            )}
+
+            {/* VALIDATION TAB */}
+            {activeTab === "validation" && (
+              <div className="space-y-6">
+                <AnimatedCard className="p-6">
+                  <h3 className="mb-6 text-xl font-bold text-slate-900">Validation Checks</h3>
+                  {validationChecks.length === 0 ? (
+                    <div className="py-12 text-center">
+                      <Icon
+                        name="CheckCircle"
+                        className="mx-auto mb-4 h-12 w-12 text-green-600"
+                      />
+                      <p className="font-semibold text-slate-900">All checks passed!</p>
+                      <p className="mt-2 text-sm text-gray-500">
+                        Your claim meets all JTR requirements
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {validationChecks.map((check) => {
+                        const severityColors = {
+                          critical: "bg-red-50 border-red-200",
+                          high: "bg-orange-50 border-orange-200",
+                          medium: "bg-yellow-50 border-yellow-200",
+                          low: "bg-blue-50 border-blue-200",
+                        };
+                        return (
+                          <div
+                            key={check.id}
+                            className={`rounded-lg border p-4 ${severityColors[check.severity]}`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="mb-1 flex items-center gap-2">
+                                  <Badge
+                                    variant={
+                                      check.severity === "critical"
+                                        ? "danger"
+                                        : check.severity === "high"
+                                          ? "warning"
+                                          : "secondary"
+                                    }
+                                  >
+                                    {check.severity}
+                                  </Badge>
+                                  <span className="font-semibold text-slate-900">
+                                    {check.rule_title}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-slate-700">{check.message}</p>
+                                <p className="mt-2 text-xs text-gray-600">
+                                  Rule: {check.rule_code}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </AnimatedCard>
+              </div>
+            )}
           </div>
         </div>
       </div>

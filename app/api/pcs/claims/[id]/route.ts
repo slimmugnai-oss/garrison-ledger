@@ -10,10 +10,7 @@ export const runtime = "nodejs";
 /**
  * GET: Fetch a single PCS claim by ID
  */
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth();
     if (!userId) throw Errors.unauthorized();
@@ -53,4 +50,3 @@ export async function GET(
     return errorResponse(error);
   }
 }
-

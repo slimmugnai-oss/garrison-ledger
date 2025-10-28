@@ -56,9 +56,37 @@ export default async function PCSClaimPage({ params }: PageProps) {
     .eq('user_id', user.id)
     .maybeSingle();
 
+  // Get entitlement snapshot for detailed calculations
+  const { data: snapshot } = await supabaseAdmin
+    .from('pcs_entitlement_snapshots')
+    .select('*')
+    .eq('claim_id', id)
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Get documents
+  const { data: documents } = await supabaseAdmin
+    .from('pcs_claim_documents')
+    .select('*')
+    .eq('claim_id', id)
+    .eq('user_id', user.id)
+    .order('uploaded_at', { ascending: false });
+
+  // Get validation checks
+  const { data: validationChecks } = await supabaseAdmin
+    .from('pcs_claim_checks')
+    .select('*')
+    .eq('claim_id', id)
+    .order('severity', { ascending: true });
+
   return (
     <PCSClaimClient 
       claim={claim}
+      snapshot={snapshot || null}
+      documents={documents || []}
+      validationChecks={validationChecks || []}
       isPremium={isPremium}
       tier={tier}
       userProfile={{
