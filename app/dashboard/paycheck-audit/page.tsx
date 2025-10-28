@@ -16,6 +16,7 @@ import { LesAuditAlwaysOn } from "@/app/components/les/LesAuditAlwaysOn";
 import ProfileIncompletePrompt from "@/app/components/les/ProfileIncompletePrompt";
 import Icon from "@/app/components/ui/Icon";
 import { getUserTier } from "@/lib/auth/subscription";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "LES & Paycheck Auditor | Garrison Ledger",
@@ -68,6 +69,9 @@ export default async function PaycheckAuditPage() {
 
   const profileComplete = missingFields.length === 0;
 
+  // Premium-only feature gate
+  const isPremium = tier === "premium" || tier === "staff";
+
   return (
     <>
       <Header />
@@ -110,7 +114,55 @@ export default async function PaycheckAuditPage() {
         </section>
 
         {/* Main Content */}
-        {!profileComplete ? (
+        {!isPremium ? (
+          <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="rounded-xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 p-12 text-center shadow-lg">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-600">
+                <Icon name="Lock" className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="mb-4 text-3xl font-bold text-gray-900">
+                LES Auditor is a Premium Feature
+              </h2>
+              <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-700">
+                Professional-grade pay auditing with dynamic line item management, support for all
+                special pays, and comprehensive error detection.
+              </p>
+              <div className="mb-8 rounded-lg bg-white p-6 text-left shadow-sm">
+                <h3 className="mb-4 font-semibold text-gray-900">Premium Features:</h3>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Upload unlimited LES documents</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Dynamic line item editor (add any pay type)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Support for all special pays (SDAP, Flight Pay, etc.)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Complete audit results with variance analysis</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Save and export audit history</span>
+                  </li>
+                </ul>
+              </div>
+              <Link
+                href="/dashboard/upgrade?feature=les-auditor"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
+              >
+                <Icon name="Crown" className="h-5 w-5" />
+                Upgrade to Premium
+              </Link>
+              <p className="mt-4 text-sm text-gray-600">$9.99/month or $99/year • Cancel anytime</p>
+            </div>
+          </div>
+        ) : !profileComplete ? (
           <ProfileIncompletePrompt missingFields={missingFields} />
         ) : (
           <LesAuditAlwaysOn

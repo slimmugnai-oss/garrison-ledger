@@ -4,12 +4,13 @@
  * LES ALWAYS-ON AUDIT COMPONENT
  *
  * Split-panel design with real-time audit computation.
- * Left: Input fields | Right: Live audit report
+ * Left: Dynamic line item manager | Right: Live audit report
  *
  * Features:
  * - Real-time computation (400ms debounce)
  * - Server-side paywall enforcement
  * - No "Run Audit" button - always computing
+ * - Dynamic line item management with templates
  */
 
 import { logger } from "@/lib/logger";
@@ -21,18 +22,21 @@ interface LESLine {
   section: string;
 }
 
-/**
- * - Save/PDF for premium users only
- */
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import DynamicLineItemManager from "./DynamicLineItemManager";
+import SmartTemplateSelector from "./SmartTemplateSelector";
+import UploadReviewStepper from "./UploadReviewStepper";
 import { useLesAudit } from "@/app/hooks/useLesAudit";
 import type { AuditInputs } from "@/app/hooks/useLesAudit";
 import type { Tier } from "@/lib/auth/subscription";
+import type { DynamicLineItem } from "@/app/types/les";
+import { convertLineItemsToAuditInputs } from "@/lib/les/line-item-converter";
+import { generateLineItemId } from "@/lib/utils/line-item-ids";
+import { computeTaxableBases } from "@/lib/les/codes";
 
 interface Props {
   tier: Tier;
@@ -61,163 +65,29 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [mhaOrZip, setMhaOrZip] = useState(userProfile.mhaCode || "");
   const [withDependents, setWithDependents] = useState(userProfile.hasDependents || false);
 
-  // Allowances
-  const [basePay, setBasePay] = useState(0);
-  const [bah, setBah] = useState(0);
-  const [bas, setBas] = useState(0);
-  const [cola, setCola] = useState(0);
-
-  // Deductions
-  const [tsp, setTsp] = useState(0);
-  const [sgli, setSgli] = useState(0);
-  const [dental, setDental] = useState(0);
-
-  // Taxes
-  const [federalTax, setFederalTax] = useState(0);
-  const [stateTax, setStateTax] = useState(0);
-  const [fica, setFica] = useState(0);
-  const [medicare, setMedicare] = useState(0);
-
-  // Net Pay
-  const [netPay, setNetPay] = useState<number | undefined>(undefined);
+  // NEW: Dynamic line items (replaces all individual state variables)
+  const [lineItems, setLineItems] = useState<DynamicLineItem[]>([]);
+  const [templateSelected, setTemplateSelected] = useState(false);
 
   // UI State
   const [saving, setSaving] = useState(false);
   const [loadingExpected, setLoadingExpected] = useState(false);
-  const [collapsedSections, setCollapsedSections] = useState({
-    entitlements: false,
-    deductions: false,
-    taxes: false,
-  });
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [entryMode, setEntryMode] = useState<"upload" | "manual">("upload");
   const [uploading, setUploading] = useState(false);
+  const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
+  const [uploadId, setUploadId] = useState<string | null>(null);
 
   // ============================================================================
-  // MEMOIZED COMPUTATIONS
-  // ============================================================================
-
-  const completeness = useMemo(() => {
-    const total = 12; // Base, BAH, BAS, COLA, TSP, SGLI, Dental, 4 taxes, Net
-    const filled = [
-      basePay,
-      bah,
-      bas,
-      cola,
-      tsp,
-      sgli,
-      dental,
-      federalTax,
-      stateTax,
-      fica,
-      medicare,
-      netPay,
-    ].filter((v) => (v || 0) > 0).length;
-    return { filled, total, percentage: (filled / total) * 100 };
-  }, [basePay, bah, bas, cola, tsp, sgli, dental, federalTax, stateTax, fica, medicare, netPay]);
-
-  const entitlementCount = useMemo(
-    () => [basePay, bah, bas, cola].filter((v) => v > 0).length,
-    [basePay, bah, bas, cola]
-  );
-
-  const deductionCount = useMemo(
-    () => [tsp, sgli, dental].filter((v) => v > 0).length,
-    [tsp, sgli, dental]
-  );
-
-  const taxCount = useMemo(
-    () => [federalTax, stateTax, fica, medicare].filter((v) => v > 0).length,
-    [federalTax, stateTax, fica, medicare]
-  );
-
-  // ============================================================================
-  // AUTO-CALCULATE FICA & MEDICARE
-  // ============================================================================
-
-  useEffect(() => {
-    // Calculate taxable gross (Base + COLA, excludes BAH/BAS which are tax-free)
-    const taxableGross = basePay + cola;
-
-    if (taxableGross > 0) {
-      // Auto-fill FICA (6.2%) if currently zero
-      if (fica === 0) {
-        const calculatedFica = Math.round(taxableGross * 0.062);
-        setFica(calculatedFica);
-      }
-
-      // Auto-fill Medicare (1.45%) if currently zero
-      if (medicare === 0) {
-        const calculatedMedicare = Math.round(taxableGross * 0.0145);
-        setMedicare(calculatedMedicare);
-      }
-    }
-  }, [basePay, cola]); // Only recalculate when these change, not when fica/medicare change
-
-  // ============================================================================
-  // TAX VALIDATION LOGIC
-  // ============================================================================
-
-  const taxValidation = useMemo(() => {
-    const warnings: string[] = [];
-    const advisories: string[] = [];
-
-    const taxableGross = basePay + cola;
-
-    if (taxableGross === 0) return { warnings, advisories };
-
-    // Validate FICA (should be 6.2% of taxable gross, ±$5 tolerance)
-    const expectedFica = Math.round(taxableGross * 0.062);
-    if (fica > 0 && Math.abs(fica - expectedFica) > 5) {
-      warnings.push(
-        `FICA is $${(fica / 100).toFixed(2)} but expected $${(expectedFica / 100).toFixed(2)} (6.2% of taxable gross). Check your LES.`
-      );
-    }
-
-    // Validate Medicare (should be 1.45% of taxable gross, ±$2 tolerance)
-    const expectedMedicare = Math.round(taxableGross * 0.0145);
-    if (medicare > 0 && Math.abs(medicare - expectedMedicare) > 2) {
-      warnings.push(
-        `Medicare is $${(medicare / 100).toFixed(2)} but expected $${(expectedMedicare / 100).toFixed(2)} (1.45% of taxable gross). Check your LES.`
-      );
-    }
-
-    // Federal tax reasonableness checks
-    const federalPercent = (federalTax / taxableGross) * 100;
-
-    // Only check if federal tax is > 0 (CZTE check is handled in API findings)
-    if (federalTax > 0 && federalPercent < 5) {
-      advisories.push(
-        `Federal tax (${federalPercent.toFixed(1)}%) seems low. Typical: 10-15%. This might be correct if you have many exemptions or adjusted your W-4.`
-      );
-    } else if (federalPercent > 25) {
-      advisories.push(
-        `Federal tax (${federalPercent.toFixed(1)}%) seems high. Typical: 10-15%. This might be correct if you requested additional withholding on your W-4.`
-      );
-    }
-
-    // Total tax burden check (shouldn't exceed 35%)
-    const totalTaxes = federalTax + stateTax + fica + medicare;
-    const totalPercent = (totalTaxes / taxableGross) * 100;
-    if (totalPercent > 35) {
-      warnings.push(
-        `Total tax burden is ${totalPercent.toFixed(1)}% - higher than typical 25-30%. Verify all amounts with your LES.`
-      );
-    }
-
-    return { warnings, advisories };
-  }, [basePay, cola, federalTax, stateTax, fica, medicare]);
-
-  // ============================================================================
-  // AUTO-POPULATE EXPECTED VALUES
+  // AUTO-POPULATE EXPECTED VALUES (Auto-fill line items from profile)
   // ============================================================================
 
   useEffect(() => {
     const fetchExpectedValues = async () => {
-      // Only fetch if we have complete profile data
-      if (!month || !year || !paygrade || !mhaOrZip) return;
+      // Only fetch if we have complete profile data and no items yet
+      if (!month || !year || !paygrade || !mhaOrZip || lineItems.length > 0) return;
 
       logger.info("[LesAuditAlwaysOn] Fetching expected values with:", {
         month,
@@ -247,15 +117,68 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
           logger.info("[LesAuditAlwaysOn] Received expected values:", data);
 
-          // Auto-fill allowances (official DFAS data) - only if field is empty
-          if (data.base_pay && basePay === 0) setBasePay(data.base_pay);
-          if (data.bah && bah === 0) setBah(data.bah);
-          if (data.bas && bas === 0) setBas(data.bas);
-          if (data.cola && cola === 0) setCola(data.cola);
+          // Auto-fill line items from expected values
+          const newItems: DynamicLineItem[] = [];
 
-          // Auto-fill deductions (from profile) - only if field is empty
-          if (data.tsp && tsp === 0) setTsp(data.tsp);
-          if (data.sgli && sgli === 0) setSgli(data.sgli);
+          if (data.base_pay) {
+            newItems.push({
+              id: generateLineItemId(),
+              line_code: "BASEPAY",
+              description: "Base Pay",
+              amount_cents: data.base_pay,
+              section: "ALLOWANCE",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+          if (data.bah) {
+            newItems.push({
+              id: generateLineItemId(),
+              line_code: "BAH",
+              description: "Basic Allowance for Housing",
+              amount_cents: data.bah,
+              section: "ALLOWANCE",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+          if (data.bas) {
+            newItems.push({
+              id: generateLineItemId(),
+              line_code: "BAS",
+              description: "Basic Allowance for Subsistence",
+              amount_cents: data.bas,
+              section: "ALLOWANCE",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+          if (data.tsp) {
+            newItems.push({
+              id: generateLineItemId(),
+              line_code: "TSP",
+              description: "Thrift Savings Plan",
+              amount_cents: data.tsp,
+              section: "DEDUCTION",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+          if (data.sgli) {
+            newItems.push({
+              id: generateLineItemId(),
+              line_code: "SGLI",
+              description: "SGLI Life Insurance",
+              amount_cents: data.sgli,
+              section: "DEDUCTION",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+
+          if (newItems.length > 0) {
+            setLineItems(newItems);
+          }
         }
       } catch (error) {
         logger.error("Failed to fetch expected values:", error);
@@ -265,30 +188,92 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
     };
 
     fetchExpectedValues();
-  }, [month, year, paygrade, mhaOrZip, withDependents]);
+  }, [month, year, paygrade, mhaOrZip, withDependents, lineItems.length]);
 
   // ============================================================================
-  // AUTO-CALCULATE FICA & MEDICARE (6.2% and 1.45% of taxable gross)
+  // AUTO-CALCULATE FICA & MEDICARE (Auto-add to line items if missing)
   // ============================================================================
 
   useEffect(() => {
-    // Calculate taxable gross (excludes BAH/BAS which are non-taxable)
-    const taxableGross = basePay + cola; // In cents already
+    // Build allowances array for taxable base calculation
+    const allowances = lineItems
+      .filter((item) => item.section === "ALLOWANCE")
+      .map((item) => ({
+        code: item.line_code,
+        amount_cents: item.amount_cents,
+      }));
 
-    if (taxableGross > 0) {
-      // Auto-calculate FICA (6.2%) if empty or zero
-      if (fica === 0) {
-        const calculatedFica = Math.round(taxableGross * 0.062);
-        setFica(calculatedFica);
-      }
+    // Calculate correct FICA/Medicare taxable base (includes Base Pay, COLA, and taxable special pays)
+    const taxableBases = computeTaxableBases(allowances);
+    const ficaMedicareGross = taxableBases.oasdi; // FICA and Medicare use same base
 
-      // Auto-calculate Medicare (1.45%) if empty or zero
-      if (medicare === 0) {
-        const calculatedMedicare = Math.round(taxableGross * 0.0145);
-        setMedicare(calculatedMedicare);
+    if (ficaMedicareGross > 0) {
+      // Check what we have in current state
+      const hasFica = lineItems.some((item) => item.line_code === "FICA");
+      const hasMedicare = lineItems.some((item) => item.line_code === "MEDICARE");
+
+      // Only add if missing
+      if (!hasFica || !hasMedicare) {
+        setLineItems((prev) => {
+          // Double-check in prev state to prevent race conditions
+          const prevHasFica = prev.some((item) => item.line_code === "FICA");
+          const prevHasMedicare = prev.some((item) => item.line_code === "MEDICARE");
+
+          // If both already present, no changes needed
+          if (prevHasFica && prevHasMedicare) {
+            return prev;
+          }
+
+          // Recalculate taxable base from prev state to ensure consistency
+          const prevAllowances = prev
+            .filter((item) => item.section === "ALLOWANCE")
+            .map((item) => ({
+              code: item.line_code,
+              amount_cents: item.amount_cents,
+            }));
+          const prevTaxableBases = computeTaxableBases(prevAllowances);
+          const prevFicaMedicareGross = prevTaxableBases.oasdi;
+
+          // If no taxable gross in prev state, no point adding taxes
+          if (prevFicaMedicareGross === 0) {
+            return prev;
+          }
+
+          const updates = [...prev];
+
+          if (!prevHasFica) {
+            // FICA = 6.2% of FICA/Medicare taxable gross (Base Pay + COLA + taxable special pays)
+            const calculatedFica = Math.round(prevFicaMedicareGross * 0.062);
+            updates.push({
+              id: generateLineItemId(),
+              line_code: "FICA",
+              description: "FICA (Social Security)",
+              amount_cents: calculatedFica,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+
+          if (!prevHasMedicare) {
+            // Medicare = 1.45% of FICA/Medicare taxable gross
+            const calculatedMedicare = Math.round(prevFicaMedicareGross * 0.0145);
+            updates.push({
+              id: generateLineItemId(),
+              line_code: "MEDICARE",
+              description: "Medicare Tax",
+              amount_cents: calculatedMedicare,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            });
+          }
+
+          return updates;
+        });
       }
     }
-  }, [basePay, cola, fica, medicare]);
+  }, [lineItems]);
 
   // ============================================================================
   // FETCH AUDIT HISTORY
@@ -322,72 +307,25 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   }, [fetchHistory]);
 
   // ============================================================================
-  // BUILD AUDIT INPUTS (MEMOIZED TO PREVENT RE-RENDER LOOP)
+  // BUILD AUDIT INPUTS (Convert line items to audit input format)
   // ============================================================================
 
   const inputs: AuditInputs = useMemo(
-    () => ({
-      month,
-      year,
-      profile:
+    () =>
+      convertLineItemsToAuditInputs(
+        lineItems,
+        month,
+        year,
         paygrade && mhaOrZip && yos >= 0
           ? {
               paygrade,
               yos,
               mhaOrZip,
               withDependents,
-              specials: {},
             }
-          : null,
-      actual: {
-        allowances: [
-          basePay > 0 && { code: "BASEPAY", description: "Base Pay", amount_cents: basePay },
-          bah > 0 && { code: "BAH", description: "Basic Allowance for Housing", amount_cents: bah },
-          bas > 0 && {
-            code: "BAS",
-            description: "Basic Allowance for Subsistence",
-            amount_cents: bas,
-          },
-          cola > 0 && { code: "COLA", description: "Cost of Living Allowance", amount_cents: cola },
-        ].filter(Boolean) as Array<{ code: string; description: string; amount_cents: number }>,
-        taxes: [
-          federalTax > 0 && {
-            code: "TAX_FED",
-            description: "Federal Tax",
-            amount_cents: federalTax,
-          },
-          stateTax > 0 && { code: "TAX_STATE", description: "State Tax", amount_cents: stateTax },
-          fica > 0 && { code: "FICA", description: "FICA (Social Security)", amount_cents: fica },
-          medicare > 0 && { code: "MEDICARE", description: "Medicare", amount_cents: medicare },
-        ].filter(Boolean) as Array<{ code: string; description: string; amount_cents: number }>,
-        deductions: [
-          tsp > 0 && { code: "TSP", description: "TSP Contribution", amount_cents: tsp },
-          sgli > 0 && { code: "SGLI", description: "SGLI Premium", amount_cents: sgli },
-          dental > 0 && { code: "DENTAL", description: "Dental Premium", amount_cents: dental },
-        ].filter(Boolean) as Array<{ code: string; description: string; amount_cents: number }>,
-      },
-      net_pay_cents: netPay,
-    }),
-    [
-      month,
-      year,
-      paygrade,
-      yos,
-      mhaOrZip,
-      withDependents,
-      basePay,
-      bah,
-      bas,
-      cola,
-      federalTax,
-      stateTax,
-      fica,
-      medicare,
-      tsp,
-      sgli,
-      dental,
-      netPay,
-    ]
+          : null
+      ),
+    [lineItems, month, year, paygrade, yos, mhaOrZip, withDependents]
   );
 
   // ============================================================================
@@ -458,27 +396,31 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         throw new Error("Invalid audit data structure");
       }
 
-      // Helper to find line amount from linesBySection structure
-      const findAmount = (section: string, code: string) => {
-        const sectionLines = data.linesBySection[section] || [];
-        const line = sectionLines.find((l: LESLine) => l.line_code === code);
-        return line?.amount_cents || 0;
-      };
+      // Convert loaded audit data to DynamicLineItem array
+      const loadedItems: DynamicLineItem[] = [];
 
-      // Load line items into form fields
-      setBasePay(findAmount("ALLOWANCE", "BASEPAY"));
-      setBah(findAmount("ALLOWANCE", "BAH"));
-      setBas(findAmount("ALLOWANCE", "BAS"));
-      setCola(findAmount("ALLOWANCE", "COLA"));
-      setTsp(findAmount("DEDUCTION", "TSP"));
-      setSgli(findAmount("DEDUCTION", "SGLI"));
-      setDental(findAmount("DEDUCTION", "DENTAL"));
-      setFederalTax(findAmount("TAX", "TAX_FED"));
-      setStateTax(findAmount("TAX", "TAX_STATE"));
-      setFica(findAmount("TAX", "FICA"));
-      setMedicare(findAmount("TAX", "MEDICARE"));
+      // Process all sections
+      Object.entries(data.linesBySection).forEach(([section, lines]) => {
+        if (Array.isArray(lines)) {
+          lines.forEach((line: LESLine) => {
+            if (line.amount_cents > 0) {
+              loadedItems.push({
+                id: generateLineItemId(),
+                line_code: line.line_code,
+                description: line.description,
+                amount_cents: line.amount_cents,
+                section: section as any,
+                isCustom: false,
+                isParsed: false,
+              });
+            }
+          });
+        }
+      });
 
-      // Set month/year LAST to avoid triggering auto-populate before fields are set
+      setLineItems(loadedItems);
+
+      // Set month/year
       setMonth(data.metadata.month);
       setYear(data.metadata.year);
 
@@ -538,15 +480,18 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         handleSavePDF();
       }
 
-      // Escape: Collapse all sections
-      if (e.key === "Escape") {
-        setCollapsedSections({ entitlements: true, deductions: true, taxes: true });
+      // Escape: Reset form (clear all line items)
+      if (e.key === "Escape" && lineItems.length > 0) {
+        if (confirm("Clear all line items?")) {
+          setLineItems([]);
+          setTemplateSelected(false);
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [tier, handleSavePDF]);
+  }, [tier, handleSavePDF, lineItems.length]);
 
   // ============================================================================
   // UPLOAD HANDLER
@@ -568,10 +513,29 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         throw new Error(err.error || "Upload failed");
       }
 
-      const { uploadId } = await uploadRes.json();
+      const uploadData = await uploadRes.json();
+      const parsedId = uploadData.uploadId || uploadData.id;
 
-      // Reload the page to show audit results
-      window.location.href = `/dashboard/paycheck-audit/${uploadId}`;
+      // Convert parsed lines to DynamicLineItem format
+      if (uploadData.lines && Array.isArray(uploadData.lines)) {
+        const parsedItems: DynamicLineItem[] = uploadData.lines.map((line: any) => ({
+          id: generateLineItemId(),
+          line_code: line.line_code || line.code,
+          description: line.description || line.line_code,
+          amount_cents: line.amount_cents || 0,
+          section: line.section || "OTHER",
+          isCustom: false,
+          isParsed: true,
+          dbId: line.id,
+        }));
+
+        setUploadedItems(parsedItems);
+        setUploadId(parsedId);
+        setEntryMode("manual"); // Switch to manual mode to show review stepper
+      } else {
+        // Fallback: redirect to audit detail page
+        window.location.href = `/dashboard/paycheck-audit/${parsedId}`;
+      }
     } catch (error) {
       alert(error instanceof Error ? error.message : "Upload failed. Please try manual entry.");
       setEntryMode("manual");
@@ -720,33 +684,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         </div>
       )}
 
-      {/* Manual Entry UI (existing) */}
+      {/* Manual Entry UI - NEW Dynamic Line Item Manager */}
       {entryMode === "manual" && (
         <div className="grid min-h-screen grid-cols-1 gap-0 lg:grid-cols-2 lg:gap-6">
-          {/* LEFT PANEL: INPUTS */}
+          {/* LEFT PANEL: DYNAMIC LINE ITEM MANAGER */}
           <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              aria-label="LES data entry form"
-              className="mx-auto max-w-2xl space-y-6"
-            >
+            <div className="mx-auto max-w-2xl space-y-6">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
                 <button
                   onClick={() => {
                     if (confirm("Clear all entered data and start over?")) {
-                      setBasePay(0);
-                      setBah(0);
-                      setBas(0);
-                      setCola(0);
-                      setTsp(0);
-                      setSgli(0);
-                      setDental(0);
-                      setFederalTax(0);
-                      setStateTax(0);
-                      setFica(0);
-                      setMedicare(0);
-                      setNetPay(undefined);
+                      setLineItems([]);
+                      setTemplateSelected(false);
                     }
                   }}
                   className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
@@ -754,25 +704,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   <Icon name="RefreshCw" className="h-4 w-4" />
                   <span className="hidden sm:inline">Reset Form</span>
                 </button>
-              </div>
-
-              {/* Completeness Indicator - NEW */}
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium text-blue-900">Data Completeness</span>
-                  <span className="text-sm font-semibold text-blue-900">
-                    {completeness.filled}/{completeness.total}
-                  </span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-blue-100">
-                  <div
-                    className="h-full bg-blue-600 transition-all duration-300"
-                    style={{ width: `${completeness.percentage}%` }}
-                  />
-                </div>
-                <p className="mt-2 text-xs text-blue-700">
-                  Fill all fields for the most accurate audit
-                </p>
               </div>
 
               {/* Month/Year */}
@@ -810,227 +741,51 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               </div>
 
-              {/* Entitlements Section */}
-              <div className="rounded-lg border bg-white">
-                <button
-                  onClick={() =>
-                    setCollapsedSections((prev) => ({ ...prev, entitlements: !prev.entitlements }))
-                  }
-                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-                  aria-expanded={!collapsedSections.entitlements}
-                  aria-controls="entitlements-section"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
-                    <span className="font-semibold text-gray-900">Entitlements</span>
-                    <Badge variant="info">{entitlementCount}/4</Badge>
-                  </div>
-                  <Icon
-                    name={collapsedSections.entitlements ? "ChevronDown" : "ChevronUp"}
-                    className="h-5 w-5 text-gray-400"
+              {/* Upload Review Wizard (show if items from upload) */}
+              {uploadedItems && uploadedItems.length > 0 && lineItems.length === 0 && (
+                <div className="mb-6">
+                  <UploadReviewStepper
+                    parsedItems={uploadedItems}
+                    onComplete={(items) => {
+                      setLineItems(items);
+                      setUploadedItems(null);
+                    }}
+                    onBack={() => {
+                      setUploadedItems(null);
+                      setLineItems([]);
+                      setEntryMode("upload");
+                    }}
                   />
-                </button>
+                </div>
+              )}
 
-                {!collapsedSections.entitlements && (
-                  <div
-                    className="space-y-3 px-4 pb-4"
-                    id="entitlements-section"
-                    role="region"
-                    aria-label="Entitlements input fields"
-                  >
-                    {loadingExpected && (
-                      <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-                        <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
-                        <span>Loading official DFAS rates...</span>
-                      </div>
-                    )}
-                    {/* Base Pay, BAH, BAS, COLA inputs */}
-                    <CurrencyField
-                      label="Base Pay"
-                      value={basePay}
-                      onChange={setBasePay}
-                      helpText="Monthly basic pay (Entitlements section, top of LES)"
-                    />
-                    <CurrencyField
-                      label="BAH"
-                      value={bah}
-                      onChange={setBah}
-                      helpText="Basic Allowance for Housing (location-based)"
-                    />
-                    <CurrencyField
-                      label="BAS"
-                      value={bas}
-                      onChange={setBas}
-                      helpText="Basic Allowance for Subsistence (meals)"
-                    />
-                    <CurrencyField
-                      label="COLA"
-                      value={cola}
-                      onChange={setCola}
-                      helpText="Cost of Living Allowance (if applicable)"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Deductions Section */}
-              <div className="rounded-lg border bg-white">
-                <button
-                  onClick={() =>
-                    setCollapsedSections((prev) => ({ ...prev, deductions: !prev.deductions }))
-                  }
-                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon name="Calculator" className="h-5 w-5 text-orange-600" />
-                    <span className="font-semibold text-gray-900">Deductions</span>
-                    <Badge variant="info">{deductionCount}/3</Badge>
-                  </div>
-                  <Icon
-                    name={collapsedSections.deductions ? "ChevronDown" : "ChevronUp"}
-                    className="h-5 w-5 text-gray-400"
+              {/* Template Selector (show if no items and no upload review) */}
+              {!uploadedItems && !templateSelected && lineItems.length === 0 && (
+                <div className="mb-6">
+                  <SmartTemplateSelector
+                    onSelect={(items) => {
+                      setLineItems(items);
+                      setTemplateSelected(true);
+                    }}
                   />
-                </button>
+                </div>
+              )}
 
-                {!collapsedSections.deductions && (
-                  <div className="space-y-3 px-4 pb-4">
-                    <CurrencyField
-                      label="TSP"
-                      value={tsp}
-                      onChange={setTsp}
-                      helpText="Thrift Savings Plan contribution"
-                    />
-                    <CurrencyField
-                      label="SGLI"
-                      value={sgli}
-                      onChange={setSgli}
-                      helpText="Servicemembers' Group Life Insurance premium"
-                    />
-                    <CurrencyField
-                      label="Dental"
-                      value={dental}
-                      onChange={setDental}
-                      helpText="Dental insurance premium (if enrolled)"
-                    />
-                  </div>
-                )}
-              </div>
+              {/* Loading Expected Values */}
+              {loadingExpected && (
+                <div className="mb-4 flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+                  <Icon name="RefreshCw" className="h-4 w-4 animate-spin" />
+                  <span>Loading official DFAS rates...</span>
+                </div>
+              )}
 
-              {/* Taxes Section */}
-              <div className="rounded-lg border bg-white">
-                <button
-                  onClick={() => setCollapsedSections((prev) => ({ ...prev, taxes: !prev.taxes }))}
-                  className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon name="Landmark" className="h-5 w-5 text-red-600" />
-                    <span className="font-semibold text-gray-900">Taxes</span>
-                    <Badge variant="info">{taxCount}/4</Badge>
-                  </div>
-                  <Icon
-                    name={collapsedSections.taxes ? "ChevronDown" : "ChevronUp"}
-                    className="h-5 w-5 text-gray-400"
-                  />
-                </button>
-
-                {!collapsedSections.taxes && (
-                  <div className="space-y-3 px-4 pb-4">
-                    {/* Tax Info Banner */}
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                      <div className="flex items-start gap-2">
-                        <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" />
-                        <div className="text-xs text-blue-800">
-                          <strong>FICA and Medicare are auto-calculated</strong> at 6.2% and 1.45%
-                          of taxable gross. You can edit if your LES differs (rare).
-                        </div>
-                      </div>
-                    </div>
-
-                    <CurrencyField
-                      label="Federal Tax"
-                      value={federalTax}
-                      onChange={setFederalTax}
-                      helpText="Federal income tax withheld"
-                    />
-                    <CurrencyField
-                      label="State Tax"
-                      value={stateTax}
-                      onChange={setStateTax}
-                      helpText="State income tax withheld (if applicable)"
-                    />
-                    <div>
-                      <CurrencyField
-                        label="FICA / Social Security ✓ Auto-calc (6.2%)"
-                        value={fica}
-                        onChange={setFica}
-                        helpText="Auto-calculated from taxable gross - edit if your LES differs"
-                      />
-                    </div>
-                    <div>
-                      <CurrencyField
-                        label="Medicare ✓ Auto-calc (1.45%)"
-                        value={medicare}
-                        onChange={setMedicare}
-                        helpText="Auto-calculated from taxable gross - edit if your LES differs"
-                      />
-                    </div>
-
-                    {/* Tax Validation Warnings */}
-                    {taxValidation.warnings.length > 0 && (
-                      <div className="rounded-lg border-l-4 border-red-400 bg-red-50 p-3">
-                        <div className="flex gap-2">
-                          <Icon
-                            name="AlertTriangle"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600"
-                          />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold text-red-900">
-                              Tax Validation Warnings
-                            </p>
-                            <ul className="mt-1 space-y-1 text-xs text-red-800">
-                              {taxValidation.warnings.map((w, i) => (
-                                <li key={i}>• {w}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Tax Validation Advisories */}
-                    {taxValidation.advisories.length > 0 && (
-                      <div className="rounded-lg border-l-4 border-yellow-400 bg-yellow-50 p-3">
-                        <div className="flex gap-2">
-                          <Icon
-                            name="Info"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600"
-                          />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold text-yellow-900">Advisory</p>
-                            <ul className="mt-1 space-y-1 text-xs text-yellow-800">
-                              {taxValidation.advisories.map((a, i) => (
-                                <li key={i}>• {a}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Net Pay Section - NEW */}
-              <div className="rounded-lg border bg-white p-4">
-                <h3 className="mb-3 font-semibold text-gray-900">Net Pay (Bottom Line)</h3>
-                <CurrencyField
-                  label="Actual Net Pay from LES"
-                  value={netPay || 0}
-                  onChange={setNetPay}
-                  helpText="This is your final take-home amount at the bottom of your LES"
-                />
-              </div>
-            </form>
+              {/* Dynamic Line Item Manager */}
+              <DynamicLineItemManager
+                lineItems={lineItems}
+                onChange={setLineItems}
+                allowEdit={true}
+              />
+            </div>
           </div>
 
           {/* RIGHT PANEL: AUDIT REPORT (ALWAYS VISIBLE) */}
@@ -1377,70 +1132,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// ============================================================================
-// HELPER COMPONENTS
-// ============================================================================
-
-function CurrencyField({
-  label,
-  value,
-  onChange,
-  helpText,
-}: {
-  label: string;
-  value: number;
-  onChange: (val: number) => void;
-  helpText?: string;
-}) {
-  const [displayValue, setDisplayValue] = React.useState("");
-  const [isFocused, setIsFocused] = React.useState(false);
-
-  // Sync external value to display when not focused
-  React.useEffect(() => {
-    if (!isFocused) {
-      setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
-    }
-  }, [value, isFocused]);
-
-  return (
-    <div>
-      <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <span className="text-gray-500 sm:text-sm">$</span>
-        </div>
-        <input
-          type="text"
-          inputMode="decimal"
-          value={isFocused ? displayValue : value > 0 ? (value / 100).toFixed(2) : ""}
-          onFocus={(e) => {
-            setIsFocused(true);
-            setDisplayValue(value > 0 ? (value / 100).toFixed(2) : "");
-            // Select all on focus for easy overwrite
-            e.target.select();
-          }}
-          onChange={(e) => {
-            // Just update local display while typing - no conversion yet
-            setDisplayValue(e.target.value);
-          }}
-          onBlur={() => {
-            setIsFocused(false);
-            // NOW convert to cents (only on blur)
-            const dollars = parseFloat(displayValue) || 0;
-            const cents = Math.round(dollars * 100);
-            // Validate: no negatives, max $999,999
-            const validated = Math.max(0, Math.min(99999900, cents));
-            onChange(validated);
-          }}
-          className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          placeholder="0.00"
-        />
-      </div>
-      {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
     </div>
   );
 }

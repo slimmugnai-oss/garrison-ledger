@@ -434,12 +434,27 @@ export async function POST(req: NextRequest) {
       fileSize: file.size,
     });
 
+    // Fetch the lines we just inserted to return to client
+    const { data: insertedLines } = await supabaseAdmin
+      .from("les_lines")
+      .select("*")
+      .eq("upload_id", uploadRecord.id);
+
     return NextResponse.json({
       uploadId: uploadRecord.id,
       parsedOk,
       summary,
       month,
       year,
+      lines:
+        insertedLines ||
+        parseResult.lines.map((line) => ({
+          id: null,
+          line_code: line.line_code,
+          description: line.description,
+          amount_cents: line.amount_cents,
+          section: line.section,
+        })),
     });
   } catch (error) {
     logger.error("[LES Upload] Unhandled error", {

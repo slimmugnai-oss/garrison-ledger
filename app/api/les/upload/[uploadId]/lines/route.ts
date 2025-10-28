@@ -1,76 +1,55 @@
 /**
- * GET PARSED LINES FOR UPLOAD
- *
- * GET /api/les/upload/[uploadId]/lines
- * - Returns all parsed line items for a specific LES upload
- * - Used to display parsed results and allow adding missing items
- *
- * Security:
- * - Clerk authentication required
- * - RLS: User can only view their own uploads
+ * GET all line items for an upload
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 
-import { errorResponse, Errors } from "@/lib/api-errors";
-import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest, { params }: { params: { uploadId: string } }) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      throw Errors.unauthorized();
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { uploadId } = params;
 
-    // Verify upload exists and belongs to user
+    // Verify ownership
     const { data: upload, error: uploadError } = await supabaseAdmin
       .from("les_uploads")
-      .select("id, user_id")
+      .select("user_id")
       .eq("id", uploadId)
+      .eq("user_id", userId)
       .single();
 
     if (uploadError || !upload) {
-      logger.error("Upload not found", { uploadId, error: uploadError });
-      throw Errors.notFound("LES upload not found");
+      return NextResponse.json({ error: "Upload not found or unauthorized" }, { status: 404 });
     }
 
-    if (upload.user_id !== userId) {
-      logger.warn("Unauthorized upload access attempt", {
-        uploadId,
-        userId: userId.substring(0, 8) + "...",
-        ownerId: upload.user_id.substring(0, 8) + "...",
-      });
-      throw Errors.unauthorized("You can only view your own LES uploads");
-    }
-
-    // Fetch all lines for this upload
-    const { data: lines, error: linesError } = await supabaseAdmin
+    // Fetch all line items
+    const { data, error } = await supabaseAdmin
       .from("les_lines")
-      .select("line_code, description, amount_cents, section")
+      .select("*")
       .eq("upload_id", uploadId)
       .order("section", { ascending: true })
-      .order("amount_cents", { ascending: false });
+      .order("created_at", { ascending: true });
 
-    if (linesError) {
-      logger.error("Failed to fetch lines", { uploadId, error: linesError });
-      throw Errors.databaseError("Failed to fetch parsed lines");
+    if (error) {
+      console.error("[LES Lines Fetch] Error:", error);
+      return NextResponse.json({ error: "Failed to fetch line items" }, { status: 500 });
     }
 
-    return NextResponse.json({
-      lines: lines || [],
-      uploadId,
-    });
+    return NextResponse.json({ data: data || [] });
   } catch (error) {
-    logger.error("[LES Get Lines] Error", {
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-    return errorResponse(error);
+    console.error("[LES Lines Fetch] Exception:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

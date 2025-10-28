@@ -1,31 +1,31 @@
 import { NextResponse } from "next/server";
 
-import { logger } from '@/lib/logger';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { logger } from "@/lib/logger";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 export const revalidate = 300; // Cache for 5 minutes
 
 /**
  * GET /api/stats/platform
- * 
+ *
  * Returns public platform statistics for social proof
  * - Total users
  * - Total plans generated
  * - Plans generated this week
  * - Content blocks available
- * 
+ *
  * No authentication required (public stats)
  */
 export async function GET() {
   try {
     // Get total user count
     const { count: userCount, error: userError } = await supabaseAdmin
-      .from('user_profiles')
-      .select('*', { count: 'exact', head: true });
+      .from("user_profiles")
+      .select("*", { count: "exact", head: true });
 
     if (userError) {
-      logger.warn('[PlatformStats] Failed to fetch user count', { error: userError });
+      logger.warn("[PlatformStats] Failed to fetch user count", { error: userError });
     }
 
     // Plans system removed - set to 0
@@ -34,20 +34,22 @@ export async function GET() {
 
     // Get content blocks count
     const { count: contentBlocks, error: contentError } = await supabaseAdmin
-      .from('content_blocks')
-      .select('*', { count: 'exact', head: true });
+      .from("content_blocks")
+      .select("*", { count: "exact", head: true });
 
     if (contentError) {
-      logger.warn('[PlatformStats] Failed to fetch content count', { error: contentError });
+      logger.warn("[PlatformStats] Failed to fetch content count", { error: contentError });
     }
 
     // Get knowledge embeddings count (total knowledge sources)
     const { count: knowledgeSources, error: knowledgeError } = await supabaseAdmin
-      .from('knowledge_embeddings')
-      .select('*', { count: 'exact', head: true });
+      .from("knowledge_embeddings")
+      .select("*", { count: "exact", head: true });
 
     if (knowledgeError) {
-      logger.warn('[PlatformStats] Failed to fetch knowledge sources count', { error: knowledgeError });
+      logger.warn("[PlatformStats] Failed to fetch knowledge sources count", {
+        error: knowledgeError,
+      });
     }
 
     // Return stats
@@ -57,15 +59,14 @@ export async function GET() {
       weeklyPlans: weeklyPlans || 0,
       contentBlocks: contentBlocks || 410, // Fallback to known count
       knowledgeSources: knowledgeSources || 0, // Total embeddings/knowledge sources
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
-    logger.info('[PlatformStats] Platform stats fetched', stats);
+    logger.info("[PlatformStats] Platform stats fetched", stats);
     return NextResponse.json(stats);
-
   } catch (error) {
-    logger.error('[PlatformStats] Error fetching stats, returning fallbacks', error);
-    
+    logger.error("[PlatformStats] Error fetching stats, returning fallbacks", error);
+
     // Return fallback stats on error (fail gracefully for public endpoint)
     return NextResponse.json({
       users: 500, // Conservative estimate
@@ -73,8 +74,7 @@ export async function GET() {
       weeklyPlans: 87,
       contentBlocks: 410,
       knowledgeSources: 2300, // Conservative fallback
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     });
   }
 }
-

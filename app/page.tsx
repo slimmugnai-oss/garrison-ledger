@@ -95,7 +95,8 @@ export default async function Home() {
                 <li className="flex items-start gap-3">
                   <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-green-400" />
                   <span>
-                    <strong>{knowledgeSourcesFormatted} knowledge sources</strong> + official DFAS/VA/TSP data
+                    <strong>{knowledgeSourcesFormatted} knowledge sources</strong> + official
+                    DFAS/VA/TSP data
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -200,7 +201,8 @@ export default async function Home() {
                   <div>
                     <p className="font-bold text-green-400">Military-Grade Security</p>
                     <p className="text-sm text-green-200">
-                      We delete your LES immediately after processing. Zero SSN or bank account storage.
+                      We delete your LES immediately after processing. Zero SSN or bank account
+                      storage.
                     </p>
                   </div>
                 </div>
@@ -507,7 +509,8 @@ export default async function Home() {
 
               <p className="mb-6 text-xl leading-relaxed text-slate-200">
                 Stop spending hours on DTS vouchers. Track receipts, calculate per diem, and build
-                JTR-compliant calculation worksheets in 20 minutes to help complete vouchers accurately.
+                JTR-compliant calculation worksheets in 20 minutes to help complete vouchers
+                accurately.
               </p>
 
               <ul className="mb-8 space-y-3 text-lg">

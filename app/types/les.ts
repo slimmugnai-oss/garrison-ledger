@@ -412,3 +412,32 @@ export function formatMonthYear(month: number, year: number): string {
   ];
   return `${monthNames[month - 1]} ${year}`;
 }
+
+// =============================================================================
+// DYNAMIC LINE ITEM TYPES (Premium LES Auditor)
+// =============================================================================
+
+/**
+ * Dynamic line item with UI state
+ * Used for client-side management of LES line items
+ */
+export interface DynamicLineItem {
+  id: string; // UUID for React keys
+  line_code: string; // BASEPAY, BAH, FLIGHT_PAY, etc.
+  description: string;
+  amount_cents: number;
+  section: LesSection;
+  isCustom: boolean; // User-added vs template/parsed
+  isParsed: boolean; // From PDF parse vs manual
+  dbId?: string; // Database ID if persisted (from les_lines table)
+}
+
+/**
+ * Line item for autocomplete/search
+ */
+export interface LineCodeOption {
+  code: string;
+  description: string;
+  section: LesSection;
+  exampleAmount?: number; // Optional example amount in cents
+}

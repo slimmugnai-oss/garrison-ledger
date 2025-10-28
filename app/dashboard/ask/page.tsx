@@ -90,8 +90,7 @@ export default async function AskAssistantPage() {
               ratingCount: "500",
               bestRating: "10",
             },
-            description:
-              `24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by ${knowledgeSourcesFormatted} knowledge sources and official military data.`,
+            description: `24/7 military life expert providing instant answers to financial, PCS, deployment, career, and benefits questions. Backed by ${knowledgeSourcesFormatted} knowledge sources and official military data.`,
             featureList: [
               "Instant expert answers in ~2 seconds",
               `${knowledgeSourcesFormatted} embedded knowledge sources`,
@@ -176,9 +175,8 @@ export default async function AskAssistantPage() {
               </h1>
 
               <p className="mb-8 text-xl leading-relaxed text-blue-100">
-                Your 24/7 military life advisor. Get instant, expert
-                answers to ANY military life question; financial, PCS, deployment, career, benefits,
-                base life.
+                Your 24/7 military life advisor. Get instant, expert answers to ANY military life
+                question; financial, PCS, deployment, career, benefits, base life.
               </p>
 
               {/* Trust Badges */}
@@ -316,7 +314,8 @@ export default async function AskAssistantPage() {
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-900">Get Expert Answer</h3>
                 <p className="text-gray-600">
-                  Our AI expert analyzes {knowledgeSourcesFormatted}+ knowledge sources + official data + your profile
+                  Our AI expert analyzes {knowledgeSourcesFormatted}+ knowledge sources + official
+                  data + your profile
                 </p>
               </div>
 
@@ -385,7 +384,9 @@ export default async function AskAssistantPage() {
                   <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                     <Icon name="Database" className="h-6 w-6 text-green-600" />
                   </div>
-                  <p className="text-sm font-semibold text-gray-900">{knowledgeSourcesFormatted} Knowledge Sources</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {knowledgeSourcesFormatted} Knowledge Sources
+                  </p>
                   <p className="text-xs text-gray-600">Embedded military expertise</p>
                 </div>
 
