@@ -177,10 +177,15 @@ export default function PCSUnifiedWizard({
   const loadClaimForEditing = async (claimId: string) => {
     try {
       setIsCalculating(true);
+      setIsLoadingEdit(true);
+      // CRITICAL: Set step immediately to prevent start screen from showing
+      setCurrentStep("review");
 
       const response = await fetch(`/api/pcs/claims/${claimId}`);
       if (!response.ok) {
         toast.error("Failed to load claim");
+        setIsLoadingEdit(false);
+        setIsCalculating(false);
         return;
       }
 
@@ -221,8 +226,10 @@ export default function PCSUnifiedWizard({
         logger.info("Loaded claim with pre-calculated snapshot", { claimId });
       }
 
-      // Jump directly to review step
+      // Ensure we're on review step (should already be set, but ensure)
       setCurrentStep("review");
+      
+      // Clear loading states
       setIsLoadingEdit(false);
       setIsCalculating(false);
 
@@ -230,6 +237,7 @@ export default function PCSUnifiedWizard({
     } catch (error) {
       logger.error("Failed to load claim for editing", error);
       toast.error("Failed to load claim");
+      setIsLoadingEdit(false);
       setIsCalculating(false);
     }
   };
