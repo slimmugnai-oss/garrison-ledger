@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
@@ -112,6 +112,73 @@ export default function PCSClaimClient({
 }: PCSClaimClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [calculatedSnapshot, setCalculatedSnapshot] = useState<Snapshot | null>(snapshot);
+  const [isCalculating, setIsCalculating] = useState(false);
+  
+  // If no snapshot exists, calculate fresh on mount
+  useEffect(() => {
+    if (!snapshot && claim && !isCalculating) {
+      calculateFreshSnapshot();
+    }
+  }, [snapshot, claim]);
+  
+  const calculateFreshSnapshot = async () => {
+    if (isCalculating) return;
+    
+    setIsCalculating(true);
+    try {
+      const response = await fetch(`/api/pcs/calculate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rank_at_pcs: claim.rank_at_pcs,
+          branch: claim.branch,
+          origin_base: claim.origin_base,
+          destination_base: claim.destination_base,
+          dependents_count: claim.dependents_count || 0,
+          departure_date: claim.departure_date,
+          arrival_date: claim.arrival_date,
+          pcs_orders_date: claim.pcs_orders_date,
+          travel_method: claim.travel_method || "ppm",
+          tle_origin_nights: claim.tle_origin_nights || 0,
+          tle_destination_nights: claim.tle_destination_nights || 0,
+          per_diem_days: claim.per_diem_days || 0,
+          distance_miles: claim.malt_distance || claim.distance_miles || 0,
+          estimated_weight: claim.estimated_weight || claim.actual_weight || 0,
+          actual_weight: claim.actual_weight || claim.estimated_weight || 0,
+        }),
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.calculations) {
+          // Transform to Snapshot format
+          const calc = result.calculations;
+          setCalculatedSnapshot({
+            dla_amount: calc.dla?.amount || 0,
+            tle_amount: calc.tle?.total || 0,
+            tle_days: (calc.tle?.origin?.days || 0) + (calc.tle?.destination?.days || 0),
+            malt_amount: calc.malt?.amount || 0,
+            malt_miles: calc.malt?.distance || 0,
+            per_diem_amount: calc.perDiem?.amount || 0,
+            per_diem_days: calc.perDiem?.days || 0,
+            ppm_estimate: calc.ppm?.amount || 0,
+            ppm_weight: calc.ppm?.weight || 0,
+            total_estimated: calc.total || 0,
+            calculation_details: calc,
+            confidence_scores: calc.confidence,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to calculate snapshot:", error);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+  
+  // Use calculated snapshot if available, otherwise fall back to original snapshot
+  const displaySnapshot = calculatedSnapshot || snapshot;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -288,7 +355,7 @@ export default function PCSClaimClient({
                 </div>
                 <div>
                   <div className="text-2xl font-black text-slate-900">
-                    {formatCurrency(claim.entitlements?.total || snapshot?.total_estimated || 0)}
+                    {formatCurrency(claim.entitlements?.total || displaySnapshot?.total_estimated || 0)}
                   </div>
                   <div className="text-sm text-slate-600">Estimated Total</div>
                 </div>
@@ -415,8 +482,8 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Distance</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {snapshot?.malt_miles ||
-                            snapshot?.calculation_details?.malt?.distance ||
+                          {displaySnapshot?.malt_miles ||
+                            displaySnapshot?.calculation_details?.malt?.distance ||
                             claim.malt_distance ||
                             claim.distance_miles ||
                             0}{" "}
@@ -428,8 +495,8 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Travel Days</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {snapshot?.per_diem_days ||
-                            snapshot?.calculation_details?.perDiem?.days ||
+                          {displaySnapshot?.per_diem_days ||
+                            displaySnapshot?.calculation_details?.perDiem?.days ||
                             claim.per_diem_days ||
                             0}{" "}
                           days
@@ -443,8 +510,8 @@ export default function PCSClaimClient({
                             Estimated Weight
                           </span>
                           <span className="text-lg font-bold text-slate-900">
-                            {snapshot?.ppm_weight ||
-                              snapshot?.calculation_details?.ppm?.weight ||
+                            {displaySnapshot?.ppm_weight ||
+                              displaySnapshot?.calculation_details?.ppm?.weight ||
                               claim.actual_weight ||
                               claim.estimated_weight ||
                               0}{" "}
@@ -481,30 +548,30 @@ export default function PCSClaimClient({
                     {[
                       {
                         label: "Dislocation Allowance (DLA)",
-                        amount: claim.entitlements?.dla || snapshot?.dla_amount || 0,
+                        amount: claim.entitlements?.dla || displaySnapshot?.dla_amount || 0,
                         description: "One-time payment for PCS relocation",
                       },
                       {
                         label: "Temporary Lodging Expense (TLE)",
-                        amount: claim.entitlements?.tle || snapshot?.tle_amount || 0,
-                        description: `Lodging for ${snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0} origin + ${snapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0} destination nights`,
+                        amount: claim.entitlements?.tle || displaySnapshot?.tle_amount || 0,
+                        description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",
-                        amount: claim.entitlements?.malt || snapshot?.malt_amount || 0,
-                        description: `${snapshot?.malt_miles || snapshot?.calculation_details?.malt?.distance || claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
+                        amount: claim.entitlements?.malt || displaySnapshot?.malt_amount || 0,
+                        description: `${displaySnapshot?.malt_miles || displaySnapshot?.calculation_details?.malt?.distance || claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
-                        amount: claim.entitlements?.per_diem || snapshot?.per_diem_amount || 0,
-                        description: `${snapshot?.per_diem_days || snapshot?.calculation_details?.perDiem?.days || claim.per_diem_days || 0} days of meals & incidentals`,
+                        amount: claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
+                        description: `${displaySnapshot?.per_diem_days || displaySnapshot?.calculation_details?.perDiem?.days || claim.per_diem_days || 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
-                              amount: claim.entitlements?.ppm || snapshot?.ppm_estimate || 0,
-                              description: `Based on ${snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0} lbs`,
+                              amount: claim.entitlements?.ppm || displaySnapshot?.ppm_estimate || 0,
+                              description: `Based on ${displaySnapshot?.ppm_weight || displaySnapshot?.calculation_details?.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0} lbs`,
                             },
                           ]
                         : []),
@@ -521,11 +588,11 @@ export default function PCSClaimClient({
                           <div className="text-lg font-bold text-slate-900">
                             {formatCurrency(item.amount)}
                           </div>
-                          {snapshot?.confidence_scores && (
+                          {displaySnapshot?.confidence_scores && (
                             <div className="text-xs text-gray-500">
                               Confidence:{" "}
                               {Math.round(
-                                (snapshot.confidence_scores[
+                                ((displaySnapshot.confidence_scores[
                                   item.label.toLowerCase().includes("dla")
                                     ? "dla"
                                     : item.label.toLowerCase().includes("tle")
@@ -535,7 +602,7 @@ export default function PCSClaimClient({
                                         : item.label.toLowerCase().includes("per diem")
                                           ? "perDiem"
                                           : "ppm"
-                                ] as number) * 100 || 80
+                                ] as number) || 0.8) * 100
                               )}
                               %
                             </div>
@@ -549,7 +616,7 @@ export default function PCSClaimClient({
                       <div className="text-lg font-bold text-slate-900">Total Estimated</div>
                       <div className="text-2xl font-black text-blue-600">
                         {formatCurrency(
-                          claim.entitlements?.total || snapshot?.total_estimated || 0
+                          claim.entitlements?.total || displaySnapshot?.total_estimated || 0
                         )}
                       </div>
                     </div>

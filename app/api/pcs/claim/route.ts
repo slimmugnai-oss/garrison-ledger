@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
       const calculations = body.calculations;
 
       try {
-        await supabaseAdmin.from("pcs_entitlement_snapshots").insert({
+        const { error: snapshotError } = await supabaseAdmin.from("pcs_entitlement_snapshots").insert({
           claim_id: claim.id,
           user_id: userId,
           dla_amount: calculations.dla?.amount || 0,
@@ -157,6 +157,17 @@ export async function POST(req: NextRequest) {
           jtr_rule_version: calculations.jtrRuleVersion || "2025-01-25",
           data_sources: calculations.dataSources,
         });
+        
+        if (snapshotError) {
+          logger.error("[PCSClaim] Failed to create snapshot", snapshotError, {
+            userId,
+            claimId: claim.id,
+            snapshotErrorCode: snapshotError.code,
+            snapshotErrorMessage: snapshotError.message,
+          });
+        } else {
+          logger.info("[PCSClaim] Snapshot created successfully", { userId, claimId: claim.id });
+        }
 
         // Calculate completion percentage based on usability
         // A claim is complete if it has calculations (meaning user reached review screen)

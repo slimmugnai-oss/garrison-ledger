@@ -30,18 +30,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
 
-    // Get documents
-    const { data: documents, error: docsError } = await supabaseAdmin
+    // Get documents (non-fatal if fails)
+    const { data: documents } = await supabaseAdmin
       .from("pcs_claim_documents")
       .select("*")
       .eq("claim_id", claimId)
       .eq("user_id", userId)
       .order("uploaded_at", { ascending: true });
-
-    if (docsError) {
-      logger.error("Failed to fetch documents:", docsError);
-      return NextResponse.json({ error: "Failed to fetch documents" }, { status: 500 });
-    }
+    
+    // Continue even if documents query fails - PDF can be generated without them
 
     // Get calculations (from entitlement snapshots or calculate fresh)
     const { data: snapshots, error: snapshotsError } = await supabaseAdmin
@@ -54,48 +51,48 @@ export async function POST(request: NextRequest) {
 
     let calculations;
     const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
-    
+
     // First try to use snapshot calculation_details
     if (snapshot && snapshot.calculation_details) {
-        logger.info("Using snapshot calculation_details for PDF", { claimId });
-        const details = snapshot.calculation_details;
-        calculations = {
-          dla: {
-            amount: snapshot.dla_amount || details.dla?.amount || 0,
-            confidence: details.dla?.confidence || 0.8,
-            source: details.dla?.source || "JTR",
-            lastVerified: details.dla?.lastVerified || new Date().toISOString(),
-          },
-          tle: {
-            amount: snapshot.tle_amount || details.tle?.total || 0,
-            confidence: details.tle?.confidence || 0.8,
-            source: "JTR",
-            lastVerified: new Date().toISOString(),
-          },
-          malt: {
-            amount: snapshot.malt_amount || details.malt?.amount || 0,
-            confidence: details.malt?.confidence || 0.8,
-            source: details.malt?.source || "JTR",
-            lastVerified: details.malt?.effectiveDate || new Date().toISOString(),
-          },
-          per_diem: {
-            amount: snapshot.per_diem_amount || details.perDiem?.amount || 0,
-            confidence: details.perDiem?.confidence || 0.8,
-            source: "JTR",
-            lastVerified: details.perDiem?.effectiveDate || new Date().toISOString(),
-          },
-          ppm: {
-            amount: snapshot.ppm_estimate || details.ppm?.amount || 0,
-            confidence: details.ppm?.confidence || 0.8,
-            source: "JTR",
-            lastVerified: new Date().toISOString(),
-          },
-          total_entitlements: snapshot.total_estimated || details.total || 0,
-          confidence: {
-            overall: snapshot.confidence_scores?.overall || details.confidence?.overall || 0.8,
-            dataSources: snapshot.data_sources || details.dataSources || {},
-          },
-        };
+      logger.info("Using snapshot calculation_details for PDF", { claimId });
+      const details = snapshot.calculation_details;
+      calculations = {
+        dla: {
+          amount: snapshot.dla_amount || details.dla?.amount || 0,
+          confidence: details.dla?.confidence || 0.8,
+          source: details.dla?.source || "JTR",
+          lastVerified: details.dla?.lastVerified || new Date().toISOString(),
+        },
+        tle: {
+          amount: snapshot.tle_amount || details.tle?.total || 0,
+          confidence: details.tle?.confidence || 0.8,
+          source: "JTR",
+          lastVerified: new Date().toISOString(),
+        },
+        malt: {
+          amount: snapshot.malt_amount || details.malt?.amount || 0,
+          confidence: details.malt?.confidence || 0.8,
+          source: details.malt?.source || "JTR",
+          lastVerified: details.malt?.effectiveDate || new Date().toISOString(),
+        },
+        per_diem: {
+          amount: snapshot.per_diem_amount || details.perDiem?.amount || 0,
+          confidence: details.perDiem?.confidence || 0.8,
+          source: "JTR",
+          lastVerified: details.perDiem?.effectiveDate || new Date().toISOString(),
+        },
+        ppm: {
+          amount: snapshot.ppm_estimate || details.ppm?.amount || 0,
+          confidence: details.ppm?.confidence || 0.8,
+          source: "JTR",
+          lastVerified: new Date().toISOString(),
+        },
+        total_entitlements: snapshot.total_estimated || details.total || 0,
+        confidence: {
+          overall: snapshot.confidence_scores?.overall || details.confidence?.overall || 0.8,
+          dataSources: snapshot.data_sources || details.dataSources || {},
+        },
+      };
     } else if (snapshotsError || !snapshots || snapshots.length === 0) {
       // No snapshots, check if claim has entitlements
       if (claim.entitlements && claim.entitlements.total > 0) {
@@ -144,7 +141,7 @@ export async function POST(request: NextRequest) {
         // Extract from snapshot calculation_details if available, otherwise use claim entitlements
         const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
         const details = snapshot?.calculation_details || {};
-        
+
         const formDataForCalc = {
           rank_at_pcs: claim.rank_at_pcs,
           branch: claim.branch,
