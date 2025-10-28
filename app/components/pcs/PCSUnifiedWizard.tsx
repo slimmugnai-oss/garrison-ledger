@@ -587,34 +587,10 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
       if (result.success) {
         const claimId = result.claim.id;
 
-        // 2. Generate and download PDF
-        const pdfResponse = await fetch("/api/pcs/export/pdf", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ claimId, type: "full" }),
-        });
+        toast.success("PCS claim saved successfully!");
 
-        if (pdfResponse.ok) {
-          const pdfBlob = await pdfResponse.blob();
-
-          // 3. Trigger browser download
-          const url = URL.createObjectURL(pdfBlob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `PCS_Claim_${new Date().toISOString().split("T")[0]}.pdf`;
-          a.click();
-          URL.revokeObjectURL(url);
-        }
-
-        toast.success("PCS claim saved and PDF downloaded!");
-
-        // Only call onComplete if user wants to exit wizard
-        // Don't reset wizard state immediately - let user stay on review screen
-        setTimeout(() => {
-          if (onComplete) {
-            onComplete(claimId);
-          }
-        }, 100);
+        // Redirect to view claim page
+        window.location.href = `/dashboard/pcs-copilot/${claimId}`;
       } else {
         toast.error("Failed to save claim. Please try again.");
       }
@@ -1476,8 +1452,8 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   disabled={isSaving || !calculations}
                   className="bg-green-600 px-8 text-lg hover:bg-green-700"
                 >
-                  <Icon name="Download" className="mr-2 h-5 w-5" />
-                  {isSaving ? "Saving..." : "Download Claim Package (PDF)"}
+                  <Icon name="Save" className="mr-2 h-5 w-5" />
+                  {isSaving ? "Saving..." : "Save Claim"}
                 </Button>
               </div>
             </div>
