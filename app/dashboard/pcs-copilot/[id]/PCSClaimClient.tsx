@@ -669,6 +669,7 @@ export default function PCSClaimClient({
                         <span className="text-lg font-bold text-slate-900">
                           {displaySnapshot?.per_diem_days ||
                             displaySnapshot?.calculation_details?.perDiem?.days ||
+                            claim.form_data?.per_diem_days ||
                             claim.per_diem_days ||
                             0}{" "}
                           days
@@ -731,20 +732,20 @@ export default function PCSClaimClient({
                       {
                         label: "Mileage Allowance (MALT)",
                         amount: claim.entitlements?.malt || displaySnapshot?.malt_amount || 0,
-                        description: `${displaySnapshot?.malt_miles ?? displaySnapshot?.calculation_details?.malt?.distance ?? claim.malt_distance ?? claim.distance_miles ?? 0} miles × $0.18/mile`,
+                        description: `${displaySnapshot?.malt_miles ?? displaySnapshot?.calculation_details?.malt?.distance ?? claim.form_data?.malt_distance ?? claim.form_data?.distance_miles ?? claim.malt_distance ?? claim.distance_miles ?? 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
                         amount:
                           claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
-                        description: `${displaySnapshot?.per_diem_days ?? displaySnapshot?.calculation_details?.perDiem?.days ?? claim.per_diem_days ?? 0} days of meals & incidentals`,
+                        description: `${displaySnapshot?.per_diem_days ?? displaySnapshot?.calculation_details?.perDiem?.days ?? claim.form_data?.per_diem_days ?? claim.per_diem_days ?? 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
                               amount: claim.entitlements?.ppm || displaySnapshot?.ppm_estimate || 0,
-                              description: `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
+                              description: `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.form_data?.actual_weight ?? claim.form_data?.estimated_weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
                             },
                           ]
                         : []),

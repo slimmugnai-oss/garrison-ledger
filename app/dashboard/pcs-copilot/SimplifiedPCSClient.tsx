@@ -58,7 +58,8 @@ export default function SimplifiedPCSClient({
       const params = new URLSearchParams(window.location.search);
       if (params.has("edit")) {
         params.delete("edit");
-        const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
+        const newUrl =
+          window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
         window.history.replaceState({}, "", newUrl);
       }
     }
