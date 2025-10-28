@@ -737,11 +737,11 @@ export default function PCSUnifiedWizard({
 
       const requestBody = isEditing ? { claimId: editingClaimId, ...claimData } : claimData;
 
-      logger.info("Saving claim", { 
-        isEditing, 
-        claimId: editingClaimId, 
+      logger.info("Saving claim", {
+        isEditing,
+        claimId: editingClaimId,
         method,
-        hasCalculations: !!calculations 
+        hasCalculations: !!calculations,
       });
 
       const response = await fetch(url, {
@@ -1667,8 +1667,8 @@ export default function PCSUnifiedWizard({
               <div className="flex gap-3">
                 <Button
                   onClick={handleSaveClaim}
-                  disabled={isSaving || !calculations}
-                  className="bg-green-600 px-8 text-lg hover:bg-green-700"
+                  disabled={isSaving}
+                  className="bg-green-600 px-8 text-lg hover:bg-green-700 disabled:opacity-50"
                 >
                   <Icon name="Save" className="mr-2 h-5 w-5" />
                   {isSaving ? "Saving..." : "Save Claim"}
