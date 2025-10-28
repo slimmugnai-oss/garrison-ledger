@@ -65,6 +65,15 @@ export default function SimplifiedPCSClient({
     }
   }, []);
 
+  // Get the edit claim ID from URL if present
+  const getEditClaimId = () => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("edit");
+    }
+    return null;
+  };
+
   // Clear ?edit param from URL when wizard is closed
   useEffect(() => {
     if (!showWizard && typeof window !== "undefined") {
