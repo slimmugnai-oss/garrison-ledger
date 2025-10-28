@@ -12,29 +12,49 @@ export async function POST(req: NextRequest) {
 
     const formData: FormData = await req.json();
 
-    logger.info("[PCS Calculate] Starting calculation", {
+    // CRITICAL DEBUG: Log EVERYTHING to diagnose DLA=$0 and PPM=5000 bugs
+    logger.info("[PCS Calculate] ===== FULL FORM DATA =====", {
       userId,
+      rank: formData.rank_at_pcs,
+      dependents: formData.dependents_count,
       origin: formData.origin_base,
       destination: formData.destination_base,
+      departureDate: formData.departure_date,
+      arrivalDate: formData.arrival_date,
+      maltDistance: formData.malt_distance,
+      distanceMiles: formData.distance_miles,
+      actualWeight: formData.actual_weight,
+      estimatedWeight: formData.estimated_weight,
+      perDiemDays: formData.per_diem_days,
+      FULL_FORMDATA: JSON.stringify(formData),
     });
 
     const calculations = await calculatePCSClaim(formData);
 
-    logger.info("[PCS Calculate] Calculation completed", {
+    logger.info("[PCS Calculate] ===== CALCULATION RESULTS =====", {
       userId,
+      DLA: {
+        amount: calculations.dla.amount,
+        rank: formData.rank_at_pcs,
+        hasDependents: formData.dependents_count > 0,
+        confidence: calculations.dla.confidence,
+      },
+      PPM: {
+        amount: calculations.ppm.amount,
+        weight: calculations.ppm.weight,
+        distance: calculations.ppm.distance,
+        confidence: calculations.ppm.confidence,
+      },
+      MALT: {
+        amount: calculations.malt.amount,
+        distance: calculations.malt.distance,
+      },
       total: calculations.total,
-      dla: calculations.dla.amount,
-      malt: calculations.malt.amount,
-      ppm: calculations.ppm.amount,
     });
 
     return NextResponse.json(calculations);
   } catch (error) {
     logger.error("[PCS Calculate] Calculation failed:", error);
-    return NextResponse.json(
-      { error: "Failed to calculate PCS entitlements" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to calculate PCS entitlements" }, { status: 500 });
   }
 }
-

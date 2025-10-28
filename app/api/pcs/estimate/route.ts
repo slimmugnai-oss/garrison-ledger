@@ -3,13 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { errorResponse, Errors } from '@/lib/api-errors';
 import { logger } from '@/lib/logger';
-import { calculateDistance } from '@/lib/pcs/distance';
-import { 
-  getDLARate, 
-  getMALTRate,
-  calculateConfidenceScore
-} from '@/lib/pcs/jtr-rules';
-import { getPerDiemRate } from '@/lib/pcs/per-diem';
+import { calculatePCSClaim, type FormData } from '@/lib/pcs/calculation-engine';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
@@ -28,9 +22,6 @@ export const maxDuration = 30;
 interface EstimateRequest {
   claimId: string;
 }
-
-const PER_DIEM_TRAVEL_RATE = 0.75;
-const PPM_PAYMENT_PERCENTAGE = 0.95;
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -82,100 +73,53 @@ export async function POST(req: NextRequest) {
       .eq('user_id', userId)
       .maybeSingle();
 
-    const rank = claim.rank_at_pcs || profile?.rank || 'E5';
+    const rank = claim.rank_at_pcs || profile?.rank || 'E-5';
     const branch = claim.branch || profile?.branch || 'Army';
     const dependentsCount = claim.dependents_count || 0;
-    const hasDependents = dependentsCount > 0;
 
-    // Get documents for confidence scoring
-    const { data: documents } = await supabaseAdmin
-      .from('pcs_claim_documents')
-      .select('document_type')
-      .eq('claim_id', claimId);
+    // CRITICAL FIX: Use NEW calculation engine instead of outdated logic
+    const formData: FormData = {
+      rank_at_pcs: rank,
+      branch,
+      origin_base: claim.origin_base || '',
+      destination_base: claim.destination_base || '',
+      dependents_count: dependentsCount,
+      departure_date: claim.departure_date || '',
+      arrival_date: claim.arrival_date || '',
+      pcs_orders_date: claim.pcs_orders_date || new Date().toISOString().split('T')[0],
+      travel_method: claim.travel_method || 'ppm',
+      tle_origin_nights: claim.tle_origin_nights || 0,
+      tle_destination_nights: claim.tle_destination_nights || 0,
+      tle_origin_rate: claim.tle_origin_rate || 0,
+      tle_destination_rate: claim.tle_destination_rate || 0,
+      malt_distance: claim.malt_distance || claim.distance_miles || 0,
+      distance_miles: claim.distance_miles || claim.malt_distance || 0,
+      per_diem_days: claim.per_diem_days || 0,
+      actual_weight: claim.actual_weight || 0,
+      estimated_weight: claim.estimated_weight || 0,
+      destination_zip: claim.destination_zip || '00000',
+    };
 
-    const hasOrders = documents?.some(d => d.document_type === 'orders') || false;
+    logger.info('[PCS Estimate] Calculating with new engine', {
+      claimId,
+      rank,
+      dependents: dependentsCount,
+      origin: claim.origin_base,
+      destination: claim.destination_base,
+    });
 
-    // Calculate DLA using JTR rules
-    const dlaResult = getDLARate(rank, hasDependents);
-    const dlaAmount = dlaResult.amount;
+    const calculations = await calculatePCSClaim(formData);
 
-    // Calculate TLE (requires lodging receipts)
-    const { data: lodgingDocs } = await supabaseAdmin
-      .from('pcs_claim_documents')
-      .select('normalized_data')
-      .eq('claim_id', claimId)
-      .eq('document_type', 'lodging_receipt')
-      .eq('ocr_status', 'completed');
-
-    let tleDays = 0;
-    let tleAmount = 0;
-    if (lodgingDocs) {
-      lodgingDocs.forEach((doc) => {
-        const data = doc.normalized_data as { nights?: number; total_amount?: number };
-        if (data.nights && data.total_amount) {
-          tleDays += data.nights;
-          tleAmount += data.total_amount;
-        }
-      });
-      // Cap at 10 days per location (20 total)
-      tleDays = Math.min(tleDays, 20);
-    }
-
-    // Calculate MALT (requires distance calculation)
-    const distanceResult = await calculateDistance(
-      claim.origin_base || 'Unknown',
-      claim.destination_base || 'Unknown',
-      true // Use Google Maps for accuracy
-    );
-    const maltMiles = distanceResult.miles;
-    const maltRateInfo = getMALTRate();
-    const maltAmount = maltMiles * maltRateInfo.rate;
-
-    // Calculate Per Diem with real locality rates
-    const travelDays = calculateTravelDays(claim.departure_date, claim.arrival_date);
-    
-    // Get per diem rates for origin and destination
-    // Use higher of the two rates (common practice)
-    const originPerDiem = claim.origin_city && claim.origin_state
-      ? getPerDiemRate(claim.origin_city, claim.origin_state)
-      : 166; // Standard CONUS
-    const destPerDiem = claim.destination_city && claim.destination_state
-      ? getPerDiemRate(claim.destination_city, claim.destination_state)
-      : 166; // Standard CONUS
-    
-    const perDiemRate = Math.max(originPerDiem, destPerDiem);
-    
-    // Calculate per diem: member gets 75% rate, each dependent gets 75% of member's rate
-    const memberPerDiem = travelDays * perDiemRate * PER_DIEM_TRAVEL_RATE;
-    const dependentPerDiem = memberPerDiem * 0.75 * dependentsCount;
-    const perDiemAmount = memberPerDiem + dependentPerDiem;
-
-    // Calculate PPM (requires weigh tickets)
-    const { data: weighTickets } = await supabaseAdmin
-      .from('pcs_claim_documents')
-      .select('normalized_data')
-      .eq('claim_id', claimId)
-      .eq('document_type', 'weigh_ticket')
-      .eq('ocr_status', 'completed');
-
-    let ppmWeight = 0;
-    let ppmEstimate = 0;
-    if (weighTickets && weighTickets.length > 0) {
-      // Get net weight from tickets
-      weighTickets.forEach((ticket) => {
-        const data = ticket.normalized_data as { net_weight?: number };
-        if (data.net_weight) {
-          ppmWeight += data.net_weight;
-        }
-      });
-      
-      // Estimate government cost (simplified - actual uses DoD rate tables)
-      const estimatedGCC = (ppmWeight / 1000) * maltMiles * 0.85; // Rough estimate
-      ppmEstimate = estimatedGCC * PPM_PAYMENT_PERCENTAGE;
-    }
-
-    // Calculate total
-    const totalEstimated = dlaAmount + tleAmount + maltAmount + perDiemAmount + ppmEstimate;
+    // Extract values from new calculation engine
+    const dlaAmount = calculations.dla.amount;
+    const tleAmount = calculations.tle.total;
+    const maltMiles = calculations.malt.distance;
+    const maltAmount = calculations.malt.amount;
+    const travelDays = calculations.perDiem.days;
+    const perDiemAmount = calculations.perDiem.amount;
+    const ppmWeight = calculations.ppm.weight;
+    const ppmEstimate = calculations.ppm.amount;
+    const totalEstimated = calculations.total;
 
     // Get total from actual receipts
     const { data: allReceipts } = await supabaseAdmin
@@ -196,16 +140,20 @@ export async function POST(req: NextRequest) {
 
     const potentialLeftOnTable = Math.max(0, totalEstimated - totalClaimed);
 
-    // Calculate confidence score
-    const confidenceResult = calculateConfidenceScore({
-      hasOrders,
-      hasWeighTickets: (weighTickets && weighTickets.length > 0) || false,
-      hasReceipts: (allReceipts && allReceipts.length > 0) || false,
-      originCity: claim.origin_city,
-      destinationCity: claim.destination_city,
-      distance: maltMiles,
-      rank
-    });
+    // Get confidence from calculation engine
+    const avgConfidence = Math.round(
+      (calculations.dla.confidence +
+        calculations.malt.confidence +
+        calculations.perDiem.confidence +
+        calculations.ppm.confidence) /
+        4
+    );
+    const confidenceLevel =
+      avgConfidence >= 90
+        ? 'high'
+        : avgConfidence >= 70
+        ? 'medium'
+        : 'low';
 
     // Create snapshot
     const { data: snapshot, error: snapshotError } = await supabaseAdmin
@@ -229,20 +177,25 @@ export async function POST(req: NextRequest) {
           branch,
           dependents: dependentsCount,
           distance: maltMiles,
-          distance_method: distanceResult.method,
-          travel_days: travelDays
+          travel_days: travelDays,
+          full_calculations: calculations
         },
         rates_used: {
-          dla_rate: dlaResult.amount,
-          dla_citation: dlaResult.citation,
-          malt_rate: maltRateInfo.rate,
-          malt_citation: maltRateInfo.citation,
-          per_diem_rate: perDiemRate,
-          ppm_percentage: PPM_PAYMENT_PERCENTAGE
+          dla_rate: calculations.dla.rateUsed,
+          dla_citation: calculations.dla.citation,
+          malt_rate: calculations.malt.ratePerMile,
+          malt_citation: calculations.malt.citation,
+          per_diem_rate: calculations.perDiem.rate,
+          ppm_rate: calculations.ppm.rate
         },
-        confidence_score: confidenceResult.score,
-        confidence_level: confidenceResult.level,
-        confidence_factors: confidenceResult.factors
+        confidence_score: avgConfidence,
+        confidence_level: confidenceLevel,
+        confidence_factors: {
+          dla: calculations.dla.confidence,
+          malt: calculations.malt.confidence,
+          perDiem: calculations.perDiem.confidence,
+          ppm: calculations.ppm.confidence
+        }
       })
       .select()
       .single();
@@ -293,12 +246,16 @@ export async function POST(req: NextRequest) {
 
     const duration = Date.now() - startTime;
     
-    logger.info('PCS entitlement calculated', {
+    logger.info('[PCS Estimate] Calculation completed', {
       userId: userId.substring(0, 8) + '...',
       claimId,
       totalEstimated,
+      dla: dlaAmount,
+      malt: maltAmount,
+      perDiem: perDiemAmount,
+      ppm: ppmEstimate,
       potentialLeft: potentialLeftOnTable,
-      confidence: confidenceResult.level,
+      confidence: confidenceLevel,
       duration_ms: duration
     });
 
@@ -309,22 +266,8 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     const duration = Date.now() - startTime;
-    logger.error('PCS calculation failed', error, { duration_ms: duration });
+    logger.error('[PCS Estimate] Calculation failed', error, { duration_ms: duration });
     return errorResponse(error);
   }
-}
-
-/**
- * Calculate travel days
- */
-function calculateTravelDays(departureDate: string | null, arrivalDate: string | null): number {
-  if (!departureDate || !arrivalDate) return 5; // Default estimate
-  
-  const departure = new Date(departureDate);
-  const arrival = new Date(arrivalDate);
-  const diffTime = Math.abs(arrival.getTime() - departure.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  return Math.max(1, diffDays);
 }
 
