@@ -132,15 +132,9 @@ export async function fetchPerDiemRates(
  */
 export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
   try {
-    const supabase = await getSupabaseClient();
-    if (!supabase) {
-      // Client-side: return empty array
-      logger.info("DLA rates requested on client-side, returning empty array");
-      return [];
-    }
-
+    // CRITICAL: Check cache first, but use supabaseAdmin (server-side only)
     // Check cache first
-    const { data: cached } = await supabase
+    const { data: cached } = await supabaseAdmin
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "dla")
@@ -176,13 +170,19 @@ export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
         {} as Record<string, number>
       );
 
-      await supabase.from("jtr_rates_cache").insert({
-        rate_type: "dla",
-        effective_date: effectiveDate,
-        rate_data: rateData,
-        source_url: "https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/",
-        verification_status: "verified",
-      });
+      // Try to cache the result (non-blocking)
+      try {
+        await supabaseAdmin.from("jtr_rates_cache").insert({
+          rate_type: "dla",
+          effective_date: effectiveDate,
+          rate_data: rateData,
+          source_url: "https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/",
+          verification_status: "verified",
+        });
+      } catch (cacheError) {
+        // Cache write failure is non-critical - log and continue
+        logger.warn("Failed to cache DLA rates (non-critical):", cacheError);
+      }
     }
 
     return dlaRates;
