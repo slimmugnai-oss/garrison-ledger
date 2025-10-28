@@ -131,6 +131,7 @@ export default function PCSClaimClient({
 }: PCSClaimClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showEditWizard, setShowEditWizard] = useState(false);
 
   // REACTIVE SNAPSHOT PATTERN: Snapshot should ALWAYS exist after save
   // If missing, it's a data integrity issue - log warning but proceed with form_data fallback

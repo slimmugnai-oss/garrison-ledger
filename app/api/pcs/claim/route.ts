@@ -358,7 +358,8 @@ export async function PATCH(req: NextRequest) {
             malt_amount: calculations.malt?.amount || 0,
             per_diem_days: calculations.perDiem?.days || 0,
             per_diem_amount: calculations.perDiem?.amount || 0,
-            ppm_weight: updates.actual_weight || updates.estimated_weight || calculations.ppm?.weight || 0,
+            ppm_weight:
+              updates.actual_weight || updates.estimated_weight || calculations.ppm?.weight || 0,
             ppm_estimate: calculations.ppm?.amount || 0,
             total_estimated: calculations.total || 0,
             calculation_details: calculations,
@@ -387,9 +388,7 @@ export async function PATCH(req: NextRequest) {
             claim.destination_base,
             claim.rank_at_pcs,
           ];
-          const hasEssentialFields = essentialFields.every(
-            (field) => field && field !== ""
-          );
+          const hasEssentialFields = essentialFields.every((field) => field && field !== "");
 
           const completionPercentage = hasCalculations && hasEssentialFields ? 100 : 0;
           const readinessScore = hasCalculations
