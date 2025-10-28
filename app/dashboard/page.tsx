@@ -137,8 +137,8 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Automated pay verification.</strong> Catch errors fast, verify BAH, BAS,
-                      COLA, and deductions with 12-point validation checks in seconds.
+                      <strong>Automated pay verification.</strong> Catch errors fast, verify BAH,
+                      BAS, COLA, and deductions with 12-point validation checks in seconds.
                     </p>
 
                     {/* Stats */}
@@ -192,8 +192,9 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Base intelligence made simple.</strong> Find perfect neighborhoods with
-                      real-time data on schools, rent vs BAH, commute times, and quality of life metrics.
+                      <strong>Base intelligence made simple.</strong> Find perfect neighborhoods
+                      with real-time data on schools, rent vs BAH, commute times, and quality of
+                      life metrics.
                     </p>
 
                     {/* Stats */}
@@ -248,7 +249,8 @@ export default async function Dashboard() {
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
                       <strong>Maximize your DITY move profit.</strong> Track receipts, calculate
-                      reimbursements, and ensure JTR compliance with automated entitlement calculations.
+                      reimbursements, and ensure JTR compliance with automated entitlement
+                      calculations.
                     </p>
 
                     {/* Stats */}
@@ -305,8 +307,9 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>AI-powered travel vouchers.</strong> Auto-parse receipts, build DTS-ready
-                      vouchers, and ensure compliance with automated checks and calculations.
+                      <strong>AI-powered travel vouchers.</strong> Auto-parse receipts, build
+                      DTS-ready vouchers, and ensure compliance with automated checks and
+                      calculations.
                     </p>
 
                     {/* Stats */}
@@ -320,9 +323,7 @@ export default async function Dashboard() {
                           ✓ Compliance checks
                         </span>
                         <span className="text-xs font-bold text-gray-900">
-                          {isPremium
-                            ? "Unlimited receipts"
-                            : `${tdyTrips || 0} trips • 3/trip`}
+                          {isPremium ? "Unlimited receipts" : `${tdyTrips || 0} trips • 3/trip`}
                         </span>
                       </div>
                     </div>
@@ -522,9 +523,7 @@ export default async function Dashboard() {
                 <p className="mb-3 text-sm text-gray-600">
                   Estimate VA loan rental cash flow potential
                 </p>
-                <div className="text-xs font-semibold text-purple-600">
-                  Calculate cash flow →
-                </div>
+                <div className="text-xs font-semibold text-purple-600">Calculate cash flow →</div>
               </Link>
 
               {/* PCS Budget Calculator */}
@@ -544,9 +543,7 @@ export default async function Dashboard() {
                 <p className="mb-3 text-sm text-gray-600">
                   Estimate move costs using official JTR rates
                 </p>
-                <div className="text-xs font-semibold text-orange-600">
-                  Plan your move budget →
-                </div>
+                <div className="text-xs font-semibold text-orange-600">Plan your move budget →</div>
               </Link>
 
               {/* On-Base Savings */}

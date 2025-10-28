@@ -998,7 +998,6 @@ function ProfileSetupContent() {
                   </div>
                 )}
               </ProfileSection>
-
             </>
           )}
 
