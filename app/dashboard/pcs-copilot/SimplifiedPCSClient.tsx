@@ -58,7 +58,7 @@ export default function SimplifiedPCSClient({
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const editParam = params.get("edit");
-      
+
       if (editParam) {
         setShowWizard(true); // Show wizard when edit param exists
       }

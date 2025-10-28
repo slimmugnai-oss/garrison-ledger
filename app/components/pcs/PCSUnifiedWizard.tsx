@@ -105,16 +105,18 @@ export default function PCSUnifiedWizard({
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
   const [editingClaimId, setEditingClaimId] = useState<string | null>(null);
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
 
   // Load claim for editing if editClaimId prop or ?edit query param is present
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlEditId = params.get("edit");
-
+    
     // Priority: prop > URL param
     const claimIdToLoad = editClaimId || urlEditId;
-
+    
     if (claimIdToLoad) {
+      setIsLoadingEdit(true);
       setEditingClaimId(claimIdToLoad);
       loadClaimForEditing(claimIdToLoad);
     }
@@ -737,6 +739,18 @@ export default function PCSUnifiedWizard({
   };
 
   // START SCREEN
+  // Show loading state while loading claim for editing
+  if (isLoadingEdit || (editingClaimId && !calculations)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+          <p className="text-slate-600">Loading claim for editing...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (currentStep === "start") {
     return (
       <div className="mx-auto max-w-4xl py-12">
