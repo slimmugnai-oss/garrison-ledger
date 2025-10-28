@@ -143,10 +143,21 @@ export async function POST(request: NextRequest) {
         const details = snapshot?.calculation_details || {};
 
         // Calculate missing values for PDF
-        let distance = snapshot?.malt_miles || details.malt?.distance || claim.malt_distance || claim.distance_miles || 0;
-        let weight = snapshot?.ppm_weight || details.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0;
-        let perDiemDays = snapshot?.per_diem_days || details.perDiem?.days || claim.per_diem_days || 0;
-        
+        let distance =
+          snapshot?.malt_miles ||
+          details.malt?.distance ||
+          claim.malt_distance ||
+          claim.distance_miles ||
+          0;
+        let weight =
+          snapshot?.ppm_weight ||
+          details.ppm?.weight ||
+          claim.actual_weight ||
+          claim.estimated_weight ||
+          0;
+        let perDiemDays =
+          snapshot?.per_diem_days || details.perDiem?.days || claim.per_diem_days || 0;
+
         // Calculate distance if missing
         if (!distance && claim.origin_base && claim.destination_base) {
           try {
@@ -158,7 +169,7 @@ export async function POST(request: NextRequest) {
             logger.warn("PDF: Failed to calculate distance", { error: err });
           }
         }
-        
+
         // Calculate per diem days from dates if missing
         if (!perDiemDays && claim.departure_date && claim.arrival_date) {
           const depDate = new Date(claim.departure_date);
@@ -167,11 +178,40 @@ export async function POST(request: NextRequest) {
           perDiemDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           logger.info("PDF: Calculated per diem days from dates", { perDiemDays });
         }
-        
-        // Use default weight if missing
-        if (!weight) {
-          weight = 5000; // Default
-          logger.warn("PDF: No weight provided, using default", { weight });
+
+        // Use rank-based default weight if missing (with dependents if user has them)
+        if (!weight && claim.rank_at_pcs) {
+          const hasDeps = (claim.dependents_count || 0) > 0;
+          const rankDefaults: Record<string, { without: number; with: number }> = {
+            "E1": { without: 5000, with: 8000 },
+            "E2": { without: 5000, with: 8000 },
+            "E3": { without: 5000, with: 8000 },
+            "E4": { without: 7000, with: 8000 },
+            "E5": { without: 7000, with: 9000 },
+            "E6": { without: 8000, with: 11000 },
+            "E7": { without: 11000, with: 13000 },
+            "E8": { without: 12000, with: 14000 },
+            "E9": { without: 13000, with: 15000 },
+            "W1": { without: 10000, with: 12000 },
+            "W2": { without: 11000, with: 13000 },
+            "W3": { without: 12000, with: 14000 },
+            "W4": { without: 13000, with: 15000 },
+            "W5": { without: 13000, with: 16000 },
+            "O1": { without: 10000, with: 12000 },
+            "O2": { without: 10000, with: 12000 },
+            "O3": { without: 11000, with: 13000 },
+            "O4": { without: 12000, with: 14000 },
+            "O5": { without: 13000, with: 16000 },
+            "O6": { without: 14000, with: 18000 },
+            "O7": { without: 15000, with: 18000 },
+            "O8": { without: 16000, with: 18000 },
+            "O9": { without: 17000, with: 18000 },
+            "O10": { without: 18000, with: 18000 },
+          };
+          const normalizedRank = claim.rank_at_pcs.replace(/[^EWO0-9]/g, "").toUpperCase();
+          const defaults = rankDefaults[normalizedRank] || { without: 8000, with: 11000 };
+          weight = hasDeps ? defaults.with : defaults.without;
+          logger.warn("PDF: No weight provided, using rank-based default", { weight, rank: claim.rank_at_pcs, hasDeps });
         }
 
         const formDataForCalc = {
@@ -187,7 +227,8 @@ export async function POST(request: NextRequest) {
           // Use snapshot data first, then defaults
           tle_origin_nights: details.tle?.origin?.days || claim.tle_origin_nights || 0,
           tle_origin_rate: details.tle?.origin?.rate || claim.tle_origin_rate || 0,
-          tle_destination_nights: details.tle?.destination?.days || claim.tle_destination_nights || 0,
+          tle_destination_nights:
+            details.tle?.destination?.days || claim.tle_destination_nights || 0,
           tle_destination_rate: details.tle?.destination?.rate || claim.tle_destination_rate || 0,
           per_diem_days: perDiemDays,
           malt_distance: distance,
@@ -199,7 +240,7 @@ export async function POST(request: NextRequest) {
           origin_zip: claim.origin_zip || null,
           destination_zip: claim.destination_zip || null,
         };
-        
+
         logger.info("PDF: Calculating fresh with formData", {
           distance,
           weight,
@@ -208,6 +249,15 @@ export async function POST(request: NextRequest) {
         });
 
         const calcResult = await calculatePCSClaim(formDataForCalc);
+        
+        logger.info("PDF: Calculation result", {
+          dla: calcResult.dla?.amount,
+          tle: calcResult.tle?.total,
+          malt: calcResult.malt?.amount,
+          perDiem: calcResult.perDiem?.amount,
+          ppm: calcResult.ppm?.amount,
+          total: calcResult.total,
+        });
 
         calculations = {
           dla: {
@@ -252,6 +302,15 @@ export async function POST(request: NextRequest) {
             },
           },
         };
+        
+        logger.info("PDF: Mapped calculations object", {
+          dla: calculations.dla.amount,
+          tle: calculations.tle.amount,
+          malt: calculations.malt.amount,
+          perDiem: calculations.per_diem.amount,
+          ppm: calculations.ppm.amount,
+          total: calculations.total_entitlements,
+        });
 
         logger.info("Calculated fresh entitlements for PDF", {
           claimId,
