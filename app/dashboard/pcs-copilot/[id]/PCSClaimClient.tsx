@@ -50,9 +50,13 @@ interface Claim {
 interface Snapshot {
   dla_amount: number;
   tle_amount: number;
+  tle_days?: number;
   malt_amount: number;
+  malt_miles?: number;
   per_diem_amount: number;
+  per_diem_days?: number;
   ppm_estimate: number;
+  ppm_weight?: number;
   total_estimated: number;
   confidence_scores?: {
     dla?: number;
@@ -236,6 +240,14 @@ export default function PCSClaimClient({
                 <Icon name="Edit" className="mr-2 h-4 w-4" />
                 Edit Claim
               </Link>
+              <button
+                onClick={handleDownloadPackage}
+                disabled={isDownloading}
+                className="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+              >
+                <Icon name="FileDown" className="mr-2 h-4 w-4" />
+                {isDownloading ? "Generating..." : "Download PDF"}
+              </button>
             </div>
           </div>
 
@@ -403,7 +415,11 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Distance</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {claim.malt_distance || claim.distance_miles || 0} miles
+                          {snapshot?.malt_miles || 
+                           snapshot?.calculation_details?.malt?.distance || 
+                           claim.malt_distance || 
+                           claim.distance_miles || 
+                           0} miles
                         </span>
                       </div>
                     </div>
@@ -411,7 +427,10 @@ export default function PCSClaimClient({
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Travel Days</span>
                         <span className="text-lg font-bold text-slate-900">
-                          {claim.per_diem_days || 0} days
+                          {snapshot?.per_diem_days || 
+                           snapshot?.calculation_details?.perDiem?.days || 
+                           claim.per_diem_days || 
+                           0} days
                         </span>
                       </div>
                     </div>
@@ -422,7 +441,11 @@ export default function PCSClaimClient({
                             Estimated Weight
                           </span>
                           <span className="text-lg font-bold text-slate-900">
-                            {claim.actual_weight || claim.estimated_weight || 0} lbs
+                            {snapshot?.ppm_weight || 
+                             snapshot?.calculation_details?.ppm?.weight || 
+                             claim.actual_weight || 
+                             claim.estimated_weight || 
+                             0} lbs
                           </span>
                         </div>
                       </div>
@@ -461,24 +484,24 @@ export default function PCSClaimClient({
                       {
                         label: "Temporary Lodging Expense (TLE)",
                         amount: claim.entitlements?.tle || snapshot?.tle_amount || 0,
-                        description: `Lodging for ${claim.tle_origin_nights || 0} origin + ${claim.tle_destination_nights || 0} destination nights`,
+                        description: `Lodging for ${snapshot?.calculation_details?.tle?.origin?.days || claim.tle_origin_nights || 0} origin + ${snapshot?.calculation_details?.tle?.destination?.days || claim.tle_destination_nights || 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",
                         amount: claim.entitlements?.malt || snapshot?.malt_amount || 0,
-                        description: `${claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
+                        description: `${snapshot?.malt_miles || snapshot?.calculation_details?.malt?.distance || claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
                         amount: claim.entitlements?.per_diem || snapshot?.per_diem_amount || 0,
-                        description: `${claim.per_diem_days || 0} days of meals & incidentals`,
+                        description: `${snapshot?.per_diem_days || snapshot?.calculation_details?.perDiem?.days || claim.per_diem_days || 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
                               amount: claim.entitlements?.ppm || snapshot?.ppm_estimate || 0,
-                              description: `Based on ${claim.actual_weight || claim.estimated_weight || 0} lbs`,
+                              description: `Based on ${snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0} lbs`,
                             },
                           ]
                         : []),

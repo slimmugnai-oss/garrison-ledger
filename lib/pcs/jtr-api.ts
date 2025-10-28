@@ -598,11 +598,23 @@ async function getPerDiemRateFromDB(
   }
 
   if (data && data.rate_data) {
+    const rateData = data.rate_data as PerDiemRate;
     logger.info("Per diem rate found in cache", {
       zipCode,
-      city: (data.rate_data as any)?.city || "Unknown",
+      city: rateData.city || "Unknown",
+      totalRate: rateData.totalRate || "missing",
     });
-    return data.rate_data as PerDiemRate;
+    
+    // CRITICAL: Ensure totalRate exists, calculate if missing
+    if (!rateData.totalRate && rateData.lodgingRate && rateData.mealRate) {
+      rateData.totalRate = rateData.lodgingRate + rateData.mealRate;
+      logger.warn("Calculated missing totalRate from lodgingRate + mealRate", {
+        zipCode,
+        calculated: rateData.totalRate,
+      });
+    }
+    
+    return rateData;
   }
 
   // If specific location not found, try to find standard CONUS rate
