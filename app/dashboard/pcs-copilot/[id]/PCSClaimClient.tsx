@@ -128,10 +128,14 @@ export default function PCSClaimClient({
 
     setIsCalculating(true);
     try {
+      const distance = claim.malt_distance || claim.distance_miles || 0;
+      const weight = claim.actual_weight || claim.estimated_weight || 0;
+      
       const response = await fetch(`/api/pcs/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          claim_name: claim.claim_name || "PCS Claim",
           rank_at_pcs: claim.rank_at_pcs,
           branch: claim.branch,
           origin_base: claim.origin_base,
@@ -143,23 +147,29 @@ export default function PCSClaimClient({
           travel_method: claim.travel_method || "ppm",
           tle_origin_nights: claim.tle_origin_nights || 0,
           tle_destination_nights: claim.tle_destination_nights || 0,
+          tle_origin_rate: claim.tle_origin_rate || 0, // Required by FormData
+          tle_destination_rate: claim.tle_destination_rate || 0, // Required by FormData
           per_diem_days: claim.per_diem_days || 0,
-          distance_miles: claim.malt_distance || claim.distance_miles || 0,
-          estimated_weight: claim.estimated_weight || claim.actual_weight || 0,
-          actual_weight: claim.actual_weight || claim.estimated_weight || 0,
+          malt_distance: distance, // Required by FormData (for MALT calculation)
+          distance_miles: distance, // Alternative field
+          estimated_weight: weight,
+          actual_weight: weight,
+          fuel_receipts: claim.fuel_receipts || 0, // Required by FormData
+          origin_zip: claim.origin_zip,
+          destination_zip: claim.destination_zip,
         }),
       });
 
       if (response.ok) {
         const calc = await response.json();
         console.log("[PCSClaim] Calculation response:", calc);
-        
+
         // The API returns calculations directly (or error object)
         if (calc?.error) {
           console.error("[PCSClaim] Calculation error:", calc.error);
           return;
         }
-        
+
         if (calc && calc.dla) {
           // Transform to Snapshot format
           const snapshot = {
