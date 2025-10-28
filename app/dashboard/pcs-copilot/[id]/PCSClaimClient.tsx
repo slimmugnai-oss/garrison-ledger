@@ -487,14 +487,14 @@ export default function PCSClaimClient({
                           <span className="text-sm font-semibold text-slate-700">
                             Estimated Weight
                           </span>
-                        <span className="text-lg font-bold text-slate-900">
-                          {displaySnapshot?.ppm_weight ||
-                            displaySnapshot?.calculation_details?.ppm?.weight ||
-                            claim.form_data?.actual_weight ||
-                            claim.form_data?.estimated_weight ||
-                            0}{" "}
-                          lbs
-                        </span>
+                          <span className="text-lg font-bold text-slate-900">
+                            {displaySnapshot?.ppm_weight ||
+                              displaySnapshot?.calculation_details?.ppm?.weight ||
+                              claim.form_data?.actual_weight ||
+                              claim.form_data?.estimated_weight ||
+                              0}{" "}
+                            lbs
+                          </span>
                         </div>
                       </div>
                     )}

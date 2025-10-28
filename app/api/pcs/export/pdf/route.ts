@@ -56,43 +56,73 @@ export async function POST(request: NextRequest) {
     if (snapshot && snapshot.calculation_details) {
       logger.info("Using snapshot calculation_details for PDF", { claimId });
       const details = snapshot.calculation_details;
+      
+      // CRITICAL: Log snapshot data to debug zeros
+      logger.info("PDF: Snapshot data", {
+        dla_amount: snapshot.dla_amount,
+        tle_amount: snapshot.tle_amount,
+        malt_amount: snapshot.malt_amount,
+        per_diem_amount: snapshot.per_diem_amount,
+        ppm_estimate: snapshot.ppm_estimate,
+        total_estimated: snapshot.total_estimated,
+      });
+      
+      logger.info("PDF: Calculation details", {
+        dla_amount: details.dla?.amount,
+        tle_total: details.tle?.total,
+        malt_amount: details.malt?.amount,
+        perDiem_amount: details.perDiem?.amount,
+        ppm_amount: details.ppm?.amount,
+        total: details.total,
+      });
+      
+      // CRITICAL: Convert string numbers to actual numbers (PostgreSQL numeric returns strings)
       calculations = {
         dla: {
-          amount: snapshot.dla_amount || details.dla?.amount || 0,
-          confidence: details.dla?.confidence || 0.8,
+          amount: Number(snapshot.dla_amount) || Number(details.dla?.amount) || 0,
+          confidence: Number(details.dla?.confidence) || 0.8,
           source: details.dla?.source || "JTR",
           lastVerified: details.dla?.lastVerified || new Date().toISOString(),
         },
         tle: {
-          amount: snapshot.tle_amount || details.tle?.total || 0,
-          confidence: details.tle?.confidence || 0.8,
+          amount: Number(snapshot.tle_amount) || Number(details.tle?.total) || 0,
+          confidence: Number(details.tle?.confidence) || 0.8,
           source: "JTR",
           lastVerified: new Date().toISOString(),
         },
         malt: {
-          amount: snapshot.malt_amount || details.malt?.amount || 0,
-          confidence: details.malt?.confidence || 0.8,
+          amount: Number(snapshot.malt_amount) || Number(details.malt?.amount) || 0,
+          confidence: Number(details.malt?.confidence) || 0.8,
           source: details.malt?.source || "JTR",
           lastVerified: details.malt?.effectiveDate || new Date().toISOString(),
         },
         per_diem: {
-          amount: snapshot.per_diem_amount || details.perDiem?.amount || 0,
-          confidence: details.perDiem?.confidence || 0.8,
+          amount: Number(snapshot.per_diem_amount) || Number(details.perDiem?.amount) || 0,
+          confidence: Number(details.perDiem?.confidence) || 0.8,
           source: "JTR",
           lastVerified: details.perDiem?.effectiveDate || new Date().toISOString(),
         },
         ppm: {
-          amount: snapshot.ppm_estimate || details.ppm?.amount || 0,
-          confidence: details.ppm?.confidence || 0.8,
+          amount: Number(snapshot.ppm_estimate) || Number(details.ppm?.amount) || 0,
+          confidence: Number(details.ppm?.confidence) || 0.8,
           source: "JTR",
           lastVerified: new Date().toISOString(),
         },
-        total_entitlements: snapshot.total_estimated || details.total || 0,
+        total_entitlements: Number(snapshot.total_estimated) || Number(details.total) || 0,
         confidence: {
-          overall: snapshot.confidence_scores?.overall || details.confidence?.overall || 0.8,
+          overall: Number(snapshot.confidence_scores?.overall) || Number(details.confidence?.overall) || 0.8,
           dataSources: snapshot.data_sources || details.dataSources || {},
         },
       };
+      
+      logger.info("PDF: Final calculations object", {
+        dla: calculations.dla.amount,
+        tle: calculations.tle.amount,
+        malt: calculations.malt.amount,
+        per_diem: calculations.per_diem.amount,
+        ppm: calculations.ppm.amount,
+        total: calculations.total_entitlements,
+      });
     } else if (snapshotsError || !snapshots || snapshots.length === 0) {
       // No snapshots, check if claim has entitlements
       if (claim.entitlements && claim.entitlements.total > 0) {
@@ -384,9 +414,9 @@ export async function POST(request: NextRequest) {
       departure_date: claim.departure_date || "Not provided",
       dependents_authorized: (claim.dependents_count || 0) > 0,
       dependents_count: claim.dependents_count || 0,
-      estimated_weight: claim.estimated_weight || claim.actual_weight || 0,
+      estimated_weight: claim.form_data?.actual_weight || claim.form_data?.estimated_weight || claim.estimated_weight || claim.actual_weight || 0,
       travel_method: (claim.travel_method || "ppm") as "dity" | "full" | "partial",
-      distance: claim.distance_miles || claim.malt_distance || 0,
+      distance: snapshot?.malt_miles || claim.form_data?.malt_distance || claim.form_data?.distance_miles || claim.distance_miles || claim.malt_distance || 0,
       created_at: claim.created_at || new Date().toISOString(),
       updated_at: claim.updated_at || new Date().toISOString(),
     };
