@@ -114,6 +114,7 @@ export async function POST(req: NextRequest) {
 
     // Extract values from new calculation engine
     const dlaAmount = calculations.dla.amount;
+    const tleDays = calculations.tle.origin.days + calculations.tle.destination.days;
     const tleAmount = calculations.tle.total;
     const maltMiles = calculations.malt.distance;
     const maltAmount = calculations.malt.amount;
