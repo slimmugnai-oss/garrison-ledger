@@ -286,12 +286,14 @@ export default function PCSClaimClient({
         }
 
         if (calc && calc.dla) {
-          // Use the weight from calculation result if we had to use a default
-          // This ensures we display the actual weight that was used in calculation
-          const actualWeight = calc.ppm?.weight || weight || 0;
+          // CRITICAL: If we used a default weight (11,000) because snapshot had no weight,
+          // but the original snapshot exists, use the ORIGINAL weight from the snapshot
+          // Otherwise, use the weight that was calculated (default or entered)
+          const originalWeight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight;
+          const displayWeight = originalWeight || calc.ppm?.weight || weight || 0;
 
           // Transform to Snapshot format
-          const snapshot = {
+          const snapshotData = {
             dla_amount: calc.dla?.amount || 0,
             tle_amount: calc.tle?.total || 0,
             tle_days: (calc.tle?.origin?.days || 0) + (calc.tle?.destination?.days || 0),
@@ -300,18 +302,19 @@ export default function PCSClaimClient({
             per_diem_amount: calc.perDiem?.amount || 0,
             per_diem_days: calc.perDiem?.days || 0,
             ppm_estimate: calc.ppm?.amount || 0,
-            ppm_weight: actualWeight, // Use the weight from calculation (or what we sent)
+            ppm_weight: displayWeight, // Use original weight if exists, otherwise calculated weight
             total_estimated: calc.total || 0,
             calculation_details: calc,
             confidence_scores: calc.confidence || {},
           };
           console.log("[PCSClaim] Setting calculated snapshot:", {
-            ...snapshot,
-            weight_used: actualWeight,
+            ...snapshotData,
+            original_weight_from_snapshot: originalWeight,
             weight_from_calc: calc.ppm?.weight,
             weight_sent_to_api: weight,
+            final_display_weight: displayWeight,
           });
-          setCalculatedSnapshot(snapshot);
+          setCalculatedSnapshot(snapshotData);
         } else {
           console.warn("[PCSClaim] Invalid calculation response:", calc);
         }

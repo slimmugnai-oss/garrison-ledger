@@ -147,7 +147,8 @@ export async function POST(req: NextRequest) {
             per_diem_amount: calculations.perDiem?.amount || 0,
             // CRITICAL: Use the weight from formData if available, otherwise from calculations
             // This preserves the user's entered weight (e.g., 8250) instead of using calculation result
-            ppm_weight: body.actual_weight || body.estimated_weight || calculations.ppm?.weight || 0,
+            ppm_weight:
+              body.actual_weight || body.estimated_weight || calculations.ppm?.weight || 0,
             ppm_estimate: calculations.ppm?.amount || 0,
             total_estimated: calculations.total || 0,
             calculation_details: calculations,
