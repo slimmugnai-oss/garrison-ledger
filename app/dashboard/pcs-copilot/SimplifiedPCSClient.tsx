@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import PCSUnifiedWizard from "@/app/components/pcs/PCSUnifiedWizard";
+import { logger } from "@/lib/logger";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Button from "@/app/components/ui/Button";
@@ -86,7 +87,7 @@ export default function SimplifiedPCSClient({
         toast.error("Failed to delete claim");
       }
     } catch (error) {
-      console.error("Failed to delete claim:", error);
+      logger.error("Failed to delete claim", error);
       toast.error("An error occurred while deleting the claim");
     } finally {
       setIsDeleting(false);
