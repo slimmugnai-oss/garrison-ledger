@@ -1414,6 +1414,11 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                         </div>
                         <div className="text-xs text-slate-500">
                           {calculations.ppm.weight} lbs × {calculations.ppm.distance} miles
+                          {calculations.ppm.weight > calculations.ppm.maxWeight && (
+                            <span className="ml-1 text-orange-600">
+                              (capped at {calculations.ppm.maxWeight.toLocaleString()} lbs for rank)
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="text-xl font-bold text-slate-900">

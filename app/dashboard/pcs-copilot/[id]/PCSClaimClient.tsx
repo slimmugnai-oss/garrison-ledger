@@ -293,14 +293,11 @@ export default function PCSClaimClient({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`
-                      flex items-center gap-2 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors
-                      ${
-                        isActive
-                          ? "border-blue-600 text-blue-600"
-                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                      }
-                    `}
+                    className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "border-blue-600 text-blue-600"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    } `}
                   >
                     <Icon name={tab.icon as any} className="h-4 w-4" />
                     {tab.label}
@@ -458,44 +455,29 @@ export default function PCSClaimClient({
                     {[
                       {
                         label: "Dislocation Allowance (DLA)",
-                        amount:
-                          claim.entitlements?.dla ||
-                          snapshot?.dla_amount ||
-                          0,
+                        amount: claim.entitlements?.dla || snapshot?.dla_amount || 0,
                         description: "One-time payment for PCS relocation",
                       },
                       {
                         label: "Temporary Lodging Expense (TLE)",
-                        amount:
-                          claim.entitlements?.tle ||
-                          snapshot?.tle_amount ||
-                          0,
+                        amount: claim.entitlements?.tle || snapshot?.tle_amount || 0,
                         description: `Lodging for ${claim.tle_origin_nights || 0} origin + ${claim.tle_destination_nights || 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",
-                        amount:
-                          claim.entitlements?.malt ||
-                          snapshot?.malt_amount ||
-                          0,
+                        amount: claim.entitlements?.malt || snapshot?.malt_amount || 0,
                         description: `${claim.malt_distance || claim.distance_miles || 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
-                        amount:
-                          claim.entitlements?.per_diem ||
-                          snapshot?.per_diem_amount ||
-                          0,
+                        amount: claim.entitlements?.per_diem || snapshot?.per_diem_amount || 0,
                         description: `${claim.per_diem_days || 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
-                              amount:
-                                claim.entitlements?.ppm ||
-                                snapshot?.ppm_estimate ||
-                                0,
+                              amount: claim.entitlements?.ppm || snapshot?.ppm_estimate || 0,
                               description: `Based on ${claim.actual_weight || claim.estimated_weight || 0} lbs`,
                             },
                           ]
@@ -517,15 +499,17 @@ export default function PCSClaimClient({
                             <div className="text-xs text-gray-500">
                               Confidence:{" "}
                               {Math.round(
-                                (snapshot.confidence_scores[item.label.toLowerCase().includes("dla")
-                                  ? "dla"
-                                  : item.label.toLowerCase().includes("tle")
-                                    ? "tle"
-                                    : item.label.toLowerCase().includes("malt")
-                                      ? "malt"
-                                      : item.label.toLowerCase().includes("per diem")
-                                        ? "perDiem"
-                                        : "ppm"] as number) * 100 || 80
+                                (snapshot.confidence_scores[
+                                  item.label.toLowerCase().includes("dla")
+                                    ? "dla"
+                                    : item.label.toLowerCase().includes("tle")
+                                      ? "tle"
+                                      : item.label.toLowerCase().includes("malt")
+                                        ? "malt"
+                                        : item.label.toLowerCase().includes("per diem")
+                                          ? "perDiem"
+                                          : "ppm"
+                                ] as number) * 100 || 80
                               )}
                               %
                             </div>
@@ -598,7 +582,7 @@ export default function PCSClaimClient({
                           <div className="flex items-center gap-3">
                             <Icon name="File" className="h-5 w-5 text-gray-500" />
                             <div>
-                              <div className="font-semibold text-slate-900 capitalize">
+                              <div className="font-semibold capitalize text-slate-900">
                                 {doc.document_type.replace("_", " ")}
                               </div>
                               <div className="text-sm text-gray-500">
@@ -622,10 +606,7 @@ export default function PCSClaimClient({
                   <h3 className="mb-6 text-xl font-bold text-slate-900">Validation Checks</h3>
                   {validationChecks.length === 0 ? (
                     <div className="py-12 text-center">
-                      <Icon
-                        name="CheckCircle"
-                        className="mx-auto mb-4 h-12 w-12 text-green-600"
-                      />
+                      <Icon name="CheckCircle" className="mx-auto mb-4 h-12 w-12 text-green-600" />
                       <p className="font-semibold text-slate-900">All checks passed!</p>
                       <p className="mt-2 text-sm text-gray-500">
                         Your claim meets all JTR requirements

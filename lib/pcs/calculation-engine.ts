@@ -340,10 +340,10 @@ function calculatePPM(weight: number, distance: number, rank: string): Calculati
   const amount = actualWeight * distance * rate * 0.001; // Simplified formula
 
   return {
-    weight: actualWeight,
+    weight: weight, // Return user's entered weight (not capped) for display
     distance: distance || 0,
     rate,
-    amount,
+    amount, // Use capped weight for calculation amount
     maxWeight,
     citation: "JTR 054703",
     confidence: weight && distance ? 90 : 50,
