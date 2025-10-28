@@ -598,9 +598,9 @@ async function getPerDiemRateFromDB(
   }
 
   if (data && data.rate_data) {
-    logger.info("Per diem rate found in cache", { 
-      zipCode, 
-      city: (data.rate_data as any)?.city || "Unknown" 
+    logger.info("Per diem rate found in cache", {
+      zipCode,
+      city: (data.rate_data as any)?.city || "Unknown",
     });
     return data.rate_data as PerDiemRate;
   }
@@ -608,7 +608,7 @@ async function getPerDiemRateFromDB(
   // If specific location not found, try to find standard CONUS rate
   // Most locations use the standard rate, so this is a legitimate fallback
   logger.warn("Per diem rate not found for specific ZIP, trying standard CONUS", { zipCode });
-  
+
   const { data: standardRate, error: standardError } = await supabaseAdmin
     .from("jtr_rates_cache")
     .select("*")
@@ -640,8 +640,11 @@ async function getPerDiemRateFromDB(
   return {
     zipCode,
     totalRate: 166,
+    lodgingRate: 96,
+    mealRate: 70,
     city: "Standard CONUS (Fallback)",
     state: "",
+    effectiveDate: effectiveDate,
   };
 }
 
