@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
         ];
         const hasEssentialFields = essentialFields.every((field) => field && field !== "");
         const hasCalculations = !!calculations && calculations.total > 0;
-        
+
         // If user reached review and saved with calculations, it's 100% complete
         // Otherwise, calculate based on essential fields filled
         let completionPercentage = 0;
@@ -175,11 +175,19 @@ export async function POST(req: NextRequest) {
         } else if (hasEssentialFields) {
           // Has essential fields but no calculations yet - partial
           const optionalFields = [claim.departure_date, claim.arrival_date, claim.branch];
-          const optionalFieldsFilled = optionalFields.filter((field) => field && field !== "").length;
-          completionPercentage = 50 + Math.round((optionalFieldsFilled / optionalFields.length) * 40); // 50-90%
+          const optionalFieldsFilled = optionalFields.filter(
+            (field) => field && field !== ""
+          ).length;
+          completionPercentage =
+            50 + Math.round((optionalFieldsFilled / optionalFields.length) * 40); // 50-90%
         } else {
           // Missing essential fields - calculate percentage based on what's filled
-          const allFields = [...essentialFields, claim.departure_date, claim.arrival_date, claim.branch];
+          const allFields = [
+            ...essentialFields,
+            claim.departure_date,
+            claim.arrival_date,
+            claim.branch,
+          ];
           const filledFields = allFields.filter((field) => field && field !== "").length;
           completionPercentage = Math.round((filledFields / allFields.length) * 50); // 0-50%
         }
