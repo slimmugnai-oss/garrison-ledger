@@ -126,6 +126,11 @@ export default function PCSClaimClient({
   tier: _tier,
   userProfile: _userProfile,
 }: PCSClaimClientProps) {
+  // DEBUG: Log form_data to verify it's being passed from server
+  console.log("[PCSClaimClient] Claim form_data:", claim.form_data);
+  console.log("[PCSClaimClient] Weight from form_data:", claim.form_data?.actual_weight);
+  console.log("[PCSClaimClient] TLE nights from form_data:", claim.form_data?.tle_origin_nights);
+
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
   const [calculatedSnapshot, setCalculatedSnapshot] = useState<Snapshot | null>(snapshot);
