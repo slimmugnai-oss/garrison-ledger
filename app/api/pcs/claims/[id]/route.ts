@@ -45,11 +45,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     // ALWAYS fetch latest snapshot (reactive snapshot pattern)
+    // Note: pcs_entitlement_snapshots doesn't have user_id column - query by claim_id only
     const { data: snapshot } = await supabaseAdmin
       .from("pcs_entitlement_snapshots")
       .select("*")
       .eq("claim_id", id)
-      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();

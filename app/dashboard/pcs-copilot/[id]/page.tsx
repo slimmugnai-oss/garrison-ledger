@@ -57,11 +57,11 @@ export default async function PCSClaimPage({ params }: PageProps) {
     .maybeSingle();
 
   // Get entitlement snapshot for detailed calculations
+  // Note: pcs_entitlement_snapshots doesn't have user_id column - query by claim_id only
   const { data: snapshot } = await supabaseAdmin
     .from("pcs_entitlement_snapshots")
     .select("*")
     .eq("claim_id", id)
-    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();

@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
           .from("pcs_entitlement_snapshots")
           .insert({
             claim_id: claim.id,
-            user_id: userId,
+            // Note: user_id is not in schema - removed
             dla_amount: calculations.dla?.amount || 0,
             tle_days:
               (calculations.tle?.origin?.days || 0) + (calculations.tle?.destination?.days || 0),

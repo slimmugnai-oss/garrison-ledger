@@ -162,7 +162,8 @@ export default function PCSClaimClient({
   };
 
   const formatCurrency = (amount: number | null | undefined) => {
-    if (amount == null || isNaN(amount)) return "$0.00";
+    // Handle null, undefined, NaN, or 0 values
+    if (amount == null || isNaN(amount) || amount === 0) return "$0.00";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -525,30 +526,49 @@ export default function PCSClaimClient({
                     {[
                       {
                         label: "Dislocation Allowance (DLA)",
-                        amount: claim.entitlements?.dla || displaySnapshot?.dla_amount || 0,
+                        amount:
+                          displaySnapshot?.dla_amount ||
+                          claim.entitlements?.dla ||
+                          displaySnapshot?.calculation_details?.dla?.amount ||
+                          0,
                         description: "One-time payment for PCS relocation",
                       },
                       {
                         label: "Temporary Lodging Expense (TLE)",
-                        amount: claim.entitlements?.tle || displaySnapshot?.tle_amount || 0,
+                        amount:
+                          displaySnapshot?.tle_amount ||
+                          claim.entitlements?.tle ||
+                          displaySnapshot?.calculation_details?.tle?.total ||
+                          0,
                         description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days ?? claim.form_data?.tle_origin_nights ?? 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days ?? claim.form_data?.tle_destination_nights ?? 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",
-                        amount: claim.entitlements?.malt || displaySnapshot?.malt_amount || 0,
+                        amount:
+                          displaySnapshot?.malt_amount ||
+                          claim.entitlements?.malt ||
+                          displaySnapshot?.calculation_details?.malt?.amount ||
+                          0,
                         description: `${displaySnapshot?.malt_miles ?? displaySnapshot?.calculation_details?.malt?.distance ?? claim.form_data?.malt_distance ?? claim.form_data?.distance_miles ?? claim.malt_distance ?? claim.distance_miles ?? 0} miles × $0.18/mile`,
                       },
                       {
                         label: "Per Diem",
                         amount:
-                          claim.entitlements?.per_diem || displaySnapshot?.per_diem_amount || 0,
+                          displaySnapshot?.per_diem_amount ||
+                          claim.entitlements?.per_diem ||
+                          displaySnapshot?.calculation_details?.perDiem?.amount ||
+                          0,
                         description: `${displaySnapshot?.per_diem_days ?? displaySnapshot?.calculation_details?.perDiem?.days ?? claim.form_data?.per_diem_days ?? claim.per_diem_days ?? 0} days of meals & incidentals`,
                       },
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
                               label: "Personally Procured Move (PPM)",
-                              amount: claim.entitlements?.ppm || displaySnapshot?.ppm_estimate || 0,
+                              amount:
+                                displaySnapshot?.ppm_estimate ||
+                                claim.entitlements?.ppm ||
+                                displaySnapshot?.calculation_details?.ppm?.amount ||
+                                0,
                               description: `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.form_data?.actual_weight ?? claim.form_data?.estimated_weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
                             },
                           ]
