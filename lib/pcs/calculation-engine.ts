@@ -148,7 +148,11 @@ async function calculateDLA(
         const letter = converted.charAt(0); // E, W, or O
         const number = parseInt(converted.substring(1), 10); // 06 → 6
         paygrade = `${letter}-${number}`;
-        logger.info("[PCS Calc] Converted rank for DLA lookup", { originalRank: rank, converted, paygrade });
+        logger.info("[PCS Calc] Converted rank for DLA lookup", {
+          originalRank: rank,
+          converted,
+          paygrade,
+        });
       }
     }
 
@@ -310,7 +314,10 @@ function calculatePPM(weight: number, distance: number, rank: string): Calculati
     O10: 18000,
   };
 
-  const maxWeight = weightAllowances[rank] || 5000;
+  // CRITICAL FIX: Convert rank format for weight allowance lookup
+  // "E-6" → "E6", "O-3" → "O3", etc.
+  const normalizedRank = rank.replace("-", "");
+  const maxWeight = weightAllowances[normalizedRank] || 5000;
 
   // CRITICAL FIX: Don't use maxWeight as default if user hasn't entered weight
   // If weight is 0 or undefined, return 0 amount (PPM not applicable)
