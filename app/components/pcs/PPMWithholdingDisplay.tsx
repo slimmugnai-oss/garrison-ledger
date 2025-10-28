@@ -38,6 +38,30 @@ export default function PPMWithholdingDisplay({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* GCC Estimator Warning (if using estimator mode) */}
+        {result.source.includes("Estimator") && (
+          <div className="rounded-lg border-2 border-red-600 bg-red-50 p-4">
+            <p className="text-sm font-bold text-red-900">⚠️ GCC ESTIMATE ONLY - NOT OFFICIAL</p>
+            <p className="mt-1 text-xs text-red-800">
+              The <strong>${result.gccAmount.toLocaleString()} GCC amount</strong> below is a{" "}
+              <strong>rough approximation</strong> using simplified math. DoD uses proprietary
+              DP3/GHC household goods rate tables with banded pricing we cannot replicate. Your
+              actual GCC could be ±50% different.{" "}
+              <strong>
+                <a
+                  href="https://my.move.mil"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Get your official GCC from my.move.mil
+                </a>
+              </strong>{" "}
+              before making financial decisions.
+            </p>
+          </div>
+        )}
+        
         {/* Gross Payout */}
         <div className="rounded-lg bg-green-50 p-4">
           <div className="mb-2 flex items-center justify-between">
@@ -50,7 +74,7 @@ export default function PPMWithholdingDisplay({
             </div>
           </div>
           <div className="text-3xl font-black text-green-900">
-            ${result.gccAmount.toLocaleString()}
+            {result.source.includes("Estimator") && "~"}${result.gccAmount.toLocaleString()}
           </div>
           <div className="mt-1 text-sm text-green-700">
             Incentive: {result.incentivePercentage}% = ${result.grossPayout.toLocaleString()} gross

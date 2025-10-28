@@ -69,10 +69,12 @@ export default function PPMModeSelector({
               <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3">
                 <Icon name="CheckCircle" className="h-8 w-8 text-green-600" />
               </div>
-              <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from my.move.mil</h4>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">
+                I Have My GCC from my.move.mil
+              </h4>
               <p className="mb-4 text-sm text-slate-600">
-                Enter the official Government Constructed Cost from your my.move.mil account. This provides the
-                most accurate payout calculation.
+                Enter the official Government Constructed Cost from your my.move.mil account. This
+                provides the most accurate payout calculation.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -161,7 +163,9 @@ export default function PPMModeSelector({
               />
             </div>
             <div className="mt-2 rounded-lg bg-blue-50 p-3">
-              <p className="mb-2 text-xs font-semibold text-blue-900">How to find your official GCC:</p>
+              <p className="mb-2 text-xs font-semibold text-blue-900">
+                How to find your official GCC:
+              </p>
               <ol className="ml-4 list-decimal space-y-1 text-xs text-blue-800">
                 <li>
                   Log in to{" "}
@@ -292,7 +296,9 @@ export default function PPMModeSelector({
               DP3/GHC household goods rate tables with banded rates by mileage range and weight
               brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50%
               or more.{" "}
-              <strong>Always get your official GCC from my.move.mil before making decisions.</strong>
+              <strong>
+                Always get your official GCC from my.move.mil before making decisions.
+              </strong>
             </p>
           </div>
 
