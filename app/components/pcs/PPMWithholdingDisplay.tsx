@@ -61,7 +61,7 @@ export default function PPMWithholdingDisplay({
             </p>
           </div>
         )}
-        
+
         {/* Gross Payout */}
         <div className="rounded-lg bg-green-50 p-4">
           <div className="mb-2 flex items-center justify-between">

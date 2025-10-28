@@ -82,6 +82,12 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
     tle_destination_nights: 0,
     tle_origin_rate: 0,
     tle_destination_rate: 0,
+    malt_distance: 0, // Initialize to 0, will be auto-calculated when bases entered
+    distance_miles: 0, // Initialize to 0, will be auto-calculated when bases entered
+    per_diem_days: 0, // Initialize to 0, will be auto-calculated from dates
+    estimated_weight: 0,
+    actual_weight: 0,
+    fuel_receipts: 0,
   });
   const [calculations, setCalculations] = useState<CalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
