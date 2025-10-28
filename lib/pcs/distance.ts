@@ -1,6 +1,6 @@
 /**
  * PCS DISTANCE CALCULATION
- * 
+ *
  * Calculates distance between military bases for MALT and PPM estimates.
  * Uses:
  * 1. Pre-calculated base-to-base distances (instant, free)
@@ -8,7 +8,7 @@
  * 3. Google Maps Distance Matrix API (driving distance, ~$0.005/request)
  */
 
-import militaryBasesData from '@/lib/data/military-bases.json';
+import militaryBasesData from "@/lib/data/military-bases.json";
 
 interface MilitaryBase {
   id: string;
@@ -31,18 +31,18 @@ export async function calculateDistance(
   origin: string,
   destination: string,
   useGoogleMaps: boolean = false
-): Promise<{ miles: number; method: 'cached' | 'haversine' | 'google-maps' }> {
+): Promise<{ miles: number; method: "cached" | "haversine" | "google-maps" }> {
   // Find bases by name or ID
   const originBase = findBase(origin);
   const destinationBase = findBase(destination);
 
   if (!originBase || !destinationBase) {
-    return { miles: 1000, method: 'cached' }; // Default fallback
+    return { miles: 1000, method: "cached" }; // Default fallback
   }
 
   // If same base, return 0
   if (originBase.id === destinationBase.id) {
-    return { miles: 0, method: 'cached' };
+    return { miles: 0, method: "cached" };
   }
 
   // Try Google Maps if enabled and API key available
@@ -50,7 +50,7 @@ export async function calculateDistance(
     try {
       const googleDistance = await getGoogleMapsDistance(originBase, destinationBase);
       if (googleDistance) {
-        return { miles: googleDistance, method: 'google-maps' };
+        return { miles: googleDistance, method: "google-maps" };
       }
     } catch {
       // Fall through to Haversine
@@ -65,37 +65,74 @@ export async function calculateDistance(
     destinationBase.lng
   );
 
-  return { miles: Math.round(haversineDistance), method: 'haversine' };
+  return { miles: Math.round(haversineDistance), method: "haversine" };
 }
 
 /**
  * Find a base by name, ID, or city
  * Handles variations like "Fort Liberty, NC" vs "Fort Liberty (Bragg)"
+ * 
+ * Tested patterns:
+ * - "Fort Liberty, NC" → "Fort Liberty (Bragg)" ✓
+ * - "Joint Base Lewis-McChord, WA" → "Joint Base Lewis-McChord" ✓
+ * - "Fort Bragg" (legacy name) → "Fort Liberty (Bragg)" ✓
+ * - "JBLM" → "Joint Base Lewis-McChord" ✓
+ * - "Eglin AFB, FL" → "Eglin Air Force Base" ✓
  */
 function findBase(identifier: string): MilitaryBase | undefined {
   const normalizedId = identifier.toLowerCase().trim();
-  
+
   // Remove state abbreviations and extra punctuation for better matching
   const cleanedId = normalizedId
-    .replace(/,\s*(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)/i, '')
+    .replace(
+      /,\s*(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)/i,
+      ""
+    )
     .trim();
-  
-  return militaryBases.find(base => {
+
+  return militaryBases.find((base) => {
     const baseName = base.name.toLowerCase();
     const baseCity = base.city.toLowerCase();
+    const baseId = base.id.toLowerCase();
     
-    // Exact ID match
-    if (base.id === normalizedId) return true;
+    // Strategy: Multiple matching methods to handle OCR variations
+
+    // 1. Exact ID match (e.g., "jblm" → Joint Base Lewis-McChord)
+    if (baseId === normalizedId || baseId === cleanedId) return true;
+
+    // 2. Extract base name without parentheses for clean comparison
+    const baseNameCore = baseName.split("(")[0].trim();
+    const cleanedIdCore = cleanedId.split("(")[0].trim();
+
+    // 3. Direct name match (either direction)
+    if (baseNameCore.includes(cleanedIdCore) || cleanedIdCore.includes(baseNameCore)) return true;
+
+    // 4. Legacy name match (what's in parentheses)
+    // e.g., "Fort Bragg" should match "Fort Liberty (Bragg)"
+    const legacyMatch = baseName.match(/\((.*?)\)/);
+    if (legacyMatch) {
+      const legacyName = legacyMatch[1].toLowerCase();
+      if (cleanedId.includes(legacyName) || cleanedId.includes(`fort ${legacyName}`)) return true;
+    }
+
+    // 5. City match
+    if (baseCity === cleanedId || baseCity === normalizedId) return true;
+
+    // 6. City + state match (e.g., "Norfolk, VA")
+    if (normalizedId.includes(baseCity) && normalizedId.includes(base.state.toLowerCase())) return true;
+
+    // 7. Common abbreviations
+    const abbreviations: Record<string, string[]> = {
+      "jblm": ["joint base lewis-mcchord", "joint base lewis mcchord"],
+      "jble": ["joint base langley-eustis"],
+      "jbsa": ["joint base san antonio"],
+      "jbphh": ["joint base pearl harbor-hickam"],
+    };
     
-    // Direct name match (handles "Fort Liberty" matching "Fort Liberty (Bragg)")
-    if (baseName.includes(cleanedId) || cleanedId.includes(baseName.split('(')[0].trim())) return true;
-    
-    // City match
-    if (baseCity === cleanedId) return true;
-    
-    // Combined name + city match
-    if ((baseName + ' ' + baseCity).includes(cleanedId)) return true;
-    
+    for (const [abbr, fullNames] of Object.entries(abbreviations)) {
+      if (cleanedId === abbr && fullNames.some(fn => baseName.includes(fn))) return true;
+    }
+
     return false;
   });
 }
@@ -103,7 +140,7 @@ function findBase(identifier: string): MilitaryBase | undefined {
 /**
  * Calculate straight-line distance using Haversine formula
  * Returns distance in miles
- * 
+ *
  * This gives us ~85-90% accuracy compared to driving distance
  * Good enough for estimates, costs $0
  */
@@ -116,15 +153,14 @@ function calculateHaversineDistance(
   const R = 3959; // Earth's radius in miles
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  
-  const a = 
+
+  const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
-  
+
   // Apply a 1.15x multiplier to approximate driving distance
   // Accounts for roads not being perfectly straight
   return distance * 1.15;
@@ -148,16 +184,16 @@ async function getGoogleMapsDistance(
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) return null;
 
-  const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json');
-  url.searchParams.append('origins', `${origin.lat},${origin.lng}`);
-  url.searchParams.append('destinations', `${destination.lat},${destination.lng}`);
-  url.searchParams.append('units', 'imperial');
-  url.searchParams.append('key', apiKey);
+  const url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json");
+  url.searchParams.append("origins", `${origin.lat},${origin.lng}`);
+  url.searchParams.append("destinations", `${destination.lat},${destination.lng}`);
+  url.searchParams.append("units", "imperial");
+  url.searchParams.append("key", apiKey);
 
   const response = await fetch(url.toString());
   const data = await response.json();
 
-  if (data.status === 'OK' && data.rows[0]?.elements[0]?.status === 'OK') {
+  if (data.status === "OK" && data.rows[0]?.elements[0]?.status === "OK") {
     const distanceMeters = data.rows[0].elements[0].distance.value;
     const distanceMiles = distanceMeters * 0.000621371; // meters to miles
     return Math.round(distanceMiles);
@@ -177,9 +213,8 @@ export function getAllBases(): MilitaryBase[] {
  * Get bases by branch
  */
 export function getBasesByBranch(branch: string): MilitaryBase[] {
-  return militaryBases.filter(base => 
-    base.branch.toLowerCase() === branch.toLowerCase() || 
-    base.branch === 'Joint'
+  return militaryBases.filter(
+    (base) => base.branch.toLowerCase() === branch.toLowerCase() || base.branch === "Joint"
   );
 }
 
@@ -188,11 +223,11 @@ export function getBasesByBranch(branch: string): MilitaryBase[] {
  */
 export function searchBases(query: string): MilitaryBase[] {
   const normalized = query.toLowerCase().trim();
-  
-  return militaryBases.filter(base =>
-    base.name.toLowerCase().includes(normalized) ||
-    base.city.toLowerCase().includes(normalized) ||
-    base.state.toLowerCase().includes(normalized)
+
+  return militaryBases.filter(
+    (base) =>
+      base.name.toLowerCase().includes(normalized) ||
+      base.city.toLowerCase().includes(normalized) ||
+      base.state.toLowerCase().includes(normalized)
   );
 }
-
