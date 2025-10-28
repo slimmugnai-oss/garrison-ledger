@@ -20,7 +20,6 @@ export interface UserProfile {
   rank?: string | null;
   paygrade?: string | null;
   current_base?: string | null;
-  next_base?: string | null;
   mha_code?: string | null;
   has_dependents?: boolean | null;
 
@@ -92,35 +91,7 @@ export function getProfileRecommendations(profile: UserProfile): Recommendation[
     });
   }
 
-  // PCS Copilot readiness - Core requirement
-  if (!profile.current_base && !profile.next_base) {
-    recommendations.push({
-      tool: "PCS Copilot",
-      status: "incomplete",
-      message: "Add current and next base to calculate PCS entitlements",
-      fields: ["current_base", "next_base"],
-    });
-  } else if (!profile.current_base) {
-    recommendations.push({
-      tool: "PCS Copilot",
-      status: "incomplete",
-      message: "Add current base to enable PCS calculations",
-      fields: ["current_base"],
-    });
-  } else if (!profile.next_base) {
-    recommendations.push({
-      tool: "PCS Copilot",
-      status: "incomplete",
-      message: "Add next PCS base to start planning your move",
-      fields: ["next_base"],
-    });
-  } else {
-    recommendations.push({
-      tool: "PCS Copilot",
-      status: "ready",
-      message: "Profile complete - ready for PCS planning",
-    });
-  }
+  // PCS Copilot - Not tied to profile anymore (user enters data in tool itself)
 
   // TSP Calculator readiness
   if (!profile.age || !profile.retirement_age_target) {
@@ -170,7 +141,6 @@ export function calculateProfileCompletion(profile: UserProfile): number {
 
   // Optional fields
   const optionalFields = [
-    profile.next_base,
     profile.tsp_contribution_percent,
     profile.sgli_coverage_amount,
     profile.filing_status,

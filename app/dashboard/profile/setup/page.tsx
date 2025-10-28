@@ -35,11 +35,8 @@ type ProfilePayload = {
   component?: string | null;
   time_in_service_months?: number | null;
 
-  // Location & Deployment
+  // Location
   current_base?: string | null;
-  next_base?: string | null;
-  pcs_date?: string | null;
-  pcs_count?: number | null;
 
   // Family
   marital_status?: string | null;
@@ -174,11 +171,8 @@ function ProfileSetupContent() {
             rank: json?.rank ?? null,
             component: json?.component ?? null,
             time_in_service_months: json?.time_in_service_months ?? null,
-            // Location & Deployment
+            // Location
             current_base: json?.current_base ?? null,
-            next_base: json?.next_base ?? null,
-            pcs_date: json?.pcs_date ?? null,
-            pcs_count: json?.pcs_count ?? null,
             // Family
             marital_status: json?.marital_status ?? null,
             num_children: json?.num_children ?? null,
@@ -345,10 +339,8 @@ function ProfileSetupContent() {
           if (data.rank) complete++;
         }
         break;
-      case 3: // Location & Deployment
-        total = 1;
-        if (data.current_base) complete++;
-        // deployment_count removed - not used by any tool
+      case 3: // Section 3 removed (Location was moved to Military section)
+        total = 0;
         break;
       case 4: // Family
         total = 2;
@@ -932,6 +924,23 @@ function ProfileSetupContent() {
                     )}
                   </div>
 
+                  {/* Current Base - moved from Location section */}
+                  {data.service_status &&
+                    !["military_spouse", "veteran"].includes(data.service_status) && (
+                      <ProfileFormField
+                        label="Current Base"
+                        description="Your current duty station"
+                        success={!!data.current_base}
+                      >
+                        <BaseAutocomplete
+                          value={data.current_base ?? ""}
+                          onChange={(value) =>
+                            setData((d) => ({ ...d, current_base: value || null }))
+                          }
+                          placeholder="e.g., Fort Liberty, NC"
+                        />
+                      </ProfileFormField>
+                    )}
                   {/* NEW: Additional military fields */}
                   {/* MOS/AFSC and Clearance fields removed - not used by any tools */}
                 </div>
@@ -990,63 +999,6 @@ function ProfileSetupContent() {
                 )}
               </ProfileSection>
 
-              {/* Section 3: Location & Deployment */}
-              <ProfileSection
-                number={3}
-                title="Location & Deployment"
-                icon="📍"
-                description="Where you are and where you're going"
-                expanded={expandedSections.has(3)}
-                onToggle={() => toggleSection(3)}
-                completion={getSectionCompletion(3)}
-              >
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <ProfileFormField
-                      label="Current Base"
-                      description="Your current duty station"
-                      success={!!data.current_base}
-                    >
-                      <BaseAutocomplete
-                        value={data.current_base ?? ""}
-                        onChange={(value) =>
-                          setData((d) => ({ ...d, current_base: value || null }))
-                        }
-                        placeholder="e.g., Fort Liberty, NC"
-                      />
-                    </ProfileFormField>
-
-                    <ProfileFormField
-                      label="Next Base"
-                      description="If you have orders"
-                      success={!!data.next_base}
-                    >
-                      <BaseAutocomplete
-                        value={data.next_base ?? ""}
-                        onChange={(value) => setData((d) => ({ ...d, next_base: value || null }))}
-                        placeholder="If known (optional)"
-                      />
-                    </ProfileFormField>
-
-                    <ProfileFormField
-                      label="PCS Date"
-                      description="Report date if known"
-                      success={!!data.pcs_date}
-                    >
-                      <input
-                        type="date"
-                        className={getInputClass(false, !!data.pcs_date)}
-                        value={data.pcs_date ?? ""}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, pcs_date: e.target.value || null }))
-                        }
-                      />
-                    </ProfileFormField>
-                  </div>
-
-                  {/* deployment_count, deployment_status, last_deployment_date all removed - not used by any tool */}
-                </div>
-              </ProfileSection>
             </>
           )}
 

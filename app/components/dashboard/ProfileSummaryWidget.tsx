@@ -26,9 +26,8 @@ export default function ProfileSummaryWidget({ profile, userName }: ProfileSumma
   const completionColor = getCompletionColor(completionPercentage);
   const completionMessage = getCompletionMessage(completionPercentage);
 
-  // Get dedicated LES Auditor and PCS Copilot recommendations
+  // Get LES Auditor recommendation (PCS Copilot not tied to profile)
   const lesRec = recommendations.find((r) => r.tool === "LES Auditor");
-  const pcsRec = recommendations.find((r) => r.tool === "PCS Copilot");
 
   // Format rank display
   const rankDisplay = profile.paygrade
@@ -132,98 +131,49 @@ export default function ProfileSummaryWidget({ profile, userName }: ProfileSumma
           </div>
         </div>
 
-        {/* Tool Readiness - LES Auditor & PCS Copilot */}
-        {(lesRec || pcsRec) && (
+        {/* Tool Readiness - LES Auditor */}
+        {lesRec && (
           <div className="mb-6">
             <h3 className="mb-4 text-sm font-semibold text-gray-700">Tool Readiness</h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* LES Auditor Card */}
-              {lesRec && (
+            <div
+              className={`flex items-start gap-3 rounded-lg border-l-4 p-4 ${
+                lesRec.status === "ready"
+                  ? "border-green-500 bg-green-50"
+                  : "border-yellow-500 bg-yellow-50"
+              }`}
+            >
+              <Icon
+                name={lesRec.status === "ready" ? "CheckCircle" : "AlertCircle"}
+                className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
+                  lesRec.status === "ready" ? "text-green-600" : "text-yellow-600"
+                }`}
+              />
+              <div className="flex-1">
+                <div className="mb-1 flex items-center justify-between">
+                  <div
+                    className={`text-sm font-semibold ${
+                      lesRec.status === "ready" ? "text-green-900" : "text-yellow-900"
+                    }`}
+                  >
+                    LES Auditor
+                  </div>
+                  {lesRec.status === "ready" && (
+                    <Link
+                      href="/dashboard/paycheck-audit"
+                      className="text-xs font-medium text-green-700 hover:text-green-800"
+                    >
+                      Go to Tool →
+                    </Link>
+                  )}
+                </div>
                 <div
-                  className={`flex items-start gap-3 rounded-lg border-l-4 p-4 ${
-                    lesRec.status === "ready"
-                      ? "border-green-500 bg-green-50"
-                      : "border-yellow-500 bg-yellow-50"
+                  className={`text-xs ${
+                    lesRec.status === "ready" ? "text-green-800" : "text-yellow-800"
                   }`}
                 >
-                  <Icon
-                    name={lesRec.status === "ready" ? "CheckCircle" : "AlertCircle"}
-                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
-                      lesRec.status === "ready" ? "text-green-600" : "text-yellow-600"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <div className="mb-1 flex items-center justify-between">
-                      <div
-                        className={`text-sm font-semibold ${
-                          lesRec.status === "ready" ? "text-green-900" : "text-yellow-900"
-                        }`}
-                      >
-                        LES Auditor
-                      </div>
-                      {lesRec.status === "ready" && (
-                        <Link
-                          href="/dashboard/paycheck-audit"
-                          className="text-xs font-medium text-green-700 hover:text-green-800"
-                        >
-                          Go to Tool →
-                        </Link>
-                      )}
-                    </div>
-                    <div
-                      className={`text-xs ${
-                        lesRec.status === "ready" ? "text-green-800" : "text-yellow-800"
-                      }`}
-                    >
-                      {lesRec.message}
-                    </div>
-                  </div>
+                  {lesRec.message}
                 </div>
-              )}
-
-              {/* PCS Copilot Card */}
-              {pcsRec && (
-                <div
-                  className={`flex items-start gap-3 rounded-lg border-l-4 p-4 ${
-                    pcsRec.status === "ready"
-                      ? "border-green-500 bg-green-50"
-                      : "border-yellow-500 bg-yellow-50"
-                  }`}
-                >
-                  <Icon
-                    name={pcsRec.status === "ready" ? "CheckCircle" : "AlertCircle"}
-                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
-                      pcsRec.status === "ready" ? "text-green-600" : "text-yellow-600"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <div className="mb-1 flex items-center justify-between">
-                      <div
-                        className={`text-sm font-semibold ${
-                          pcsRec.status === "ready" ? "text-green-900" : "text-yellow-900"
-                        }`}
-                      >
-                        PCS Copilot
-                      </div>
-                      {pcsRec.status === "ready" && (
-                        <Link
-                          href="/dashboard/pcs-copilot"
-                          className="text-xs font-medium text-green-700 hover:text-green-800"
-                        >
-                          Go to Tool →
-                        </Link>
-                      )}
-                    </div>
-                    <div
-                      className={`text-xs ${
-                        pcsRec.status === "ready" ? "text-green-800" : "text-yellow-800"
-                      }`}
-                    >
-                      {pcsRec.message}
-                    </div>
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         )}
