@@ -233,12 +233,24 @@ export default function SimplifiedPCSClient({
                       variant={
                         claim.status === "completed"
                           ? "success"
-                          : claim.status === "in_progress"
-                            ? "primary"
-                            : "secondary"
+                          : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                            ? "success"
+                            : claim.status === "ready_to_submit"
+                              ? "success"
+                              : claim.status === "in_progress"
+                                ? "primary"
+                                : "secondary"
                       }
                     >
-                      {claim.status}
+                      {claim.status === "completed"
+                        ? "Completed"
+                        : claim.completion_percentage === 100 && claim.readiness_score >= 80
+                          ? "Ready to Submit"
+                          : claim.status === "ready_to_submit"
+                            ? "Ready to Submit"
+                            : claim.status === "in_progress"
+                              ? "In Progress"
+                              : "Draft"}
                     </Badge>
                     {/* Delete button */}
                     <button
