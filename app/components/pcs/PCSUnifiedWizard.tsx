@@ -857,7 +857,7 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   disabled={
                     getFieldCompletionPercentage() < 70 ||
                     isLoadingDistance ||
-                    (formData.origin_base &&
+                    !!(formData.origin_base &&
                       formData.destination_base &&
                       formData.malt_distance === 0)
                   }
