@@ -327,13 +327,17 @@ export async function PATCH(req: NextRequest) {
 
     // Build form_data from body if fields are present
     const formData: Record<string, any> = {};
-    if (body.tle_origin_nights !== undefined) formData.tle_origin_nights = body.tle_origin_nights || 0;
-    if (body.tle_destination_nights !== undefined) formData.tle_destination_nights = body.tle_destination_nights || 0;
+    if (body.tle_origin_nights !== undefined)
+      formData.tle_origin_nights = body.tle_origin_nights || 0;
+    if (body.tle_destination_nights !== undefined)
+      formData.tle_destination_nights = body.tle_destination_nights || 0;
     if (body.tle_origin_rate !== undefined) formData.tle_origin_rate = body.tle_origin_rate || 0;
-    if (body.tle_destination_rate !== undefined) formData.tle_destination_rate = body.tle_destination_rate || 0;
+    if (body.tle_destination_rate !== undefined)
+      formData.tle_destination_rate = body.tle_destination_rate || 0;
     if (body.actual_weight !== undefined) formData.actual_weight = body.actual_weight || 0;
     if (body.estimated_weight !== undefined) formData.estimated_weight = body.estimated_weight || 0;
-    if (body.malt_distance !== undefined) formData.malt_distance = body.malt_distance || body.distance_miles || 0;
+    if (body.malt_distance !== undefined)
+      formData.malt_distance = body.malt_distance || body.distance_miles || 0;
     if (body.distance_miles !== undefined) formData.distance_miles = body.distance_miles || 0;
     if (body.per_diem_days !== undefined) formData.per_diem_days = body.per_diem_days || 0;
     if (body.fuel_receipts !== undefined) formData.fuel_receipts = body.fuel_receipts || 0;
