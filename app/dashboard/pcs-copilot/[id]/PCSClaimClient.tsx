@@ -134,7 +134,7 @@ export default function PCSClaimClient({
       let distance = claim.malt_distance || claim.distance_miles || 0;
       let weight = claim.actual_weight || claim.estimated_weight || 0;
       let perDiemDays = claim.per_diem_days || 0;
-      
+
       // Calculate distance if missing
       if (!distance && claim.origin_base && claim.destination_base) {
         try {
@@ -155,7 +155,7 @@ export default function PCSClaimClient({
           console.warn("[PCSClaim] Failed to calculate distance:", err);
         }
       }
-      
+
       // Calculate per diem days from dates if missing
       if (!perDiemDays && claim.departure_date && claim.arrival_date) {
         const depDate = new Date(claim.departure_date);
@@ -164,13 +164,13 @@ export default function PCSClaimClient({
         perDiemDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         console.log("[PCSClaim] Calculated per diem days:", perDiemDays);
       }
-      
+
       // Use default weight if missing (prompt user in future)
       if (!weight) {
         weight = 5000; // Default PPM weight for E1-E5 without dependents
         console.warn("[PCSClaim] No weight provided, using default:", weight);
       }
-      
+
       const response = await fetch(`/api/pcs/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -245,15 +245,21 @@ export default function PCSClaimClient({
   // Use calculated snapshot if available, otherwise fall back to original snapshot
   const displaySnapshot = calculatedSnapshot || snapshot;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return "Not provided";
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return dateString; // Return original if invalid
+    }
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (amount == null || isNaN(amount)) return "$0.00";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
