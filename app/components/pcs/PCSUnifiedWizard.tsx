@@ -111,10 +111,10 @@ export default function PCSUnifiedWizard({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlEditId = params.get("edit");
-    
+
     // Priority: prop > URL param
     const claimIdToLoad = editClaimId || urlEditId;
-    
+
     if (claimIdToLoad) {
       setIsLoadingEdit(true);
       setEditingClaimId(claimIdToLoad);
@@ -173,6 +173,7 @@ export default function PCSUnifiedWizard({
       // Jump directly to review step
       setCurrentStep("review");
       setIsCalculating(false);
+      setIsLoadingEdit(false);
 
       toast.success("Claim loaded for editing");
     } catch (error) {
