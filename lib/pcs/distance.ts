@@ -71,7 +71,7 @@ export async function calculateDistance(
 /**
  * Find a base by name, ID, or city
  * Handles variations like "Fort Liberty, NC" vs "Fort Liberty (Bragg)"
- * 
+ *
  * Tested patterns:
  * - "Fort Liberty, NC" → "Fort Liberty (Bragg)" ✓
  * - "Joint Base Lewis-McChord, WA" → "Joint Base Lewis-McChord" ✓
@@ -102,7 +102,13 @@ function findBase(identifier: string): MilitaryBase | undefined {
 
     // 2. Extract base name without parentheses for clean comparison
     const baseNameCore = baseName.split("(")[0].trim();
-    const cleanedIdCore = cleanedId.split("(")[0].trim();
+    let cleanedIdCore = cleanedId.split("(")[0].trim();
+    
+    // 2a. Handle "AFB" abbreviation → "Air Force Base"
+    // e.g., "Eglin AFB" should match "Eglin Air Force Base"
+    if (cleanedIdCore.includes(" afb")) {
+      cleanedIdCore = cleanedIdCore.replace(" afb", " air force base");
+    }
 
     // 3. Direct name match (either direction)
     if (baseNameCore.includes(cleanedIdCore) || cleanedIdCore.includes(baseNameCore)) return true;
@@ -119,18 +125,19 @@ function findBase(identifier: string): MilitaryBase | undefined {
     if (baseCity === cleanedId || baseCity === normalizedId) return true;
 
     // 6. City + state match (e.g., "Norfolk, VA")
-    if (normalizedId.includes(baseCity) && normalizedId.includes(base.state.toLowerCase())) return true;
+    if (normalizedId.includes(baseCity) && normalizedId.includes(base.state.toLowerCase()))
+      return true;
 
     // 7. Common abbreviations
     const abbreviations: Record<string, string[]> = {
-      "jblm": ["joint base lewis-mcchord", "joint base lewis mcchord"],
-      "jble": ["joint base langley-eustis"],
-      "jbsa": ["joint base san antonio"],
-      "jbphh": ["joint base pearl harbor-hickam"],
+      jblm: ["joint base lewis-mcchord", "joint base lewis mcchord"],
+      jble: ["joint base langley-eustis"],
+      jbsa: ["joint base san antonio"],
+      jbphh: ["joint base pearl harbor-hickam"],
     };
-    
+
     for (const [abbr, fullNames] of Object.entries(abbreviations)) {
-      if (cleanedId === abbr && fullNames.some(fn => baseName.includes(fn))) return true;
+      if (cleanedId === abbr && fullNames.some((fn) => baseName.includes(fn))) return true;
     }
 
     return false;
