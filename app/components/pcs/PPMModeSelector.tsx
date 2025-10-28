@@ -8,6 +8,7 @@ import Button from "@/app/components/ui/Button";
 import Card, { CardContent, CardHeader, CardTitle } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
 import Input from "@/app/components/ui/Input";
+import { estimateGCC } from "@/lib/pcs/gcc-estimator";
 
 interface PPMModeSelectorProps {
   onModeSelected: (mode: "official" | "estimator", data: PPMData) => void;
@@ -358,39 +359,73 @@ export default function PPMModeSelector({
               </div>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Simplified Rate (for estimation only)
-              </label>
-              <Input type="number" value="0.60" disabled className="bg-slate-100" />
-              <p className="mt-1 text-xs text-slate-500">
-                <strong>Note:</strong> DoD doesn't use a flat $/mile rate. Real GCC uses DP3/GHC
-                banded rate tables (proprietary). This is a rough approximation only.
-              </p>
-            </div>
+            {/* GCC Estimate Display */}
+            {(() => {
+              const weight = parseFloat(estimatorWeight) || 0;
+              const distance = parseFloat(estimatorDistance) || 0;
+              
+              if (weight === 0 || distance === 0) {
+                return (
+                  <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-6 text-center">
+                    <Icon name="Calculator" className="mx-auto h-12 w-12 text-slate-400" />
+                    <p className="mt-3 text-sm text-slate-600">
+                      Enter weight and distance to see GCC estimate
+                    </p>
+                  </div>
+                );
+              }
 
-            <div className="rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
-              <div className="mb-2 text-sm font-medium text-amber-900">
-                Rough Ballpark Estimate:
-              </div>
-              <div className="text-3xl font-black text-amber-900">
-                ~$
-                {(
-                  ((parseFloat(estimatorWeight) || 0) / 100) *
-                  (parseFloat(estimatorDistance) || 0) *
-                  0.6
-                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-              <div className="mt-2 text-xs text-slate-700">
-                <strong>Simplified formula:</strong> (
-                {parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
-                {parseFloat(estimatorDistance || "0").toLocaleString()} mi × $0.60/cwt
-              </div>
-              <div className="mt-2 rounded border border-red-300 bg-red-100 px-2 py-1 text-xs font-medium text-red-900">
-                ⚠️ <strong>Could be ±50% off or more!</strong> Actual GCC uses DP3/GHC banded rate
-                tables, not linear math. Use my.move.mil for real calculation.
-              </div>
-            </div>
+              const estimate = estimateGCC(weight, distance);
+              
+              return (
+                <div className="space-y-4">
+                  {/* Estimate Range */}
+                  <div className="rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+                    <div className="mb-2 text-sm font-medium text-amber-900">
+                      Estimated GCC Range:
+                    </div>
+                    <div className="text-3xl font-black text-amber-900">
+                      ${estimate.adjustedLow.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      {" - "}
+                      ${estimate.adjustedHigh.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </div>
+                    <div className="mt-1 text-sm text-amber-800">
+                      Midpoint: ~${estimate.midpoint.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </div>
+                  </div>
+
+                  {/* Calculation Breakdown */}
+                  <div className="rounded-lg bg-slate-50 p-4 text-xs">
+                    <div className="mb-2 font-semibold text-slate-900">How we calculated this:</div>
+                    <div className="space-y-1 text-slate-700">
+                      <div>• Weight: {estimate.breakdown.cwt.toFixed(1)} CWT ({weight.toLocaleString()} lbs ÷ 100)</div>
+                      <div>• Distance band: {estimate.breakdown.distanceBand}</div>
+                      <div>• Base rate: ${estimate.breakdown.ratePerCWTLow}-${estimate.breakdown.ratePerCWTHigh} per CWT</div>
+                      <div>• Base linehaul: ${estimate.linehaulLow.toLocaleString()}-${estimate.linehaulHigh.toLocaleString()}</div>
+                      {estimate.breakdown.fuelMultiplier > 1.0 && (
+                        <div>• + Fuel surcharge ({((estimate.breakdown.fuelMultiplier - 1) * 100).toFixed(0)}%)</div>
+                      )}
+                      {estimate.breakdown.peakMultiplier > 1.0 && (
+                        <div>• + Peak season ({((estimate.breakdown.peakMultiplier - 1) * 100).toFixed(0)}%)</div>
+                      )}
+                      {estimate.breakdown.shortHaulMultiplier > 1.0 && (
+                        <div>• + Short-haul premium ({((estimate.breakdown.shortHaulMultiplier - 1) * 100).toFixed(0)}%)</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Strong Disclaimer */}
+                  <div className="rounded border-2 border-red-600 bg-red-50 p-4">
+                    <p className="mb-2 text-xs font-bold text-red-900">⚠️ PLANNING ESTIMATE ONLY</p>
+                    <ul className="ml-4 list-disc space-y-1 text-xs text-red-800">
+                      {estimate.disclaimers.map((disclaimer, i) => (
+                        <li key={i}>{disclaimer}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* CTA */}
@@ -408,13 +443,14 @@ export default function PPMModeSelector({
               onClick={() => {
                 const weightValue = parseFloat(estimatorWeight);
                 const distanceValue = parseFloat(estimatorDistance);
-                // ROUGH approximation: (weight / 100) × distance × avg_rate
-                // This is NOT how DoD calculates GCC (they use DP3/GHC banded tables)
-                const estimatedGCC = (weightValue / 100) * distanceValue * 0.6;
-                if (estimatedGCC > 0) {
+                
+                // Use banded GCC estimator (NOT per-mile linear!)
+                const estimate = estimateGCC(weightValue, distanceValue);
+                
+                if (estimate.midpoint > 0) {
                   onModeSelected("estimator", {
                     mode: "estimator",
-                    gccAmount: estimatedGCC,
+                    gccAmount: estimate.midpoint, // Use midpoint for calculations
                     weight: weightValue,
                     distance: distanceValue,
                   });
