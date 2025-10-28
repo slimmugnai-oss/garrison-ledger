@@ -133,11 +133,9 @@ export default function PCSClaimClient({
       // Calculate missing values from available data
       let distance = claim.malt_distance || claim.distance_miles || 0;
       // Try to get weight from snapshot first, then fall back to defaults
-      let weight = snapshot?.ppm_weight || 
-                   snapshot?.calculation_details?.ppm?.weight || 
-                   0;
+      let weight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || 0;
       let perDiemDays = claim.per_diem_days || 0;
-      
+
       console.log("[PCSClaim] Weight lookup:", {
         snapshot_weight: snapshot?.ppm_weight,
         details_weight: snapshot?.calculation_details?.ppm?.weight,
@@ -255,8 +253,9 @@ export default function PCSClaimClient({
           per_diem_days: perDiemDays,
           malt_distance: distance,
           distance_miles: distance, // CRITICAL: Both fields needed for PPM
-          estimated_weight: weight,
-          actual_weight: weight,
+          // Use the weight we found (from snapshot or default)
+          estimated_weight: weight || 0,
+          actual_weight: weight || 0,
           fuel_receipts: claim.fuel_receipts || 0,
           origin_zip: claim.origin_zip,
           destination_zip: claim.destination_zip,
@@ -284,7 +283,7 @@ export default function PCSClaimClient({
             per_diem_amount: calc.perDiem?.amount || 0,
             per_diem_days: calc.perDiem?.days || 0,
             ppm_estimate: calc.ppm?.amount || 0,
-            ppm_weight: calc.ppm?.weight || weight || 0, // Use calculated weight or fall back to entered weight
+            ppm_weight: weight || calc.ppm?.weight || 0, // Preserve the weight we used (either from snapshot or default)
             total_estimated: calc.total || 0,
             calculation_details: calc,
             confidence_scores: calc.confidence || {},
