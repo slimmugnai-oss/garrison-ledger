@@ -98,6 +98,74 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
 
+  // Load claim for editing if ?edit query param is present
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const editClaimId = params.get("edit");
+
+    if (editClaimId) {
+      loadClaimForEditing(editClaimId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadClaimForEditing = async (claimId: string) => {
+    try {
+      setIsCalculating(true);
+
+      const response = await fetch(`/api/pcs/claims/${claimId}`);
+      if (!response.ok) {
+        toast.error("Failed to load claim");
+        return;
+      }
+
+      const { claim } = await response.json();
+      const formDataFromClaim = claim.form_data || {};
+
+      // Load ALL data into formData state
+      setFormData({
+        claim_name: claim.claim_name || "",
+        rank_at_pcs: claim.rank_at_pcs || userProfile.rank,
+        branch: claim.branch || userProfile.branch,
+        origin_base: claim.origin_base || userProfile.currentBase,
+        destination_base: claim.destination_base || "",
+        dependents_count: claim.dependents_count || 0,
+        departure_date: claim.departure_date || "",
+        arrival_date: claim.arrival_date || "",
+        pcs_orders_date: claim.pcs_orders_date || "",
+        travel_method: claim.travel_method || "ppm",
+        // Load from form_data JSONB
+        tle_origin_nights: formDataFromClaim.tle_origin_nights || 0,
+        tle_destination_nights: formDataFromClaim.tle_destination_nights || 0,
+        tle_origin_rate: formDataFromClaim.tle_origin_rate || 0,
+        tle_destination_rate: formDataFromClaim.tle_destination_rate || 0,
+        actual_weight: formDataFromClaim.actual_weight || 0,
+        estimated_weight: formDataFromClaim.estimated_weight || 0,
+        malt_distance: formDataFromClaim.malt_distance || 0,
+        distance_miles: formDataFromClaim.distance_miles || 0,
+        per_diem_days: formDataFromClaim.per_diem_days || 0,
+        fuel_receipts: formDataFromClaim.fuel_receipts || 0,
+        origin_zip: formDataFromClaim.origin_zip || null,
+        destination_zip: formDataFromClaim.destination_zip || null,
+      });
+
+      // Jump directly to review step
+      setCurrentStep("review");
+
+      // Trigger calculations
+      setTimeout(() => {
+        calculateEstimates();
+      }, 100);
+
+      toast.success("Claim loaded for editing");
+    } catch (error) {
+      logger.error("Failed to load claim for editing", error);
+      toast.error("Failed to load claim");
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
   // PPM withholding calculator state
   const [ppmDisclaimerAccepted, setPpmDisclaimerAccepted] = useState(false);
   const [ppmMode, setPpmMode] = useState<"official" | "estimator" | null>(null);

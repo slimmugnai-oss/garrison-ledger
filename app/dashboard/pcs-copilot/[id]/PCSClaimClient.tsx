@@ -33,6 +33,20 @@ interface Claim {
     per_diem?: number;
     ppm?: number;
   } | null;
+  form_data?: {
+    tle_origin_nights?: number;
+    tle_destination_nights?: number;
+    tle_origin_rate?: number;
+    tle_destination_rate?: number;
+    actual_weight?: number;
+    estimated_weight?: number;
+    malt_distance?: number;
+    distance_miles?: number;
+    per_diem_days?: number;
+    fuel_receipts?: number;
+    origin_zip?: string | null;
+    destination_zip?: string | null;
+  };
   tle_origin_nights?: number;
   tle_destination_nights?: number;
   tle_origin_rate?: number;
@@ -134,11 +148,9 @@ export default function PCSClaimClient({
       let distance = claim.malt_distance || claim.distance_miles || 0;
       // Try to get weight from snapshot first, then fall back to defaults
       // IMPORTANT: ppm_weight stores the ENTERED weight, not the calculation weight
-      let weight = snapshot?.ppm_weight || 
-                   snapshot?.calculation_details?.ppm?.weight || 
-                   0;
+      let weight = snapshot?.ppm_weight || snapshot?.calculation_details?.ppm?.weight || 0;
       let perDiemDays = claim.per_diem_days || 0;
-      
+
       console.log("[PCSClaim] Weight lookup:", {
         snapshot: snapshot ? "exists" : "null",
         snapshot_weight: snapshot?.ppm_weight,
@@ -644,8 +656,8 @@ export default function PCSClaimClient({
                         <span className="text-lg font-bold text-slate-900">
                           {displaySnapshot?.malt_miles ||
                             displaySnapshot?.calculation_details?.malt?.distance ||
-                            claim.malt_distance ||
-                            claim.distance_miles ||
+                            claim.form_data?.malt_distance ||
+                            claim.form_data?.distance_miles ||
                             0}{" "}
                           miles
                         </span>
@@ -672,8 +684,8 @@ export default function PCSClaimClient({
                           <span className="text-lg font-bold text-slate-900">
                             {displaySnapshot?.ppm_weight ||
                               displaySnapshot?.calculation_details?.ppm?.weight ||
-                              claim.actual_weight ||
-                              claim.estimated_weight ||
+                              claim.form_data?.actual_weight ||
+                              claim.form_data?.estimated_weight ||
                               0}{" "}
                             lbs
                           </span>
@@ -714,7 +726,7 @@ export default function PCSClaimClient({
                       {
                         label: "Temporary Lodging Expense (TLE)",
                         amount: claim.entitlements?.tle || displaySnapshot?.tle_amount || 0,
-                        description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days ?? claim.tle_origin_nights ?? 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days ?? claim.tle_destination_nights ?? 0} destination nights`,
+                        description: `Lodging for ${displaySnapshot?.calculation_details?.tle?.origin?.days ?? claim.form_data?.tle_origin_nights ?? 0} origin + ${displaySnapshot?.calculation_details?.tle?.destination?.days ?? claim.form_data?.tle_destination_nights ?? 0} destination nights`,
                       },
                       {
                         label: "Mileage Allowance (MALT)",

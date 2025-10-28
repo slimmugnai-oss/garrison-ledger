@@ -99,11 +99,23 @@ export async function POST(req: NextRequest) {
         status: "draft",
         readiness_score: 0,
         completion_percentage: 0,
-        // Save all form fields for editing
-        // Note: These fields don't exist in the database schema yet
-        // We're storing the data in the entitlements JSONB field instead
         // CRITICAL: Save entitlements for PDF export
         entitlements: body.entitlements || null,
+        // CRITICAL: Store ALL form data for editing
+        form_data: {
+          tle_origin_nights: body.tle_origin_nights || 0,
+          tle_destination_nights: body.tle_destination_nights || 0,
+          tle_origin_rate: body.tle_origin_rate || 0,
+          tle_destination_rate: body.tle_destination_rate || 0,
+          actual_weight: body.actual_weight || 0,
+          estimated_weight: body.estimated_weight || 0,
+          malt_distance: body.malt_distance || body.distance_miles || 0,
+          distance_miles: body.distance_miles || 0,
+          per_diem_days: body.per_diem_days || 0,
+          fuel_receipts: body.fuel_receipts || 0,
+          origin_zip: body.origin_zip || null,
+          destination_zip: body.destination_zip || null,
+        },
       })
       .select()
       .single();

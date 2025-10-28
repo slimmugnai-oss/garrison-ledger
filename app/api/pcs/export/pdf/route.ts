@@ -137,26 +137,12 @@ export async function POST(request: NextRequest) {
 
         // Import calculation engine
         const { calculatePCSClaim } = await import("@/lib/pcs/calculation-engine");
+        const formData = claim.form_data || {};
 
-        // Extract from snapshot calculation_details if available, otherwise use claim entitlements
-        const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
-        const details = snapshot?.calculation_details || {};
-
-        // Calculate missing values for PDF
-        let distance =
-          snapshot?.malt_miles ||
-          details.malt?.distance ||
-          claim.malt_distance ||
-          claim.distance_miles ||
-          0;
-        let weight =
-          snapshot?.ppm_weight ||
-          details.ppm?.weight ||
-          claim.actual_weight ||
-          claim.estimated_weight ||
-          0;
-        let perDiemDays =
-          snapshot?.per_diem_days || details.perDiem?.days || claim.per_diem_days || 0;
+        // Calculate missing values for PDF using form_data
+        let distance = formData.malt_distance || formData.distance_miles || claim.distance_miles || 0;
+        let weight = formData.actual_weight || formData.estimated_weight || 0;
+        let perDiemDays = formData.per_diem_days || 0;
 
         // Calculate distance if missing
         if (!distance && claim.origin_base && claim.destination_base) {
@@ -228,21 +214,20 @@ export async function POST(request: NextRequest) {
           arrival_date: claim.arrival_date,
           pcs_orders_date: claim.pcs_orders_date,
           travel_method: claim.travel_method || "ppm",
-          // Use snapshot data first, then defaults
-          tle_origin_nights: details.tle?.origin?.days || claim.tle_origin_nights || 0,
-          tle_origin_rate: details.tle?.origin?.rate || claim.tle_origin_rate || 0,
-          tle_destination_nights:
-            details.tle?.destination?.days || claim.tle_destination_nights || 0,
-          tle_destination_rate: details.tle?.destination?.rate || claim.tle_destination_rate || 0,
+          // Use form_data values
+          tle_origin_nights: formData.tle_origin_nights || 0,
+          tle_origin_rate: formData.tle_origin_rate || 0,
+          tle_destination_nights: formData.tle_destination_nights || 0,
+          tle_destination_rate: formData.tle_destination_rate || 0,
           per_diem_days: perDiemDays,
           malt_distance: distance,
           distance_miles: distance, // CRITICAL: Both fields needed for PPM
           estimated_weight: weight,
           actual_weight: weight,
-          fuel_receipts: claim.fuel_receipts || 0,
+          fuel_receipts: formData.fuel_receipts || 0,
           claim_name: claim.claim_name,
-          origin_zip: claim.origin_zip || null,
-          destination_zip: claim.destination_zip || null,
+          origin_zip: formData.origin_zip || null,
+          destination_zip: formData.destination_zip || null,
         };
 
         logger.info("PDF: Calculating fresh with formData", {
