@@ -199,7 +199,7 @@ export default function PCSClaimClient({
       const html = await response.text();
       const blob = new Blob([html], { type: "text/html" });
       const url = window.URL.createObjectURL(blob);
-      
+
       // Open in new window for printing/saving
       const newWindow = window.open(url, "_blank");
       if (!newWindow) {
@@ -211,7 +211,7 @@ export default function PCSClaimClient({
         a.click();
         document.body.removeChild(a);
       }
-      
+
       setTimeout(() => window.URL.revokeObjectURL(url), 100);
       toast.success("Document opened. Press Ctrl/Cmd+P to print or save as PDF.");
     } catch (error) {

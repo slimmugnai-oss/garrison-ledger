@@ -1,12 +1,12 @@
 /**
  * PCS CLAIM HTML GENERATOR
- * 
+ *
  * Lightweight alternative to PDF generation.
  * Generates a print-ready HTML document that can be:
  * - Viewed in browser
  * - Printed to PDF (Ctrl/Cmd + P)
  * - Saved as HTML file
- * 
+ *
  * Much faster than html2canvas + jsPDF, no heavy processing.
  */
 
@@ -380,4 +380,3 @@ export function generatePCSClaimHTML(
 
   return html;
 }
-

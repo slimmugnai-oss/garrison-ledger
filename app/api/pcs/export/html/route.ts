@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
 
-    // Get calculations from snapshot
+    // Get calculations from snapshot (no user_id column in snapshots table)
     const { data: snapshots } = await supabaseAdmin
       .from("pcs_entitlement_snapshots")
       .select("*")
@@ -40,10 +40,29 @@ export async function POST(request: NextRequest) {
 
     const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
 
+    logger.info("HTML Export: Snapshot data", {
+      claimId,
+      hasSnapshot: !!snapshot,
+      dla_amount: snapshot?.dla_amount,
+      tle_amount: snapshot?.tle_amount,
+      malt_amount: snapshot?.malt_amount,
+      per_diem_amount: snapshot?.per_diem_amount,
+      ppm_estimate: snapshot?.ppm_estimate,
+      total_estimated: snapshot?.total_estimated,
+    });
+
     // Build calculations object from snapshot
     let calculations;
     if (snapshot && snapshot.calculation_details) {
       const details = snapshot.calculation_details;
+      
+      logger.info("HTML Export: Using snapshot calculation_details", {
+        dla_from_details: details.dla?.amount,
+        tle_from_details: details.tle?.total,
+        malt_from_details: details.malt?.amount,
+        perDiem_from_details: details.perDiem?.amount,
+        ppm_from_details: details.ppm?.amount,
+      });
       calculations = {
         dla: {
           amount: Number(snapshot.dla_amount) || Number(details.dla?.amount) || 0,
@@ -77,18 +96,56 @@ export async function POST(request: NextRequest) {
         },
         total_entitlements: Number(snapshot.total_estimated) || Number(details.total) || 0,
         confidence: {
-          overall: Number(snapshot.confidence_scores?.overall) || Number(details.confidence?.overall) || 0.8,
+          overall:
+            Number(snapshot.confidence_scores?.overall) ||
+            Number(details.confidence?.overall) ||
+            0.8,
           dataSources: snapshot.data_sources || details.dataSources || {},
         },
       };
+      
+      logger.info("HTML Export: Final calculations", {
+        dla: calculations.dla.amount,
+        tle: calculations.tle.amount,
+        malt: calculations.malt.amount,
+        per_diem: calculations.per_diem.amount,
+        ppm: calculations.ppm.amount,
+        total: calculations.total_entitlements,
+      });
     } else {
       // Fallback if no snapshot
+      logger.warn("HTML Export: No snapshot found, using fallback", { claimId });
       calculations = {
-        dla: { amount: 0, confidence: 0.5, source: "Manual", lastVerified: new Date().toISOString() },
-        tle: { amount: 0, confidence: 0.5, source: "Manual", lastVerified: new Date().toISOString() },
-        malt: { amount: 0, confidence: 0.5, source: "Manual", lastVerified: new Date().toISOString() },
-        per_diem: { amount: 0, confidence: 0.5, source: "Manual", lastVerified: new Date().toISOString() },
-        ppm: { amount: 0, confidence: 0.5, source: "Manual", lastVerified: new Date().toISOString() },
+        dla: {
+          amount: 0,
+          confidence: 0.5,
+          source: "Manual",
+          lastVerified: new Date().toISOString(),
+        },
+        tle: {
+          amount: 0,
+          confidence: 0.5,
+          source: "Manual",
+          lastVerified: new Date().toISOString(),
+        },
+        malt: {
+          amount: 0,
+          confidence: 0.5,
+          source: "Manual",
+          lastVerified: new Date().toISOString(),
+        },
+        per_diem: {
+          amount: 0,
+          confidence: 0.5,
+          source: "Manual",
+          lastVerified: new Date().toISOString(),
+        },
+        ppm: {
+          amount: 0,
+          confidence: 0.5,
+          source: "Manual",
+          lastVerified: new Date().toISOString(),
+        },
         total_entitlements: 0,
         confidence: { overall: 0.5, dataSources: {} },
       };
@@ -105,16 +162,16 @@ export async function POST(request: NextRequest) {
       dependents_authorized: (claim.dependents_count || 0) > 0,
       dependents_count: claim.dependents_count || 0,
       estimated_weight:
-        claim.form_data?.actual_weight ||
-        claim.form_data?.estimated_weight ||
-        claim.estimated_weight ||
+        Number(claim.form_data?.actual_weight) ||
+        Number(claim.form_data?.estimated_weight) ||
+        Number(claim.estimated_weight) ||
         0,
       travel_method: (claim.travel_method || "ppm") as "dity" | "full" | "partial",
       distance:
-        snapshot?.malt_miles ||
-        claim.form_data?.malt_distance ||
-        claim.form_data?.distance_miles ||
-        claim.distance_miles ||
+        Number(snapshot?.malt_miles) ||
+        Number(claim.form_data?.malt_distance) ||
+        Number(claim.form_data?.distance_miles) ||
+        Number(claim.distance_miles) ||
         0,
       created_at: claim.created_at || new Date().toISOString(),
       updated_at: claim.updated_at || new Date().toISOString(),
@@ -142,4 +199,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "HTML generation failed" }, { status: 500 });
   }
 }
-
