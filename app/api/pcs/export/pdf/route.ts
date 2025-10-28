@@ -142,6 +142,38 @@ export async function POST(request: NextRequest) {
         const snapshot = snapshots && snapshots.length > 0 ? snapshots[0] : null;
         const details = snapshot?.calculation_details || {};
 
+        // Calculate missing values for PDF
+        let distance = snapshot?.malt_miles || details.malt?.distance || claim.malt_distance || claim.distance_miles || 0;
+        let weight = snapshot?.ppm_weight || details.ppm?.weight || claim.actual_weight || claim.estimated_weight || 0;
+        let perDiemDays = snapshot?.per_diem_days || details.perDiem?.days || claim.per_diem_days || 0;
+        
+        // Calculate distance if missing
+        if (!distance && claim.origin_base && claim.destination_base) {
+          try {
+            const { calculateDistance } = await import("@/lib/pcs/distance");
+            const distResult = await calculateDistance(claim.origin_base, claim.destination_base);
+            distance = distResult.miles || 0;
+            logger.info("PDF: Calculated distance for PDF", { distance, miles: distResult.miles });
+          } catch (err) {
+            logger.warn("PDF: Failed to calculate distance", { error: err });
+          }
+        }
+        
+        // Calculate per diem days from dates if missing
+        if (!perDiemDays && claim.departure_date && claim.arrival_date) {
+          const depDate = new Date(claim.departure_date);
+          const arrDate = new Date(claim.arrival_date);
+          const diffTime = Math.abs(arrDate.getTime() - depDate.getTime());
+          perDiemDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          logger.info("PDF: Calculated per diem days from dates", { perDiemDays });
+        }
+        
+        // Use default weight if missing
+        if (!weight) {
+          weight = 5000; // Default
+          logger.warn("PDF: No weight provided, using default", { weight });
+        }
+
         const formDataForCalc = {
           rank_at_pcs: claim.rank_at_pcs,
           branch: claim.branch,
@@ -153,20 +185,27 @@ export async function POST(request: NextRequest) {
           pcs_orders_date: claim.pcs_orders_date,
           travel_method: claim.travel_method || "ppm",
           // Use snapshot data first, then defaults
-          tle_origin_nights: details.tle?.origin?.days || 0,
-          tle_origin_rate: details.tle?.origin?.rate || 0,
-          tle_destination_nights: details.tle?.destination?.days || 0,
-          tle_destination_rate: details.tle?.destination?.rate || 0,
-          per_diem_days: snapshot?.per_diem_days || details.perDiem?.days || 0,
-          malt_distance: snapshot?.malt_miles || details.malt?.distance || 0,
-          distance_miles: snapshot?.malt_miles || details.malt?.distance || 0,
-          estimated_weight: snapshot?.ppm_weight || details.ppm?.weight || 0,
-          actual_weight: snapshot?.ppm_weight || details.ppm?.weight || 0,
-          fuel_receipts: 0,
+          tle_origin_nights: details.tle?.origin?.days || claim.tle_origin_nights || 0,
+          tle_origin_rate: details.tle?.origin?.rate || claim.tle_origin_rate || 0,
+          tle_destination_nights: details.tle?.destination?.days || claim.tle_destination_nights || 0,
+          tle_destination_rate: details.tle?.destination?.rate || claim.tle_destination_rate || 0,
+          per_diem_days: perDiemDays,
+          malt_distance: distance,
+          distance_miles: distance, // CRITICAL: Both fields needed for PPM
+          estimated_weight: weight,
+          actual_weight: weight,
+          fuel_receipts: claim.fuel_receipts || 0,
           claim_name: claim.claim_name,
           origin_zip: claim.origin_zip || null,
           destination_zip: claim.destination_zip || null,
         };
+        
+        logger.info("PDF: Calculating fresh with formData", {
+          distance,
+          weight,
+          perDiemDays,
+          dependents: claim.dependents_count || 0,
+        });
 
         const calcResult = await calculatePCSClaim(formDataForCalc);
 

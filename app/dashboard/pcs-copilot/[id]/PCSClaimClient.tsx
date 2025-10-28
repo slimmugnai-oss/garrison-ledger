@@ -138,6 +138,10 @@ export default function PCSClaimClient({
       // Calculate distance if missing
       if (!distance && claim.origin_base && claim.destination_base) {
         try {
+          console.log("[PCSClaim] Calculating distance between bases...", {
+            origin: claim.origin_base,
+            destination: claim.destination_base,
+          });
           const distResponse = await fetch(`/api/pcs/calculate-distance`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -148,12 +152,20 @@ export default function PCSClaimClient({
           });
           if (distResponse.ok) {
             const distData = await distResponse.json();
-            distance = distData.miles || 0;
-            console.log("[PCSClaim] Calculated distance:", distance);
+            distance = distData.miles || distData.distance || 0;
+            console.log("[PCSClaim] Calculated distance:", distance, "miles");
+          } else {
+            const errorText = await distResponse.text();
+            console.error("[PCSClaim] Distance API error:", distResponse.status, errorText);
           }
         } catch (err) {
-          console.warn("[PCSClaim] Failed to calculate distance:", err);
+          console.error("[PCSClaim] Failed to calculate distance:", err);
         }
+      }
+      
+      // If still no distance, log warning
+      if (!distance) {
+        console.warn("[PCSClaim] No distance available, calculations may be incomplete");
       }
 
       // Calculate per diem days from dates if missing
@@ -171,6 +183,13 @@ export default function PCSClaimClient({
         console.warn("[PCSClaim] No weight provided, using default:", weight);
       }
 
+      console.log("[PCSClaim] Calling calculation API with:", {
+        distance,
+        weight,
+        perDiemDays,
+        dependents: claim.dependents_count || 0,
+      });
+      
       const response = await fetch(`/api/pcs/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -187,11 +206,11 @@ export default function PCSClaimClient({
           travel_method: claim.travel_method || "ppm",
           tle_origin_nights: claim.tle_origin_nights || 0,
           tle_destination_nights: claim.tle_destination_nights || 0,
-          tle_origin_rate: claim.tle_origin_rate || 0, // Required by FormData
-          tle_destination_rate: claim.tle_destination_rate || 0, // Required by FormData
+          tle_origin_rate: claim.tle_origin_rate || 0,
+          tle_destination_rate: claim.tle_destination_rate || 0,
           per_diem_days: perDiemDays,
           malt_distance: distance,
-          distance_miles: distance,
+          distance_miles: distance, // CRITICAL: Both fields needed for PPM
           estimated_weight: weight,
           actual_weight: weight,
           fuel_receipts: claim.fuel_receipts || 0,
