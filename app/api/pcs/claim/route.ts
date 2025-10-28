@@ -315,10 +315,15 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { claimId, ...updates } = body;
+    const { claimId, calculations, entitlements, ...updates } = body;
 
     if (!claimId) {
       throw Errors.invalidInput("claimId is required");
+    }
+
+    // Ensure form_data is properly structured if provided
+    if (updates.form_data && typeof updates.form_data !== "object") {
+      updates.form_data = {};
     }
 
     // Update claim

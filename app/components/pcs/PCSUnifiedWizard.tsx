@@ -104,16 +104,18 @@ export default function PCSUnifiedWizard({
   const [ocrData, setOcrData] = useState<any>(null);
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
+  const [editingClaimId, setEditingClaimId] = useState<string | null>(null);
 
   // Load claim for editing if editClaimId prop or ?edit query param is present
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlEditId = params.get("edit");
-
+    
     // Priority: prop > URL param
     const claimIdToLoad = editClaimId || urlEditId;
-
+    
     if (claimIdToLoad) {
+      setEditingClaimId(claimIdToLoad);
       loadClaimForEditing(claimIdToLoad);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -659,11 +661,19 @@ export default function PCSUnifiedWizard({
         estimated_weight: formData.estimated_weight,
       };
 
-      // 1. Save claim to database
-      const response = await fetch("/api/pcs/claim", {
-        method: "POST",
+      // 1. Save or update claim to database
+      const isEditing = !!editingClaimId;
+      const method = isEditing ? "PATCH" : "POST";
+      const url = isEditing ? "/api/pcs/claim" : "/api/pcs/claim";
+      
+      const requestBody = isEditing
+        ? { claimId: editingClaimId, ...claimData }
+        : claimData;
+
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(claimData),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -681,13 +691,18 @@ export default function PCSUnifiedWizard({
       if (result.success && result.claim) {
         const claimId = result.claim.id;
 
-        logger.info("Claim saved successfully", { claimId });
-        toast.success("PCS claim saved successfully!");
+        logger.info("Claim saved successfully", { claimId, isEditing });
+        toast.success(isEditing ? "PCS claim updated successfully!" : "PCS claim saved successfully!");
 
-        // Small delay to let toast show, then redirect
-        setTimeout(() => {
-          window.location.href = `/dashboard/pcs-copilot/${claimId}`;
-        }, 500);
+        // If editing in modal, call onComplete callback instead of redirecting
+        if (onComplete) {
+          onComplete(claimId);
+        } else {
+          // Small delay to let toast show, then redirect
+          setTimeout(() => {
+            window.location.href = `/dashboard/pcs-copilot/${claimId}`;
+          }, 500);
+        }
       } else {
         logger.error("Failed to save claim - invalid response", { result });
         toast.error("Failed to save claim. Please try again.");
