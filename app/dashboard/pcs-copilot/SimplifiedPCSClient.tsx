@@ -48,10 +48,22 @@ export default function SimplifiedPCSClient({
       const params = new URLSearchParams(window.location.search);
       return !!params.get("edit"); // Show wizard if ?edit param exists
     }
-    return true; // Default to wizard, user can switch to list
+    return false; // Default to list view
   });
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Watch for ?edit param changes and show wizard when present
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const editParam = params.get("edit");
+      
+      if (editParam) {
+        setShowWizard(true); // Show wizard when edit param exists
+      }
+    }
+  }, []);
 
   // Clear ?edit param from URL when wizard is closed
   useEffect(() => {

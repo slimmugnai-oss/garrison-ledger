@@ -695,7 +695,7 @@ export default function PCSClaimClient({
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </>
   );
