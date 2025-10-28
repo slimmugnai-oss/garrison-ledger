@@ -294,7 +294,7 @@ function calculatePPM(weight: number, distance: number, rank: string): Calculati
   };
 
   const maxWeight = weightAllowances[rank] || 5000;
-  
+
   // CRITICAL FIX: Don't use maxWeight as default if user hasn't entered weight
   // If weight is 0 or undefined, return 0 amount (PPM not applicable)
   if (!weight || weight === 0) {
@@ -308,7 +308,7 @@ function calculatePPM(weight: number, distance: number, rank: string): Calculati
       confidence: 0,
     };
   }
-  
+
   const actualWeight = Math.min(weight, maxWeight);
 
   // Simplified PPM calculation (would use actual GCC rates)

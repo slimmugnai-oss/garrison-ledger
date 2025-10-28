@@ -70,16 +70,34 @@ export async function calculateDistance(
 
 /**
  * Find a base by name, ID, or city
+ * Handles variations like "Fort Liberty, NC" vs "Fort Liberty (Bragg)"
  */
 function findBase(identifier: string): MilitaryBase | undefined {
   const normalizedId = identifier.toLowerCase().trim();
   
-  return militaryBases.find(base => 
-    base.id === normalizedId ||
-    base.name.toLowerCase().includes(normalizedId) ||
-    base.city.toLowerCase() === normalizedId ||
-    (base.name.toLowerCase() + ' ' + base.city.toLowerCase()).includes(normalizedId)
-  );
+  // Remove state abbreviations and extra punctuation for better matching
+  const cleanedId = normalizedId
+    .replace(/,\s*(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)/i, '')
+    .trim();
+  
+  return militaryBases.find(base => {
+    const baseName = base.name.toLowerCase();
+    const baseCity = base.city.toLowerCase();
+    
+    // Exact ID match
+    if (base.id === normalizedId) return true;
+    
+    // Direct name match (handles "Fort Liberty" matching "Fort Liberty (Bragg)")
+    if (baseName.includes(cleanedId) || cleanedId.includes(baseName.split('(')[0].trim())) return true;
+    
+    // City match
+    if (baseCity === cleanedId) return true;
+    
+    // Combined name + city match
+    if ((baseName + ' ' + baseCity).includes(cleanedId)) return true;
+    
+    return false;
+  });
 }
 
 /**
