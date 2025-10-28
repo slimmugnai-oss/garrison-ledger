@@ -825,14 +825,27 @@ export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnified
                   <Icon name="ArrowLeft" className="mr-2 h-4 w-4" />
                   Back
                 </Button>
-                <Button
-                  onClick={() => setCurrentStep("lodging")}
-                  disabled={getFieldCompletionPercentage() < 70}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Continue to Lodging
-                  <Icon name="ArrowRight" className="ml-2 h-4 w-4" />
-                </Button>
+              <Button
+                onClick={() => setCurrentStep("lodging")}
+                disabled={
+                  getFieldCompletionPercentage() < 70 ||
+                  isLoadingDistance ||
+                  (formData.origin_base && formData.destination_base && formData.malt_distance === 0)
+                }
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isLoadingDistance ? (
+                  <>
+                    <Icon name="Loader" className="mr-2 h-4 w-4 animate-spin" />
+                    Calculating distance...
+                  </>
+                ) : (
+                  <>
+                    Continue to Lodging
+                    <Icon name="ArrowRight" className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
               </div>
             </CardContent>
           </Card>
