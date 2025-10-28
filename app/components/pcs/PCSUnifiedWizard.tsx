@@ -36,6 +36,7 @@ interface PCSUnifiedWizardProps {
     hasDependents?: boolean;
   };
   onComplete?: (claimId: string) => void;
+  editClaimId?: string; // Optional: if provided, loads claim for editing
 }
 
 type WizardStep = "start" | "basic-info" | "lodging" | "review" | "complete";
@@ -73,7 +74,7 @@ interface WizardFormData extends Partial<FormData> {
  * Plain English throughout with tooltips for jargon
  * Real-time ROI calculation at top
  */
-export default function PCSUnifiedWizard({ userProfile, onComplete }: PCSUnifiedWizardProps) {
+export default function PCSUnifiedWizard({ userProfile, onComplete, editClaimId }: PCSUnifiedWizardProps) {
   const [currentStep, setCurrentStep] = useState<WizardStep>("start");
   const [entryMethod, setEntryMethod] = useState<"ocr" | "manual" | null>(null);
   const [formData, setFormData] = useState<WizardFormData>({
