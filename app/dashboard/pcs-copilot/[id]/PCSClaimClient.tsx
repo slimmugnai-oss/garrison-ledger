@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import PCSUnifiedWizard from "@/app/components/pcs/PCSUnifiedWizard";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
@@ -131,7 +130,6 @@ export default function PCSClaimClient({
 }: PCSClaimClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [isDownloading, setIsDownloading] = useState(false);
-  const [showEditWizard, setShowEditWizard] = useState(false);
 
   // REACTIVE SNAPSHOT PATTERN: Snapshot should ALWAYS exist after save
   // If missing, it's a data integrity issue - log warning but proceed with form_data fallback
@@ -277,13 +275,13 @@ export default function PCSClaimClient({
               </div>
             </div>
             <div className="flex gap-3">
-              <button
-                onClick={() => setShowEditWizard(true)}
+              <Link
+                href={`/dashboard/pcs-copilot?edit=${claim.id}`}
                 className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
               >
                 <Icon name="Edit" className="mr-2 h-4 w-4" />
                 Edit Claim
-              </button>
+              </Link>
               <button
                 onClick={handleExportHTML}
                 disabled={isDownloading}
@@ -697,30 +695,7 @@ export default function PCSClaimClient({
           </div>
         </div>
       </div>
-
-      {/* Edit Wizard Modal */}
-      {showEditWizard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative max-h-[90vh] w-full max-w-4xl overflow-auto rounded-lg bg-white shadow-xl">
-            <button
-              onClick={() => setShowEditWizard(false)}
-              className="absolute right-4 top-4 z-10 rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
-            >
-              <Icon name="X" className="h-5 w-5" />
-            </button>
-            <PCSUnifiedWizard
-              userProfile={_userProfile || {}}
-              onComplete={(claimId) => {
-                setShowEditWizard(false);
-                // Reload page to show updated claim
-                window.location.reload();
-              }}
-              editClaimId={claim.id}
-            />
-          </div>
-        </div>
-      )}
-
+      
       <Footer />
     </>
   );
