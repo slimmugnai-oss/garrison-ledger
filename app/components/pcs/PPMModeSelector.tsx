@@ -69,9 +69,9 @@ export default function PPMModeSelector({
               <div className="mb-4 inline-flex rounded-xl bg-green-50 p-3">
                 <Icon name="CheckCircle" className="h-8 w-8 text-green-600" />
               </div>
-              <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from MilMove</h4>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">I Have My GCC from my.move.mil</h4>
               <p className="mb-4 text-sm text-slate-600">
-                Enter the Government Constructed Cost from your MilMove estimate. This provides the
+                Enter the official Government Constructed Cost from your my.move.mil account. This provides the
                 most accurate payout calculation.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
@@ -161,22 +161,24 @@ export default function PPMModeSelector({
               />
             </div>
             <div className="mt-2 rounded-lg bg-blue-50 p-3">
-              <p className="mb-2 text-xs font-semibold text-blue-900">How to find your GCC:</p>
+              <p className="mb-2 text-xs font-semibold text-blue-900">How to find your official GCC:</p>
               <ol className="ml-4 list-decimal space-y-1 text-xs text-blue-800">
                 <li>
-                  Visit{" "}
+                  Log in to{" "}
                   <a
-                    href="https://www.move.mil/moving-guide/ppm"
+                    href="https://my.move.mil"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline"
+                    className="font-semibold underline"
                   >
-                    move.mil PPM calculator
-                  </a>
+                    my.move.mil
+                  </a>{" "}
+                  (official DoD moving portal)
                 </li>
+                <li>Create or access your PPM move in MilMove</li>
                 <li>Enter your move details (weight, origin, destination, dates)</li>
-                <li>Click "Calculate" to get your GCC estimate</li>
-                <li>Copy the GCC dollar amount and paste it above</li>
+                <li>Copy the GCC amount from your PPM estimate</li>
+                <li>Paste it in the field above</li>
               </ol>
             </div>
           </div>
@@ -361,11 +363,13 @@ export default function PPMModeSelector({
                 ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="mt-2 text-xs text-slate-700">
-                <strong>Simplified formula:</strong> ({parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
+                <strong>Simplified formula:</strong> (
+                {parseFloat(estimatorWeight || "0").toLocaleString()} lbs ÷ 100) ×{" "}
                 {parseFloat(estimatorDistance || "0").toLocaleString()} mi × $0.60/cwt
               </div>
-              <div className="mt-2 rounded bg-red-100 border border-red-300 px-2 py-1 text-xs font-medium text-red-900">
-                ⚠️ <strong>Could be ±50% off or more!</strong> Actual GCC uses DP3/GHC banded rate tables, not linear math. Use move.mil for real calculation.
+              <div className="mt-2 rounded border border-red-300 bg-red-100 px-2 py-1 text-xs font-medium text-red-900">
+                ⚠️ <strong>Could be ±50% off or more!</strong> Actual GCC uses DP3/GHC banded rate
+                tables, not linear math. Use my.move.mil for real calculation.
               </div>
             </div>
           </div>
@@ -375,10 +379,10 @@ export default function PPMModeSelector({
             <Button
               variant="outline"
               className="w-full border-2 border-green-600 bg-green-50 text-green-900 hover:bg-green-100"
-              onClick={() => window.open("https://www.move.mil/moving-guide/ppm", "_blank")}
+              onClick={() => window.open("https://my.move.mil", "_blank")}
             >
               <Icon name="ExternalLink" className="mr-2 h-4 w-4" />
-              Get Official GCC from move.mil (RECOMMENDED)
+              Get Official GCC from my.move.mil (RECOMMENDED)
             </Button>
 
             <Button
