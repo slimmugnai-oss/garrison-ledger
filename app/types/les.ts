@@ -1,9 +1,9 @@
 /**
  * LES & PAYCHECK AUDITOR - TYPE DEFINITIONS
- * 
+ *
  * Domain types for Leave and Earnings Statement (LES) parsing,
  * expected pay calculation, and audit flag generation.
- * 
+ *
  * Security Note: These types are used server-side only for parsing.
  * Never expose raw LES text or full PDFs to client-side code.
  */
@@ -15,32 +15,32 @@
 /**
  * LES line item section categories
  */
-export type LesSection = 
-  | 'ALLOWANCE'   // BAH, BAS, COLA, special pays
-  | 'DEDUCTION'   // SGLI, TSP, garnishments
-  | 'ALLOTMENT'   // Voluntary allotments
-  | 'TAX'         // Federal, state, FICA
-  | 'DEBT'        // Debt repayments
-  | 'ADJUSTMENT'  // Pay adjustments (positive or negative)
-  | 'OTHER';      // Misc items (backward compatibility)
+export type LesSection =
+  | "ALLOWANCE" // BAH, BAS, COLA, special pays
+  | "DEDUCTION" // SGLI, TSP, garnishments
+  | "ALLOTMENT" // Voluntary allotments
+  | "TAX" // Federal, state, FICA
+  | "DEBT" // Debt repayments
+  | "ADJUSTMENT" // Pay adjustments (positive or negative)
+  | "OTHER"; // Misc items (backward compatibility)
 
 /**
  * Parsed LES line item
  * All amounts stored as positive integers in cents
  */
 export interface LesLine {
-  line_code: string;        // e.g., "BAH", "BAS", "COLA", "SDAP"
-  description: string;       // e.g., "BASIC ALLOW HOUS W/DEP"
-  amount_cents: number;      // Always positive; section determines debit/credit
+  line_code: string; // e.g., "BAH", "BAS", "COLA", "SDAP"
+  description: string; // e.g., "BASIC ALLOW HOUS W/DEP"
+  amount_cents: number; // Always positive; section determines debit/credit
   section: LesSection;
-  raw?: string;              // Original line text for debugging (optional)
+  raw?: string; // Original line text for debugging (optional)
 }
 
 /**
  * Expected special pay (SDAP, HFP, IDP, etc.)
  */
 export interface ExpectedSpecialPay {
-  code: string;   // SDAP, HFP, IDP, FSA, etc.
+  code: string; // SDAP, HFP, IDP, FSA, etc.
   cents: number;
 }
 
@@ -50,13 +50,13 @@ export interface ExpectedSpecialPay {
  */
 export interface ExpectedSnapshot {
   user_id: string;
-  month: number;              // 1-12
-  year: number;               // e.g., 2025
-  paygrade: string;           // E01-E09, O01-O10, W01-W05
-  mha_or_zip?: string;        // Military Housing Area or ZIP code
+  month: number; // 1-12
+  year: number; // e.g., 2025
+  paygrade: string; // E01-E09, O01-O10, W01-W05
+  mha_or_zip?: string; // Military Housing Area or ZIP code
   with_dependents: boolean;
-  yos?: number;               // Years of service
-  
+  yos?: number; // Years of service
+
   expected: {
     bah_cents?: number;
     bas_cents?: number;
@@ -72,6 +72,7 @@ export interface ExpectedSnapshot {
     medicare_cents?: number;
     net_pay_cents?: number;
   };
+  czteActive?: boolean; // Combat Zone Tax Exclusion deployment status
 }
 
 /**
@@ -80,18 +81,18 @@ export interface ExpectedSnapshot {
  * - yellow: Warning/info that should be reviewed
  * - green: All clear / verified correct
  */
-export type FlagSeverity = 'red' | 'yellow' | 'green';
+export type FlagSeverity = "red" | "yellow" | "green";
 
 /**
  * Audit flag for pay discrepancy
  */
 export interface PayFlag {
   severity: FlagSeverity;
-  flag_code: string;         // BAH_MISMATCH, BAS_MISSING, COLA_STOPPED, etc.
-  message: string;           // BLUF explanation for service member
-  suggestion: string;        // Concrete next step
-  ref_url?: string;          // Link to DFAS/resource hub
-  delta_cents?: number;      // Expected - Actual (positive = underpaid)
+  flag_code: string; // BAH_MISMATCH, BAS_MISSING, COLA_STOPPED, etc.
+  message: string; // BLUF explanation for service member
+  suggestion: string; // Concrete next step
+  ref_url?: string; // Link to DFAS/resource hub
+  delta_cents?: number; // Expected - Actual (positive = underpaid)
 }
 
 // =============================================================================
@@ -129,7 +130,7 @@ export interface ParsedSummary {
     TAX: number;
     OTHER: number;
   };
-  allowancesByCode: Record<string, number>;  // { BAH: 150000, BAS: 46066, ... }
+  allowancesByCode: Record<string, number>; // { BAH: 150000, BAS: 46066, ... }
   deductionsByCode: Record<string, number>;
 }
 
@@ -178,7 +179,7 @@ export interface PayFlagRow {
  * POST /api/les/upload - Request
  */
 export interface LesUploadRequest {
-  file: File;  // Multipart form data
+  file: File; // Multipart form data
 }
 
 /**
@@ -209,7 +210,7 @@ export interface LesAuditResponse {
   summary: {
     actualAllowancesCents: number;
     expectedAllowancesCents: number;
-    deltaCents: number;  // Total delta (positive = underpaid)
+    deltaCents: number; // Total delta (positive = underpaid)
   };
 }
 
@@ -231,7 +232,7 @@ export interface LesHistoryItem {
     yellow: number;
     green: number;
   };
-  totalDeltaCents: number;  // Sum of all deltas (positive = recovered underpayments)
+  totalDeltaCents: number; // Sum of all deltas (positive = recovered underpayments)
 }
 
 /**
@@ -250,7 +251,7 @@ export interface LesDeleteRequest {
  */
 export interface LesFlagsProps {
   flags: PayFlag[];
-  tier: 'free' | 'premium';
+  tier: "free" | "premium";
 }
 
 /**
@@ -285,9 +286,9 @@ export interface ParseResult {
  * Parser configuration
  */
 export interface ParserConfig {
-  maxLines?: number;        // Max lines to parse (safety limit)
-  strictMode?: boolean;     // Fail on unknown codes vs skip
-  debug?: boolean;          // Include raw text in output
+  maxLines?: number; // Max lines to parse (safety limit)
+  strictMode?: boolean; // Fail on unknown codes vs skip
+  debug?: boolean; // Include raw text in output
 }
 
 // =============================================================================
@@ -322,7 +323,7 @@ export interface ComparisonOptions {
     colaDeltaCents?: number;
     specialPayDeltaCents?: number;
   };
-  strictMode?: boolean;  // Flag all discrepancies vs only significant ones
+  strictMode?: boolean; // Flag all discrepancies vs only significant ones
 }
 
 // =============================================================================
@@ -334,26 +335,29 @@ export interface ComparisonOptions {
  */
 export const FLAG_CODES = {
   // Red flags (critical)
-  BAH_MISMATCH: 'BAH_MISMATCH',
-  BAS_MISSING: 'BAS_MISSING',
-  COLA_STOPPED: 'COLA_STOPPED',
-  SPECIAL_PAY_MISSING: 'SPECIAL_PAY_MISSING',
-  
+  BAH_MISMATCH: "BAH_MISMATCH",
+  BAS_MISSING: "BAS_MISSING",
+  COLA_STOPPED: "COLA_STOPPED",
+  SPECIAL_PAY_MISSING: "SPECIAL_PAY_MISSING",
+
   // Yellow flags (warnings)
-  COLA_UNEXPECTED: 'COLA_UNEXPECTED',
-  PROMO_NOT_REFLECTED: 'PROMO_NOT_REFLECTED',
-  BAH_PARTIAL_OR_DIFF: 'BAH_PARTIAL_OR_DIFF',
-  MINOR_VARIANCE: 'MINOR_VARIANCE',
-  VERIFICATION_NEEDED: 'VERIFICATION_NEEDED',
-  
+  COLA_UNEXPECTED: "COLA_UNEXPECTED",
+  PROMO_NOT_REFLECTED: "PROMO_NOT_REFLECTED",
+  BAH_PARTIAL_OR_DIFF: "BAH_PARTIAL_OR_DIFF",
+  MINOR_VARIANCE: "MINOR_VARIANCE",
+  VERIFICATION_NEEDED: "VERIFICATION_NEEDED",
+  SPECIAL_PAY_UNEXPECTED: "SPECIAL_PAY_UNEXPECTED",
+  POSSIBLE_CZTE: "POSSIBLE_CZTE",
+
   // Green flags (all clear)
-  ALL_VERIFIED: 'ALL_VERIFIED',
-  BAH_CORRECT: 'BAH_CORRECT',
-  BAS_CORRECT: 'BAS_CORRECT',
-  CZTE_INFO: 'CZTE_INFO'
+  ALL_VERIFIED: "ALL_VERIFIED",
+  BAH_CORRECT: "BAH_CORRECT",
+  BAS_CORRECT: "BAS_CORRECT",
+  CZTE_INFO: "CZTE_INFO",
+  CZTE_ACTIVE: "CZTE_ACTIVE",
 } as const;
 
-export type FlagCode = typeof FLAG_CODES[keyof typeof FLAG_CODES];
+export type FlagCode = (typeof FLAG_CODES)[keyof typeof FLAG_CODES];
 
 // =============================================================================
 // UTILITY TYPES
@@ -370,7 +374,7 @@ export function centsToDoollars(cents: number): string {
  * Helper to format delta with sign
  */
 export function formatDelta(deltaCents: number): string {
-  const sign = deltaCents > 0 ? '+' : '';
+  const sign = deltaCents > 0 ? "+" : "";
   return `${sign}${centsToDoollars(deltaCents)}`;
 }
 
@@ -378,21 +382,33 @@ export function formatDelta(deltaCents: number): string {
  * Helper to determine if paygrade is officer
  */
 export function isOfficer(paygrade: string): boolean {
-  return paygrade.startsWith('O') || paygrade.startsWith('W');
+  return paygrade.startsWith("O") || paygrade.startsWith("W");
 }
 
 /**
  * Helper to determine if paygrade is enlisted
  */
 export function isEnlisted(paygrade: string): boolean {
-  return paygrade.startsWith('E');
+  return paygrade.startsWith("E");
 }
 
 /**
  * Month/Year formatting
  */
 export function formatMonthYear(month: number, year: number): string {
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   return `${monthNames[month - 1]} ${year}`;
 }
-

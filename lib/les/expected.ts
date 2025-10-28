@@ -90,6 +90,22 @@ export async function buildExpectedSnapshot(params: ExpectedPayParams): Promise<
 
   const expected: ExpectedSnapshot["expected"] = {};
 
+  // =========================================================================
+  // CZTE (Combat Zone Tax Exclusion) Status
+  // =========================================================================
+  let czteActive = false;
+  try {
+    const { data: profile } = await supabaseAdmin
+      .from("user_profiles")
+      .select("currently_deployed_czte")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    czteActive = profile?.currently_deployed_czte || false;
+  } catch {
+    czteActive = false;
+  }
+
   // =============================================================================
   // BAH (Basic Allowance for Housing)
   // =============================================================================
@@ -209,6 +225,7 @@ export async function buildExpectedSnapshot(params: ExpectedPayParams): Promise<
     with_dependents,
     yos,
     expected,
+    czteActive, // Combat Zone Tax Exclusion status
   };
 }
 
@@ -318,18 +335,28 @@ async function computeCOLA(params: {
 }
 
 /**
- * Compute special pays from user profile
+ * Compute special pays from user profile - HYBRID V1 IMPLEMENTATION
  * Returns array of special pays or empty array
  *
- * Reads from existing profile fields: receives_sdap, receives_hfp_idp, receives_fsa, receives_flpp
+ * HYBRID MERGE LOGIC:
+ * 1. Read from user_profiles (4 legacy special pays: SDAP, HFP_IDP, FSA, FLPP)
+ * 2. Read from user_special_pay_assignments (6 new catalog-based pays: SEA, FLIGHT, SUB, DIVE, JUMP, HDP)
+ * 3. Merge by code (assignments take precedence over profile fields)
+ * 4. For flat_monthly with no amount, use default_amount_cents from catalog
+ * 5. Skip rate_table pays in v1 (deferred to v2)
  */
 async function computeSpecialPays(
   userId: string,
-  _year: number,
-  _month: number
+  year: number,
+  month: number
 ): Promise<ExpectedSpecialPay[]> {
   try {
-    const { data: profile, error } = await supabaseAdmin
+    const specialsMap = new Map<string, number>();
+
+    // =========================================================================
+    // STEP 1: Read from user_profiles (4 legacy special pays)
+    // =========================================================================
+    const { data: profile } = await supabaseAdmin
       .from("user_profiles")
       .select(
         "receives_sdap, sdap_monthly_cents, receives_hfp_idp, hfp_idp_monthly_cents, receives_fsa, fsa_monthly_cents, receives_flpp, flpp_monthly_cents"
@@ -337,34 +364,85 @@ async function computeSpecialPays(
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (error || !profile) {
-      return [];
+    if (profile) {
+      // SDAP - Special Duty Assignment Pay
+      if (profile.receives_sdap && profile.sdap_monthly_cents) {
+        specialsMap.set("SDAP", profile.sdap_monthly_cents);
+      }
+
+      // HFP/IDP - Hostile Fire Pay / Imminent Danger Pay
+      if (profile.receives_hfp_idp && profile.hfp_idp_monthly_cents) {
+        specialsMap.set("IDP", profile.hfp_idp_monthly_cents);
+      }
+
+      // FSA - Family Separation Allowance
+      if (profile.receives_fsa && profile.fsa_monthly_cents) {
+        specialsMap.set("FSA", profile.fsa_monthly_cents);
+      }
+
+      // FLPP - Foreign Language Proficiency Pay
+      if (profile.receives_flpp && profile.flpp_monthly_cents) {
+        specialsMap.set("FLPP", profile.flpp_monthly_cents);
+      }
     }
 
-    const specials: ExpectedSpecialPay[] = [];
+    // =========================================================================
+    // STEP 2: Read from user_special_pay_assignments (catalog-based pays)
+    // =========================================================================
+    // Compute audit period boundaries
+    const auditDate = new Date(year, month - 1, 15); // Mid-month of audit period
+    const auditDateStr = auditDate.toISOString().split("T")[0];
 
-    // SDAP - Special Duty Assignment Pay
-    if (profile.receives_sdap && profile.sdap_monthly_cents) {
-      specials.push({ code: "SDAP", cents: profile.sdap_monthly_cents });
+    const { data: assignments } = await supabaseAdmin
+      .from("user_special_pay_assignments")
+      .select("code, amount_override_cents")
+      .eq("user_id", userId)
+      .lte("start_date", auditDateStr)
+      .or(`end_date.is.null,end_date.gte.${auditDateStr}`);
+
+    // =========================================================================
+    // STEP 3: Load catalog defaults for assignments without override amounts
+    // =========================================================================
+    if (assignments && assignments.length > 0) {
+      const assignmentCodes = assignments.map((a) => a.code);
+
+      const { data: catalogEntries } = await supabaseAdmin
+        .from("special_pay_catalog")
+        .select("code, calc_method, default_amount_cents")
+        .in("code", assignmentCodes);
+
+      const catalogMap = new Map(catalogEntries?.map((c) => [c.code, c]) || []);
+
+      // =========================================================================
+      // STEP 4: Merge assignments (takes precedence over profile fields)
+      // =========================================================================
+      for (const assignment of assignments) {
+        const catalogEntry = catalogMap.get(assignment.code);
+
+        // Skip rate_table pays in v1 (SEA, FLIGHT, SUB, DIVE, JUMP)
+        if (catalogEntry?.calc_method === "rate_table") {
+          continue;
+        }
+
+        // Use amount_override_cents if present, otherwise use catalog default
+        const amountCents = assignment.amount_override_cents || catalogEntry?.default_amount_cents;
+
+        if (amountCents) {
+          specialsMap.set(assignment.code, amountCents);
+        }
+      }
     }
 
-    // HFP/IDP - Hostile Fire Pay / Imminent Danger Pay
-    if (profile.receives_hfp_idp && profile.hfp_idp_monthly_cents) {
-      specials.push({ code: "HFP_IDP", cents: profile.hfp_idp_monthly_cents });
-    }
-
-    // FSA - Family Separation Allowance
-    if (profile.receives_fsa && profile.fsa_monthly_cents) {
-      specials.push({ code: "FSA", cents: profile.fsa_monthly_cents });
-    }
-
-    // FLPP - Foreign Language Proficiency Pay
-    if (profile.receives_flpp && profile.flpp_monthly_cents) {
-      specials.push({ code: "FLPP", cents: profile.flpp_monthly_cents });
-    }
-
-    return specials;
-  } catch {
+    // =========================================================================
+    // STEP 5: Convert map to array
+    // =========================================================================
+    return Array.from(specialsMap.entries()).map(([code, cents]) => ({
+      code,
+      cents,
+    }));
+  } catch (error) {
+    // Log error but don't fail the audit
+    console.error("[computeSpecialPays] Error:", error);
     return [];
   }
 }

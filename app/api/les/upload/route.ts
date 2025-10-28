@@ -1,13 +1,13 @@
 /**
  * LES UPLOAD & PARSE ENDPOINT (ZERO-STORAGE SECURITY MODEL)
- * 
+ *
  * POST /api/les/upload
  * - Accepts PDF file upload (multipart/form-data)
  * - ⚠️ CRITICAL: Parses in-memory ONLY - NEVER stores raw PDF
  * - Uses text parsing OR Gemini Vision OCR based on format detection
  * - Stores ONLY parsed line items (no PII) in database
  * - Enforces tier-based upload quotas
- * 
+ *
  * Security:
  * - Clerk authentication required
  * - ZERO PII storage: No SSN, bank account, address, or full name
@@ -15,49 +15,56 @@
  * - GDPR/CCPA compliant by design
  * - Tier gating (Free: 1/month, Premium: unlimited)
  * - RLS enforced via user_id checks
- * 
+ *
  * Runtime: Node.js (required for PDF parsing)
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
-import pdf from 'pdf-parse';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import pdf from "pdf-parse";
 
-import { errorResponse, Errors } from '@/lib/api-errors';
-import { compareLesToExpected } from '@/lib/les/compare';
-import { buildExpectedSnapshot } from '@/lib/les/expected';
-import { parseLesPdf } from '@/lib/les/parse';
-import type { ParseResult, LesLine } from '@/app/types/les';
-import { logger } from '@/lib/logger';
-import { ssot } from '@/lib/ssot';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { errorResponse, Errors } from "@/lib/api-errors";
+import { compareLesToExpected } from "@/lib/les/compare";
+import { buildExpectedSnapshot } from "@/lib/les/expected";
+import { parseLesPdf } from "@/lib/les/parse";
+import type { ParseResult, LesLine } from "@/app/types/les";
+import { logger } from "@/lib/logger";
+import { ssot } from "@/lib/ssot";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 /**
  * Record server-side analytics event
  */
-async function recordAnalyticsEvent(userId: string, event: string, properties: Record<string, unknown>) {
+async function recordAnalyticsEvent(
+  userId: string,
+  event: string,
+  properties: Record<string, unknown>
+) {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/analytics/track`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event,
-        properties: { ...properties, user_id: userId },
-        timestamp: new Date().toISOString()
-      })
-    });
+    await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/analytics/track`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event,
+          properties: { ...properties, user_id: userId },
+          timestamp: new Date().toISOString(),
+        }),
+      }
+    );
   } catch (error) {
-    logger.warn('Failed to record analytics event', {
+    logger.warn("Failed to record analytics event", {
       event,
-      error: error instanceof Error ? error.message : 'Unknown'
+      error: error instanceof Error ? error.message : "Unknown",
     });
   }
 }
 
 // Force Node.js runtime for PDF parsing
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 /**
  * Maximum file size (from SSOT)
@@ -78,9 +85,10 @@ export async function POST(req: NextRequest) {
     // 2. TIER GATING & QUOTA CHECK
     // ==========================================================================
     const tier = await getUserTier(userId);
-    const monthlyQuota = tier === 'free' 
-      ? ssot.features.lesAuditor.freeUploadsPerMonth
-      : ssot.features.lesAuditor.premiumUploadsPerMonth; // null = unlimited
+    const monthlyQuota =
+      tier === "free"
+        ? ssot.features.lesAuditor.freeUploadsPerMonth
+        : ssot.features.lesAuditor.premiumUploadsPerMonth; // null = unlimited
 
     // Check current month's uploads for Free tier
     if (monthlyQuota !== null) {
@@ -89,25 +97,25 @@ export async function POST(req: NextRequest) {
       const currentYear = now.getUTCFullYear();
 
       const { count, error: countError } = await supabaseAdmin
-        .from('les_uploads')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('month', currentMonth)
-        .eq('year', currentYear);
+        .from("les_uploads")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("month", currentMonth)
+        .eq("year", currentYear);
 
       if (countError) {
-        logger.error('Failed to check upload quota', countError, { userId });
-        throw Errors.databaseError('Failed to check upload quota');
+        logger.error("Failed to check upload quota", countError, { userId });
+        throw Errors.databaseError("Failed to check upload quota");
       }
 
       if (count !== null && count >= monthlyQuota) {
-        logger.info('Upload quota exceeded', {
-          userId: userId.substring(0, 8) + '...',
+        logger.info("Upload quota exceeded", {
+          userId: userId.substring(0, 8) + "...",
           quota: monthlyQuota,
           used: count,
-          tier
+          tier,
         });
-        
+
         throw Errors.premiumRequired(
           `Monthly upload limit reached (${count}/${monthlyQuota}). Upgrade to Premium for unlimited uploads.`
         );
@@ -118,16 +126,16 @@ export async function POST(req: NextRequest) {
     // 3. PARSE MULTIPART FORM DATA
     // ==========================================================================
     const formData = await req.formData();
-    const file = formData.get('file') as File | null;
+    const file = formData.get("file") as File | null;
 
     if (!file) {
-      throw Errors.invalidInput('No file provided');
+      throw Errors.invalidInput("No file provided");
     }
 
     // Validate file type
-    if (file.type !== 'application/pdf') {
-      throw Errors.invalidInput('Only PDF files are supported', { 
-        receivedType: file.type 
+    if (file.type !== "application/pdf") {
+      throw Errors.invalidInput("Only PDF files are supported", {
+        receivedType: file.type,
       });
     }
 
@@ -135,9 +143,9 @@ export async function POST(req: NextRequest) {
     if (file.size > MAX_FILE_SIZE_BYTES) {
       throw Errors.invalidInput(
         `File too large (max ${ssot.features.lesAuditor.maxFileSizeMB}MB)`,
-        { 
+        {
           maxSize: MAX_FILE_SIZE_BYTES,
-          actualSize: file.size 
+          actualSize: file.size,
         }
       );
     }
@@ -153,28 +161,28 @@ export async function POST(req: NextRequest) {
     const month = now.getUTCMonth() + 1;
     const year = now.getUTCFullYear();
 
-    logger.info('[LES Upload] Starting parse-and-purge process', {
-      userId: userId.substring(0, 8) + '...',
+    logger.info("[LES Upload] Starting parse-and-purge process", {
+      userId: userId.substring(0, 8) + "...",
       fileSize: file.size,
-      fileName: file.name
+      fileName: file.name,
     });
 
     // Detect if LES is text-based or needs vision OCR
     const lesFormat = await detectLESFormat(buffer);
-    logger.info('[LES Upload] Format detected', { format: lesFormat });
+    logger.info("[LES Upload] Format detected", { format: lesFormat });
 
     // Parse using appropriate method
     let parseResult: ParseResult | null = null;
-    let ocrMethod: 'text_parse' | 'vision_ocr' | 'hybrid' = 'text_parse';
+    let ocrMethod: "text_parse" | "vision_ocr" | "hybrid" = "text_parse";
 
-    if (lesFormat === 'text') {
+    if (lesFormat === "text") {
       // Standard text-based LES (myPay export)
       parseResult = await parseLesPdf(buffer, { debug: false });
-      ocrMethod = 'text_parse';
-    } else if (lesFormat === 'image') {
+      ocrMethod = "text_parse";
+    } else if (lesFormat === "image") {
       // Scanned/photographed LES - use Gemini Vision
       parseResult = await processLESWithVision(buffer, file.type);
-      ocrMethod = 'vision_ocr';
+      ocrMethod = "vision_ocr";
     } else {
       // Hybrid: Try text parse first, fall back to vision if insufficient
       try {
@@ -182,13 +190,13 @@ export async function POST(req: NextRequest) {
         if (parseResult.lines.length < 3) {
           // Too few lines extracted, try vision
           parseResult = await processLESWithVision(buffer, file.type);
-          ocrMethod = 'vision_ocr';
+          ocrMethod = "vision_ocr";
         } else {
-          ocrMethod = 'text_parse';
+          ocrMethod = "text_parse";
         }
       } catch {
         parseResult = await processLESWithVision(buffer, file.type);
-        ocrMethod = 'vision_ocr';
+        ocrMethod = "vision_ocr";
       }
     }
 
@@ -196,17 +204,19 @@ export async function POST(req: NextRequest) {
     const summary = parseResult?.summary || null;
 
     if (!parsedOk || !parseResult) {
-      throw Errors.invalidInput('Failed to parse LES. Please ensure it is a valid LES PDF from myPay or your service pay system.');
+      throw Errors.invalidInput(
+        "Failed to parse LES. Please ensure it is a valid LES PDF from myPay or your service pay system."
+      );
     }
 
     // ==========================================================================
     // 5. CREATE DATABASE RECORD (NO STORAGE PATH!)
     // ==========================================================================
     const { data: uploadRecord, error: insertError } = await supabaseAdmin
-      .from('les_uploads')
+      .from("les_uploads")
       .insert({
         user_id: userId,
-        entry_type: 'upload',
+        entry_type: "upload",
         original_filename: file.name,
         mime_type: file.type,
         size_bytes: file.size,
@@ -216,159 +226,152 @@ export async function POST(req: NextRequest) {
         parsed_ok: parsedOk,
         parsed_at: new Date().toISOString(),
         parsed_summary: summary,
-        upload_status: 'parsed',
-        ocr_method: ocrMethod
+        upload_status: "parsed",
+        ocr_method: ocrMethod,
       })
-      .select('*')
+      .select("*")
       .single();
 
     if (insertError || !uploadRecord) {
-      logger.error('Failed to save upload metadata', insertError, { userId });
-      throw Errors.databaseError('Failed to save upload metadata');
+      logger.error("Failed to save upload metadata", insertError, { userId });
+      throw Errors.databaseError("Failed to save upload metadata");
     }
 
     // ==========================================================================
     // 6. STORE PARSED LINE ITEMS (SAFE - NO PII)
     // ==========================================================================
-    const lineRows = parseResult.lines.map(line => ({
+    const lineRows = parseResult.lines.map((line) => ({
       upload_id: uploadRecord.id,
       line_code: line.line_code,
       description: line.description,
       amount_cents: line.amount_cents,
       section: line.section,
-      raw: undefined // Don't store raw text for security
+      raw: undefined, // Don't store raw text for security
     }));
 
-    const { error: linesError } = await supabaseAdmin
-      .from('les_lines')
-      .insert(lineRows);
+    const { error: linesError } = await supabaseAdmin.from("les_lines").insert(lineRows);
 
     if (linesError) {
-      logger.error('Failed to save parsed lines', linesError, {
+      logger.error("Failed to save parsed lines", linesError, {
         uploadId: uploadRecord.id,
-        lineCount: lineRows.length
+        lineCount: lineRows.length,
       });
-      throw Errors.databaseError('Failed to save parsed lines');
+      throw Errors.databaseError("Failed to save parsed lines");
     }
 
-    logger.info('[LES Upload] Lines stored - PDF buffer will be discarded', {
+    logger.info("[LES Upload] Lines stored - PDF buffer will be discarded", {
       uploadId: uploadRecord.id,
       lineCount: lineRows.length,
-      ocrMethod
+      ocrMethod,
     });
 
     // ==========================================================================
     // 7. RUN AUDIT WORKFLOW
     // ==========================================================================
     try {
-        logger.info('[LESUpload] Starting audit workflow', {
-          uploadId: uploadRecord.id,
-          lineCount: parseResult.lines.length,
-          userId: userId.substring(0, 8) + '...'
+      logger.info("[LESUpload] Starting audit workflow", {
+        uploadId: uploadRecord.id,
+        lineCount: parseResult.lines.length,
+        userId: userId.substring(0, 8) + "...",
+      });
+
+      // Load user profile
+      const profile = await getUserProfile(userId);
+
+      if (profile) {
+        // Build expected snapshot
+        const snapshot = await buildExpectedSnapshot({
+          userId,
+          month,
+          year,
+          paygrade: profile.paygrade,
+          mha_or_zip: profile.mha_or_zip,
+          with_dependents: profile.with_dependents,
+          yos: profile.yos,
         });
 
-        // Load user profile
-        const profile = await getUserProfile(userId);
-        
-        if (profile) {
-          // Build expected snapshot
-          const snapshot = await buildExpectedSnapshot({
-            userId,
-            month,
-            year,
-            paygrade: profile.paygrade,
-            mha_or_zip: profile.mha_or_zip,
-            with_dependents: profile.with_dependents,
-            yos: profile.yos
-          });
+        // Store snapshot
+        await supabaseAdmin.from("expected_pay_snapshot").insert({
+          user_id: userId,
+          upload_id: uploadRecord.id,
+          month,
+          year,
+          paygrade: profile.paygrade,
+          mha_or_zip: profile.mha_or_zip,
+          with_dependents: profile.with_dependents,
+          yos: profile.yos,
+          expected_bah_cents: snapshot.expected.bah_cents,
+          expected_bas_cents: snapshot.expected.bas_cents,
+          expected_cola_cents: snapshot.expected.cola_cents,
+          expected_specials: snapshot.expected.specials,
+        });
 
-          // Store snapshot
-          await supabaseAdmin
-            .from('expected_pay_snapshot')
-            .insert({
-              user_id: userId,
-              upload_id: uploadRecord.id,
-              month,
-              year,
-              paygrade: profile.paygrade,
-              mha_or_zip: profile.mha_or_zip,
-              with_dependents: profile.with_dependents,
-              yos: profile.yos,
-              expected_bah_cents: snapshot.expected.bah_cents,
-              expected_bas_cents: snapshot.expected.bas_cents,
-              expected_cola_cents: snapshot.expected.cola_cents,
-              expected_specials: snapshot.expected.specials
-            });
+        // Compare actual vs expected
+        const comparison = compareLesToExpected(parseResult.lines, snapshot);
 
-          // Compare actual vs expected
-          const comparison = compareLesToExpected(parseResult.lines, snapshot);
-
-          // Store flags
-          if (comparison.flags.length > 0) {
-            const flagRows = comparison.flags.map(flag => ({
-              upload_id: uploadRecord.id,
-              severity: flag.severity,
-              flag_code: flag.flag_code,
-              message: flag.message,
-              suggestion: flag.suggestion,
-              ref_url: flag.ref_url,
-              delta_cents: flag.delta_cents
-            }));
-
-            await supabaseAdmin
-              .from('pay_flags')
-              .insert(flagRows);
-          }
-
-          // Update upload status to audit complete
-          await supabaseAdmin
-            .from('les_uploads')
-            .update({ upload_status: 'audit_complete' })
-            .eq('id', uploadRecord.id);
-
-          logger.info('[LESUpload] Audit completed successfully', {
-            uploadId: uploadRecord.id,
-            flagCount: comparison.flags.length,
-            redFlags: comparison.flags.filter(f => f.severity === 'red').length,
-            yellowFlags: comparison.flags.filter(f => f.severity === 'yellow').length,
-            greenFlags: comparison.flags.filter(f => f.severity === 'green').length,
-            userId: userId.substring(0, 8) + '...'
-          });
-
-          // Record analytics
-          await recordAnalyticsEvent(userId, 'les_audit_complete', {
+        // Store flags
+        if (comparison.flags.length > 0) {
+          const flagRows = comparison.flags.map((flag) => ({
             upload_id: uploadRecord.id,
-            month,
-            year,
-            flag_count: comparison.flags.length,
-            has_red_flags: comparison.flags.some(f => f.severity === 'red')
-          });
+            severity: flag.severity,
+            flag_code: flag.flag_code,
+            message: flag.message,
+            suggestion: flag.suggestion,
+            ref_url: flag.ref_url,
+            delta_cents: flag.delta_cents,
+          }));
 
-        } else {
-          logger.warn('[LESUpload] Profile incomplete, audit skipped', {
-            uploadId: uploadRecord.id,
-            userId: userId.substring(0, 8) + '...'
-          });
-          
-          // Keep status as 'parsed' - user needs to complete profile
-          // UI can show: "Complete your profile to run audit"
+          await supabaseAdmin.from("pay_flags").insert(flagRows);
         }
+
+        // Update upload status to audit complete
+        await supabaseAdmin
+          .from("les_uploads")
+          .update({ upload_status: "audit_complete" })
+          .eq("id", uploadRecord.id);
+
+        logger.info("[LESUpload] Audit completed successfully", {
+          uploadId: uploadRecord.id,
+          flagCount: comparison.flags.length,
+          redFlags: comparison.flags.filter((f) => f.severity === "red").length,
+          yellowFlags: comparison.flags.filter((f) => f.severity === "yellow").length,
+          greenFlags: comparison.flags.filter((f) => f.severity === "green").length,
+          userId: userId.substring(0, 8) + "...",
+        });
+
+        // Record analytics
+        await recordAnalyticsEvent(userId, "les_audit_complete", {
+          upload_id: uploadRecord.id,
+          month,
+          year,
+          flag_count: comparison.flags.length,
+          has_red_flags: comparison.flags.some((f) => f.severity === "red"),
+        });
+      } else {
+        logger.warn("[LESUpload] Profile incomplete, audit skipped", {
+          uploadId: uploadRecord.id,
+          userId: userId.substring(0, 8) + "...",
+        });
+
+        // Keep status as 'parsed' - user needs to complete profile
+        // UI can show: "Complete your profile to run audit"
+      }
     } catch (auditError) {
-      logger.error('[LESUpload] Failed to run audit after upload', auditError, {
+      logger.error("[LESUpload] Failed to run audit after upload", auditError, {
         uploadId: uploadRecord.id,
-        userId: userId.substring(0, 8) + '...'
+        userId: userId.substring(0, 8) + "...",
       });
-      
+
       // Don't fail the upload - mark as audit_failed
       await supabaseAdmin
-        .from('les_uploads')
-        .update({ upload_status: 'audit_failed' })
-        .eq('id', uploadRecord.id);
+        .from("les_uploads")
+        .update({ upload_status: "audit_failed" })
+        .eq("id", uploadRecord.id);
 
       // Record analytics
-      await recordAnalyticsEvent(userId, 'les_audit_failed', {
+      await recordAnalyticsEvent(userId, "les_audit_failed", {
         upload_id: uploadRecord.id,
-        error: auditError instanceof Error ? auditError.message : 'Unknown error'
+        error: auditError instanceof Error ? auditError.message : "Unknown error",
       });
     }
 
@@ -376,30 +379,30 @@ export async function POST(req: NextRequest) {
     // 8. ANALYTICS
     // ==========================================================================
     // Record analytics events (server-side)
-    await recordAnalyticsEvent(userId, 'les_upload', {
+    await recordAnalyticsEvent(userId, "les_upload", {
       size: file.size,
       month,
-      year
+      year,
     });
 
     if (parsedOk) {
-      await recordAnalyticsEvent(userId, 'les_parse_ok', {
-        upload_id: uploadRecord.id
+      await recordAnalyticsEvent(userId, "les_parse_ok", {
+        upload_id: uploadRecord.id,
       });
     } else {
-      await recordAnalyticsEvent(userId, 'les_parse_fail', {
-        reason: 'parse_error'
+      await recordAnalyticsEvent(userId, "les_parse_fail", {
+        reason: "parse_error",
       });
     }
 
     // ==========================================================================
     // 9. RETURN RESPONSE (PDF BUFFER NOW DISCARDED - ZERO RETENTION!)
     // ==========================================================================
-    logger.info('LES upload complete', {
+    logger.info("LES upload complete", {
       uploadId: uploadRecord.id,
       parsedOk,
-      userId: userId.substring(0, 8) + '...',
-      fileSize: file.size
+      userId: userId.substring(0, 8) + "...",
+      fileSize: file.size,
     });
 
     return NextResponse.json({
@@ -407,9 +410,8 @@ export async function POST(req: NextRequest) {
       parsedOk,
       summary,
       month,
-      year
+      year,
     });
-
   } catch (error) {
     return errorResponse(error);
   }
@@ -419,25 +421,25 @@ export async function POST(req: NextRequest) {
  * Get user's subscription tier
  * TODO: Integrate with your premium status system
  */
-async function getUserTier(userId: string): Promise<'free' | 'premium'> {
+async function getUserTier(userId: string): Promise<"free" | "premium"> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('entitlements')
-      .select('tier')
-      .eq('user_id', userId)
+      .from("entitlements")
+      .select("tier")
+      .eq("user_id", userId)
       .maybeSingle();
 
     if (error || !data) {
-      return 'free';
+      return "free";
     }
 
-    return (data.tier as 'free' | 'premium') || 'free';
+    return (data.tier as "free" | "premium") || "free";
   } catch (error) {
-    logger.warn('Failed to get user tier, defaulting to free', {
-      error: error instanceof Error ? error.message : 'Unknown',
-      userId: userId.substring(0, 8) + '...'
+    logger.warn("Failed to get user tier, defaulting to free", {
+      error: error instanceof Error ? error.message : "Unknown",
+      userId: userId.substring(0, 8) + "...",
     });
-    return 'free';
+    return "free";
   }
 }
 
@@ -452,9 +454,9 @@ async function getUserProfile(userId: string): Promise<{
 } | null> {
   try {
     const { data, error } = await supabaseAdmin
-      .from('user_profiles')
-      .select('paygrade, mha_code, mha_code_override, has_dependents, time_in_service_months')
-      .eq('user_id', userId)
+      .from("user_profiles")
+      .select("paygrade, mha_code, mha_code_override, has_dependents, time_in_service_months")
+      .eq("user_id", userId)
       .maybeSingle();
 
     if (error || !data) {
@@ -466,13 +468,13 @@ async function getUserProfile(userId: string): Promise<{
 
     // Validate required computed fields
     if (!data.paygrade || !mhaCode || data.has_dependents === null) {
-      logger.warn('[LESUpload] Profile incomplete', {
-        userId: userId.substring(0, 8) + '...',
+      logger.warn("[LESUpload] Profile incomplete", {
+        userId: userId.substring(0, 8) + "...",
         missingFields: {
           paygrade: !data.paygrade,
           mha_code: !mhaCode,
-          has_dependents: data.has_dependents === null
-        }
+          has_dependents: data.has_dependents === null,
+        },
       });
       return null;
     }
@@ -481,10 +483,10 @@ async function getUserProfile(userId: string): Promise<{
       paygrade: data.paygrade,
       mha_or_zip: mhaCode,
       with_dependents: Boolean(data.has_dependents),
-      yos: data.time_in_service_months ? Math.floor(data.time_in_service_months / 12) : undefined
+      yos: data.time_in_service_months ? Math.floor(data.time_in_service_months / 12) : undefined,
     };
   } catch (profileError) {
-    logger.warn('[LESUpload] Failed to get user profile', { userId, error: profileError });
+    logger.warn("[LESUpload] Failed to get user profile", { userId, error: profileError });
     return null;
   }
 }
@@ -496,17 +498,17 @@ async function getUserProfile(userId: string): Promise<{
 /**
  * Detect LES format to choose appropriate parsing method
  */
-async function detectLESFormat(buffer: Buffer): Promise<'text' | 'image' | 'hybrid'> {
+async function detectLESFormat(buffer: Buffer): Promise<"text" | "image" | "hybrid"> {
   try {
     const textData = await pdf(buffer);
     const textLength = textData.text.length;
-    
-    if (textLength > 500) return 'text'; // Sufficient text extracted - standard myPay export
-    if (textLength < 50) return 'image'; // Almost no text - scanned/photographed LES
-    return 'hybrid'; // Some text but may need vision enhancement
+
+    if (textLength > 500) return "text"; // Sufficient text extracted - standard myPay export
+    if (textLength < 50) return "image"; // Almost no text - scanned/photographed LES
+    return "hybrid"; // Some text but may need vision enhancement
   } catch (error) {
-    logger.warn('[LES Format Detection] PDF parse failed, assuming image format', { error });
-    return 'image'; // If text extraction fails, assume it's an image
+    logger.warn("[LES Format Detection] PDF parse failed, assuming image format", { error });
+    return "image"; // If text extraction fails, assume it's an image
   }
 }
 
@@ -514,39 +516,36 @@ async function detectLESFormat(buffer: Buffer): Promise<'text' | 'image' | 'hybr
  * Process LES with Gemini Vision (for scanned/image LES)
  * Handles multiple LES formats from different service pay systems
  */
-async function processLESWithVision(
-  buffer: Buffer,
-  contentType: string
-): Promise<ParseResult> {
+async function processLESWithVision(buffer: Buffer, contentType: string): Promise<ParseResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('Gemini API key not configured');
+    throw new Error("Gemini API key not configured");
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-  const base64Data = buffer.toString('base64');
-  
+  const base64Data = buffer.toString("base64");
+
   const prompt = getLESExtractionPrompt();
-  
-  logger.info('[LES Vision OCR] Processing with Gemini Vision');
-  
+
+  logger.info("[LES Vision OCR] Processing with Gemini Vision");
+
   const result = await model.generateContent([
     prompt,
     {
       inlineData: {
         mimeType: contentType,
-        data: base64Data
-      }
-    }
+        data: base64Data,
+      },
+    },
   ]);
 
   const response = await result.response;
   const extractedText = response.text();
 
-  logger.info('[LES Vision OCR] Response received', { 
-    responseLength: extractedText.length 
+  logger.info("[LES Vision OCR] Response received", {
+    responseLength: extractedText.length,
   });
 
   // Parse JSON response
@@ -559,67 +558,71 @@ async function processLESWithVision(
   try {
     // Remove markdown code blocks if present
     let cleanedText = extractedText.trim();
-    cleanedText = cleanedText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-    
-    const firstBrace = cleanedText.indexOf('{');
-    const lastBrace = cleanedText.lastIndexOf('}');
-    
+    cleanedText = cleanedText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+
+    const firstBrace = cleanedText.indexOf("{");
+    const lastBrace = cleanedText.lastIndexOf("}");
+
     if (firstBrace !== -1 && lastBrace !== -1) {
       const jsonString = cleanedText.substring(firstBrace, lastBrace + 1);
       extractedData = JSON.parse(jsonString);
     } else {
-      throw new Error('No JSON found in response');
+      throw new Error("No JSON found in response");
     }
   } catch (parseError) {
-    logger.error('[LES Vision OCR] Failed to parse JSON response', { 
+    logger.error("[LES Vision OCR] Failed to parse JSON response", {
       error: parseError,
-      responsePreview: extractedText.substring(0, 500)
+      responsePreview: extractedText.substring(0, 500),
     });
-    throw new Error('Failed to parse OCR response');
+    throw new Error("Failed to parse OCR response");
   }
 
   // Convert to ParseResult format
   const lines: LesLine[] = [
-    ...(extractedData.allowances || []).map(item => ({
+    ...(extractedData.allowances || []).map((item) => ({
       line_code: item.code,
       description: item.description,
       amount_cents: item.amount_cents,
-      section: 'ALLOWANCE' as const
+      section: "ALLOWANCE" as const,
     })),
-    ...(extractedData.taxes || []).map(item => ({
+    ...(extractedData.taxes || []).map((item) => ({
       line_code: item.code,
       description: item.description,
       amount_cents: item.amount_cents,
-      section: 'TAX' as const
+      section: "TAX" as const,
     })),
-    ...(extractedData.deductions || []).map(item => ({
+    ...(extractedData.deductions || []).map((item) => ({
       line_code: item.code,
       description: item.description,
       amount_cents: item.amount_cents,
-      section: 'DEDUCTION' as const
-    }))
+      section: "DEDUCTION" as const,
+    })),
   ];
 
-  logger.info('[LES Vision OCR] Extraction complete', {
+  logger.info("[LES Vision OCR] Extraction complete", {
     totalLines: lines.length,
     allowances: extractedData.allowances?.length || 0,
     taxes: extractedData.taxes?.length || 0,
-    deductions: extractedData.deductions?.length || 0
+    deductions: extractedData.deductions?.length || 0,
   });
 
   return {
     lines,
     summary: {
       totalsBySection: {
-        ALLOWANCE: lines.filter(l => l.section === 'ALLOWANCE').reduce((sum, l) => sum + l.amount_cents, 0),
-        TAX: lines.filter(l => l.section === 'TAX').reduce((sum, l) => sum + l.amount_cents, 0),
-        DEDUCTION: lines.filter(l => l.section === 'DEDUCTION').reduce((sum, l) => sum + l.amount_cents, 0),
+        ALLOWANCE: lines
+          .filter((l) => l.section === "ALLOWANCE")
+          .reduce((sum, l) => sum + l.amount_cents, 0),
+        TAX: lines.filter((l) => l.section === "TAX").reduce((sum, l) => sum + l.amount_cents, 0),
+        DEDUCTION: lines
+          .filter((l) => l.section === "DEDUCTION")
+          .reduce((sum, l) => sum + l.amount_cents, 0),
         ALLOTMENT: 0,
-        OTHER: 0
+        OTHER: 0,
       },
       allowancesByCode: {},
-      deductionsByCode: {}
-    }
+      deductionsByCode: {},
+    },
   };
 }
 
@@ -656,10 +659,12 @@ ALLOWANCES (Section 1):
 - IDP or IMMINENT DANGER PAY: Combat zone pay
 - FSA or FAM SEP ALLOW: Family separation allowance
 - FLPP or FOR LANG PRO PAY: Foreign language proficiency pay
-- SEA PAY or CAREER SEA PAY: Navy sea duty pay
+- SEA PAY or CAREER SEA PAY: Navy/Coast Guard sea duty pay
 - SUB PAY or SUBMARINE PAY: Navy submarine duty pay
-- FLIGHT PAY or AVIATION PAY: Air Force/Navy aviation pay
+- FLIGHT PAY or AVIATION PAY or ACIP: Aviation career incentive pay
 - JUMP PAY or PARACHUTE PAY: Airborne duty pay
+- DIVE PAY or DIVING PAY: Diving duty pay
+- HDP or HARDSHIP DUTY PAY: Location hardship pay
 
 TAXES (Section 2):
 - FED TAX or FITW or FEDERAL TAX: Federal income tax withheld
@@ -722,4 +727,3 @@ VALIDATION:
 
 REMEMBER: Your PRIMARY mission is to SKIP all PII. Only extract pay line items.`;
 }
-

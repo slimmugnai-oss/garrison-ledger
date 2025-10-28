@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense , useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import ProfileFormField, { getInputClass } from "@/app/components/profile/ProfileFormField";
 import ProfileLoadingSkeleton from "@/app/components/profile/ProfileLoadingSkeleton";
@@ -62,6 +62,7 @@ type ProfilePayload = {
   fsa_monthly_cents?: number | null;
   receives_flpp?: boolean | null;
   flpp_monthly_cents?: number | null;
+  currently_deployed_czte?: boolean | null;
 
   // Deductions & Taxes (for LES Auditor)
   tsp_contribution_percent?: number | null;
@@ -197,6 +198,7 @@ function ProfileSetupContent() {
             fsa_monthly_cents: json?.fsa_monthly_cents ?? null,
             receives_flpp: json?.receives_flpp ?? null,
             flpp_monthly_cents: json?.flpp_monthly_cents ?? null,
+            currently_deployed_czte: json?.currently_deployed_czte ?? null,
             // Deductions & Taxes
             tsp_contribution_percent: json?.tsp_contribution_percent ?? null,
             tsp_contribution_type: json?.tsp_contribution_type ?? null,
@@ -1563,6 +1565,38 @@ function ProfileSetupContent() {
                         </div>
                       </ProfileFormField>
                     )}
+                  </div>
+
+                  {/* CZTE - Combat Zone Tax Exclusion */}
+                  <div className="space-y-3">
+                    <ProfileFormField
+                      label="Currently deployed to Combat Zone Tax Exclusion (CZTE) location?"
+                      description="Enables zero federal tax withholding validation for deployed service members"
+                      success={
+                        data.currently_deployed_czte !== null &&
+                        data.currently_deployed_czte !== undefined
+                      }
+                    >
+                      <div className="flex gap-4">
+                        <label className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={data.currently_deployed_czte || false}
+                            onChange={(e) =>
+                              setData((d) => ({ ...d, currently_deployed_czte: e.target.checked }))
+                            }
+                            className="h-4 w-4 rounded text-blue-600"
+                          />
+                          <span>Yes, currently deployed (CZTE active)</span>
+                        </label>
+                      </div>
+                      {data.currently_deployed_czte && (
+                        <div className="mt-3 rounded-md bg-green-50 p-3 text-sm text-green-800">
+                          ✅ CZTE active - Zero federal tax withholding will be validated as correct
+                          in LES Auditor
+                        </div>
+                      )}
+                    </ProfileFormField>
                   </div>
                 </div>
               </ProfileSection>

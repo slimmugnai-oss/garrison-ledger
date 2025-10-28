@@ -104,6 +104,20 @@ export const ssot = {
       maxFileSizeMB: 5,
       supportedFormats: ["PDF"],
       futureFormats: ["image-ocr", "manual-entry"],
+      specialPays: {
+        supported: ["SDAP", "IDP", "FSA", "FLPP", "SEA", "FLIGHT", "SUB", "DIVE", "JUMP", "HDP"],
+        implementation: "hybrid", // user_profiles for 4 legacy, catalog for new pays
+        v1Flat: ["SDAP", "IDP", "FSA", "FLPP", "HDP"], // flat_monthly rates
+        v1RateTables: ["SEA", "FLIGHT", "SUB", "DIVE", "JUMP"], // deferred to v2
+        catalogTable: "special_pay_catalog",
+        assignmentsTable: "user_special_pay_assignments",
+      },
+      czte: {
+        enabled: true,
+        version: "v1_simple_boolean",
+        profileField: "currently_deployed_czte",
+        futureEnhancement: "full_deployment_table_with_dates",
+      },
     },
     askAssistant: {
       status: "active",

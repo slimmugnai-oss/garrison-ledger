@@ -1,0 +1,72 @@
+[
+  {
+    "code": "SDAP",
+    "name": "Special Duty Assignment Pay",
+    "calc_method": "flat_monthly",
+    "default_amount_cents": 15000,
+    "description": "Pay for specific skill identifiers or duty assignments. Amount varies by assignment ($150-$450/month typical range)."
+  },
+  {
+    "code": "IDP",
+    "name": "Imminent Danger or Hostile Fire Pay",
+    "calc_method": "flat_monthly",
+    "default_amount_cents": 22500,
+    "description": "Statutory $225/month for service in designated hostile fire or imminent danger zones."
+  },
+  {
+    "code": "FSA",
+    "name": "Family Separation Allowance",
+    "calc_method": "flat_monthly",
+    "default_amount_cents": 25000,
+    "description": "Statutory $250/month when separated from family members due to military orders for 30+ days."
+  },
+  {
+    "code": "FLPP",
+    "name": "Foreign Language Proficiency Pay",
+    "calc_method": "flat_monthly",
+    "default_amount_cents": 30000,
+    "description": "Pay for qualified foreign language skills. Amount varies by proficiency level and language criticality ($100-$500/month)."
+  },
+  {
+    "code": "SEA",
+    "name": "Sea Pay",
+    "calc_method": "rate_table",
+    "default_amount_cents": null,
+    "description": "Career Sea Pay for Navy/Coast Guard personnel. Requires rate table lookup by paygrade and cumulative sea duty months. Implementation deferred to v2."
+  },
+  {
+    "code": "FLIGHT",
+    "name": "Flight Pay",
+    "calc_method": "rate_table",
+    "default_amount_cents": null,
+    "description": "Aviation Career Incentive Pay (ACIP) for rated aviators. Requires rate table lookup by years of aviation service and aviation category. Implementation deferred to v2."
+  },
+  {
+    "code": "SUB",
+    "name": "Submarine Pay",
+    "calc_method": "rate_table",
+    "default_amount_cents": null,
+    "description": "Submarine Duty Pay for qualified submariners. Requires rate table lookup by paygrade and submarine qualification level. Implementation deferred to v2."
+  },
+  {
+    "code": "DIVE",
+    "name": "Dive Pay",
+    "calc_method": "rate_table",
+    "default_amount_cents": null,
+    "description": "Diving Duty Pay for qualified divers. Requires rate table lookup by paygrade and dive qualification level. Implementation deferred to v2."
+  },
+  {
+    "code": "JUMP",
+    "name": "Parachute Pay",
+    "calc_method": "rate_table",
+    "default_amount_cents": null,
+    "description": "Parachute Duty Pay for airborne-qualified personnel. Typically $150-$225/month based on jump status. Implementation deferred to v2."
+  },
+  {
+    "code": "HDP",
+    "name": "Hardship Duty Pay",
+    "calc_method": "flat_monthly",
+    "default_amount_cents": 10000,
+    "description": "Location-based hardship pay. Amount varies by duty location hardship level ($50-$150/month typical range)."
+  }
+]

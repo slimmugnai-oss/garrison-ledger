@@ -77,6 +77,42 @@ export const LINE_CODES: Record<string, LineCodeDefinition> = {
     taxability: { fed: true, state: true, oasdi: true, medicare: true },
   },
 
+  SEA_PAY: {
+    section: "ALLOWANCE",
+    description: "Career Sea Pay",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
+  FLIGHT_PAY: {
+    section: "ALLOWANCE",
+    description: "Aviation Career Incentive Pay (ACIP)",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
+  SUB_PAY: {
+    section: "ALLOWANCE",
+    description: "Submarine Duty Pay",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
+  DIVE_PAY: {
+    section: "ALLOWANCE",
+    description: "Diving Duty Pay",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
+  JUMP_PAY: {
+    section: "ALLOWANCE",
+    description: "Parachute Duty Pay",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
+  HDP: {
+    section: "ALLOWANCE",
+    description: "Hardship Duty Pay",
+    taxability: { fed: true, state: true, oasdi: true, medicare: true },
+  },
+
   // =============================================================================
   // TAXES
   // =============================================================================
@@ -246,6 +282,17 @@ export function canonicalizeCode(rawCode: string): string {
     return "HFP";
   if (normalized === "FSA" || normalized.includes("FAMILY SEP")) return "FSA";
   if (normalized === "FLPP" || normalized.includes("LANGUAGE")) return "FLPP";
+  if (normalized.includes("SEA PAY") || normalized.includes("CAREER SEA")) return "SEA_PAY";
+  if (
+    normalized.includes("FLIGHT") ||
+    normalized.includes("AVIATION") ||
+    normalized.includes("ACIP")
+  )
+    return "FLIGHT_PAY";
+  if (normalized.includes("SUB") && normalized.includes("PAY")) return "SUB_PAY";
+  if (normalized.includes("DIVE") || normalized.includes("DIVING")) return "DIVE_PAY";
+  if (normalized.includes("JUMP") || normalized.includes("PARACHUTE")) return "JUMP_PAY";
+  if (normalized.includes("HARDSHIP") || normalized === "HDP") return "HDP";
 
   // Taxes
   if (normalized.includes("FED") && normalized.includes("TAX")) return "TAX_FED";

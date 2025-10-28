@@ -154,6 +154,67 @@ export function compareLesToExpected(
   }
 
   // =============================================================================
+  // Special Pays Comparison (NEW - V1 Enhancement)
+  // =============================================================================
+  // Compare expected special pays (from profile + assignments) vs actual LES
+  const expectedSpecials = expected.expected.specials || [];
+  const actualSpecialsMap = new Map<string, number>();
+
+  // Build map of actual special pays from parsed LES
+  for (const line of parsed) {
+    if (
+      line.section === "ALLOWANCE" &&
+      [
+        "SDAP",
+        "IDP",
+        "FSA",
+        "FLPP",
+        "SEA_PAY",
+        "FLIGHT_PAY",
+        "SUB_PAY",
+        "DIVE_PAY",
+        "JUMP_PAY",
+        "HDP",
+      ].includes(line.line_code)
+    ) {
+      const existing = actualSpecialsMap.get(line.line_code) || 0;
+      actualSpecialsMap.set(line.line_code, existing + line.amount_cents);
+    }
+  }
+
+  // Check for missing expected special pays
+  for (const expectedSpecial of expectedSpecials) {
+    const actualAmount = actualSpecialsMap.get(expectedSpecial.code) || 0;
+    const delta = expectedSpecial.cents - actualAmount;
+
+    if (actualAmount === 0) {
+      // Expected special pay not found in LES
+      flags.push(createSpecialPayMissingFlag(expectedSpecial.code, expectedSpecial.cents));
+    } else if (Math.abs(delta) > 1000) {
+      // $10 threshold for special pay variance
+      flags.push(
+        createSpecialPayMismatchFlag(
+          expectedSpecial.code,
+          actualAmount,
+          expectedSpecial.cents,
+          delta
+        )
+      );
+    } else {
+      // Special pay verified correct
+      flags.push(createCorrectFlag(expectedSpecial.code, actualAmount));
+    }
+
+    // Remove from actualSpecialsMap (processed)
+    actualSpecialsMap.delete(expectedSpecial.code);
+  }
+
+  // Check for unexpected special pays (in LES but not in profile/assignments)
+  for (const [code, amount] of actualSpecialsMap.entries()) {
+    flags.push(createSpecialPayUnexpectedFlag(code, amount));
+  }
+
+  // =============================================================================
   // Deductions Comparison (TSP, SGLI, Dental)
   // =============================================================================
   const actualDeductions = new Map<string, number>();
@@ -259,6 +320,20 @@ export function compareLesToExpected(
         flags.push(createMedicarePercentageCorrectFlag(actualMedicare, actualPercent));
       }
     }
+  }
+
+  // =============================================================================
+  // CZTE (Combat Zone Tax Exclusion) Detection
+  // =============================================================================
+  const actualFedTax = actualTaxes.get("TAX_FED") || 0;
+  const czteActive = (expected as any).czteActive || false; // TypeScript will be fixed in types update
+
+  if (czteActive && actualFedTax === 0) {
+    // Green flag - CZTE active, zero fed tax expected
+    flags.push(createCZTEActiveFlag());
+  } else if (!czteActive && actualFedTax === 0 && (actualFICA > 0 || actualMedicare > 0)) {
+    // Yellow flag - possible CZTE situation (FICA/Medicare present but no fed tax)
+    flags.push(createPossibleCZTEFlag());
   }
 
   // Federal and State Tax - NO VALIDATION
@@ -750,6 +825,61 @@ function createNetPayCorrectFlag(actual: number): PayFlag {
     flag_code: "NET_PAY_CORRECT",
     message: `✅ NET PAY VERIFIED: $${actualDollars} - Your paycheck is correct!`,
     suggestion: `Your net pay matches expectations. All entitlements, deductions, and taxes have been validated. No action needed.`,
+  };
+}
+
+// =============================================================================
+// Special Pay Flag Creators
+// =============================================================================
+
+function createSpecialPayMissingFlag(code: string, expected: number): PayFlag {
+  const expectedDollars = (expected / 100).toFixed(2);
+
+  return {
+    severity: "red",
+    flag_code: "SPECIAL_PAY_MISSING",
+    message: `${code} missing: Expected $${expectedDollars}/month but not found on LES`,
+    suggestion: `Contact your finance office to verify ${code} is properly reflected in DJMS. Bring supporting documentation (orders, qualifications, duty assignment). Request retroactive payment if applicable.`,
+    delta_cents: expected,
+    ref_url: "https://www.dfas.mil/MilitaryMembers/payentitlements/special-pay/",
+  };
+}
+
+function createSpecialPayUnexpectedFlag(code: string, actual: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+
+  return {
+    severity: "yellow",
+    flag_code: "SPECIAL_PAY_UNEXPECTED",
+    message: `${code} found ($${actualDollars}/month) but not in your profile`,
+    suggestion: `If this is a recurring special pay, add it to your profile for accurate future audits. If this is a one-time payment or bonus, no action needed. Verify the amount is correct for your qualification level.`,
+    delta_cents: -actual,
+  };
+}
+
+// =============================================================================
+// CZTE Flag Creators
+// =============================================================================
+
+function createCZTEActiveFlag(): PayFlag {
+  return {
+    severity: "green",
+    flag_code: "CZTE_ACTIVE",
+    message: "✅ Combat Zone Tax Exclusion (CZTE) active - Zero federal tax is correct",
+    suggestion:
+      "No action needed. Your deployment to a CZTE location makes your income exempt from federal income tax. FICA and Medicare taxes still apply as required by law.",
+    ref_url: "https://www.irs.gov/publications/p3",
+  };
+}
+
+function createPossibleCZTEFlag(): PayFlag {
+  return {
+    severity: "yellow",
+    flag_code: "POSSIBLE_CZTE",
+    message: "Zero federal tax detected but CZTE flag not set. Are you deployed to a combat zone?",
+    suggestion:
+      "If you're currently deployed to a Combat Zone Tax Exclusion (CZTE) location, update your profile to mark 'Currently deployed (CZTE active)'. This will validate your zero federal tax withholding. If not deployed, verify with finance why federal tax is $0.",
+    ref_url: "https://www.irs.gov/publications/p3",
   };
 }
 
