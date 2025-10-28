@@ -344,9 +344,11 @@ export async function PATCH(req: NextRequest) {
     // Build form_data JSONB object
     const formData: Record<string, any> = {};
     if (tle_origin_nights !== undefined) formData.tle_origin_nights = tle_origin_nights || 0;
-    if (tle_destination_nights !== undefined) formData.tle_destination_nights = tle_destination_nights || 0;
+    if (tle_destination_nights !== undefined)
+      formData.tle_destination_nights = tle_destination_nights || 0;
     if (tle_origin_rate !== undefined) formData.tle_origin_rate = tle_origin_rate || 0;
-    if (tle_destination_rate !== undefined) formData.tle_destination_rate = tle_destination_rate || 0;
+    if (tle_destination_rate !== undefined)
+      formData.tle_destination_rate = tle_destination_rate || 0;
     if (actual_weight !== undefined) formData.actual_weight = actual_weight || 0;
     if (estimated_weight !== undefined) formData.estimated_weight = estimated_weight || 0;
     if (malt_distance !== undefined) formData.malt_distance = malt_distance || distance_miles || 0;
@@ -358,11 +360,22 @@ export async function PATCH(req: NextRequest) {
 
     // Only update valid database columns - remove form fields and calculations from updates
     const validFields = [
-      'claim_name', 'pcs_orders_date', 'departure_date', 'arrival_date',
-      'origin_base', 'destination_base', 'travel_method', 'dependents_count',
-      'rank_at_pcs', 'branch', 'entitlements', 'status', 'readiness_score', 'completion_percentage'
+      "claim_name",
+      "pcs_orders_date",
+      "departure_date",
+      "arrival_date",
+      "origin_base",
+      "destination_base",
+      "travel_method",
+      "dependents_count",
+      "rank_at_pcs",
+      "branch",
+      "entitlements",
+      "status",
+      "readiness_score",
+      "completion_percentage",
     ];
-    
+
     const updateData: Record<string, any> = {
       updated_at: new Date().toISOString(),
     };
@@ -384,10 +397,10 @@ export async function PATCH(req: NextRequest) {
       updateData.form_data = formData;
     }
 
-    logger.info("[PCSClaim] Updating claim", { 
-      claimId, 
+    logger.info("[PCSClaim] Updating claim", {
+      claimId,
       updateFields: Object.keys(updateData),
-      hasFormData: Object.keys(formData).length > 0 
+      hasFormData: Object.keys(formData).length > 0,
     });
 
     // Update claim
@@ -452,9 +465,25 @@ export async function PATCH(req: NextRequest) {
           const hasEssentialFields = essentialFields.every((field) => field && field !== "");
 
           const completionPercentage = hasCalculations && hasEssentialFields ? 100 : 0;
-          const readinessScore = hasCalculations
-            ? Math.round((calculations.confidence?.overall || 0.8) * 100)
-            : 0;
+          
+          // Calculate readiness score properly (0-100 range)
+          let readinessScore = 100;
+          if (hasCalculations && calculations.confidence?.overall) {
+            // Convert confidence (0-1) to readiness score (0-100)
+            const confidenceValue = typeof calculations.confidence.overall === 'number' 
+              ? calculations.confidence.overall 
+              : 0.8;
+            readinessScore = Math.round(confidenceValue * 100);
+            // Cap at 100
+            readinessScore = Math.min(100, Math.max(0, readinessScore));
+          } else if (!hasCalculations) {
+            readinessScore = 0;
+          }
+          
+          // Penalize if critical fields are missing
+          if (!claim.pcs_orders_date || !claim.origin_base || !claim.destination_base) {
+            readinessScore = Math.max(0, readinessScore - 20);
+          }
 
           // Update status based on completeness
           const shouldBeReady = completionPercentage === 100 && readinessScore >= 80;
