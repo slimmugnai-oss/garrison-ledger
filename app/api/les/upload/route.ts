@@ -19,16 +19,16 @@
  * Runtime: Node.js (required for PDF parsing)
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 import pdf from "pdf-parse";
 
+import type { ParseResult, LesLine } from "@/app/types/les";
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { compareLesToExpected } from "@/lib/les/compare";
 import { buildExpectedSnapshot } from "@/lib/les/expected";
 import { parseLesPdf } from "@/lib/les/parse";
-import type { ParseResult, LesLine } from "@/app/types/les";
 import { logger } from "@/lib/logger";
 import { ssot } from "@/lib/ssot";
 import { supabaseAdmin } from "@/lib/supabase/admin";

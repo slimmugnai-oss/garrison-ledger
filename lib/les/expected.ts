@@ -417,7 +417,9 @@ async function computeSpecialPays(
       // STEP 4: Merge assignments (takes precedence over profile fields)
       // =========================================================================
       for (const assignment of assignments) {
-        const catalogEntry = catalogMap.get(assignment.code);
+        const catalogEntry = catalogMap.get(assignment.code) as
+          | { code: string; calc_method: string; default_amount_cents: number | null }
+          | undefined;
 
         // Skip rate_table pays in v1 (SEA, FLIGHT, SUB, DIVE, JUMP)
         if (catalogEntry?.calc_method === "rate_table") {

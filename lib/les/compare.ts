@@ -210,9 +210,9 @@ export function compareLesToExpected(
   }
 
   // Check for unexpected special pays (in LES but not in profile/assignments)
-  for (const [code, amount] of actualSpecialsMap.entries()) {
+  Array.from(actualSpecialsMap.entries()).forEach(([code, amount]) => {
     flags.push(createSpecialPayUnexpectedFlag(code, amount));
-  }
+  });
 
   // =============================================================================
   // Deductions Comparison (TSP, SGLI, Dental)
@@ -278,10 +278,14 @@ export function compareLesToExpected(
     }
   }
 
+  // Extract tax amounts for use across validations
+  const actualFICA = actualTaxes.get("FICA") || 0;
+  const actualMedicare = actualTaxes.get("MEDICARE") || 0;
+  const actualFedTax = actualTaxes.get("TAX_FED") || 0;
+
   // FICA Percentage Validation (6.2% of taxable gross)
   // User entered actual FICA - we validate the percentage is correct
   if (expected.expected.fica_cents !== undefined) {
-    const actualFICA = actualTaxes.get("FICA") || 0;
     const expectedFICA = expected.expected.fica_cents; // Reference: 6.2% of taxable gross
     const delta = expectedFICA - actualFICA;
 
@@ -302,7 +306,6 @@ export function compareLesToExpected(
   // Medicare Percentage Validation (1.45% of taxable gross)
   // User entered actual Medicare - we validate the percentage is correct
   if (expected.expected.medicare_cents !== undefined) {
-    const actualMedicare = actualTaxes.get("MEDICARE") || 0;
     const expectedMedicare = expected.expected.medicare_cents; // Reference: 1.45% of taxable gross
     const delta = expectedMedicare - actualMedicare;
 
@@ -325,7 +328,6 @@ export function compareLesToExpected(
   // =============================================================================
   // CZTE (Combat Zone Tax Exclusion) Detection
   // =============================================================================
-  const actualFedTax = actualTaxes.get("TAX_FED") || 0;
   const czteActive = (expected as any).czteActive || false; // TypeScript will be fixed in types update
 
   if (czteActive && actualFedTax === 0) {
@@ -525,37 +527,6 @@ function createCOLAUnexpectedFlag(actual: number): PayFlag {
     suggestion: `Verify your duty station code in DJMS. If location does not qualify for COLA, notify finance to avoid future repayment. If you're entitled, no action needed.`,
     ref_url: "https://www.travel.dod.mil/Travel-Transportation-Rates/Per-Diem/COLA-Rates/",
     delta_cents: -actual,
-  };
-}
-
-function createSpecialPayMissingFlag(code: string, expected: number): PayFlag {
-  const expectedDollars = (expected / 100).toFixed(2);
-
-  return {
-    severity: "red",
-    flag_code: FLAG_CODES.SPECIAL_PAY_MISSING,
-    message: `${code} not found on LES. Expected $${expectedDollars}/month.`,
-    suggestion: `Contact finance office to verify ${code} entitlement is in system. Bring supporting documentation (NEC/MOS orders, duty location, etc.). Request retroactive payment if applicable.`,
-    delta_cents: expected,
-  };
-}
-
-function createSpecialPayMismatchFlag(
-  code: string,
-  actual: number,
-  expected: number,
-  delta: number
-): PayFlag {
-  const actualDollars = (actual / 100).toFixed(2);
-  const expectedDollars = (expected / 100).toFixed(2);
-  const deltaDollars = Math.abs(delta / 100).toFixed(2);
-
-  return {
-    severity: "yellow",
-    flag_code: FLAG_CODES.MINOR_VARIANCE,
-    message: `${code} variance: Received $${actualDollars}, expected $${expectedDollars}. Delta: ${delta > 0 ? "+" : "-"}$${deltaDollars}.`,
-    suggestion: `Verify ${code} rate with finance. Rate may vary by duty assignment or proficiency level. Confirm entitlement details in your service record.`,
-    delta_cents: delta,
   };
 }
 
@@ -841,6 +812,26 @@ function createSpecialPayMissingFlag(code: string, expected: number): PayFlag {
     message: `${code} missing: Expected $${expectedDollars}/month but not found on LES`,
     suggestion: `Contact your finance office to verify ${code} is properly reflected in DJMS. Bring supporting documentation (orders, qualifications, duty assignment). Request retroactive payment if applicable.`,
     delta_cents: expected,
+    ref_url: "https://www.dfas.mil/MilitaryMembers/payentitlements/special-pay/",
+  };
+}
+
+function createSpecialPayMismatchFlag(
+  code: string,
+  actual: number,
+  expected: number,
+  delta: number
+): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+  const expectedDollars = (expected / 100).toFixed(2);
+  const deltaDollars = Math.abs(delta / 100).toFixed(2);
+
+  return {
+    severity: "yellow",
+    flag_code: "SPECIAL_PAY_MISMATCH",
+    message: `${code} variance: Received $${actualDollars}, expected $${expectedDollars}. Delta: ${delta > 0 ? "+" : "-"}$${deltaDollars}`,
+    suggestion: `Verify ${code} rate with finance. Rate may vary by duty assignment or proficiency level. Confirm entitlement details in your service record.`,
+    delta_cents: delta,
     ref_url: "https://www.dfas.mil/MilitaryMembers/payentitlements/special-pay/",
   };
 }
