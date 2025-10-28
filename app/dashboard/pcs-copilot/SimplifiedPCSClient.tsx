@@ -53,7 +53,7 @@ export default function SimplifiedPCSClient({
   const handleDeleteClaim = async (claimId: string) => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/pcs/claim/${claimId}`, {
+      const response = await fetch(`/api/pcs/claims/${claimId}`, {
         method: "DELETE",
       });
 
