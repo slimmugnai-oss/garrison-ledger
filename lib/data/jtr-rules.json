@@ -118,29 +118,33 @@
       "citation": "JTR 054705",
       "description": "Maximum weight authorized for shipment or PPM based on rank",
       "allowances": {
-        "E1": 5000,
-        "E2": 5000,
-        "E3": 5000,
-        "E4": 7000,
-        "E5": 7000,
-        "E6": 8000,
-        "E7": 11000,
-        "E8": 12000,
-        "E9": 13000,
-        "W1": 10000,
-        "W2": 11000,
-        "W3": 12000,
-        "W4": 13000,
-        "W5": 13500,
-        "O1": 10000,
-        "O2": 10000,
-        "O3": 11000,
-        "O4": 12500,
-        "O5": 13000,
-        "O6": 18000
+        "E1": { "without": 5000, "with": 8000 },
+        "E2": { "without": 5000, "with": 8000 },
+        "E3": { "without": 5000, "with": 8000 },
+        "E4": { "without": 7000, "with": 8000 },
+        "E5": { "without": 7000, "with": 9000 },
+        "E6": { "without": 8000, "with": 11000 },
+        "E7": { "without": 11000, "with": 13000 },
+        "E8": { "without": 12000, "with": 14000 },
+        "E9": { "without": 13000, "with": 15000 },
+        "W1": { "without": 10000, "with": 12000 },
+        "W2": { "without": 11000, "with": 13000 },
+        "W3": { "without": 12000, "with": 14000 },
+        "W4": { "without": 13000, "with": 15000 },
+        "W5": { "without": 13000, "with": 16000 },
+        "O1": { "without": 10000, "with": 12000 },
+        "O2": { "without": 10000, "with": 12000 },
+        "O3": { "without": 11000, "with": 13000 },
+        "O4": { "without": 12000, "with": 14000 },
+        "O5": { "without": 13000, "with": 16000 },
+        "O6": { "without": 14000, "with": 18000 },
+        "O7": { "without": 15000, "with": 18000 },
+        "O8": { "without": 16000, "with": 18000 },
+        "O9": { "without": 17000, "with": 18000 },
+        "O10": { "without": 18000, "with": 18000 }
       },
       "unit": "pounds",
-      "notes": "With dependents, add 500 lbs per dependent (max 2,000 lbs additional)"
+      "notes": "Weight allowance is BINARY: 'with dependents' (any accompanied dependents) vs 'without dependents'. Pro-gear (member 2,000 lbs, spouse 500 lbs) is separate and does NOT count against HHG cap."
     },
     {
       "id": "per-diem-travel",
@@ -182,7 +186,7 @@
       "conditions": {
         "requires_combat_zone": true,
         "max_deposit": 10000,
-        "interest_rate": 0.10,
+        "interest_rate": 0.1,
         "must_start_in_zone": true
       },
       "notes": "Accrues for up to 3 months after leaving combat zone"
@@ -266,4 +270,3 @@
     }
   ]
 }
-

@@ -158,13 +158,21 @@ After your move, you submit:
 ### Strategy 5: Max Your Weight Allowance
 **Why:** You get paid based on weight moved, not weight you're authorized to move
 
-**Weight Allowances by Rank (without dependents):**
-- E-1 to E-5: 7,000 lbs
-- E-6 to E-9: 11,000 lbs
-- O-1 to O-3: 12,000 lbs
-- O-4 to O-6: 14,000 lbs
+**Weight Allowances by Rank (binary: with/without dependents):**
+- E-1 to E-3: 5,000 lbs (without) / 8,000 lbs (with)
+- E-4: 7,000 lbs (without) / 8,000 lbs (with)
+- E-5: 7,000 lbs (without) / 9,000 lbs (with)
+- E-6: 8,000 lbs (without) / 11,000 lbs (with)
+- E-7: 11,000 lbs (without) / 13,000 lbs (with)
+- E-8: 12,000 lbs (without) / 14,000 lbs (with)
+- E-9: 13,000 lbs (without) / 15,000 lbs (with)
+- O-1 to O-2: 10,000 lbs (without) / 12,000 lbs (with)
+- O-3: 11,000 lbs (without) / 13,000 lbs (with)
+- O-4: 12,000 lbs (without) / 14,000 lbs (with)
+- O-5: 13,000 lbs (without) / 16,000 lbs (with)
+- O-6: 14,000 lbs (without) / 18,000 lbs (with)
 
-**With dependents:** Add 1,000-2,000 lbs
+**Note:** Weight allowance is BINARY (has dependents or doesn't), not additive per dependent. Pro-gear (member 2,000 lbs, spouse 500 lbs) is separate.
 
 **Reality Check:** If you're authorized 10,000 lbs but only move 6,000 lbs, you're leaving money on the table. Fill that truck (legally).
 

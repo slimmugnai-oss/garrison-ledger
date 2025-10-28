@@ -1,14 +1,17 @@
 // Manually Curated Atomic Content - Gold Standard Quality
 // Hand-crafted HTML for each of the 26 atomic blocks
 
-export const CURATED_ATOMS: Record<string, { title: string; html: string; type: string; tags: string[]; topics: string[] }> = {
+export const CURATED_ATOMS: Record<
+  string,
+  { title: string; html: string; type: string; tags: string[]; topics: string[] }
+> = {
   // ==================== PCS HUB ATOMS (8) ====================
-  
-  'pcs-master-checklist': {
-    title: 'Complete PCS Checklist',
-    type: 'checklist',
-    tags: ['pcs', 'checklist'],
-    topics: ['pcs', 'pcs-prep'],
+
+  "pcs-master-checklist": {
+    title: "Complete PCS Checklist",
+    type: "checklist",
+    tags: ["pcs", "checklist"],
+    topics: ["pcs", "pcs-prep"],
     html: `
       <p class="text-lg mb-8">A comprehensive checklist covering every critical task for your permanent change of station, organized by category.</p>
       
@@ -60,11 +63,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'pcs-timeline-tool': {
-    title: 'Interactive PCS Timeline Generator',
-    type: 'tool',
-    tags: ['pcs', 'timeline', 'planning'],
-    topics: ['pcs', 'pcs-prep'],
+  "pcs-timeline-tool": {
+    title: "Interactive PCS Timeline Generator",
+    type: "tool",
+    tags: ["pcs", "timeline", "planning"],
+    topics: ["pcs", "pcs-prep"],
     html: `
       <p class="text-xl mb-8">Generate a personalized PCS timeline based on your report date, with every critical deadline mapped out week-by-week.</p>
       
@@ -174,11 +177,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'pcs-budget-calculator': {
-    title: 'PCS Financial Calculator',
-    type: 'calculator',
-    tags: ['pcs', 'budget', 'dla', 'tle'],
-    topics: ['pcs', 'budgeting'],
+  "pcs-budget-calculator": {
+    title: "PCS Financial Calculator",
+    type: "calculator",
+    tags: ["pcs", "budget", "dla", "tle"],
+    topics: ["pcs", "budgeting"],
     html: `
       <p class="text-lg mb-6">Calculate your PCS income (DLA, TLE, per diem) and expenses to budget accurately and avoid financial surprises.</p>
       
@@ -246,11 +249,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'pcs-emotional-readiness': {
-    title: 'Mental & Emotional PCS Preparation',
-    type: 'guide',
-    tags: ['pcs', 'mental-health', 'family'],
-    topics: ['pcs', 'family'],
+  "pcs-emotional-readiness": {
+    title: "Mental & Emotional PCS Preparation",
+    type: "guide",
+    tags: ["pcs", "mental-health", "family"],
+    topics: ["pcs", "family"],
     html: `
       <p class="text-xl mb-8">A PCS is more than logistics—it's a major life transition affecting your entire family's emotional well-being. Use these evidence-based strategies to thrive through the change.</p>
 
@@ -299,11 +302,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'pcs-faq': {
-    title: 'PCS Questions Answered',
-    type: 'faq_section',
-    tags: ['pcs', 'faq'],
-    topics: ['pcs', 'pcs-prep'],
+  "pcs-faq": {
+    title: "PCS Questions Answered",
+    type: "faq_section",
+    tags: ["pcs", "faq"],
+    topics: ["pcs", "pcs-prep"],
     html: `
       <p class="text-lg mb-8">Expert answers to the most common PCS questions about entitlements, logistics, and timelines.</p>
 
@@ -358,7 +361,7 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
           <ul class="list-disc list-inside text-gray-700 space-y-1">
             <li>E-1 without dependents: 5,000 lbs</li>
             <li>E-5 with dependents: 9,000 lbs</li>
-            <li>O-3 with dependents: 14,500 lbs</li>
+            <li>O-3 with dependents: 13,000 lbs</li>
             <li>O-6+ with dependents: 18,000 lbs</li>
           </ul>
           <p class="text-gray-700 mt-3">Pro gear (uniforms, equipment) gets separate 2,000 lb allowance. Exceeding weight costs approximately $0.50-1.00 per pound.</p>
@@ -367,11 +370,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'oconus-pcs-guide': {
-    title: 'OCONUS PCS Navigator',
-    type: 'guide',
-    tags: ['pcs', 'oconus'],
-    topics: ['pcs', 'oconus'],
+  "oconus-pcs-guide": {
+    title: "OCONUS PCS Navigator",
+    type: "guide",
+    tags: ["pcs", "oconus"],
+    topics: ["pcs", "oconus"],
     html: `
       <p class="text-xl mb-8">Moving overseas? These country-specific guides help you navigate VAT exemptions, driving requirements, pet quarantine, and cultural essentials.</p>
 
@@ -414,11 +417,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'ppm-profit-guide': {
-    title: 'PPM (Do-It-Yourself Move) Complete Guide',
-    type: 'guide',
-    tags: ['pcs', 'ppm', 'dity'],
-    topics: ['pcs', 'ppm'],
+  "ppm-profit-guide": {
+    title: "PPM (Do-It-Yourself Move) Complete Guide",
+    type: "guide",
+    tags: ["pcs", "ppm", "dity"],
+    topics: ["pcs", "ppm"],
     html: `
       <p class="text-xl mb-8">A Personally Procured Move (PPM) means you move yourself and the government pays you. Done right, you can profit. Done wrong, you lose money and stress.</p>
 
@@ -465,12 +468,12 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
   },
 
   // ==================== CAREER HUB ATOMS (7) ====================
-  
-  'mycaa-complete-guide': {
-    title: 'MyCAA Scholarship Complete Guide',
-    type: 'checklist',
-    tags: ['career', 'education', 'mycaa'],
-    topics: ['career', 'mycaa', 'education'],
+
+  "mycaa-complete-guide": {
+    title: "MyCAA Scholarship Complete Guide",
+    type: "checklist",
+    tags: ["career", "education", "mycaa"],
+    topics: ["career", "mycaa", "education"],
     html: `
       <p class="text-xl mb-8">The My Career Advancement Account (MyCAA) is a game-changer: up to <strong>$4,000</strong> for portable career training. Here's everything you need to know.</p>
 
@@ -524,11 +527,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'resume-power-up': {
-    title: 'Military Spouse Resume Translator',
-    type: 'guide',
-    tags: ['career', 'resume', 'job-search'],
-    topics: ['career', 'job-search', 'resume'],
+  "resume-power-up": {
+    title: "Military Spouse Resume Translator",
+    type: "guide",
+    tags: ["career", "resume", "job-search"],
+    topics: ["career", "job-search", "resume"],
     html: `
       <p class="text-xl mb-8">Your military life is packed with valuable skills. Here's how to translate deployments, PCS moves, and volunteer work into powerful resume achievements that resonate with hiring managers.</p>
 
@@ -599,11 +602,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'portable-careers-guide': {
-    title: 'Portable Career Fields Explorer',
-    type: 'guide',
-    tags: ['career', 'remote', 'portable'],
-    topics: ['career', 'remote-work'],
+  "portable-careers-guide": {
+    title: "Portable Career Fields Explorer",
+    type: "guide",
+    tags: ["career", "remote", "portable"],
+    topics: ["career", "remote-work"],
     html: `
       <p class="text-xl mb-8">Discover in-demand fields that offer flexibility and remote opportunities perfect for military life—careers that travel with you across every PCS.</p>
 
@@ -658,11 +661,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'federal-employment-guide': {
-    title: 'Federal Employment & USAJOBS Mastery',
-    type: 'guide',
-    tags: ['career', 'federal', 'usajobs'],
-    topics: ['career', 'federal-employment'],
+  "federal-employment-guide": {
+    title: "Federal Employment & USAJOBS Mastery",
+    type: "guide",
+    tags: ["career", "federal", "usajobs"],
+    topics: ["career", "federal-employment"],
     html: `
       <p class="text-xl mb-8">A federal career offers stability, excellent benefits, and transferability across every PCS. But the application process is unique. Here's how to master it.</p>
 
@@ -714,11 +717,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'entrepreneur-toolkit': {
-    title: 'Spouse Entrepreneur Toolkit',
-    type: 'checklist',
-    tags: ['career', 'business', 'entrepreneur'],
-    topics: ['career', 'entrepreneurship'],
+  "entrepreneur-toolkit": {
+    title: "Spouse Entrepreneur Toolkit",
+    type: "checklist",
+    tags: ["career", "business", "entrepreneur"],
+    topics: ["career", "entrepreneurship"],
     html: `
       <p class="text-xl mb-8">Starting your own business is the ultimate portable career. This toolkit provides the foundational steps to turn your idea into a successful, mobile enterprise.</p>
 
@@ -774,11 +777,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'license-transfer-guide': {
-    title: 'Professional License Transfer Guide',
-    type: 'guide',
-    tags: ['career', 'licensing'],
-    topics: ['career', 'license-transfer'],
+  "license-transfer-guide": {
+    title: "Professional License Transfer Guide",
+    type: "guide",
+    tags: ["career", "licensing"],
+    topics: ["career", "license-transfer"],
     html: `
       <p class="text-xl mb-8">For spouses in licensed professions (nursing, teaching, cosmetology, real estate), moving is a major challenge. Here's how to navigate state license transfers.</p>
 
@@ -825,11 +828,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'high-impact-certs': {
-    title: 'High-Impact Certifications',
-    type: 'pro_tip_list',
-    tags: ['career', 'certification'],
-    topics: ['career', 'certifications', 'mycaa'],
+  "high-impact-certs": {
+    title: "High-Impact Certifications",
+    type: "pro_tip_list",
+    tags: ["career", "certification"],
+    topics: ["career", "certifications", "mycaa"],
     html: `
       <p class="text-xl mb-8">You don't always need a full degree. These in-demand certifications can be earned in months (often MyCAA-funded) and lead to immediate, portable career opportunities.</p>
 
@@ -886,12 +889,12 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
   },
 
   // ==================== DEPLOYMENT ATOMS (5) ====================
-  
-  'pre-deployment-checklist': {
-    title: 'Pre-Deployment Readiness Checklist',
-    type: 'checklist',
-    tags: ['deployment', 'preparation'],
-    topics: ['deployment', 'pre-deployment'],
+
+  "pre-deployment-checklist": {
+    title: "Pre-Deployment Readiness Checklist",
+    type: "checklist",
+    tags: ["deployment", "preparation"],
+    topics: ["deployment", "pre-deployment"],
     html: `
       <p class="text-xl mb-8">A solid foundation makes deployment smoother. Complete these legal, financial, and household tasks before departure.</p>
 
@@ -933,11 +936,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'homefront-survival': {
-    title: 'Homefront Survival Guide',
-    type: 'guide',
-    tags: ['deployment', 'homefront'],
-    topics: ['deployment', 'family'],
+  "homefront-survival": {
+    title: "Homefront Survival Guide",
+    type: "guide",
+    tags: ["deployment", "homefront"],
+    topics: ["deployment", "family"],
     html: `
       <p class="text-xl mb-8">The homefront is about thriving, not just surviving. Build resilience with resources for emotional wellness, solo parenting, and operational security.</p>
 
@@ -980,11 +983,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'reintegration-roadmap': {
-    title: 'Reintegration & Homecoming Roadmap',
-    type: 'guide',
-    tags: ['deployment', 'reintegration'],
-    topics: ['deployment', 'reintegration'],
+  "reintegration-roadmap": {
+    title: "Reintegration & Homecoming Roadmap",
+    type: "guide",
+    tags: ["deployment", "reintegration"],
+    topics: ["deployment", "reintegration"],
     html: `
       <p class="text-xl mb-8">Homecoming is a process, not a single event. Manage expectations and reconnect thoughtfully to build your new family dynamic.</p>
 
@@ -1042,11 +1045,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'deployment-faq': {
-    title: 'Deployment Questions Answered',
-    type: 'faq_section',
-    tags: ['deployment', 'faq'],
-    topics: ['deployment'],
+  "deployment-faq": {
+    title: "Deployment Questions Answered",
+    type: "faq_section",
+    tags: ["deployment", "faq"],
+    topics: ["deployment"],
     html: `
       <p class="text-lg mb-8">Expert answers to the most common deployment questions about preparation, pay, support, and reintegration.</p>
 
@@ -1089,11 +1092,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'deployment-family-pact': {
-    title: 'Family Deployment Communication Planner',
-    type: 'tool',
-    tags: ['deployment', 'communication'],
-    topics: ['deployment', 'family'],
+  "deployment-family-pact": {
+    title: "Family Deployment Communication Planner",
+    type: "tool",
+    tags: ["deployment", "communication"],
+    topics: ["deployment", "family"],
     html: `
       <p class="text-xl mb-8">This is a shared journey. Define your family's goals and communication plan for this time apart. This becomes your "why."</p>
 
@@ -1137,12 +1140,12 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
   },
 
   // ==================== FINANCE/SHOPPING ATOMS (remaining critical ones) ====================
-  
-  'emergency-fund-builder': {
-    title: 'Emergency Fund & Financial Foundation',
-    type: 'guide',
-    tags: ['finance', 'emergency-fund', 'budget'],
-    topics: ['finance', 'budgeting', 'personal-finance'],
+
+  "emergency-fund-builder": {
+    title: "Emergency Fund & Financial Foundation",
+    type: "guide",
+    tags: ["finance", "emergency-fund", "budget"],
+    topics: ["finance", "budgeting", "personal-finance"],
     html: `
       <p class="text-xl mb-8">Build your financial shock absorber: a 3-6 month emergency fund that keeps PCS surprises, car repairs, and unexpected expenses from becoming crises.</p>
 
@@ -1189,11 +1192,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'tsp-brs-essentials': {
-    title: 'TSP & BRS Essentials',
-    type: 'guide',
-    tags: ['finance', 'tsp', 'retirement'],
-    topics: ['finance', 'tsp', 'retirement'],
+  "tsp-brs-essentials": {
+    title: "TSP & BRS Essentials",
+    type: "guide",
+    tags: ["finance", "tsp", "retirement"],
+    topics: ["finance", "tsp", "retirement"],
     html: `
       <p class="text-xl mb-8">The Blended Retirement System (BRS) is your path to retirement security. Understanding TSP and the government match is essential for building long-term wealth.</p>
 
@@ -1248,11 +1251,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'les-decoder': {
-    title: 'LES (Leave & Earnings Statement) Decoder',
-    type: 'guide',
-    tags: ['finance', 'les', 'pay'],
-    topics: ['finance', 'budgeting'],
+  "les-decoder": {
+    title: "LES (Leave & Earnings Statement) Decoder",
+    type: "guide",
+    tags: ["finance", "les", "pay"],
+    topics: ["finance", "budgeting"],
     html: `
       <p class="text-xl mb-8">Understanding your Leave and Earnings Statement (LES) is the foundation of military budgeting. Here's what every line means.</p>
 
@@ -1303,11 +1306,11 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
     `,
   },
 
-  'commissary-savings-calculator': { 
-    title: 'Visualize Your Annual On-Base Savings', 
-    type: 'calculator', 
-    tags: ['finance', 'savings', 'calculator', 'commissary', 'exchange'], 
-    topics: ['on-base-shopping', 'personal-finance', 'budgeting'], 
+  "commissary-savings-calculator": {
+    title: "Visualize Your Annual On-Base Savings",
+    type: "calculator",
+    tags: ["finance", "savings", "calculator", "commissary", "exchange"],
+    topics: ["on-base-shopping", "personal-finance", "budgeting"],
     html: `
       <h3 class="text-2xl font-bold text-headings mb-4">Visualize Your Savings</h3>
       <p class="text-body mb-6">The benefits of on-base shopping add up quickly. Use these interactive calculators to estimate how much your family can save over the course of a year.</p>
@@ -1367,13 +1370,13 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
         </div>
         <p class="text-xs text-muted mt-2 text-center">Assumes MILITARY STAR® savings of 5¢/gallon on gas. Tax savings vary by location.</p>
       </div>
-    ` 
+    `,
   },
-  'commissary-exchange-basics': { 
-    title: 'Commissary & Exchange 101: Your On-Base Shopping Benefits', 
-    type: 'guide', 
-    tags: ['finance', 'savings', 'commissary', 'exchange', 'benefits', 'mwr'], 
-    topics: ['on-base-shopping', 'personal-finance', 'military-benefits'], 
+  "commissary-exchange-basics": {
+    title: "Commissary & Exchange 101: Your On-Base Shopping Benefits",
+    type: "guide",
+    tags: ["finance", "savings", "commissary", "exchange", "benefits", "mwr"],
+    topics: ["on-base-shopping", "personal-finance", "military-benefits"],
     html: `
       <h3 class="text-2xl font-bold text-headings mb-4">Understanding Your On-Base Shopping Benefits</h3>
       <p class="text-body mb-8">The Commissary and the Exchange are two of the most valuable benefits for military families, but they operate very differently. Understanding how each works is key to maximizing your savings and supporting your community.</p>
@@ -1407,13 +1410,13 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
            </ul>
         </div>
       </div>
-    ` 
+    `,
   },
-  'oconus-shopping-guide': { 
-    title: 'A Military Family\'s Guide to Shopping Overseas (OCONUS)', 
-    type: 'guide', 
-    tags: ['oconus', 'pcs', 'shopping', 'germany', 'japan', 'korea', 'vat'], 
-    topics: ['on-base-shopping', 'pcs-prep', 'oconus'], 
+  "oconus-shopping-guide": {
+    title: "A Military Family's Guide to Shopping Overseas (OCONUS)",
+    type: "guide",
+    tags: ["oconus", "pcs", "shopping", "germany", "japan", "korea", "vat"],
+    topics: ["on-base-shopping", "pcs-prep", "oconus"],
     html: `
       <h3 class="text-2xl font-bold text-headings mb-4">Navigating Your OCONUS Shopping Experience</h3>
       <p class="text-body mb-6">Shopping overseas comes with unique opportunities and challenges. The Cost of Living Allowance (COLA) you receive is designed to offset higher local prices, and maximizing both on- and off-base shopping helps that allowance go further. Here are country-specific tips to help you navigate the local economy.</p>
@@ -1450,13 +1453,13 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
           <li><strong>Pro-Tip:</strong> Many stores offer a point card or membership for discounts. It's also common for cashiers to ask if you need a bag ("bongtu pilyohaseyo?"), as they often cost a small fee.</li>
         </ul>
       </div>
-    ` 
+    `,
   },
-  'shopping-pro-tips': { 
-    title: 'Shop Like a Pro: Insider Tips for Commissary & Exchange Savings', 
-    type: 'pro_tip_list', 
-    tags: ['finance', 'savings', 'commissary', 'exchange', 'pcs', 'oconus', 'tips'], 
-    topics: ['on-base-shopping', 'personal-finance', 'pcs-prep'], 
+  "shopping-pro-tips": {
+    title: "Shop Like a Pro: Insider Tips for Commissary & Exchange Savings",
+    type: "pro_tip_list",
+    tags: ["finance", "savings", "commissary", "exchange", "pcs", "oconus", "tips"],
+    topics: ["on-base-shopping", "personal-finance", "pcs-prep"],
     html: `
       <h3 class="text-2xl font-bold text-headings mb-4">Shop Like a Pro: Maximize Your Savings</h3>
       <p class="text-body mb-6">A few extra pieces of knowledge can make your on-base shopping trips even more effective. Here are some essential tips to help you get started.</p>
@@ -1496,7 +1499,7 @@ export const CURATED_ATOMS: Record<string, { title: string; html: string; type: 
           </div>
         </div>
       </div>
-    ` 
+    `,
   },
 };
 

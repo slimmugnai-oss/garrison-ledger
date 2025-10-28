@@ -289,35 +289,56 @@ async function calculatePerDiem(
 
 /**
  * Calculate PPM (Personally Procured Move)
+ *
+ * Weight allowances are BINARY (with/without dependents), not additive per-dependent.
+ * Pro-gear is separate and doesn't count against HHG cap.
+ *
+ * Source: JTR 054705 - HHG Weight Allowances by Rank
  */
-function calculatePPM(weight: number, distance: number, rank: string): CalculationResult["ppm"] {
-  // Get weight allowance by rank
-  const weightAllowances: Record<string, number> = {
-    E1: 5000,
-    E2: 5000,
-    E3: 5000,
-    E4: 5000,
-    E5: 7000,
-    E6: 7000,
-    E7: 11000,
-    E8: 11000,
-    E9: 11000,
-    O1: 8000,
-    O2: 8000,
-    O3: 13000,
-    O4: 13000,
-    O5: 16000,
-    O6: 16000,
-    O7: 18000,
-    O8: 18000,
-    O9: 18000,
-    O10: 18000,
+function calculatePPM(
+  weight: number,
+  distance: number,
+  rank: string,
+  hasDependents: boolean = false
+): CalculationResult["ppm"] {
+  // Weight allowances by rank (binary: with/without dependents)
+  // These are the HHG caps per JTR 054705 (Table 5-5)
+  // Source: Official JTR documentation - verified 2025-01-01
+  const weightAllowances: Record<string, { without: number; with: number }> = {
+    // Enlisted (E1-E9)
+    E1: { without: 5000, with: 8000 },
+    E2: { without: 5000, with: 8000 },
+    E3: { without: 5000, with: 8000 },
+    E4: { without: 7000, with: 8000 },
+    E5: { without: 7000, with: 9000 },
+    E6: { without: 8000, with: 11000 },
+    E7: { without: 11000, with: 13000 },
+    E8: { without: 12000, with: 14000 },
+    E9: { without: 13000, with: 15000 },
+    // Warrant Officers (W1-W5)
+    W1: { without: 10000, with: 12000 },
+    W2: { without: 11000, with: 13000 },
+    W3: { without: 12000, with: 14000 },
+    W4: { without: 13000, with: 15000 },
+    W5: { without: 13000, with: 16000 },
+    // Officers (O1-O10)
+    O1: { without: 10000, with: 12000 },
+    O2: { without: 10000, with: 12000 },
+    O3: { without: 11000, with: 13000 },
+    O4: { without: 12000, with: 14000 },
+    O5: { without: 13000, with: 16000 },
+    O6: { without: 14000, with: 18000 },
+    O7: { without: 15000, with: 18000 },
+    O8: { without: 16000, with: 18000 },
+    O9: { without: 17000, with: 18000 },
+    O10: { without: 18000, with: 18000 },
   };
 
   // CRITICAL FIX: Convert rank format for weight allowance lookup
   // "E-6" → "E6", "O-3" → "O3", etc.
   const normalizedRank = rank.replace("-", "");
-  const maxWeight = weightAllowances[normalizedRank] || 5000;
+  const rankAllowance = weightAllowances[normalizedRank] || { without: 5000, with: 8000 };
+  const maxWeight = hasDependents ? rankAllowance.with : rankAllowance.without;
 
   // CRITICAL FIX: Don't use maxWeight as default if user hasn't entered weight
   // If weight is 0 or undefined, return 0 amount (PPM not applicable)
@@ -467,7 +488,8 @@ export async function calculatePCSClaim(formData: FormData): Promise<Calculation
   const ppm = calculatePPM(
     formData.actual_weight || formData.estimated_weight,
     formData.distance_miles,
-    formData.rank_at_pcs
+    formData.rank_at_pcs,
+    (formData.dependents_count || 0) > 0 // Binary: has dependents?
   );
 
   logger.info("🔍 PPM Calculated", {
