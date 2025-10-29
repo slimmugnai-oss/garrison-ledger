@@ -162,7 +162,7 @@ describe('compare.ts', () => {
         expected: { bah_cents: 200000 },  // $2,000 expected
         taxable_bases: { fed: 0, state: 0, oasdi: 0, medicare: 0 },
         actualLines: [
-          { line_code: 'BAH', amount_cents: 185000, section: 'ALLOWANCE' }  // $1,850 (small $150 variance)
+          { line_code: 'BAH', amount_cents: 195000, section: 'ALLOWANCE' }  // $1,950 (small $50 variance)
         ],
         netPayCents: 0
       });
@@ -170,7 +170,7 @@ describe('compare.ts', () => {
       const bahFlag = result.flags.find(f => f.flag_code === 'BAH_PARTIAL_OR_DIFF');
       expect(bahFlag).toBeDefined();
       expect(bahFlag?.severity).toBe('yellow');
-      expect(bahFlag?.delta_cents).toBe(15000);  // $150
+      expect(bahFlag?.delta_cents).toBe(5000);  // $50
     });
     
     it('shows CZTE_INFO when fed tax near zero but FICA/Medicare present', () => {

@@ -456,32 +456,80 @@ export default function LesManualEntryTabbed({
       {/* Tabs Navigation */}
       <div className="rounded-t-lg border-b border-gray-200 bg-white">
         <nav className="-mb-px flex overflow-x-auto" aria-label="Tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`group inline-flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium ${
-                activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              } `}
-            >
-              <Icon
-                name={tab.icon}
-                className={`h-5 w-5 ${activeTab === tab.id ? "text-blue-600" : "text-gray-400 group-hover:text-gray-500"}`}
-              />
-              <span>{tab.label}</span>
-              {tab.count > 0 && (
-                <span
-                  className={`ml-1 rounded-full px-2 py-0.5 text-xs ${
-                    activeTab === tab.id ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            // Calculate completion percentage for each tab
+            const getCompletionPercentage = (tabId: TabId) => {
+              switch (tabId) {
+                case "entitlements":
+                  return Math.round(([basePay, bah, bas, cola, sdap, hfpIdp, fsa, flpp].filter((v) => v).length / 8) * 100);
+                case "deductions":
+                  return Math.round(([tsp, sgli, dental].filter((v) => v).length / 3) * 100);
+                case "taxes":
+                  return Math.round(([federalTax, stateTax, fica, medicare].filter((v) => v).length / 4) * 100);
+                case "summary":
+                  return netPay ? 100 : 0;
+                default:
+                  return 0;
+              }
+            };
+
+            const completionPercentage = getCompletionPercentage(tab.id);
+            const isComplete = completionPercentage === 100;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`group relative inline-flex items-center gap-3 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? "border-blue-600 text-blue-600 bg-blue-50"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 hover:bg-gray-50"
+                }`}
+                title={`${tab.label} - ${completionPercentage}% complete`}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon
+                    name={tab.icon}
+                    className={`h-5 w-5 transition-colors ${
+                      activeTab === tab.id 
+                        ? "text-blue-600" 
+                        : isComplete 
+                          ? "text-green-500" 
+                          : "text-gray-400 group-hover:text-gray-500"
+                    }`}
+                  />
+                  <span>{tab.label}</span>
+                </div>
+                
+                {/* Progress indicator */}
+                <div className="flex items-center gap-2">
+                  {tab.count > 0 && (
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        activeTab === tab.id 
+                          ? "bg-blue-100 text-blue-600" 
+                          : isComplete
+                            ? "bg-green-100 text-green-600"
+                            : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  )}
+                  
+                  {/* Completion percentage bar */}
+                  <div className="h-1 w-12 rounded-full bg-gray-200">
+                    <div 
+                      className={`h-1 rounded-full transition-all duration-300 ${
+                        isComplete ? "bg-green-500" : "bg-blue-500"
+                      }`}
+                      style={{ width: `${completionPercentage}%` }}
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </nav>
       </div>
 
@@ -489,21 +537,24 @@ export default function LesManualEntryTabbed({
       <div className="min-h-[500px] rounded-lg border border-t-0 bg-white p-6">
         {/* Tab 1: Entitlements */}
         {activeTab === "entitlements" && (
-          <div className="space-y-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Entitlements (Income)</h3>
-              <span className="text-sm text-gray-500">From LES "Entitlements" section</span>
+          <div className="space-y-8">
+            <div className="mb-6 flex items-center justify-between border-b-2 border-gray-200 pb-4">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Icon name="DollarSign" className="h-6 w-6 text-blue-600" />
+                Entitlements (Income)
+              </h3>
+              <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">From LES "Entitlements" section</span>
             </div>
 
             {/* Clarification: What We Prefill */}
-            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <div className="flex items-start gap-3">
-                <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+            <div className="mb-6 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-6 shadow-sm">
+              <div className="flex items-start gap-4">
+                <Icon name="Info" className="mt-1 h-6 w-6 flex-shrink-0 text-blue-600" />
                 <div className="text-sm">
-                  <p className="mb-1 font-semibold text-blue-900">
+                  <p className="mb-2 text-lg font-bold text-blue-900">
                     What We Prefill vs What You Enter
                   </p>
-                  <p className="mb-2 text-blue-800">
+                  <p className="mb-3 text-blue-800">
                     <strong>We prefill:</strong> Only authoritative values from official DFAS tables
                     (Base Pay, BAH, BAS, COLA).
                   </p>
@@ -515,7 +566,13 @@ export default function LesManualEntryTabbed({
               </div>
             </div>
 
-            <div className="space-y-4">
+            {/* Core Entitlements Card */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+              <h4 className="mb-4 text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Icon name="Shield" className="h-5 w-5 text-green-600" />
+                Core Entitlements (Auto-filled)
+              </h4>
+              <div className="space-y-6">
               <CurrencyInput
                 label="Base Pay (Monthly)"
                 value={basePay}
@@ -552,19 +609,24 @@ export default function LesManualEntryTabbed({
                 helpText="Optional - Only if you receive COLA at your location"
                 optional
               />
+              </div>
+            </div>
 
-              {/* Special Pays - Only show if configured */}
-              {(sdap ||
-                hfpIdp ||
-                fsa ||
-                flpp ||
-                autoFilled.sdap ||
-                autoFilled.hfpIdp ||
-                autoFilled.fsa ||
-                autoFilled.flpp) && (
-                <div className="mt-6 border-t pt-6">
-                  <h4 className="text-md mb-4 font-semibold text-gray-900">Special Pays</h4>
-                  <div className="space-y-4">
+            {/* Special Pays - Only show if configured */}
+            {(sdap ||
+              hfpIdp ||
+              fsa ||
+              flpp ||
+              autoFilled.sdap ||
+              autoFilled.hfpIdp ||
+              autoFilled.fsa ||
+              autoFilled.flpp) && (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <h4 className="mb-4 text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Icon name="Star" className="h-5 w-5 text-amber-600" />
+                  Special Pays (Conditional)
+                </h4>
+                <div className="space-y-6">
                     {(sdap || autoFilled.sdap) && (
                       <CurrencyInput
                         label="SDAP (Special Duty Assignment Pay)"
@@ -608,10 +670,9 @@ export default function LesManualEntryTabbed({
                         helpText='Found on LES as "FLPP"'
                       />
                     )}
-                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="mt-6 flex justify-end border-t pt-6">
               <button
@@ -627,13 +688,21 @@ export default function LesManualEntryTabbed({
 
         {/* Tab 2: Deductions */}
         {activeTab === "deductions" && (
-          <div className="space-y-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Deductions</h3>
-              <span className="text-sm text-gray-500">From LES "Deductions" section</span>
+          <div className="space-y-8">
+            <div className="mb-6 flex items-center justify-between border-b-2 border-gray-200 pb-4">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Icon name="Calculator" className="h-6 w-6 text-red-600" />
+                Deductions
+              </h3>
+              <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">From LES "Deductions" section</span>
             </div>
 
-            <div className="space-y-4">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+              <h4 className="mb-4 text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Icon name="Minus" className="h-5 w-5 text-red-600" />
+                Standard Deductions
+              </h4>
+              <div className="space-y-6">
               <CurrencyInput
                 label="TSP Contribution"
                 value={tsp}
@@ -663,6 +732,7 @@ export default function LesManualEntryTabbed({
                 helpText='Enter exact amount from LES "DENTAL" or "TRICARE DENTAL" line'
                 optional
               />
+              </div>
             </div>
 
             <div className="mt-6 flex justify-between border-t pt-6">
@@ -686,24 +756,27 @@ export default function LesManualEntryTabbed({
 
         {/* Tab 3: Taxes */}
         {activeTab === "taxes" && (
-          <div className="space-y-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Tax Withholding</h3>
-              <span className="text-sm text-gray-500">From LES "Taxes" section</span>
+          <div className="space-y-8">
+            <div className="mb-6 flex items-center justify-between border-b-2 border-gray-200 pb-4">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Icon name="Landmark" className="h-6 w-6 text-purple-600" />
+                Tax Withholding
+              </h3>
+              <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">From LES "Taxes" section</span>
             </div>
 
             {/* Important Notice: Manual Tax Entry Required */}
-            <div className="mb-6 border-l-4 border-amber-400 bg-amber-50 p-4">
-              <div className="flex items-start gap-3">
+            <div className="mb-6 rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-amber-100 p-6 shadow-sm">
+              <div className="flex items-start gap-4">
                 <Icon
                   name="AlertTriangle"
-                  className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600"
+                  className="mt-1 h-6 w-6 flex-shrink-0 text-amber-600"
                 />
                 <div>
-                  <p className="mb-1 text-sm font-semibold text-amber-900">
+                  <p className="mb-2 text-lg font-bold text-amber-900">
                     Enter exactly what appears on your LES
                   </p>
-                  <p className="text-sm text-amber-800">
+                  <p className="text-amber-800">
                     We do <strong>NOT</strong> estimate federal/state taxes in v1. You provide the
                     actual values, we validate the percentages.
                   </p>
@@ -729,46 +802,50 @@ export default function LesManualEntryTabbed({
               </div>
             </div>
 
-            <div className="space-y-4">
-              <CurrencyInput
-                label="Federal Income Tax Withheld"
-                value={federalTax}
-                autoFilled={false}
-                onChange={setFederalTax}
-                onOverride={() => {}}
-                helpText='Enter exact amount from LES "FED TAX" or "FITW" line'
-                optional
-              />
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+              <h4 className="mb-4 text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Icon name="Receipt" className="h-5 w-5 text-purple-600" />
+                Tax Withholding Details
+              </h4>
+              <div className="space-y-6">
+                <CurrencyInput
+                  label="Federal Income Tax Withheld"
+                  value={federalTax}
+                  autoFilled={false}
+                  onChange={setFederalTax}
+                  onOverride={() => {}}
+                  helpText='Enter exact amount from LES "FED TAX" or "FITW" line'
+                />
 
-              <CurrencyInput
-                label="State Income Tax Withheld"
-                value={stateTax}
-                autoFilled={false}
-                onChange={setStateTax}
-                onOverride={() => {}}
-                helpText='Enter exact amount from LES "STATE TAX" (enter 0 for TX, FL, WA, etc.)'
-                optional
-              />
+                <CurrencyInput
+                  label="State Income Tax Withheld"
+                  value={stateTax}
+                  autoFilled={false}
+                  onChange={setStateTax}
+                  onOverride={() => {}}
+                  helpText='Enter exact amount from LES "STATE TAX" (enter 0 for TX, FL, WA, etc.)'
+                />
 
-              <CurrencyInput
-                label="FICA (Social Security) - Auto-calculated at 6.2%"
-                value={fica}
-                autoFilled={autoFilled.fica}
-                onChange={setFica}
-                onOverride={() => setAutoFilled((prev) => ({ ...prev, fica: false }))}
-                helpText="Auto-calculated at 6.2% of taxable gross - edit if your LES differs"
-                optional
-              />
+                <CurrencyInput
+                  label="FICA (Social Security) - Auto-calculated at 6.2%"
+                  value={fica}
+                  autoFilled={autoFilled.fica}
+                  onChange={setFica}
+                  onOverride={() => setAutoFilled((prev) => ({ ...prev, fica: false }))}
+                  helpText="Auto-calculated at 6.2% of taxable gross - edit if your LES differs"
+                  optional
+                />
 
-              <CurrencyInput
-                label="Medicare - Auto-calculated at 1.45%"
-                value={medicare}
-                autoFilled={autoFilled.medicare}
-                onChange={setMedicare}
-                onOverride={() => setAutoFilled((prev) => ({ ...prev, medicare: false }))}
-                helpText="Auto-calculated at 1.45% of taxable gross - edit if your LES differs"
-                optional
-              />
+                <CurrencyInput
+                  label="Medicare - Auto-calculated at 1.45%"
+                  value={medicare}
+                  autoFilled={autoFilled.medicare}
+                  onChange={setMedicare}
+                  onOverride={() => setAutoFilled((prev) => ({ ...prev, medicare: false }))}
+                  helpText="Auto-calculated at 1.45% of taxable gross - edit if your LES differs"
+                  optional
+                />
+              </div>
             </div>
 
             <div className="mt-6 flex justify-between border-t pt-6">

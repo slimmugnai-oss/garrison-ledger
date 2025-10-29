@@ -318,14 +318,32 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
 
   // Manual entry form
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Progress Bar */}
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 pb-4">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold text-gray-900">LES Manual Entry</h2>
+            <span className="text-sm font-medium text-gray-500">
+              {Math.round((Object.values(autoFilled).filter(Boolean).length / Object.keys(autoFilled).length) * 100)}% Complete
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${Math.round((Object.values(autoFilled).filter(Boolean).length / Object.keys(autoFilled).length) * 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Info Banner */}
-      <div className="rounded-lg border border-blue-300 bg-blue-50 p-4">
-        <div className="flex items-start gap-3">
-          <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+      <div className="rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-6 shadow-sm">
+        <div className="flex items-start gap-4">
+          <Icon name="Info" className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
           <div>
-            <h3 className="font-semibold text-blue-900">Quick Manual Entry</h3>
-            <p className="text-sm text-blue-800 mt-1">
+            <h3 className="text-lg font-bold text-blue-900">Quick Manual Entry</h3>
+            <p className="text-blue-800 mt-2">
               {(autoFilled.bah || autoFilled.bas || autoFilled.basePay) ? (
                 <>
                   ✅ <strong>Auto-filled</strong> with {fallbackMessage ? 'typical' : 'your expected'} pay values
@@ -349,24 +367,23 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
       </div>
 
       {/* Manual Entry Form */}
-      <form onSubmit={handleSubmit} className="rounded-lg border bg-white p-6">
-        <h3 className="font-semibold mb-6 flex items-center gap-2">
-          <Icon name="Edit" className="h-5 w-5 text-blue-600" />
-          Enter LES Allowances
-        </h3>
-
-        <div className="space-y-6">
-          {/* Month/Year */}
-          <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Month/Year Selection */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <Icon name="Calendar" className="h-6 w-6 text-blue-600" />
+            Select Pay Period
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="month" className="block text-sm font-medium mb-2">
+              <label htmlFor="month" className="block text-sm font-semibold text-gray-700 mb-3">
                 Month
               </label>
               <select
                 id="month"
                 value={month}
                 onChange={(e) => setMonth(parseInt(e.target.value))}
-                className="w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-300 p-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 required
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
@@ -378,14 +395,14 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
             </div>
 
             <div>
-              <label htmlFor="year" className="block text-sm font-medium mb-2">
+              <label htmlFor="year" className="block text-sm font-semibold text-gray-700 mb-3">
                 Year
               </label>
               <select
                 id="year"
                 value={year}
                 onChange={(e) => setYear(parseInt(e.target.value))}
-                className="w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-300 p-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 required
               >
                 {[2025, 2024, 2023].map(y => (
@@ -394,11 +411,16 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               </select>
             </div>
           </div>
+        </div>
 
-          {/* Allowances Section */}
-          <div className="space-y-4">
-            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Basic Allowances</h4>
+        {/* Allowances Section */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+            <Icon name="DollarSign" className="h-6 w-6 text-green-600" />
+            Basic Allowances
+          </h4>
             
+          <div className="space-y-6">
             <CurrencyInput
               label="BAH (Basic Allowance for Housing)"
               value={bah}
@@ -427,11 +449,16 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               optional
             />
           </div>
+        </div>
 
-          {/* Special Pays Section */}
-          {(sdap || hfpIdp || fsa || flpp || autoFilled.sdap || autoFilled.hfpIdp || autoFilled.fsa || autoFilled.flpp) && (
-            <div className="space-y-4 pt-4">
-              <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Special Pays</h4>
+        {/* Special Pays Section */}
+        {(sdap || hfpIdp || fsa || flpp || autoFilled.sdap || autoFilled.hfpIdp || autoFilled.fsa || autoFilled.flpp) && (
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+              <Icon name="Star" className="h-6 w-6 text-amber-600" />
+              Special Pays (Conditional)
+            </h4>
+            <div className="space-y-6">
               
               {(sdap || autoFilled.sdap) && (
                 <CurrencyInput
@@ -477,11 +504,16 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
                 />
               )}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Base Pay Section */}
-          <div className="space-y-4 pt-4">
-            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Base Pay</h4>
+        {/* Base Pay Section */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+            <Icon name="Shield" className="h-6 w-6 text-blue-600" />
+            Base Pay
+          </h4>
+          <div className="space-y-6">
             
             <CurrencyInput
               label="Base Pay (Monthly)"
@@ -492,10 +524,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               helpText='Found on LES as "BASE PAY" - Your monthly base pay based on rank and years of service'
             />
           </div>
+        </div>
 
-          {/* Deductions Section */}
-          <div className="space-y-4 pt-4">
-            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Deductions</h4>
+        {/* Deductions Section */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+            <Icon name="Calculator" className="h-6 w-6 text-red-600" />
+            Deductions
+          </h4>
+          <div className="space-y-6">
             
             <CurrencyInput
               label="TSP Contribution"
@@ -527,10 +564,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               optional
             />
           </div>
+        </div>
 
-          {/* Taxes Section */}
-          <div className="space-y-4 pt-4">
-            <h4 className="text-md font-semibold text-gray-900 border-b pb-2">Taxes</h4>
+        {/* Taxes Section */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+            <Icon name="Landmark" className="h-6 w-6 text-purple-600" />
+            Tax Withholding
+          </h4>
+          <div className="space-y-6">
             
             <CurrencyInput
               label="Federal Income Tax Withheld"
@@ -539,7 +581,6 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               onChange={setFederalTax}
               onOverride={() => setAutoFilled(prev => ({ ...prev, federalTax: false }))}
               helpText='Found on LES as "FED TAX" or "FITW"'
-              optional
             />
 
             <CurrencyInput
@@ -549,7 +590,6 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               onChange={setStateTax}
               onOverride={() => setAutoFilled(prev => ({ ...prev, stateTax: false }))}
               helpText='Found on LES as "STATE TAX" or "SITW" (0 for no-tax states)'
-              optional
             />
 
             <CurrencyInput
@@ -572,13 +612,15 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               optional
             />
           </div>
+        </div>
 
-          {/* Net Pay Section */}
-          <div className="space-y-4 pt-4">
-            <h4 className="text-md font-semibold text-gray-900 border-b pb-2 flex items-center gap-2">
-              <Icon name="DollarSign" className="w-5 h-5 text-green-600" />
-              Net Pay (The Bottom Line)
-            </h4>
+        {/* Net Pay Section */}
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-b-2 border-gray-200 pb-4">
+            <Icon name="DollarSign" className="w-6 h-6 text-green-600" />
+            Net Pay (The Bottom Line)
+          </h4>
+          <div className="space-y-6">
             
             <CurrencyInput
               label="Net Pay (Take-Home)"
@@ -589,19 +631,21 @@ export default function LesManualEntry({ tier, isPremium: _isPremium, hasProfile
               helpText='Found on LES as "NET PAY" - The amount that actually hits your bank account'
             />
             
-            <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-              <p className="text-xs text-green-800">
-                <Icon name="Info" className="inline w-3 h-3 mr-1" />
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <p className="text-sm text-green-800 flex items-center gap-2">
+                <Icon name="Info" className="w-4 h-4" />
                 Net Pay = (Base Pay + Allowances + Special Pays) - (Deductions + Taxes)
               </p>
             </div>
           </div>
+        </div>
 
-          {/* Submit Button */}
+        {/* Sticky Submit Button */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 -mx-6 -mb-6">
           <button
             type="submit"
             disabled={state === 'auditing' || !hasProfile}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-3 rounded-xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
             {state === 'auditing' ? (
               <>
