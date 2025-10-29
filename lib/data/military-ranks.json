@@ -149,7 +149,8 @@
     "warrant": [
       { "code": "W-2", "title": "Chief Warrant Officer 2 (CWO2)" },
       { "code": "W-3", "title": "Chief Warrant Officer 3 (CWO3)" },
-      { "code": "W-4", "title": "Chief Warrant Officer 4 (CWO4)" }
+      { "code": "W-4", "title": "Chief Warrant Officer 4 (CWO4)" },
+      { "code": "W-5", "title": "Chief Warrant Officer 5 (CWO5)" }
     ],
     "officer": [
       { "code": "O-1", "title": "Ensign (ENS)" },
@@ -192,4 +193,3 @@
     ]
   }
 }
-

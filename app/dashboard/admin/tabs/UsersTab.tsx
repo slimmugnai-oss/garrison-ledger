@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
-import Badge from '@/app/components/ui/Badge';
+import Badge from "@/app/components/ui/Badge";
 
-import DataTable, { Column } from '../components/DataTable';
-import MetricCard from '../components/MetricCard';
-import UserDetailModal from '../components/UserDetailModal';
+import DataTable, { Column } from "../components/DataTable";
+import MetricCard from "../components/MetricCard";
+import UserDetailModal from "../components/UserDetailModal";
 
 interface User {
   user_id: string;
@@ -33,10 +33,10 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [tierFilter, setTierFilter] = useState('all');
-  const [branchFilter, setBranchFilter] = useState('all');
-  const [profileFilter, setProfileFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tierFilter, setTierFilter] = useState("all");
+  const [branchFilter, setBranchFilter] = useState("all");
+  const [profileFilter, setProfileFilter] = useState("all");
   const [total, setTotal] = useState(initialTotal);
 
   const loadUsers = useCallback(async () => {
@@ -47,31 +47,31 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
         q: searchQuery,
         tier: tierFilter,
         branch: branchFilter,
-        page: '1',
-        pageSize: '50',
+        page: "1",
+        pageSize: "50",
       });
 
       const res = await fetch(`/api/admin/users/search?${params}`);
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to load users');
+        throw new Error(errorData.error || "Failed to load users");
       }
 
       const data = await res.json();
-      
+
       // Apply profile filter client-side
       let filteredUsers = data.users || [];
-      if (profileFilter === 'complete') {
+      if (profileFilter === "complete") {
         filteredUsers = filteredUsers.filter((u: User) => u.profile_completed);
-      } else if (profileFilter === 'incomplete') {
+      } else if (profileFilter === "incomplete") {
         filteredUsers = filteredUsers.filter((u: User) => !u.profile_completed);
       }
-      
+
       setUsers(filteredUsers);
       setTotal(filteredUsers.length);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load users';
-      console.error('Error loading users:', err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to load users";
+      console.error("Error loading users:", err);
       setError(errorMessage);
       setUsers([]);
     } finally {
@@ -89,100 +89,98 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   };
 
   const handleBulkExport = async (selectedIds: string[]) => {
-    const selectedUsers = users.filter(u => selectedIds.includes(u.user_id));
+    const selectedUsers = users.filter((u) => selectedIds.includes(u.user_id));
     const csv = [
-      'User ID,Email,First Name,Last Name,Profile Status,Rank,Branch,Tier,Subscription Status,Joined',
-      ...selectedUsers.map(u =>
-        `${u.user_id},${u.email || ''},${u.firstName || ''},${u.lastName || ''},${u.profile_completed ? 'Complete' : 'Incomplete'},${u.rank || ''},${u.branch || ''},${u.tier},${u.subscription_status},${u.created_at}`
+      "User ID,Email,First Name,Last Name,Profile Status,Rank,Branch,Tier,Subscription Status,Joined",
+      ...selectedUsers.map(
+        (u) =>
+          `${u.user_id},${u.email || ""},${u.firstName || ""},${u.lastName || ""},${u.profile_completed ? "Complete" : "Incomplete"},${u.rank || ""},${u.branch || ""},${u.tier},${u.subscription_status},${u.created_at}`
       ),
-    ].join('\n');
+    ].join("\n");
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `garrison-users-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `garrison-users-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const columns: Column<User>[] = [
     {
-      key: 'email',
-      header: 'Email',
+      key: "email",
+      header: "Email",
       sortable: true,
-      render: (user) => (
-        <span className="text-sm">{user.email || '-'}</span>
-      ),
+      render: (user) => <span className="text-sm">{user.email || "-"}</span>,
     },
     {
-      key: 'firstName',
-      header: 'Name',
+      key: "firstName",
+      header: "Name",
       sortable: true,
       render: (user) => (
-        <span className="font-semibold text-sm">
+        <span className="text-sm font-semibold">
           {user.firstName || user.lastName
-            ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
-            : '-'}
+            ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+            : "-"}
         </span>
       ),
     },
     {
-      key: 'user_id',
-      header: 'User ID',
+      key: "user_id",
+      header: "User ID",
       sortable: true,
       render: (user) => (
-        <span className="font-mono text-xs text-text-muted">{user.user_id.substring(0, 20)}...</span>
+        <span className="text-text-muted font-mono text-xs">
+          {user.user_id.substring(0, 20)}...
+        </span>
       ),
     },
     {
-      key: 'profile_completed',
-      header: 'Profile',
+      key: "profile_completed",
+      header: "Profile",
       sortable: true,
-      render: (user) => (
+      render: (user) =>
         user.profile_completed ? (
           <Badge variant="success">Complete</Badge>
         ) : (
           <Badge variant="warning">Incomplete</Badge>
-        )
-      ),
+        ),
     },
     {
-      key: 'rank',
-      header: 'Rank',
+      key: "rank",
+      header: "Rank",
       sortable: true,
-      render: (user) => (
-        <span className="font-semibold">{user.rank || '-'}</span>
-      ),
+      render: (user) => <span className="font-semibold">{user.rank || "-"}</span>,
     },
     {
-      key: 'branch',
-      header: 'Branch',
+      key: "branch",
+      header: "Branch",
       sortable: true,
-      render: (user) => (
-        <span className="text-sm">{user.branch || '-'}</span>
-      ),
+      render: (user) => <span className="text-sm">{user.branch || "-"}</span>,
     },
     {
-      key: 'tier',
-      header: 'Tier',
+      key: "tier",
+      header: "Tier",
       sortable: true,
       render: (user) => (
-        <Badge variant={user.tier === 'premium' ? 'success' : 'secondary'} size="sm">
+        <Badge variant={user.tier === "premium" ? "success" : "secondary"} size="sm">
           {user.tier.toUpperCase()}
         </Badge>
       ),
     },
     {
-      key: 'subscription_status',
-      header: 'Status',
+      key: "subscription_status",
+      header: "Status",
       sortable: true,
       render: (user) => (
         <Badge
           variant={
-            user.subscription_status === 'active' ? 'success' :
-            user.subscription_status === 'canceled' ? 'danger' :
-            'secondary'
+            user.subscription_status === "active"
+              ? "success"
+              : user.subscription_status === "canceled"
+                ? "danger"
+                : "secondary"
           }
           size="sm"
         >
@@ -191,20 +189,20 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
       ),
     },
     {
-      key: 'profile_completed',
-      header: 'Profile',
+      key: "profile_completed",
+      header: "Profile",
       render: (user) => (
-        <Badge variant={user.profile_completed ? 'success' : 'warning'} size="sm">
-          {user.profile_completed ? 'Complete' : 'Incomplete'}
+        <Badge variant={user.profile_completed ? "success" : "warning"} size="sm">
+          {user.profile_completed ? "Complete" : "Incomplete"}
         </Badge>
       ),
     },
     {
-      key: 'created_at',
-      header: 'Joined',
+      key: "created_at",
+      header: "Joined",
       sortable: true,
       render: (user) => (
-        <span className="text-sm text-text-muted">
+        <span className="text-text-muted text-sm">
           {new Date(user.created_at).toLocaleDateString()}
         </span>
       ),
@@ -212,20 +210,18 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   ];
 
   // Calculate stats
-  const premiumUsers = users.filter(u => u.tier === 'premium' && u.has_active_subscription).length;
-  const completedProfiles = users.filter(u => u.profile_completed).length;
-  const conversionRate = users.length > 0 ? (premiumUsers / users.length * 100).toFixed(1) : '0.0';
+  const premiumUsers = users.filter(
+    (u) => u.tier === "premium" && u.has_active_subscription
+  ).length;
+  const completedProfiles = users.filter((u) => u.profile_completed).length;
+  const conversionRate =
+    users.length > 0 ? ((premiumUsers / users.length) * 100).toFixed(1) : "0.0";
 
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricCard
-          title="Total Users"
-          value={total}
-          icon="Users"
-          variant="info"
-        />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <MetricCard title="Total Users" value={total} icon="Users" variant="info" />
         <MetricCard
           title="Premium"
           value={premiumUsers}
@@ -236,7 +232,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
         <MetricCard
           title="Complete Profiles"
           value={completedProfiles}
-          subtitle={`${users.length > 0 ? (completedProfiles / users.length * 100).toFixed(0) : 0}% rate`}
+          subtitle={`${users.length > 0 ? ((completedProfiles / users.length) * 100).toFixed(0) : 0}% rate`}
           icon="CheckCircle"
           variant="default"
         />
@@ -250,21 +246,21 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 flex-wrap">
-        <div className="flex-1 max-w-md">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="max-w-md flex-1">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by email, name, or User ID..."
-            className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-        
+
         <select
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value)}
-          className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="all">All Tiers</option>
           <option value="free">Free</option>
@@ -275,7 +271,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
         <select
           value={branchFilter}
           onChange={(e) => setBranchFilter(e.target.value)}
-          className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="all">All Branches</option>
           <option value="Army">Army</option>
@@ -289,7 +285,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
         <select
           value={profileFilter}
           onChange={(e) => setProfileFilter(e.target.value)}
-          className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="all">All Profiles</option>
           <option value="complete">Complete</option>
@@ -298,7 +294,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
 
         <button
           onClick={loadUsers}
-          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-semibold"
+          className="hover:bg-primary-hover rounded-lg bg-primary px-4 py-2 font-semibold text-white transition-colors"
         >
           Refresh
         </button>
@@ -306,15 +302,15 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
 
       {/* Error Display */}
       {error && (
-        <div className="bg-danger/10 border border-danger rounded-lg p-4 mb-4">
+        <div className="bg-danger/10 mb-4 rounded-lg border border-danger p-4">
           <div className="flex items-start gap-3">
-            <div className="text-danger text-xl">⚠️</div>
+            <div className="text-xl text-danger">⚠️</div>
             <div className="flex-1">
-              <h3 className="font-semibold text-danger mb-1">Error Loading Users</h3>
-              <p className="text-sm text-text-muted">{error}</p>
+              <h3 className="mb-1 font-semibold text-danger">Error Loading Users</h3>
+              <p className="text-text-muted text-sm">{error}</p>
               <button
                 onClick={loadUsers}
-                className="mt-2 text-sm text-primary hover:text-primary-hover font-semibold"
+                className="hover:text-primary-hover mt-2 text-sm font-semibold text-primary"
               >
                 Try Again
               </button>
@@ -325,8 +321,8 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
 
       {/* User Table */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+        <div className="py-12 text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p className="text-text-muted">Loading users...</p>
         </div>
       ) : !error ? (
@@ -337,24 +333,24 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
           searchPlaceholder="Search users..."
           bulkActions={[
             {
-              label: 'Send Email',
-              icon: 'Mail',
+              label: "Send Email",
+              icon: "Mail",
               onClick: handleBulkEmail,
             },
             {
-              label: 'Export CSV',
-              icon: 'Download',
+              label: "Export CSV",
+              icon: "Download",
               onClick: handleBulkExport,
             },
           ]}
           rowActions={[
             {
-              label: 'View Details',
+              label: "View Details",
               onClick: (user) => setSelectedUser(user.user_id),
             },
             {
-              label: 'Send Email',
-              icon: 'Mail',
+              label: "Send Email",
+              icon: "Mail",
               onClick: (user) => window.open(`mailto:${user.user_id}@example.com`),
             },
           ]}
@@ -364,10 +360,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
 
       {/* User Detail Modal */}
       {selectedUser && (
-        <UserDetailModal
-          userId={selectedUser}
-          onClose={() => setSelectedUser(null)}
-        />
+        <UserDetailModal userId={selectedUser} onClose={() => setSelectedUser(null)} />
       )}
     </div>
   );

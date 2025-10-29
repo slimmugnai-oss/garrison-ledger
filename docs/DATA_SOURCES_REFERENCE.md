@@ -330,3 +330,33 @@ VALUES (...);
 **Next Review Due:** January 2026  
 **Data Quality:** 100/100 (all sources current for 2025)
 
+---
+
+## Military Ranks & Paygrades
+
+### Rank/Paygrade Decoupling (2025-10-29)
+
+**Major Change:** Decoupled rank titles from paygrade selection to eliminate auto-derivation bugs.
+
+**Previous System:**
+- User selected rank title (e.g., "Chief Master Sergeant")
+- System auto-derived paygrade (E09) using pattern matching
+- **Problem:** Complex pattern matching failed (Chief Master Sergeant → E07 bug)
+
+**Current System:**
+- **Rank** (Optional): Human-readable title for display only
+- **Paygrade** (Required): E01-E09, W01-W05, O01-O10 for calculations
+- **No auto-derivation:** User explicitly selects paygrade
+- **Branch-aware:** Warrant officer section hidden for Air Force/Space Force; W-1 hidden for Navy/Coast Guard
+
+**Data Source:**
+- `lib/data/military-ranks.json` - Official rank titles by branch
+- Updated: 2025-10-29 (added Coast Guard W-5)
+- Source: DFAS, Veteran.com, official branch rank structures
+
+**Benefits:**
+- ✅ Zero auto-derivation bugs
+- ✅ Future-proof (branch rank changes don't break system)
+- ✅ More accurate (users know their paygrade from LES)
+- ✅ Simpler codebase (removed 193 lines of pattern matching)
+

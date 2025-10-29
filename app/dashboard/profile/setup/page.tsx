@@ -13,7 +13,7 @@ import Icon from "@/app/components/ui/Icon";
 import { getBaseMHA, getMHALocationType } from "@/lib/data/base-mha-helpers";
 import militaryComponents from "@/lib/data/military-components.json";
 import militaryRanks from "@/lib/data/military-ranks.json";
-import { getRankPaygrade, getRankCategory } from "@/lib/data/rank-paygrade-map";
+import { getRankCategory } from "@/lib/data/rank-paygrade-map";
 
 type ProfilePayload = {
   // Basic info
@@ -279,21 +279,19 @@ function ProfileSetupContent() {
     }
   }, [data.num_children, data.marital_status, data.has_dependents]);
 
-  // Auto-derive paygrade and rank_category from rank
+  // Auto-derive rank_category from paygrade (E/W/O determines category)
   // CRITICAL: Required for LES Auditor, PCS Copilot, all pay calculations
   useEffect(() => {
-    if (data.rank) {
-      const paygrade = getRankPaygrade(data.rank);
-      const rankCategory = paygrade ? getRankCategory(paygrade) : null;
-      if (data.paygrade !== paygrade || data.rank_category !== rankCategory) {
+    if (data.paygrade) {
+      const rankCategory = getRankCategory(data.paygrade);
+      if (data.rank_category !== rankCategory) {
         setData((d) => ({
           ...d,
-          paygrade: paygrade ?? undefined,
           rank_category: rankCategory ?? undefined,
         }));
       }
     }
-  }, [data.rank, data.paygrade, data.rank_category]);
+  }, [data.paygrade, data.rank_category]);
 
   // Auto-derive mha_code and duty_location_type from current_base
   // CRITICAL: Required for BAH lookups in LES Auditor and Base Navigator
@@ -445,10 +443,9 @@ function ProfileSetupContent() {
       { field: data.tsp_balance_range, name: "tsp_balance_range", label: "TSP balance" },
     ];
 
-    // Add branch/rank requirements conditionally
+    // Add branch/paygrade requirements conditionally (rank is optional)
     if (data.service_status && !["military_spouse", "dod_civilian"].includes(data.service_status)) {
       requiredFields.push(
-        { field: data.rank, name: "rank", label: "Rank" },
         { field: data.paygrade, name: "paygrade", label: "Paygrade" },
         { field: data.branch, name: "branch", label: "Branch" }
       );
@@ -815,10 +812,13 @@ function ProfileSetupContent() {
                         </ProfileFormField>
 
                         <ProfileFormField
-                          label="Rank"
-                          required
+                          label="Rank (Optional)"
                           error={fieldErrors.rank}
-                          description={!data.branch ? "Select branch first" : undefined}
+                          description={
+                            !data.branch
+                              ? "Select branch first"
+                              : "Your rank title for display only (e.g., Chief Master Sergeant)"
+                          }
                           success={!!data.rank}
                         >
                           <select
@@ -869,12 +869,12 @@ function ProfileSetupContent() {
                           </select>
                         </ProfileFormField>
 
-                        {/* NEW: Explicit Paygrade Selection */}
+                        {/* Paygrade Selection - REQUIRED for all calculations */}
                         <ProfileFormField
                           label="Paygrade"
                           required
                           error={fieldErrors.paygrade}
-                          description="Select your exact paygrade (E-1 through E-9, W-1 through W-5, or O-1 through O-10)"
+                          description="Your paygrade determines BAH and pay rates. Find it on your LES under 'Grade'."
                           success={!!data.paygrade}
                         >
                           <select
@@ -896,13 +896,22 @@ function ProfileSetupContent() {
                               <option value="E08">E-8</option>
                               <option value="E09">E-9</option>
                             </optgroup>
-                            <optgroup label="Warrant Officer (W-1 to W-5)">
-                              <option value="W01">W-1</option>
-                              <option value="W02">W-2</option>
-                              <option value="W03">W-3</option>
-                              <option value="W04">W-4</option>
-                              <option value="W05">W-5</option>
-                            </optgroup>
+                            {/* Show warrant officers only for Army, Navy, Marines, Coast Guard */}
+                            {data.branch &&
+                              ["Army", "Navy", "Marines", "Marine Corps", "Coast Guard"].includes(
+                                data.branch
+                              ) && (
+                                <optgroup label="Warrant Officer (W-1 to W-5)">
+                                  {/* Navy/Coast Guard start at W-2 (no W-1) */}
+                                  {!["Navy", "Coast Guard"].includes(data.branch) && (
+                                    <option value="W01">W-1</option>
+                                  )}
+                                  <option value="W02">W-2</option>
+                                  <option value="W03">W-3</option>
+                                  <option value="W04">W-4</option>
+                                  <option value="W05">W-5</option>
+                                </optgroup>
+                              )}
                             <optgroup label="Officer (O-1 to O-10)">
                               <option value="O01">O-1</option>
                               <option value="O02">O-2</option>
