@@ -130,8 +130,26 @@ export function getSchoolsByZip(
   perPage = 25,
   page = 1
 ): Promise<SchoolDiggerResponse> {
+  // For now, we'll use a simple mapping of ZIP codes to states
+  // In production, you might want to use a more comprehensive ZIP-to-state lookup
+  const getStateFromZip = (zip: string): string => {
+    const zipNum = parseInt(zip);
+    if (zipNum >= 98000 && zipNum <= 99999) return "WA"; // Washington
+    if (zipNum >= 90000 && zipNum <= 96699) return "CA"; // California
+    if (zipNum >= 10000 && zipNum <= 14999) return "NY"; // New York
+    if (zipNum >= 20000 && zipNum <= 29999) return "DC"; // Washington DC
+    if (zipNum >= 30000 && zipNum <= 39999) return "GA"; // Georgia
+    if (zipNum >= 40000 && zipNum <= 49999) return "KY"; // Kentucky
+    if (zipNum >= 50000 && zipNum <= 59999) return "IA"; // Iowa
+    if (zipNum >= 60000 && zipNum <= 69999) return "IL"; // Illinois
+    if (zipNum >= 70000 && zipNum <= 79999) return "LA"; // Louisiana
+    if (zipNum >= 80000 && zipNum <= 89999) return "CO"; // Colorado
+    return "WA"; // Default to Washington for military bases
+  };
+
   return sdFetch<SchoolDiggerResponse>("/schools", {
     zip,
+    st: getStateFromZip(zip),
     perPage,
     page,
     sortBy: "rank",
