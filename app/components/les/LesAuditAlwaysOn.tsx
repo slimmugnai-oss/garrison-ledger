@@ -27,16 +27,17 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { PremiumCurtain } from "@/app/components/paywall/PremiumCurtain";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import { useLesAudit } from "@/app/hooks/useLesAudit";
+import type { AuditInputs } from "@/app/hooks/useLesAudit";
+import type { DynamicLineItem } from "@/app/types/les";
+import type { Tier } from "@/lib/auth/subscription";
+import { computeTaxableBases } from "@/lib/les/codes";
+import { convertLineItemsToAuditInputs } from "@/lib/les/line-item-converter";
+import { generateLineItemId } from "@/lib/utils/line-item-ids";
+
 import DynamicLineItemManager from "./DynamicLineItemManager";
 import SmartTemplateSelector from "./SmartTemplateSelector";
 import UploadReviewStepper from "./UploadReviewStepper";
-import { useLesAudit } from "@/app/hooks/useLesAudit";
-import type { AuditInputs } from "@/app/hooks/useLesAudit";
-import type { Tier } from "@/lib/auth/subscription";
-import type { DynamicLineItem } from "@/app/types/les";
-import { convertLineItemsToAuditInputs } from "@/lib/les/line-item-converter";
-import { generateLineItemId } from "@/lib/utils/line-item-ids";
-import { computeTaxableBases } from "@/lib/les/codes";
 
 interface Props {
   tier: Tier;
@@ -81,7 +82,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [netPay, setNetPay] = useState<string>(""); // Net pay from LES (user-entered)
-  
+
   // Collapsible sections state for findings
   const [redFlagsExpanded, setRedFlagsExpanded] = useState(true);
   const [yellowFlagsExpanded, setYellowFlagsExpanded] = useState(true);
@@ -773,8 +774,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             <div className="mx-auto max-w-2xl space-y-6">
               {/* Enhanced Header with Progress */}
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-slate-800">Enter LES Data</h2>
                   <button
                     onClick={() => {
                       if (confirm("Clear all entered data and start over?")) {
@@ -782,47 +783,34 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                         setTemplateSelected(false);
                       }
                     }}
-                    className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
                   >
                     <Icon name="RefreshCw" className="h-4 w-4" />
                     <span className="hidden sm:inline">Reset Form</span>
                   </button>
                 </div>
-                
-                {/* Progress Indicator */}
-                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Completion Progress</span>
-                    <span className="text-sm font-semibold text-blue-600">
-                      {Math.round((lineItems.length / 12) * 100)}%
-                    </span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-gray-200">
-                    <div 
-                      className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
-                      style={{ width: `${Math.min((lineItems.length / 12) * 100, 100)}%` }}
-                    />
-                  </div>
-                  <p className="mt-2 text-xs text-gray-500">
-                    {lineItems.length} of ~12 typical LES line items entered
-                  </p>
-                </div>
+
               </div>
 
-              {/* Enhanced Pay Period Section */}
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
-                  <Icon name="Calendar" className="h-5 w-5 text-blue-600" />
+              {/* Pay Period Section */}
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3 text-base font-semibold text-slate-800">
+                  <Icon name="Calendar" className="h-5 w-5 text-slate-400" />
                   Pay Period
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label htmlFor="month-select" className="mb-1 block text-sm font-medium text-gray-700">Month</label>
+                    <label
+                      htmlFor="month-select"
+                      className="mb-1 block text-sm font-medium text-slate-700"
+                    >
+                      Month
+                    </label>
                     <select
                       id="month-select"
                       value={month || ""}
                       onChange={(e) => setMonth(parseInt(e.target.value))}
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
                       <option value="">Select...</option>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -833,7 +821,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="year" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label htmlFor="year" className="mb-1 block text-sm font-medium text-slate-700">
                       Year
                     </label>
                     <input
@@ -842,19 +830,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       onChange={(e) => setYear(parseInt(e.target.value))}
                       min="2020"
                       max="2099"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Enhanced Net Pay Section */}
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
-                  <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+              {/* Net Pay Section */}
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3 text-base font-semibold text-slate-800">
+                  <Icon name="DollarSign" className="h-5 w-5 text-slate-400" />
                   Net Pay from LES
                 </h3>
-                <p className="mb-4 text-sm text-gray-600">
+                <p className="mb-4 text-sm text-slate-600">
                   Enter the actual net pay shown on your LES statement. This is used to verify the
                   audit calculation matches your paycheck.
                 </p>
@@ -870,11 +858,11 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     value={netPay}
                     onChange={(e) => setNetPay(e.target.value)}
                     placeholder="0.00"
-                    className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full rounded-lg border-slate-300 pl-7 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
                 {netPay && (
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className="mt-2 text-xs text-slate-500">
                     This will be compared against computed net pay to catch discrepancies.
                   </p>
                 )}
@@ -919,17 +907,21 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               )}
 
               {/* Federal and State Tax - Always Visible */}
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
-                  <Icon name="Landmark" className="h-5 w-5 text-red-600" />
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3 text-base font-semibold text-slate-800">
+                  <Icon name="Landmark" className="h-5 w-5 text-slate-400" />
                   Federal & State Tax
                 </h3>
-                <p className="mb-4 text-sm text-gray-600">
-                  Enter the exact amounts from your LES statement. These are critical for accurate audit calculations.
+                <p className="mb-4 text-sm text-slate-600">
+                  Enter the exact amounts from your LES statement. These are critical for accurate
+                  audit calculations.
                 </p>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label htmlFor="federal-tax" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="federal-tax"
+                      className="mb-1 block text-sm font-medium text-slate-700"
+                    >
                       Federal Income Tax Withheld
                     </label>
                     <div className="relative">
@@ -943,50 +935,58 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                         min="0"
                         max="999999"
                         value={(() => {
-                          const fedItem = lineItems.find(item => item.line_code === 'TAX_FED');
-                          return fedItem ? (fedItem.amount_cents / 100).toFixed(2) : '';
+                          const fedItem = lineItems.find((item) => item.line_code === "TAX_FED");
+                          return fedItem ? (fedItem.amount_cents / 100).toFixed(2) : "";
                         })()}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (value === '') {
+                          if (value === "") {
                             // Remove the item if empty
-                            setLineItems(prev => prev.filter(item => item.line_code !== 'TAX_FED'));
+                            setLineItems((prev) =>
+                              prev.filter((item) => item.line_code !== "TAX_FED")
+                            );
                           } else {
                             // Add or update the item
                             const amountCents = Math.round(parseFloat(value) * 100);
-                            setLineItems(prev => {
-                              const existing = prev.find(item => item.line_code === 'TAX_FED');
+                            setLineItems((prev) => {
+                              const existing = prev.find((item) => item.line_code === "TAX_FED");
                               if (existing) {
-                                return prev.map(item => 
-                                  item.line_code === 'TAX_FED' 
+                                return prev.map((item) =>
+                                  item.line_code === "TAX_FED"
                                     ? { ...item, amount_cents: amountCents }
                                     : item
                                 );
                               } else {
-                                return [...prev, {
-                                  id: generateLineItemId(),
-                                  line_code: 'TAX_FED',
-                                  description: 'Federal Income Tax Withheld',
-                                  amount_cents: amountCents,
-                                  section: 'TAX' as const,
-                                  isCustom: true,
-                                  isParsed: false,
-                                  severity: 'info' as const
-                                }];
+                                return [
+                                  ...prev,
+                                  {
+                                    id: generateLineItemId(),
+                                    line_code: "TAX_FED",
+                                    description: "Federal Income Tax Withheld",
+                                    amount_cents: amountCents,
+                                    section: "TAX" as const,
+                                    isCustom: true,
+                                    isParsed: false,
+                                    severity: "info" as const,
+                                  },
+                                ];
                               }
                             });
                           }
                         }}
                         placeholder="0.00"
-                        className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="w-full rounded-lg border-slate-300 pl-7 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Found on LES as "FED TAX" or "FITW"
                     </p>
                   </div>
                   <div>
-                    <label htmlFor="state-tax" className="mb-1 block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="state-tax"
+                      className="mb-1 block text-sm font-medium text-slate-700"
+                    >
                       State Income Tax Withheld
                     </label>
                     <div className="relative">
@@ -1000,55 +1000,62 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                         min="0"
                         max="999999"
                         value={(() => {
-                          const stateItem = lineItems.find(item => item.line_code === 'TAX_STATE');
-                          return stateItem ? (stateItem.amount_cents / 100).toFixed(2) : '';
+                          const stateItem = lineItems.find(
+                            (item) => item.line_code === "TAX_STATE"
+                          );
+                          return stateItem ? (stateItem.amount_cents / 100).toFixed(2) : "";
                         })()}
                         onChange={(e) => {
                           const value = e.target.value;
-                          if (value === '') {
+                          if (value === "") {
                             // Remove the item if empty
-                            setLineItems(prev => prev.filter(item => item.line_code !== 'TAX_STATE'));
+                            setLineItems((prev) =>
+                              prev.filter((item) => item.line_code !== "TAX_STATE")
+                            );
                           } else {
                             // Add or update the item
                             const amountCents = Math.round(parseFloat(value) * 100);
-                            setLineItems(prev => {
-                              const existing = prev.find(item => item.line_code === 'TAX_STATE');
+                            setLineItems((prev) => {
+                              const existing = prev.find((item) => item.line_code === "TAX_STATE");
                               if (existing) {
-                                return prev.map(item => 
-                                  item.line_code === 'TAX_STATE' 
+                                return prev.map((item) =>
+                                  item.line_code === "TAX_STATE"
                                     ? { ...item, amount_cents: amountCents }
                                     : item
                                 );
                               } else {
-                                return [...prev, {
-                                  id: generateLineItemId(),
-                                  line_code: 'TAX_STATE',
-                                  description: 'State Income Tax Withheld',
-                                  amount_cents: amountCents,
-                                  section: 'TAX' as const,
-                                  isCustom: true,
-                                  isParsed: false,
-                                  severity: 'info' as const
-                                }];
+                                return [
+                                  ...prev,
+                                  {
+                                    id: generateLineItemId(),
+                                    line_code: "TAX_STATE",
+                                    description: "State Income Tax Withheld",
+                                    amount_cents: amountCents,
+                                    section: "TAX" as const,
+                                    isCustom: true,
+                                    isParsed: false,
+                                    severity: "info" as const,
+                                  },
+                                ];
                               }
                             });
                           }
                         }}
                         placeholder="0.00"
-                        className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="w-full rounded-lg border-slate-300 pl-7 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Found on LES as "STATE TAX" or "SITW" (0 for no-tax states)
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Enhanced Line Item Manager */}
-              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
-                  <Icon name="List" className="h-5 w-5 text-purple-600" />
+              {/* Line Item Manager */}
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 flex items-center gap-2 border-b border-slate-200 pb-3 text-base font-semibold text-slate-800">
+                  <Icon name="List" className="h-5 w-5 text-slate-400" />
                   LES Line Items
                 </h3>
                 <DynamicLineItemManager
@@ -1063,7 +1070,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           {/* RIGHT PANEL: AUDIT REPORT (ALWAYS VISIBLE) */}
           <div className="bg-white p-4 lg:overflow-y-auto lg:border-l lg:p-6">
             <div className="mx-auto max-w-3xl space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900">Audit Report</h2>
+              <h2 className="text-2xl font-bold text-slate-800">Audit Report</h2>
 
               {/* Screen Reader Status Announcements */}
               <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -1074,25 +1081,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
               {/* Loading State */}
               {loading && (
-                <div className="animate-pulse space-y-4">
-                  {/* Summary skeleton */}
-                  <div className="h-32 rounded-lg bg-gray-100 p-6" />
-
-                  {/* Flags skeleton */}
-                  <div className="space-y-3">
-                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
-                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
-                    <div className="h-24 rounded-lg bg-gray-100 p-4" />
-                  </div>
+                <div className="space-y-6">
+                  <div className="h-32 animate-pulse rounded-lg bg-slate-100" />
+                  <div className="h-24 animate-pulse rounded-lg bg-slate-100" />
+                  <div className="h-24 animate-pulse rounded-lg bg-slate-100" />
                 </div>
               )}
 
-              {/* Error State - NEW */}
+              {/* Error State */}
               {error && (
                 <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-                  <Icon name="AlertCircle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+                  <Icon name="AlertCircle" className="h-5 w-5 flex-shrink-0 text-red-600" />
                   <div className="flex-1">
-                    <p className="font-semibold text-red-900">Audit Failed</p>
+                    <p className="text-sm font-semibold text-red-900">Audit Failed</p>
                     <p className="text-sm text-red-700">{error}</p>
                   </div>
                 </div>
@@ -1101,93 +1102,98 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               {/* Enhanced Summary Card */}
               {result && (
                 <>
-                  <div className="rounded-xl border-2 bg-gradient-to-br from-white to-gray-50 p-8 shadow-lg">
+                  <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     {/* Hero Metric - Total Variance */}
                     <div className="mb-6 text-center">
-                      <div className="text-sm font-medium uppercase tracking-wide text-gray-600">
+                      <div className="text-sm font-medium text-slate-600">
                         Total Pay Variance
                       </div>
-                      <div className={`text-5xl font-black ${
-                        result.totals.variance !== null && result.totals.variance > 0 
-                          ? 'text-red-600' 
-                          : 'text-green-600'
-                      }`}>
+                      <div
+                        className={`mt-2 text-4xl font-bold ${
+                          result.totals.variance !== null && result.totals.variance > 0
+                            ? "text-red-600"
+                            : "text-green-600"
+                        }`}
+                      >
                         {result.totals.variance !== null ? (
                           <>
-                            {result.totals.variance > 0 ? '+' : ''}${(Math.abs(result.totals.variance) / 100).toFixed(2)}
+                            {result.totals.variance > 0 ? "+" : ""}$
+                            {(Math.abs(result.totals.variance) / 100).toFixed(2)}
                           </>
                         ) : (
-                          'Premium Feature'
+                          "Premium Feature"
                         )}
                       </div>
-                      <div className="mt-2 text-sm text-gray-600">
-                        {result.totals.variance !== null ? (
-                          result.totals.variance > 0 ? 'You may be owed money' : 'Everything looks correct'
-                        ) : (
-                          'Upgrade to see variance analysis'
-                        )}
+                      <div className="mt-1 text-sm text-slate-600">
+                        {result.totals.variance !== null
+                          ? result.totals.variance > 0
+                            ? "You may be owed money"
+                            : "Everything looks correct"
+                          : "Upgrade to see variance analysis"}
                       </div>
                     </div>
 
                     {/* Issue Breakdown Grid */}
-                    <div className="grid grid-cols-3 gap-6 border-t pt-6">
+                    <div className="grid grid-cols-3 gap-4 border-t border-slate-200 pt-6">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-red-600">
-                          {result.flags.filter(f => f.severity === 'red').length}
+                        <div className="text-2xl font-semibold text-red-600">
+                          {result.flags.filter((f) => f.severity === "red").length}
                         </div>
-                        <div className="text-sm font-semibold text-red-600 uppercase tracking-wide">Critical</div>
+                        <div className="text-xs font-medium text-slate-600">Critical</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-amber-600">
-                          {result.flags.filter(f => f.severity === 'yellow').length}
+                        <div className="text-2xl font-semibold text-amber-600">
+                          {result.flags.filter((f) => f.severity === "yellow").length}
                         </div>
-                        <div className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Warnings</div>
+                        <div className="text-xs font-medium text-slate-600">Warnings</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-green-600">
-                          {result.flags.filter(f => f.severity === 'green').length}
+                        <div className="text-2xl font-semibold text-green-600">
+                          {result.flags.filter((f) => f.severity === "green").length}
                         </div>
-                        <div className="text-sm font-semibold text-green-600 uppercase tracking-wide">Verified</div>
+                        <div className="text-xs font-medium text-slate-600">Verified</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Actionable Insights Dashboard */}
-                  {tier === "premium" || tier === "staff" ? (
-                    (() => {
-                      const redFlags = result.flags.filter(f => f.severity === 'red');
-                      const totalOwed = redFlags.reduce((total, flag) => {
-                        const match = flag.message.match(/\$[\d,]+\.?\d*/);
-                        if (match) {
-                          const amount = parseFloat(match[0].replace(/[$,]/g, ''));
-                          return total + amount;
-                        }
-                        return total;
-                      }, 0);
+                  {tier === "premium" || tier === "staff"
+                    ? (() => {
+                        const redFlags = result.flags.filter((f) => f.severity === "red");
+                        const totalOwed = redFlags.reduce((total, flag) => {
+                          const match = flag.message.match(/\$[\d,]+\.?\d*/);
+                          if (match) {
+                            const amount = parseFloat(match[0].replace(/[$,]/g, ""));
+                            return total + amount;
+                          }
+                          return total;
+                        }, 0);
 
-                      return redFlags.length > 0 ? (
-                        <div className="rounded-xl border-2 border-red-200 bg-red-50 p-6">
-                          <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-red-900">
-                            <Icon name="DollarSign" className="h-6 w-6" />
-                            Action Required
-                          </h3>
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between rounded-lg bg-white p-4">
-                              <span className="font-semibold text-gray-900">Total Money Potentially Owed:</span>
-                              <span className="text-2xl font-black text-red-600">
-                                ${totalOwed.toFixed(2)}
-                              </span>
+                        return redFlags.length > 0 ? (
+                          <div className="rounded-lg border border-red-200 bg-red-50 p-6">
+                            <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-red-900">
+                              <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
+                              Action Required
+                            </h3>
+                            <div className="rounded-lg bg-white p-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-slate-700">
+                                  Total Potentially Owed:
+                                </span>
+                                <span className="text-lg font-bold text-red-600">
+                                  ${totalOwed.toFixed(2)}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ) : null;
-                    })()
-                  ) : null}
+                        ) : null;
+                      })()
+                    : null}
 
                   {/* Enhanced Flags List with Collapsible Sections */}
                   <div>
-                    <h3 className="mb-4 text-xl font-bold text-gray-900 flex items-center gap-2">
-                      <Icon name="Shield" className="h-6 w-6 text-blue-600" />
+                    <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-800">
+                      <Icon name="Shield" className="h-5 w-5 text-slate-400" />
                       Audit Findings
                     </h3>
 
@@ -1216,51 +1222,60 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       <>
                         {/* Enhanced Collapsible Flags */}
                         {(() => {
-                          const redFlags = result.flags.filter(f => f.severity === 'red');
-                          const yellowFlags = result.flags.filter(f => f.severity === 'yellow');
-                          const greenFlags = result.flags.filter(f => f.severity === 'green');
+                          const redFlags = result.flags.filter((f) => f.severity === "red");
+                          const yellowFlags = result.flags.filter((f) => f.severity === "yellow");
+                          const greenFlags = result.flags.filter((f) => f.severity === "green");
 
                           return (
                             <div className="space-y-4">
                               {/* Critical Issues */}
                               {redFlags.length > 0 && (
-                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
                                   <button
                                     onClick={() => setRedFlagsExpanded(!redFlagsExpanded)}
-                                    className="flex w-full items-center justify-between p-6 text-left"
+                                    className="flex w-full items-center justify-between p-4 text-left hover:bg-slate-50"
                                   >
-                                    <h4 className="flex items-center gap-3 text-xl font-bold text-red-900">
-                                      <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
+                                    <h4 className="flex items-center gap-2 text-base font-semibold text-slate-800">
+                                      <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
                                       Critical Issues
-                                      <span className="rounded-full bg-red-600 px-3 py-1 text-sm font-semibold text-white">
+                                      <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">
                                         {redFlags.length}
                                       </span>
                                     </h4>
-                                    <Icon name={redFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                    <Icon
+                                      name={redFlagsExpanded ? "ChevronUp" : "ChevronDown"}
+                                      className="h-5 w-5 text-slate-400"
+                                    />
                                   </button>
                                   {redFlagsExpanded && (
-                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                    <div className="space-y-3 border-t border-slate-200 p-4">
                                       {redFlags.map((flag, idx) => (
-                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-red-50 border-red-200 shadow-sm">
-                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                                            <Icon name="AlertCircle" className="h-8 w-8 md:h-6 md:w-6 text-red-600 flex-shrink-0" />
-                                            <div className="flex-1 space-y-3">
-                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
-                                              <p className="text-sm leading-relaxed text-gray-700">
+                                        <div
+                                          key={idx}
+                                          className="rounded-lg border border-red-200 bg-red-50 p-4"
+                                        >
+                                          <div className="flex gap-3">
+                                            <Icon
+                                              name="AlertCircle"
+                                              className="h-5 w-5 flex-shrink-0 text-red-600"
+                                            />
+                                            <div className="flex-1 space-y-2">
+                                              <h5 className="text-sm font-semibold text-slate-900">
+                                                {flag.message}
+                                              </h5>
+                                              <p className="text-sm text-slate-600">
                                                 <strong>What to do:</strong> {flag.suggestion}
                                               </p>
                                               {flag.ref_url && (
-                                                <div className="flex flex-col gap-2 md:flex-row md:gap-3">
-                                                  <a
-                                                    href={flag.ref_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
-                                                  >
-                                                    Learn More
-                                                    <Icon name="ExternalLink" className="h-4 w-4" />
-                                                  </a>
-                                                </div>
+                                                <a
+                                                  href={flag.ref_url}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+                                                >
+                                                  Learn More
+                                                  <Icon name="ExternalLink" className="h-4 w-4" />
+                                                </a>
                                               )}
                                             </div>
                                           </div>
@@ -1273,43 +1288,55 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
                               {/* Warnings */}
                               {yellowFlags.length > 0 && (
-                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
                                   <button
                                     onClick={() => setYellowFlagsExpanded(!yellowFlagsExpanded)}
-                                    className="flex w-full items-center justify-between p-6 text-left"
+                                    className="flex w-full items-center justify-between p-4 text-left hover:bg-slate-50"
                                   >
-                                    <h4 className="flex items-center gap-3 text-xl font-bold text-amber-900">
-                                      <Icon name="AlertTriangle" className="h-6 w-6 text-amber-600" />
+                                    <h4 className="flex items-center gap-2 text-base font-semibold text-slate-800">
+                                      <Icon
+                                        name="AlertTriangle"
+                                        className="h-5 w-5 text-amber-600"
+                                      />
                                       Warnings
-                                      <span className="rounded-full bg-amber-600 px-3 py-1 text-sm font-semibold text-white">
+                                      <span className="rounded-full bg-amber-600 px-2 py-0.5 text-xs font-semibold text-white">
                                         {yellowFlags.length}
                                       </span>
                                     </h4>
-                                    <Icon name={yellowFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                    <Icon
+                                      name={yellowFlagsExpanded ? "ChevronUp" : "ChevronDown"}
+                                      className="h-5 w-5 text-slate-400"
+                                    />
                                   </button>
                                   {yellowFlagsExpanded && (
-                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                    <div className="space-y-3 border-t border-slate-200 p-4">
                                       {yellowFlags.map((flag, idx) => (
-                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-amber-50 border-amber-200 shadow-sm">
-                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                                            <Icon name="AlertTriangle" className="h-8 w-8 md:h-6 md:w-6 text-amber-600 flex-shrink-0" />
-                                            <div className="flex-1 space-y-3">
-                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
-                                              <p className="text-sm leading-relaxed text-gray-700">
+                                        <div
+                                          key={idx}
+                                          className="rounded-lg border border-amber-200 bg-amber-50 p-4"
+                                        >
+                                          <div className="flex gap-3">
+                                            <Icon
+                                              name="AlertTriangle"
+                                              className="h-5 w-5 flex-shrink-0 text-amber-600"
+                                            />
+                                            <div className="flex-1 space-y-2">
+                                              <h5 className="text-sm font-semibold text-slate-900">
+                                                {flag.message}
+                                              </h5>
+                                              <p className="text-sm text-slate-600">
                                                 <strong>What to do:</strong> {flag.suggestion}
                                               </p>
                                               {flag.ref_url && (
-                                                <div className="flex flex-col gap-2 md:flex-row md:gap-3">
-                                                  <a
-                                                    href={flag.ref_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
-                                                  >
-                                                    Learn More
-                                                    <Icon name="ExternalLink" className="h-4 w-4" />
-                                                  </a>
-                                                </div>
+                                                <a
+                                                  href={flag.ref_url}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+                                                >
+                                                  Learn More
+                                                  <Icon name="ExternalLink" className="h-4 w-4" />
+                                                </a>
                                               )}
                                             </div>
                                           </div>
@@ -1322,29 +1349,40 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
                               {/* Verified Correct */}
                               {greenFlags.length > 0 && (
-                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
                                   <button
                                     onClick={() => setGreenFlagsExpanded(!greenFlagsExpanded)}
-                                    className="flex w-full items-center justify-between p-6 text-left"
+                                    className="flex w-full items-center justify-between p-4 text-left hover:bg-slate-50"
                                   >
-                                    <h4 className="flex items-center gap-3 text-xl font-bold text-green-900">
-                                      <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+                                    <h4 className="flex items-center gap-2 text-base font-semibold text-slate-800">
+                                      <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
                                       Verified Correct
-                                      <span className="rounded-full bg-green-600 px-3 py-1 text-sm font-semibold text-white">
+                                      <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-semibold text-white">
                                         {greenFlags.length}
                                       </span>
                                     </h4>
-                                    <Icon name={greenFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                    <Icon
+                                      name={greenFlagsExpanded ? "ChevronUp" : "ChevronDown"}
+                                      className="h-5 w-5 text-slate-400"
+                                    />
                                   </button>
                                   {greenFlagsExpanded && (
-                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                    <div className="space-y-3 border-t border-slate-200 p-4">
                                       {greenFlags.map((flag, idx) => (
-                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-green-50 border-green-200 shadow-sm">
-                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                                            <Icon name="CheckCircle" className="h-8 w-8 md:h-6 md:w-6 text-green-600 flex-shrink-0" />
-                                            <div className="flex-1 space-y-3">
-                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
-                                              <p className="text-sm leading-relaxed text-gray-700">
+                                        <div
+                                          key={idx}
+                                          className="rounded-lg border border-green-200 bg-green-50 p-4"
+                                        >
+                                          <div className="flex gap-3">
+                                            <Icon
+                                              name="CheckCircle"
+                                              className="h-5 w-5 flex-shrink-0 text-green-600"
+                                            />
+                                            <div className="flex-1 space-y-2">
+                                              <h5 className="text-sm font-semibold text-slate-900">
+                                                {flag.message}
+                                              </h5>
+                                              <p className="text-sm text-slate-600">
                                                 <strong>What to do:</strong> {flag.suggestion}
                                               </p>
                                             </div>
@@ -1374,7 +1412,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       </>
                     )}
                   </div>
-
 
                   {/* Waterfall (Premium Only) */}
                   {tier !== "premium" && tier !== "staff" ? (
