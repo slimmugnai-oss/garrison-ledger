@@ -217,7 +217,7 @@ export default function BaseNavigatorClient({
 
         {/* Streamlined Filters - Mobile Optimized */}
         <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
-          <h2 className="mb-4 sm:mb-6 text-lg font-semibold text-gray-900">Search Criteria</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 sm:mb-6">Search Criteria</h2>
 
           <div className="space-y-4 sm:space-y-6">
             {/* Row 1: Bedrooms and BAH */}
@@ -228,7 +228,7 @@ export default function BaseNavigatorClient({
                 <select
                   value={bedrooms}
                   onChange={(e) => setBedrooms(Number(e.target.value))}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
                 >
                   <option value={2}>2 BR</option>
                   <option value={3}>3 BR</option>
@@ -250,7 +250,7 @@ export default function BaseNavigatorClient({
                   type="number"
                   value={Math.round(bahMonthlyCents / 100)}
                   onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
                   placeholder="2500"
                 />
                 <p className="mt-1 text-xs text-gray-600">
@@ -291,7 +291,7 @@ export default function BaseNavigatorClient({
                       key={grade}
                       type="button"
                       onClick={() => toggleGrade(grade)}
-                      className={`rounded-lg px-4 py-3 font-medium transition-all duration-200 min-h-[44px] min-w-[80px] ${
+                      className={`min-h-[44px] min-w-[80px] rounded-lg px-4 py-3 font-medium transition-all duration-200 ${
                         kidsGrades.includes(grade)
                           ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
@@ -321,7 +321,7 @@ export default function BaseNavigatorClient({
                 <select
                   value={sortPriority}
                   onChange={(e) => setSortPriority(e.target.value as typeof sortPriority)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="overall">Best Overall Fit</option>
                   <option value="schools">Best Schools First</option>
@@ -336,7 +336,7 @@ export default function BaseNavigatorClient({
           <button
             onClick={computeRankings}
             disabled={loading || bahMonthlyCents === 0}
-            className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 min-h-[48px] text-base md:w-auto"
+            className="mt-6 min-h-[48px] w-full rounded-lg bg-blue-600 px-6 py-4 text-base font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
           >
             {loading ? "Computing Rankings..." : "Find Best Neighborhoods"}
           </button>
@@ -486,20 +486,24 @@ export default function BaseNavigatorClient({
                       className={`overflow-hidden rounded-2xl border-2 ${rankStyle.border} bg-white transition-all duration-300 hover:shadow-xl ${rankStyle.shadow}`}
                     >
                       {/* Header Section - Mobile Optimized */}
-                      <div className={`${rankStyle.gradient} p-4 sm:p-6 text-white`}>
+                      <div className={`${rankStyle.gradient} p-4 text-white sm:p-6`}>
                         <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <div className="mb-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                              <span className="text-xl sm:text-2xl font-bold">{rankStyle.label}</span>
-                              <h3 className="text-2xl sm:text-3xl font-bold">ZIP {result.zip}</h3>
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                              <span className="text-xl font-bold sm:text-2xl">
+                                {rankStyle.label}
+                              </span>
+                              <h3 className="text-2xl font-bold sm:text-3xl">ZIP {result.zip}</h3>
                             </div>
-                            <p className="text-base sm:text-lg opacity-90">{scoreBreakdown.message}</p>
+                            <p className="text-base opacity-90 sm:text-lg">
+                              {scoreBreakdown.message}
+                            </p>
                           </div>
 
                           {isPremium && (
                             <button
                               onClick={() => saveWatchlist(result.zip)}
-                              className={`rounded-xl p-3 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                              className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl p-3 ${
                                 isWatched
                                   ? "bg-white bg-opacity-20 text-white"
                                   : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"
@@ -513,9 +517,11 @@ export default function BaseNavigatorClient({
 
                         {/* Family Fit Score - Mobile Optimized */}
                         <div className="mt-4 rounded-xl bg-white bg-opacity-20 p-4">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                             <div>
-                              <span className="text-base sm:text-lg font-semibold">Family Fit Score</span>
+                              <span className="text-base font-semibold sm:text-lg">
+                                Family Fit Score
+                              </span>
                               <div
                                 className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-semibold ${rankStyle.badge}`}
                               >
@@ -526,7 +532,7 @@ export default function BaseNavigatorClient({
                                     : "Fair"}
                               </div>
                             </div>
-                            <span className="text-4xl sm:text-5xl font-bold">
+                            <span className="text-4xl font-bold sm:text-5xl">
                               {Math.round(result.family_fit_score)}
                             </span>
                           </div>
@@ -537,23 +543,48 @@ export default function BaseNavigatorClient({
                       <div className="p-4 sm:p-6">
                         {/* Tab Navigation */}
                         <div className="mb-6">
-                          <div className="flex gap-1 border-b border-gray-200 overflow-x-auto pb-0">
+                          <div className="flex gap-1 overflow-x-auto border-b border-gray-200 pb-0">
                             {[
-                              { id: 'overview', label: 'Overview', shortLabel: 'Overview', icon: 'BarChart3' },
-                              { id: 'schools', label: 'Schools', shortLabel: 'Schools', icon: 'GraduationCap' },
-                              { id: 'housing', label: 'Housing', shortLabel: 'Housing', icon: 'Home' },
-                              { id: 'commute', label: 'Commute', shortLabel: 'Commute', icon: 'Car' },
-                              { id: 'quality', label: 'Quality of Life', shortLabel: 'QoL', icon: 'Sun' }
+                              {
+                                id: "overview",
+                                label: "Overview",
+                                shortLabel: "Overview",
+                                icon: "BarChart3",
+                              },
+                              {
+                                id: "schools",
+                                label: "Schools",
+                                shortLabel: "Schools",
+                                icon: "GraduationCap",
+                              },
+                              {
+                                id: "housing",
+                                label: "Housing",
+                                shortLabel: "Housing",
+                                icon: "Home",
+                              },
+                              {
+                                id: "commute",
+                                label: "Commute",
+                                shortLabel: "Commute",
+                                icon: "Car",
+                              },
+                              {
+                                id: "quality",
+                                label: "Quality of Life",
+                                shortLabel: "QoL",
+                                icon: "Sun",
+                              },
                             ].map((tab) => {
-                              const isActive = (activeTabs[result.zip] || 'overview') === tab.id;
+                              const isActive = (activeTabs[result.zip] || "overview") === tab.id;
                               return (
                                 <button
                                   key={tab.id}
                                   onClick={() => switchTab(result.zip, tab.id)}
-                                  className={`flex items-center gap-2 rounded-t-lg px-3 py-3 text-sm font-medium transition-colors min-h-[44px] flex-shrink-0 ${
+                                  className={`flex min-h-[44px] flex-shrink-0 items-center gap-2 rounded-t-lg px-3 py-3 text-sm font-medium transition-colors ${
                                     isActive
-                                      ? 'border-b-2 border-blue-600 bg-blue-50 text-blue-700'
-                                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                      ? "border-b-2 border-blue-600 bg-blue-50 text-blue-700"
+                                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                   }`}
                                 >
                                   <Icon name={tab.icon} className="h-4 w-4 flex-shrink-0" />
@@ -567,7 +598,7 @@ export default function BaseNavigatorClient({
 
                         {/* Tab Content */}
                         <div className="min-h-[400px]">
-                          {(activeTabs[result.zip] || 'overview') === 'overview' && (
+                          {(activeTabs[result.zip] || "overview") === "overview" && (
                             <div className="space-y-6">
                               {/* Quick Stats Bar */}
                               <div className="rounded-lg bg-gray-50 p-4">
@@ -580,13 +611,16 @@ export default function BaseNavigatorClient({
                                   </div>
                                   <div className="text-center">
                                     <div className="text-2xl font-bold text-blue-600">
-                                      ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : 'N/A'}
+                                      $
+                                      {result.median_rent_cents
+                                        ? (result.median_rent_cents / 100).toLocaleString()
+                                        : "N/A"}
                                     </div>
                                     <div className="text-sm text-gray-600">Rent</div>
                                   </div>
                                   <div className="text-center">
                                     <div className="text-2xl font-bold text-purple-600">
-                                      {result.commute_am_minutes || 'N/A'}min
+                                      {result.commute_am_minutes || "N/A"}min
                                     </div>
                                     <div className="text-sm text-gray-600">Commute</div>
                                   </div>
@@ -607,10 +641,10 @@ export default function BaseNavigatorClient({
                                 <div className="rounded-lg bg-blue-50 p-4">
                                   <p className="text-gray-700">
                                     {result.family_fit_score >= 80
-                                      ? `This neighborhood offers excellent value with a ${Math.round(result.subscores.schools)}/100 school rating and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : 'affordable'} rent. The ${result.commute_am_minutes || 'reasonable'} minute commute and ${result.weather_index}/10 weather comfort make it ideal for military families.`
+                                      ? `This neighborhood offers excellent value with a ${Math.round(result.subscores.schools)}/100 school rating and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "affordable"} rent. The ${result.commute_am_minutes || "reasonable"} minute commute and ${result.weather_index}/10 weather comfort make it ideal for military families.`
                                       : result.family_fit_score >= 60
-                                        ? `This neighborhood provides good value with solid schools (${Math.round(result.subscores.schools)}/100) and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : 'reasonable'} rent. The ${result.commute_am_minutes || 'manageable'} minute commute offers decent accessibility to ${base.name}.`
-                                        : `This neighborhood has potential with ${Math.round(result.subscores.schools)}/100 schools and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : 'varying'} rent costs. Consider the ${result.commute_am_minutes || 'longer'} minute commute carefully for your family's needs.`}
+                                        ? `This neighborhood provides good value with solid schools (${Math.round(result.subscores.schools)}/100) and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "reasonable"} rent. The ${result.commute_am_minutes || "manageable"} minute commute offers decent accessibility to ${base.name}.`
+                                        : `This neighborhood has potential with ${Math.round(result.subscores.schools)}/100 schools and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "varying"} rent costs. Consider the ${result.commute_am_minutes || "longer"} minute commute carefully for your family's needs.`}
                                   </p>
                                 </div>
                               </div>
@@ -624,7 +658,13 @@ export default function BaseNavigatorClient({
                                   <div className="flex items-center gap-2">
                                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
                                     <span className="text-gray-700">
-                                      Family Fit Score: {Math.round(result.family_fit_score)}/100 ({result.family_fit_score >= 80 ? 'Excellent' : result.family_fit_score >= 60 ? 'Good' : 'Fair'})
+                                      Family Fit Score: {Math.round(result.family_fit_score)}/100 (
+                                      {result.family_fit_score >= 80
+                                        ? "Excellent"
+                                        : result.family_fit_score >= 60
+                                          ? "Good"
+                                          : "Fair"}
+                                      )
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -636,13 +676,15 @@ export default function BaseNavigatorClient({
                                   <div className="flex items-center gap-2">
                                     <Icon name="Home" className="h-5 w-5 text-blue-600" />
                                     <span className="text-gray-700">
-                                      Housing Affordability: {Math.round(result.subscores.rentVsBah)}/100
+                                      Housing Affordability:{" "}
+                                      {Math.round(result.subscores.rentVsBah)}/100
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Icon name="Car" className="h-5 w-5 text-purple-600" />
                                     <span className="text-gray-700">
-                                      Commute Convenience: {Math.round(result.subscores.commute)}/100
+                                      Commute Convenience: {Math.round(result.subscores.commute)}
+                                      /100
                                     </span>
                                   </div>
                                 </div>
@@ -650,42 +692,97 @@ export default function BaseNavigatorClient({
                             </div>
                           )}
 
-                          {(activeTabs[result.zip] || 'overview') === 'schools' && (
+                          {(activeTabs[result.zip] || "overview") === "schools" && (
                             <div className="space-y-6">
-                              <div className="flex items-center justify-between">
-                                <h4 className="text-lg font-semibold text-gray-900">School Information</h4>
-                                <div className="text-sm text-gray-600">
-                                  Rating: {Math.round(result.subscores.schools)}/100
+                                <div className="flex items-center justify-between">
+                                  <h4 className="text-lg font-semibold text-gray-900">
+                                    School Information
+                                  </h4>
+                                  <div className="text-sm text-gray-600">
+                                    Rating: {Math.round(result.subscores.schools)}/100
+                                  </div>
                                 </div>
-                              </div>
 
-                              {result.payload.top_schools && result.payload.top_schools.length > 0 ? (
+                                {/* School Data Provenance */}
+                                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                  <div className="flex items-center gap-2 text-sm text-blue-800">
+                                    <Icon name="Info" className="h-4 w-4" />
+                                    <span>
+                                      <strong>Data Source:</strong> SchoolDigger • Updated daily • 
+                                      <a 
+                                        href="https://www.schooldigger.com" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="ml-1 underline hover:text-blue-900"
+                                      >
+                                        View on SchoolDigger
+                                      </a>
+                                    </span>
+                                  </div>
+                                </div>
+
+                              {result.payload.top_schools &&
+                              result.payload.top_schools.length > 0 ? (
                                 <div className="space-y-4">
-                                  {result.payload.top_schools.map((school, i) => (
-                                    <div key={i} className="rounded-lg border border-gray-200 bg-white p-4">
-                                      <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                          <h5 className="font-semibold text-gray-900">{school.name}</h5>
-                                          <p className="text-sm text-gray-600">
-                                            {school.grades} • {school.type} • {school.distance_mi.toFixed(1)} mi away
-                                          </p>
-                                        </div>
-                                        <div className="text-right">
-                                          <div className="text-2xl font-bold text-green-600">
-                                            {school.rating}/10
+                                  {result.payload.top_schools.map((school, i) => {
+                                    // Convert 0-10 rating to 1-5 stars for display
+                                    const starRating = Math.round((school.rating / 10) * 5);
+                                    const stars = "★".repeat(starRating) + "☆".repeat(5 - starRating);
+                                    
+                                    return (
+                                      <div
+                                        key={i}
+                                        className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition-shadow"
+                                      >
+                                        <div className="flex items-start justify-between">
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-2">
+                                              <h5 className="font-semibold text-gray-900">
+                                                {school.name}
+                                              </h5>
+                                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                school.type === 'private' 
+                                                  ? 'bg-purple-100 text-purple-800' 
+                                                  : 'bg-blue-100 text-blue-800'
+                                              }`}>
+                                                {school.type === 'private' ? 'Private' : 'Public'}
+                                              </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 mb-2">
+                                              {school.grades} • {school.distance_mi.toFixed(1)} mi away
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-yellow-500 text-lg">{stars}</span>
+                                              <span className="text-sm text-gray-600">
+                                                ({starRating}/5 stars)
+                                              </span>
+                                            </div>
                                           </div>
-                                          <div className="text-xs text-gray-500">
-                                            {school.rating >= 8 ? '★★★★★' : school.rating >= 6 ? '★★★★☆' : '★★★☆☆'}
+                                          <div className="ml-4 text-right">
+                                            <div className="text-2xl font-bold text-green-600">
+                                              {school.rating.toFixed(1)}
+                                            </div>
+                                            <div className="text-sm text-gray-500">out of 10</div>
+                                            <a
+                                              href={`https://www.schooldigger.com/go/${school.name.replace(/\s+/g, '-').toLowerCase()}`}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                                            >
+                                              <Icon name="ExternalLink" className="h-3 w-3" />
+                                              View Details
+                                            </a>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </div>
                               ) : (
                                 <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
                                   <p className="text-sm text-yellow-800">
-                                    <strong>School data unavailable</strong> - This may be due to API configuration or data limitations.
+                                    <strong>School data unavailable</strong> - This may be due to
+                                    API configuration or data limitations.
                                   </p>
                                 </div>
                               )}
@@ -699,9 +796,29 @@ export default function BaseNavigatorClient({
                             </div>
                           )}
 
-                          {(activeTabs[result.zip] || 'overview') === 'housing' && (
-                            <div className="space-y-6">
-                              <h4 className="text-lg font-semibold text-gray-900">Housing Market</h4>
+                          {(activeTabs[result.zip] || "overview") === "housing" && (
+                              <div className="space-y-6">
+                                <h4 className="text-lg font-semibold text-gray-900">
+                                  Housing Market
+                                </h4>
+
+                                {/* Housing Data Provenance */}
+                                <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                                  <div className="flex items-center gap-2 text-sm text-green-800">
+                                    <Icon name="Info" className="h-4 w-4" />
+                                    <span>
+                                      <strong>Data Source:</strong> Zillow via RapidAPI • Cached 30 days • 
+                                      <a 
+                                        href="https://www.zillow.com" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="ml-1 underline hover:text-green-900"
+                                      >
+                                        View on Zillow
+                                      </a>
+                                    </span>
+                                  </div>
+                                </div>
 
                               {/* Rent vs BAH Comparison */}
                               <div className="rounded-lg border border-gray-200 bg-white p-6">
@@ -711,12 +828,16 @@ export default function BaseNavigatorClient({
                                     {Math.round(result.subscores.rentVsBah)}/100
                                   </div>
                                 </div>
-                                
+
                                 <div className="space-y-4">
                                   <div className="flex items-center justify-between">
                                     <span className="text-gray-700">Median Rent</span>
                                     <span className="text-xl font-bold text-gray-900">
-                                      ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : 'N/A'}/mo
+                                      $
+                                      {result.median_rent_cents
+                                        ? (result.median_rent_cents / 100).toLocaleString()
+                                        : "N/A"}
+                                      /mo
                                     </span>
                                   </div>
                                   <div className="flex items-center justify-between">
@@ -728,16 +849,19 @@ export default function BaseNavigatorClient({
                                   <div className="border-t border-gray-200 pt-4">
                                     <div className="flex items-center justify-between">
                                       <span className="text-gray-700">Monthly Difference</span>
-                                      <span className={`text-lg font-semibold ${
-                                        result.median_rent_cents && result.median_rent_cents <= bahMonthlyCents
-                                          ? 'text-green-600'
-                                          : 'text-red-600'
-                                      }`}>
+                                      <span
+                                        className={`text-lg font-semibold ${
+                                          result.median_rent_cents &&
+                                          result.median_rent_cents <= bahMonthlyCents
+                                            ? "text-green-600"
+                                            : "text-red-600"
+                                        }`}
+                                      >
                                         {result.median_rent_cents
                                           ? result.median_rent_cents <= bahMonthlyCents
                                             ? `+$${((bahMonthlyCents - result.median_rent_cents) / 100).toLocaleString()}/mo`
                                             : `-$${((result.median_rent_cents - bahMonthlyCents) / 100).toLocaleString()}/mo`
-                                          : 'N/A'}
+                                          : "N/A"}
                                       </span>
                                     </div>
                                   </div>
@@ -747,34 +871,41 @@ export default function BaseNavigatorClient({
                               {/* Sample Listings */}
                               {result.payload.sample_listings.length > 0 && (
                                 <div>
-                                  <h5 className="mb-4 font-semibold text-gray-900">Available Listings</h5>
+                                  <h5 className="mb-4 font-semibold text-gray-900">
+                                    Available Listings
+                                  </h5>
                                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    {result.payload.sample_listings.slice(0, 4).map((listing, i) => (
-                                      <a
-                                        key={i}
-                                        href={listing.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:bg-gray-50"
-                                      >
-                                        <div className="flex items-center justify-between">
-                                          <div className="min-w-0 flex-1">
-                                            <p className="truncate text-sm font-medium text-gray-900">
-                                              {listing.title}
-                                            </p>
-                                            <p className="text-xs text-gray-600">
-                                              {listing.bedrooms}BR • {listing.bathrooms}BA
-                                            </p>
+                                    {result.payload.sample_listings
+                                      .slice(0, 4)
+                                      .map((listing, i) => (
+                                        <a
+                                          key={i}
+                                          href={listing.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="block rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:bg-gray-50"
+                                        >
+                                          <div className="flex items-center justify-between">
+                                            <div className="min-w-0 flex-1">
+                                              <p className="truncate text-sm font-medium text-gray-900">
+                                                {listing.title}
+                                              </p>
+                                              <p className="text-xs text-gray-600">
+                                                {listing.bedrooms}BR • {listing.bathrooms}BA
+                                              </p>
+                                            </div>
+                                            <div className="ml-3 text-right">
+                                              <p className="text-lg font-bold text-blue-600">
+                                                ${(listing.price_cents / 100).toLocaleString()}/mo
+                                              </p>
+                                              <Icon
+                                                name="ExternalLink"
+                                                className="ml-auto h-4 w-4 text-gray-400"
+                                              />
+                                            </div>
                                           </div>
-                                          <div className="ml-3 text-right">
-                                            <p className="text-lg font-bold text-blue-600">
-                                              ${(listing.price_cents / 100).toLocaleString()}/mo
-                                            </p>
-                                            <Icon name="ExternalLink" className="ml-auto h-4 w-4 text-gray-400" />
-                                          </div>
-                                        </div>
-                                      </a>
-                                    ))}
+                                        </a>
+                                      ))}
                                   </div>
                                 </div>
                               )}
@@ -788,9 +919,29 @@ export default function BaseNavigatorClient({
                             </div>
                           )}
 
-                          {(activeTabs[result.zip] || 'overview') === 'commute' && (
+                          {(activeTabs[result.zip] || "overview") === "commute" && (
                             <div className="space-y-6">
-                              <h4 className="text-lg font-semibold text-gray-900">Commute to {base.name}</h4>
+                              <h4 className="text-lg font-semibold text-gray-900">
+                                Commute to {base.name}
+                              </h4>
+
+                              {/* Commute Data Provenance */}
+                              <div className="rounded-lg border border-purple-200 bg-purple-50 p-3">
+                                <div className="flex items-center gap-2 text-sm text-purple-800">
+                                  <Icon name="Info" className="h-4 w-4" />
+                                  <span>
+                                    <strong>Data Source:</strong> Google Distance Matrix • Updated daily • 
+                                    <a 
+                                      href={`https://maps.google.com/maps?q=${base.latitude},${base.longitude}`}
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="ml-1 underline hover:text-purple-900"
+                                    >
+                                      View on Google Maps
+                                    </a>
+                                  </span>
+                                </div>
+                              </div>
 
                               <div className="rounded-lg border border-gray-200 bg-white p-6">
                                 <div className="mb-4 flex items-center justify-between">
@@ -803,13 +954,13 @@ export default function BaseNavigatorClient({
                                 <div className="grid grid-cols-2 gap-6">
                                   <div className="text-center">
                                     <div className="text-3xl font-bold text-purple-600">
-                                      {result.commute_am_minutes || 'N/A'}
+                                      {result.commute_am_minutes || "N/A"}
                                     </div>
                                     <div className="text-sm text-gray-600">AM Rush (min)</div>
                                   </div>
                                   <div className="text-center">
                                     <div className="text-3xl font-bold text-purple-600">
-                                      {result.commute_pm_minutes || 'N/A'}
+                                      {result.commute_pm_minutes || "N/A"}
                                     </div>
                                     <div className="text-sm text-gray-600">PM Rush (min)</div>
                                   </div>
@@ -831,9 +982,29 @@ export default function BaseNavigatorClient({
                             </div>
                           )}
 
-                          {(activeTabs[result.zip] || 'overview') === 'quality' && (
+                          {(activeTabs[result.zip] || "overview") === "quality" && (
                             <div className="space-y-6">
-                              <h4 className="text-lg font-semibold text-gray-900">Quality of Life</h4>
+                              <h4 className="text-lg font-semibold text-gray-900">
+                                Quality of Life
+                              </h4>
+
+                              {/* Quality of Life Data Provenance */}
+                              <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                                <div className="flex items-center gap-2 text-sm text-orange-800">
+                                  <Icon name="Info" className="h-4 w-4" />
+                                  <span>
+                                    <strong>Data Sources:</strong> Google Weather, Google Places • Updated daily • 
+                                    <a 
+                                      href="https://developers.google.com/maps/documentation/places/web-service"
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="ml-1 underline hover:text-orange-900"
+                                    >
+                                      View API Documentation
+                                    </a>
+                                  </span>
+                                </div>
+                              </div>
 
                               {/* Weather */}
                               <div className="rounded-lg border border-gray-200 bg-white p-6">
@@ -864,7 +1035,8 @@ export default function BaseNavigatorClient({
                                     <div className="flex items-center gap-2">
                                       <Icon name="ShoppingCart" className="h-5 w-5 text-gray-600" />
                                       <span className="text-sm text-gray-700">
-                                        {result.payload.amenities_data.grocery_stores} Grocery Stores
+                                        {result.payload.amenities_data.grocery_stores} Grocery
+                                        Stores
                                       </span>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -893,7 +1065,9 @@ export default function BaseNavigatorClient({
                               {result.payload.military_data && (
                                 <div className="rounded-lg border border-gray-200 bg-white p-6">
                                   <div className="mb-4 flex items-center justify-between">
-                                    <h5 className="font-semibold text-gray-900">Military Amenities</h5>
+                                    <h5 className="font-semibold text-gray-900">
+                                      Military Amenities
+                                    </h5>
                                     <div className="text-2xl font-bold text-gray-600">
                                       {Math.round(result.subscores.military)}/100
                                     </div>
@@ -904,9 +1078,16 @@ export default function BaseNavigatorClient({
                                   <div className="grid grid-cols-2 gap-4">
                                     {result.payload.military_data.commissary_distance_mi && (
                                       <div className="flex items-center gap-2">
-                                        <Icon name="ShoppingCart" className="h-5 w-5 text-gray-600" />
+                                        <Icon
+                                          name="ShoppingCart"
+                                          className="h-5 w-5 text-gray-600"
+                                        />
                                         <span className="text-sm text-gray-700">
-                                          Commissary: {result.payload.military_data.commissary_distance_mi.toFixed(1)} mi
+                                          Commissary:{" "}
+                                          {result.payload.military_data.commissary_distance_mi.toFixed(
+                                            1
+                                          )}{" "}
+                                          mi
                                         </span>
                                       </div>
                                     )}
@@ -914,7 +1095,11 @@ export default function BaseNavigatorClient({
                                       <div className="flex items-center gap-2">
                                         <Icon name="Store" className="h-5 w-5 text-gray-600" />
                                         <span className="text-sm text-gray-700">
-                                          Exchange: {result.payload.military_data.exchange_distance_mi.toFixed(1)} mi
+                                          Exchange:{" "}
+                                          {result.payload.military_data.exchange_distance_mi.toFixed(
+                                            1
+                                          )}{" "}
+                                          mi
                                         </span>
                                       </div>
                                     )}
@@ -922,7 +1107,11 @@ export default function BaseNavigatorClient({
                                       <div className="flex items-center gap-2">
                                         <Icon name="Shield" className="h-5 w-5 text-gray-600" />
                                         <span className="text-sm text-gray-700">
-                                          VA Facility: {result.payload.military_data.va_facility_distance_mi.toFixed(1)} mi
+                                          VA Facility:{" "}
+                                          {result.payload.military_data.va_facility_distance_mi.toFixed(
+                                            1
+                                          )}{" "}
+                                          mi
                                         </span>
                                       </div>
                                     )}
@@ -958,13 +1147,17 @@ export default function BaseNavigatorClient({
                                     <div>
                                       <span className="text-sm text-gray-600">Median Income:</span>
                                       <span className="ml-2 text-sm font-semibold">
-                                        ${result.payload.demographics_data.median_income.toLocaleString()}
+                                        $
+                                        {result.payload.demographics_data.median_income.toLocaleString()}
                                       </span>
                                     </div>
                                     <div>
                                       <span className="text-sm text-gray-600">Diversity:</span>
                                       <span className="ml-2 text-sm font-semibold">
-                                        {(result.payload.demographics_data.diversity_index * 100).toFixed(0)}%
+                                        {(
+                                          result.payload.demographics_data.diversity_index * 100
+                                        ).toFixed(0)}
+                                        %
                                       </span>
                                     </div>
                                   </div>
@@ -974,7 +1167,9 @@ export default function BaseNavigatorClient({
                               <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                   <Icon name="Info" className="h-4 w-4" />
-                                  <span>Data sources: Google Weather, Google Places • Updated daily</span>
+                                  <span>
+                                    Data sources: Google Weather, Google Places • Updated daily
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -1068,9 +1263,7 @@ export default function BaseNavigatorClient({
               <Icon name="MessageCircle" className="h-6 w-6 text-indigo-600" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-indigo-900">
-                Need Help Deciding?
-              </h3>
+              <h3 className="text-lg font-semibold text-indigo-900">Need Help Deciding?</h3>
               <p className="mt-1 text-sm text-indigo-700">
                 Get personalized advice from our military financial experts. They understand the
                 unique challenges of military moves and can help you make the best decision for your
