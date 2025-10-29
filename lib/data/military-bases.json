@@ -1,414 +1,3003 @@
 {
+  "_meta": {
+    "description": "Auto-generated complete list of military installations from official BAH database",
+    "source": "DFAS 2025 BAH Rates (bah_rates table) + Google Maps Geocoding API",
+    "generated": "2025-10-29T14:33:12.593Z",
+    "total_bases": 299,
+    "geocoded": 0,
+    "state_fallback": 299,
+    "note": "DO NOT manually edit this file. Regenerate using: npm run regenerate-bases"
+  },
   "bases": [
-    {
-      "id": "fort-liberty",
-      "name": "Fort Liberty (Bragg)",
-      "branch": "Army",
-      "state": "NC",
-      "city": "Fayetteville",
-      "lat": 35.1390,
-      "lng": -79.0060,
-      "zip": "28310"
-    },
-    {
-      "id": "jblm",
-      "name": "Joint Base Lewis-McChord",
-      "branch": "Joint",
-      "state": "WA",
-      "city": "Tacoma",
-      "lat": 47.0979,
-      "lng": -122.5830,
-      "zip": "98433"
-    },
-    {
-      "id": "fort-campbell",
-      "name": "Fort Campbell",
-      "branch": "Army",
-      "state": "KY",
-      "city": "Clarksville",
-      "lat": 36.6514,
-      "lng": -87.4613,
-      "zip": "42223"
-    },
-    {
-      "id": "fort-hood",
-      "name": "Fort Cavazos (Hood)",
-      "branch": "Army",
-      "state": "TX",
-      "city": "Killeen",
-      "lat": 31.1348,
-      "lng": -97.7837,
-      "zip": "76544"
-    },
-    {
-      "id": "camp-pendleton",
-      "name": "Camp Pendleton",
-      "branch": "Marines",
-      "state": "CA",
-      "city": "Oceanside",
-      "lat": 33.3026,
-      "lng": -117.3156,
-      "zip": "92055"
-    },
-    {
-      "id": "camp-lejeune",
-      "name": "Camp Lejeune",
-      "branch": "Marines",
-      "state": "NC",
-      "city": "Jacksonville",
-      "lat": 34.6706,
-      "lng": -77.3477,
-      "zip": "28547"
-    },
-    {
-      "id": "twentynine-palms",
-      "name": "Twentynine Palms",
-      "branch": "Marines",
-      "state": "CA",
-      "city": "Twentynine Palms",
-      "lat": 34.2963,
-      "lng": -116.1628,
-      "zip": "92278"
-    },
-    {
-      "id": "quantico",
-      "name": "Marine Corps Base Quantico",
-      "branch": "Marines",
-      "state": "VA",
-      "city": "Quantico",
-      "lat": 38.5182,
-      "lng": -77.3093,
-      "zip": "22134"
-    },
-    {
-      "id": "parris-island",
-      "name": "Marine Corps Recruit Depot Parris Island",
-      "branch": "Marines",
-      "state": "SC",
-      "city": "Beaufort",
-      "lat": 32.3516,
-      "lng": -80.6799,
-      "zip": "29905"
-    },
-    {
-      "id": "san-diego",
-      "name": "Marine Corps Recruit Depot San Diego",
-      "branch": "Marines",
-      "state": "CA",
-      "city": "San Diego",
-      "lat": 32.7542,
-      "lng": -117.1939,
-      "zip": "92140"
-    },
-    {
-      "id": "eglin-afb",
-      "name": "Eglin Air Force Base",
-      "branch": "Air Force",
-      "state": "FL",
-      "city": "Valparaiso",
-      "lat": 30.4833,
-      "lng": -86.5253,
-      "zip": "32542"
-    },
-    {
-      "id": "nellis-afb",
-      "name": "Nellis Air Force Base",
-      "branch": "Air Force",
-      "state": "NV",
-      "city": "Las Vegas",
-      "lat": 36.2365,
-      "lng": -115.0346,
-      "zip": "89191"
-    },
-    {
-      "id": "travis-afb",
-      "name": "Travis Air Force Base",
-      "branch": "Air Force",
-      "state": "CA",
-      "city": "Fairfield",
-      "lat": 38.2627,
-      "lng": -121.9275,
-      "zip": "94535"
-    },
-    {
-      "id": "luke-afb",
-      "name": "Luke Air Force Base",
-      "branch": "Air Force",
-      "state": "AZ",
-      "city": "Glendale",
-      "lat": 33.5350,
-      "lng": -112.3833,
-      "zip": "85309"
-    },
-    {
-      "id": "hill-afb",
-      "name": "Hill Air Force Base",
-      "branch": "Air Force",
-      "state": "UT",
-      "city": "Ogden",
-      "lat": 41.1239,
-      "lng": -111.9728,
-      "zip": "84056"
-    },
-    {
-      "id": "langley-afb",
-      "name": "Joint Base Langley-Eustis",
-      "branch": "Air Force",
-      "state": "VA",
-      "city": "Hampton",
-      "lat": 37.0829,
-      "lng": -76.3607,
-      "zip": "23665"
-    },
-    {
-      "id": "lackland-afb",
-      "name": "Joint Base San Antonio",
-      "branch": "Air Force",
-      "state": "TX",
-      "city": "San Antonio",
-      "lat": 29.3843,
-      "lng": -98.5815,
-      "zip": "78236"
-    },
-    {
-      "id": "tinker-afb",
-      "name": "Tinker Air Force Base",
-      "branch": "Air Force",
-      "state": "OK",
-      "city": "Oklahoma City",
-      "lat": 35.4149,
-      "lng": -97.3866,
-      "zip": "73145"
-    },
-    {
-      "id": "macdill-afb",
-      "name": "MacDill Air Force Base",
-      "branch": "Air Force",
-      "state": "FL",
-      "city": "Tampa",
-      "lat": 27.8493,
-      "lng": -82.5032,
-      "zip": "33621"
-    },
-    {
-      "id": "norfolk-nb",
-      "name": "Naval Station Norfolk",
-      "branch": "Navy",
-      "state": "VA",
-      "city": "Norfolk",
-      "lat": 36.9467,
-      "lng": -76.2881,
-      "zip": "23511"
-    },
-    {
-      "id": "san-diego-nb",
-      "name": "Naval Base San Diego",
-      "branch": "Navy",
-      "state": "CA",
-      "city": "San Diego",
-      "lat": 32.6935,
-      "lng": -117.1228,
-      "zip": "92136"
-    },
-    {
-      "id": "pearl-harbor",
-      "name": "Joint Base Pearl Harbor-Hickam",
-      "branch": "Navy",
-      "state": "HI",
-      "city": "Honolulu",
-      "lat": 21.3550,
-      "lng": -157.9561,
-      "zip": "96860"
-    },
-    {
-      "id": "mayport-nb",
-      "name": "Naval Station Mayport",
-      "branch": "Navy",
-      "state": "FL",
-      "city": "Jacksonville",
-      "lat": 30.3927,
-      "lng": -81.4251,
-      "zip": "32228"
-    },
-    {
-      "id": "everett-nb",
-      "name": "Naval Station Everett",
-      "branch": "Navy",
-      "state": "WA",
-      "city": "Everett",
-      "lat": 47.9892,
-      "lng": -122.2283,
-      "zip": "98207"
-    },
-    {
-      "id": "great-lakes",
-      "name": "Naval Station Great Lakes",
-      "branch": "Navy",
-      "state": "IL",
-      "city": "North Chicago",
-      "lat": 42.3109,
-      "lng": -87.8479,
-      "zip": "60088"
-    },
-    {
-      "id": "fort-bragg-ca",
-      "name": "Fort Irwin",
-      "branch": "Army",
-      "state": "CA",
-      "city": "Barstow",
-      "lat": 35.2606,
-      "lng": -116.6808,
-      "zip": "92310"
-    },
-    {
-      "id": "fort-benning",
-      "name": "Fort Moore (Benning)",
-      "branch": "Army",
-      "state": "GA",
-      "city": "Columbus",
-      "lat": 32.3557,
-      "lng": -84.9452,
-      "zip": "31905"
-    },
-    {
-      "id": "fort-stewart",
-      "name": "Fort Stewart",
-      "branch": "Army",
-      "state": "GA",
-      "city": "Hinesville",
-      "lat": 31.8694,
-      "lng": -81.6099,
-      "zip": "31314"
-    },
-    {
-      "id": "fort-drum",
-      "name": "Fort Drum",
-      "branch": "Army",
-      "state": "NY",
-      "city": "Watertown",
-      "lat": 44.0459,
-      "lng": -75.7761,
-      "zip": "13602"
-    },
-    {
-      "id": "fort-bliss",
-      "name": "Fort Bliss",
-      "branch": "Army",
-      "state": "TX",
-      "city": "El Paso",
-      "lat": 31.8137,
-      "lng": -106.4206,
-      "zip": "79916"
-    },
-    {
-      "id": "fort-carson",
-      "name": "Fort Carson",
-      "branch": "Army",
-      "state": "CO",
-      "city": "Colorado Springs",
-      "lat": 38.7350,
-      "lng": -104.7930,
-      "zip": "80913"
-    },
-    {
-      "id": "fort-riley",
-      "name": "Fort Riley",
-      "branch": "Army",
-      "state": "KS",
-      "city": "Junction City",
-      "lat": 39.0413,
-      "lng": -96.7958,
-      "zip": "66442"
-    },
-    {
-      "id": "fort-polk",
-      "name": "Fort Johnson (Polk)",
-      "branch": "Army",
-      "state": "LA",
-      "city": "Leesville",
-      "lat": 31.0449,
-      "lng": -93.2120,
-      "zip": "71459"
-    },
-    {
-      "id": "fort-sam-houston",
-      "name": "Fort Sam Houston",
-      "branch": "Army",
-      "state": "TX",
-      "city": "San Antonio",
-      "lat": 29.4538,
-      "lng": -98.4394,
-      "zip": "78234"
-    },
-    {
-      "id": "fort-sill",
-      "name": "Fort Sill",
-      "branch": "Army",
-      "state": "OK",
-      "city": "Lawton",
-      "lat": 34.6501,
-      "lng": -98.4020,
-      "zip": "73503"
-    },
-    {
-      "id": "fort-leonard-wood",
-      "name": "Fort Leonard Wood",
-      "branch": "Army",
-      "state": "MO",
-      "city": "Waynesville",
-      "lat": 37.7420,
-      "lng": -92.1531,
-      "zip": "65473"
-    },
-    {
-      "id": "fort-gordon",
-      "name": "Fort Eisenhower (Gordon)",
-      "branch": "Army",
-      "state": "GA",
-      "city": "Augusta",
-      "lat": 33.4327,
-      "lng": -82.1345,
-      "zip": "30905"
-    },
-    {
-      "id": "fort-rucker",
-      "name": "Fort Novosel (Rucker)",
-      "branch": "Army",
-      "state": "AL",
-      "city": "Ozark",
-      "lat": 31.3449,
-      "lng": -85.7147,
-      "zip": "36362"
-    },
-    {
-      "id": "fort-lee",
-      "name": "Fort Gregg-Adams (Lee)",
-      "branch": "Army",
-      "state": "VA",
-      "city": "Petersburg",
-      "lat": 37.2440,
-      "lng": -77.3360,
-      "zip": "23801"
-    },
-    {
-      "id": "west-point",
-      "name": "United States Military Academy",
-      "branch": "Army",
-      "state": "NY",
-      "city": "West Point",
-      "lat": 41.3914,
-      "lng": -73.9567,
-      "zip": "10996"
-    },
-    {
-      "id": "pentagon",
-      "name": "The Pentagon",
-      "branch": "Joint",
-      "state": "VA",
-      "city": "Arlington",
-      "lat": 38.8719,
-      "lng": -77.0563,
-      "zip": "22202"
-    }
+      {
+          "id": "aberdeen-proving-grounds-md",
+          "name": "ABERDEEN PROVING GROUNDS, MD",
+          "branch": "Army",
+          "state": "MD",
+          "city": "Aberdeen Proving Grounds, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "abilene-dyess-afb-tx",
+          "name": "ABILENE/DYESS AFB, TX",
+          "branch": "Air Force",
+          "state": "TX",
+          "city": "Abilene",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "akron-oh",
+          "name": "AKRON, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Akron, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "albany-ga",
+          "name": "ALBANY, GA",
+          "branch": "Joint",
+          "state": "GA",
+          "city": "Albany, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "albuquerque-kirtland-afb-nm",
+          "name": "ALBUQUERQUE/KIRTLAND AFB, NM",
+          "branch": "Air Force",
+          "state": "NM",
+          "city": "Albuquerque",
+          "lat": 34.840515,
+          "lng": -106.248482,
+          "zip": "00000"
+      },
+      {
+          "id": "alexandria-la",
+          "name": "ALEXANDRIA, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "Alexandria, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "allentown-bethlehem-pa",
+          "name": "ALLENTOWN/BETHLEHEM, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Allentown",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "altus-afb-ok",
+          "name": "ALTUS AFB, OK",
+          "branch": "Air Force",
+          "state": "OK",
+          "city": "Altus Afb, Ok",
+          "lat": 35.565342,
+          "lng": -96.928917,
+          "zip": "00000"
+      },
+      {
+          "id": "anchorage-ak",
+          "name": "ANCHORAGE, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Anchorage, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "ann-arbor-mi",
+          "name": "ANN ARBOR, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Ann Arbor, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "annapolis-md",
+          "name": "ANNAPOLIS, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Annapolis, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "anniston-fort-mcclellan-al",
+          "name": "ANNISTON/FORT MCCLELLAN, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Anniston",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "asheville-nc",
+          "name": "ASHEVILLE, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Asheville, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "astoria-or",
+          "name": "ASTORIA, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Astoria, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "atlanta-ga",
+          "name": "ATLANTA, GA",
+          "branch": "Joint",
+          "state": "GA",
+          "city": "Atlanta, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "atlantic-city-nj",
+          "name": "ATLANTIC CITY, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Atlantic City, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "auburn-al",
+          "name": "AUBURN, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Auburn, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "austin-tx",
+          "name": "AUSTIN, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Austin, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "ballston-spa-albany-ny",
+          "name": "BALLSTON SPA/ALBANY, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Ballston Spa",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "baltimore-md",
+          "name": "BALTIMORE, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Baltimore, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "bangor-me",
+          "name": "BANGOR, ME",
+          "branch": "Joint",
+          "state": "ME",
+          "city": "Bangor, Me",
+          "lat": 44.693947,
+          "lng": -69.381927,
+          "zip": "00000"
+      },
+      {
+          "id": "barstow-fort-irwin-ca",
+          "name": "BARSTOW/FORT IRWIN, CA",
+          "branch": "Army",
+          "state": "CA",
+          "city": "Barstow",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "baton-rouge-la",
+          "name": "BATON ROUGE, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "Baton Rouge, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "battle-creek-kalamazoo-mi",
+          "name": "BATTLE CREEK/KALAMAZOO, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Battle Creek",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "beale-afb-ca",
+          "name": "BEALE AFB, CA",
+          "branch": "Air Force",
+          "state": "CA",
+          "city": "Beale Afb, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "beaufort-parris-island-sc",
+          "name": "BEAUFORT/PARRIS ISLAND, SC",
+          "branch": "Marine Corps",
+          "state": "SC",
+          "city": "Beaufort",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "beaumont-tx",
+          "name": "BEAUMONT, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Beaumont, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "birmingham-al",
+          "name": "BIRMINGHAM, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Birmingham, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "bismarck-nd",
+          "name": "BISMARCK, ND",
+          "branch": "Joint",
+          "state": "ND",
+          "city": "Bismarck, Nd",
+          "lat": 47.528912,
+          "lng": -99.784012,
+          "zip": "00000"
+      },
+      {
+          "id": "bloomington-in",
+          "name": "BLOOMINGTON, IN",
+          "branch": "Joint",
+          "state": "IN",
+          "city": "Bloomington, In",
+          "lat": 39.849426,
+          "lng": -86.258278,
+          "zip": "00000"
+      },
+      {
+          "id": "boise-id",
+          "name": "BOISE, ID",
+          "branch": "Joint",
+          "state": "ID",
+          "city": "Boise, Id",
+          "lat": 44.240459,
+          "lng": -114.478828,
+          "zip": "00000"
+      },
+      {
+          "id": "boston-ma",
+          "name": "BOSTON, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Boston, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "boulder-co",
+          "name": "BOULDER, CO",
+          "branch": "Joint",
+          "state": "CO",
+          "city": "Boulder, Co",
+          "lat": 39.059811,
+          "lng": -105.311104,
+          "zip": "00000"
+      },
+      {
+          "id": "bremerton-wa",
+          "name": "BREMERTON, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Bremerton, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "bridgeport-ca",
+          "name": "BRIDGEPORT, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Bridgeport, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "brownsville-tx",
+          "name": "BROWNSVILLE, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Brownsville, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "brunswick-me",
+          "name": "BRUNSWICK, ME",
+          "branch": "Joint",
+          "state": "ME",
+          "city": "Brunswick, Me",
+          "lat": 44.693947,
+          "lng": -69.381927,
+          "zip": "00000"
+      },
+      {
+          "id": "buffalo-ny",
+          "name": "BUFFALO, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Buffalo, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "burlington-vt",
+          "name": "BURLINGTON, VT",
+          "branch": "Joint",
+          "state": "VT",
+          "city": "Burlington, Vt",
+          "lat": 44.045876,
+          "lng": -72.710686,
+          "zip": "00000"
+      },
+      {
+          "id": "camp-lejeune-nc",
+          "name": "CAMP LEJEUNE, NC",
+          "branch": "Marine Corps",
+          "state": "NC",
+          "city": "Camp Lejeune, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "camp-pendleton-ca",
+          "name": "CAMP PENDLETON, CA",
+          "branch": "Marine Corps",
+          "state": "CA",
+          "city": "Camp Pendleton, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "cannon-afb-clovis-nm",
+          "name": "CANNON AFB/CLOVIS, NM",
+          "branch": "Air Force",
+          "state": "NM",
+          "city": "Cannon Afb",
+          "lat": 34.840515,
+          "lng": -106.248482,
+          "zip": "00000"
+      },
+      {
+          "id": "cape-cod-plymouth-ma",
+          "name": "CAPE COD-PLYMOUTH, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Cape Cod-plymouth, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "cape-may-nj",
+          "name": "CAPE MAY, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Cape May, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "carlisle-barracks-pa",
+          "name": "CARLISLE BARRACKS, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Carlisle Barracks, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "champaign-urbana-il",
+          "name": "CHAMPAIGN/URBANA, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Champaign",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "charleston-sc",
+          "name": "CHARLESTON, SC",
+          "branch": "Joint",
+          "state": "SC",
+          "city": "Charleston, Sc",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "charleston-wv",
+          "name": "CHARLESTON, WV",
+          "branch": "Joint",
+          "state": "WV",
+          "city": "Charleston, Wv",
+          "lat": 38.491226,
+          "lng": -80.954453,
+          "zip": "00000"
+      },
+      {
+          "id": "charlotte-nc",
+          "name": "CHARLOTTE, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Charlotte, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "charlottesville-va",
+          "name": "CHARLOTTESVILLE, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Charlottesville, Va",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "chattanooga-tn",
+          "name": "CHATTANOOGA, TN",
+          "branch": "Joint",
+          "state": "TN",
+          "city": "Chattanooga, Tn",
+          "lat": 35.747845,
+          "lng": -86.692345,
+          "zip": "00000"
+      },
+      {
+          "id": "cheyenne-wy",
+          "name": "CHEYENNE, WY",
+          "branch": "Joint",
+          "state": "WY",
+          "city": "Cheyenne, Wy",
+          "lat": 42.755966,
+          "lng": -107.30249,
+          "zip": "00000"
+      },
+      {
+          "id": "chicago-il",
+          "name": "CHICAGO, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Chicago, Il",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "china-lake-ca",
+          "name": "CHINA LAKE, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "China Lake, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "cincinnati-oh",
+          "name": "CINCINNATI, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Cincinnati, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "cleveland-oh",
+          "name": "CLEVELAND, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Cleveland, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "coastal-maine-me",
+          "name": "COASTAL MAINE, ME",
+          "branch": "Joint",
+          "state": "ME",
+          "city": "Coastal Maine, Me",
+          "lat": 44.693947,
+          "lng": -69.381927,
+          "zip": "00000"
+      },
+      {
+          "id": "college-station-tx",
+          "name": "COLLEGE STATION, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "College Station, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "colorado-springs-co",
+          "name": "COLORADO SPRINGS, CO",
+          "branch": "Joint",
+          "state": "CO",
+          "city": "Colorado Springs, Co",
+          "lat": 39.059811,
+          "lng": -105.311104,
+          "zip": "00000"
+      },
+      {
+          "id": "columbia-fort-jackson-sc",
+          "name": "COLUMBIA/FORT JACKSON, SC",
+          "branch": "Army",
+          "state": "SC",
+          "city": "Columbia",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "columbia-jefferson-city-mo",
+          "name": "COLUMBIA/JEFFERSON CITY, MO",
+          "branch": "Joint",
+          "state": "MO",
+          "city": "Columbia",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "columbus-afb-ms",
+          "name": "COLUMBUS AFB, MS",
+          "branch": "Air Force",
+          "state": "MS",
+          "city": "Columbus Afb, Ms",
+          "lat": 32.741646,
+          "lng": -89.678696,
+          "zip": "00000"
+      },
+      {
+          "id": "columbus-oh",
+          "name": "COLUMBUS, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Columbus, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "coos-bay-or",
+          "name": "COOS BAY, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Coos Bay, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "corpus-christi-tx",
+          "name": "CORPUS CHRISTI, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Corpus Christi, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "corvallis-or",
+          "name": "CORVALLIS, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Corvallis, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "dahlgren-fort-walker-va",
+          "name": "DAHLGREN/FORT WALKER, VA",
+          "branch": "Army",
+          "state": "VA",
+          "city": "Dahlgren",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "dahlonega-ga",
+          "name": "DAHLONEGA, GA",
+          "branch": "Joint",
+          "state": "GA",
+          "city": "Dahlonega, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "dallas-tx",
+          "name": "DALLAS, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Dallas, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "davis-monthan-afb-az",
+          "name": "DAVIS-MONTHAN AFB, AZ",
+          "branch": "Air Force",
+          "state": "AZ",
+          "city": "Davis-monthan Afb, Az",
+          "lat": 33.729759,
+          "lng": -111.431221,
+          "zip": "00000"
+      },
+      {
+          "id": "denver-co",
+          "name": "DENVER, CO",
+          "branch": "Joint",
+          "state": "CO",
+          "city": "Denver, Co",
+          "lat": 39.059811,
+          "lng": -105.311104,
+          "zip": "00000"
+      },
+      {
+          "id": "des-moines-ia",
+          "name": "DES MOINES, IA",
+          "branch": "Joint",
+          "state": "IA",
+          "city": "Des Moines, Ia",
+          "lat": 42.011539,
+          "lng": -93.210526,
+          "zip": "00000"
+      },
+      {
+          "id": "detroit-mi",
+          "name": "DETROIT, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Detroit, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "dover-afb-rehoboth-de",
+          "name": "DOVER AFB/REHOBOTH, DE",
+          "branch": "Air Force",
+          "state": "DE",
+          "city": "Dover Afb",
+          "lat": 39.318523,
+          "lng": -75.507141,
+          "zip": "00000"
+      },
+      {
+          "id": "duluth-mn",
+          "name": "DULUTH, MN",
+          "branch": "Joint",
+          "state": "MN",
+          "city": "Duluth, Mn",
+          "lat": 45.694454,
+          "lng": -93.900192,
+          "zip": "00000"
+      },
+      {
+          "id": "durham-chapel-hill-nc",
+          "name": "DURHAM/CHAPEL HILL, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Durham",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "eastern-panhandle-wv",
+          "name": "EASTERN PANHANDLE, WV",
+          "branch": "Joint",
+          "state": "WV",
+          "city": "Eastern Panhandle, Wv",
+          "lat": 38.491226,
+          "lng": -80.954453,
+          "zip": "00000"
+      },
+      {
+          "id": "eastern-shore-md",
+          "name": "EASTERN SHORE, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Eastern Shore, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "edwards-afb-palmdale-ca",
+          "name": "EDWARDS AFB/PALMDALE, CA",
+          "branch": "Air Force",
+          "state": "CA",
+          "city": "Edwards Afb",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "eglin-afb-fl",
+          "name": "EGLIN AFB, FL",
+          "branch": "Air Force",
+          "state": "FL",
+          "city": "Eglin Afb, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "el-centro-ca",
+          "name": "EL CENTRO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "El Centro, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "el-paso-tx",
+          "name": "EL PASO, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "El Paso, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "elizabeth-city-nc",
+          "name": "ELIZABETH CITY, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Elizabeth City, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "erie-pa",
+          "name": "ERIE, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Erie, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "essex-co-ma",
+          "name": "ESSEX CO, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Essex Co, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "eugene-or",
+          "name": "EUGENE, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Eugene, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "everett-wa",
+          "name": "EVERETT, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Everett, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "fairbanks-ak",
+          "name": "FAIRBANKS, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Fairbanks, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "fallon-nas-nv",
+          "name": "FALLON NAS, NV",
+          "branch": "Joint",
+          "state": "NV",
+          "city": "Fallon Nas, Nv",
+          "lat": 38.313515,
+          "lng": -117.055374,
+          "zip": "00000"
+      },
+      {
+          "id": "fargo-nd",
+          "name": "FARGO, ND",
+          "branch": "Joint",
+          "state": "ND",
+          "city": "Fargo, Nd",
+          "lat": 47.528912,
+          "lng": -99.784012,
+          "zip": "00000"
+      },
+      {
+          "id": "fayetteville-ar",
+          "name": "FAYETTEVILLE, AR",
+          "branch": "Joint",
+          "state": "AR",
+          "city": "Fayetteville, Ar",
+          "lat": 34.969704,
+          "lng": -92.373123,
+          "zip": "00000"
+      },
+      {
+          "id": "fitchburg-ma",
+          "name": "FITCHBURG, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Fitchburg, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "florida-keys-fl",
+          "name": "FLORIDA KEYS, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Florida Keys, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-campbell-ky",
+          "name": "FORT CAMPBELL, KY",
+          "branch": "Army",
+          "state": "KY",
+          "city": "Fort Campbell, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-cavazos-tx",
+          "name": "FORT CAVAZOS, TX",
+          "branch": "Army",
+          "state": "TX",
+          "city": "Fort Cavazos, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-chaffee-fort-smith-ar",
+          "name": "FORT CHAFFEE/FORT SMITH, AR",
+          "branch": "Army",
+          "state": "AR",
+          "city": "Fort Chaffee",
+          "lat": 34.969704,
+          "lng": -92.373123,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-collins-co",
+          "name": "FORT COLLINS, CO",
+          "branch": "Army",
+          "state": "CO",
+          "city": "Fort Collins, Co",
+          "lat": 39.059811,
+          "lng": -105.311104,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-detrick-md",
+          "name": "FORT DETRICK, MD",
+          "branch": "Army",
+          "state": "MD",
+          "city": "Fort Detrick, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-drum-watertown-ny",
+          "name": "FORT DRUM/WATERTOWN, NY",
+          "branch": "Army",
+          "state": "NY",
+          "city": "Fort Drum",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-eisenhower-ga",
+          "name": "FORT EISENHOWER, GA",
+          "branch": "Army",
+          "state": "GA",
+          "city": "Fort Eisenhower, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-g-g-meade-md",
+          "name": "FORT G. G. MEADE, MD",
+          "branch": "Army",
+          "state": "MD",
+          "city": "Fort G. G. Meade, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-huachuca-az",
+          "name": "FORT HUACHUCA, AZ",
+          "branch": "Army",
+          "state": "AZ",
+          "city": "Fort Huachuca, Az",
+          "lat": 33.729759,
+          "lng": -111.431221,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-johnson-la",
+          "name": "FORT JOHNSON, LA",
+          "branch": "Army",
+          "state": "LA",
+          "city": "Fort Johnson, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-knox-ky",
+          "name": "FORT KNOX, KY",
+          "branch": "Army",
+          "state": "KY",
+          "city": "Fort Knox, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-leavenworth-ks",
+          "name": "FORT LEAVENWORTH, KS",
+          "branch": "Army",
+          "state": "KS",
+          "city": "Fort Leavenworth, Ks",
+          "lat": 38.5266,
+          "lng": -96.726486,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-leonard-wood-mo",
+          "name": "FORT LEONARD WOOD, MO",
+          "branch": "Army",
+          "state": "MO",
+          "city": "Fort Leonard Wood, Mo",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-liberty-pope-nc",
+          "name": "FORT LIBERTY/POPE, NC",
+          "branch": "Army",
+          "state": "NC",
+          "city": "Fort Liberty",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-monmouth-earle-nws-nj",
+          "name": "FORT MONMOUTH/EARLE NWS, NJ",
+          "branch": "Army",
+          "state": "NJ",
+          "city": "Fort Monmouth",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-moore-ga",
+          "name": "FORT MOORE, GA",
+          "branch": "Army",
+          "state": "GA",
+          "city": "Fort Moore, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-myers-beach-fl",
+          "name": "FORT MYERS BEACH, FL",
+          "branch": "Army",
+          "state": "FL",
+          "city": "Fort Myers Beach, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-novosel-al",
+          "name": "FORT NOVOSEL, AL",
+          "branch": "Army",
+          "state": "AL",
+          "city": "Fort Novosel, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-pierce-fl",
+          "name": "FORT PIERCE, FL",
+          "branch": "Army",
+          "state": "FL",
+          "city": "Fort Pierce, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-riley-ks",
+          "name": "FORT RILEY, KS",
+          "branch": "Army",
+          "state": "KS",
+          "city": "Fort Riley, Ks",
+          "lat": 38.5266,
+          "lng": -96.726486,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-sill-lawton-ok",
+          "name": "FORT SILL/LAWTON, OK",
+          "branch": "Army",
+          "state": "OK",
+          "city": "Fort Sill",
+          "lat": 35.565342,
+          "lng": -96.928917,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-stewart-ga",
+          "name": "FORT STEWART, GA",
+          "branch": "Army",
+          "state": "GA",
+          "city": "Fort Stewart, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-wayne-in",
+          "name": "FORT WAYNE, IN",
+          "branch": "Army",
+          "state": "IN",
+          "city": "Fort Wayne, In",
+          "lat": 39.849426,
+          "lng": -86.258278,
+          "zip": "00000"
+      },
+      {
+          "id": "fort-worth-tx",
+          "name": "FORT WORTH, TX",
+          "branch": "Army",
+          "state": "TX",
+          "city": "Fort Worth, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "frankfort-ky",
+          "name": "FRANKFORT, KY",
+          "branch": "Joint",
+          "state": "KY",
+          "city": "Frankfort, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "fresno-ca",
+          "name": "FRESNO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Fresno, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "gainesville-fl",
+          "name": "GAINESVILLE, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Gainesville, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "goodfellow-afb-tx",
+          "name": "GOODFELLOW AFB, TX",
+          "branch": "Air Force",
+          "state": "TX",
+          "city": "Goodfellow Afb, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "grand-forks-nd",
+          "name": "GRAND FORKS, ND",
+          "branch": "Joint",
+          "state": "ND",
+          "city": "Grand Forks, Nd",
+          "lat": 47.528912,
+          "lng": -99.784012,
+          "zip": "00000"
+      },
+      {
+          "id": "grand-haven-mi",
+          "name": "GRAND HAVEN, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Grand Haven, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "grand-rapids-mi",
+          "name": "GRAND RAPIDS, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Grand Rapids, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "great-lakes-navtracen-il",
+          "name": "GREAT LAKES NAVTRACEN, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Great Lakes Navtracen, Il",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "greensboro-nc",
+          "name": "GREENSBORO, NC",
+          "branch": "Navy",
+          "state": "NC",
+          "city": "Greensboro, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "greenville-sc",
+          "name": "GREENVILLE, SC",
+          "branch": "Joint",
+          "state": "SC",
+          "city": "Greenville, Sc",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "gulfport-ms",
+          "name": "GULFPORT, MS",
+          "branch": "Joint",
+          "state": "MS",
+          "city": "Gulfport, Ms",
+          "lat": 32.741646,
+          "lng": -89.678696,
+          "zip": "00000"
+      },
+      {
+          "id": "hampden-county-ma",
+          "name": "HAMPDEN COUNTY, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Hampden County, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "hampton-newport-news-va",
+          "name": "HAMPTON/NEWPORT NEWS, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Hampton",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "hanscom-afb-ma",
+          "name": "HANSCOM AFB, MA",
+          "branch": "Air Force",
+          "state": "MA",
+          "city": "Hanscom Afb, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "hartford-ct",
+          "name": "HARTFORD, CT",
+          "branch": "Joint",
+          "state": "CT",
+          "city": "Hartford, Ct",
+          "lat": 41.597782,
+          "lng": -72.755371,
+          "zip": "00000"
+      },
+      {
+          "id": "hattiesburg-ms",
+          "name": "HATTIESBURG, MS",
+          "branch": "Joint",
+          "state": "MS",
+          "city": "Hattiesburg, Ms",
+          "lat": 32.741646,
+          "lng": -89.678696,
+          "zip": "00000"
+      },
+      {
+          "id": "hawaii-county-hi",
+          "name": "HAWAII COUNTY, HI",
+          "branch": "Joint",
+          "state": "HI",
+          "city": "Hawaii County, Hi",
+          "lat": 21.094318,
+          "lng": -157.498337,
+          "zip": "00000"
+      },
+      {
+          "id": "helena-mt",
+          "name": "HELENA, MT",
+          "branch": "Joint",
+          "state": "MT",
+          "city": "Helena, Mt",
+          "lat": 46.921925,
+          "lng": -110.454353,
+          "zip": "00000"
+      },
+      {
+          "id": "holloman-afb-alamogordo-nm",
+          "name": "HOLLOMAN AFB/ALAMOGORDO, NM",
+          "branch": "Air Force",
+          "state": "NM",
+          "city": "Holloman Afb",
+          "lat": 34.840515,
+          "lng": -106.248482,
+          "zip": "00000"
+      },
+      {
+          "id": "honolulu-county-hi",
+          "name": "HONOLULU COUNTY, HI",
+          "branch": "Joint",
+          "state": "HI",
+          "city": "Honolulu County, Hi",
+          "lat": 21.094318,
+          "lng": -157.498337,
+          "zip": "00000"
+      },
+      {
+          "id": "houston-tx",
+          "name": "HOUSTON, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Houston, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "humboldt-county-ca",
+          "name": "HUMBOLDT COUNTY, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Humboldt County, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "huntington-wv",
+          "name": "HUNTINGTON, WV",
+          "branch": "Joint",
+          "state": "WV",
+          "city": "Huntington, Wv",
+          "lat": 38.491226,
+          "lng": -80.954453,
+          "zip": "00000"
+      },
+      {
+          "id": "huntsville-al",
+          "name": "HUNTSVILLE, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Huntsville, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "indian-head-navordsta-md",
+          "name": "INDIAN HEAD NAVORDSTA, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Indian Head Navordsta, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "indianapolis-in",
+          "name": "INDIANAPOLIS, IN",
+          "branch": "Joint",
+          "state": "IN",
+          "city": "Indianapolis, In",
+          "lat": 39.849426,
+          "lng": -86.258278,
+          "zip": "00000"
+      },
+      {
+          "id": "jackson-ms",
+          "name": "JACKSON, MS",
+          "branch": "Joint",
+          "state": "MS",
+          "city": "Jackson, Ms",
+          "lat": 32.741646,
+          "lng": -89.678696,
+          "zip": "00000"
+      },
+      {
+          "id": "jacksonville-fl",
+          "name": "JACKSONVILLE, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Jacksonville, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "jb-mcguire-dix-lakehurst-nj",
+          "name": "JB MCGUIRE-DIX-LAKEHURST, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Jb Mcguire-dix-lakehurst, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "johnson-city-kingsport-tn",
+          "name": "JOHNSON CITY/KINGSPORT, TN",
+          "branch": "Joint",
+          "state": "TN",
+          "city": "Johnson City",
+          "lat": 35.747845,
+          "lng": -86.692345,
+          "zip": "00000"
+      },
+      {
+          "id": "juneau-ak",
+          "name": "JUNEAU, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Juneau, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "kansas-city-mo",
+          "name": "KANSAS CITY, MO",
+          "branch": "Joint",
+          "state": "MO",
+          "city": "Kansas City, Mo",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "kauai-county-hi",
+          "name": "KAUAI COUNTY, HI",
+          "branch": "Joint",
+          "state": "HI",
+          "city": "Kauai County, Hi",
+          "lat": 21.094318,
+          "lng": -157.498337,
+          "zip": "00000"
+      },
+      {
+          "id": "ketchikan-ak",
+          "name": "KETCHIKAN, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Ketchikan, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "kings-bay-brunswick-ga",
+          "name": "KINGS BAY/BRUNSWICK, GA",
+          "branch": "Joint",
+          "state": "GA",
+          "city": "Kings Bay",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "knoxville-tn",
+          "name": "KNOXVILLE, TN",
+          "branch": "Joint",
+          "state": "TN",
+          "city": "Knoxville, Tn",
+          "lat": 35.747845,
+          "lng": -86.692345,
+          "zip": "00000"
+      },
+      {
+          "id": "kodiak-island-ak",
+          "name": "KODIAK ISLAND, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Kodiak Island, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "lafayette-la",
+          "name": "LAFAYETTE, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "Lafayette, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "lake-charles-la",
+          "name": "LAKE CHARLES, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "Lake Charles, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "lansing-mi",
+          "name": "LANSING, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Lansing, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "laughlin-afb-del-rio-tx",
+          "name": "LAUGHLIN AFB/DEL RIO, TX",
+          "branch": "Air Force",
+          "state": "TX",
+          "city": "Laughlin Afb",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "lemoore-nas-ca",
+          "name": "LEMOORE NAS, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Lemoore Nas, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "lexington-ky",
+          "name": "LEXINGTON, KY",
+          "branch": "Joint",
+          "state": "KY",
+          "city": "Lexington, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "lexington-va",
+          "name": "LEXINGTON, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Lexington, Va",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "lincoln-ne",
+          "name": "LINCOLN, NE",
+          "branch": "Joint",
+          "state": "NE",
+          "city": "Lincoln, Ne",
+          "lat": 41.12537,
+          "lng": -98.268082,
+          "zip": "00000"
+      },
+      {
+          "id": "little-rock-ar",
+          "name": "LITTLE ROCK, AR",
+          "branch": "Joint",
+          "state": "AR",
+          "city": "Little Rock, Ar",
+          "lat": 34.969704,
+          "lng": -92.373123,
+          "zip": "00000"
+      },
+      {
+          "id": "long-island-ny",
+          "name": "LONG ISLAND, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Long Island, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "los-angeles-ca",
+          "name": "LOS ANGELES, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Los Angeles, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "louisville-ky",
+          "name": "LOUISVILLE, KY",
+          "branch": "Joint",
+          "state": "KY",
+          "city": "Louisville, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "lubbock-tx",
+          "name": "LUBBOCK, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Lubbock, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "madison-wi",
+          "name": "MADISON, WI",
+          "branch": "Joint",
+          "state": "WI",
+          "city": "Madison, Wi",
+          "lat": 44.268543,
+          "lng": -89.616508,
+          "zip": "00000"
+      },
+      {
+          "id": "malmstrom-sfb-great-falls-mt",
+          "name": "MALMSTROM SFB/GREAT FALLS, MT",
+          "branch": "Air Force",
+          "state": "MT",
+          "city": "Malmstrom Sfb",
+          "lat": 46.921925,
+          "lng": -110.454353,
+          "zip": "00000"
+      },
+      {
+          "id": "manchester-concord-nh",
+          "name": "MANCHESTER/CONCORD, NH",
+          "branch": "Joint",
+          "state": "NH",
+          "city": "Manchester",
+          "lat": 43.452492,
+          "lng": -71.563896,
+          "zip": "00000"
+      },
+      {
+          "id": "marin-sonoma-ca",
+          "name": "MARIN/SONOMA, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Marin",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "marquette-mi",
+          "name": "MARQUETTE, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Marquette, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "martha-s-vineyard-ma",
+          "name": "MARTHA'S VINEYARD, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Martha's Vineyard, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "maui-county-hi",
+          "name": "MAUI COUNTY, HI",
+          "branch": "Joint",
+          "state": "HI",
+          "city": "Maui County, Hi",
+          "lat": 21.094318,
+          "lng": -157.498337,
+          "zip": "00000"
+      },
+      {
+          "id": "memphis-tn",
+          "name": "MEMPHIS, TN",
+          "branch": "Joint",
+          "state": "TN",
+          "city": "Memphis, Tn",
+          "lat": 35.747845,
+          "lng": -86.692345,
+          "zip": "00000"
+      },
+      {
+          "id": "meridian-ms",
+          "name": "MERIDIAN, MS",
+          "branch": "Joint",
+          "state": "MS",
+          "city": "Meridian, Ms",
+          "lat": 32.741646,
+          "lng": -89.678696,
+          "zip": "00000"
+      },
+      {
+          "id": "miami-fort-lauderdale-fl",
+          "name": "MIAMI/FORT LAUDERDALE, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Miami",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "milwaukee-wi",
+          "name": "MILWAUKEE, WI",
+          "branch": "Joint",
+          "state": "WI",
+          "city": "Milwaukee, Wi",
+          "lat": 44.268543,
+          "lng": -89.616508,
+          "zip": "00000"
+      },
+      {
+          "id": "minneapolis-st-paul-mn",
+          "name": "MINNEAPOLIS/ST PAUL, MN",
+          "branch": "Joint",
+          "state": "MN",
+          "city": "Minneapolis",
+          "lat": 45.694454,
+          "lng": -93.900192,
+          "zip": "00000"
+      },
+      {
+          "id": "minot-afb-nd",
+          "name": "MINOT AFB, ND",
+          "branch": "Air Force",
+          "state": "ND",
+          "city": "Minot Afb, Nd",
+          "lat": 47.528912,
+          "lng": -99.784012,
+          "zip": "00000"
+      },
+      {
+          "id": "mobile-al",
+          "name": "MOBILE, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Mobile, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "monroe-la",
+          "name": "MONROE, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "Monroe, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "monterey-ca",
+          "name": "MONTEREY, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Monterey, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "montgomery-al",
+          "name": "MONTGOMERY, AL",
+          "branch": "Joint",
+          "state": "AL",
+          "city": "Montgomery, Al",
+          "lat": 32.806671,
+          "lng": -86.79113,
+          "zip": "00000"
+      },
+      {
+          "id": "moody-afb-ga",
+          "name": "MOODY AFB, GA",
+          "branch": "Air Force",
+          "state": "GA",
+          "city": "Moody Afb, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "morehead-cherry-pt-mcas-nc",
+          "name": "MOREHEAD/CHERRY PT MCAS, NC",
+          "branch": "Marine Corps",
+          "state": "NC",
+          "city": "Morehead",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "morgantown-wv",
+          "name": "MORGANTOWN, WV",
+          "branch": "Joint",
+          "state": "WV",
+          "city": "Morgantown, Wv",
+          "lat": 38.491226,
+          "lng": -80.954453,
+          "zip": "00000"
+      },
+      {
+          "id": "mountain-home-afb-id",
+          "name": "MOUNTAIN HOME AFB, ID",
+          "branch": "Air Force",
+          "state": "ID",
+          "city": "Mountain Home Afb, Id",
+          "lat": 44.240459,
+          "lng": -114.478828,
+          "zip": "00000"
+      },
+      {
+          "id": "myrtle-beach-sc",
+          "name": "MYRTLE BEACH, SC",
+          "branch": "Joint",
+          "state": "SC",
+          "city": "Myrtle Beach, Sc",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "nantucket-ma",
+          "name": "NANTUCKET, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Nantucket, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "nashville-tn",
+          "name": "NASHVILLE, TN",
+          "branch": "Joint",
+          "state": "TN",
+          "city": "Nashville, Tn",
+          "lat": 35.747845,
+          "lng": -86.692345,
+          "zip": "00000"
+      },
+      {
+          "id": "nellis-afb-las-vegas-nv",
+          "name": "NELLIS AFB/LAS VEGAS, NV",
+          "branch": "Air Force",
+          "state": "NV",
+          "city": "Nellis Afb",
+          "lat": 38.313515,
+          "lng": -117.055374,
+          "zip": "00000"
+      },
+      {
+          "id": "new-haven-fairfield-ct",
+          "name": "NEW HAVEN/FAIRFIELD, CT",
+          "branch": "Joint",
+          "state": "CT",
+          "city": "New Haven",
+          "lat": 41.597782,
+          "lng": -72.755371,
+          "zip": "00000"
+      },
+      {
+          "id": "new-london-ct",
+          "name": "NEW LONDON, CT",
+          "branch": "Joint",
+          "state": "CT",
+          "city": "New London, Ct",
+          "lat": 41.597782,
+          "lng": -72.755371,
+          "zip": "00000"
+      },
+      {
+          "id": "new-orleans-la",
+          "name": "NEW ORLEANS, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "New Orleans, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "new-york-city-ny",
+          "name": "NEW YORK CITY, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "New York City, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "newport-ri",
+          "name": "NEWPORT, RI",
+          "branch": "Joint",
+          "state": "RI",
+          "city": "Newport, Ri",
+          "lat": 41.680893,
+          "lng": -71.51178,
+          "zip": "00000"
+      },
+      {
+          "id": "norfolk-portsmouth-va",
+          "name": "NORFOLK/PORTSMOUTH, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Norfolk",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "northern-new-jersey-nj",
+          "name": "NORTHERN NEW JERSEY, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Northern New Jersey, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "oakland-ca",
+          "name": "OAKLAND, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Oakland, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "ocala-fl",
+          "name": "OCALA, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Ocala, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "ogden-hill-afb-ut",
+          "name": "OGDEN/HILL AFB, UT",
+          "branch": "Air Force",
+          "state": "UT",
+          "city": "Ogden",
+          "lat": 40.150032,
+          "lng": -111.862434,
+          "zip": "00000"
+      },
+      {
+          "id": "oklahoma-city-ok",
+          "name": "OKLAHOMA CITY, OK",
+          "branch": "Joint",
+          "state": "OK",
+          "city": "Oklahoma City, Ok",
+          "lat": 35.565342,
+          "lng": -96.928917,
+          "zip": "00000"
+      },
+      {
+          "id": "omaha-offutt-afb-ne",
+          "name": "OMAHA/OFFUTT AFB, NE",
+          "branch": "Air Force",
+          "state": "NE",
+          "city": "Omaha",
+          "lat": 41.12537,
+          "lng": -98.268082,
+          "zip": "00000"
+      },
+      {
+          "id": "orlando-fl",
+          "name": "ORLANDO, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Orlando, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "outer-banks-nc",
+          "name": "OUTER BANKS, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Outer Banks, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "oxford-md",
+          "name": "OXFORD, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Oxford, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "paducah-ky",
+          "name": "PADUCAH, KY",
+          "branch": "Joint",
+          "state": "KY",
+          "city": "Paducah, Ky",
+          "lat": 37.66814,
+          "lng": -84.670067,
+          "zip": "00000"
+      },
+      {
+          "id": "panama-city-fl",
+          "name": "PANAMA CITY, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Panama City, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "patrick-sfb-fl",
+          "name": "PATRICK SFB, FL",
+          "branch": "Air Force",
+          "state": "FL",
+          "city": "Patrick Sfb, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "patuxent-river-md",
+          "name": "PATUXENT RIVER, MD",
+          "branch": "Joint",
+          "state": "MD",
+          "city": "Patuxent River, Md",
+          "lat": 39.063946,
+          "lng": -76.802101,
+          "zip": "00000"
+      },
+      {
+          "id": "pensacola-fl",
+          "name": "PENSACOLA, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Pensacola, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "peoria-il",
+          "name": "PEORIA, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Peoria, Il",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "perth-amboy-nj",
+          "name": "PERTH AMBOY, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Perth Amboy, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "philadelphia-pa-camden-nj",
+          "name": "PHILADELPHIA, PA/CAMDEN, NJ",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Philadelphia, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "phoenix-az",
+          "name": "PHOENIX, AZ",
+          "branch": "Joint",
+          "state": "AZ",
+          "city": "Phoenix, Az",
+          "lat": 33.729759,
+          "lng": -111.431221,
+          "zip": "00000"
+      },
+      {
+          "id": "pittsburgh-pa",
+          "name": "PITTSBURGH, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Pittsburgh, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "port-angeles-wa",
+          "name": "PORT ANGELES, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Port Angeles, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "portland-me",
+          "name": "PORTLAND, ME",
+          "branch": "Joint",
+          "state": "ME",
+          "city": "Portland, Me",
+          "lat": 44.693947,
+          "lng": -69.381927,
+          "zip": "00000"
+      },
+      {
+          "id": "portland-or",
+          "name": "PORTLAND, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Portland, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "portsmouth-nh-kittery-me",
+          "name": "PORTSMOUTH, NH/KITTERY, ME",
+          "branch": "Joint",
+          "state": "NH",
+          "city": "Portsmouth, Nh",
+          "lat": 43.452492,
+          "lng": -71.563896,
+          "zip": "00000"
+      },
+      {
+          "id": "providence-ri",
+          "name": "PROVIDENCE, RI",
+          "branch": "Joint",
+          "state": "RI",
+          "city": "Providence, Ri",
+          "lat": 41.680893,
+          "lng": -71.51178,
+          "zip": "00000"
+      },
+      {
+          "id": "provo-ut",
+          "name": "PROVO, UT",
+          "branch": "Joint",
+          "state": "UT",
+          "city": "Provo, Ut",
+          "lat": 40.150032,
+          "lng": -111.862434,
+          "zip": "00000"
+      },
+      {
+          "id": "quantico-woodbridge-va",
+          "name": "QUANTICO/WOODBRIDGE, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Quantico",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "raleigh-nc",
+          "name": "RALEIGH, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Raleigh, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "rapid-city-ellsworth-afb-sd",
+          "name": "RAPID CITY/ELLSWORTH AFB, SD",
+          "branch": "Air Force",
+          "state": "SD",
+          "city": "Rapid City",
+          "lat": 44.299782,
+          "lng": -99.438828,
+          "zip": "00000"
+      },
+      {
+          "id": "reno-carson-city-nv",
+          "name": "RENO/CARSON CITY, NV",
+          "branch": "Joint",
+          "state": "NV",
+          "city": "Reno",
+          "lat": 38.313515,
+          "lng": -117.055374,
+          "zip": "00000"
+      },
+      {
+          "id": "richmond-fort-gregg-adams-va",
+          "name": "RICHMOND/FORT GREGG-ADAMS, VA",
+          "branch": "Army",
+          "state": "VA",
+          "city": "Richmond",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "riverside-ca",
+          "name": "RIVERSIDE, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Riverside, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "roanoke-va",
+          "name": "ROANOKE, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Roanoke, Va",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "robins-afb-ga",
+          "name": "ROBINS AFB, GA",
+          "branch": "Air Force",
+          "state": "GA",
+          "city": "Robins Afb, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "rochester-ny",
+          "name": "ROCHESTER, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Rochester, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "rock-island-il",
+          "name": "ROCK ISLAND, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Rock Island, Il",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "rome-griffiss-afb-ny",
+          "name": "ROME/GRIFFISS AFB, NY",
+          "branch": "Air Force",
+          "state": "NY",
+          "city": "Rome",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "sacramento-ca",
+          "name": "SACRAMENTO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Sacramento, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "saginaw-mi",
+          "name": "SAGINAW, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Saginaw, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "salem-or",
+          "name": "SALEM, OR",
+          "branch": "Joint",
+          "state": "OR",
+          "city": "Salem, Or",
+          "lat": 44.572021,
+          "lng": -122.070938,
+          "zip": "00000"
+      },
+      {
+          "id": "salt-lake-city-ut",
+          "name": "SALT LAKE CITY, UT",
+          "branch": "Joint",
+          "state": "UT",
+          "city": "Salt Lake City, Ut",
+          "lat": 40.150032,
+          "lng": -111.862434,
+          "zip": "00000"
+      },
+      {
+          "id": "san-antonio-tx",
+          "name": "SAN ANTONIO, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "San Antonio, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "san-bernardino-ca",
+          "name": "SAN BERNARDINO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "San Bernardino, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "san-diego-ca",
+          "name": "SAN DIEGO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "San Diego, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "san-francisco-ca",
+          "name": "SAN FRANCISCO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "San Francisco, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "san-luis-obispo-ca",
+          "name": "SAN LUIS OBISPO, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "San Luis Obispo, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "santa-clara-county-ca",
+          "name": "SANTA CLARA COUNTY, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Santa Clara County, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "santa-fe-los-alamos-nm",
+          "name": "SANTA FE/LOS ALAMOS, NM",
+          "branch": "Joint",
+          "state": "NM",
+          "city": "Santa Fe",
+          "lat": 34.840515,
+          "lng": -106.248482,
+          "zip": "00000"
+      },
+      {
+          "id": "sault-ste-marie-mi",
+          "name": "SAULT STE MARIE, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Sault Ste Marie, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "savannah-ga",
+          "name": "SAVANNAH, GA",
+          "branch": "Joint",
+          "state": "GA",
+          "city": "Savannah, Ga",
+          "lat": 33.040619,
+          "lng": -83.643074,
+          "zip": "00000"
+      },
+      {
+          "id": "scott-afb-il",
+          "name": "SCOTT AFB, IL",
+          "branch": "Air Force",
+          "state": "IL",
+          "city": "Scott Afb, Il",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "seattle-wa",
+          "name": "SEATTLE, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Seattle, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "seymour-johnson-afb-nc",
+          "name": "SEYMOUR JOHNSON AFB, NC",
+          "branch": "Air Force",
+          "state": "NC",
+          "city": "Seymour Johnson Afb, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "shreveport-barksdale-afb-la",
+          "name": "SHREVEPORT/BARKSDALE AFB, LA",
+          "branch": "Air Force",
+          "state": "LA",
+          "city": "Shreveport",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "sioux-falls-sd",
+          "name": "SIOUX FALLS, SD",
+          "branch": "Joint",
+          "state": "SD",
+          "city": "Sioux Falls, Sd",
+          "lat": 44.299782,
+          "lng": -99.438828,
+          "zip": "00000"
+      },
+      {
+          "id": "sitka-ak",
+          "name": "SITKA, AK",
+          "branch": "Joint",
+          "state": "AK",
+          "city": "Sitka, Ak",
+          "lat": 61.370716,
+          "lng": -152.404419,
+          "zip": "00000"
+      },
+      {
+          "id": "sparta-fort-mccoy-wi",
+          "name": "SPARTA/FORT MCCOY, WI",
+          "branch": "Army",
+          "state": "WI",
+          "city": "Sparta",
+          "lat": 44.268543,
+          "lng": -89.616508,
+          "zip": "00000"
+      },
+      {
+          "id": "spokane-wa",
+          "name": "SPOKANE, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Spokane, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "springfield-mo",
+          "name": "SPRINGFIELD, MO",
+          "branch": "Joint",
+          "state": "MO",
+          "city": "Springfield, Mo",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "springfield-decatur-il",
+          "name": "SPRINGFIELD/DECATUR, IL",
+          "branch": "Joint",
+          "state": "IL",
+          "city": "Springfield",
+          "lat": 40.349457,
+          "lng": -88.986137,
+          "zip": "00000"
+      },
+      {
+          "id": "st-mary-and-terrebonne-la",
+          "name": "ST MARY AND TERREBONNE, LA",
+          "branch": "Joint",
+          "state": "LA",
+          "city": "St Mary And Terrebonne, La",
+          "lat": 31.169546,
+          "lng": -91.867805,
+          "zip": "00000"
+      },
+      {
+          "id": "st-louis-mo",
+          "name": "ST. LOUIS, MO",
+          "branch": "Joint",
+          "state": "MO",
+          "city": "St. Louis, Mo",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "state-college-pa",
+          "name": "STATE COLLEGE, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "State College, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "staten-island-ny",
+          "name": "STATEN ISLAND, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Staten Island, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "stevens-point-wi",
+          "name": "STEVENS POINT, WI",
+          "branch": "Joint",
+          "state": "WI",
+          "city": "Stevens Point, Wi",
+          "lat": 44.268543,
+          "lng": -89.616508,
+          "zip": "00000"
+      },
+      {
+          "id": "stockton-ca",
+          "name": "STOCKTON, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Stockton, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "sumter-shaw-afb-sc",
+          "name": "SUMTER/SHAW AFB, SC",
+          "branch": "Air Force",
+          "state": "SC",
+          "city": "Sumter",
+          "lat": 33.856892,
+          "lng": -80.945007,
+          "zip": "00000"
+      },
+      {
+          "id": "syracuse-ny",
+          "name": "SYRACUSE, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Syracuse, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "tacoma-wa",
+          "name": "TACOMA, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Tacoma, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "tallahassee-fl",
+          "name": "TALLAHASSEE, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Tallahassee, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "tampa-fl",
+          "name": "TAMPA, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Tampa, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "terre-haute-in",
+          "name": "TERRE HAUTE, IN",
+          "branch": "Joint",
+          "state": "IN",
+          "city": "Terre Haute, In",
+          "lat": 39.849426,
+          "lng": -86.258278,
+          "zip": "00000"
+      },
+      {
+          "id": "toledo-oh",
+          "name": "TOLEDO, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Toledo, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "topeka-ks",
+          "name": "TOPEKA, KS",
+          "branch": "Joint",
+          "state": "KS",
+          "city": "Topeka, Ks",
+          "lat": 38.5266,
+          "lng": -96.726486,
+          "zip": "00000"
+      },
+      {
+          "id": "traverse-city-mi",
+          "name": "TRAVERSE CITY, MI",
+          "branch": "Joint",
+          "state": "MI",
+          "city": "Traverse City, Mi",
+          "lat": 43.326618,
+          "lng": -84.536095,
+          "zip": "00000"
+      },
+      {
+          "id": "trenton-nj",
+          "name": "TRENTON, NJ",
+          "branch": "Joint",
+          "state": "NJ",
+          "city": "Trenton, Nj",
+          "lat": 40.298904,
+          "lng": -74.521011,
+          "zip": "00000"
+      },
+      {
+          "id": "tulsa-ok",
+          "name": "TULSA, OK",
+          "branch": "Joint",
+          "state": "OK",
+          "city": "Tulsa, Ok",
+          "lat": 35.565342,
+          "lng": -96.928917,
+          "zip": "00000"
+      },
+      {
+          "id": "twenty-nine-palms-mcb-ca",
+          "name": "TWENTY NINE PALMS MCB, CA",
+          "branch": "Marine Corps",
+          "state": "CA",
+          "city": "Twenty Nine Palms Mcb, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "vallejo-travis-afb-ca",
+          "name": "VALLEJO/TRAVIS AFB, CA",
+          "branch": "Air Force",
+          "state": "CA",
+          "city": "Vallejo",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "vance-afb-enid-ok",
+          "name": "VANCE AFB/ENID, OK",
+          "branch": "Air Force",
+          "state": "OK",
+          "city": "Vance Afb",
+          "lat": 35.565342,
+          "lng": -96.928917,
+          "zip": "00000"
+      },
+      {
+          "id": "vandenberg-sfb-ca",
+          "name": "VANDENBERG SFB, CA",
+          "branch": "Air Force",
+          "state": "CA",
+          "city": "Vandenberg Sfb, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "ventura-ca",
+          "name": "VENTURA, CA",
+          "branch": "Joint",
+          "state": "CA",
+          "city": "Ventura, Ca",
+          "lat": 36.116203,
+          "lng": -119.681564,
+          "zip": "00000"
+      },
+      {
+          "id": "volusia-county-fl",
+          "name": "VOLUSIA COUNTY, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "Volusia County, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "waco-tx",
+          "name": "WACO, TX",
+          "branch": "Joint",
+          "state": "TX",
+          "city": "Waco, Tx",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "warrenton-va",
+          "name": "WARRENTON, VA",
+          "branch": "Joint",
+          "state": "VA",
+          "city": "Warrenton, Va",
+          "lat": 37.769337,
+          "lng": -78.169968,
+          "zip": "00000"
+      },
+      {
+          "id": "washington-dc-metro-area",
+          "name": "WASHINGTON, DC METRO AREA",
+          "branch": "Joint",
+          "state": "DC",
+          "city": "Washington, Dc Metro Area",
+          "lat": 38.907192,
+          "lng": -77.036871,
+          "zip": "00000"
+      },
+      {
+          "id": "west-palm-beach-fl",
+          "name": "WEST PALM BEACH, FL",
+          "branch": "Joint",
+          "state": "FL",
+          "city": "West Palm Beach, Fl",
+          "lat": 27.766279,
+          "lng": -81.686783,
+          "zip": "00000"
+      },
+      {
+          "id": "west-point-ny",
+          "name": "WEST POINT, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "West Point, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "westchester-county-ny",
+          "name": "WESTCHESTER COUNTY, NY",
+          "branch": "Joint",
+          "state": "NY",
+          "city": "Westchester County, Ny",
+          "lat": 42.165726,
+          "lng": -74.948051,
+          "zip": "00000"
+      },
+      {
+          "id": "whidbey-island-wa",
+          "name": "WHIDBEY ISLAND, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Whidbey Island, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "white-sands-mr-las-cruces-nm",
+          "name": "WHITE SANDS MR/LAS CRUCES, NM",
+          "branch": "Joint",
+          "state": "NM",
+          "city": "White Sands Mr",
+          "lat": 34.840515,
+          "lng": -106.248482,
+          "zip": "00000"
+      },
+      {
+          "id": "whiteman-afb-mo",
+          "name": "WHITEMAN AFB, MO",
+          "branch": "Air Force",
+          "state": "MO",
+          "city": "Whiteman Afb, Mo",
+          "lat": 38.456085,
+          "lng": -92.288368,
+          "zip": "00000"
+      },
+      {
+          "id": "wichita-fls-sheppard-afb-tx",
+          "name": "WICHITA FLS/SHEPPARD AFB, TX",
+          "branch": "Air Force",
+          "state": "TX",
+          "city": "Wichita Fls",
+          "lat": 31.054487,
+          "lng": -97.563461,
+          "zip": "00000"
+      },
+      {
+          "id": "wichita-mcconnell-afb-ks",
+          "name": "WICHITA/MCCONNELL AFB, KS",
+          "branch": "Air Force",
+          "state": "KS",
+          "city": "Wichita",
+          "lat": 38.5266,
+          "lng": -96.726486,
+          "zip": "00000"
+      },
+      {
+          "id": "wilkes-barre-scranton-pa",
+          "name": "WILKES-BARRE/SCRANTON, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Wilkes-barre",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "willow-grove-pa",
+          "name": "WILLOW GROVE, PA",
+          "branch": "Joint",
+          "state": "PA",
+          "city": "Willow Grove, Pa",
+          "lat": 40.590752,
+          "lng": -77.209755,
+          "zip": "00000"
+      },
+      {
+          "id": "wilmington-nc",
+          "name": "WILMINGTON, NC",
+          "branch": "Joint",
+          "state": "NC",
+          "city": "Wilmington, Nc",
+          "lat": 35.630066,
+          "lng": -79.806419,
+          "zip": "00000"
+      },
+      {
+          "id": "worcester-ma",
+          "name": "WORCESTER, MA",
+          "branch": "Joint",
+          "state": "MA",
+          "city": "Worcester, Ma",
+          "lat": 42.230171,
+          "lng": -71.530106,
+          "zip": "00000"
+      },
+      {
+          "id": "wright-patterson-afb-oh",
+          "name": "WRIGHT-PATTERSON AFB, OH",
+          "branch": "Air Force",
+          "state": "OH",
+          "city": "Wright-patterson Afb, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "yakima-wa",
+          "name": "YAKIMA, WA",
+          "branch": "Joint",
+          "state": "WA",
+          "city": "Yakima, Wa",
+          "lat": 47.400902,
+          "lng": -121.490494,
+          "zip": "00000"
+      },
+      {
+          "id": "youngstown-oh",
+          "name": "YOUNGSTOWN, OH",
+          "branch": "Joint",
+          "state": "OH",
+          "city": "Youngstown, Oh",
+          "lat": 40.388783,
+          "lng": -82.764915,
+          "zip": "00000"
+      },
+      {
+          "id": "yuma-az",
+          "name": "YUMA, AZ",
+          "branch": "Joint",
+          "state": "AZ",
+          "city": "Yuma, Az",
+          "lat": 33.729759,
+          "lng": -111.431221,
+          "zip": "00000"
+      }
   ]
 }

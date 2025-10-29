@@ -206,20 +206,73 @@ VALUES (...);
 ### 11. MHA Code Mappings
 - **Location:** `lib/data/base-mha-map.json` (JSON file)
 - **Purpose:** Maps military base names to MHA codes for BAH lookup
-- **Entries:** ~50 major bases
-- **Last Update:** 2025-10-22 (fixed Fort Bliss: TX085 → TX279)
-- **Official Source:** DFAS BAH Rate Lookup
-- **Update Schedule:** As needed (bases open/close/rename)
-- **Update Method:** Direct JSON file edit
+- **Entries:** 338 locations (auto-generated from `bah_rates` table)
+- **Last Update:** 2025-01-24 (auto-regenerated from official BAH data)
+- **Official Source:** DFAS BAH Rate Lookup (`bah_rates` table)
+- **Update Schedule:** Regenerate when BAH data updates (annually)
+- **Update Method:** Auto-generated via `npm run regenerate-base-mha-map` script
 
 **Critical Mappings:**
 ```json
 {
-  "Fort Bliss, TX": "TX279",     // El Paso MHA
-  "Fort Liberty, NC": "NC090",   // Fayetteville MHA
-  "Fort Cavazos, TX": "TX191"    // Killeen MHA
+  "FORT BLISS": "TX279",           // El Paso MHA
+  "FORT LIBERTY/POPE": "NC182",    // Fayetteville MHA
+  "FORT CAVAZOS": "TX286",         // Killeen MHA
+  "MOODY AFB": "GA081"             // Valdosta MHA
 }
 ```
+
+**⚠️ IMPORTANT:** This file is auto-generated. Do NOT manually edit.  
+**To regenerate:** `npm run regenerate-base-mha-map`
+
+---
+
+### 11A. Military Bases Master List
+- **Location:** `lib/data/military-bases.json` (JSON file)
+- **Purpose:** Complete list of military installations for profile autocomplete
+- **Entries:** 299 bases (all unique BAH locations with coordinates)
+- **Last Update:** 2025-10-29 (regenerated from `bah_rates` table)
+- **Official Source:** DFAS BAH database + Google Maps Geocoding API
+- **Update Schedule:** Regenerate when BAH data updates or bases open/close/rename
+- **Update Method:** Auto-generated via `npm run regenerate-bases` script
+
+**Data Structure:**
+```json
+{
+  "bases": [
+    {
+      "id": "moody-afb-ga",
+      "name": "MOODY AFB, GA",
+      "branch": "Air Force",
+      "state": "GA",
+      "city": "Valdosta",
+      "lat": 30.968,
+      "lng": -83.193,
+      "zip": "31699"
+    }
+  ]
+}
+```
+
+**How to Update (when BAH data changes):**
+1. Ensure BAH rates are up-to-date in `bah_rates` table
+2. Add `GOOGLE_MAPS_API_KEY` to `.env.local` (optional, for accurate coordinates)
+3. Run: `npm run regenerate-bases`
+4. Verify: Check that new/renamed bases appear in profile autocomplete
+5. Commit updated file
+
+**Branch Classification:**
+- Primary: Cross-referenced with `app/data/bases.ts` (150+ bases with known branches)
+- Fallback: Heuristic rules (AFB → Air Force, Fort → Army, NAS → Navy, Camp → Marines)
+- Default: Joint (for unclassified installations)
+
+**Geocoding:**
+- With API key: Accurate lat/lng from Google Maps Geocoding API
+- Without API key: State center coordinates (fallback)
+- Cached: Previous geocoding results stored in `.geocode-cache.json`
+
+**⚠️ IMPORTANT:** This file is auto-generated. Do NOT manually edit.  
+**To regenerate:** `npm run regenerate-bases`
 
 ---
 
@@ -262,13 +315,18 @@ VALUES (...);
 - `/docs/DATA_SOURCES_REFERENCE.md` - This file
 - `supabase-migrations/` - All data update migrations
 - `lib/ssot.ts` - Single source of truth constants
-- `lib/data/base-mha-map.json` - Base to MHA mappings
+- `lib/data/base-mha-map.json` - Base to MHA mappings (auto-generated)
+- `lib/data/military-bases.json` - Complete base list (auto-generated)
 
 **Admin Tools:**
 - `/dashboard/admin/data-sources` - Monitoring dashboard
 - `LES_DATA_SOURCES_AUDIT_REPORT.md` - Latest audit (2025-10-22)
 
-**Last Major Audit:** 2025-10-22  
+**Generation Scripts:**
+- `npm run regenerate-base-mha-map` - Regenerate base-mha-map.json from bah_rates
+- `npm run regenerate-bases` - Regenerate military-bases.json from bah_rates + geocoding
+
+**Last Major Audit:** 2025-10-29  
 **Next Review Due:** January 2026  
 **Data Quality:** 100/100 (all sources current for 2025)
 
