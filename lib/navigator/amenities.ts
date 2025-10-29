@@ -24,7 +24,7 @@ export interface AmenityData {
  */
 export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
   console.log(`[DEBUG] fetchAmenitiesData called for ZIP: ${zip}`);
-  
+
   const cacheKey = `gplaces:amenities:v1:${zip}`; // v1 - consolidated Google API key
   const cached = await getCache<AmenityData>(cacheKey);
   if (cached) {

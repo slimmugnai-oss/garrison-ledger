@@ -72,12 +72,14 @@ export default function BaseNavigatorClient({
    * Compute rankings
    */
   const computeRankings = async () => {
+    console.log("[DEBUG] computeRankings called");
     setLoading(true);
     setError(null);
 
     // Computing rankings with current filter values
 
     try {
+      console.log("[DEBUG] Making API call to /api/navigator/base");
       const response = await fetch("/api/navigator/base", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,14 +91,20 @@ export default function BaseNavigatorClient({
         }),
       });
 
+      console.log("[DEBUG] API response status:", response.status);
+
       if (!response.ok) {
         const err = await response.json();
+        console.error("[DEBUG] API error response:", err);
         throw new Error(err.error || "Failed to compute rankings");
       }
 
       const data: NavigatorResponse = await response.json();
+      console.log("[DEBUG] API response data:", data);
+      console.log("[DEBUG] Results count:", data.results?.length);
       setResults(data.results);
     } catch (err) {
+      console.error("[DEBUG] Error in computeRankings:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);

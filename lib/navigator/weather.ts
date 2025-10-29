@@ -36,7 +36,7 @@ interface NominatimGeocodingResponse {
  */
 export async function weatherComfortIndex(zip: string): Promise<{ index10: number; note: string }> {
   console.log(`[DEBUG] weatherComfortIndex called for ZIP: ${zip}`);
-  
+
   // CRITICAL: v4 cache key to bust corrupted old data
   const cacheKey = `gweather:index:v4:${zip}`;
 
