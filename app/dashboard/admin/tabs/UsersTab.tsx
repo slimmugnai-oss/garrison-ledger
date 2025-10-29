@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Badge from '@/app/components/ui/Badge';
 
@@ -31,6 +31,7 @@ interface UsersTabProps {
 export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState('all');
@@ -38,8 +39,9 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
   const [profileFilter, setProfileFilter] = useState('all');
   const [total, setTotal] = useState(initialTotal);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams({
         q: searchQuery,
@@ -50,30 +52,36 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
       });
 
       const res = await fetch(`/api/admin/users/search?${params}`);
-      if (!res.ok) throw new Error('Failed to load users');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to load users');
+      }
 
       const data = await res.json();
       
       // Apply profile filter client-side
-      let filteredUsers = data.users;
+      let filteredUsers = data.users || [];
       if (profileFilter === 'complete') {
-        filteredUsers = data.users.filter((u: User) => u.profile_completed);
+        filteredUsers = filteredUsers.filter((u: User) => u.profile_completed);
       } else if (profileFilter === 'incomplete') {
-        filteredUsers = data.users.filter((u: User) => !u.profile_completed);
+        filteredUsers = filteredUsers.filter((u: User) => !u.profile_completed);
       }
       
       setUsers(filteredUsers);
       setTotal(filteredUsers.length);
-    } catch (error) {
-      console.error('Error loading users:', error);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load users';
+      console.error('Error loading users:', err);
+      setError(errorMessage);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, tierFilter, branchFilter, profileFilter]);
 
   useEffect(() => {
     loadUsers();
-  }, [searchQuery, tierFilter, branchFilter, profileFilter, loadUsers]);
+  }, [loadUsers]);
 
   const handleBulkEmail = async (selectedIds: string[]) => {
     alert(`Would send email to ${selectedIds.length} users`);
@@ -296,13 +304,32 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
         </button>
       </div>
 
+      {/* Error Display */}
+      {error && (
+        <div className="bg-danger/10 border border-danger rounded-lg p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <div className="text-danger text-xl">⚠️</div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-danger mb-1">Error Loading Users</h3>
+              <p className="text-sm text-text-muted">{error}</p>
+              <button
+                onClick={loadUsers}
+                className="mt-2 text-sm text-primary hover:text-primary-hover font-semibold"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* User Table */}
       {loading ? (
         <div className="text-center py-12">
           <div className="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
           <p className="text-text-muted">Loading users...</p>
         </div>
-      ) : (
+      ) : !error ? (
         <DataTable
           data={users}
           columns={columns}
@@ -333,7 +360,7 @@ export default function UsersTab({ initialTotal = 0 }: UsersTabProps) {
           ]}
           emptyMessage="No users found"
         />
-      )}
+      ) : null}
 
       {/* User Detail Modal */}
       {selectedUser && (

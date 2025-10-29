@@ -26,14 +26,23 @@ export async function GET(request: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const clerk = await clerkClient();
+    let allClerkUsers = [];
+    try {
+      const clerk = await clerkClient();
+      
+      // FETCH ALL CLERK USERS FIRST (not just those with profiles)
+      const clerkUsersResponse = await clerk.users.getUserList({
+        limit: 500, // Fetch up to 500 users (adjust if needed)
+      });
 
-    // FETCH ALL CLERK USERS FIRST (not just those with profiles)
-    const clerkUsersResponse = await clerk.users.getUserList({
-      limit: 500, // Fetch up to 500 users (adjust if needed)
-    });
-
-    const allClerkUsers = clerkUsersResponse.data;
+      allClerkUsers = clerkUsersResponse.data || [];
+    } catch (clerkError) {
+      console.error('Clerk API error:', clerkError);
+      return NextResponse.json({ 
+        error: 'Failed to fetch users from Clerk', 
+        details: clerkError instanceof Error ? clerkError.message : 'Unknown error'
+      }, { status: 500 });
+    }
 
     // Filter by search query if provided
     let filteredClerkUsers = allClerkUsers;
