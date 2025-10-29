@@ -295,7 +295,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
       if (response.ok) {
         const data = await response.json();
+        logger.info("[LesAuditAlwaysOn] Fetched history:", data.audits?.length || 0, "audits");
         setHistory(data.audits || []);
+      } else {
+        logger.error("[LesAuditAlwaysOn] Failed to fetch history:", response.status);
       }
     } catch (error) {
       logger.error("Failed to fetch history:", error);
@@ -639,7 +642,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           <button
             onClick={() => setEntryMode("upload")}
             disabled
-            className="relative px-6 py-3 font-medium text-gray-400 cursor-not-allowed"
+            className="relative cursor-not-allowed px-6 py-3 font-medium text-gray-400"
             title="Coming soon - PDF upload with automatic parsing"
           >
             <Icon name="Upload" className="mr-2 inline-block h-4 w-4" />
@@ -1151,7 +1154,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     </button>
 
                     {/* View Saved Audits Button */}
-                    {tier === "premium" && history.length > 0 && (
+                    {(tier === "premium" || tier === "staff") && history.length > 0 && (
                       <button
                         onClick={() => {
                           setHistoryExpanded(!historyExpanded);
@@ -1198,7 +1201,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               )}
 
               {/* Audit History (Premium Only) */}
-              {tier === "premium" && (
+              {(tier === "premium" || tier === "staff") && (
                 <div id="saved-audits-section" className="mt-8 border-t pt-6">
                   {history.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
