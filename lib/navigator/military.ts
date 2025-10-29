@@ -274,7 +274,7 @@ function getDefaultMilitaryData(): MilitaryAmenitiesData {
  */
 function getDefaultMilitaryForZip(zip: string): MilitaryAmenitiesData {
   const zipNum = parseInt(zip);
-  
+
   // Default military amenities by region (based on typical military base locations)
   if (zipNum >= 98000 && zipNum <= 99999) {
     // Washington - near JBLM and other military installations
@@ -347,7 +347,7 @@ function getDefaultMilitaryForZip(zip: string): MilitaryAmenitiesData {
       note: "Limited military facilities access in Mountain West",
     };
   }
-  
+
   // Default fallback
   return {
     military_score: 6,

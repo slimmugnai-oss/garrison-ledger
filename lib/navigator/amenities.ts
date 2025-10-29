@@ -23,11 +23,16 @@ export interface AmenityData {
  * Fetch amenities data for a ZIP code
  */
 export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
+  console.log(`[DEBUG] fetchAmenitiesData called for ZIP: ${zip}`);
+  
   const cacheKey = `gplaces:amenities:v1:${zip}`; // v1 - consolidated Google API key
   const cached = await getCache<AmenityData>(cacheKey);
   if (cached) {
+    console.log(`[DEBUG] Cache hit for amenities: ${zip}`, cached);
     return cached;
   }
+
+  console.log(`[DEBUG] Cache miss for amenities: ${zip}, generating defaults`);
 
   // Always use region-specific defaults for now
   // API key check removed since we're using fallbacks regardless
@@ -37,11 +42,15 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     // This is a temporary solution until Google APIs are properly configured
     // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultAmenitiesForZip(zip);
+    console.log(`[DEBUG] Generated amenities result for ${zip}:`, result);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
-  } catch {
+  } catch (error) {
+    console.error(`[DEBUG] Error in fetchAmenitiesData for ${zip}:`, error);
     // Fallback to region-specific defaults even on error
-    return getDefaultAmenitiesForZip(zip);
+    const fallback = getDefaultAmenitiesForZip(zip);
+    console.log(`[DEBUG] Using fallback amenities for ${zip}:`, fallback);
+    return fallback;
   }
 }
 
@@ -218,7 +227,7 @@ function getDefaultAmenitiesData(): AmenityData {
  */
 function getDefaultAmenitiesForZip(zip: string): AmenityData {
   const zipNum = parseInt(zip);
-  
+
   // Default amenities by region (based on typical suburban/urban patterns)
   if (zipNum >= 98000 && zipNum <= 99999) {
     // Washington - suburban areas near military bases
@@ -298,7 +307,7 @@ function getDefaultAmenitiesForZip(zip: string): AmenityData {
       note: "Moderate suburban amenities",
     };
   }
-  
+
   // Default fallback
   return {
     amenities_score: 6,

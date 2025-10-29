@@ -35,24 +35,33 @@ interface NominatimGeocodingResponse {
  * Returns 0-10 score and readable note
  */
 export async function weatherComfortIndex(zip: string): Promise<{ index10: number; note: string }> {
+  console.log(`[DEBUG] weatherComfortIndex called for ZIP: ${zip}`);
+  
   // CRITICAL: v4 cache key to bust corrupted old data
   const cacheKey = `gweather:index:v4:${zip}`;
 
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) {
+    console.log(`[DEBUG] Cache hit for weather: ${zip}`, cached);
     return cached;
   }
+
+  console.log(`[DEBUG] Cache miss for weather: ${zip}, generating defaults`);
 
   try {
     // For now, use default weather data since Google Weather API requires proper setup
     // This is a temporary solution until Google APIs are properly configured
     // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultWeatherForZip(zip);
+    console.log(`[DEBUG] Generated weather result for ${zip}:`, result);
     await setCache(cacheKey, result, 24 * 3600);
     return result;
-  } catch {
+  } catch (error) {
+    console.error(`[DEBUG] Error in weatherComfortIndex for ${zip}:`, error);
     // Fallback to region-specific defaults even on error
-    return getDefaultWeatherForZip(zip);
+    const fallback = getDefaultWeatherForZip(zip);
+    console.log(`[DEBUG] Using fallback weather for ${zip}:`, fallback);
+    return fallback;
   }
 }
 
@@ -152,7 +161,7 @@ function analyzeOpenWeatherData(data: any): { index10: number; note: string } {
  */
 function getDefaultWeatherForZip(zip: string): { index10: number; note: string } {
   const zipNum = parseInt(zip);
-  
+
   // Default weather by region
   if (zipNum >= 98000 && zipNum <= 99999) {
     // Washington - moderate climate
@@ -176,7 +185,7 @@ function getDefaultWeatherForZip(zip: string): { index10: number; note: string }
     // Mountain West - dry climate
     return { index10: 8, note: "Dry Mountain West climate" };
   }
-  
+
   // Default fallback
   return { index10: 7, note: "Moderate climate" };
 }
