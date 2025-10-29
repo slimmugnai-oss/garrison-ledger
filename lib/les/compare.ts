@@ -344,6 +344,62 @@ export function compareLesToExpected(
   // The overall net pay check will catch any major issues
 
   // =============================================================================
+  // Additional Deductions & Allotments Validation
+  // =============================================================================
+
+  // TLA (Temporary Lodging Allowance) - OCONUS only, varies by location/days
+  // Don't compute expected, just acknowledge if present
+  const actualTLA = actualAllowances.get("TLA") || 0;
+  if (actualTLA > 0) {
+    flags.push(createCorrectFlag("TLA", actualTLA));
+  }
+
+  // AFRH (Armed Forces Retirement Home) - Optional voluntary deduction
+  // Don't flag if missing (optional)
+  const actualAFRH = actualDeductions.get("AFRH") || 0;
+  if (actualAFRH > 0) {
+    flags.push(createCorrectFlag("AFRH", actualAFRH));
+  }
+
+  // SGLI Family/Spouse - Separate from main SGLI, manual entry only
+  // Don't compute expected, just acknowledge if present
+  const actualSGLIFam = actualDeductions.get("SGLI_FAM") || 0;
+  if (actualSGLIFam > 0) {
+    flags.push(createCorrectFlag("SGLI_FAM", actualSGLIFam));
+  }
+
+  // Mid-Month Pay - Internal DFAS accounting (advance then deduction)
+  // Exclude from expected calculations, just acknowledge if present
+  const actualMidMonth = actualDeductions.get("MID_MONTH_PAY") || 0;
+  if (actualMidMonth > 0) {
+    // Don't flag this as it's standard DFAS accounting practice
+    // It's half of base pay paid mid-month, then deducted at end
+  }
+
+  // Privatized Housing - Flag if present without BAH (potential issue)
+  // Note: PRIVATIZED_HOUSING is an ALLOTMENT, not a DEDUCTION
+  const actualAllotments = new Map<string, number>();
+  for (const line of parsed) {
+    if (line.section === "ALLOTMENT") {
+      const existing = actualAllotments.get(line.line_code) || 0;
+      actualAllotments.set(line.line_code, existing + line.amount_cents);
+    }
+  }
+  const actualPrivHousing = actualAllotments.get("PRIVATIZED_HOUSING") || 0;
+  const actualBAHForCheck = actualAllowances.get("BAH") || 0;
+  if (actualPrivHousing > 0 && actualBAHForCheck === 0) {
+    flags.push(createPrivatizedHousingWithoutBAHFlag(actualPrivHousing));
+  } else if (actualPrivHousing > 0) {
+    flags.push(createCorrectFlag("PRIVATIZED_HOUSING", actualPrivHousing));
+  }
+
+  // Tricare Dental - Separate from generic dental, acknowledge if present
+  const actualTricareDental = actualDeductions.get("TRICARE_DENTAL") || 0;
+  if (actualTricareDental > 0) {
+    flags.push(createCorrectFlag("TRICARE_DENTAL", actualTricareDental));
+  }
+
+  // =============================================================================
   // Net Pay Validation (THE MONEY QUESTION)
   // =============================================================================
   if (expected.expected.net_pay_cents !== undefined) {
@@ -845,6 +901,19 @@ function createSpecialPayUnexpectedFlag(code: string, actual: number): PayFlag {
     message: `${code} found ($${actualDollars}/month) but not in your profile`,
     suggestion: `If this is a recurring special pay, add it to your profile for accurate future audits. If this is a one-time payment or bonus, no action needed. Verify the amount is correct for your qualification level.`,
     delta_cents: -actual,
+  };
+}
+
+function createPrivatizedHousingWithoutBAHFlag(actual: number): PayFlag {
+  const actualDollars = (actual / 100).toFixed(2);
+
+  return {
+    severity: "yellow",
+    flag_code: "PRIVATIZED_HOUSING_WITHOUT_BAH",
+    message: `Privatized Housing allotment ($${actualDollars}/month) found, but no BAH on LES`,
+    suggestion: `If you're in privatized housing, BAH should be paid and then deducted (allotment). Verify with finance that BAH is being processed correctly. If BAH was denied or suspended, this may be intentional - confirm with finance office.`,
+    delta_cents: 0,
+    ref_url: "https://www.defensetravel.dod.mil/site/bahCalc.cfm",
   };
 }
 

@@ -113,6 +113,12 @@ export const LINE_CODES: Record<string, LineCodeDefinition> = {
     taxability: { fed: true, state: true, oasdi: true, medicare: true },
   },
 
+  TLA: {
+    section: "ALLOWANCE",
+    description: "Temporary Lodging Allowance (OCONUS)",
+    taxability: { fed: false, state: false, oasdi: true, medicare: true },
+  },
+
   // =============================================================================
   // TAXES
   // =============================================================================
@@ -163,6 +169,30 @@ export const LINE_CODES: Record<string, LineCodeDefinition> = {
     taxability: { fed: false, state: false, oasdi: false, medicare: false },
   },
 
+  AFRH: {
+    section: "DEDUCTION",
+    description: "Armed Forces Retirement Home",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
+  SGLI_FAM: {
+    section: "DEDUCTION",
+    description: "SGLI Family/Spouse Coverage",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
+  MID_MONTH_PAY: {
+    section: "DEDUCTION",
+    description: "Mid-Month Pay Advance (Deduction)",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
+  TRICARE_DENTAL: {
+    section: "DEDUCTION",
+    description: "Tricare Dental Insurance",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
   // =============================================================================
   // ALLOTMENTS
   // =============================================================================
@@ -170,6 +200,18 @@ export const LINE_CODES: Record<string, LineCodeDefinition> = {
   ALLOTMENT: {
     section: "ALLOTMENT",
     description: "Discretionary Allotment",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
+  BANK_ALLOTMENT: {
+    section: "ALLOTMENT",
+    description: "Bank Account Allotment",
+    taxability: { fed: false, state: false, oasdi: false, medicare: false },
+  },
+
+  PRIVATIZED_HOUSING: {
+    section: "ALLOTMENT",
+    description: "Privatized Housing Allotment",
     taxability: { fed: false, state: false, oasdi: false, medicare: false },
   },
 
@@ -293,6 +335,12 @@ export function canonicalizeCode(rawCode: string): string {
   if (normalized.includes("DIVE") || normalized.includes("DIVING")) return "DIVE_PAY";
   if (normalized.includes("JUMP") || normalized.includes("PARACHUTE")) return "JUMP_PAY";
   if (normalized.includes("HARDSHIP") || normalized === "HDP") return "HDP";
+  if (
+    normalized === "TLA" ||
+    normalized.includes("TEMPORARY LODGING ALLOWANCE") ||
+    normalized.includes("TEMP LODGING")
+  )
+    return "TLA";
 
   // Taxes
   if (normalized.includes("FED") && normalized.includes("TAX")) return "TAX_FED";
@@ -306,11 +354,43 @@ export function canonicalizeCode(rawCode: string): string {
   if (normalized === "MEDICARE" || normalized.includes("MEDICARE")) return "MEDICARE";
 
   // Deductions
-  if (normalized === "SGLI" || normalized.includes("SGLI")) return "SGLI";
-  if (normalized.includes("DENTAL")) return "DENTAL";
+  if (normalized === "SGLI" || (normalized.includes("SGLI") && !normalized.includes("FAM")))
+    return "SGLI";
+  if (
+    normalized.includes("SGLI FAM") ||
+    normalized.includes("SGLI FAM/SPOUSE") ||
+    normalized.includes("SGLI_FAM")
+  )
+    return "SGLI_FAM";
+  if (
+    normalized.includes("TRICARE DENTAL") ||
+    normalized.includes("TRI CARE DENTAL") ||
+    (normalized.includes("DENTAL") && normalized.includes("TRICARE"))
+  )
+    return "TRICARE_DENTAL";
+  if (normalized.includes("DENTAL") && !normalized.includes("TRICARE")) return "DENTAL";
   if (normalized === "TSP" || normalized.includes("THRIFT")) return "TSP";
+  if (normalized === "AFRH" || normalized.includes("ARMED FORCES RETIREMENT HOME")) return "AFRH";
+  if (
+    normalized.includes("MID-MONTH-PAY") ||
+    normalized.includes("MID MONTH PAY") ||
+    normalized.includes("MID_MONTH_PAY")
+  )
+    return "MID_MONTH_PAY";
 
   // Allotments
+  if (
+    normalized.includes("PRIVATIZED HOUSING") ||
+    normalized.includes("PRIVATIZED_HOUSING") ||
+    normalized.includes("PRIV HOUSING")
+  )
+    return "PRIVATIZED_HOUSING";
+  if (
+    normalized.includes("BANK ACCT ALLOT") ||
+    normalized.includes("BANK ACCOUNT ALLOTMENT") ||
+    normalized.includes("BANK_ALLOTMENT")
+  )
+    return "BANK_ALLOTMENT";
   if (normalized.includes("ALLOTMENT")) return "ALLOTMENT";
 
   // Debts
@@ -380,8 +460,40 @@ const CODE_ALIASES: Record<string, string> = {
   "SGLI PREMIUM": "SGLI",
 
   // Dental variations
-  "TRICARE DENTAL": "DENTAL",
+  "TRICARE DENTAL": "TRICARE_DENTAL",
   "DENTAL PREMIUM": "DENTAL",
+  "TRI CARE DENTAL": "TRICARE_DENTAL",
+
+  // TLA variations
+  TLA: "TLA",
+  "TEMPORARY LODGING ALLOWANCE": "TLA",
+  "TEMP LODGING ALLOW": "TLA",
+  "TEMP LODGING ALLOWANCE": "TLA",
+
+  // AFRH variations
+  AFRH: "AFRH",
+  "ARMED FORCES RETIREMENT HOME": "AFRH",
+
+  // SGLI Family variations
+  "SGLI FAM": "SGLI_FAM",
+  "SGLI FAM/SPOUSE": "SGLI_FAM",
+  SGLI_FAM: "SGLI_FAM",
+  "SGLI FAMILY": "SGLI_FAM",
+  "SGLI SPOUSE": "SGLI_FAM",
+
+  // Mid-month pay variations
+  "MID-MONTH-PAY": "MID_MONTH_PAY",
+  "MID MONTH PAY": "MID_MONTH_PAY",
+  MID_MONTH_PAY: "MID_MONTH_PAY",
+
+  // Allotment variations
+  "BANK ACCT ALLOT": "BANK_ALLOTMENT",
+  "BANK ACCOUNT ALLOTMENT": "BANK_ALLOTMENT",
+  BANK_ALLOTMENT: "BANK_ALLOTMENT",
+  "PRIVATIZED HOUSING": "PRIVATIZED_HOUSING",
+  PRIVATIZED_HOUSING: "PRIVATIZED_HOUSING",
+  "PRIV HOUSING": "PRIVATIZED_HOUSING",
+  "PRIV HOUSING ALLOT": "PRIVATIZED_HOUSING",
 };
 
 /**

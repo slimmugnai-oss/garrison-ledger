@@ -1,17 +1,17 @@
 /**
  * DATA PROVENANCE COMPONENT
- * 
+ *
  * Shows data source, last verified date, cache TTL, and confidence level
  * Military audience needs to trust the data - this builds that trust
  */
 
-import Icon from './Icon';
+import Icon from "./Icon";
 
 interface DataProvenanceProps {
   source: string;
   lastVerified: string;
   cacheTTL?: string;
-  confidence: 'high' | 'medium' | 'low';
+  confidence: "high" | "medium" | "low";
   link?: string;
   className?: string;
 }
@@ -19,21 +19,21 @@ interface DataProvenanceProps {
 export default function DataProvenance({
   source,
   lastVerified,
-  cacheTTL = '24 hours',
+  cacheTTL = "24 hours",
   confidence,
   link,
-  className = ''
+  className = "",
 }: DataProvenanceProps) {
   const confidenceColors = {
-    high: 'text-green-600 bg-green-50 border-green-200',
-    medium: 'text-yellow-600 bg-yellow-50 border-yellow-200',
-    low: 'text-red-600 bg-red-50 border-red-200'
+    high: "text-green-600 bg-green-50 border-green-200",
+    medium: "text-yellow-600 bg-yellow-50 border-yellow-200",
+    low: "text-red-600 bg-red-50 border-red-200",
   };
 
   const confidenceIcons = {
-    high: 'CheckCircle',
-    medium: 'AlertTriangle',
-    low: 'AlertCircle'
+    high: "CheckCircle",
+    medium: "AlertTriangle",
+    low: "AlertCircle",
   };
 
   return (

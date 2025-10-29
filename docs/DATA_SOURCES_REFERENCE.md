@@ -80,15 +80,19 @@ INSERT INTO military_pay_tables (paygrade, years_of_service, monthly_rate_cents,
 
 ---
 
-### 3. BAS Rates
+### 3. BAS Rates ✅ UPDATED 2025-10-29
 - **Location:** `lib/ssot.ts` (hardcoded constant)
 - **Purpose:** Food allowance for enlisted and officers
 - **Values:** 2 rates (enlisted, officer)
-- **Last Update:** 2025-10-22
-- **Current Rates:** Enlisted $460.25, Officer $316.98
+- **Last Update:** 2025-10-29
+- **Current Rates:** Enlisted $465.77/month, Officer $316.98/month
 - **Official Source:** https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/
 - **Update Schedule:** Annual (January 1st)
 - **Update Method:** Direct code edit in SSOT file
+
+**⚠️ UPDATE (2025-10-29):**
+Updated enlisted BAS from $460.25 → **$465.77/month** (2025 official DFAS rate).
+**Note:** Deployment may affect BAS rates - if user shows different rate, verify with finance office before flagging as error.
 
 **How to Update (January 2026):**
 ```typescript
@@ -101,21 +105,29 @@ basMonthlyCents: {
 
 ---
 
-### 4. SGLI Rates
-- **Location:** `sgli_rates` table (Supabase)
-- **Purpose:** Life insurance premium rates
-- **Rows:** 8 coverage tiers ($50K to $400K)
-- **Last Update:** 2025-01-01
-- **Rate Formula:** $0.007 per $100 of coverage
+### 4. SGLI Rates ✅ UPDATED 2025-10-29
+- **Location:** Manual entry (no automated calculation currently)
+- **Purpose:** Life insurance premium rates by coverage amount
+- **Current Rate:** 5 cents per $1,000 (effective July 1, 2025, reduced from 6 cents)
+- **Last Update:** 2025-10-29
 - **Official Source:** https://www.va.gov/life-insurance/options-eligibility/sgli/
-- **Update Schedule:** Rarely (last changed ~2015, check annually)
-- **Update Method:** SQL UPDATE or INSERT new effective_date rates
+- **Update Schedule:** Manual entry per user guidance (formula may be complex)
+- **Update Method:** Users enter actual amount from LES
 
-**How to Update (if VA announces change):**
+**⚠️ NOTE (2025-10-29):**
+SGLI calculation kept as manual entry due to complexity:
+- **Base rate:** 5 cents per $1,000 (effective July 1, 2025)
+- **$500K coverage:** 500 × $0.05 = $25.00/month
+- **LES may show:** $26.00 (includes optional TSGLI premium of $1.00)
+- **Family/Spouse:** Separate line item (SGLI_FAM code) - manual entry only
+- **Reason:** Formula varies by coverage tier, optional TSGLI adds complexity
+
+**How to Update (if implementing automated calculation in future):**
 ```sql
--- Verify current VA.gov rates first!
-INSERT INTO sgli_rates (coverage_amount, monthly_premium_cents, effective_date) VALUES
-(50000, [new_premium_cents], '2026-01-01'),
+-- Would need to create sgli_rates table with:
+INSERT INTO sgli_rates (coverage_amount, monthly_premium_cents, includes_tsgli, effective_date) VALUES
+(500000, 2600, true, '2025-07-01'),  -- $26.00 (includes TSGLI)
+(500000, 2500, false, '2025-07-01'), -- $25.00 (base only)
 ...
 ```
 
@@ -240,6 +252,56 @@ VALUES (...);
 
 **⚠️ IMPORTANT:** This file is auto-generated. Do NOT manually edit.  
 **To regenerate:** `npm run regenerate-base-mha-map`
+
+---
+
+### 11. LES Line Item Codes ✅ EXPANDED 2025-10-29
+- **Location:** `lib/les/codes.ts` (TypeScript constant)
+- **Purpose:** Canonical registry of all LES line item codes with metadata
+- **Total Codes:** 35+ codes (expanded from 22)
+- **Last Update:** 2025-10-29
+- **Official Source:** Actual LES statements from all service branches
+- **Update Schedule:** As new line items are discovered on actual LES statements
+- **Update Method:** Add to `LINE_CODES` constant in `lib/les/codes.ts`
+
+**New Codes Added (2025-10-29):**
+- **TLA** - Temporary Lodging Allowance (OCONUS)
+- **AFRH** - Armed Forces Retirement Home (voluntary deduction)
+- **SGLI_FAM** - SGLI Family/Spouse Coverage (separate from main SGLI)
+- **MID_MONTH_PAY** - Mid-Month Pay Advance (deduction)
+- **TRICARE_DENTAL** - Tricare Dental Insurance (separate from generic DENTAL)
+- **BANK_ALLOTMENT** - Bank Account Allotment
+- **PRIVATIZED_HOUSING** - Privatized Housing Allotment
+
+**Code Sections:**
+- **ALLOWANCE:** BASEPAY, BAH, BAS, COLA, SDAP, HFP, FSA, FLPP, TLA, special pays
+- **TAX:** TAX_FED, TAX_STATE, FICA, MEDICARE
+- **DEDUCTION:** SGLI, SGLI_FAM, TSP, DENTAL, TRICARE_DENTAL, AFRH, MID_MONTH_PAY
+- **ALLOTMENT:** ALLOTMENT, BANK_ALLOTMENT, PRIVATIZED_HOUSING
+- **DEBT:** DEBT
+- **ADJUSTMENT:** ADJUSTMENT
+
+**Taxability Rules:**
+- BAH/BAS: NOT taxable (fed/state/FICA/Medicare)
+- TLA: NOT taxable for fed/state, BUT taxable for FICA/Medicare
+- Base Pay: Fully taxable
+- Special Pays: Varies by type (see each code definition)
+
+**Comparison Logic:**
+- TLA: No expected calculation (varies by location/days)
+- AFRH: Optional, don't flag if missing
+- SGLI_FAM: Manual entry only, acknowledge if present
+- MID_MONTH_PAY: Standard DFAS accounting, no flag needed
+- PRIVATIZED_HOUSING: Flag if present without BAH (potential issue)
+
+**How to Add New Code:**
+1. Add to `LINE_CODES` constant with section, description, taxability
+2. Update `canonicalizeCode()` for PDF parsing
+3. Update `CODE_ALIASES` for user entry variations
+4. Add comparison logic in `lib/les/compare.ts` if needed
+5. Document in this file
+
+**See:** `lib/les/codes.ts` for complete code registry
 
 ---
 
