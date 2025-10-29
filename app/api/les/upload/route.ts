@@ -241,11 +241,11 @@ export async function POST(req: NextRequest) {
     // ==========================================================================
     // 5. CREATE DATABASE RECORD (NO STORAGE PATH!)
     // ==========================================================================
-    const { data: uploadRecord, error: insertError } = await supabaseAdmin
+    const { data: uploadRecord, error: insertError} = await supabaseAdmin
       .from("les_uploads")
       .insert({
         user_id: userId,
-        entry_type: "upload",
+        entry_type: "pdf", // ✅ FIXED: Must be 'pdf' or 'manual' per DB constraint
         original_filename: file.name,
         mime_type: file.type,
         size_bytes: file.size,
