@@ -215,20 +215,20 @@ export default function BaseNavigatorClient({
           </div>
         </div>
 
-        {/* Streamlined Filters */}
-        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900">Search Criteria</h2>
+        {/* Streamlined Filters - Mobile Optimized */}
+        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
+          <h2 className="mb-4 sm:mb-6 text-lg font-semibold text-gray-900">Search Criteria</h2>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Row 1: Bedrooms and BAH */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
               {/* Bedrooms */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">Bedrooms</label>
                 <select
                   value={bedrooms}
                   onChange={(e) => setBedrooms(Number(e.target.value))}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                 >
                   <option value={2}>2 BR</option>
                   <option value={3}>3 BR</option>
@@ -250,7 +250,7 @@ export default function BaseNavigatorClient({
                   type="number"
                   value={Math.round(bahMonthlyCents / 100)}
                   onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                   placeholder="2500"
                 />
                 <p className="mt-1 text-xs text-gray-600">
@@ -291,7 +291,7 @@ export default function BaseNavigatorClient({
                       key={grade}
                       type="button"
                       onClick={() => toggleGrade(grade)}
-                      className={`rounded-lg px-4 py-2 font-medium transition-all duration-200 ${
+                      className={`rounded-lg px-4 py-3 font-medium transition-all duration-200 min-h-[44px] min-w-[80px] ${
                         kidsGrades.includes(grade)
                           ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
@@ -321,7 +321,7 @@ export default function BaseNavigatorClient({
                 <select
                   value={sortPriority}
                   onChange={(e) => setSortPriority(e.target.value as typeof sortPriority)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 min-h-[44px]"
                 >
                   <option value="overall">Best Overall Fit</option>
                   <option value="schools">Best Schools First</option>
@@ -336,7 +336,7 @@ export default function BaseNavigatorClient({
           <button
             onClick={computeRankings}
             disabled={loading || bahMonthlyCents === 0}
-            className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+            className="mt-6 w-full rounded-lg bg-blue-600 px-6 py-4 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 min-h-[48px] text-base md:w-auto"
           >
             {loading ? "Computing Rankings..." : "Find Best Neighborhoods"}
           </button>
@@ -485,21 +485,21 @@ export default function BaseNavigatorClient({
                     <div
                       className={`overflow-hidden rounded-2xl border-2 ${rankStyle.border} bg-white transition-all duration-300 hover:shadow-xl ${rankStyle.shadow}`}
                     >
-                      {/* Header Section */}
-                      <div className={`${rankStyle.gradient} p-6 text-white`}>
+                      {/* Header Section - Mobile Optimized */}
+                      <div className={`${rankStyle.gradient} p-4 sm:p-6 text-white`}>
                         <div className="flex items-start justify-between">
-                          <div>
-                            <div className="mb-2 flex items-center gap-3">
-                              <span className="text-2xl font-bold">{rankStyle.label}</span>
-                              <h3 className="text-3xl font-bold">ZIP {result.zip}</h3>
+                          <div className="flex-1 min-w-0">
+                            <div className="mb-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                              <span className="text-xl sm:text-2xl font-bold">{rankStyle.label}</span>
+                              <h3 className="text-2xl sm:text-3xl font-bold">ZIP {result.zip}</h3>
                             </div>
-                            <p className="text-lg opacity-90">{scoreBreakdown.message}</p>
+                            <p className="text-base sm:text-lg opacity-90">{scoreBreakdown.message}</p>
                           </div>
 
                           {isPremium && (
                             <button
                               onClick={() => saveWatchlist(result.zip)}
-                              className={`rounded-xl p-3 ${
+                              className={`rounded-xl p-3 min-h-[44px] min-w-[44px] flex items-center justify-center ${
                                 isWatched
                                   ? "bg-white bg-opacity-20 text-white"
                                   : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"
@@ -511,11 +511,11 @@ export default function BaseNavigatorClient({
                           )}
                         </div>
 
-                        {/* Family Fit Score - Prominent */}
+                        {/* Family Fit Score - Mobile Optimized */}
                         <div className="mt-4 rounded-xl bg-white bg-opacity-20 p-4">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div>
-                              <span className="text-lg font-semibold">Family Fit Score</span>
+                              <span className="text-base sm:text-lg font-semibold">Family Fit Score</span>
                               <div
                                 className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-semibold ${rankStyle.badge}`}
                               >
@@ -526,7 +526,7 @@ export default function BaseNavigatorClient({
                                     : "Fair"}
                               </div>
                             </div>
-                            <span className="text-5xl font-bold">
+                            <span className="text-4xl sm:text-5xl font-bold">
                               {Math.round(result.family_fit_score)}
                             </span>
                           </div>
@@ -534,30 +534,31 @@ export default function BaseNavigatorClient({
                       </div>
 
                       {/* Content Section - Tabbed Interface */}
-                      <div className="p-6">
+                      <div className="p-4 sm:p-6">
                         {/* Tab Navigation */}
                         <div className="mb-6">
-                          <div className="flex flex-wrap gap-2 border-b border-gray-200">
+                          <div className="flex gap-1 border-b border-gray-200 overflow-x-auto pb-0">
                             {[
-                              { id: 'overview', label: 'Overview', icon: 'BarChart3' },
-                              { id: 'schools', label: 'Schools', icon: 'GraduationCap' },
-                              { id: 'housing', label: 'Housing', icon: 'Home' },
-                              { id: 'commute', label: 'Commute', icon: 'Car' },
-                              { id: 'quality', label: 'Quality of Life', icon: 'Sun' }
+                              { id: 'overview', label: 'Overview', shortLabel: 'Overview', icon: 'BarChart3' },
+                              { id: 'schools', label: 'Schools', shortLabel: 'Schools', icon: 'GraduationCap' },
+                              { id: 'housing', label: 'Housing', shortLabel: 'Housing', icon: 'Home' },
+                              { id: 'commute', label: 'Commute', shortLabel: 'Commute', icon: 'Car' },
+                              { id: 'quality', label: 'Quality of Life', shortLabel: 'QoL', icon: 'Sun' }
                             ].map((tab) => {
                               const isActive = (activeTabs[result.zip] || 'overview') === tab.id;
                               return (
                                 <button
                                   key={tab.id}
                                   onClick={() => switchTab(result.zip, tab.id)}
-                                  className={`flex items-center gap-2 rounded-t-lg px-4 py-3 text-sm font-medium transition-colors ${
+                                  className={`flex items-center gap-2 rounded-t-lg px-3 py-3 text-sm font-medium transition-colors min-h-[44px] flex-shrink-0 ${
                                     isActive
                                       ? 'border-b-2 border-blue-600 bg-blue-50 text-blue-700'
                                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                   }`}
                                 >
-                                  <Icon name={tab.icon} className="h-4 w-4" />
-                                  {tab.label}
+                                  <Icon name={tab.icon} className="h-4 w-4 flex-shrink-0" />
+                                  <span className="hidden sm:inline">{tab.label}</span>
+                                  <span className="sm:hidden">{tab.shortLabel}</span>
                                 </button>
                               );
                             })}
