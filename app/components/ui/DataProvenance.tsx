@@ -30,7 +30,7 @@ export default function DataProvenance({
     low: "text-red-600 bg-red-50 border-red-200",
   };
 
-  const confidenceIcons = {
+  const confidenceIcons: Record<"high" | "medium" | "low", "CheckCircle" | "AlertTriangle" | "AlertCircle"> = {
     high: "CheckCircle",
     medium: "AlertTriangle",
     low: "AlertCircle",

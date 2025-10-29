@@ -130,12 +130,12 @@ export function getSchoolsByZip(
   perPage = 25,
   page = 1
 ): Promise<SchoolDiggerResponse> {
-  return sdFetch<SchoolDiggerResponse>("/schools", { 
-    zip, 
-    perPage, 
-    page, 
+  return sdFetch<SchoolDiggerResponse>("/schools", {
+    zip,
+    perPage,
+    page,
     sortBy: "rank",
-    includeUnrankedSchoolsInRankSort: true
+    includeUnrankedSchoolsInRankSort: "true",
   });
 }
 
@@ -153,7 +153,7 @@ export function getSchoolsByLatLon(
     perPage,
     page,
     sortBy: "rank",
-    includeUnrankedSchoolsInRankSort: true
+    includeUnrankedSchoolsInRankSort: "true",
   });
 }
 
@@ -167,7 +167,7 @@ export function getSchoolsByState(
     perPage,
     page,
     sortBy: "rank",
-    includeUnrankedSchoolsInRankSort: true
+    includeUnrankedSchoolsInRankSort: "true",
   });
 }
 
@@ -179,7 +179,7 @@ export function getDistrictsByState(
   return sdFetch<SchoolDiggerResponse>("/districts", {
     st: state,
     perPage,
-    page
+    page,
   });
 }
 
@@ -190,7 +190,7 @@ export function getSchoolRankingsByState(
 ): Promise<SchoolDiggerResponse> {
   return sdFetch<SchoolDiggerResponse>(`/rankings/schools/${state}`, {
     perPage,
-    page
+    page,
   });
 }
 

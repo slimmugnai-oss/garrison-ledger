@@ -9,13 +9,13 @@
  * Run: npx ts-node scripts/test-navigator-apis.ts
  */
 
-import { weatherComfortIndex } from '../lib/navigator/weather';
-import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '../lib/navigator/schools';
-import { fetchMedianRent, fetchSampleListings } from '../lib/navigator/housing';
-import { commuteMinutesFromZipToGate } from '../lib/navigator/distance';
-import { fetchAmenitiesData } from '../lib/navigator/amenities';
-import { fetchMilitaryAmenitiesData } from '../lib/navigator/military';
-import { familyFitScore100 } from '../lib/navigator/score';
+import { weatherComfortIndex } from '../lib/navigator/weather.js';
+import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '../lib/navigator/schools.js';
+import { fetchMedianRent, fetchSampleListings } from '../lib/navigator/housing.js';
+import { commuteMinutesFromZipToGate } from '../lib/navigator/distance.js';
+import { fetchAmenitiesData } from '../lib/navigator/amenities.js';
+import { fetchMilitaryAmenitiesData } from '../lib/navigator/military.js';
+import { familyFitScore100 } from '../lib/navigator/score.js';
 
 const TEST_ZIP = '98498'; // Near JBLM
 const TEST_GATE = { lat: 47.126, lng: -122.561 }; // JBLM gate

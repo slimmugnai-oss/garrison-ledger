@@ -19,6 +19,7 @@ import type {
   NavigatorResponse,
   KidsGrade,
 } from "@/app/types/navigator";
+import { getScoreBreakdown } from "@/lib/navigator/score";
 
 interface Props {
   base: BaseSeed;
@@ -194,7 +195,7 @@ export default function BaseNavigatorClient({
                     {base.branch}
                   </span>
                   <span className="flex items-center gap-2">
-                    <Icon name="Hash" className="h-5 w-5" />
+                    <Icon name="Key" className="h-5 w-5" />
                     {base.mha}
                   </span>
                 </div>
@@ -549,31 +550,31 @@ export default function BaseNavigatorClient({
                                 id: "overview",
                                 label: "Overview",
                                 shortLabel: "Overview",
-                                icon: "BarChart3",
+                                icon: "BarChart" as const,
                               },
                               {
                                 id: "schools",
                                 label: "Schools",
                                 shortLabel: "Schools",
-                                icon: "GraduationCap",
+                                icon: "GraduationCap" as const,
                               },
                               {
                                 id: "housing",
                                 label: "Housing",
                                 shortLabel: "Housing",
-                                icon: "Home",
+                                icon: "Home" as const,
                               },
                               {
                                 id: "commute",
                                 label: "Commute",
                                 shortLabel: "Commute",
-                                icon: "Car",
+                                icon: "Truck" as const,
                               },
                               {
                                 id: "quality",
                                 label: "Quality of Life",
                                 shortLabel: "QoL",
-                                icon: "Sun",
+                                icon: "Sun" as const,
                               },
                             ].map((tab) => {
                               const isActive = (activeTabs[result.zip] || "overview") === tab.id;
@@ -681,7 +682,7 @@ export default function BaseNavigatorClient({
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <Icon name="Car" className="h-5 w-5 text-purple-600" />
+                                    <Icon name="Truck" className="h-5 w-5 text-purple-600" />
                                     <span className="text-gray-700">
                                       Commute Convenience: {Math.round(result.subscores.commute)}
                                       /100
@@ -752,7 +753,7 @@ export default function BaseNavigatorClient({
                                               </span>
                                             </div>
                                             <p className="mb-2 text-sm text-gray-600">
-                                              {school.grades} • {school.distance_mi.toFixed(1)} mi
+                                              {school.grades} • {school.distance_mi?.toFixed(1) || '0.0'} mi
                                               away
                                             </p>
                                             <div className="flex items-center gap-2">
@@ -940,7 +941,7 @@ export default function BaseNavigatorClient({
                                     <strong>Data Source:</strong> Google Distance Matrix • Updated
                                     daily •
                                     <a
-                                      href={`https://maps.google.com/maps?q=${base.latitude},${base.longitude}`}
+                                      href={`https://maps.google.com/maps?q=${base.center.lat},${base.center.lng}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="ml-1 underline hover:text-purple-900"
@@ -1102,7 +1103,7 @@ export default function BaseNavigatorClient({
                                     )}
                                     {result.payload.military_data.exchange_distance_mi && (
                                       <div className="flex items-center gap-2">
-                                        <Icon name="Store" className="h-5 w-5 text-gray-600" />
+                                        <Icon name="ShoppingCart" className="h-5 w-5 text-gray-600" />
                                         <span className="text-sm text-gray-700">
                                           Exchange:{" "}
                                           {result.payload.military_data.exchange_distance_mi.toFixed(
