@@ -23,7 +23,7 @@ import Icon from "../components/ui/Icon";
 export const metadata: Metadata = {
   title: "Dashboard - Garrison Ledger",
   description:
-    "Your military financial intelligence command center. Access 5 premium tools: LES Auditor, PCS Copilot, Base Navigator, TDY Copilot, and Ask Assistant.",
+    "Your military financial intelligence command center. Access 4 premium tools: LES Auditor, PCS Copilot, Base Navigator, and Ask Assistant.",
 };
 
 export default async function Dashboard() {
@@ -58,11 +58,6 @@ export default async function Dashboard() {
     .eq("user_id", user.id)
     .gte("created_at", firstDayOfMonth.toISOString());
 
-  const { count: tdyTrips } = await supabaseAdmin
-    .from("tdy_trips")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
-
   // Get knowledge sources count
   const { count: knowledgeSources } = await supabaseAdmin
     .from("knowledge_embeddings")
@@ -94,7 +89,7 @@ export default async function Dashboard() {
                 <Icon name="Star" className="h-6 w-6 text-yellow-600" />
                 <div>
                   <h3 className="font-semibold text-yellow-900">Premium Member</h3>
-                  <p className="text-sm text-yellow-800">Unlimited access to all 5 premium tools</p>
+                  <p className="text-sm text-yellow-800">Unlimited access to all 4 premium tools</p>
                 </div>
               </div>
             </div>
@@ -108,12 +103,12 @@ export default async function Dashboard() {
             />
           </div>
 
-          {/* 5 Premium Tools - Hero Section */}
+          {/* 4 Premium Tools - Hero Section */}
           <div className="mb-12">
             <h2 className="mb-6 text-2xl font-semibold text-gray-900">Your Premium Tools</h2>
 
-            {/* Top Row: 3 cards */}
-            <div className="mb-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* 2x2 Grid Layout */}
+            <div className="mb-6 grid gap-6 md:grid-cols-2">
               {/* LES Auditor */}
               <AnimatedCard delay={0}>
                 <Link
@@ -281,68 +276,9 @@ export default async function Dashboard() {
                   </div>
                 </Link>
               </AnimatedCard>
-            </div>
-
-            {/* Bottom Row: 2 cards centered */}
-            <div className="grid gap-6 md:grid-cols-2 lg:mx-auto lg:max-w-2xl">
-              {/* TDY Copilot */}
-              <AnimatedCard delay={0.3}>
-                <Link
-                  href="/dashboard/tdy-voucher"
-                  className="block h-full rounded-lg border-2 border-purple-300 bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 p-6 transition-all hover:scale-105 hover:shadow-2xl"
-                >
-                  <div className="flex h-full flex-col">
-                    {/* Badge */}
-                    <div className="mb-3">
-                      {isPremium ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-purple-600 to-violet-600 px-3 py-1 text-xs font-bold text-white">
-                          <Icon name="Sparkles" className="h-3 w-3" />
-                          PREMIUM ACTIVE
-                        </span>
-                      ) : (
-                        <Badge variant="warning">
-                          <Icon name="Lock" className="mr-1 inline h-3 w-3" />
-                          Limited
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Icon */}
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-violet-600 shadow-lg">
-                      <Icon name="File" className="h-8 w-8 text-white" />
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="mb-2 text-xl font-bold text-gray-900">TDY Copilot</h3>
-
-                    {/* Description */}
-                    <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>Build travel vouchers faster.</strong> Auto-parse receipts with AI,
-                      calculate per diem using official DTMO rates, and generate submission-ready
-                      voucher packages.
-                    </p>
-
-                    {/* Stats */}
-                    <div className="mt-auto space-y-2 border-t border-purple-200 pt-3">
-                      <div className="flex items-center justify-between text-xs text-gray-600">
-                        <span>🤖 AI receipt parsing</span>
-                        <span>✅ Per diem validation</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-purple-700">
-                          ✓ DTMO 2025 rates
-                        </span>
-                        <span className="text-xs font-bold text-gray-900">
-                          {isPremium ? "Unlimited receipts" : `${tdyTrips || 0} trips • 3/trip`}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </AnimatedCard>
 
               {/* Ask Our Military Expert */}
-              <AnimatedCard delay={0.4}>
+              <AnimatedCard delay={0.3}>
                 <Link
                   href="/dashboard/ask"
                   className="block h-full rounded-lg border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-6 transition-all hover:scale-105 hover:shadow-2xl"
@@ -415,25 +351,6 @@ export default async function Dashboard() {
                     <div className="text-2xl font-bold text-gray-900">{lesUploads || 0}</div>
                     <div className="text-xs text-gray-500">
                       {isPremium ? "Unlimited" : "1 free/month"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* TDY Trips Total */}
-                <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                      <Icon name="File" className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">TDY Trips</div>
-                      <div className="text-sm text-gray-600">Total tracked</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">{tdyTrips || 0}</div>
-                    <div className="text-xs text-gray-500">
-                      {isPremium ? "Unlimited receipts" : "3 receipts/trip"}
                     </div>
                   </div>
                 </div>
@@ -609,7 +526,7 @@ export default async function Dashboard() {
               <h3 className="mb-2 text-2xl font-bold text-gray-900">Unlock Unlimited Access</h3>
               <p className="mx-auto mb-6 max-w-2xl text-gray-700">
                 Upgrade to Premium for unlimited LES audits, full Base Navigator rankings, unlimited
-                TDY receipts, and more.
+                PCS tracking, and more.
               </p>
               <Link
                 href="/dashboard/upgrade"

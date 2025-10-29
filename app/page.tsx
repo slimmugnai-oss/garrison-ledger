@@ -16,7 +16,7 @@ import Icon from "./components/ui/Icon";
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",
   description:
-    "5 premium tools for military families: LES Auditor catches pay errors automatically, Base Navigator finds your perfect neighborhood, PCS Copilot maximizes DITY profit, TDY Copilot builds vouchers fast, Ask Assistant answers military finance questions with official data.",
+    "4 premium tools for military families: LES Auditor catches pay errors automatically, Base Navigator finds your perfect neighborhood, PCS Copilot maximizes DITY profit, Ask Assistant answers military finance questions with official data.",
 };
 
 export default async function Home() {
@@ -41,8 +41,8 @@ export default async function Home() {
               Military Financial Intelligence Platform
             </h1>
             <p className="mb-8 text-xl text-gray-600">
-              5 premium tools built for military families. Audit your pay. Navigate bases. Build
-              vouchers. Track moves. Always-current intel.
+              4 premium tools built for military families. Audit your pay. Navigate bases. Track
+              moves. Get expert answers. Always-current intel.
             </p>
 
             <SignedOut>
@@ -492,109 +492,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* TDY Copilot Spotlight */}
-      <section className="mt-px bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 py-20 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            {/* Left: Headline + Copy */}
-            <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-                <Icon name="File" className="h-4 w-4 text-purple-400" />
-                <span className="text-sm font-semibold text-purple-400">BUILD VOUCHERS FAST</span>
-              </div>
-
-              <h2 className="font-lora mb-6 text-5xl font-bold leading-tight">
-                Your Travel Voucher Assistant
-              </h2>
-
-              <p className="mb-6 text-xl leading-relaxed text-slate-200">
-                Stop spending hours on DTS vouchers. Track receipts, calculate per diem, and build
-                JTR-compliant calculation worksheets in 20 minutes to help complete vouchers
-                accurately.
-              </p>
-
-              <ul className="mb-8 space-y-3 text-lg">
-                <li className="flex items-start gap-3">
-                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
-                  <span>
-                    <strong>Save 2+ hours per trip</strong> with auto-calculations
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
-                  <span>
-                    <strong>Receipt photo capture</strong> with OCR text extraction
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Icon name="CheckCircle" className="mt-1 h-6 w-6 flex-shrink-0 text-purple-400" />
-                  <span>
-                    <strong>Official JTR per diem rates</strong> for all locations
-                  </span>
-                </li>
-              </ul>
-
-              <SignedOut>
-                <SignUpButton mode="modal">
-                  <button className="rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 px-8 py-4 text-lg font-bold text-white hover:from-purple-600 hover:to-violet-700">
-                    Create Voucher Free →
-                  </button>
-                </SignUpButton>
-                <p className="mt-3 text-sm text-slate-300">
-                  Free for all members • Unlimited vouchers
-                </p>
-              </SignedOut>
-
-              <SignedIn>
-                <Link
-                  href="/dashboard/tdy-copilot"
-                  className="inline-block rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 px-8 py-4 text-lg font-bold text-white hover:from-purple-600 hover:to-violet-700"
-                >
-                  Create Voucher →
-                </Link>
-              </SignedIn>
-            </div>
-
-            {/* Right: Example Voucher Preview */}
-            <div className="space-y-4">
-              <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-md">
-                <p className="mb-2 text-sm font-semibold text-purple-300">Example Voucher:</p>
-                <p className="mb-3 text-lg font-medium">TDY to Washington, DC (3 days)</p>
-                <div className="rounded-md bg-white/20 p-3 text-sm">
-                  <p className="font-semibold text-purple-400">💰 Reimbursement:</p>
-                  <p className="mt-1 text-slate-100">
-                    Per Diem (3 days): <strong className="text-purple-400">$360</strong>
-                    <br />
-                    Mileage (200 mi): <strong className="text-purple-400">$118</strong>
-                    <br />
-                    <strong className="text-yellow-400">Total: $478</strong>
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
-                  📸 Receipts
-                </div>
-                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
-                  🍽️ Per diem
-                </div>
-                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
-                  ⛽ Mileage
-                </div>
-                <div className="rounded-lg border border-white/20 bg-white/5 p-3 backdrop-blur-sm">
-                  🏨 Lodging
-                </div>
-              </div>
-
-              <p className="text-center text-sm text-slate-300">
-                Ready-to-submit voucher in under 20 minutes
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Pricing CTA */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
@@ -624,7 +521,7 @@ export default async function Home() {
               </li>
               <li className="flex items-center gap-3">
                 <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
-                <span className="text-gray-700">Unlimited TDY receipts & vouchers</span>
+                <span className="text-gray-700">Unlimited PCS tracking & calculations</span>
               </li>
               <li className="flex items-center gap-3">
                 <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />

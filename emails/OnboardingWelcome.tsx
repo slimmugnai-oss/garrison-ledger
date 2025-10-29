@@ -74,14 +74,14 @@ export const OnboardingWelcome = ({
               </Text>
               <Text style={text}>
                 •{" "}
-                <Link href={`${baseUrl}/dashboard/tdy`} style={linkBold}>
-                  TDY / Travel Voucher Copilot
+                <Link href={`${baseUrl}/dashboard/navigator`} style={linkBold}>
+                  Base / Area Navigator
                 </Link>
               </Text>
               <Text style={text}>
                 •{" "}
-                <Link href={`${baseUrl}/dashboard/navigator`} style={linkBold}>
-                  Base / Area Navigator
+                <Link href={`${baseUrl}/dashboard/pcs-copilot`} style={linkBold}>
+                  PCS Copilot
                 </Link>
               </Text>
             </Section>
@@ -96,7 +96,7 @@ export const OnboardingWelcome = ({
             <Section style={premiumSection}>
               <Text style={premiumTitle}>If you find value, Premium is $9.99/month:</Text>
               <Text style={bulletText}>• Unlimited audits + full detail and history</Text>
-              <Text style={bulletText}>• Full TDY flow (unlimited docs)</Text>
+              <Text style={bulletText}>• Unlimited PCS tracking and calculations</Text>
               <Text style={bulletText}>• Complete Base Navigator rankings and watchlists</Text>
               <Text style={bulletText}>• More "Ask a Military Expert" questions</Text>
               <Button style={button} href={`${baseUrl}/dashboard/upgrade`}>

@@ -62,14 +62,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/dashboard/tdy-voucher"
-                  className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-                >
-                  TDY Copilot
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/dashboard/ask"
                   className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >

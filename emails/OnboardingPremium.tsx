@@ -25,8 +25,8 @@ export const OnboardingPremium = ({
   const premiumFeatures = [
     { emoji: "🔍", name: "Unlimited LES Audits", desc: "vs 1/month free" },
     { emoji: "📦", name: "PCS Copilot", desc: "Full move planning with JTR" },
-    { emoji: "✈️", name: "TDY Copilot", desc: "Travel reimbursement optimizer" },
     { emoji: "🗺️", name: "Full Base Navigator", desc: "School ratings for 203 bases" },
+    { emoji: "💬", name: "Ask Military Expert", desc: "50 questions/month vs 5 free" },
     { emoji: "📁", name: "Document Binder", desc: "Secure LES/orders storage" },
   ];
 

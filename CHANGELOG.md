@@ -5,6 +5,44 @@
 
 ---
 
+## **Version 6.1.0** - 2025-10-29
+
+### 🔄 **Strategic Pivot: TDY Copilot Removal**
+
+**Status:** ✅ Complete
+
+**Why This Change:**
+- Focusing on 4 core premium tools that deliver maximum value
+- Streamlined user experience and messaging
+- Resource optimization for core features
+- Clearer value proposition: LES Auditor, PCS Copilot, Base Navigator, Ask Assistant
+
+**Changes Made:**
+- ✅ Removed TDY Copilot from homepage, dashboard, and upgrade pages
+- ✅ Updated all "5 premium tools" references to "4 premium tools"
+- ✅ Deleted `/app/api/tdy/` directory (8 API routes)
+- ✅ Deleted `/app/components/tdy/` directory (5 UI components)
+- ✅ Deleted `/app/dashboard/tdy-voucher/` directory (3 page files)
+- ✅ Deleted `/lib/tdy/` directory (6 library files)
+- ✅ Deleted `/app/types/tdy.ts` type definitions
+- ✅ Created database migration to drop `tdy_trips` and `tdy_items` tables
+- ✅ Updated email templates (OnboardingWelcome, OnboardingPremium)
+- ✅ Updated SSOT with TDY as removed feature
+- ✅ Updated pricing pages and feature comparison tables
+
+**Database Migration:**
+- Created `supabase-migrations/20251029114034_remove_tdy_tables.sql`
+- Drops `tdy_items` and `tdy_trips` tables with CASCADE
+- ⚠️ Destructive migration - backs up recommended before applying
+
+**Impact:**
+- Cleaner marketing message
+- Reduced API surface area (98 routes → 90 routes)
+- Simplified dashboard UI (4 tool cards in 2x2 grid)
+- Better focus on high-value tools
+
+---
+
 ## **Version 6.0.1** - 2025-10-23
 
 ### 🌐 **Domain Migration: app.familymedia.com → garrisonledger.com**

@@ -66,7 +66,7 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
         <div className="mb-16 text-center">
           <h1 className="font-lora mb-4 text-5xl font-bold text-gray-900">Upgrade to Premium</h1>
           <p className="mb-2 text-2xl text-gray-600">
-            Unlock unlimited access to all 5 premium tools
+            Unlock unlimited access to all 4 premium tools
           </p>
           <p className="text-lg text-gray-500">
             Or buy Ask Our Military Expert question credits as needed
@@ -201,9 +201,9 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
               <div className="flex items-start gap-3">
                 <Icon name="CheckCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-600" />
                 <div>
-                  <p className="font-semibold text-gray-900">Unlimited TDY Receipts</p>
+                  <p className="font-semibold text-gray-900">Unlimited PCS Tracking</p>
                   <p className="text-sm text-gray-600">
-                    Build compliant vouchers with unlimited uploads
+                    Track all PCS claims with readiness scoring and calculations
                   </p>
                 </div>
               </div>
@@ -324,8 +324,8 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">TDY Receipts</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">3 per trip</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">PCS Tracking</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">Limited</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
                     Unlimited
                   </td>

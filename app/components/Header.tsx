@@ -298,8 +298,6 @@ export default function Header() {
                       isActivePath("/dashboard/paycheck-audit") ||
                       isActivePath("/dashboard/pcs-copilot") ||
                       isActivePath("/dashboard/navigator") ||
-                      isActivePath("/dashboard/tdy-copilot") ||
-                      isActivePath("/dashboard/tdy-voucher") ||
                       isActivePath("/dashboard/ask")
                         ? "text-slate-900 dark:text-white"
                         : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
@@ -314,8 +312,6 @@ export default function Header() {
                       isActivePath("/dashboard/paycheck-audit") ||
                       isActivePath("/dashboard/pcs-copilot") ||
                       isActivePath("/dashboard/navigator") ||
-                      isActivePath("/dashboard/tdy-copilot") ||
-                      isActivePath("/dashboard/tdy-voucher") ||
                       isActivePath("/dashboard/ask")) && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
                     )}
@@ -405,35 +401,6 @@ export default function Header() {
                             </div>
                             <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                               Find perfect neighborhoods
-                            </div>
-                          </div>
-                        </Link>
-
-                        {/* TDY Copilot */}
-                        <Link
-                          href="/dashboard/tdy-voucher"
-                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
-                            isActivePath("/dashboard/tdy-voucher") ||
-                            isActivePath("/dashboard/tdy-copilot")
-                              ? "bg-purple-50 dark:bg-purple-900/20"
-                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
-                          }`}
-                        >
-                          <Icon
-                            name="File"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
-                          />
-                          <div>
-                            <div
-                              className={`text-sm font-semibold ${isActivePath("/dashboard/tdy-voucher") || isActivePath("/dashboard/tdy-copilot") ? "text-purple-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
-                            >
-                              TDY Copilot
-                              <span className="ml-2 rounded bg-purple-100 px-1.5 py-0.5 text-xs text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                New
-                              </span>
-                            </div>
-                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                              Build travel vouchers fast
                             </div>
                           </div>
                         </Link>
@@ -999,16 +966,6 @@ export default function Header() {
                       <Icon name="MapPin" className="h-5 w-5 text-blue-600" />
                       <span className="font-medium">Base Navigator</span>
                       <span className="ml-auto rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                        New
-                      </span>
-                    </Link>
-                    <Link
-                      href="/dashboard/tdy-voucher"
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-slate-800"
-                    >
-                      <Icon name="File" className="h-5 w-5 text-purple-600" />
-                      <span className="font-medium">TDY Copilot</span>
-                      <span className="ml-auto rounded bg-purple-100 px-2 py-0.5 text-xs text-purple-700">
                         New
                       </span>
                     </Link>

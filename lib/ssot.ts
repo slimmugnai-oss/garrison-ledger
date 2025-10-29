@@ -11,7 +11,7 @@ export const ssot = {
   /**
    * SYSTEM VERSION & METADATA
    */
-  lastUpdatedISO: "2025-01-19",
+  lastUpdatedISO: "2025-10-29",
   version: "4.0.0",
   environment: process.env.NODE_ENV || "development",
 
@@ -189,6 +189,12 @@ export const ssot = {
       reason: "Transformed into Ask Assistant",
       deprecatedDate: "2025-01-23",
       replacement: "/dashboard/ask",
+    },
+    tdyCopilot: {
+      status: "removed",
+      reason: "strategic pivot - focusing on 4 core tools",
+      removedDate: "2025-10-29",
+      replacement: null,
     },
   },
 
