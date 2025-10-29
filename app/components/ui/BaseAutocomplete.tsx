@@ -13,6 +13,7 @@ interface MilitaryBase {
   lat: number;
   lng: number;
   zip: string;
+  aliases?: string[]; // Former names (e.g., ["Fort Bragg"] for Fort Liberty)
 }
 
 const militaryBases = militaryBasesData.bases as MilitaryBase[];
@@ -43,12 +44,24 @@ export default function BaseAutocomplete({
       return;
     }
 
-    const filtered = militaryBases.filter(base => 
-      base.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-      base.city.toLowerCase().includes(inputValue.toLowerCase()) ||
-      base.state.toLowerCase().includes(inputValue.toLowerCase()) ||
-      base.branch.toLowerCase().includes(inputValue.toLowerCase())
-    );
+    const filtered = militaryBases.filter(base => {
+      const input = inputValue.toLowerCase();
+      
+      // Search name, city, state, branch
+      if (base.name.toLowerCase().includes(input) ||
+          base.city.toLowerCase().includes(input) ||
+          base.state.toLowerCase().includes(input) ||
+          base.branch.toLowerCase().includes(input)) {
+        return true;
+      }
+      
+      // Search aliases (former names like "Fort Bragg")
+      if (base.aliases && base.aliases.length > 0) {
+        return base.aliases.some(alias => alias.toLowerCase().includes(input));
+      }
+      
+      return false;
+    });
 
     // Sort by relevance (exact matches first, then by name)
     const sorted = filtered.sort((a, b) => {

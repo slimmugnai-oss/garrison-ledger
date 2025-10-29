@@ -56,7 +56,21 @@ interface MilitaryBase {
   lat: number;
   lng: number;
   zip: string;
+  aliases?: string[]; // Former names (e.g., ["Fort Bragg"] for Fort Liberty)
 }
+
+// Known base renames - map current name to former names
+// Keys must match exactly as they appear in bah_rates.location_name
+const BASE_ALIASES: Record<string, string[]> = {
+  'FORT LIBERTY/POPE, NC': ['Fort Bragg', 'Fort Bragg, NC', 'FORT BRAGG'],
+  'FORT CAVAZOS, TX': ['Fort Hood', 'Fort Hood, TX', 'FORT HOOD'],
+  'FORT MOORE, GA': ['Fort Benning', 'Fort Benning, GA', 'FORT BENNING'],
+  'FORT EISENHOWER, GA': ['Fort Gordon', 'Fort Gordon, GA', 'FORT GORDON'],
+  'DAHLGREN/FORT WALKER, VA': ['Fort A.P. Hill', 'Fort A.P. Hill, VA', 'FORT A.P. HILL'],
+  'RICHMOND/FORT GREGG-ADAMS, VA': ['Fort Lee', 'Fort Lee, VA', 'FORT LEE'],
+  'FORT NOVOSEL, AL': ['Fort Rucker', 'Fort Rucker, AL', 'FORT RUCKER'],
+  'FORT JOHNSON, LA': ['Fort Polk', 'Fort Polk, LA', 'FORT POLK'],
+};
 
 interface BAHLocation {
   mha: string;
@@ -386,7 +400,10 @@ async function regenerateMilitaryBases() {
     // Generate ID
     const id = generateBaseId(locationName);
     
-    bases.push({
+    // Check if this base has aliases (former names)
+    const aliases = BASE_ALIASES[locationName.toUpperCase()] || BASE_ALIASES[locationName];
+    
+    const baseEntry: MilitaryBase = {
       id,
       name: locationName,
       branch,
@@ -395,7 +412,14 @@ async function regenerateMilitaryBases() {
       lat,
       lng,
       zip,
-    });
+    };
+    
+    // Add aliases if they exist
+    if (aliases && aliases.length > 0) {
+      baseEntry.aliases = aliases;
+    }
+    
+    bases.push(baseEntry);
   }
   
   console.log(`\n✅ Geocoded ${geocodedCount} locations, ${fallbackCount} used state center fallback\n`);

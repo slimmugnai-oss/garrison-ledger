@@ -2,7 +2,7 @@
   "_meta": {
     "description": "Auto-generated complete list of military installations from official BAH database",
     "source": "DFAS 2025 BAH Rates (bah_rates table) + Google Maps Geocoding API",
-    "generated": "2025-10-29T14:33:12.593Z",
+    "generated": "2025-10-29T15:02:23.611Z",
     "total_bases": 299,
     "geocoded": 0,
     "state_fallback": 299,
@@ -677,7 +677,12 @@
           "city": "Dahlgren",
           "lat": 37.769337,
           "lng": -78.169968,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort A.P. Hill",
+              "Fort A.P. Hill, VA",
+              "FORT A.P. HILL"
+          ]
       },
       {
           "id": "dahlonega-ga",
@@ -957,7 +962,12 @@
           "city": "Fort Cavazos, Tx",
           "lat": 31.054487,
           "lng": -97.563461,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Hood",
+              "Fort Hood, TX",
+              "FORT HOOD"
+          ]
       },
       {
           "id": "fort-chaffee-fort-smith-ar",
@@ -1007,7 +1017,12 @@
           "city": "Fort Eisenhower, Ga",
           "lat": 33.040619,
           "lng": -83.643074,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Gordon",
+              "Fort Gordon, GA",
+              "FORT GORDON"
+          ]
       },
       {
           "id": "fort-g-g-meade-md",
@@ -1037,7 +1052,12 @@
           "city": "Fort Johnson, La",
           "lat": 31.169546,
           "lng": -91.867805,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Polk",
+              "Fort Polk, LA",
+              "FORT POLK"
+          ]
       },
       {
           "id": "fort-knox-ky",
@@ -1077,7 +1097,12 @@
           "city": "Fort Liberty",
           "lat": 35.630066,
           "lng": -79.806419,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Bragg",
+              "Fort Bragg, NC",
+              "FORT BRAGG"
+          ]
       },
       {
           "id": "fort-monmouth-earle-nws-nj",
@@ -1097,7 +1122,12 @@
           "city": "Fort Moore, Ga",
           "lat": 33.040619,
           "lng": -83.643074,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Benning",
+              "Fort Benning, GA",
+              "FORT BENNING"
+          ]
       },
       {
           "id": "fort-myers-beach-fl",
@@ -1117,7 +1147,12 @@
           "city": "Fort Novosel, Al",
           "lat": 32.806671,
           "lng": -86.79113,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Rucker",
+              "Fort Rucker, AL",
+              "FORT RUCKER"
+          ]
       },
       {
           "id": "fort-pierce-fl",
@@ -2287,7 +2322,12 @@
           "city": "Richmond",
           "lat": 37.769337,
           "lng": -78.169968,
-          "zip": "00000"
+          "zip": "00000",
+          "aliases": [
+              "Fort Lee",
+              "Fort Lee, VA",
+              "FORT LEE"
+          ]
       },
       {
           "id": "riverside-ca",
