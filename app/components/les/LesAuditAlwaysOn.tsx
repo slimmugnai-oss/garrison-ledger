@@ -81,6 +81,11 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
   const [netPay, setNetPay] = useState<string>(""); // Net pay from LES (user-entered)
+  
+  // Collapsible sections state for findings
+  const [redFlagsExpanded, setRedFlagsExpanded] = useState(true);
+  const [yellowFlagsExpanded, setYellowFlagsExpanded] = useState(true);
+  const [greenFlagsExpanded, setGreenFlagsExpanded] = useState(false);
 
   // ============================================================================
   // AUTO-POPULATE EXPECTED VALUES (Auto-fill line items from profile)
@@ -766,29 +771,55 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           {/* LEFT PANEL: DYNAMIC LINE ITEM MANAGER */}
           <div className="bg-gray-50 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto lg:p-6">
             <div className="mx-auto max-w-2xl space-y-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
-                <button
-                  onClick={() => {
-                    if (confirm("Clear all entered data and start over?")) {
-                      setLineItems([]);
-                      setTemplateSelected(false);
-                    }
-                  }}
-                  className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
-                >
-                  <Icon name="RefreshCw" className="h-4 w-4" />
-                  <span className="hidden sm:inline">Reset Form</span>
-                </button>
+              {/* Enhanced Header with Progress */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">Enter LES Data</h2>
+                  <button
+                    onClick={() => {
+                      if (confirm("Clear all entered data and start over?")) {
+                        setLineItems([]);
+                        setTemplateSelected(false);
+                      }
+                    }}
+                    className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                  >
+                    <Icon name="RefreshCw" className="h-4 w-4" />
+                    <span className="hidden sm:inline">Reset Form</span>
+                  </button>
+                </div>
+                
+                {/* Progress Indicator */}
+                <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Completion Progress</span>
+                    <span className="text-sm font-semibold text-blue-600">
+                      {Math.round((lineItems.length / 12) * 100)}%
+                    </span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-gray-200">
+                    <div 
+                      className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                      style={{ width: `${Math.min((lineItems.length / 12) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    {lineItems.length} of ~12 typical LES line items entered
+                  </p>
+                </div>
               </div>
 
-              {/* Month/Year */}
-              <div className="rounded-lg border bg-white p-4">
-                <h3 className="mb-3 font-semibold text-gray-900">Pay Period</h3>
-                <div className="grid grid-cols-2 gap-4">
+              {/* Enhanced Pay Period Section */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
+                  <Icon name="Calendar" className="h-5 w-5 text-blue-600" />
+                  Pay Period
+                </h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Month</label>
+                    <label htmlFor="month-select" className="mb-1 block text-sm font-medium text-gray-700">Month</label>
                     <select
+                      id="month-select"
                       value={month || ""}
                       onChange={(e) => setMonth(parseInt(e.target.value))}
                       className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -817,10 +848,13 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               </div>
 
-              {/* Net Pay Input */}
-              <div className="rounded-lg border bg-white p-4">
-                <h3 className="mb-3 font-semibold text-gray-900">Net Pay from LES</h3>
-                <p className="mb-3 text-sm text-gray-600">
+              {/* Enhanced Net Pay Section */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
+                  <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                  Net Pay from LES
+                </h3>
+                <p className="mb-4 text-sm text-gray-600">
                   Enter the actual net pay shown on your LES statement. This is used to verify the
                   audit calculation matches your paycheck.
                 </p>
@@ -884,12 +918,18 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               )}
 
-              {/* Dynamic Line Item Manager */}
-              <DynamicLineItemManager
-                lineItems={lineItems}
-                onChange={setLineItems}
-                allowEdit={true}
-              />
+              {/* Enhanced Line Item Manager */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
+                  <Icon name="List" className="h-5 w-5 text-purple-600" />
+                  LES Line Items
+                </h3>
+                <DynamicLineItemManager
+                  lineItems={lineItems}
+                  onChange={setLineItems}
+                  allowEdit={true}
+                />
+              </div>
             </div>
           </div>
 
@@ -931,77 +971,101 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               )}
 
-              {/* Summary Header */}
+              {/* Enhanced Summary Card */}
               {result && (
                 <>
-                  <div className="rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-6">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      {/* Expected Net */}
-                      <div>
-                        <p className="mb-1 text-sm font-medium text-blue-700">Expected Net Pay</p>
-                        {result.totals.computed_net !== null ? (
-                          <p className="text-2xl font-bold text-blue-900">
-                            ${(result.totals.computed_net / 100).toFixed(2)}
-                          </p>
+                  <div className="rounded-xl border-2 bg-gradient-to-br from-white to-gray-50 p-8 shadow-lg">
+                    {/* Hero Metric - Total Variance */}
+                    <div className="mb-6 text-center">
+                      <div className="text-sm font-medium uppercase tracking-wide text-gray-600">
+                        Total Pay Variance
+                      </div>
+                      <div className={`text-5xl font-black ${
+                        result.totals.variance !== null && result.totals.variance > 0 
+                          ? 'text-red-600' 
+                          : 'text-green-600'
+                      }`}>
+                        {result.totals.variance !== null ? (
+                          <>
+                            {result.totals.variance > 0 ? '+' : ''}${(Math.abs(result.totals.variance) / 100).toFixed(2)}
+                          </>
                         ) : (
-                          <p className="text-lg text-blue-600">Premium feature</p>
+                          'Premium Feature'
                         )}
                       </div>
-
-                      {/* Actual Net */}
-                      <div>
-                        <p className="mb-1 text-sm font-medium text-gray-700">Your LES Net Pay</p>
-                        {tier !== "premium" && tier !== "staff" ? (
-                          <p className="text-lg text-blue-600">Premium feature</p>
-                        ) : result.totals.actual_net > 0 ? (
-                          <p className="text-2xl font-bold text-gray-900">
-                            ${(result.totals.actual_net / 100).toFixed(2)}
-                          </p>
+                      <div className="mt-2 text-sm text-gray-600">
+                        {result.totals.variance !== null ? (
+                          result.totals.variance > 0 ? 'You may be owed money' : 'Everything looks correct'
                         ) : (
-                          <p className="text-sm italic text-gray-500">Enter above to compare</p>
+                          'Upgrade to see variance analysis'
                         )}
                       </div>
+                    </div>
 
-                      {/* Variance */}
-                      <div>
-                        <p className="mb-1 text-sm font-medium text-gray-700">Variance</p>
-                        {tier !== "premium" && tier !== "staff" ? (
-                          <p className="text-lg text-blue-600">Premium feature</p>
-                        ) : result.totals.variance !== null ? (
-                          <p
-                            className={`text-2xl font-bold ${
-                              Math.abs(result.totals.variance) <= 500
-                                ? "text-green-600"
-                                : Math.abs(result.totals.variance) <= 5000
-                                  ? "text-yellow-600"
-                                  : "text-red-600"
-                            }`}
-                          >
-                            ${Math.abs(result.totals.variance / 100).toFixed(2)}
-                          </p>
-                        ) : (
-                          <Badge
-                            variant={
-                              result.totals.varianceBucket === "0-5"
-                                ? "success"
-                                : result.totals.varianceBucket === "5-50"
-                                  ? "warning"
-                                  : "danger"
-                            }
-                          >
-                            {result.totals.varianceBucket === "0-5" && "$0-$5"}
-                            {result.totals.varianceBucket === "5-50" && "$5-$50"}
-                            {result.totals.varianceBucket === ">50" && ">$50"}
-                            {result.totals.varianceBucket === ">100" && ">$100"}
-                          </Badge>
-                        )}
+                    {/* Issue Breakdown Grid */}
+                    <div className="grid grid-cols-3 gap-6 border-t pt-6">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-red-600">
+                          {result.flags.filter(f => f.severity === 'red').length}
+                        </div>
+                        <div className="text-sm font-semibold text-red-600 uppercase tracking-wide">Critical</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-amber-600">
+                          {result.flags.filter(f => f.severity === 'yellow').length}
+                        </div>
+                        <div className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Warnings</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-green-600">
+                          {result.flags.filter(f => f.severity === 'green').length}
+                        </div>
+                        <div className="text-sm font-semibold text-green-600 uppercase tracking-wide">Verified</div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Flags List */}
+                  {/* Actionable Insights Dashboard */}
+                  {tier === "premium" || tier === "staff" ? (
+                    (() => {
+                      const redFlags = result.flags.filter(f => f.severity === 'red');
+                      const totalOwed = redFlags.reduce((total, flag) => {
+                        const match = flag.message.match(/\$[\d,]+\.?\d*/);
+                        if (match) {
+                          const amount = parseFloat(match[0].replace(/[$,]/g, ''));
+                          return total + amount;
+                        }
+                        return total;
+                      }, 0);
+
+                      return redFlags.length > 0 ? (
+                        <div className="rounded-xl border-2 border-red-200 bg-red-50 p-6">
+                          <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-red-900">
+                            <Icon name="DollarSign" className="h-6 w-6" />
+                            Action Required
+                          </h3>
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between rounded-lg bg-white p-4">
+                              <span className="font-semibold text-gray-900">Total Money Potentially Owed:</span>
+                              <span className="text-2xl font-black text-red-600">
+                                ${totalOwed.toFixed(2)}
+                              </span>
+                            </div>
+                            <button className="w-full rounded-lg bg-red-600 py-3 font-semibold text-white hover:bg-red-700">
+                              Generate Finance Office Email
+                            </button>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()
+                  ) : null}
+
+                  {/* Enhanced Flags List with Collapsible Sections */}
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-gray-900">Findings</h3>
+                    <h3 className="mb-4 text-xl font-bold text-gray-900 flex items-center gap-2">
+                      <Icon name="Shield" className="h-6 w-6 text-blue-600" />
+                      Audit Findings
+                    </h3>
 
                     {/* Complete paywall for free users */}
                     {tier !== "premium" && tier !== "staff" ? (
@@ -1026,42 +1090,158 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                       </div>
                     ) : (
                       <>
-                        {/* Visible Flags */}
-                        <div className="space-y-3">
-                          {result.flags.map((flag, idx) => (
-                            <div
-                              key={idx}
-                              className={`rounded-lg border-l-4 p-4 ${
-                                flag.severity === "red"
-                                  ? "border-red-500 bg-red-50"
-                                  : flag.severity === "yellow"
-                                    ? "border-yellow-500 bg-yellow-50"
-                                    : "border-green-500 bg-green-50"
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                {/* Severity Icon - NEW */}
-                                <div className="flex-shrink-0">
-                                  {flag.severity === "red" ? (
-                                    <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
-                                  ) : flag.severity === "yellow" ? (
-                                    <Icon
-                                      name="AlertTriangle"
-                                      className="h-6 w-6 text-yellow-600"
-                                    />
-                                  ) : (
-                                    <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+                        {/* Enhanced Collapsible Flags */}
+                        {(() => {
+                          const redFlags = result.flags.filter(f => f.severity === 'red');
+                          const yellowFlags = result.flags.filter(f => f.severity === 'yellow');
+                          const greenFlags = result.flags.filter(f => f.severity === 'green');
+
+                          return (
+                            <div className="space-y-4">
+                              {/* Critical Issues */}
+                              {redFlags.length > 0 && (
+                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                  <button
+                                    onClick={() => setRedFlagsExpanded(!redFlagsExpanded)}
+                                    className="flex w-full items-center justify-between p-6 text-left"
+                                  >
+                                    <h4 className="flex items-center gap-3 text-xl font-bold text-red-900">
+                                      <Icon name="AlertCircle" className="h-6 w-6 text-red-600" />
+                                      Critical Issues
+                                      <span className="rounded-full bg-red-600 px-3 py-1 text-sm font-semibold text-white">
+                                        {redFlags.length}
+                                      </span>
+                                    </h4>
+                                    <Icon name={redFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                  </button>
+                                  {redFlagsExpanded && (
+                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                      {redFlags.map((flag, idx) => (
+                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-red-50 border-red-200 shadow-sm">
+                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                                            <Icon name="AlertCircle" className="h-8 w-8 md:h-6 md:w-6 text-red-600 flex-shrink-0" />
+                                            <div className="flex-1 space-y-3">
+                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
+                                              <p className="text-sm leading-relaxed text-gray-700">
+                                                <strong>What to do:</strong> {flag.suggestion}
+                                              </p>
+                                              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
+                                                <button className="w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
+                                                  <Icon name="Copy" className="h-4 w-4" />
+                                                  Copy Email Template
+                                                </button>
+                                                {flag.ref_url && (
+                                                  <a
+                                                    href={flag.ref_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                                                  >
+                                                    Learn More
+                                                    <Icon name="ExternalLink" className="h-4 w-4" />
+                                                  </a>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
                                   )}
                                 </div>
+                              )}
 
-                                <div className="flex-1">
-                                  <p className="mb-1 font-semibold text-gray-900">{flag.message}</p>
-                                  <p className="text-sm text-gray-700">{flag.suggestion}</p>
+                              {/* Warnings */}
+                              {yellowFlags.length > 0 && (
+                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                  <button
+                                    onClick={() => setYellowFlagsExpanded(!yellowFlagsExpanded)}
+                                    className="flex w-full items-center justify-between p-6 text-left"
+                                  >
+                                    <h4 className="flex items-center gap-3 text-xl font-bold text-amber-900">
+                                      <Icon name="AlertTriangle" className="h-6 w-6 text-amber-600" />
+                                      Warnings
+                                      <span className="rounded-full bg-amber-600 px-3 py-1 text-sm font-semibold text-white">
+                                        {yellowFlags.length}
+                                      </span>
+                                    </h4>
+                                    <Icon name={yellowFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                  </button>
+                                  {yellowFlagsExpanded && (
+                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                      {yellowFlags.map((flag, idx) => (
+                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-amber-50 border-amber-200 shadow-sm">
+                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                                            <Icon name="AlertTriangle" className="h-8 w-8 md:h-6 md:w-6 text-amber-600 flex-shrink-0" />
+                                            <div className="flex-1 space-y-3">
+                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
+                                              <p className="text-sm leading-relaxed text-gray-700">
+                                                <strong>What to do:</strong> {flag.suggestion}
+                                              </p>
+                                              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
+                                                <button className="w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
+                                                  <Icon name="Copy" className="h-4 w-4" />
+                                                  Copy Email Template
+                                                </button>
+                                                {flag.ref_url && (
+                                                  <a
+                                                    href={flag.ref_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                                                  >
+                                                    Learn More
+                                                    <Icon name="ExternalLink" className="h-4 w-4" />
+                                                  </a>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
-                              </div>
+                              )}
+
+                              {/* Verified Correct */}
+                              {greenFlags.length > 0 && (
+                                <div className="rounded-xl border-2 bg-white shadow-sm">
+                                  <button
+                                    onClick={() => setGreenFlagsExpanded(!greenFlagsExpanded)}
+                                    className="flex w-full items-center justify-between p-6 text-left"
+                                  >
+                                    <h4 className="flex items-center gap-3 text-xl font-bold text-green-900">
+                                      <Icon name="CheckCircle" className="h-6 w-6 text-green-600" />
+                                      Verified Correct
+                                      <span className="rounded-full bg-green-600 px-3 py-1 text-sm font-semibold text-white">
+                                        {greenFlags.length}
+                                      </span>
+                                    </h4>
+                                    <Icon name={greenFlagsExpanded ? "ChevronUp" : "ChevronDown"} className="h-5 w-5" />
+                                  </button>
+                                  {greenFlagsExpanded && (
+                                    <div className="space-y-3 border-t px-6 pb-6 pt-4">
+                                      {greenFlags.map((flag, idx) => (
+                                        <div key={idx} className="rounded-xl border-2 p-4 md:p-6 bg-green-50 border-green-200 shadow-sm">
+                                          <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                                            <Icon name="CheckCircle" className="h-8 w-8 md:h-6 md:w-6 text-green-600 flex-shrink-0" />
+                                            <div className="flex-1 space-y-3">
+                                              <h5 className="text-base font-bold md:text-lg">{flag.message}</h5>
+                                              <p className="text-sm leading-relaxed text-gray-700">
+                                                <strong>What to do:</strong> {flag.suggestion}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                          );
+                        })()}
 
                         {/* Hidden Flags (Free Tier) */}
                         {result.hiddenFlagCount > 0 && (
@@ -1077,6 +1257,28 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                         )}
                       </>
                     )}
+                  </div>
+
+                  {/* Export Options */}
+                  <div className="rounded-xl border bg-white p-6">
+                    <h3 className="mb-4 font-semibold text-gray-900 flex items-center gap-2">
+                      <Icon name="Download" className="h-5 w-5 text-blue-600" />
+                      Export Options
+                    </h3>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 transition-colors">
+                        <Icon name="File" className="h-4 w-4" />
+                        Download PDF Report
+                      </button>
+                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-700 transition-colors">
+                        <Icon name="Send" className="h-4 w-4" />
+                        Email to Finance Office
+                      </button>
+                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-600 px-4 py-3 font-semibold text-white hover:bg-gray-700 transition-colors">
+                        <Icon name="Save" className="h-4 w-4" />
+                        Save to History
+                      </button>
+                    </div>
                   </div>
 
                   {/* Waterfall (Premium Only) */}
