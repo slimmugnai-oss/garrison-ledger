@@ -45,9 +45,7 @@ export default function BaseNavigatorClient({
 }: Props) {
   // Filters
   const [bedrooms, setBedrooms] = useState(3);
-  const [bahMonthlyCents, setBahMonthlyCents] = useState(
-    initialBahCents ?? 250000 // Use auto-filled value or default $2,500
-  );
+  const [bahMonthlyCents, setBahMonthlyCents] = useState(250000);
   const [kidsGrades, setKidsGrades] = useState<KidsGrade[]>([]);
   const [sortPriority, setSortPriority] = useState<"overall" | "schools" | "housing" | "commute">(
     "overall"
@@ -59,7 +57,7 @@ export default function BaseNavigatorClient({
   const [error, setError] = useState<string | null>(null);
 
   // Watchlist
-  const [watchedZips, setWatchedZips] = useState<string[]>(initialWatchlist?.zips || []);
+  const [watchedZips, setWatchedZips] = useState<string[]>([]);
 
   // Modals
   const [_showAnalyzer, _setShowAnalyzer] = useState(false);
@@ -68,6 +66,19 @@ export default function BaseNavigatorClient({
   // Tab state for each neighborhood card
   const [activeTabs, setActiveTabs] = useState<Record<string, string>>({});
 
+  // Initialize BAH from props after hydration to avoid mismatch
+  useEffect(() => {
+    if (initialBahCents && initialBahCents > 0) {
+      setBahMonthlyCents(initialBahCents);
+    }
+  }, [initialBahCents]);
+
+  // Initialize watchlist from props after hydration to avoid mismatch
+  useEffect(() => {
+    if (initialWatchlist?.zips) {
+      setWatchedZips(initialWatchlist.zips);
+    }
+  }, [initialWatchlist?.zips]);
 
   /**
    * Compute rankings
