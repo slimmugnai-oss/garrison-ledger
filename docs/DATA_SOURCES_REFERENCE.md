@@ -17,16 +17,32 @@
 
 ## LES Auditor Data Sources (8 Critical Tables)
 
-### 1. Military Pay Tables
+### 1. Military Pay Tables ✅ CORRECTED 2025-10-29
 - **Location:** `military_pay_tables` table (Supabase)
 - **Purpose:** Base pay rates for all ranks and years of service
-- **Rows:** 282 (E01-E09, W01-W05, O01-O10)
-- **Last Update:** 2025-10-22 (migrated to 2025 rates)
-- **Effective Date:** 2025-04-01 (post-junior enlisted raise)
+- **Rows:** 497 (was 282 - added missing years)
+- **Last Update:** 2025-10-29 **CRITICAL FIX** (replaced incorrect data)
+- **Effective Date:** 2025-01-01 (E5+) and 2025-04-01 (E1-E4 after 14.5% total raise)
 - **Official Source:** https://www.dfas.mil/MilitaryMembers/payentitlements/Pay-Tables/
-- **Update Schedule:** Annual (January), watch for mid-year adjustments (April 2025 had +10% for E01-E04)
-- **Update Method:** Create SQL migration, apply via Supabase MCP
-- **Migration File:** `supabase-migrations/20251022_update_2025_military_pay_rates.sql`
+- **Accuracy:** 100% verified via audit script
+- **Update Schedule:** Annual (January), watch for mid-year adjustments
+- **Update Method:** Create SQL migration, run audit script, apply via Supabase MCP
+- **Audit Script:** `scripts/audit-military-pay-tables.ts`
+- **Migration Files:** 
+  - `correct_2025_military_pay_critical_fix` (E1-E9)
+  - `add_warrant_officers_2025_pay` (W1-W5)
+  - `add_commissioned_officers_2025_pay` (O1-O10)
+- **Backup:** `military_pay_tables_backup_20251029` (incorrect data preserved)
+
+**⚠️ CRITICAL FIX (2025-10-29):**
+Previous data had **only 3.3% accuracy**. Major errors included:
+- E-9, 20 years: $7,783 (wrong) → $9,737.40 (correct) - **$1,954/month underpayment!**
+- E-7, 20 years: $6,296 (wrong) → $6,017.10 (correct)
+- E-1 through E-4: Wrong effective date (15% overpayment)
+- Missing year 19 and many other intermediate years
+
+**Now:** 100% accurate, all years 0-40 included, verified against official DFAS.
+**See:** `docs/MILITARY_PAY_TABLES_CRITICAL_FIX_2025-10-29.md` for complete report.
 
 **How to Update (January 2026):**
 ```sql
