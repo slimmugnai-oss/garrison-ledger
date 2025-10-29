@@ -48,6 +48,7 @@ export default function BaseNavigatorClient({
     initialBahCents ?? 250000 // Use auto-filled value or default $2,500
   );
   const [kidsGrades, setKidsGrades] = useState<KidsGrade[]>([]);
+  const [sortPriority, setSortPriority] = useState<'overall' | 'schools' | 'housing' | 'commute'>('overall');
 
   // Results
   const [results, setResults] = useState<NeighborhoodCard[]>([]);
@@ -147,13 +148,13 @@ export default function BaseNavigatorClient({
   // }, []);
 
   // Determine which results to show (gating)
-  const visibleResults = isPremium ? results : results.slice(0, 3);
-  const _hasMore = results.length > 3 && !isPremium;
+  const visibleResults = results; // Always show all results (max 5 from API)
+  // No pagination needed - API returns max 5 results
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Enhanced Hero Section */}
         <div className="mb-8">
           <nav className="mb-4 text-sm">
             <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">
@@ -167,105 +168,158 @@ export default function BaseNavigatorClient({
             <span className="text-gray-600">{base.name} Navigator</span>
           </nav>
 
-          <h1 className="font-lora mb-3 text-4xl font-bold text-gray-900">{base.name} Navigator</h1>
-          <p className="text-lg text-gray-600">
-            Find the best neighborhoods for your family. Ranked by schools, rent vs BAH, commute,
-            and weather.
-          </p>
+          <div className="rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white">
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="font-lora mb-2 text-4xl font-bold">{base.name} Navigator</h1>
+                <div className="mb-4 flex flex-wrap items-center gap-4 text-lg">
+                  <span className="flex items-center gap-2">
+                    <Icon name="MapPin" className="h-5 w-5" />
+                    {base.state}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Icon name="Shield" className="h-5 w-5" />
+                    {base.branch}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Icon name="Hash" className="h-5 w-5" />
+                    {base.mha}
+                  </span>
+                </div>
+                <p className="text-xl text-blue-100">
+                  Find your perfect neighborhood near {base.name}
+                </p>
+                <p className="mt-2 text-blue-200">
+                  Data-driven analysis of schools, housing, commute, and quality of life
+                </p>
+              </div>
+              <div className="hidden md:block">
+                <div className="rounded-lg bg-white bg-opacity-20 px-4 py-2">
+                  <div className="text-sm text-blue-100">Premium Feature</div>
+                  <div className="text-lg font-semibold">Base Navigator</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Filters */}
+        {/* Streamlined Filters */}
         <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Filters</h2>
+          <h2 className="mb-6 text-lg font-semibold text-gray-900">Search Criteria</h2>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {/* Bedrooms */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Bedrooms</label>
-              <select
-                value={bedrooms}
-                onChange={(e) => setBedrooms(Number(e.target.value))}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
-              >
-                <option value={2}>2 BR</option>
-                <option value={3}>3 BR</option>
-                <option value={4}>4 BR</option>
-                <option value={5}>5 BR</option>
-              </select>
-            </div>
-
-            {/* BAH */}
-            <div>
-              <label
-                htmlFor="your_monthly_bah_"
-                className="mb-2 block text-sm font-medium text-gray-700"
-              >
-                Your Monthly BAH
-              </label>
-              <input
-                id="input_pozstmjkt"
-                type="number"
-                value={Math.round(bahMonthlyCents / 100)}
-                onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                placeholder="2500"
-              />
-              <p className="mt-1 text-xs text-gray-600">
-                {bahSource === "auto" && userProfile.rank && base.mha ? (
-                  <>
-                    Auto-filled for {userProfile.rank}
-                    {userProfile.hasDependents ? " with dependents" : " without dependents"}
-                    at {base.name} ({base.mha}). You can adjust if needed.
-                  </>
-                ) : userProfile.rank && userProfile.hasDependents === null ? (
-                  <>
-                    For {base.mha} (check your LES).
-                    <a
-                      href="/dashboard/profile/quick-start"
-                      className="ml-1 text-blue-600 hover:underline"
-                    >
-                      Update your profile
-                    </a>{" "}
-                    to auto-fill this field.
-                  </>
-                ) : (
-                  <>For {base.mha} (check your LES or update your profile to auto-fill)</>
-                )}
-              </p>
-            </div>
-
-            {/* Kids Grades */}
-            <div className="col-span-2">
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Kids Grade Levels (affects school scoring)
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {(["elem", "middle", "high"] as KidsGrade[]).map((grade) => (
-                  <button
-                    key={grade}
-                    type="button"
-                    onClick={() => toggleGrade(grade)}
-                    className={`rounded-lg px-4 py-2 font-medium transition-all duration-200 ${
-                      kidsGrades.includes(grade)
-                        ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-                    }`}
-                  >
-                    {kidsGrades.includes(grade) && "✓ "}
-                    {grade === "elem"
-                      ? "Elementary"
-                      : grade === "middle"
-                        ? "Middle"
-                        : "High School"}
-                  </button>
-                ))}
+          <div className="space-y-6">
+            {/* Row 1: Bedrooms and BAH */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Bedrooms */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Bedrooms</label>
+                <select
+                  value={bedrooms}
+                  onChange={(e) => setBedrooms(Number(e.target.value))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={2}>2 BR</option>
+                  <option value={3}>3 BR</option>
+                  <option value={4}>4 BR</option>
+                  <option value={5}>5 BR</option>
+                </select>
               </div>
-              {kidsGrades.length > 0 && (
-                <p className="mt-2 text-xs text-blue-600">
-                  {kidsGrades.length} grade level{kidsGrades.length > 1 ? "s" : ""} selected. Click
-                  "Find Best Neighborhoods" to update results.
+
+              {/* BAH */}
+              <div>
+                <label
+                  htmlFor="your_monthly_bah_"
+                  className="mb-2 block text-sm font-medium text-gray-700"
+                >
+                  Your Monthly BAH
+                </label>
+                <input
+                  id="input_pozstmjkt"
+                  type="number"
+                  value={Math.round(bahMonthlyCents / 100)}
+                  onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                  placeholder="2500"
+                />
+                <p className="mt-1 text-xs text-gray-600">
+                  {bahSource === "auto" && userProfile.rank && base.mha ? (
+                    <>
+                      Auto-filled for {userProfile.rank}
+                      {userProfile.hasDependents ? " with dependents" : " without dependents"}
+                      at {base.name} ({base.mha}). You can adjust if needed.
+                    </>
+                  ) : userProfile.rank && userProfile.hasDependents === null ? (
+                    <>
+                      For {base.mha} (check your LES).
+                      <a
+                        href="/dashboard/profile/quick-start"
+                        className="ml-1 text-blue-600 hover:underline"
+                      >
+                        Update your profile
+                      </a>{" "}
+                      to auto-fill this field.
+                    </>
+                  ) : (
+                    <>For {base.mha} (check your LES or update your profile to auto-fill)</>
+                  )}
                 </p>
-              )}
+              </div>
+            </div>
+
+            {/* Row 2: Kids Grades and Sort Priority */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Kids Grades */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Kids Grade Levels (affects school scoring)
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {(["elem", "middle", "high"] as KidsGrade[]).map((grade) => (
+                    <button
+                      key={grade}
+                      type="button"
+                      onClick={() => toggleGrade(grade)}
+                      className={`rounded-lg px-4 py-2 font-medium transition-all duration-200 ${
+                        kidsGrades.includes(grade)
+                          ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
+                      }`}
+                    >
+                      {kidsGrades.includes(grade) && "✓ "}
+                      {grade === "elem"
+                        ? "Elementary"
+                        : grade === "middle"
+                          ? "Middle"
+                          : "High School"}
+                    </button>
+                  ))}
+                </div>
+                {kidsGrades.length > 0 && (
+                  <p className="mt-2 text-xs text-blue-600">
+                    {kidsGrades.length} grade level{kidsGrades.length > 1 ? "s" : ""} selected.
+                  </p>
+                )}
+              </div>
+
+              {/* Sort Priority */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Sort Priority
+                </label>
+                <select
+                  value={sortPriority}
+                  onChange={(e) => setSortPriority(e.target.value as typeof sortPriority)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="overall">Best Overall Fit</option>
+                  <option value="schools">Best Schools First</option>
+                  <option value="housing">Lowest Housing Cost</option>
+                  <option value="commute">Shortest Commute</option>
+                </select>
+                <p className="mt-1 text-xs text-gray-600">
+                  How should we prioritize the results?
+                </p>
+              </div>
             </div>
           </div>
 
@@ -278,27 +332,77 @@ export default function BaseNavigatorClient({
           </button>
         </div>
 
-        {/* Error State */}
+        {/* Enhanced Error State */}
         {error && (
-          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4">
-            <div className="flex items-start gap-2">
-              <Icon name="AlertCircle" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
-              <div>
-                <h3 className="font-semibold text-red-900">Error</h3>
-                <p className="text-sm text-red-700">{error}</p>
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+            <div className="flex items-start gap-3">
+              <Icon name="AlertCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-red-900 mb-2">Unable to Load Neighborhoods</h3>
+                <p className="text-sm text-red-700 mb-4">{error}</p>
+                <div className="space-y-2">
+                  <p className="text-sm text-red-600 font-medium">Try these solutions:</p>
+                  <ul className="text-sm text-red-600 space-y-1 ml-4">
+                    <li>• Check your internet connection</li>
+                    <li>• Verify your BAH amount is correct</li>
+                    <li>• Try adjusting your search criteria</li>
+                    <li>• Refresh the page and try again</li>
+                  </ul>
+                </div>
+                <div className="mt-4">
+                  <button
+                    onClick={computeRankings}
+                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    Try Again
+                  </button>
+                  <a
+                    href="/dashboard/support"
+                    className="ml-3 text-sm text-red-600 underline hover:no-underline"
+                  >
+                    Contact Support
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Loading State - Enhanced Skeleton */}
         {loading && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
-                <div className="mb-4 h-6 rounded bg-gray-200"></div>
-                <div className="mb-4 h-20 rounded bg-gray-100"></div>
-                <div className="h-4 w-3/4 rounded bg-gray-200"></div>
+          <div className="space-y-8">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="animate-pulse overflow-hidden rounded-2xl border-2 border-gray-200 bg-white">
+                {/* Header Skeleton */}
+                <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300"></div>
+                
+                {/* Content Skeleton */}
+                <div className="p-6">
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    {/* Left Column */}
+                    <div className="space-y-4">
+                      <div className="h-6 w-32 rounded bg-gray-200"></div>
+                      <div className="space-y-3">
+                        {[1, 2, 3, 4, 5].map((j) => (
+                          <div key={j} className="flex items-center justify-between">
+                            <div className="h-4 w-24 rounded bg-gray-200"></div>
+                            <div className="h-4 w-16 rounded bg-gray-200"></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Right Column */}
+                    <div className="space-y-4">
+                      <div className="h-6 w-32 rounded bg-gray-200"></div>
+                      <div className="space-y-3">
+                        {[1, 2, 3, 4].map((j) => (
+                          <div key={j} className="h-4 w-full rounded bg-gray-200"></div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -310,7 +414,7 @@ export default function BaseNavigatorClient({
             {/* Header */}
             <div className="mb-8">
               <h2 className="font-lora mb-2 text-2xl font-bold text-gray-900">
-                {isPremium ? `All ${results.length} Neighborhoods Ranked` : "Top 3 Neighborhoods"}
+                Top {results.length} Neighborhoods Ranked
               </h2>
               <p className="text-gray-600">
                 The best ZIP codes for your family, ranked by our comprehensive scoring algorithm.
@@ -322,30 +426,54 @@ export default function BaseNavigatorClient({
               {visibleResults.map((result, index) => {
                 const isWatched = watchedZips.includes(result.zip);
                 const scoreBreakdown = getScoreBreakdown(result.family_fit_score);
-                const rankColors = [
-                  "bg-gradient-to-r from-yellow-400 to-yellow-600",
-                  "bg-gradient-to-r from-gray-300 to-gray-500",
-                  "bg-gradient-to-r from-amber-600 to-amber-800",
-                  "bg-gradient-to-r from-blue-500 to-blue-700",
-                ];
-                const rankLabels = [
-                  "🥇 #1 Choice",
-                  "🥈 #2 Choice",
-                  "🥉 #3 Choice",
-                  `#${index + 1} Choice`,
-                ];
-                const rankColor = rankColors[Math.min(index, rankColors.length - 1)];
-                const rankLabel = index < 3 ? rankLabels[index] : `#${index + 1} Choice`;
+                // Enhanced medal system for top 3, professional for others
+                const getRankStyle = (index: number) => {
+                  if (index === 0) {
+                    return {
+                      gradient: "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600",
+                      shadow: "shadow-lg shadow-yellow-200",
+                      border: "border-yellow-300",
+                      label: "🥇 #1 Choice",
+                      badge: "bg-yellow-100 text-yellow-800"
+                    };
+                  } else if (index === 1) {
+                    return {
+                      gradient: "bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500",
+                      shadow: "shadow-lg shadow-gray-200",
+                      border: "border-gray-300",
+                      label: "🥈 #2 Choice",
+                      badge: "bg-gray-100 text-gray-800"
+                    };
+                  } else if (index === 2) {
+                    return {
+                      gradient: "bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700",
+                      shadow: "shadow-lg shadow-amber-200",
+                      border: "border-amber-300",
+                      label: "🥉 #3 Choice",
+                      badge: "bg-amber-100 text-amber-800"
+                    };
+                  } else {
+                    return {
+                      gradient: "bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700",
+                      shadow: "shadow-lg shadow-blue-200",
+                      border: "border-blue-300",
+                      label: `#${index + 1} Choice`,
+                      badge: "bg-blue-100 text-blue-800"
+                    };
+                  }
+                };
+
+                const rankStyle = getRankStyle(index);
 
                 return (
                   <AnimatedCard key={result.zip} delay={index * 0.1}>
-                    <div className="overflow-hidden rounded-2xl border-2 border-gray-200 bg-white transition-all duration-300 hover:shadow-xl">
+                    <div className={`overflow-hidden rounded-2xl border-2 ${rankStyle.border} bg-white transition-all duration-300 hover:shadow-xl ${rankStyle.shadow}`}>
                       {/* Header Section */}
-                      <div className={`${rankColor} p-6 text-white`}>
+                      <div className={`${rankStyle.gradient} p-6 text-white`}>
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="mb-2 flex items-center gap-3">
-                              <span className="text-2xl font-bold">{rankLabel}</span>
+                              <span className="text-2xl font-bold">{rankStyle.label}</span>
                               <h3 className="text-3xl font-bold">ZIP {result.zip}</h3>
                             </div>
                             <p className="text-lg opacity-90">{scoreBreakdown.message}</p>
@@ -369,7 +497,12 @@ export default function BaseNavigatorClient({
                         {/* Family Fit Score - Prominent */}
                         <div className="mt-4 rounded-xl bg-white bg-opacity-20 p-4">
                           <div className="flex items-center justify-between">
-                            <span className="text-lg font-semibold">Family Fit Score</span>
+                            <div>
+                              <span className="text-lg font-semibold">Family Fit Score</span>
+                              <div className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-semibold ${rankStyle.badge}`}>
+                                {result.family_fit_score >= 80 ? 'Excellent' : result.family_fit_score >= 60 ? 'Good' : 'Fair'}
+                              </div>
+                            </div>
                             <span className="text-5xl font-bold">
                               {Math.round(result.family_fit_score)}
                             </span>
@@ -558,7 +691,7 @@ export default function BaseNavigatorClient({
                                 <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
                                   <p className="text-sm text-yellow-800">
                                     <strong>API Configuration Needed:</strong> School ratings
-                                    require GreatSchools API key.
+                                    require SchoolDigger API key.
                                   </p>
                                 </div>
                               ) : (
@@ -570,7 +703,7 @@ export default function BaseNavigatorClient({
                                     >
                                       Upgrade to Premium
                                     </a>{" "}
-                                    to see school ratings from GreatSchools
+                                    to see school ratings from SchoolDigger
                                   </p>
                                 </div>
                               )}
@@ -773,49 +906,76 @@ export default function BaseNavigatorClient({
               })}
             </div>
 
-            {/* Premium Gate for Additional Results - Only show for non-premium users */}
-            {results.length > 3 && !isPremium && (
-              <div className="rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-8 text-center">
-                <Icon name="Lock" className="mx-auto mb-4 h-16 w-16 text-blue-600" />
-                <h3 className="mb-2 text-2xl font-bold text-blue-900">
-                  {results.length - 3} More Neighborhoods Available
-                </h3>
-                <p className="mb-6 text-lg text-blue-700">
-                  Upgrade to Premium to see the complete ranking of all {results.length}{" "}
-                  neighborhoods, plus detailed school lists, commute analysis, and advanced
-                  filtering options.
-                </p>
-                <a
-                  href="/dashboard/upgrade?feature=base-navigator"
-                  className="inline-block rounded-xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
-                >
-                  Upgrade to Premium →
-                </a>
-              </div>
-            )}
           </>
         )}
 
-        {/* Empty State */}
+        {/* Enhanced Empty State */}
         {!loading && results.length === 0 && (
-          <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
-            <Icon name="MapPin" className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-            <h3 className="mb-2 text-xl font-semibold text-gray-900">No Results Yet</h3>
-            <p className="mb-4 text-gray-600">
-              Set your filters and click "Find Best Neighborhoods" to compute rankings.
+          <div className="rounded-2xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-white p-12 text-center">
+            <Icon name="MapPin" className="mx-auto mb-6 h-20 w-20 text-gray-300" />
+            <h3 className="mb-4 text-2xl font-bold text-gray-900">Ready to Find Your Perfect Neighborhood?</h3>
+            <p className="mb-6 text-lg text-gray-600 max-w-2xl mx-auto">
+              Set your search criteria above and click "Find Best Neighborhoods" to discover the top 5 areas near {base.name} that match your family's needs.
             </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={computeRankings}
+                className="rounded-lg bg-blue-600 px-8 py-3 font-medium text-white hover:bg-blue-700"
+              >
+                Find Best Neighborhoods
+              </button>
+              <a
+                href="/dashboard/navigator"
+                className="rounded-lg border border-gray-300 px-8 py-3 font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Browse Other Bases
+              </a>
+            </div>
           </div>
         )}
 
-        {/* Attribution Footer */}
-        <div className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <p className="text-center text-xs text-gray-600">
-            School ratings © GreatSchools. Listings & median rent via Zillow. Commute & weather via
-            Google.
-            <br />
-            Data cached 24h (schools/housing/commute) and 7d (weather). Scores are estimates -
-            verify locally.
-          </p>
+        {/* Enhanced Attribution Footer */}
+        <div className="mt-8 rounded-lg border border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 p-6">
+          <div className="text-center">
+            <h4 className="mb-3 text-sm font-semibold text-gray-900">Data Sources & Attribution</h4>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 text-xs text-gray-600">
+              <div className="space-y-1">
+                <div className="font-medium text-gray-800">Schools</div>
+                <div>© SchoolDigger</div>
+                <div>Updated daily</div>
+              </div>
+              <div className="space-y-1">
+                <div className="font-medium text-gray-800">Housing & Commute</div>
+                <div>Zillow via RapidAPI • Google Maps</div>
+                <div>Cached 30 days</div>
+              </div>
+              <div className="space-y-1">
+                <div className="font-medium text-gray-800">Weather & Amenities</div>
+                <div>Google Weather • Google Places</div>
+                <div>Cached 7 days</div>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500">
+                Last updated: {new Date().toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })} • 
+                <button 
+                  onClick={computeRankings}
+                  className="ml-1 text-blue-600 hover:underline"
+                >
+                  Refresh data
+                </button>
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Scores are estimates based on available data - verify locally before making decisions.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Ask Expert CTA */}

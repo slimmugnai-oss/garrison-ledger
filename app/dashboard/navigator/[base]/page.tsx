@@ -89,6 +89,11 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
     .maybeSingle();
 
   const isPremium = entitlement?.tier === 'premium' && entitlement?.status === 'active';
+  
+  // Redirect non-premium users to upgrade page
+  if (!isPremium) {
+    redirect('/dashboard/upgrade?feature=base-navigator');
+  }
 
   // Get user profile for BAH lookup
   const { data: profile } = await supabase
@@ -133,7 +138,7 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
       <Header />
       <BaseNavigatorClient
         base={baseData}
-        isPremium={isPremium}
+        isPremium={true}
         userProfile={{
           rank: profile?.rank,
           currentBase: profile?.current_base,

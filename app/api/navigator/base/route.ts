@@ -210,8 +210,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Sort by family_fit_score descending
+    // Sort by family_fit_score descending and limit to top 5
     results.sort((a, b) => b.family_fit_score - a.family_fit_score);
+    const topResults = results.slice(0, 5);
 
     // Track usage (only for free users, premium is unlimited)
     if (!isPremium) {
@@ -244,7 +245,7 @@ export async function POST(request: NextRequest) {
         payload: {
           base_code: base.code,
           bedrooms,
-          result_count: results.length,
+          result_count: topResults.length,
         },
       });
     } catch (analyticsError) {
@@ -261,14 +262,14 @@ export async function POST(request: NextRequest) {
       userId: userId.substring(0, 8) + "...",
       baseCode,
       zipCount: base.candidateZips.length,
-      resultCount: results.length,
+      resultCount: topResults.length,
       duration_ms: duration,
       tier,
     });
 
     const response: NavigatorResponse = {
       base,
-      results,
+      results: topResults,
     };
 
     return NextResponse.json(response);
