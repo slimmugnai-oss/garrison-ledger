@@ -76,7 +76,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
-  const [entryMode, setEntryMode] = useState<"upload" | "manual">("upload");
+  const [entryMode, setEntryMode] = useState<"upload" | "manual">("manual");
   const [uploading, setUploading] = useState(false);
   const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
@@ -626,17 +626,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       <div className="mb-8">
         <div className="flex gap-2 border-b border-gray-200">
           <button
-            onClick={() => setEntryMode("upload")}
-            className={`relative px-6 py-3 font-medium transition-colors ${
-              entryMode === "upload"
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            <Icon name="Upload" className="mr-2 inline-block h-4 w-4" />
-            Upload PDF
-          </button>
-          <button
             onClick={() => setEntryMode("manual")}
             className={`relative px-6 py-3 font-medium transition-colors ${
               entryMode === "manual"
@@ -646,6 +635,18 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           >
             <Icon name="Edit" className="mr-2 inline-block h-4 w-4" />
             Manual Entry
+          </button>
+          <button
+            onClick={() => setEntryMode("upload")}
+            disabled
+            className="relative px-6 py-3 font-medium text-gray-400 cursor-not-allowed"
+            title="Coming soon - PDF upload with automatic parsing"
+          >
+            <Icon name="Upload" className="mr-2 inline-block h-4 w-4" />
+            Upload PDF
+            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs font-semibold text-gray-600">
+              Coming Soon
+            </span>
           </button>
         </div>
       </div>
