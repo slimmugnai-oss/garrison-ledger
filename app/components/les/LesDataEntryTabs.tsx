@@ -256,7 +256,7 @@ export default function LesDataEntryTabs({
             if (items.length === 0) {
               return (
                 <div key={section} className={`rounded-lg border-2 border-dashed p-8 text-center ${SECTION_COLORS[section]}`}>
-                  <Icon name={tab.icon as any} className="mx-auto mb-3 h-8 w-8 text-slate-400" />
+                  <Icon name={SECTION_ICONS[section] as any} className="mx-auto mb-3 h-8 w-8 text-slate-400" />
                   <h4 className="mb-2 font-semibold text-slate-700">No {SECTION_LABELS[section]} items</h4>
                   <p className="mb-4 text-sm text-slate-600">
                     Add your {SECTION_LABELS[section].toLowerCase()} from your LES
