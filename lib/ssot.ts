@@ -261,6 +261,9 @@ export const ssot = {
 
   /**
    * EXTERNAL DATA VENDORS
+   *
+   * NOTE: Google API Consolidation (Updated 2025-10-29)
+   * All Google services (weather, distance, amenities, military) now use GOOGLE_API_KEY
    */
   vendors: {
     weather: {
@@ -271,6 +274,16 @@ export const ssot = {
       attribution: "Google",
       licenseDoc: "docs/vendors/weather.md",
       apiUrl: "https://weather.googleapis.com/v1/currentConditions:lookup",
+      apiKey: "GOOGLE_API_KEY",
+    },
+    distance: {
+      name: "Google Distance Matrix API",
+      provider: "Google",
+      cacheDays: 1,
+      attribution: "Google",
+      licenseDoc: "docs/vendors/distance.md",
+      apiUrl: "https://maps.googleapis.com/maps/api/distancematrix/json",
+      apiKey: "GOOGLE_API_KEY",
     },
     housing: {
       name: "Zillow Market Data",
@@ -281,21 +294,17 @@ export const ssot = {
       apiUrl: "https://zillow-com1.p.rapidapi.com",
     },
     schools: {
-      name: "GreatSchools",
+      name: "SchoolDigger",
       provider: "Direct API",
       gated: true, // Premium only
-      cacheDays: 30,
-      attribution: "GreatSchools",
-      licenseDoc: "docs/vendors/greatschools.md",
-      tier: "premium",
-    },
-    crime: {
-      name: "Crime Data API",
-      provider: "Configurable",
-      cacheDays: 30,
-      attribution: "Crime Data Provider",
-      licenseDoc: "docs/vendors/crime.md",
-      apiUrl: "https://api.crime-data.com/v1/crime",
+      cacheDays: 1,
+      cacheHours: 24,
+      attribution: "SchoolDigger",
+      licenseDoc: "docs/vendors/schooldigger.md",
+      tier: "all",
+      apiUrl: "https://api.schooldigger.com/v2.3",
+      apiKey: "SCHOOLDIGGER_APP_ID + SCHOOLDIGGER_APP_KEY",
+      ratingScale: "1-5 stars (converted to 0-10)",
     },
     amenities: {
       name: "Google Places API",
@@ -303,15 +312,16 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Google",
       licenseDoc: "docs/vendors/amenities.md",
-      apiUrl: "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+      apiUrl: "https://places.googleapis.com/v1/places:searchNearby",
+      apiKey: "GOOGLE_API_KEY",
     },
     demographics: {
-      name: "RapidAPI Demographics",
-      provider: "RapidAPI",
+      name: "Default Demographics",
+      provider: "Hardcoded Defaults",
       cacheDays: 30,
-      attribution: "Demographics Provider",
+      attribution: "N/A",
       licenseDoc: "docs/vendors/demographics.md",
-      apiUrl: "https://demographics-api.p.rapidapi.com/demographics",
+      note: "Using neutral defaults until proper API integration",
     },
     military: {
       name: "Google Places API",
@@ -319,7 +329,8 @@ export const ssot = {
       cacheDays: 30,
       attribution: "Google",
       licenseDoc: "docs/vendors/military.md",
-      apiUrl: "https://maps.googleapis.com/maps/api/place/textsearch/json",
+      apiUrl: "https://places.googleapis.com/v1/places:searchText",
+      apiKey: "GOOGLE_API_KEY",
     },
   },
 
@@ -511,10 +522,12 @@ export function validateEnvironment(): { valid: boolean; missing: string[] } {
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
-    "GOOGLE_API_KEY",
+    "GOOGLE_API_KEY", // Consolidated Google API key (weather, distance, amenities, military)
     "RAPIDAPI_KEY",
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
+    "SCHOOLDIGGER_APP_ID", // SchoolDigger API
+    "SCHOOLDIGGER_APP_KEY",
   ];
 
   const missing = required.filter((key) => !process.env[key]);

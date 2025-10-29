@@ -196,9 +196,15 @@ export default function BaseNavigatorClient({
 
             {/* BAH */}
             <div>
-              <label htmlFor="your_monthly_bah_" className="mb-2 block text-sm font-medium text-gray-700">Your Monthly BAH
+              <label
+                htmlFor="your_monthly_bah_"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                Your Monthly BAH
               </label>
-                <input id="input_pozstmjkt" type="number"
+              <input
+                id="input_pozstmjkt"
+                type="number"
                 value={Math.round(bahMonthlyCents / 100)}
                 onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -388,7 +394,7 @@ export default function BaseNavigatorClient({
                                   <div className="flex items-center gap-2">
                                     <Icon name="GraduationCap" className="h-5 w-5 text-green-600" />
                                     <span className="font-semibold text-gray-900">
-                                      Schools (30%)
+                                      Schools (35%)
                                     </span>
                                   </div>
                                   <span className="text-2xl font-bold text-green-600">
@@ -466,34 +472,13 @@ export default function BaseNavigatorClient({
                                 </div>
                               </div>
 
-                              {/* Safety */}
-                              <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                                <div className="mb-2 flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <Icon name="Shield" className="h-5 w-5 text-red-600" />
-                                    <span className="font-semibold text-gray-900">
-                                      Safety (10%)
-                                    </span>
-                                  </div>
-                                  <span className="text-2xl font-bold text-red-600">
-                                    {Math.round(result.subscores.safety)}
-                                  </span>
-                                </div>
-                                <div className="h-3 overflow-hidden rounded-full bg-red-200">
-                                  <div
-                                    className="h-full rounded-full bg-red-500"
-                                    style={{ width: `${result.subscores.safety}%` }}
-                                  />
-                                </div>
-                              </div>
-
                               {/* Amenities */}
                               <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
                                 <div className="mb-2 flex items-center justify-between">
                                   <div className="flex items-center gap-2">
                                     <Icon name="ShoppingCart" className="h-5 w-5 text-indigo-600" />
                                     <span className="font-semibold text-gray-900">
-                                      Amenities (5%)
+                                      Amenities (8%)
                                     </span>
                                   </div>
                                   <span className="text-2xl font-bold text-indigo-600">
@@ -650,35 +635,6 @@ export default function BaseNavigatorClient({
                                 <p className="text-gray-700">{result.payload.weather_note}</p>
                               </div>
                             </div>
-
-                            {/* Safety & Crime */}
-                            {result.payload.crime_data && (
-                              <div className="mb-6">
-                                <h5 className="mb-3 flex items-center gap-2 text-lg font-semibold text-gray-900">
-                                  <Icon name="Shield" className="h-5 w-5" />
-                                  Safety & Crime
-                                </h5>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                  <p className="mb-2 text-gray-700">
-                                    {result.payload.crime_data.note}
-                                  </p>
-                                  <div className="grid grid-cols-2 gap-3 text-sm">
-                                    <div>
-                                      <span className="text-gray-600">Crime Rate:</span>
-                                      <span className="ml-2 font-semibold">
-                                        {result.payload.crime_data.crime_rate_per_1000}/1000
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <span className="text-gray-600">Violent:</span>
-                                      <span className="ml-2 font-semibold">
-                                        {result.payload.crime_data.violent_crime_rate}/1000
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
 
                             {/* Amenities */}
                             {result.payload.amenities_data && (

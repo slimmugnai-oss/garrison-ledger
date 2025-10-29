@@ -1,33 +1,37 @@
 /**
  * BASE NAVIGATOR - COMPUTE RANKINGS
- * 
+ *
  * POST /api/navigator/base
  * Computes family fit scores for all candidate ZIPs near a base
  */
 
-import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import type { NavigatorRequest, NavigatorResponse, NeighborhoodCard, KidsGrade } from '@/app/types/navigator';
-import { errorResponse, Errors } from '@/lib/api-errors';
-import bases from '@/lib/data/bases-seed.json';
-import { logger } from '@/lib/logger';
-import { fetchAmenitiesData } from '@/lib/navigator/amenities';
-import { fetchCrimeData } from '@/lib/navigator/crime';
-import { commuteMinutesFromZipToGate } from '@/lib/navigator/distance';
-import { fetchMedianRent, fetchSampleListings } from '@/lib/navigator/housing';
-import { fetchMilitaryAmenitiesData } from '@/lib/navigator/military';
-import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '@/lib/navigator/schools';
-import { familyFitScore100 } from '@/lib/navigator/score';
-import { weatherComfortIndex } from '@/lib/navigator/weather';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import type {
+  NavigatorRequest,
+  NavigatorResponse,
+  NeighborhoodCard,
+  KidsGrade,
+} from "@/app/types/navigator";
+import { errorResponse, Errors } from "@/lib/api-errors";
+import bases from "@/lib/data/bases-seed.json";
+import { logger } from "@/lib/logger";
+import { fetchAmenitiesData } from "@/lib/navigator/amenities";
+import { commuteMinutesFromZipToGate } from "@/lib/navigator/distance";
+import { fetchMedianRent, fetchSampleListings } from "@/lib/navigator/housing";
+import { fetchMilitaryAmenitiesData } from "@/lib/navigator/military";
+import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from "@/lib/navigator/schools";
+import { familyFitScore100 } from "@/lib/navigator/score";
+import { weatherComfortIndex } from "@/lib/navigator/weather";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     // Auth check
     const { userId } = await auth();
@@ -37,34 +41,34 @@ export async function POST(request: NextRequest) {
 
     // Check premium status
     const { data: entitlement } = await supabaseAdmin
-      .from('entitlements')
-      .select('tier, status')
-      .eq('user_id', userId)
+      .from("entitlements")
+      .select("tier, status")
+      .eq("user_id", userId)
       .maybeSingle();
 
-    const tier = entitlement?.tier || 'free';
-    const isPremium = tier === 'premium' && entitlement?.status === 'active';
+    const tier = entitlement?.tier || "free";
+    const isPremium = tier === "premium" && entitlement?.status === "active";
 
     // Rate limiting (Free: 3/day, Premium: Unlimited)
     if (!isPremium) {
       const { data: quotaCheck } = await supabaseAdmin
-        .from('api_quota')
-        .select('count')
-        .eq('user_id', userId)
-        .eq('route', 'navigator_base')
-        .eq('day', new Date().toISOString().split('T')[0])
+        .from("api_quota")
+        .select("count")
+        .eq("user_id", userId)
+        .eq("route", "navigator_base")
+        .eq("day", new Date().toISOString().split("T")[0])
         .maybeSingle();
 
       const FREE_DAILY_LIMIT = 3;
 
       if (quotaCheck && quotaCheck.count >= FREE_DAILY_LIMIT) {
-        logger.info('Navigator rate limit hit', {
-          userId: userId.substring(0, 8) + '...',
+        logger.info("Navigator rate limit hit", {
+          userId: userId.substring(0, 8) + "...",
           tier,
           limit: FREE_DAILY_LIMIT,
-          used: quotaCheck.count
+          used: quotaCheck.count,
         });
-        
+
         throw Errors.rateLimitExceeded(
           `Daily limit reached (${FREE_DAILY_LIMIT} base computations/day for free tier). Upgrade to Premium for unlimited access.`
         );
@@ -76,26 +80,32 @@ export async function POST(request: NextRequest) {
     const { baseCode, bedrooms = 3, bahMonthlyCents, kidsGrades = [] } = body;
 
     // Find base
-    const base = bases.find(b => b.code === baseCode);
+    const base = bases.find((b) => b.code === baseCode);
     if (!base) {
-      throw Errors.notFound('Base', `Base code ${baseCode} not found`);
+      throw Errors.notFound("Base", `Base code ${baseCode} not found`);
     }
 
     // Process each candidate ZIP
     const results: NeighborhoodCard[] = [];
 
     for (const zip of base.candidateZips) {
-
       // Fetch data in parallel
-      const [schoolsData, medianRent, sampleListings, commute, weather, crimeData, amenitiesData, militaryData] = await Promise.all([
+      const [
+        schoolsData,
+        medianRent,
+        sampleListings,
+        commute,
+        weather,
+        amenitiesData,
+        militaryData,
+      ] = await Promise.all([
         fetchSchoolsByZip(zip),
         fetchMedianRent(zip, bedrooms),
         fetchSampleListings(zip, bedrooms),
         commuteMinutesFromZipToGate({ zip, gate: base.gate }),
         weatherComfortIndex(zip),
-        fetchCrimeData(zip),
         fetchAmenitiesData(zip),
-        fetchMilitaryAmenitiesData(zip)
+        fetchMilitaryAmenitiesData(zip),
       ]);
 
       // Use default demographics data (no API)
@@ -106,7 +116,7 @@ export async function POST(request: NextRequest) {
         median_income: 75000,
         diversity_index: 0.6,
         family_households: 65,
-        note: 'Demographics data not available'
+        note: "Demographics data not available",
       };
 
       // Compute school score
@@ -123,16 +133,14 @@ export async function POST(request: NextRequest) {
         amMin: commute.am,
         pmMin: commute.pm,
         weather10: weather.index10,
-        safety10: crimeData.safety_score,
         amenities10: amenitiesData.amenities_score,
         demographics10: demographicsData.demographics_score,
-        military10: militaryData.military_score
+        military10: militaryData.military_score,
       });
 
       // Upsert to neighborhood_profiles
-      await supabaseAdmin
-        .from('neighborhood_profiles')
-        .upsert({
+      await supabaseAdmin.from("neighborhood_profiles").upsert(
+        {
           base_code: base.code,
           zip,
           bedrooms,
@@ -145,12 +153,14 @@ export async function POST(request: NextRequest) {
           payload: {
             top_schools: topSchools.slice(0, 2),
             sample_listings: sampleListings,
-            weather_note: weather.note
+            weather_note: weather.note,
           },
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'base_code,zip,bedrooms'
-        });
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "base_code,zip,bedrooms",
+        }
+      );
 
       // Add to results
       results.push({
@@ -166,16 +176,10 @@ export async function POST(request: NextRequest) {
           top_schools: topSchools.slice(0, 2),
           sample_listings: sampleListings,
           weather_note: weather.note,
-          commute_text: (commute.am && commute.pm)
-            ? `AM ${commute.am} min / PM ${commute.pm} min`
-            : 'Commute estimate unavailable',
-          crime_data: {
-            safety_score: crimeData.safety_score,
-            crime_rate_per_1000: crimeData.crime_rate_per_1000,
-            violent_crime_rate: crimeData.violent_crime_rate,
-            property_crime_rate: crimeData.property_crime_rate,
-            note: crimeData.note
-          },
+          commute_text:
+            commute.am && commute.pm
+              ? `AM ${commute.am} min / PM ${commute.pm} min`
+              : "Commute estimate unavailable",
           amenities_data: {
             amenities_score: amenitiesData.amenities_score,
             grocery_stores: amenitiesData.grocery_stores,
@@ -183,7 +187,7 @@ export async function POST(request: NextRequest) {
             gyms: amenitiesData.gyms,
             hospitals: amenitiesData.hospitals,
             shopping_centers: amenitiesData.shopping_centers,
-            note: amenitiesData.note
+            note: amenitiesData.note,
           },
           demographics_data: {
             demographics_score: demographicsData.demographics_score,
@@ -192,7 +196,7 @@ export async function POST(request: NextRequest) {
             median_income: demographicsData.median_income,
             diversity_index: demographicsData.diversity_index,
             family_households: demographicsData.family_households,
-            note: demographicsData.note
+            note: demographicsData.note,
           },
           military_data: {
             military_score: militaryData.military_score,
@@ -200,9 +204,9 @@ export async function POST(request: NextRequest) {
             exchange_distance_mi: militaryData.exchange_distance_mi,
             va_facility_distance_mi: militaryData.va_facility_distance_mi,
             military_housing_distance_mi: militaryData.military_housing_distance_mi,
-            note: militaryData.note
-          }
-        }
+            note: militaryData.note,
+          },
+        },
       });
     }
 
@@ -212,70 +216,67 @@ export async function POST(request: NextRequest) {
     // Track usage (only for free users, premium is unlimited)
     if (!isPremium) {
       const { data: quotaCheck } = await supabaseAdmin
-        .from('api_quota')
-        .select('count')
-        .eq('user_id', userId)
-        .eq('route', 'navigator_base')
-        .eq('day', new Date().toISOString().split('T')[0])
+        .from("api_quota")
+        .select("count")
+        .eq("user_id", userId)
+        .eq("route", "navigator_base")
+        .eq("day", new Date().toISOString().split("T")[0])
         .maybeSingle();
 
-      await supabaseAdmin
-        .from('api_quota')
-        .upsert({
+      await supabaseAdmin.from("api_quota").upsert(
+        {
           user_id: userId,
-          route: 'navigator_base',
-          day: new Date().toISOString().split('T')[0],
-          count: (quotaCheck?.count || 0) + 1
-        }, {
-          onConflict: 'user_id,route,day'
-        });
+          route: "navigator_base",
+          day: new Date().toISOString().split("T")[0],
+          count: (quotaCheck?.count || 0) + 1,
+        },
+        {
+          onConflict: "user_id,route,day",
+        }
+      );
     }
 
     // Analytics (non-blocking)
     try {
-      await supabaseAdmin
-        .from('events')
-        .insert({
-          user_id: userId,
-          event_type: 'navigator_compute',
-          payload: {
-            base_code: base.code,
-            bedrooms,
-            result_count: results.length
-          }
-        });
+      await supabaseAdmin.from("events").insert({
+        user_id: userId,
+        event_type: "navigator_compute",
+        payload: {
+          base_code: base.code,
+          bedrooms,
+          result_count: results.length,
+        },
+      });
     } catch (analyticsError) {
-      logger.warn('Failed to record navigator analytics', {
-        error: analyticsError instanceof Error ? analyticsError.message : 'Unknown',
-        userId: userId.substring(0, 8) + '...'
+      logger.warn("Failed to record navigator analytics", {
+        error: analyticsError instanceof Error ? analyticsError.message : "Unknown",
+        userId: userId.substring(0, 8) + "...",
       });
       // Continue - analytics failure shouldn't block results
     }
 
     const duration = Date.now() - startTime;
-    
-    logger.info('Navigator computation complete', {
-      userId: userId.substring(0, 8) + '...',
+
+    logger.info("Navigator computation complete", {
+      userId: userId.substring(0, 8) + "...",
       baseCode,
       zipCount: base.candidateZips.length,
       resultCount: results.length,
       duration_ms: duration,
-      tier
+      tier,
     });
 
     const response: NavigatorResponse = {
       base,
-      results
+      results,
     };
 
     return NextResponse.json(response);
-
   } catch (error) {
     const duration = Date.now() - startTime;
-    logger.error('Navigator computation failed', error, {
-      duration_ms: duration
+    logger.error("Navigator computation failed", error, {
+      duration_ms: duration,
     });
     return errorResponse(error);
   }
 }
-

@@ -1,10 +1,10 @@
 /**
  * BASE NAVIGATOR TYPES
- * 
+ *
  * Types for neighborhood analysis and scoring
  */
 
-export type KidsGrade = 'elem' | 'middle' | 'high';
+export type KidsGrade = "elem" | "middle" | "high";
 
 export interface BaseSeed {
   code: string;
@@ -40,33 +40,24 @@ export interface NeighborhoodCard {
   zip: string;
   family_fit_score: number;
   subscores: {
-    schools: number;      // 0-100
-    rentVsBah: number;    // 0-100
-    commute: number;      // 0-100
-    weather: number;      // 0-100
-    safety: number;       // 0-100 (NEW)
-    amenities: number;    // 0-100 (NEW)
-    demographics: number; // 0-100 (NEW)
-    military: number;     // 0-100 (NEW)
+    schools: number; // 0-100
+    rentVsBah: number; // 0-100
+    commute: number; // 0-100
+    weather: number; // 0-100
+    amenities: number; // 0-100
+    demographics: number; // 0-100
+    military: number; // 0-100
   };
-  school_score: number;        // 0-10
+  school_score: number; // 0-10
   median_rent_cents: number | null;
   commute_am_minutes: number | null;
   commute_pm_minutes: number | null;
-  weather_index: number;       // 0-10
+  weather_index: number; // 0-10
   payload: {
     top_schools: School[];
     sample_listings: Listing[];
     weather_note: string;
     commute_text: string;
-    // NEW: Additional data payloads
-    crime_data?: {
-      safety_score: number;
-      crime_rate_per_1000: number;
-      violent_crime_rate: number;
-      property_crime_rate: number;
-      note: string;
-    };
     amenities_data?: {
       amenities_score: number;
       grocery_stores: number;
@@ -116,7 +107,7 @@ export interface AnalyzeListingRequest {
 }
 
 export interface AnalyzeListingResponse {
-  verdict: 'Good fit' | 'Stretch' | 'Over cap vs BAH';
+  verdict: "Good fit" | "Stretch" | "Over cap vs BAH";
   payload: {
     listing: Listing & { lat?: number; lng?: number };
     subscores: {
@@ -139,4 +130,3 @@ export interface WatchlistData {
   max_commute_minutes?: number;
   kids_grades?: string[];
 }
-

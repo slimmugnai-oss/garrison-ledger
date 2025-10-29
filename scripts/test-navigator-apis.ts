@@ -13,7 +13,6 @@ import { weatherComfortIndex } from '../lib/navigator/weather';
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from '../lib/navigator/schools';
 import { fetchMedianRent, fetchSampleListings } from '../lib/navigator/housing';
 import { commuteMinutesFromZipToGate } from '../lib/navigator/distance';
-import { fetchCrimeData } from '../lib/navigator/crime';
 import { fetchAmenitiesData } from '../lib/navigator/amenities';
 import { fetchMilitaryAmenitiesData } from '../lib/navigator/military';
 import { familyFitScore100 } from '../lib/navigator/score';
@@ -95,24 +94,8 @@ async function testAllProviders() {
     console.log('❌ Commute API Error:', error);
   }
 
-  // Test 5: Crime & Safety
-  console.log('\n5️⃣  CRIME & SAFETY API TEST (FBI Crime Data)');
-  console.log('-'.repeat(60));
-  try {
-    const crime = await fetchCrimeData(TEST_ZIP);
-    console.log('✅ Crime API Response:');
-    console.log('   Safety Score:', crime.safety_score, '/10');
-    console.log('   Crime Rate:  ', crime.crime_rate_per_1000, '/1000');
-    console.log('   Note:        ', crime.note);
-    if (crime.safety_score === 7) {
-      console.log('   ⚠️  Using default score (API key not configured)');
-    }
-  } catch (error) {
-    console.log('❌ Crime API Error:', error);
-  }
-
-  // Test 6: Amenities
-  console.log('\n6️⃣  AMENITIES API TEST (Google Places)');
+  // Test 5: Amenities
+  console.log('\n5️⃣  AMENITIES API TEST (Google Places)');
   console.log('-'.repeat(60));
   try {
     const amenities = await fetchAmenitiesData(TEST_ZIP);
@@ -129,8 +112,8 @@ async function testAllProviders() {
     console.log('❌ Amenities API Error:', error);
   }
 
-  // Test 7: Military Amenities
-  console.log('\n7️⃣  MILITARY AMENITIES API TEST (Google Places)');
+  // Test 6: Military Amenities
+  console.log('\n6️⃣  MILITARY AMENITIES API TEST (Google Places)');
   console.log('-'.repeat(60));
   try {
     const military = await fetchMilitaryAmenitiesData(TEST_ZIP);
@@ -147,15 +130,14 @@ async function testAllProviders() {
     console.log('❌ Military API Error:', error);
   }
 
-  // Test 8: Scoring Algorithm
-  console.log('\n8️⃣  SCORING ALGORITHM TEST');
+  // Test 7: Scoring Algorithm
+  console.log('\n7️⃣  SCORING ALGORITHM TEST');
   console.log('-'.repeat(60));
   try {
     const weather = await weatherComfortIndex(TEST_ZIP);
     const schools = await fetchSchoolsByZip(TEST_ZIP);
     const medianRent = await fetchMedianRent(TEST_ZIP, 3);
     const commute = await commuteMinutesFromZipToGate({ zip: TEST_ZIP, gate: TEST_GATE });
-    const crime = await fetchCrimeData(TEST_ZIP);
     const amenities = await fetchAmenitiesData(TEST_ZIP);
     const military = await fetchMilitaryAmenitiesData(TEST_ZIP);
     
@@ -168,7 +150,6 @@ async function testAllProviders() {
       amMin: commute.am,
       pmMin: commute.pm,
       weather10: weather.index10,
-      safety10: crime.safety_score,
       amenities10: amenities.amenities_score,
       demographics10: 6,
       military10: military.military_score
@@ -176,17 +157,16 @@ async function testAllProviders() {
     
     console.log('✅ Scoring Algorithm Results:');
     console.log('   Family Fit Score:', scoreResult.total, '/100');
-    console.log('   Schools:         ', Math.round(scoreResult.subs.schools), '/100 (30% weight)');
+    console.log('   Schools:         ', Math.round(scoreResult.subs.schools), '/100 (35% weight)');
     console.log('   Rent vs BAH:     ', Math.round(scoreResult.subs.rentVsBah), '/100 (25% weight)');
     console.log('   Commute:         ', Math.round(scoreResult.subs.commute), '/100 (15% weight)');
     console.log('   Weather:         ', Math.round(scoreResult.subs.weather), '/100 (10% weight)');
-    console.log('   Safety:          ', Math.round(scoreResult.subs.safety), '/100 (10% weight)');
-    console.log('   Amenities:       ', Math.round(scoreResult.subs.amenities), '/100 (5% weight)');
-    console.log('   Demographics:    ', Math.round(scoreResult.subs.demographics), '/100 (3% weight)');
+    console.log('   Amenities:       ', Math.round(scoreResult.subs.amenities), '/100 (8% weight)');
+    console.log('   Demographics:    ', Math.round(scoreResult.subs.demographics), '/100 (5% weight)');
     console.log('   Military:        ', Math.round(scoreResult.subs.military), '/100 (2% weight)');
     
     // Verify weights sum to 100%
-    const weights = [0.30, 0.25, 0.15, 0.10, 0.10, 0.05, 0.03, 0.02];
+    const weights = [0.35, 0.25, 0.15, 0.10, 0.08, 0.05, 0.02];
     const weightSum = weights.reduce((sum, w) => sum + w, 0);
     console.log('\n   ✅ Weight Sum:', weightSum === 1.0 ? '100% ✅' : `${weightSum * 100}% ❌`);
     
@@ -201,12 +181,11 @@ async function testAllProviders() {
   console.log('✅ Graceful fallbacks working');
   console.log('✅ No crashes detected');
   console.log('\n💡 To test with REAL data, add API keys to .env.local:');
-  console.log('   - GOOGLE_WEATHER_API_KEY');
-  console.log('   - GREAT_SCHOOLS_API_KEY');
+  console.log('   - GOOGLE_API_KEY (consolidated for weather, distance, amenities, military)');
+  console.log('   - SCHOOLDIGGER_APP_ID');
+  console.log('   - SCHOOLDIGGER_APP_KEY');
   console.log('   - RAPIDAPI_KEY');
   console.log('   - ZILLOW_RAPIDAPI_HOST=zillow-com1.p.rapidapi.com');
-  console.log('   - GOOGLE_MAPS_API_KEY');
-  console.log('   - CRIME_API_KEY (optional)');
   console.log('\n');
 }
 

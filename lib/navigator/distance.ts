@@ -1,11 +1,11 @@
 /**
  * DISTANCE/COMMUTE PROVIDER (Google Distance Matrix)
- * 
+ *
  * Computes AM/PM commute times with traffic
  * Server-only, cached 24h
  */
 
-import { getCache, setCache } from '@/lib/cache';
+import { getCache, setCache } from "@/lib/cache";
 
 /**
  * Compute commute minutes from ZIP to base gate
@@ -15,12 +15,11 @@ export async function commuteMinutesFromZipToGate(args: {
   zip: string;
   gate: { lat: number; lng: number };
 }): Promise<{ am: number | null; pm: number | null }> {
-  
   const cacheKey = `gdm:commute:${args.zip}:${args.gate.lat.toFixed(3)},${args.gate.lng.toFixed(3)}`;
   const cached = await getCache<{ am: number | null; pm: number | null }>(cacheKey);
   if (cached) return cached;
 
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_API_KEY;
 
   if (!apiKey) {
     return { am: null, pm: null };
@@ -36,21 +35,20 @@ export async function commuteMinutesFromZipToGate(args: {
       origin: args.zip,
       destination: `${args.gate.lat},${args.gate.lng}`,
       departureTime: am8Time,
-      apiKey
+      apiKey,
     });
 
     const pmMinutes = await callDistanceMatrix({
       origin: args.zip,
       destination: `${args.gate.lat},${args.gate.lng}`,
       departureTime: pm5Time,
-      apiKey
+      apiKey,
     });
 
     const result = { am: amMinutes, pm: pmMinutes };
-    
+
     await setCache(cacheKey, result, 24 * 3600); // 24h cache
     return result;
-
   } catch {
     return { am: null, pm: null };
   }
@@ -65,30 +63,29 @@ async function callDistanceMatrix(args: {
   departureTime: number;
   apiKey: string;
 }): Promise<number | null> {
-  
   try {
-    const url = new URL('https://maps.googleapis.com/maps/api/distancematrix/json');
-    url.searchParams.set('origins', args.origin);
-    url.searchParams.set('destinations', args.destination);
-    url.searchParams.set('departure_time', args.departureTime.toString());
-    url.searchParams.set('traffic_model', 'best_guess');
-    url.searchParams.set('key', args.apiKey);
+    const url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json");
+    url.searchParams.set("origins", args.origin);
+    url.searchParams.set("destinations", args.destination);
+    url.searchParams.set("departure_time", args.departureTime.toString());
+    url.searchParams.set("traffic_model", "best_guess");
+    url.searchParams.set("key", args.apiKey);
 
     const response = await fetch(url.toString());
-    
+
     if (!response.ok) {
       return null;
     }
 
     const data = await response.json();
 
-    if (data.status !== 'OK' || !data.rows?.[0]?.elements?.[0]) {
+    if (data.status !== "OK" || !data.rows?.[0]?.elements?.[0]) {
       return null;
     }
 
     const element = data.rows[0].elements[0];
 
-    if (element.status !== 'OK' || !element.duration_in_traffic) {
+    if (element.status !== "OK" || !element.duration_in_traffic) {
       return null;
     }
 
@@ -97,7 +94,6 @@ async function callDistanceMatrix(args: {
     const minutes = Math.round(seconds / 60);
 
     return minutes;
-
   } catch {
     return null;
   }
@@ -110,9 +106,9 @@ async function callDistanceMatrix(args: {
 function nextWeekdayTime(hour: number, minute: number): number {
   const now = new Date();
   const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
-  
+
   let daysToAdd = 1;
-  
+
   if (currentDay === 5) {
     // Friday → Monday
     daysToAdd = 3;
@@ -136,4 +132,3 @@ function nextWeekdayTime(hour: number, minute: number): number {
   // Return Unix timestamp in seconds
   return Math.floor(targetDate.getTime() / 1000);
 }
-

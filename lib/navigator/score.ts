@@ -1,18 +1,17 @@
 /**
  * NEIGHBORHOOD SCORING ENGINE
- * 
+ *
  * Computes family fit scores based on:
- * - Schools (30% weight)
+ * - Schools (35% weight)
  * - Rent vs BAH (25% weight)
  * - Commute (15% weight)
  * - Weather (10% weight)
- * - Safety (10% weight) - NEW
- * - Amenities (5% weight) - NEW
- * - Demographics (3% weight) - NEW
- * - Military (2% weight) - NEW
+ * - Amenities (8% weight)
+ * - Demographics (5% weight)
+ * - Military (2% weight)
  */
 
-import { ssot as _ssot } from '@/lib/ssot';
+import { ssot as _ssot } from "@/lib/ssot";
 
 /**
  * Convert school score (0-10) to 0-100 scale
@@ -25,11 +24,7 @@ export function schoolsScore100(score10: number): number {
  * Compute rent vs BAH score (0-100)
  * Piecewise linear bands based on how much rent exceeds BAH
  */
-export function rentVsBahScore100(
-  medianRentCents: number | null,
-  bahMonthlyCents: number
-): number {
-  
+export function rentVsBahScore100(medianRentCents: number | null, bahMonthlyCents: number): number {
   if (!medianRentCents || !bahMonthlyCents) {
     return 0;
   }
@@ -44,18 +39,18 @@ export function rentVsBahScore100(
 
   // Piecewise linear scoring:
   // 0-10% over: 100-80 points
-  if (overageRatio <= 0.10) {
-    return Math.round(100 - (overageRatio * 200));
+  if (overageRatio <= 0.1) {
+    return Math.round(100 - overageRatio * 200);
   }
 
   // 10-20% over: 80-50 points
-  if (overageRatio <= 0.20) {
-    return Math.round(80 - ((overageRatio - 0.10) * 300));
+  if (overageRatio <= 0.2) {
+    return Math.round(80 - (overageRatio - 0.1) * 300);
   }
 
   // 20-40% over: 50-30 points
-  if (overageRatio <= 0.40) {
-    return Math.round(50 - ((overageRatio - 0.20) * 100));
+  if (overageRatio <= 0.4) {
+    return Math.round(50 - (overageRatio - 0.2) * 100);
   }
 
   // >40% over: 15 points (very poor fit)
@@ -66,13 +61,9 @@ export function rentVsBahScore100(
  * Compute commute score (0-100)
  * Piecewise linear based on commute minutes
  */
-export function commuteScore100(
-  amMinutes: number | null,
-  pmMinutes: number | null
-): number {
-  
+export function commuteScore100(amMinutes: number | null, pmMinutes: number | null): number {
   const avgMinutes = averageDefined([amMinutes, pmMinutes]);
-  
+
   if (avgMinutes === null) {
     return 0;
   }
@@ -95,7 +86,7 @@ export function commuteScore100(
     [60, 35],
     [75, 20],
     [90, 5],
-    [120, 0]
+    [120, 0],
   ];
 
   // Find which segment we're in
@@ -118,13 +109,6 @@ export function commuteScore100(
  */
 export function weatherScore100(index10: number): number {
   return Math.round(Math.max(0, Math.min(10, index10)) * 10);
-}
-
-/**
- * Convert safety score (0-10) to 0-100 scale
- */
-export function safetyScore100(score10: number): number {
-  return Math.round(Math.max(0, Math.min(10, score10)) * 10);
 }
 
 /**
@@ -160,20 +144,18 @@ export function familyFitScore100(
     amMin: number | null;
     pmMin: number | null;
     weather10: number;
-    safety10: number;
     amenities10: number;
     demographics10: number;
     military10: number;
   },
-  weights = { 
-    schools: 0.30, 
-    rentVsBah: 0.25, 
-    commute: 0.15, 
-    weather: 0.10,
-    safety: 0.10,
-    amenities: 0.05,
-    demographics: 0.03,
-    military: 0.02
+  weights = {
+    schools: 0.35,
+    rentVsBah: 0.25,
+    commute: 0.15,
+    weather: 0.1,
+    amenities: 0.08,
+    demographics: 0.05,
+    military: 0.02,
   }
 ): {
   total: number;
@@ -182,31 +164,27 @@ export function familyFitScore100(
     rentVsBah: number;
     commute: number;
     weather: number;
-    safety: number;
     amenities: number;
     demographics: number;
     military: number;
   };
 } {
-  
   const schoolScore = schoolsScore100(subscores.schools10);
   const rentScore = rentVsBahScore100(subscores.medianRentCents, subscores.bahMonthlyCents);
   const commuteScore = commuteScore100(subscores.amMin, subscores.pmMin);
   const weatherScore = weatherScore100(subscores.weather10);
-  const safetyScore = safetyScore100(subscores.safety10);
   const amenitiesScore = amenitiesScore100(subscores.amenities10);
   const demographicsScore = demographicsScore100(subscores.demographics10);
   const militaryScore = militaryScore100(subscores.military10);
 
   const total = Math.round(
     schoolScore * weights.schools +
-    rentScore * weights.rentVsBah +
-    commuteScore * weights.commute +
-    weatherScore * weights.weather +
-    safetyScore * weights.safety +
-    amenitiesScore * weights.amenities +
-    demographicsScore * weights.demographics +
-    militaryScore * weights.military
+      rentScore * weights.rentVsBah +
+      commuteScore * weights.commute +
+      weatherScore * weights.weather +
+      amenitiesScore * weights.amenities +
+      demographicsScore * weights.demographics +
+      militaryScore * weights.military
   );
 
   return {
@@ -216,11 +194,10 @@ export function familyFitScore100(
       rentVsBah: rentScore,
       commute: commuteScore,
       weather: weatherScore,
-      safety: safetyScore,
       amenities: amenitiesScore,
       demographics: demographicsScore,
-      military: militaryScore
-    }
+      military: militaryScore,
+    },
   };
 }
 
@@ -228,8 +205,8 @@ export function familyFitScore100(
  * Helper: Average of defined values
  */
 function averageDefined(arr: Array<number | null | undefined>): number | null {
-  const defined = arr.filter((x): x is number => typeof x === 'number');
-  
+  const defined = arr.filter((x): x is number => typeof x === "number");
+
   if (defined.length === 0) {
     return null;
   }
@@ -241,38 +218,37 @@ function averageDefined(arr: Array<number | null | undefined>): number | null {
  * Get score breakdown explanation
  */
 export function getScoreBreakdown(score: number): {
-  tier: 'excellent' | 'good' | 'fair' | 'poor';
+  tier: "excellent" | "good" | "fair" | "poor";
   color: string;
   message: string;
 } {
   if (score >= 80) {
     return {
-      tier: 'excellent',
-      color: 'green',
-      message: 'Excellent fit - highly recommended'
+      tier: "excellent",
+      color: "green",
+      message: "Excellent fit - highly recommended",
     };
   }
 
   if (score >= 60) {
     return {
-      tier: 'good',
-      color: 'blue',
-      message: 'Good fit - solid option'
+      tier: "good",
+      color: "blue",
+      message: "Good fit - solid option",
     };
   }
 
   if (score >= 40) {
     return {
-      tier: 'fair',
-      color: 'yellow',
-      message: 'Fair fit - consider trade-offs'
+      tier: "fair",
+      color: "yellow",
+      message: "Fair fit - consider trade-offs",
     };
   }
 
   return {
-    tier: 'poor',
-    color: 'red',
-    message: 'Poor fit - explore other areas'
+    tier: "poor",
+    color: "red",
+    message: "Poor fit - explore other areas",
   };
 }
-
