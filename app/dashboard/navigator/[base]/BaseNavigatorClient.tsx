@@ -694,32 +694,32 @@ export default function BaseNavigatorClient({
 
                           {(activeTabs[result.zip] || "overview") === "schools" && (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="text-lg font-semibold text-gray-900">
-                                    School Information
-                                  </h4>
-                                  <div className="text-sm text-gray-600">
-                                    Rating: {Math.round(result.subscores.schools)}/100
-                                  </div>
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-lg font-semibold text-gray-900">
+                                  School Information
+                                </h4>
+                                <div className="text-sm text-gray-600">
+                                  Rating: {Math.round(result.subscores.schools)}/100
                                 </div>
+                              </div>
 
-                                {/* School Data Provenance */}
-                                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                                  <div className="flex items-center gap-2 text-sm text-blue-800">
-                                    <Icon name="Info" className="h-4 w-4" />
-                                    <span>
-                                      <strong>Data Source:</strong> SchoolDigger • Updated daily • 
-                                      <a 
-                                        href="https://www.schooldigger.com" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="ml-1 underline hover:text-blue-900"
-                                      >
-                                        View on SchoolDigger
-                                      </a>
-                                    </span>
-                                  </div>
+                              {/* School Data Provenance */}
+                              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                <div className="flex items-center gap-2 text-sm text-blue-800">
+                                  <Icon name="Info" className="h-4 w-4" />
+                                  <span>
+                                    <strong>Data Source:</strong> SchoolDigger • Updated daily •
+                                    <a
+                                      href="https://www.schooldigger.com"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-1 underline hover:text-blue-900"
+                                    >
+                                      View on SchoolDigger
+                                    </a>
+                                  </span>
                                 </div>
+                              </div>
 
                               {result.payload.top_schools &&
                               result.payload.top_schools.length > 0 ? (
@@ -727,32 +727,38 @@ export default function BaseNavigatorClient({
                                   {result.payload.top_schools.map((school, i) => {
                                     // Convert 0-10 rating to 1-5 stars for display
                                     const starRating = Math.round((school.rating / 10) * 5);
-                                    const stars = "★".repeat(starRating) + "☆".repeat(5 - starRating);
-                                    
+                                    const stars =
+                                      "★".repeat(starRating) + "☆".repeat(5 - starRating);
+
                                     return (
                                       <div
                                         key={i}
-                                        className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition-shadow"
+                                        className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
                                       >
                                         <div className="flex items-start justify-between">
                                           <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-2">
+                                            <div className="mb-2 flex items-center gap-2">
                                               <h5 className="font-semibold text-gray-900">
                                                 {school.name}
                                               </h5>
-                                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                school.type === 'private' 
-                                                  ? 'bg-purple-100 text-purple-800' 
-                                                  : 'bg-blue-100 text-blue-800'
-                                              }`}>
-                                                {school.type === 'private' ? 'Private' : 'Public'}
+                                              <span
+                                                className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                                  school.type === "private"
+                                                    ? "bg-purple-100 text-purple-800"
+                                                    : "bg-blue-100 text-blue-800"
+                                                }`}
+                                              >
+                                                {school.type === "private" ? "Private" : "Public"}
                                               </span>
                                             </div>
-                                            <p className="text-sm text-gray-600 mb-2">
-                                              {school.grades} • {school.distance_mi.toFixed(1)} mi away
+                                            <p className="mb-2 text-sm text-gray-600">
+                                              {school.grades} • {school.distance_mi.toFixed(1)} mi
+                                              away
                                             </p>
                                             <div className="flex items-center gap-2">
-                                              <span className="text-yellow-500 text-lg">{stars}</span>
+                                              <span className="text-lg text-yellow-500">
+                                                {stars}
+                                              </span>
                                               <span className="text-sm text-gray-600">
                                                 ({starRating}/5 stars)
                                               </span>
@@ -764,7 +770,7 @@ export default function BaseNavigatorClient({
                                             </div>
                                             <div className="text-sm text-gray-500">out of 10</div>
                                             <a
-                                              href={`https://www.schooldigger.com/go/${school.name.replace(/\s+/g, '-').toLowerCase()}`}
+                                              href={`https://www.schooldigger.com/go/${school.name.replace(/\s+/g, "-").toLowerCase()}`}
                                               target="_blank"
                                               rel="noopener noreferrer"
                                               className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline"
@@ -797,28 +803,29 @@ export default function BaseNavigatorClient({
                           )}
 
                           {(activeTabs[result.zip] || "overview") === "housing" && (
-                              <div className="space-y-6">
-                                <h4 className="text-lg font-semibold text-gray-900">
-                                  Housing Market
-                                </h4>
+                            <div className="space-y-6">
+                              <h4 className="text-lg font-semibold text-gray-900">
+                                Housing Market
+                              </h4>
 
-                                {/* Housing Data Provenance */}
-                                <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-                                  <div className="flex items-center gap-2 text-sm text-green-800">
-                                    <Icon name="Info" className="h-4 w-4" />
-                                    <span>
-                                      <strong>Data Source:</strong> Zillow via RapidAPI • Cached 30 days • 
-                                      <a 
-                                        href="https://www.zillow.com" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="ml-1 underline hover:text-green-900"
-                                      >
-                                        View on Zillow
-                                      </a>
-                                    </span>
-                                  </div>
+                              {/* Housing Data Provenance */}
+                              <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                                <div className="flex items-center gap-2 text-sm text-green-800">
+                                  <Icon name="Info" className="h-4 w-4" />
+                                  <span>
+                                    <strong>Data Source:</strong> Zillow via RapidAPI • Cached 30
+                                    days •
+                                    <a
+                                      href="https://www.zillow.com"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-1 underline hover:text-green-900"
+                                    >
+                                      View on Zillow
+                                    </a>
+                                  </span>
                                 </div>
+                              </div>
 
                               {/* Rent vs BAH Comparison */}
                               <div className="rounded-lg border border-gray-200 bg-white p-6">
@@ -930,10 +937,11 @@ export default function BaseNavigatorClient({
                                 <div className="flex items-center gap-2 text-sm text-purple-800">
                                   <Icon name="Info" className="h-4 w-4" />
                                   <span>
-                                    <strong>Data Source:</strong> Google Distance Matrix • Updated daily • 
-                                    <a 
+                                    <strong>Data Source:</strong> Google Distance Matrix • Updated
+                                    daily •
+                                    <a
                                       href={`https://maps.google.com/maps?q=${base.latitude},${base.longitude}`}
-                                      target="_blank" 
+                                      target="_blank"
                                       rel="noopener noreferrer"
                                       className="ml-1 underline hover:text-purple-900"
                                     >
@@ -993,10 +1001,11 @@ export default function BaseNavigatorClient({
                                 <div className="flex items-center gap-2 text-sm text-orange-800">
                                   <Icon name="Info" className="h-4 w-4" />
                                   <span>
-                                    <strong>Data Sources:</strong> Google Weather, Google Places • Updated daily • 
-                                    <a 
+                                    <strong>Data Sources:</strong> Google Weather, Google Places •
+                                    Updated daily •
+                                    <a
                                       href="https://developers.google.com/maps/documentation/places/web-service"
-                                      target="_blank" 
+                                      target="_blank"
                                       rel="noopener noreferrer"
                                       className="ml-1 underline hover:text-orange-900"
                                     >
