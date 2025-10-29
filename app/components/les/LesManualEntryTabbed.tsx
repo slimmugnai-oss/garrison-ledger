@@ -699,7 +699,7 @@ export default function LesManualEntryTabbed({
 
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
               <h4 className="mb-4 text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Icon name="Minus" className="h-5 w-5 text-red-600" />
+                <Icon name="TrendingDown" className="h-5 w-5 text-red-600" />
                 Standard Deductions
               </h4>
               <div className="space-y-6">
