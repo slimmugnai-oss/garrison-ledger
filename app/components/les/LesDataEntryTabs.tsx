@@ -98,9 +98,19 @@ export default function LesDataEntryTabs({
   };
 
   // Get items by section within the active tab
-  const getItemsBySection = (tabId: TabId) => {
+  const getItemsBySection = (tabId: TabId): Record<LesSection, DynamicLineItem[]> => {
     const tab = TABS.find(t => t.id === tabId);
-    if (!tab) return {};
+    if (!tab) {
+      return {
+        ALLOWANCE: [],
+        TAX: [],
+        DEDUCTION: [],
+        ALLOTMENT: [],
+        DEBT: [],
+        ADJUSTMENT: [],
+        OTHER: [],
+      };
+    }
 
     const items = getTabItems(tabId);
     const grouped: Record<LesSection, DynamicLineItem[]> = {
@@ -121,7 +131,7 @@ export default function LesDataEntryTabs({
   };
 
   // Calculate totals by section
-  const getSectionTotals = (tabId: TabId) => {
+  const getSectionTotals = (tabId: TabId): Record<LesSection, number> => {
     const items = getTabItems(tabId);
     const totals: Record<LesSection, number> = {
       ALLOWANCE: 0,
