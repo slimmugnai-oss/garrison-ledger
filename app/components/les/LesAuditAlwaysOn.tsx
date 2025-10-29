@@ -71,6 +71,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
   // UI State
   const [saving, setSaving] = useState(false);
+  const [lastSavedAuditId, setLastSavedAuditId] = useState<string | null>(null);
   const [loadingExpected, setLoadingExpected] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
@@ -371,9 +372,26 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       }
 
       const data = await response.json();
-      alert("Audit saved successfully!");
+
+      // Store the saved audit ID for print functionality
+      setLastSavedAuditId(data.auditId || data.uploadId);
+
+      // Show success toast and auto-expand history section
+      const successMessage = `Audit saved for ${month ? new Date(2000, month - 1).toLocaleString("default", { month: "long" }) : ""} ${year}!`;
+
       // Refresh history to show newly saved audit
-      fetchHistory();
+      await fetchHistory();
+
+      // Auto-expand and scroll to history section
+      setHistoryExpanded(true);
+      setTimeout(() => {
+        const historyEl = document.getElementById("saved-audits-section");
+        if (historyEl) {
+          historyEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        // Show brief success message
+        alert(successMessage);
+      }, 300);
     } catch (error) {
       logger.error("[Save] Error:", error);
       alert("Failed to save audit. Please try again.");
@@ -381,6 +399,58 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       setSaving(false);
     }
   }, [result, month, year, inputs, fetchHistory]);
+
+  // ============================================================================
+  // PRINT HANDLER - Opens dedicated summary page like PCS Copilot
+  // ============================================================================
+
+  const handlePrint = useCallback(async () => {
+    if (!result) return;
+
+    // If audit is already saved, open summary page directly
+    if (lastSavedAuditId) {
+      window.open(`/dashboard/paycheck-audit/${lastSavedAuditId}/summary`, "_blank");
+      return;
+    }
+
+    // Otherwise, save first, then open summary page
+    setSaving(true);
+    try {
+      const response = await fetch("/api/les/audit/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          month,
+          year,
+          profile: inputs.profile,
+          expected: {},
+          actual: inputs.actual,
+          flags: result.flags,
+          summary: result.totals,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save audit");
+      }
+
+      const data = await response.json();
+      const auditId = data.auditId || data.uploadId;
+
+      if (auditId) {
+        setLastSavedAuditId(auditId);
+        // Open summary page in new tab
+        window.open(`/dashboard/paycheck-audit/${auditId}/summary`, "_blank");
+      } else {
+        throw new Error("No audit ID returned");
+      }
+    } catch (error) {
+      logger.error("[Print] Error:", error);
+      alert("Failed to open print summary. Please save audit first.");
+    } finally {
+      setSaving(false);
+    }
+  }, [result, lastSavedAuditId, month, year, inputs]);
 
   // ============================================================================
   // LOAD PREVIOUS AUDIT (Reuse)
@@ -1049,14 +1119,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                   )}
 
                   {/* Action Bar */}
-                  <div className="flex items-center gap-4 border-t pt-6">
+                  <div className="flex flex-wrap items-center gap-3 border-t pt-6">
+                    {/* Save Button (Primary) */}
                     {tier === "premium" || tier === "staff" ? (
                       <button
                         onClick={handleSavePDF}
                         disabled={saving}
                         className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
                       >
-                        <Icon name="Download" className="h-5 w-5" />
+                        <Icon name="CheckCircle" className="h-5 w-5" />
                         {saving ? "Saving..." : "Save Audit"}
                       </button>
                     ) : (
@@ -1064,8 +1135,36 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                         onClick={() => (window.location.href = "/dashboard/upgrade")}
                         className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
                       >
-                        <Icon name="Zap" className="h-5 w-5" />
-                        Upgrade to Save Audit
+                        <Icon name="Crown" className="h-5 w-5" />
+                        Upgrade to Save Audits
+                      </button>
+                    )}
+
+                    {/* Print Button */}
+                    <button
+                      onClick={handlePrint}
+                      className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 print:hidden"
+                    >
+                      <Icon name="Printer" className="h-5 w-5" />
+                      Print / Save PDF
+                    </button>
+
+                    {/* View Saved Audits Button */}
+                    {tier === "premium" && history.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setHistoryExpanded(!historyExpanded);
+                          setTimeout(() => {
+                            const historyEl = document.getElementById("saved-audits-section");
+                            if (historyEl) {
+                              historyEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                            }
+                          }, 100);
+                        }}
+                        className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                      >
+                        <Icon name="Archive" className="h-5 w-5" />
+                        View Saved ({history.length})
                       </button>
                     )}
                   </div>
@@ -1098,64 +1197,88 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               )}
 
               {/* Audit History (Premium Only) */}
-              {tier === "premium" && history.length > 0 && (
-                <div className="mt-8 border-t pt-6">
-                  <button
-                    onClick={() => setHistoryExpanded(!historyExpanded)}
-                    className="flex w-full items-center justify-between text-left"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900">Saved Audits</h3>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="info">{history.length}</Badge>
-                      <Icon
-                        name={historyExpanded ? "ChevronUp" : "ChevronDown"}
-                        className="h-5 w-5 text-gray-400"
-                      />
-                    </div>
-                  </button>
-
-                  {historyExpanded && (
-                    <div className="mt-4 space-y-2">
-                      {history.map((audit) => (
-                        <div
-                          key={audit.id}
-                          className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+              {tier === "premium" && (
+                <div id="saved-audits-section" className="mt-8 border-t pt-6">
+                  {history.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+                      <Icon name="File" className="mx-auto mb-3 h-12 w-12 text-gray-400" />
+                      <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                        No Saved Audits Yet
+                      </h3>
+                      <p className="mb-4 text-sm text-gray-600">
+                        Save your first audit to track pay discrepancies over time.
+                      </p>
+                      {result && (
+                        <button
+                          onClick={handleSavePDF}
+                          disabled={saving}
+                          className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50"
                         >
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900">
-                              {new Date(2000, audit.month - 1).toLocaleString("default", {
-                                month: "long",
-                              })}{" "}
-                              {audit.year}
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              {new Date(audit.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleLoadAudit(audit.id)}
-                              className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
-                            >
-                              <Icon name="Upload" className="h-4 w-4" />
-                              Load
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteAudit(
-                                  audit.id,
-                                  `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`
-                                )
-                              }
-                              className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
-                            >
-                              <Icon name="Trash2" className="h-4 w-4" />
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                          <Icon name="Download" className="h-4 w-4" />
+                          {saving ? "Saving..." : "Save Current Audit"}
+                        </button>
+                      )}
                     </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setHistoryExpanded(!historyExpanded)}
+                        className="flex w-full items-center justify-between text-left"
+                      >
+                        <h3 className="text-lg font-semibold text-gray-900">Saved Audits</h3>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="info">{history.length}</Badge>
+                          <Icon
+                            name={historyExpanded ? "ChevronUp" : "ChevronDown"}
+                            className="h-5 w-5 text-gray-400"
+                          />
+                        </div>
+                      </button>
+
+                      {historyExpanded && (
+                        <div className="mt-4 space-y-2">
+                          {history.map((audit) => (
+                            <div
+                              key={audit.id}
+                              className="flex items-center justify-between rounded-lg border bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+                            >
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">
+                                  {new Date(2000, audit.month - 1).toLocaleString("default", {
+                                    month: "long",
+                                  })}{" "}
+                                  {audit.year}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {new Date(audit.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleLoadAudit(audit.id)}
+                                  className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
+                                >
+                                  <Icon name="Upload" className="h-4 w-4" />
+                                  Load
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteAudit(
+                                      audit.id,
+                                      `${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}`
+                                    )
+                                  }
+                                  className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
+                                >
+                                  <Icon name="Trash2" className="h-4 w-4" />
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}

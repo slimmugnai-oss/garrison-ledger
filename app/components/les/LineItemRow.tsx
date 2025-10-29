@@ -102,15 +102,11 @@ export default function LineItemRow({ item, onEdit, onDelete }: Props) {
             {formatAmount(item.amount_cents)}
           </span>
 
-          {/* Action buttons (always visible on mobile, show on hover desktop) */}
-          <div
-            className={`flex items-center gap-1 transition-opacity sm:opacity-0 ${
-              showActions ? "opacity-100" : ""
-            }`}
-          >
+          {/* Action buttons - ALWAYS visible on mobile, show on hover desktop */}
+          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
             <button
               onClick={() => onEdit(item)}
-              className="touch-manipulation rounded-md p-1.5 text-gray-600 hover:bg-white hover:text-blue-600"
+              className="touch-manipulation rounded-md bg-white p-2 text-gray-600 shadow-sm hover:bg-blue-50 hover:text-blue-600"
               aria-label={`Edit ${item.description}`}
               style={{ minWidth: "44px", minHeight: "44px" }}
             >
@@ -118,10 +114,10 @@ export default function LineItemRow({ item, onEdit, onDelete }: Props) {
             </button>
             <button
               onClick={handleDelete}
-              className={`touch-manipulation rounded-md p-1.5 transition-colors ${
+              className={`touch-manipulation rounded-md p-2 shadow-sm transition-colors ${
                 confirmDelete
                   ? "bg-red-100 text-red-700 hover:bg-red-200"
-                  : "text-gray-600 hover:bg-white hover:text-red-600"
+                  : "bg-white text-gray-600 hover:bg-red-50 hover:text-red-600"
               }`}
               aria-label={`Delete ${item.description}`}
               style={{ minWidth: "44px", minHeight: "44px" }}
