@@ -1200,10 +1200,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               )}
 
-              {/* Audit History (Premium Only) */}
+              {/* Audit History - Always visible for premium/staff */}
               {(tier === "premium" || tier === "staff") && (
                 <div id="saved-audits-section" className="mt-8 border-t pt-6">
-                  {history.length === 0 ? (
+                  {loadingHistory ? (
+                    <div className="text-center py-8">
+                      <Icon name="RefreshCw" className="mx-auto h-8 w-8 animate-spin text-gray-400" />
+                      <p className="mt-2 text-sm text-gray-600">Loading saved audits...</p>
+                    </div>
+                  ) : history.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
                       <Icon name="File" className="mx-auto mb-3 h-12 w-12 text-gray-400" />
                       <h3 className="mb-2 text-lg font-semibold text-gray-900">
