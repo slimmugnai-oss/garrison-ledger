@@ -68,13 +68,15 @@ export default function BaseNavigatorClient({
   // Tab state for each neighborhood card
   const [activeTabs, setActiveTabs] = useState<Record<string, string>>({});
 
-  // Debug logging
-  console.log("[DEBUG] BaseNavigatorClient rendered", {
-    base: base.code,
-    loading,
-    resultsCount: results.length,
-    error
-  });
+  // Debug logging - moved to useEffect to avoid hydration issues
+  useEffect(() => {
+    console.log("[DEBUG] BaseNavigatorClient rendered", {
+      base: base.code,
+      loading,
+      resultsCount: results.length,
+      error,
+    });
+  }, [base.code, loading, results.length, error]);
 
   /**
    * Compute rankings
