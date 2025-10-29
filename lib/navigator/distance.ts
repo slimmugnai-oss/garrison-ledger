@@ -19,20 +19,16 @@ export async function commuteMinutesFromZipToGate(args: {
   const cached = await getCache<{ am: number | null; pm: number | null }>(cacheKey);
   if (cached) return cached;
 
-  const apiKey = process.env.GOOGLE_API_KEY;
-
-  if (!apiKey) {
-    return { am: null, pm: null };
-  }
-
   try {
     // For now, provide default commute times since Google Distance Matrix API requires proper setup
     // This is a temporary solution until Google APIs are properly configured
+    // Always use region-specific defaults
     const result = getDefaultCommuteTimes(args.zip);
     await setCache(cacheKey, result, 24 * 3600); // 24h cache
     return result;
   } catch {
-    return { am: null, pm: null };
+    // Fallback to region-specific defaults even on error
+    return getDefaultCommuteTimes(args.zip);
   }
 }
 
@@ -120,7 +116,7 @@ function nextWeekdayTime(hour: number, minute: number): number {
  */
 function getDefaultCommuteTimes(zip: string): { am: number | null; pm: number | null } {
   const zipNum = parseInt(zip);
-  
+
   // Default commute times by region (based on typical traffic patterns)
   if (zipNum >= 98000 && zipNum <= 99999) {
     // Washington - moderate traffic
@@ -144,7 +140,7 @@ function getDefaultCommuteTimes(zip: string): { am: number | null; pm: number | 
     // Mountain West - light traffic
     return { am: 12, pm: 15 };
   }
-  
+
   // Default fallback
   return { am: 20, pm: 25 };
 }

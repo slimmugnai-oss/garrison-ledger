@@ -19,6 +19,7 @@ import bases from "@/lib/data/bases-seed.json";
 import { logger } from "@/lib/logger";
 import { fetchAmenitiesData } from "@/lib/navigator/amenities";
 import { commuteMinutesFromZipToGate } from "@/lib/navigator/distance";
+import { fetchDemographicsData } from "@/lib/navigator/demographics";
 import { fetchMedianRent, fetchSampleListings } from "@/lib/navigator/housing";
 import { fetchMilitaryAmenitiesData } from "@/lib/navigator/military";
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from "@/lib/navigator/schools";
@@ -90,34 +91,26 @@ export async function POST(request: NextRequest) {
 
     for (const zip of base.candidateZips) {
       // Fetch data in parallel
-      const [
-        schoolsData,
-        medianRent,
-        sampleListings,
-        commute,
-        weather,
-        amenitiesData,
-        militaryData,
-      ] = await Promise.all([
-        fetchSchoolsByZip(zip),
-        fetchMedianRent(zip, bedrooms),
-        fetchSampleListings(zip, bedrooms),
-        commuteMinutesFromZipToGate({ zip, gate: base.gate }),
-        weatherComfortIndex(zip),
-        fetchAmenitiesData(zip),
-        fetchMilitaryAmenitiesData(zip),
-      ]);
-
-      // Use default demographics data (no API)
-      const demographicsData = {
-        demographics_score: 6,
-        population: 25000,
-        median_age: 35,
-        median_income: 75000,
-        diversity_index: 0.6,
-        family_households: 65,
-        note: "Demographics data not available",
-      };
+      let schoolsData, medianRent, sampleListings, commute, weather, amenitiesData, militaryData, demographicsData;
+      
+      try {
+        const results = await Promise.all([
+          fetchSchoolsByZip(zip).catch(err => { logger.warn(`Schools fetch failed for ${zip}`, { error: err }); return []; }),
+          fetchMedianRent(zip, bedrooms).catch(err => { logger.warn(`Housing fetch failed for ${zip}`, { error: err }); return null; }),
+          fetchSampleListings(zip, bedrooms).catch(err => { logger.warn(`Listings fetch failed for ${zip}`, { error: err }); return []; }),
+          commuteMinutesFromZipToGate({ zip, gate: base.gate }).catch(err => { logger.warn(`Commute fetch failed for ${zip}`, { error: err }); return { am: null, pm: null }; }),
+          weatherComfortIndex(zip).catch(err => { logger.warn(`Weather fetch failed for ${zip}`, { error: err }); return { index10: 7, note: "Weather data unavailable" }; }),
+          fetchAmenitiesData(zip).catch(err => { logger.warn(`Amenities fetch failed for ${zip}`, { error: err }); return { amenities_score: 6, grocery_stores: 0, restaurants: 0, gyms: 0, hospitals: 0, shopping_centers: 0, note: "Amenities data unavailable" }; }),
+          fetchMilitaryAmenitiesData(zip).catch(err => { logger.warn(`Military fetch failed for ${zip}`, { error: err }); return { military_score: 6, commissary_distance_mi: 20, exchange_distance_mi: 20, va_facility_distance_mi: 25, military_housing_distance_mi: 30, note: "Military facilities data unavailable" }; }),
+          fetchDemographicsData(zip).catch(err => { logger.warn(`Demographics fetch failed for ${zip}`, { error: err }); return { demographics_score: 6, population: 25000, median_age: 35, median_income: 75000, diversity_index: 0.6, family_households: 65, note: "Demographics data unavailable" }; }),
+        ]);
+        
+        [schoolsData, medianRent, sampleListings, commute, weather, amenitiesData, militaryData, demographicsData] = results;
+      } catch (error) {
+        logger.error(`Failed to fetch data for ZIP ${zip}`, error);
+        // Continue with next ZIP
+        continue;
+      }
 
       // Compute school score
       const { score10: schoolScore10, top: topSchools } = computeChildWeightedSchoolScore(

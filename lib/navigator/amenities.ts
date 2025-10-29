@@ -29,27 +29,19 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     return cached;
   }
 
-  const apiKey = process.env.GOOGLE_API_KEY;
-
-  if (!apiKey) {
-    return getDefaultAmenitiesData();
-  }
+  // Always use region-specific defaults for now
+  // API key check removed since we're using fallbacks regardless
 
   try {
-    // Step 1: Get lat/lon for ZIP code
-    const { lat, lon } = await geocodeZip(zip);
-
-    if (!lat || !lon) {
-      return getDefaultAmenitiesData();
-    }
-
-    // Step 2: For now, provide default amenities data since Google Places API requires proper setup
+    // Step 1: For now, provide default amenities data since Google Places API requires proper setup
     // This is a temporary solution until Google APIs are properly configured
+    // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultAmenitiesForZip(zip);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
   } catch {
-    return getDefaultAmenitiesData();
+    // Fallback to region-specific defaults even on error
+    return getDefaultAmenitiesForZip(zip);
   }
 }
 

@@ -43,50 +43,16 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     return cached;
   }
 
-  const apiKey = process.env.GOOGLE_API_KEY;
-
-  if (!apiKey) {
-    return { index10: 7, note: "Weather data unavailable" };
-  }
-
   try {
-    // Step 1: Get lat/lon for ZIP code (we need this for Google Weather API)
-    const { lat, lon } = await geocodeZipForWeather(zip);
-
-    if (!lat || !lon) {
-      return { index10: 7, note: "Weather data unavailable" };
-    }
-
-    // Step 2: For now, use OpenWeatherMap as fallback since Google Weather API requires proper setup
+    // For now, use default weather data since Google Weather API requires proper setup
     // This is a temporary solution until Google APIs are properly configured
-    const openWeatherApiKey = process.env.OPENWEATHER_API_KEY;
-    
-    if (openWeatherApiKey) {
-      // Use OpenWeatherMap as fallback
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=imperial`,
-        {
-          next: { revalidate: 86400 }, // 24h cache
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const result = analyzeOpenWeatherData(data);
-        await setCache(cacheKey, result, 24 * 3600);
-        return result;
-      }
-    }
-
-    // Fallback: Return default weather data based on ZIP code region
+    // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultWeatherForZip(zip);
     await setCache(cacheKey, result, 24 * 3600);
     return result;
   } catch {
-    return {
-      index10: 7,
-      note: "Weather data unavailable",
-    };
+    // Fallback to region-specific defaults even on error
+    return getDefaultWeatherForZip(zip);
   }
 }
 

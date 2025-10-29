@@ -28,27 +28,19 @@ export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryA
     return cached;
   }
 
-  const apiKey = process.env.GOOGLE_API_KEY;
-
-  if (!apiKey) {
-    return getDefaultMilitaryData();
-  }
+  // Always use region-specific defaults for now
+  // API key check removed since we're using fallbacks regardless
 
   try {
-    // Step 1: Get lat/lon for ZIP code
-    const { lat, lon } = await geocodeZip(zip);
-
-    if (!lat || !lon) {
-      return getDefaultMilitaryData();
-    }
-
-    // Step 2: For now, provide default military amenities data since Google Places API requires proper setup
+    // For now, provide default military amenities data since Google Places API requires proper setup
     // This is a temporary solution until Google APIs are properly configured
+    // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultMilitaryForZip(zip);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
   } catch {
-    return getDefaultMilitaryData();
+    // Fallback to region-specific defaults even on error
+    return getDefaultMilitaryForZip(zip);
   }
 }
 
