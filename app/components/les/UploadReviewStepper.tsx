@@ -13,6 +13,7 @@ import { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import type { DynamicLineItem } from "@/app/types/les";
 import { generateLineItemId } from "@/lib/utils/line-item-ids";
+import AddLineItemModal from "./AddLineItemModal";
 
 interface Props {
   parsedItems: DynamicLineItem[];
@@ -26,6 +27,8 @@ export default function UploadReviewStepper({ parsedItems, onComplete, onBack }:
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [items, setItems] = useState<DynamicLineItem[]>(parsedItems);
   const [editedItems, setEditedItems] = useState<Set<string>>(new Set());
+  const [editingItem, setEditingItem] = useState<DynamicLineItem | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleNext = () => {
     if (currentStep < 3) {
@@ -43,9 +46,24 @@ export default function UploadReviewStepper({ parsedItems, onComplete, onBack }:
     }
   };
 
-  const handleEdit = (item: DynamicLineItem, updatedItem: DynamicLineItem) => {
-    setItems((prev) => prev.map((i) => (i.id === item.id ? updatedItem : i)));
-    setEditedItems((prev) => new Set(prev).add(item.id));
+  const handleEditClick = (item: DynamicLineItem) => {
+    setEditingItem(item);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (itemData: Omit<DynamicLineItem, "id">) => {
+    if (!editingItem) return;
+
+    const updatedItem: DynamicLineItem = {
+      ...itemData,
+      id: editingItem.id,
+      dbId: editingItem.dbId,
+    };
+
+    setItems((prev) => prev.map((i) => (i.id === editingItem.id ? updatedItem : i)));
+    setEditedItems((prev) => new Set(prev).add(editingItem.id));
+    setIsEditModalOpen(false);
+    setEditingItem(null);
   };
 
   const handleDelete = (id: string) => {
@@ -134,7 +152,7 @@ export default function UploadReviewStepper({ parsedItems, onComplete, onBack }:
         {currentStep === 1 && (
           <ParsedItemsReviewStep
             items={items}
-            onEdit={handleEdit}
+            onEdit={handleEditClick}
             onDelete={handleDelete}
             editedItems={editedItems}
           />
@@ -163,6 +181,20 @@ export default function UploadReviewStepper({ parsedItems, onComplete, onBack }:
           <Icon name="ArrowRight" className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Edit Modal */}
+      {isEditModalOpen && editingItem && (
+        <AddLineItemModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditingItem(null);
+          }}
+          onSave={handleSaveEdit}
+          editingItem={editingItem}
+          existingCodes={[]}
+        />
+      )}
     </div>
   );
 }
@@ -175,7 +207,7 @@ function ParsedItemsReviewStep({
   editedItems,
 }: {
   items: DynamicLineItem[];
-  onEdit: (item: DynamicLineItem, updatedItem: DynamicLineItem) => void;
+  onEdit: (item: DynamicLineItem) => void;
   onDelete: (id: string) => void;
   editedItems: Set<string>;
 }) {
@@ -217,28 +249,7 @@ function ParsedItemsReviewStep({
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => {
-                    // Inline editing: prompt for new amount
-                    const currentDollars = (item.amount_cents / 100).toFixed(2);
-                    const newAmount = prompt(
-                      `Enter new amount for ${item.description}:`,
-                      currentDollars
-                    );
-                    if (newAmount !== null && newAmount.trim()) {
-                      const amountNum = parseFloat(newAmount);
-                      if (
-                        isNaN(amountNum) ||
-                        !isFinite(amountNum) ||
-                        amountNum < 0 ||
-                        amountNum > 999999
-                      ) {
-                        alert("Invalid amount. Please enter a number between $0 and $999,999.");
-                      } else {
-                        const amountCents = Math.round(amountNum * 100);
-                        onEdit(item, { ...item, amount_cents: amountCents });
-                      }
-                    }
-                  }}
+                  onClick={() => handleEditClick(item)}
                   className="rounded-md p-2 text-gray-600 hover:bg-white"
                   aria-label={`Edit ${item.description}`}
                   type="button"
