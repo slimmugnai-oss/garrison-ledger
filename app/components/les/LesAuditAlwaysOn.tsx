@@ -295,10 +295,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
       if (response.ok) {
         const data = await response.json();
-        logger.info("[LesAuditAlwaysOn] Fetched history:", data.audits?.length || 0, "audits");
+        logger.info("[LesAuditAlwaysOn] Fetched history:", { count: data.audits?.length || 0 });
         setHistory(data.audits || []);
       } else {
-        logger.error("[LesAuditAlwaysOn] Failed to fetch history:", response.status);
+        logger.error("[LesAuditAlwaysOn] Failed to fetch history:", { status: response.status });
       }
     } catch (error) {
       logger.error("Failed to fetch history:", error);
@@ -1204,8 +1204,11 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               {(tier === "premium" || tier === "staff") && (
                 <div id="saved-audits-section" className="mt-8 border-t pt-6">
                   {loadingHistory ? (
-                    <div className="text-center py-8">
-                      <Icon name="RefreshCw" className="mx-auto h-8 w-8 animate-spin text-gray-400" />
+                    <div className="py-8 text-center">
+                      <Icon
+                        name="RefreshCw"
+                        className="mx-auto h-8 w-8 animate-spin text-gray-400"
+                      />
                       <p className="mt-2 text-sm text-gray-600">Loading saved audits...</p>
                     </div>
                   ) : history.length === 0 ? (
