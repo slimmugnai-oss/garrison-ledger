@@ -862,47 +862,47 @@ export default function PCSUnifiedWizard({
               </p>
             </div>
 
-            {/* PCS Orders Date */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                PCS Orders Date
-                <span className="ml-1 text-red-500">*</span>
-              </label>
-              <Input
-                type="text"
-                value={formData.pcs_orders_date || ""}
-                onChange={(value) => updateFormData({ pcs_orders_date: value })}
-                className="w-full"
-              />
-            </div>
+             {/* PCS Orders Date */}
+             <div>
+               <label className="mb-2 block text-sm font-medium text-slate-700">
+                 PCS Orders Date
+                 <span className="ml-1 text-red-500">*</span>
+               </label>
+               <input
+                 type="date"
+                 value={formData.pcs_orders_date || ""}
+                 onChange={(e) => updateFormData({ pcs_orders_date: e.target.value })}
+                 className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+               />
+             </div>
 
-            {/* Travel Dates */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Departure Date
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  value={formData.departure_date || ""}
-                  onChange={(value) => updateFormData({ departure_date: value })}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Arrival Date
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  value={formData.arrival_date || ""}
-                  onChange={(value) => updateFormData({ arrival_date: value })}
-                  className="w-full"
-                />
-              </div>
-            </div>
+             {/* Travel Dates */}
+             <div className="grid gap-4 sm:grid-cols-2">
+               <div>
+                 <label className="mb-2 block text-sm font-medium text-slate-700">
+                   Departure Date
+                   <span className="ml-1 text-red-500">*</span>
+                 </label>
+                 <input
+                   type="date"
+                   value={formData.departure_date || ""}
+                   onChange={(e) => updateFormData({ departure_date: e.target.value })}
+                   className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                 />
+               </div>
+               <div>
+                 <label className="mb-2 block text-sm font-medium text-slate-700">
+                   Arrival Date
+                   <span className="ml-1 text-red-500">*</span>
+                 </label>
+                 <input
+                   type="date"
+                   value={formData.arrival_date || ""}
+                   onChange={(e) => updateFormData({ arrival_date: e.target.value })}
+                   className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                 />
+               </div>
+             </div>
 
             {/* Bases */}
             <div className="grid gap-4 sm:grid-cols-2">
@@ -942,18 +942,18 @@ export default function PCSUnifiedWizard({
                   </PCSTermTooltip>
                   <span className="ml-1 text-red-500">*</span>
                 </label>
-                  <select
-                    value={formData.rank_at_pcs || ""}
-                    onChange={(e) => updateFormData({ rank_at_pcs: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="">Select pay grade</option>
-                    {ALL_PAY_GRADES.map((grade) => (
-                      <option key={grade.code} value={grade.code}>
-                        {grade.code}
-                      </option>
-                    ))}
-                  </select>
+                <select
+                  value={formData.rank_at_pcs || ""}
+                  onChange={(e) => updateFormData({ rank_at_pcs: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Select pay grade</option>
+                  {ALL_PAY_GRADES.map((grade) => (
+                    <option key={grade.code} value={grade.code}>
+                      {grade.code}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">

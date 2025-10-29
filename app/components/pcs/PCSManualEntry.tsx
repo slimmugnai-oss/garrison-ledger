@@ -455,7 +455,7 @@ export default function PCSManualEntry({
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, pcs_orders_date: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -472,7 +472,7 @@ export default function PCSManualEntry({
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, departure_date: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -492,7 +492,7 @@ export default function PCSManualEntry({
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, arrival_date: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                   <div>
