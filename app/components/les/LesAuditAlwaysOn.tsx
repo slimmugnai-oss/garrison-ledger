@@ -918,6 +918,133 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               )}
 
+              {/* Federal and State Tax - Always Visible */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
+                  <Icon name="Landmark" className="h-5 w-5 text-red-600" />
+                  Federal & State Tax
+                </h3>
+                <p className="mb-4 text-sm text-gray-600">
+                  Enter the exact amounts from your LES statement. These are critical for accurate audit calculations.
+                </p>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="federal-tax" className="mb-1 block text-sm font-medium text-gray-700">
+                      Federal Income Tax Withheld
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span className="text-gray-500 sm:text-sm">$</span>
+                      </div>
+                      <input
+                        id="federal-tax"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="999999"
+                        value={(() => {
+                          const fedItem = lineItems.find(item => item.line_code === 'TAX_FED');
+                          return fedItem ? (fedItem.amount_cents / 100).toFixed(2) : '';
+                        })()}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            // Remove the item if empty
+                            setLineItems(prev => prev.filter(item => item.line_code !== 'TAX_FED'));
+                          } else {
+                            // Add or update the item
+                            const amountCents = Math.round(parseFloat(value) * 100);
+                            setLineItems(prev => {
+                              const existing = prev.find(item => item.line_code === 'TAX_FED');
+                              if (existing) {
+                                return prev.map(item => 
+                                  item.line_code === 'TAX_FED' 
+                                    ? { ...item, amount_cents: amountCents }
+                                    : item
+                                );
+                              } else {
+                                return [...prev, {
+                                  id: generateLineItemId(),
+                                  line_code: 'TAX_FED',
+                                  description: 'Federal Income Tax Withheld',
+                                  amount_cents: amountCents,
+                                  section: 'TAX' as const,
+                                  isCustom: true,
+                                  isParsed: false,
+                                  severity: 'info' as const
+                                }];
+                              }
+                            });
+                          }
+                        }}
+                        placeholder="0.00"
+                        className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Found on LES as "FED TAX" or "FITW"
+                    </p>
+                  </div>
+                  <div>
+                    <label htmlFor="state-tax" className="mb-1 block text-sm font-medium text-gray-700">
+                      State Income Tax Withheld
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span className="text-gray-500 sm:text-sm">$</span>
+                      </div>
+                      <input
+                        id="state-tax"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="999999"
+                        value={(() => {
+                          const stateItem = lineItems.find(item => item.line_code === 'TAX_STATE');
+                          return stateItem ? (stateItem.amount_cents / 100).toFixed(2) : '';
+                        })()}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') {
+                            // Remove the item if empty
+                            setLineItems(prev => prev.filter(item => item.line_code !== 'TAX_STATE'));
+                          } else {
+                            // Add or update the item
+                            const amountCents = Math.round(parseFloat(value) * 100);
+                            setLineItems(prev => {
+                              const existing = prev.find(item => item.line_code === 'TAX_STATE');
+                              if (existing) {
+                                return prev.map(item => 
+                                  item.line_code === 'TAX_STATE' 
+                                    ? { ...item, amount_cents: amountCents }
+                                    : item
+                                );
+                              } else {
+                                return [...prev, {
+                                  id: generateLineItemId(),
+                                  line_code: 'TAX_STATE',
+                                  description: 'State Income Tax Withheld',
+                                  amount_cents: amountCents,
+                                  section: 'TAX' as const,
+                                  isCustom: true,
+                                  isParsed: false,
+                                  severity: 'info' as const
+                                }];
+                              }
+                            });
+                          }
+                        }}
+                        placeholder="0.00"
+                        className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Found on LES as "STATE TAX" or "SITW" (0 for no-tax states)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Enhanced Line Item Manager */}
               <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 <h3 className="mb-4 text-lg font-bold text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-3">
@@ -1051,9 +1178,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                                 ${totalOwed.toFixed(2)}
                               </span>
                             </div>
-                            <button className="w-full rounded-lg bg-red-600 py-3 font-semibold text-white hover:bg-red-700">
-                              Generate Finance Office Email
-                            </button>
                           </div>
                         </div>
                       ) : null;
@@ -1125,12 +1249,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                                               <p className="text-sm leading-relaxed text-gray-700">
                                                 <strong>What to do:</strong> {flag.suggestion}
                                               </p>
-                                              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
-                                                <button className="w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
-                                                  <Icon name="Copy" className="h-4 w-4" />
-                                                  Copy Email Template
-                                                </button>
-                                                {flag.ref_url && (
+                                              {flag.ref_url && (
+                                                <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                                                   <a
                                                     href={flag.ref_url}
                                                     target="_blank"
@@ -1140,8 +1260,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                                                     Learn More
                                                     <Icon name="ExternalLink" className="h-4 w-4" />
                                                   </a>
-                                                )}
-                                              </div>
+                                                </div>
+                                              )}
                                             </div>
                                           </div>
                                         </div>
@@ -1178,12 +1298,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                                               <p className="text-sm leading-relaxed text-gray-700">
                                                 <strong>What to do:</strong> {flag.suggestion}
                                               </p>
-                                              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
-                                                <button className="w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
-                                                  <Icon name="Copy" className="h-4 w-4" />
-                                                  Copy Email Template
-                                                </button>
-                                                {flag.ref_url && (
+                                              {flag.ref_url && (
+                                                <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                                                   <a
                                                     href={flag.ref_url}
                                                     target="_blank"
@@ -1193,8 +1309,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                                                     Learn More
                                                     <Icon name="ExternalLink" className="h-4 w-4" />
                                                   </a>
-                                                )}
-                                              </div>
+                                                </div>
+                                              )}
                                             </div>
                                           </div>
                                         </div>
@@ -1259,27 +1375,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     )}
                   </div>
 
-                  {/* Export Options */}
-                  <div className="rounded-xl border bg-white p-6">
-                    <h3 className="mb-4 font-semibold text-gray-900 flex items-center gap-2">
-                      <Icon name="Download" className="h-5 w-5 text-blue-600" />
-                      Export Options
-                    </h3>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 transition-colors">
-                        <Icon name="File" className="h-4 w-4" />
-                        Download PDF Report
-                      </button>
-                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-700 transition-colors">
-                        <Icon name="Send" className="h-4 w-4" />
-                        Email to Finance Office
-                      </button>
-                      <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-600 px-4 py-3 font-semibold text-white hover:bg-gray-700 transition-colors">
-                        <Icon name="Save" className="h-4 w-4" />
-                        Save to History
-                      </button>
-                    </div>
-                  </div>
 
                   {/* Waterfall (Premium Only) */}
                   {tier !== "premium" && tier !== "staff" ? (
