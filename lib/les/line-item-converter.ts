@@ -19,7 +19,8 @@ export function convertLineItemsToAuditInputs(
     yos: number;
     mhaOrZip: string;
     withDependents: boolean;
-  } | null
+  } | null,
+  netPayCents?: number
 ): AuditInputs {
   // Group items by section
   const allowances = lineItems
@@ -70,13 +71,17 @@ export function convertLineItemsToAuditInputs(
       amount_cents: item.amount_cents,
     }));
 
-  // Find net pay (if any line is NET_PAY or we can calculate it)
-  let netPay: number | undefined;
-  const netPayItem = lineItems.find(
-    (item) => item.line_code === "NET_PAY" || item.description.toLowerCase().includes("net pay")
-  );
-  if (netPayItem) {
-    netPay = netPayItem.amount_cents;
+  // Find net pay from line items OR use provided netPayCents parameter
+  let netPay: number | undefined = netPayCents;
+  
+  // If not provided as parameter, check line items
+  if (!netPay) {
+    const netPayItem = lineItems.find(
+      (item) => item.line_code === "NET_PAY" || item.description.toLowerCase().includes("net pay")
+    );
+    if (netPayItem) {
+      netPay = netPayItem.amount_cents;
+    }
   }
 
   return {

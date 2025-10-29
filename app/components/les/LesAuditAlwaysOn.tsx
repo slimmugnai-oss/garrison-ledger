@@ -79,6 +79,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
   const [uploadId, setUploadId] = useState<string | null>(null);
+  const [netPay, setNetPay] = useState<string>(""); // Net pay from LES (user-entered)
 
   // ============================================================================
   // AUTO-POPULATE EXPECTED VALUES (Auto-fill line items from profile)
@@ -323,9 +324,10 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               mhaOrZip,
               withDependents,
             }
-          : null
+          : null,
+        netPay ? Math.round(parseFloat(netPay) * 100) : undefined
       ),
-    [lineItems, month, year, paygrade, yos, mhaOrZip, withDependents]
+    [lineItems, month, year, paygrade, yos, mhaOrZip, withDependents, netPay]
   );
 
   // ============================================================================
@@ -739,6 +741,35 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Net Pay Input */}
+              <div className="rounded-lg border bg-white p-4">
+                <h3 className="mb-3 font-semibold text-gray-900">Net Pay from LES</h3>
+                <p className="mb-3 text-sm text-gray-600">
+                  Enter the actual net pay shown on your LES statement. This is used to verify the
+                  audit calculation matches your paycheck.
+                </p>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span className="text-gray-500 sm:text-sm">$</span>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="999999"
+                    value={netPay}
+                    onChange={(e) => setNetPay(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                {netPay && (
+                  <p className="mt-2 text-xs text-gray-500">
+                    This will be compared against computed net pay to catch discrepancies.
+                  </p>
+                )}
               </div>
 
               {/* Upload Review Wizard (show if items from upload) */}
