@@ -593,7 +593,7 @@ export default function PCSManualEntry({
                       <option value="">Select pay grade</option>
                       {ALL_PAY_GRADES.map((grade) => (
                         <option key={grade.code} value={grade.code}>
-                          {grade.code} - {grade.title}
+                          {grade.code}
                         </option>
                       ))}
                     </select>

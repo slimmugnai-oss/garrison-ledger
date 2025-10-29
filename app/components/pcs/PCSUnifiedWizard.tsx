@@ -942,18 +942,18 @@ export default function PCSUnifiedWizard({
                   </PCSTermTooltip>
                   <span className="ml-1 text-red-500">*</span>
                 </label>
-                <select
-                  value={formData.rank_at_pcs || ""}
-                  onChange={(e) => updateFormData({ rank_at_pcs: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="">Select pay grade</option>
-                  {ALL_PAY_GRADES.map((grade) => (
-                    <option key={grade.code} value={grade.code}>
-                      {grade.code} - {grade.title}
-                    </option>
-                  ))}
-                </select>
+                  <select
+                    value={formData.rank_at_pcs || ""}
+                    onChange={(e) => updateFormData({ rank_at_pcs: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">Select pay grade</option>
+                    {ALL_PAY_GRADES.map((grade) => (
+                      <option key={grade.code} value={grade.code}>
+                        {grade.code}
+                      </option>
+                    ))}
+                  </select>
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
