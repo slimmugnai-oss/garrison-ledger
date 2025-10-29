@@ -79,6 +79,16 @@ const SECTION_COLORS: Record<LesSection, string> = {
   OTHER: "border-gray-200 bg-gray-50",
 };
 
+const SECTION_ICONS: Record<LesSection, string> = {
+  ALLOWANCE: "DollarSign",
+  TAX: "Landmark",
+  DEDUCTION: "Calculator",
+  ALLOTMENT: "Banknote",
+  DEBT: "AlertCircle",
+  ADJUSTMENT: "RefreshCw",
+  OTHER: "File",
+};
+
 export default function LesDataEntryTabs({
   lineItems,
   onLineItemsChange,
