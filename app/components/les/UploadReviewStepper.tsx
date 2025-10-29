@@ -249,7 +249,7 @@ function ParsedItemsReviewStep({
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleEditClick(item)}
+                  onClick={() => onEdit(item)}
                   className="rounded-md p-2 text-gray-600 hover:bg-white"
                   aria-label={`Edit ${item.description}`}
                   type="button"
