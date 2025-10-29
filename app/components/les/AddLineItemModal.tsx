@@ -19,6 +19,7 @@ interface Props {
   onSave: (item: Omit<DynamicLineItem, "id">) => void;
   editingItem?: DynamicLineItem | null;
   existingCodes?: string[]; // For duplicate detection
+  defaultSection?: LesSection | null; // Pre-select section when adding
 }
 
 export default function AddLineItemModal({
@@ -27,6 +28,7 @@ export default function AddLineItemModal({
   onSave,
   editingItem = null,
   existingCodes = [],
+  defaultSection = null,
 }: Props) {
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
@@ -52,10 +54,10 @@ export default function AddLineItemModal({
       setCode("");
       setDescription("");
       setAmount("");
-      setSection("ALLOWANCE");
+      setSection(defaultSection || "ALLOWANCE");
       setErrors({});
     }
-  }, [editingItem, isOpen]);
+  }, [editingItem, isOpen, defaultSection]);
 
   // Auto-fill description and section when code is selected
   const handleCodeSelect = (option: LineCodeOption) => {
@@ -180,7 +182,7 @@ export default function AddLineItemModal({
 
       {/* Modal */}
       <div
-        className="relative z-10 w-full max-w-md rounded-lg bg-white shadow-xl"
+        className="relative z-10 w-full max-w-md rounded-xl bg-white shadow-xl"
         onKeyDown={(e) => {
           // Trap focus inside modal
           if (e.key === "Tab") {
@@ -204,13 +206,13 @@ export default function AddLineItemModal({
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <h2 id="modal-title" className="text-xl font-semibold text-slate-800">
             {editingItem ? "Edit Line Item" : "Add Line Item"}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
             aria-label="Close modal"
             type="button"
           >
@@ -219,12 +221,12 @@ export default function AddLineItemModal({
         </div>
 
         {/* Body */}
-        <div id="modal-description" className="space-y-4 px-6 py-4">
+        <div id="modal-description" className="space-y-6 px-6 py-6">
           {/* Section Selector */}
           <div>
             <label
               htmlFor="section-select"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-2 block text-sm font-semibold text-slate-800"
             >
               Section
             </label>
@@ -232,7 +234,7 @@ export default function AddLineItemModal({
               id="section-select"
               value={section}
               onChange={(e) => setSection(e.target.value as LesSection)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               aria-required="true"
             >
               <option value="ALLOWANCE">Allowance (Income)</option>
@@ -243,12 +245,12 @@ export default function AddLineItemModal({
               <option value="ADJUSTMENT">Adjustment</option>
               <option value="OTHER">Other</option>
             </select>
-            <p className="mt-1 text-xs text-gray-500">This will appear in the {section} section</p>
+            <p className="mt-2 text-xs text-slate-600">This will appear in the {section} section</p>
           </div>
 
           {/* Line Code */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Line Code <span className="text-red-500">*</span>
             </label>
             <LineItemAutocomplete
@@ -257,9 +259,9 @@ export default function AddLineItemModal({
               onSelect={handleCodeSelect}
               placeholder="e.g., FLIGHT_PAY, SDAP, BAH..."
             />
-            {errors.code && <p className="mt-1 text-sm text-red-600">{errors.code}</p>}
+            {errors.code && <p className="mt-2 text-sm text-red-600">{errors.code}</p>}
             {code && !LINE_CODES[code.toUpperCase()] && !errors.code && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
+              <p className="mt-2 flex items-center gap-1 text-xs text-amber-600">
                 <Icon name="AlertTriangle" className="h-3 w-3" />
                 Unknown code - will be saved as custom line item
               </p>
@@ -268,7 +270,7 @@ export default function AddLineItemModal({
 
           {/* Description */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Description <span className="text-red-500">*</span>
             </label>
             <input
@@ -277,23 +279,23 @@ export default function AddLineItemModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g., Aviation Career Incentive Pay"
-              className={`w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
+              className={`w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
                 errors.description ? "border-red-500" : ""
               }`}
             />
             {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.description}</p>
             )}
           </div>
 
           {/* Amount */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Amount (USD) <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span className="text-gray-500 sm:text-sm">$</span>
+                <span className="text-slate-500 sm:text-sm">$</span>
               </div>
               <input
                 type="number"
@@ -303,20 +305,20 @@ export default function AddLineItemModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className={`w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
+                className={`w-full rounded-lg border-slate-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
                   errors.amount ? "border-red-500" : ""
                 }`}
               />
             </div>
-            {errors.amount && <p className="mt-1 text-sm text-red-600">{errors.amount}</p>}
+            {errors.amount && <p className="mt-2 text-sm text-red-600">{errors.amount}</p>}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
           <button
             onClick={onClose}
-            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
             type="button"
             aria-label="Cancel and close modal"
           >
@@ -324,7 +326,7 @@ export default function AddLineItemModal({
           </button>
           <button
             onClick={handleSave}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50 transition-colors"
             type="button"
             aria-label={editingItem ? "Save changes to line item" : "Add new line item"}
             disabled={!code || !description || !amount || Object.keys(errors).length > 0}
