@@ -26,6 +26,7 @@
     "import-bah": "ts-node scripts/import-bah-csv.ts",
     "import-pay-tables": "ts-node scripts/import-pay-tables.ts",
     "regenerate-bases": "tsx scripts/regenerate-military-bases.ts",
+    "regenerate-base-mha-map": "tsx scripts/regenerate-base-mha-map.ts",
     "content:lint": "ts-node lib/content/lint.ts",
     "content:autofix": "ts-node lib/content/autofix.ts",
     "content:depublish": "ts-node lib/content/depublish.ts",

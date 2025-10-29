@@ -401,7 +401,7 @@ VALUES (...);
 - `LES_DATA_SOURCES_AUDIT_REPORT.md` - Latest audit (2025-10-22)
 
 **Generation Scripts:**
-- `npm run regenerate-base-mha-map` - Regenerate base-mha-map.json from bah_rates
+- `npm run regenerate-base-mha-map` - Regenerate base-mha-map.json from bah_rates ✅ ADDED
 - `npm run regenerate-bases` - Regenerate military-bases.json from bah_rates + geocoding
 
 **Last Major Audit:** 2025-10-29  
