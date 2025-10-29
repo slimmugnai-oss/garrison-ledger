@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
+import BaseAutocomplete from "@/app/components/ui/BaseAutocomplete";
 import Button from "@/app/components/ui/Button";
 import Card, { CardContent, CardHeader, CardTitle } from "@/app/components/ui/Card";
 import Icon from "@/app/components/ui/Icon";
@@ -18,7 +19,6 @@ import {
 
 import type { PPMWithholdingResult } from "@/lib/pcs/ppm-withholding-calculator";
 import DD1351Explainer from "./DD1351Explainer";
-import PCSDocumentUploader from "./PCSDocumentUploader";
 import PCSProvenanceDisplay from "./PCSProvenanceDisplay";
 import PCSROIDisplay from "./PCSROIDisplay";
 import PCSTermTooltip from "./PCSTermTooltip";
@@ -27,6 +27,31 @@ import PPMModeSelector from "./PPMModeSelector";
 import PPMWithholdingDisplay from "./PPMWithholdingDisplay";
 
 import militaryBasesData from "@/lib/data/military-bases.json";
+import militaryRanksData from "@/lib/data/military-ranks.json";
+
+// Flatten all pay grades from military-ranks.json into a single array
+const ALL_PAY_GRADES = Object.values(militaryRanksData as Record<string, any>)
+  .flatMap((branch) => [
+    ...(branch.enlisted || []),
+    ...(branch.warrant || []),
+    ...(branch.officer || []),
+  ])
+  .filter(
+    (rank, index, self) =>
+      // Remove duplicates based on code
+      index === self.findIndex((r) => r.code === rank.code)
+  )
+  .sort((a, b) => {
+    // Sort by pay grade: E-1, E-2, ..., W-1, W-2, ..., O-1, O-2, ...
+    const getOrder = (code: string) => {
+      const match = code.match(/([EWO])-?(\d+)/);
+      if (!match) return 999;
+      const [, type, num] = match;
+      const typeOrder = type === "E" ? 0 : type === "W" ? 100 : 200;
+      return typeOrder + parseInt(num);
+    };
+    return getOrder(a.code) - getOrder(b.code);
+  });
 
 interface PCSUnifiedWizardProps {
   userProfile: {
@@ -39,7 +64,7 @@ interface PCSUnifiedWizardProps {
   editClaimId?: string; // Optional: if provided, loads claim for editing
 }
 
-type WizardStep = "start" | "basic-info" | "lodging" | "review" | "complete";
+type WizardStep = "basic-info" | "lodging" | "review" | "complete";
 
 interface WizardFormData extends Partial<FormData> {
   claim_name?: string;
@@ -69,18 +94,16 @@ interface WizardFormData extends Partial<FormData> {
 /**
  * Unified PCS Wizard - Single responsive flow for all devices
  *
- * Combines best of manual entry + mobile wizard
- * OCR-first approach with manual entry fallback
+ * Manual entry with step-by-step guidance
  * Plain English throughout with tooltips for jargon
- * Real-time ROI calculation at top
+ * Real-time ROI calculation and auto-calculations
  */
 export default function PCSUnifiedWizard({
   userProfile,
   onComplete,
   editClaimId,
 }: PCSUnifiedWizardProps) {
-  const [currentStep, setCurrentStep] = useState<WizardStep>("start");
-  const [entryMethod, setEntryMethod] = useState<"ocr" | "manual" | null>(null);
+  const [currentStep, setCurrentStep] = useState<WizardStep>("basic-info");
   const [formData, setFormData] = useState<WizardFormData>({
     rank_at_pcs: userProfile.rank,
     branch: userProfile.branch,
@@ -101,7 +124,6 @@ export default function PCSUnifiedWizard({
   const [calculations, setCalculations] = useState<CalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [ocrData, setOcrData] = useState<any>(null);
   const [isLoadingDistance, setIsLoadingDistance] = useState(false);
   const [isLoadingRates, setIsLoadingRates] = useState(false);
   const [editingClaimId, setEditingClaimId] = useState<string | null>(null);
@@ -111,9 +133,6 @@ export default function PCSUnifiedWizard({
   useEffect(() => {
     // Don't auto-save if editing existing claim
     if (editingClaimId) return;
-
-    // Don't auto-save on start screen
-    if (currentStep === "start") return;
 
     const timeoutId = setTimeout(() => {
       try {
@@ -317,7 +336,6 @@ export default function PCSUnifiedWizard({
 
         // Jump to review step immediately
         setCurrentStep("review");
-        setEntryMethod("manual"); // Set entry method so UI renders properly
 
         toast.success("Claim loaded. Reviewing calculations...");
 
@@ -670,42 +688,6 @@ export default function PCSUnifiedWizard({
     return base?.state || "TX"; // Default to TX (no state tax)
   }, []);
 
-  const handleOCRComplete = (extractedData: any) => {
-    console.log("🔍 OCR Complete - Raw extracted data:", extractedData);
-
-    setOcrData(extractedData);
-
-    // Build update object
-    const updates = {
-      claim_name: extractedData.member_name ? `PCS - ${extractedData.member_name}` : undefined,
-      pcs_orders_date: extractedData.orders_date || extractedData.ordersDate,
-      departure_date: extractedData.departure_date || extractedData.departureDate,
-      arrival_date: extractedData.report_date || extractedData.reportDate,
-      origin_base: extractedData.origin_base || extractedData.originBase,
-      destination_base: extractedData.destination_base || extractedData.destinationBase,
-      rank_at_pcs: extractedData.rank,
-      dependents_count: extractedData.dependents_authorized || 0,
-      branch: extractedData.branch || formData.branch,
-    };
-
-    console.log("🔍 OCR Complete - Update object:", updates);
-    console.log("🔍 OCR Complete - Current formData before update:", formData);
-
-    // Populate form with OCR data
-    updateFormData(updates);
-
-    console.log("🔍 OCR Complete - FormData updated, advancing to basic-info step");
-
-    // Show success message with details
-    const fieldsExtracted = Object.values(updates).filter((v) => v !== undefined).length;
-    toast.success(
-      `PCS orders data extracted! ${fieldsExtracted} fields populated. Review and continue.`
-    );
-
-    // Move to basic info step
-    setCurrentStep("basic-info");
-  };
-
   const handleSaveClaim = async () => {
     setIsSaving(true);
     try {
@@ -796,7 +778,7 @@ export default function PCSUnifiedWizard({
   };
 
   const getStepProgress = () => {
-    const steps: WizardStep[] = ["start", "basic-info", "lodging", "review", "complete"];
+    const steps: WizardStep[] = ["basic-info", "lodging", "review", "complete"];
     const currentIndex = steps.indexOf(currentStep);
     return ((currentIndex + 1) / steps.length) * 100;
   };
@@ -818,110 +800,12 @@ export default function PCSUnifiedWizard({
 
   // START SCREEN
   // Show loading state while loading claim for editing
-  if (isLoadingEdit || (editingClaimId && !calculations && currentStep === "start")) {
+  if (isLoadingEdit || (editingClaimId && !calculations && currentStep === "basic-info")) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
           <p className="text-slate-600">Loading claim for editing...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If editing and still on start screen, skip it
-  if (currentStep === "start" && editingClaimId) {
-    // Don't render start screen, let the loading state handle it or wait for step change
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-          <p className="text-slate-600">Loading claim data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === "start") {
-    return (
-      <div className="mx-auto max-w-4xl py-12">
-        <div className="mb-8 text-center">
-          <h2 className="mb-4 text-4xl font-bold text-slate-900">How would you like to start?</h2>
-          <p className="text-lg text-slate-600">Choose the method that works best for you</p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* PRIMARY PATH: OCR Upload */}
-          <AnimatedCard className="relative cursor-pointer border-2 border-blue-600 p-8 hover:shadow-xl">
-            <Badge variant="success" className="absolute right-4 top-4">
-              Recommended
-            </Badge>
-            <div className="mb-6 inline-flex rounded-xl bg-blue-50 p-4">
-              <Icon name="Upload" className="h-8 w-8 text-blue-600" />
-            </div>
-            <h3 className="mb-3 text-2xl font-bold text-slate-900">Upload Your PCS Orders</h3>
-            <p className="mb-6 text-slate-600">
-              We'll extract all the details automatically using AI. Fastest way to get started.
-            </p>
-            <ul className="mb-6 space-y-2 text-sm text-slate-600">
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                Automatic data extraction
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                PDF or image accepted
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                Review before submitting
-              </li>
-            </ul>
-            <Button
-              onClick={() => {
-                setEntryMethod("ocr");
-                setCurrentStep("basic-info"); // Will show OCR uploader
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700"
-            >
-              Upload Orders (PDF/Image)
-            </Button>
-          </AnimatedCard>
-
-          {/* SECONDARY PATH: Manual Entry */}
-          <AnimatedCard className="cursor-pointer p-8 hover:shadow-xl">
-            <div className="mb-6 inline-flex rounded-xl bg-gray-50 p-4">
-              <Icon name="Edit" className="h-8 w-8 text-gray-600" />
-            </div>
-            <h3 className="mb-3 text-2xl font-bold text-slate-900">Enter Details Manually</h3>
-            <p className="mb-6 text-slate-600">
-              Type in your information step-by-step. We'll guide you through each field.
-            </p>
-            <ul className="mb-6 space-y-2 text-sm text-slate-600">
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                Step-by-step guidance
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                Real-time validation
-              </li>
-              <li className="flex items-center gap-2">
-                <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                Auto-calculation
-              </li>
-            </ul>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEntryMethod("manual");
-                setCurrentStep("basic-info");
-              }}
-              className="w-full"
-            >
-              Manual Entry
-            </Button>
-          </AnimatedCard>
         </div>
       </div>
     );
@@ -954,241 +838,191 @@ export default function PCSUnifiedWizard({
           </div>
         </div>
 
-        {/* OCR Upload (if OCR method selected) */}
-        {entryMethod === "ocr" && !ocrData && (
-          <Card className="mb-8 border-2 border-blue-600">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Icon name="Upload" className="h-5 w-5 text-blue-600" />
-                Upload Your PCS Orders
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PCSDocumentUploader
-                claimId="temp-wizard"
-                onDocumentProcessed={(doc) => {
-                  if (doc.extractedData) {
-                    handleOCRComplete(doc.extractedData);
-                  }
-                }}
-                maxFiles={1}
-                acceptedTypes={["application/pdf", "image/jpeg", "image/png"]}
-              />
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => setEntryMethod("manual")}
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Or enter details manually instead
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Manual Entry Form */}
-        {(entryMethod === "manual" || ocrData) && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>
-                  {ocrData ? "Review Extracted Information" : "Basic Information"}
-                </CardTitle>
-                {ocrData && (
-                  <Badge variant="success">
-                    <Icon name="CheckCircle" className="mr-1 h-3 w-3" />
-                    Extracted from Orders
-                  </Badge>
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Claim Name */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Claim Name
+                <span className="ml-1 text-red-500">*</span>
+              </label>
+              <Input
+                type="text"
+                placeholder="e.g., Fort Hood to Fort Bragg - Summer 2025"
+                value={formData.claim_name || ""}
+                onChange={(value) => updateFormData({ claim_name: value })}
+                className="w-full"
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                Give this PCS a memorable name for your records
+              </p>
+            </div>
+
+            {/* PCS Orders Date */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                PCS Orders Date
+                <span className="ml-1 text-red-500">*</span>
+              </label>
+              <Input
+                type="text"
+                value={formData.pcs_orders_date || ""}
+                onChange={(value) => updateFormData({ pcs_orders_date: value })}
+                className="w-full"
+              />
+            </div>
+
+            {/* Travel Dates */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Departure Date
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  value={formData.departure_date || ""}
+                  onChange={(value) => updateFormData({ departure_date: value })}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Arrival Date
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  value={formData.arrival_date || ""}
+                  onChange={(value) => updateFormData({ arrival_date: value })}
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            {/* Bases */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Origin Base
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <BaseAutocomplete
+                  value={formData.origin_base || ""}
+                  onChange={(value) => updateFormData({ origin_base: value })}
+                  placeholder="Start typing base name (e.g., Fort Liberty)"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Destination Base
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <BaseAutocomplete
+                  value={formData.destination_base || ""}
+                  onChange={(value) => updateFormData({ destination_base: value })}
+                  placeholder="Start typing base name (e.g., Fort Bragg)"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Pay Grade & Branch */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  <PCSTermTooltip term="Pay Grade at PCS" citation="DFAS Pay Tables">
+                    Your military pay grade at the time of PCS (determines entitlement rates).
+                    Select from standard DoD pay grades.
+                  </PCSTermTooltip>
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.rank_at_pcs || ""}
+                  onChange={(e) => updateFormData({ rank_at_pcs: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Select pay grade</option>
+                  {ALL_PAY_GRADES.map((grade) => (
+                    <option key={grade.code} value={grade.code}>
+                      {grade.code} - {grade.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Branch
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.branch || ""}
+                  onChange={(e) => updateFormData({ branch: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Select branch</option>
+                  <option value="Army">Army</option>
+                  <option value="Navy">Navy</option>
+                  <option value="Air Force">Air Force</option>
+                  <option value="Marines">Marines</option>
+                  <option value="Coast Guard">Coast Guard</option>
+                  <option value="Space Force">Space Force</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Dependents */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Number of Dependents
+                <span className="ml-1 text-red-500">*</span>
+              </label>
+              <Input
+                type="number"
+                value={formData.dependents_count?.toString() || "0"}
+                onChange={(value) => updateFormData({ dependents_count: parseInt(value, 10) || 0 })}
+                className="w-full"
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                Affects your DLA (Dislocation Allowance) amount
+              </p>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-end border-t border-gray-200 pt-6">
+              <Button
+                onClick={() => setCurrentStep("lodging")}
+                disabled={
+                  getFieldCompletionPercentage() < 70 ||
+                  isLoadingDistance ||
+                  !!(
+                    formData.origin_base &&
+                    formData.destination_base &&
+                    formData.malt_distance === 0
+                  )
+                }
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isLoadingDistance ? (
+                  <>
+                    <Icon name="Loader" className="mr-2 h-4 w-4 animate-spin" />
+                    Calculating distance...
+                  </>
+                ) : (
+                  <>
+                    Continue to Lodging
+                    <Icon name="ArrowRight" className="ml-2 h-4 w-4" />
+                  </>
                 )}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Claim Name */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Claim Name
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  placeholder="e.g., Fort Hood to Fort Bragg - Summer 2025"
-                  value={formData.claim_name || ""}
-                  onChange={(value) => updateFormData({ claim_name: value })}
-                  className="w-full"
-                />
-                <p className="mt-1 text-xs text-slate-500">
-                  Give this PCS a memorable name for your records
-                </p>
-              </div>
-
-              {/* PCS Orders Date */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  PCS Orders Date
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  value={formData.pcs_orders_date || ""}
-                  onChange={(value) => updateFormData({ pcs_orders_date: value })}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Travel Dates */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Departure Date
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    value={formData.departure_date || ""}
-                    onChange={(value) => updateFormData({ departure_date: value })}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Arrival Date
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    value={formData.arrival_date || ""}
-                    onChange={(value) => updateFormData({ arrival_date: value })}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-
-              {/* Bases */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Origin Base
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., Fort Hood, TX"
-                    value={formData.origin_base || ""}
-                    onChange={(value) => updateFormData({ origin_base: value })}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Destination Base
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., Fort Bragg, NC"
-                    value={formData.destination_base || ""}
-                    onChange={(value) => updateFormData({ destination_base: value })}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-
-              {/* Rank & Branch */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Rank at PCS
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., E-5, O-3"
-                    value={formData.rank_at_pcs || ""}
-                    onChange={(value) => updateFormData({ rank_at_pcs: value })}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Branch
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.branch || ""}
-                    onChange={(e) => updateFormData({ branch: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="">Select branch</option>
-                    <option value="Army">Army</option>
-                    <option value="Navy">Navy</option>
-                    <option value="Air Force">Air Force</option>
-                    <option value="Marines">Marines</option>
-                    <option value="Coast Guard">Coast Guard</option>
-                    <option value="Space Force">Space Force</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Dependents */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Number of Dependents
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <Input
-                  type="number"
-                  value={formData.dependents_count?.toString() || "0"}
-                  onChange={(value) =>
-                    updateFormData({ dependents_count: parseInt(value, 10) || 0 })
-                  }
-                  className="w-full"
-                />
-                <p className="mt-1 text-xs text-slate-500">
-                  Affects your DLA (Dislocation Allowance) amount
-                </p>
-              </div>
-
-              {/* Navigation */}
-              <div className="flex items-center justify-between border-t border-gray-200 pt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setCurrentStep("start");
-                    setEntryMethod(null);
-                  }}
-                >
-                  <Icon name="ArrowLeft" className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                <Button
-                  onClick={() => setCurrentStep("lodging")}
-                  disabled={
-                    getFieldCompletionPercentage() < 70 ||
-                    isLoadingDistance ||
-                    !!(
-                      formData.origin_base &&
-                      formData.destination_base &&
-                      formData.malt_distance === 0
-                    )
-                  }
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {isLoadingDistance ? (
-                    <>
-                      <Icon name="Loader" className="mr-2 h-4 w-4 animate-spin" />
-                      Calculating distance...
-                    </>
-                  ) : (
-                    <>
-                      Continue to Lodging
-                      <Icon name="ArrowRight" className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -1701,8 +1535,7 @@ export default function PCSUnifiedWizard({
         <div className="flex justify-center gap-4">
           <Button
             onClick={() => {
-              setCurrentStep("start");
-              setEntryMethod(null);
+              setCurrentStep("basic-info");
               setFormData({
                 rank_at_pcs: userProfile.rank,
                 branch: userProfile.branch,

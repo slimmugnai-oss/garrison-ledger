@@ -6,8 +6,29 @@ import PCSDocumentUploader from "@/app/components/pcs/PCSDocumentUploader";
 import PCSProvenanceDisplay from "@/app/components/pcs/PCSProvenanceDisplay";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
+import BaseAutocomplete from "@/app/components/ui/BaseAutocomplete";
 import Icon from "@/app/components/ui/Icon";
 import { logger } from "@/lib/logger";
+import militaryRanksData from "@/lib/data/military-ranks.json";
+
+// Flatten all pay grades from military-ranks.json
+const ALL_PAY_GRADES = Object.values(militaryRanksData as Record<string, any>)
+  .flatMap((branch) => [
+    ...(branch.enlisted || []),
+    ...(branch.warrant || []),
+    ...(branch.officer || []),
+  ])
+  .filter((rank, index, self) => index === self.findIndex((r) => r.code === rank.code))
+  .sort((a, b) => {
+    const getOrder = (code: string) => {
+      const match = code.match(/([EWO])-?(\d+)/);
+      if (!match) return 999;
+      const [, type, num] = match;
+      const typeOrder = type === "E" ? 0 : type === "W" ? 100 : 200;
+      return typeOrder + parseInt(num);
+    };
+    return getOrder(a.code) - getOrder(b.code);
+  });
 
 interface PCSClaimData {
   claimId: string;
@@ -481,15 +502,11 @@ export default function PCSManualEntry({
                     >
                       Origin Base
                     </label>
-                    <input
-                      id="origin_base"
-                      type="text"
+                    <BaseAutocomplete
                       value={formData.origin_base}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, origin_base: e.target.value }))
-                      }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., JBLM"
+                      onChange={(value) => setFormData((prev) => ({ ...prev, origin_base: value }))}
+                      placeholder="Start typing base name (e.g., Fort Liberty)"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -501,15 +518,13 @@ export default function PCSManualEntry({
                   >
                     Destination Base
                   </label>
-                  <input
-                    id="destination_base"
-                    type="text"
+                  <BaseAutocomplete
                     value={formData.destination_base}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, destination_base: e.target.value }))
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, destination_base: value }))
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., Fort Bragg"
+                    placeholder="Start typing base name (e.g., Fort Bragg)"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -565,18 +580,23 @@ export default function PCSManualEntry({
                       htmlFor="rank_at_pcs_"
                       className="mb-2 block text-sm font-medium text-slate-700"
                     >
-                      Rank at PCS
+                      Pay Grade at PCS
                     </label>
-                    <input
+                    <select
                       id="rank_at_pcs"
-                      type="text"
                       value={formData.rank_at_pcs}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, rank_at_pcs: e.target.value }))
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., E-5, O-3"
-                    />
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="">Select pay grade</option>
+                      {ALL_PAY_GRADES.map((grade) => (
+                        <option key={grade.code} value={grade.code}>
+                          {grade.code} - {grade.title}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
