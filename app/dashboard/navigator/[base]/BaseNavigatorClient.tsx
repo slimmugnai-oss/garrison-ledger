@@ -68,6 +68,14 @@ export default function BaseNavigatorClient({
   // Tab state for each neighborhood card
   const [activeTabs, setActiveTabs] = useState<Record<string, string>>({});
 
+  // Debug logging
+  console.log("[DEBUG] BaseNavigatorClient rendered", {
+    base: base.code,
+    loading,
+    resultsCount: results.length,
+    error
+  });
+
   /**
    * Compute rankings
    */
@@ -343,7 +351,10 @@ export default function BaseNavigatorClient({
           </div>
 
           <button
-            onClick={computeRankings}
+            onClick={() => {
+              console.log("[DEBUG] Button clicked - computeRankings");
+              computeRankings();
+            }}
             disabled={loading || bahMonthlyCents === 0}
             className="mt-6 min-h-[48px] w-full rounded-lg bg-blue-600 px-6 py-4 text-base font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
           >
@@ -761,8 +772,8 @@ export default function BaseNavigatorClient({
                                               </span>
                                             </div>
                                             <p className="mb-2 text-sm text-gray-600">
-                                              {school.grades} • {school.distance_mi?.toFixed(1) || '0.0'} mi
-                                              away
+                                              {school.grades} •{" "}
+                                              {school.distance_mi?.toFixed(1) || "0.0"} mi away
                                             </p>
                                             <div className="flex items-center gap-2">
                                               <span className="text-lg text-yellow-500">
@@ -1111,7 +1122,10 @@ export default function BaseNavigatorClient({
                                     )}
                                     {result.payload.military_data.exchange_distance_mi && (
                                       <div className="flex items-center gap-2">
-                                        <Icon name="ShoppingCart" className="h-5 w-5 text-gray-600" />
+                                        <Icon
+                                          name="ShoppingCart"
+                                          className="h-5 w-5 text-gray-600"
+                                        />
                                         <span className="text-sm text-gray-700">
                                           Exchange:{" "}
                                           {result.payload.military_data.exchange_distance_mi.toFixed(
