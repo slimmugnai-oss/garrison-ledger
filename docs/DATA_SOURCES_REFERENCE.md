@@ -360,3 +360,32 @@ VALUES (...);
 - ✅ More accurate (users know their paygrade from LES)
 - ✅ Simpler codebase (removed 193 lines of pattern matching)
 
+### Ask Military Expert AI Integration (2025-10-29)
+
+**System Prompt Updates:** Ask Military Expert AI now properly handles rank/paygrade decoupling.
+
+**Key Rules:**
+1. **Paygrade is authoritative** for all BAH, base pay, and entitlement calculations
+2. **Rank title** is display-only and NEVER used for pay rate calculations
+3. **Data citations** include source name + effective date for all dollar amounts
+4. **Freshness checks** - AI warns if data is older than current year
+5. **Profile validation** - Prompts user to update profile if paygrade is missing
+
+**User Profile Display:**
+```
+- Paygrade: E05 (AUTHORITATIVE - use for all calculations)
+- Rank Title: Staff Sergeant (display only)
+```
+
+**Example Correct Response:**
+> "Based on your profile (paygrade E05 with dependents in El Paso, TX), your BAH for 2025 is $1,773 per month. This rate is effective January 1, 2025, according to the DFAS BAH Calculator."
+
+**Example Incorrect Response (will not happen):**
+> ❌ "Based on your rank as a Staff Sergeant, your BAH is..."
+> ❌ "If you were an E-5..."
+
+**Implementation:**
+- File: `app/api/ask/submit/route.ts`
+- Updated: 2025-10-29
+- See: PAYGRADE RULES section in system prompt
+
