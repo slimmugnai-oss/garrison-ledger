@@ -135,10 +135,11 @@ async function calculateDLA(
   hasDependents: boolean,
   effectiveDate: string
 ): Promise<CalculationResult["dla"]> {
+  // CRITICAL FIX: Convert rank title to paygrade
+  // "Sergeant (SGT)" → "E05" → "E-5" for database lookup
+  let paygrade = rank;
+
   try {
-    // CRITICAL FIX: Convert rank title to paygrade
-    // "Sergeant (SGT)" → "E05" → "E-5" for database lookup
-    let paygrade = rank;
 
     // If rank is a title (contains letters/spaces), convert to paygrade
     if (rank && !rank.match(/^[EWO]-?\d{1,2}$/i)) {
@@ -183,7 +184,7 @@ async function calculateDLA(
   } catch (error) {
     logger.error("DLA calculation failed:", error);
     // Use fallback instead of returning 0
-    const fallbackAmount = getFallbackDLARate(convertedPaygrade, hasDependents);
+    const fallbackAmount = getFallbackDLARate(paygrade, hasDependents);
     return {
       amount: fallbackAmount,
       rateUsed: fallbackAmount,
