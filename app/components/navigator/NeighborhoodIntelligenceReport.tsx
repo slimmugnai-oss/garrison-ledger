@@ -169,9 +169,9 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
         {/* Housing Score */}
         {housingIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-purple-400 hover:shadow-lg" onClick={() => toggleSection("housing")}>
+          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-lg" onClick={() => toggleSection("housing")}>
             <div className="mb-3 flex items-center justify-between">
-              <Icon name="Home" className="h-8 w-8 text-purple-600" />
+              <Icon name="Home" className="h-8 w-8 text-slate-700" />
               <div className="text-right">
                 <div className="text-3xl font-bold text-slate-900">{housingIntel.bah_analysis.properties_at_or_under_bah}</div>
                 <div className="text-xs text-slate-500">at/under BAH</div>
@@ -295,29 +295,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 )}
               </div>
 
-              {/* PCS Flexibility */}
-              <div className="rounded-lg bg-white border-2 border-slate-200 p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Icon name="RefreshCw" className="h-6 w-6 text-blue-600" />
-                    <div>
-                      <div className="font-bold text-slate-900">PCS Flexibility Score</div>
-                      <div className="text-sm text-slate-600">Critical for military families</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-bold text-blue-600">{schoolsIntel.pcs_flexibility.score}</div>
-                    <div className="text-xs text-slate-500">out of 100</div>
-                  </div>
-                </div>
-                <div className="h-3 w-full rounded-full bg-slate-200 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all"
-                    style={{ width: `${schoolsIntel.pcs_flexibility.score}%` }}
-                  />
-                </div>
-                <p className="mt-3 text-sm text-slate-700">{schoolsIntel.pcs_flexibility.flexibility_note}</p>
-              </div>
             </div>
           </IntelligenceSection>
         )}
@@ -472,29 +449,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
               </div>
 
-              {/* Cost Impact */}
-              <div className="rounded-lg bg-white border-2 border-slate-200 p-6">
-                <h4 className="font-bold text-slate-900 mb-4">Utility Cost Impact</h4>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Icon name="Sun" className="h-5 w-5 text-blue-600" />
-                      <span className="font-semibold text-slate-900">AC Costs</span>
-                    </div>
-                    <div className="text-2xl font-bold text-blue-600 mb-1 capitalize">{weatherIntel.ac_cost_impact}</div>
-                    <p className="text-sm text-slate-600">Summer cooling expenses</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Icon name="Home" className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-slate-900">Heating Costs</span>
-                    </div>
-                    <div className="text-2xl font-bold text-orange-600 mb-1 capitalize">{weatherIntel.heating_cost_impact}</div>
-                    <p className="text-sm text-slate-600">Winter heating expenses</p>
-                  </div>
-                </div>
-              </div>
-
               {/* Extreme Weather Risks */}
               {weatherIntel.extreme_weather_risks.length > 0 && (
                 <div className="rounded-lg bg-amber-50 border-2 border-amber-200 p-6">
@@ -538,20 +492,20 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           >
             <div className="space-y-6">
               {/* BAH Optimization - Hero */}
-              <div className="rounded-xl bg-gradient-to-br from-purple-600 to-purple-800 p-6 text-white">
+              <div className="rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 p-6 text-white">
                 <div className="mb-4">
-                  <div className="text-sm font-semibold uppercase tracking-wide text-purple-200 mb-1">BAH Optimization</div>
+                  <div className="text-sm font-semibold uppercase tracking-wide text-slate-300 mb-1">BAH Optimization</div>
                   <div className="text-3xl font-bold">{housingIntel.bah_analysis.properties_at_or_under_bah} Properties At/Under BAH</div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-purple-200 mb-1">Sweet Spot Range</div>
+                    <div className="text-sm text-slate-300 mb-1">Sweet Spot Range</div>
                     <div className="font-bold">
                       ${(housingIntel.bah_analysis.sweet_spot_range.min_cents / 100).toFixed(0)} - ${(housingIntel.bah_analysis.sweet_spot_range.max_cents / 100).toFixed(0)}
                     </div>
                   </div>
                   <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-purple-200 mb-1">Avg Savings</div>
+                    <div className="text-sm text-slate-300 mb-1">Avg Savings</div>
                     <div className="font-bold">
                       {housingIntel.bah_analysis.avg_savings_cents !== null
                         ? housingIntel.bah_analysis.avg_savings_cents >= 0
@@ -561,11 +515,56 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                     </div>
                   </div>
                   <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-purple-200 mb-1">Strategy</div>
+                    <div className="text-sm text-slate-300 mb-1">Strategy</div>
                     <div className="font-bold text-sm">{housingIntel.bah_analysis.recommendation.split(".")[0]}</div>
                   </div>
                 </div>
               </div>
+
+              {/* Sample Listings */}
+              {neighborhood.payload.sample_listings && neighborhood.payload.sample_listings.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-bold text-slate-900 text-lg">Available Properties</h4>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {neighborhood.payload.sample_listings.map((listing, i) => (
+                      <a
+                        key={i}
+                        href={listing.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group rounded-lg border-2 border-slate-200 bg-white overflow-hidden transition-all hover:border-blue-400 hover:shadow-lg"
+                      >
+                        {listing.photo && (
+                          <div className="h-48 w-full bg-gray-200 overflow-hidden">
+                            <img
+                              src={listing.photo}
+                              alt={listing.title}
+                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4">
+                          <div className="text-2xl font-bold text-blue-600 mb-2">
+                            ${(listing.price_cents / 100).toLocaleString()}/mo
+                          </div>
+                          <h5 className="font-semibold text-slate-900 mb-2 line-clamp-2">{listing.title}</h5>
+                          {(listing.bedrooms || listing.bathrooms) && (
+                            <div className="text-sm text-slate-600 mb-3">
+                              {listing.bedrooms && `${listing.bedrooms} bed`}
+                              {listing.bedrooms && listing.bathrooms && " • "}
+                              {listing.bathrooms && `${listing.bathrooms} bath`}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2 text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                            <span>View Listing</span>
+                            <Icon name="ExternalLink" className="h-4 w-4" />
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Market Trends */}
               <div className="grid gap-4 md:grid-cols-3">
@@ -614,7 +613,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                         </div>
                         <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden">
                           <div 
-                            className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"
+                            className="h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
@@ -650,8 +649,8 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               </div>
 
               {/* Bottom Line */}
-              <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
-                <div className="font-semibold text-purple-900 mb-2">Bottom Line</div>
+              <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
+                <div className="font-semibold text-slate-900 mb-2">Bottom Line</div>
                 <p className="text-slate-700 leading-relaxed">{housingIntel.bottom_line}</p>
               </div>
             </div>
@@ -695,13 +694,13 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 p-6">
+                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6">
                   <div className="text-sm text-slate-600 mb-2">Overall Amenities</div>
-                  <div className="text-4xl font-bold text-purple-600 mb-2">{enhanced.overall_score}</div>
+                  <div className="text-4xl font-bold text-slate-700 mb-2">{enhanced.overall_score}</div>
                   <div className="text-xs text-slate-500">out of 100</div>
                   <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"
+                      className="h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
                       style={{ width: `${enhanced.overall_score}%` }}
                     />
                   </div>
@@ -768,7 +767,7 @@ function IntelligenceSection({ icon, title, subtitle, isExpanded, onToggle, colo
     blue: { border: "border-blue-200", bg: "bg-blue-50", text: "text-blue-600", hover: "hover:border-blue-400" },
     green: { border: "border-green-200", bg: "bg-green-50", text: "text-green-600", hover: "hover:border-green-400" },
     amber: { border: "border-amber-200", bg: "bg-amber-50", text: "text-amber-600", hover: "hover:border-amber-400" },
-    purple: { border: "border-purple-200", bg: "bg-purple-50", text: "text-purple-600", hover: "hover:border-purple-400" },
+    purple: { border: "border-slate-200", bg: "bg-slate-50", text: "text-slate-700", hover: "hover:border-slate-400" },
     indigo: { border: "border-indigo-200", bg: "bg-indigo-50", text: "text-indigo-600", hover: "hover:border-indigo-400" },
   };
 
@@ -856,13 +855,25 @@ function renderAmenityCategory(title: string, category: any, iconName: string) {
       {category.top_picks && category.top_picks.length > 0 && (
         <div className="space-y-2">
           {category.top_picks.slice(0, 2).map((place: any, i: number) => (
-            <div key={i} className="text-sm border-t border-slate-100 pt-2">
-              <div className="flex items-start justify-between gap-2">
+            <a
+              key={i}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                place.name + (place.address ? " " + place.address : "")
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-sm border-t border-slate-100 pt-2 transition-colors hover:bg-blue-50 rounded px-2 -mx-2 py-2"
+            >
+              <div className="flex items-start justify-between gap-2 mb-1">
                 <span className="font-semibold text-slate-900 line-clamp-1">{place.name}</span>
                 <span className="flex-shrink-0 text-amber-600 font-bold">{place.rating?.toFixed(1) || "N/A"}</span>
               </div>
-              <div className="text-xs text-slate-500">{place.distance_mi?.toFixed(1)} mi • {place.reviews || 0} reviews</div>
-            </div>
+              <div className="text-xs text-slate-500 mb-1">{place.distance_mi?.toFixed(1)} mi • {place.reviews || 0} reviews</div>
+              <div className="flex items-center gap-1 text-xs font-medium text-blue-600">
+                <span>Open in Google Maps</span>
+                <Icon name="ExternalLink" className="h-3 w-3" />
+              </div>
+            </a>
           ))}
         </div>
       )}

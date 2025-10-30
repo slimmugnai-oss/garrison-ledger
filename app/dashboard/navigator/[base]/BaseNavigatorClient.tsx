@@ -13,11 +13,7 @@ import { useState, useEffect } from "react";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
-import SchoolsIntelligenceSection from "@/app/components/navigator/intelligence-sections/SchoolsIntelligenceSection";
-import CommuteIntelligenceSection from "@/app/components/navigator/intelligence-sections/CommuteIntelligenceSection";
-import WeatherIntelligenceSection from "@/app/components/navigator/intelligence-sections/WeatherIntelligenceSection";
-import HousingIntelligenceSection from "@/app/components/navigator/intelligence-sections/HousingIntelligenceSection";
-import AmenitiesIntelligenceSection from "@/app/components/navigator/intelligence-sections/AmenitiesIntelligenceSection";
+import NeighborhoodIntelligenceReport from "@/app/components/navigator/NeighborhoodIntelligenceReport";
 import type {
   BaseSeed,
   NeighborhoodCard,
@@ -477,38 +473,14 @@ export default function BaseNavigatorClient({
                         <div className="mb-6">
                           <div className="flex gap-1 overflow-x-auto border-b border-gray-200 pb-0">
                             {[
-                              // Intelligence section tabs for top 3
+                              // Single Intelligence Report tab for top 3
                               ...(index < 3 && result.payload.intelligence
                                 ? [
                                     {
-                                      id: "schools",
-                                      label: "Schools",
-                                      shortLabel: "Schools",
-                                      icon: "GraduationCap" as const,
-                                    },
-                                    {
-                                      id: "commute",
-                                      label: "Commute",
-                                      shortLabel: "Commute",
-                                      icon: "Truck" as const,
-                                    },
-                                    {
-                                      id: "weather",
-                                      label: "Weather",
-                                      shortLabel: "Weather",
-                                      icon: "Sun" as const,
-                                    },
-                                    {
-                                      id: "housing",
-                                      label: "Housing",
-                                      shortLabel: "Housing",
-                                      icon: "Home" as const,
-                                    },
-                                    {
-                                      id: "amenities",
-                                      label: "Amenities",
-                                      shortLabel: "Amenities",
-                                      icon: "MapPin" as const,
+                                      id: "intelligence",
+                                      label: "Intelligence Report",
+                                      shortLabel: "Intel",
+                                      icon: "File" as const,
                                     },
                                   ]
                                 : [
@@ -520,7 +492,7 @@ export default function BaseNavigatorClient({
                                     },
                                   ]),
                             ].map((tab) => {
-                              const defaultTab = index < 3 && result.payload.intelligence ? "schools" : "overview";
+                              const defaultTab = index < 3 && result.payload.intelligence ? "intelligence" : "overview";
                               const isActive = (activeTabs[result.zip] || defaultTab) === tab.id;
                               return (
                                 <button
@@ -543,27 +515,16 @@ export default function BaseNavigatorClient({
 
                         {/* Tab Content */}
                         <div className="min-h-[400px]">
-                          {/* Intelligence Section Tabs (Top 3 only) */}
-                          {index < 3 && result.payload.intelligence && (
-                            <>
-                              {(activeTabs[result.zip] || "schools") === "schools" && (
-                                <SchoolsIntelligenceSection neighborhood={result} />
-                              )}
-                              {(activeTabs[result.zip] || "schools") === "commute" && (
-                                <CommuteIntelligenceSection neighborhood={result} />
-                              )}
-                              {(activeTabs[result.zip] || "schools") === "weather" && (
-                                <WeatherIntelligenceSection neighborhood={result} />
-                              )}
-                              {(activeTabs[result.zip] || "schools") === "housing" && (
-                                <HousingIntelligenceSection neighborhood={result} />
-                              )}
-                              {(activeTabs[result.zip] || "schools") === "amenities" && (
-                                <AmenitiesIntelligenceSection neighborhood={result} />
-                              )}
-                            </>
+                          {/* Intelligence Report (Top 3 only) */}
+                          {index < 3 && result.payload.intelligence && (activeTabs[result.zip] || "intelligence") === "intelligence" && (
+                            <NeighborhoodIntelligenceReport
+                              neighborhood={result}
+                              rank={index + 1}
+                              baseName={base.name}
+                            />
                           )}
 
+                          {/* Overview (for results #4-5 or if no intelligence) */}
                           {(activeTabs[result.zip] || "overview") === "overview" && (
                             <div className="space-y-6">
                               {/* Quick Stats Bar */}

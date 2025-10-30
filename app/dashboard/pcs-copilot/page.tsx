@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import Footer from "@/app/components/Footer";
@@ -29,24 +30,23 @@ export default async function PCSCopilotPage() {
   const tier = entitlement?.tier || "free";
   const isPremium = tier === "premium" && entitlement?.status === "active";
 
-  // PREMIUM-ONLY FEATURE: Block free users completely
-  if (!isPremium) {
-    redirect("/dashboard/upgrade?feature=pcs-copilot");
-  }
+  // Get user's claims (only for premium users)
+  const { data: claims } = isPremium
+    ? await supabaseAdmin
+        .from("pcs_claims")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+    : { data: null };
 
-  // Get user's claims
-  const { data: claims } = await supabaseAdmin
-    .from("pcs_claims")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  // Get user profile
-  const { data: profile } = await supabaseAdmin
-    .from("user_profiles")
-    .select("rank, branch, current_base, has_dependents")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  // Get user profile (only for premium users)
+  const { data: profile } = isPremium
+    ? await supabaseAdmin
+        .from("user_profiles")
+        .select("rank, branch, current_base, has_dependents")
+        .eq("user_id", user.id)
+        .maybeSingle()
+    : { data: null };
 
   return (
     <>
@@ -92,17 +92,67 @@ export default async function PCSCopilotPage() {
         </section>
 
         {/* Main Content */}
-        <SimplifiedPCSClient
-          initialClaims={claims || []}
-          isPremium={isPremium}
-          tier={tier}
-          userProfile={{
-            rank: profile?.rank,
-            branch: profile?.branch,
-            currentBase: profile?.current_base,
-            hasDependents: profile?.has_dependents,
-          }}
-        />
+        {!isPremium ? (
+          <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 p-12 text-center shadow-lg">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-600">
+                <Icon name="Lock" className="h-10 w-10 text-white" />
+              </div>
+              <h2 className="mb-4 text-3xl font-bold text-gray-900">
+                PCS Copilot is a Premium Feature
+              </h2>
+              <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-700">
+                Professional-grade PCS reimbursement tracking with official 2025 JTR rates,
+                comprehensive entitlement calculations, and finance office-ready documentation.
+              </p>
+              <div className="mb-8 rounded-lg bg-white p-6 text-left shadow-sm">
+                <h3 className="mb-4 font-semibold text-gray-900">Premium Features:</h3>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Calculate all PCS entitlements (DLA, mileage, per diem)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>PPM reimbursement calculator with 95% advance estimates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Official 2025 JTR rates with automatic validation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Save and track multiple PCS claims</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                    <span>Export finance office-ready worksheets</span>
+                  </li>
+                </ul>
+              </div>
+              <Link
+                href="/dashboard/upgrade?feature=pcs-copilot"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-orange-700"
+              >
+                <Icon name="Crown" className="h-5 w-5" />
+                Upgrade to Premium
+              </Link>
+              <p className="mt-4 text-sm text-gray-600">$9.99/month or $99/year • Cancel anytime</p>
+            </div>
+          </div>
+        ) : (
+          <SimplifiedPCSClient
+            initialClaims={claims || []}
+            isPremium={isPremium}
+            tier={tier}
+            userProfile={{
+              rank: profile?.rank,
+              branch: profile?.branch,
+              currentBase: profile?.current_base,
+              hasDependents: profile?.has_dependents,
+            }}
+          />
+        )}
       </main>
       <Footer />
     </>
