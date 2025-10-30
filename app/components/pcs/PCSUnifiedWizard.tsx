@@ -266,12 +266,14 @@ export default function PCSUnifiedWizard({
               amount: ppmData.gross_payout * (ppmData.federal_rate / 100),
               rate: ppmData.federal_rate,
               basis: "IRS Pub 15 supplemental wage rate",
+              isCustom: false,
             },
             state: {
               amount: ppmData.gross_payout * (ppmData.state_rate / 100),
               rate: ppmData.state_rate,
               stateName: "State",
               basis: "State supplemental withholding rate",
+              isCustom: false,
             },
             fica: {
               amount: ppmData.fica_amount,
