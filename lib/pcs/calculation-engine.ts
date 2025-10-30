@@ -183,7 +183,7 @@ async function calculateDLA(
   } catch (error) {
     logger.error("DLA calculation failed:", error);
     // Use fallback instead of returning 0
-    const fallbackAmount = getFallbackDLARate(paygrade, hasDependents);
+    const fallbackAmount = getFallbackDLARate(convertedPaygrade, hasDependents);
     return {
       amount: fallbackAmount,
       rateUsed: fallbackAmount,
