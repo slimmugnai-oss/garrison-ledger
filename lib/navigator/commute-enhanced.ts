@@ -7,7 +7,7 @@
 
 export interface TrafficPattern {
   hour: number; // 0-23
-  avg_minutes: number;
+  minutes: number;
   traffic_level: "light" | "moderate" | "heavy";
 }
 
@@ -161,22 +161,20 @@ function analyzeTrafficVariance(
   return "unpredictable";
 }
 
-function estimateBestDepartureTime(am: number | null, pm: number | null): TrafficPattern & { description: string } {
+function estimateBestDepartureTime(am: number | null, pm: number | null): { hour: number; minutes: number; description: string } {
   const baseTime = am || pm || 25;
   return {
     hour: 6,
-    avg_minutes: Math.max(10, Math.round(baseTime * 0.75)),
-    traffic_level: "light",
+    minutes: Math.max(10, Math.round(baseTime * 0.75)),
     description: "Early morning (6:00-6:30 AM) typically lightest traffic"
   };
 }
 
-function estimateWorstDepartureTime(am: number | null, pm: number | null): TrafficPattern & { description: string } {
+function estimateWorstDepartureTime(am: number | null, pm: number | null): { hour: number; minutes: number; description: string } {
   const baseTime = pm || am || 25;
   return {
     hour: 17,
-    avg_minutes: Math.round(baseTime * 1.2),
-    traffic_level: "heavy",
+    minutes: Math.round(baseTime * 1.2),
     description: "Evening rush (5:00-6:00 PM) typically heaviest"
   };
 }
