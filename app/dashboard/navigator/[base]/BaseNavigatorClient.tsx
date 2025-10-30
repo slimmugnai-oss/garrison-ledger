@@ -13,7 +13,11 @@ import { useState, useEffect } from "react";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
-import NeighborhoodIntelligenceReport from "@/app/components/navigator/NeighborhoodIntelligenceReport";
+import SchoolsIntelligenceSection from "@/app/components/navigator/intelligence-sections/SchoolsIntelligenceSection";
+import CommuteIntelligenceSection from "@/app/components/navigator/intelligence-sections/CommuteIntelligenceSection";
+import WeatherIntelligenceSection from "@/app/components/navigator/intelligence-sections/WeatherIntelligenceSection";
+import HousingIntelligenceSection from "@/app/components/navigator/intelligence-sections/HousingIntelligenceSection";
+import AmenitiesIntelligenceSection from "@/app/components/navigator/intelligence-sections/AmenitiesIntelligenceSection";
 import type {
   BaseSeed,
   NeighborhoodCard,
@@ -44,13 +48,8 @@ export default function BaseNavigatorClient({
   initialBahCents,
   bahSource = "manual",
 }: Props) {
-  // Filters
-  const [bedrooms, setBedrooms] = useState(3);
+  // Single filter: BAH
   const [bahMonthlyCents, setBahMonthlyCents] = useState(250000);
-  const [kidsGrades, setKidsGrades] = useState<KidsGrade[]>([]);
-  const [sortPriority, setSortPriority] = useState<"overall" | "schools" | "housing" | "commute">(
-    "overall"
-  );
 
   // Results
   const [results, setResults] = useState<NeighborhoodCard[]>([]);
@@ -96,9 +95,9 @@ export default function BaseNavigatorClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           baseCode: base.code,
-          bedrooms,
+          bedrooms: 3, // Default to 3BR for comprehensive analysis
           bahMonthlyCents,
-          kidsGrades,
+          kidsGrades: [], // Empty array = comprehensive analysis of all grades
         }),
       });
 
@@ -116,15 +115,6 @@ export default function BaseNavigatorClient({
     }
   };
 
-  /**
-   * Toggle kids grade filter
-   */
-  const toggleGrade = (grade: KidsGrade) => {
-    setKidsGrades((prev) => {
-      const newGrades = prev.includes(grade) ? prev.filter((g) => g !== grade) : [...prev, grade];
-      return newGrades;
-    });
-  };
 
   /**
    * Switch tab for a specific neighborhood
@@ -156,9 +146,9 @@ export default function BaseNavigatorClient({
           baseCode: base.code,
           zips: newWatched,
           max_rent_cents: bahMonthlyCents * 1.2,
-          bedrooms,
+          bedrooms: 3,
           max_commute_minutes: 45,
-          kids_grades: kidsGrades,
+          kids_grades: [],
         }),
       });
     } catch {
@@ -194,37 +184,30 @@ export default function BaseNavigatorClient({
             <span className="text-gray-600">{base.name} Navigator</span>
           </nav>
 
-          <div className="rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="font-lora mb-2 text-4xl font-bold">{base.name} Navigator</h1>
-                <div className="mb-4 flex flex-wrap items-center gap-4 text-lg">
-                  <span className="flex items-center gap-2">
-                    <Icon name="MapPin" className="h-5 w-5" />
-                    {base.state}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Icon name="Shield" className="h-5 w-5" />
-                    {base.branch}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Icon name="Key" className="h-5 w-5" />
-                    {base.mha}
-                  </span>
-                </div>
-                <p className="text-xl text-blue-100">
-                  Find your perfect neighborhood near {base.name}
-                </p>
-                <p className="mt-2 text-blue-200">
-                  Data-driven analysis of schools, housing, commute, and quality of life
-                </p>
+          <div className="overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
+            <div className="p-8">
+              <div className="mb-4 flex items-center gap-3 text-sm text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Icon name="MapPin" className="h-4 w-4" />
+                  {base.state}
+                </span>
+                <span className="text-slate-600">•</span>
+                <span className="flex items-center gap-1.5">
+                  <Icon name="Shield" className="h-4 w-4" />
+                  {base.branch}
+                </span>
+                <span className="text-slate-600">•</span>
+                <span className="flex items-center gap-1.5">
+                  <Icon name="Key" className="h-4 w-4" />
+                  {base.mha}
+                </span>
               </div>
-              <div className="hidden md:block">
-                <div className="rounded-lg bg-white bg-opacity-20 px-4 py-2">
-                  <div className="text-sm text-blue-100">Premium Feature</div>
-                  <div className="text-lg font-semibold">Base Navigator</div>
-                </div>
-              </div>
+              <h1 className="mb-3 text-3xl font-bold text-white md:text-4xl">
+                {base.name} Navigator
+              </h1>
+              <p className="text-lg text-slate-300">
+                Comprehensive neighborhood intelligence to find your perfect home near {base.name}.
+              </p>
             </div>
           </div>
         </div>
@@ -233,116 +216,51 @@ export default function BaseNavigatorClient({
         <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold text-gray-900 sm:mb-6">Search Criteria</h2>
 
-          <div className="space-y-4 sm:space-y-6">
-            {/* Row 1: Bedrooms and BAH */}
-            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-              {/* Bedrooms */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Bedrooms</label>
-                <select
-                  value={bedrooms}
-                  onChange={(e) => setBedrooms(Number(e.target.value))}
-                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value={2}>2 BR</option>
-                  <option value={3}>3 BR</option>
-                  <option value={4}>4 BR</option>
-                  <option value={5}>5 BR</option>
-                </select>
-              </div>
-
-              {/* BAH */}
-              <div>
-                <label
-                  htmlFor="your_monthly_bah_"
-                  className="mb-2 block text-sm font-medium text-gray-700"
-                >
-                  Your Monthly BAH
-                </label>
-                <input
-                  id="input_pozstmjkt"
-                  type="number"
-                  value={Math.round(bahMonthlyCents / 100)}
-                  onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
-                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
-                  placeholder="2500"
-                />
-                <p className="mt-1 text-xs text-gray-600">
-                  {bahSource === "auto" && userProfile.rank && base.mha ? (
-                    <>
-                      Auto-filled for {userProfile.rank}
-                      {userProfile.hasDependents ? " with dependents" : " without dependents"}
-                      at {base.name} ({base.mha}). You can adjust if needed.
-                    </>
-                  ) : userProfile.rank && userProfile.hasDependents === null ? (
-                    <>
-                      For {base.mha} (check your LES).
-                      <a
-                        href="/dashboard/profile/quick-start"
-                        className="ml-1 text-blue-600 hover:underline"
-                      >
-                        Update your profile
-                      </a>{" "}
-                      to auto-fill this field.
-                    </>
-                  ) : (
-                    <>For {base.mha} (check your LES or update your profile to auto-fill)</>
-                  )}
-                </p>
-              </div>
+          <div className="space-y-6">
+            {/* BAH Input - Single Field */}
+            <div className="max-w-md">
+              <label
+                htmlFor="monthly_bah_input"
+                className="mb-2 block text-base font-medium text-gray-900"
+              >
+                Your Monthly BAH
+              </label>
+              <input
+                id="monthly_bah_input"
+                type="number"
+                value={Math.round(bahMonthlyCents / 100)}
+                onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
+                className="min-h-[56px] w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                placeholder="2500"
+              />
+              <p className="mt-2 text-sm text-gray-600">
+                {bahSource === "auto" && userProfile.rank && base.mha ? (
+                  <>
+                    Auto-filled for {userProfile.rank}
+                    {userProfile.hasDependents ? " with dependents" : " without dependents"} at {base.name} (
+                    {base.mha}). You can adjust if needed.
+                  </>
+                ) : userProfile.rank && userProfile.hasDependents === null ? (
+                  <>
+                    For {base.mha} (check your LES).{" "}
+                    <a href="/dashboard/profile/quick-start" className="text-blue-600 hover:underline">
+                      Update your profile
+                    </a>{" "}
+                    to auto-fill this field.
+                  </>
+                ) : (
+                  <>For {base.mha} (check your LES or update your profile to auto-fill)</>
+                )}
+              </p>
             </div>
 
-            {/* Row 2: Kids Grades and Sort Priority */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* Kids Grades */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Kids Grade Levels (affects school scoring)
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {(["elem", "middle", "high"] as KidsGrade[]).map((grade) => (
-                    <button
-                      key={grade}
-                      type="button"
-                      onClick={() => toggleGrade(grade)}
-                      className={`min-h-[44px] min-w-[80px] rounded-lg px-4 py-3 font-medium transition-all duration-200 ${
-                        kidsGrades.includes(grade)
-                          ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-                      }`}
-                    >
-                      {kidsGrades.includes(grade) && "✓ "}
-                      {grade === "elem"
-                        ? "Elementary"
-                        : grade === "middle"
-                          ? "Middle"
-                          : "High School"}
-                    </button>
-                  ))}
-                </div>
-                {kidsGrades.length > 0 && (
-                  <p className="mt-2 text-xs text-blue-600">
-                    {kidsGrades.length} grade level{kidsGrades.length > 1 ? "s" : ""} selected.
-                  </p>
-                )}
-              </div>
-
-              {/* Sort Priority */}
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Sort Priority
-                </label>
-                <select
-                  value={sortPriority}
-                  onChange={(e) => setSortPriority(e.target.value as typeof sortPriority)}
-                  className="min-h-[44px] w-full rounded-lg border border-gray-300 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="overall">Best Overall Fit</option>
-                  <option value="schools">Best Schools First</option>
-                  <option value="housing">Lowest Housing Cost</option>
-                  <option value="commute">Shortest Commute</option>
-                </select>
-                <p className="mt-1 text-xs text-gray-600">How should we prioritize the results?</p>
+            {/* Comprehensive Analysis Note */}
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <div className="flex items-start gap-3">
+                <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+                <p className="text-sm text-blue-900">
+                  <strong>Comprehensive Analysis:</strong> We analyze all property types (2-5 bedrooms) and school grades (K-12) to find the best overall neighborhoods for your family.
+                </p>
               </div>
             </div>
           </div>
@@ -559,49 +477,51 @@ export default function BaseNavigatorClient({
                         <div className="mb-6">
                           <div className="flex gap-1 overflow-x-auto border-b border-gray-200 pb-0">
                             {[
-                              // Add Intelligence Report tab for top 3
+                              // Intelligence section tabs for top 3
                               ...(index < 3 && result.payload.intelligence
                                 ? [
                                     {
-                                      id: "intelligence",
-                                      label: "📋 Intelligence Report",
-                                      shortLabel: "Intel",
-                                      icon: "File" as const,
+                                      id: "schools",
+                                      label: "Schools",
+                                      shortLabel: "Schools",
+                                      icon: "GraduationCap" as const,
+                                    },
+                                    {
+                                      id: "commute",
+                                      label: "Commute",
+                                      shortLabel: "Commute",
+                                      icon: "Truck" as const,
+                                    },
+                                    {
+                                      id: "weather",
+                                      label: "Weather",
+                                      shortLabel: "Weather",
+                                      icon: "Sun" as const,
+                                    },
+                                    {
+                                      id: "housing",
+                                      label: "Housing",
+                                      shortLabel: "Housing",
+                                      icon: "Home" as const,
+                                    },
+                                    {
+                                      id: "amenities",
+                                      label: "Amenities",
+                                      shortLabel: "Amenities",
+                                      icon: "MapPin" as const,
                                     },
                                   ]
-                                : []),
-                              {
-                                id: "overview",
-                                label: "Overview",
-                                shortLabel: "Overview",
-                                icon: "BarChart" as const,
-                              },
-                              {
-                                id: "schools",
-                                label: "Schools",
-                                shortLabel: "Schools",
-                                icon: "GraduationCap" as const,
-                              },
-                              {
-                                id: "housing",
-                                label: "Housing",
-                                shortLabel: "Housing",
-                                icon: "Home" as const,
-                              },
-                              {
-                                id: "commute",
-                                label: "Commute",
-                                shortLabel: "Commute",
-                                icon: "Truck" as const,
-                              },
-                              {
-                                id: "quality",
-                                label: "Quality of Life",
-                                shortLabel: "QoL",
-                                icon: "Sun" as const,
-                              },
+                                : [
+                                    {
+                                      id: "overview",
+                                      label: "Overview",
+                                      shortLabel: "Overview",
+                                      icon: "BarChart" as const,
+                                    },
+                                  ]),
                             ].map((tab) => {
-                              const isActive = (activeTabs[result.zip] || "overview") === tab.id;
+                              const defaultTab = index < 3 && result.payload.intelligence ? "schools" : "overview";
+                              const isActive = (activeTabs[result.zip] || defaultTab) === tab.id;
                               return (
                                 <button
                                   key={tab.id}
@@ -623,15 +543,26 @@ export default function BaseNavigatorClient({
 
                         {/* Tab Content */}
                         <div className="min-h-[400px]">
-                          {/* Intelligence Report Tab (Top 3 only) */}
-                          {(activeTabs[result.zip] || "overview") === "intelligence" &&
-                            result.payload.intelligence && (
-                              <NeighborhoodIntelligenceReport
-                                neighborhood={result}
-                                rank={index + 1}
-                                baseName={base.name}
-                              />
-                            )}
+                          {/* Intelligence Section Tabs (Top 3 only) */}
+                          {index < 3 && result.payload.intelligence && (
+                            <>
+                              {(activeTabs[result.zip] || "schools") === "schools" && (
+                                <SchoolsIntelligenceSection neighborhood={result} />
+                              )}
+                              {(activeTabs[result.zip] || "schools") === "commute" && (
+                                <CommuteIntelligenceSection neighborhood={result} />
+                              )}
+                              {(activeTabs[result.zip] || "schools") === "weather" && (
+                                <WeatherIntelligenceSection neighborhood={result} />
+                              )}
+                              {(activeTabs[result.zip] || "schools") === "housing" && (
+                                <HousingIntelligenceSection neighborhood={result} />
+                              )}
+                              {(activeTabs[result.zip] || "schools") === "amenities" && (
+                                <AmenitiesIntelligenceSection neighborhood={result} />
+                              )}
+                            </>
+                          )}
 
                           {(activeTabs[result.zip] || "overview") === "overview" && (
                             <div className="space-y-6">
