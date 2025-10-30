@@ -409,6 +409,7 @@ export default function BaseNavigatorClient({
               </div>
             </div>
           </div>
+        </div>
 
         {/* Enhanced Error State */}
         {error && (

@@ -501,7 +501,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               {/* Executive Summary */}
               <div className="rounded-xl bg-gradient-to-r from-blue-50 to-white p-6 border-l-4 border-blue-600 shadow-sm">
                 <div className="mb-3 flex items-center gap-2">
-                  <Icon name="FileText" className="h-5 w-5 text-blue-600" />
+                  <Icon name="File" className="h-5 w-5 text-blue-600" />
                   <div className="font-bold text-blue-900">Executive Summary</div>
                 </div>
                 <p className="text-slate-700 leading-relaxed">{schoolsIntel.executive_summary}</p>
@@ -747,7 +747,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               {/* Executive Summary */}
               <div className="rounded-xl bg-gradient-to-r from-amber-50 to-white p-6 border-l-4 border-amber-600 shadow-sm">
                 <div className="mb-3 flex items-center gap-2">
-                  <Icon name="FileText" className="h-5 w-5 text-amber-600" />
+                  <Icon name="File" className="h-5 w-5 text-amber-600" />
                   <div className="font-bold text-amber-900">Executive Summary</div>
                 </div>
                 <p className="text-slate-700 leading-relaxed">{weatherIntel.executive_summary}</p>
@@ -799,7 +799,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   <div className="rounded-xl bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 p-6">
                     <div className="mb-3 flex items-center justify-between">
                       <div className="text-sm font-semibold text-slate-600">Pool Season</div>
-                      <Icon name="Droplet" className="h-5 w-5 text-purple-600" />
+                      <Icon name="Sun" className="h-5 w-5 text-purple-600" />
                     </div>
                     <div className="mb-2 text-3xl font-bold text-purple-600">{weatherIntel.pool_season}</div>
                     <div className="text-sm text-slate-600">usable months</div>
@@ -816,11 +816,11 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   {weatherIntel.seasonal_breakdown.map((season, i) => {
                     const seasonIcons = {
-                      "Spring": "Flower",
+                      "Spring": "Sun",
                       "Summer": "Sun",
-                      "Fall": "Leaf",
-                      "Autumn": "Leaf",
-                      "Winter": "Snowflake"
+                      "Fall": "Cloud",
+                      "Autumn": "Cloud",
+                      "Winter": "Cloud"
                     };
                     const seasonIcon = seasonIcons[season.season as keyof typeof seasonIcons] || "Cloud";
                     
@@ -931,7 +931,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               {/* Executive Summary */}
               <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
                 <div className="mb-3 flex items-center gap-2">
-                  <Icon name="FileText" className="h-5 w-5 text-slate-600" />
+                  <Icon name="File" className="h-5 w-5 text-slate-600" />
                   <div className="font-bold text-slate-900">Executive Summary</div>
                 </div>
                 <p className="text-slate-700 leading-relaxed">{housingIntel.executive_summary}</p>
