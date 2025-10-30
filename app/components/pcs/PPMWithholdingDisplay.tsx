@@ -164,7 +164,7 @@ export default function PPMWithholdingDisplay({
                     -${result.estimatedWithholding.state.amount.toLocaleString()}
                   </div>
                   <div className="text-xs text-slate-600">
-                    {result.estimatedWithholding.state.rate.toFixed(2)}%
+                    {(result.estimatedWithholding.state.rate * 100).toFixed(2)}%
                   </div>
                 </div>
               </div>
@@ -310,9 +310,9 @@ export default function PPMWithholdingDisplay({
               <Input
                 label={`${result.estimatedWithholding.state.stateName} State Rate (%)`}
                 type="number"
-                value={result.estimatedWithholding.state.rate.toString()}
+                value={(result.estimatedWithholding.state.rate * 100).toString()}
                 onChange={(val) => {
-                  const newState = parseFloat(val) || 0;
+                  const newState = (parseFloat(val) || 0) / 100;
                   onUpdateRates(result.estimatedWithholding.federal.rate, newState);
                 }}
               />

@@ -670,11 +670,19 @@ async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
   // CRITICAL: This MUST run server-side, use supabaseAdmin
   const year = parseInt(effectiveDate.split("-")[0]);
 
+  console.log("[DLA DEBUG] Querying for year:", year);
+
   const { data, error } = await supabaseAdmin
     .from("entitlements_data")
     .select("rank_group, dependency_status, dla_rate, effective_year")
     .eq("effective_year", year)
     .order("rank_group", { ascending: true });
+
+  console.log("[DLA DEBUG] Query results:", {
+    rowCount: data?.length,
+    sampleRow: data?.[0],
+    error
+  });
 
   if (error) {
     logger.error("Failed to fetch DLA rates from entitlements_data:", error);
@@ -687,13 +695,20 @@ async function getDLARatesFromDB(effectiveDate: string): Promise<DLARate[]> {
   }
 
   // Transform entitlements_data to DLARate array
-  return data.map((row: any) => ({
+  const result = data.map((row: any) => ({
     payGrade: row.rank_group,
     withDependents: row.dependency_status === "with",
     amount: row.dla_rate, // Already in dollars
     effectiveDate: `${row.effective_year}-01-01`,
     citation: "JTR 050302.B (DFAS Official Rates)",
   }));
+
+  console.log("[DLA DEBUG] Transformed result:", {
+    count: result.length,
+    sample: result[0]
+  });
+
+  return result;
 }
 
 async function getMALTRateFromDB(effectiveDate: string): Promise<MALTRate | null> {

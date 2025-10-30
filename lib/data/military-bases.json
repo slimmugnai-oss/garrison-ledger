@@ -1889,9 +1889,9 @@
           "name": "MOODY AFB, GA",
           "branch": "Air Force",
           "state": "GA",
-          "city": "Moody Afb, Ga",
-          "lat": 33.040619,
-          "lng": -83.643074,
+          "city": "Valdosta",
+          "lat": 30.9678,
+          "lng": -83.1930,
           "zip": "00000"
       },
       {
@@ -2685,9 +2685,9 @@
           "branch": "Air Force",
           "state": "SC",
           "city": "Sumter",
-          "lat": 33.856892,
-          "lng": -80.945007,
-          "zip": "00000"
+          "lat": 33.970833,
+          "lng": -80.470556,
+          "zip": "29152"
       },
       {
           "id": "syracuse-ny",

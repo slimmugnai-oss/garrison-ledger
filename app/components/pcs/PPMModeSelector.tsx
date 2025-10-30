@@ -116,11 +116,10 @@ export default function PPMModeSelector({
               <div className="mb-4 inline-flex rounded-xl bg-slate-100 p-3">
                 <Icon name="Calculator" className="h-8 w-8 text-slate-600" />
               </div>
-              <h4 className="mb-2 text-lg font-bold text-slate-900">Rough Ballpark Estimate</h4>
+              <h4 className="mb-2 text-lg font-bold text-slate-900">Planning Estimate</h4>
               <p className="mb-4 text-sm text-slate-600">
-                Get a very rough order-of-magnitude estimate for budgeting.{" "}
-                <strong>Not accurate</strong> - DoD uses proprietary DP3/GHC rate tables we can't
-                replicate.
+                Get a ballpark estimate for planning purposes. The official GCC uses 
+                proprietary rate tables we cannot access. Use this for budgeting only.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -128,12 +127,12 @@ export default function PPMModeSelector({
                   Order-of-magnitude only
                 </li>
                 <li className="flex items-center gap-2">
-                  <Icon name="AlertTriangle" className="h-3 w-3 text-red-600" />
-                  Can be ±50%+ off actual GCC
+                  <Icon name="AlertTriangle" className="h-3 w-3 text-amber-600" />
+                  For planning only - verify with my.move.mil
                 </li>
                 <li className="flex items-center gap-2">
-                  <Icon name="AlertTriangle" className="h-3 w-3 text-red-600" />
-                  Must verify with my.move.mil
+                  <Icon name="AlertTriangle" className="h-3 w-3 text-amber-600" />
+                  Official GCC may differ significantly
                 </li>
               </ul>
             </AnimatedCard>
@@ -303,16 +302,14 @@ export default function PPMModeSelector({
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Warning */}
-          <div className="rounded-lg border-2 border-red-600 bg-red-50 p-4">
-            <p className="text-sm font-bold text-red-900">⚠️ ROUGH BALLPARK ONLY - NOT ACCURATE</p>
-            <p className="mt-1 text-xs text-red-800">
-              <strong>This is NOT how DoD calculates PPM.</strong> Actual GCC uses proprietary
-              DP3/GHC household goods rate tables with banded rates by mileage range and weight
-              brackets, plus accessorials (fuel, SIT, etc.). Our simple formula can be off by ±50%
-              or more.{" "}
-              <strong>
-                Always get your official GCC from my.move.mil before making decisions.
-              </strong>
+          <div className="rounded-lg border-2 border-amber-600 bg-amber-50 p-4">
+            <p className="text-sm font-bold text-amber-900">⚠️ Planning Estimate Only</p>
+            <p className="mt-1 text-xs text-amber-800">
+              This estimate uses simplified formulas for budgeting purposes. The official 
+              GCC from DoD uses proprietary DP3/GHC rate tables with weight brackets, distance 
+              bands, and seasonal adjustments that we cannot replicate. Your actual GCC from 
+              my.move.mil may differ. Always verify with my.move.mil before making financial 
+              decisions.
             </p>
           </div>
 

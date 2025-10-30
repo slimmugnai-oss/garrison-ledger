@@ -301,6 +301,14 @@ GCC Estimate: ~$9,120 (rough planning figure)
 - `avg_rate_mid` (midpoint for progressive states)
 - `effective_year`
 
+**Tax Type:** Supplemental wage withholding rates (for PPM income)
+**NOT:** Sales tax or regular income brackets
+
+**Recent Corrections (October 2025):**
+- **Georgia:** Updated from 4% (sales tax) to 5.75% (supplemental wage withholding)
+- **All States:** Verified using supplemental wage rates, not sales tax
+- **Display Format:** Fixed to show percentages consistently (5.75% not 0.0575)
+
 **Update Schedule:** Annual (January)
 
 ### Verification Query
