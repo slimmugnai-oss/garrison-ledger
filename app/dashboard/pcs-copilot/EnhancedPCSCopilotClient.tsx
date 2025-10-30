@@ -564,7 +564,10 @@ export default function EnhancedPCSCopilotClient({
                           .reduce((sum, c) => sum + (c.entitlements?.total || 0), 0)
                           .toLocaleString()}
                       </div>
-                      <div className="text-sm text-slate-600">Total Estimated</div>
+                      <div className="text-sm text-slate-600">Total Entitlements</div>
+                      <div className="text-xs text-slate-500 mt-1">
+                        (Net payout varies by PPM withholdings)
+                      </div>
                     </div>
                   </div>
                 </AnimatedCard>

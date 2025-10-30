@@ -349,7 +349,10 @@ export default function PCSClaimClient({
                       claim.entitlements?.total || displaySnapshot?.total_estimated || 0
                     )}
                   </div>
-                  <div className="text-sm text-slate-600">Estimated Total</div>
+                  <div className="text-sm text-slate-600">Total Entitlements</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    (Net payout varies by PPM withholdings)
+                  </div>
                 </div>
               </div>
             </AnimatedCard>
