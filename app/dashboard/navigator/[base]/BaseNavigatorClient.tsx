@@ -668,92 +668,26 @@ export default function BaseNavigatorClient({
                           {/* Overview (for results #4-5 or if no intelligence) */}
                           {(activeTabs[result.zip] || "overview") === "overview" && (
                             <div className="space-y-6">
-                              {/* Quick Stats Bar */}
-                              <div className="rounded-lg bg-gray-50 p-4">
-                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-green-600">
-                                      {Math.round(result.subscores.schools)}
-                                    </div>
-                                    <div className="text-sm text-gray-600">Schools</div>
-                                  </div>
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-blue-600">
-                                      $
-                                      {result.median_rent_cents
-                                        ? (result.median_rent_cents / 100).toLocaleString()
-                                        : "N/A"}
-                                    </div>
-                                    <div className="text-sm text-gray-600">Rent</div>
-                                  </div>
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-purple-600">
-                                      {result.commute_am_minutes || "N/A"}min
-                                    </div>
-                                    <div className="text-sm text-gray-600">Commute</div>
-                                  </div>
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-orange-600">
-                                      {result.weather_index}/10
-                                    </div>
-                                    <div className="text-sm text-gray-600">Weather</div>
-                                  </div>
+                              {/* Simplified Overview - Just essentials */}
+                              <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white p-6 border-2 border-slate-200">
+                                <div className="mb-4 flex items-center gap-2">
+                                  <Icon name="MapPin" className="h-5 w-5 text-slate-600" />
+                                  <h4 className="text-lg font-bold text-slate-900">Neighborhood Overview</h4>
                                 </div>
-                              </div>
-
-                              {/* Why This Neighborhood */}
-                              <div>
-                                <h4 className="mb-3 text-lg font-semibold text-gray-900">
-                                  Why This Neighborhood?
-                                </h4>
-                                <div className="rounded-lg bg-blue-50 p-4">
-                                  <p className="text-gray-700">
-                                    {result.family_fit_score >= 80
-                                      ? `This neighborhood offers excellent value with a ${Math.round(result.subscores.schools)}/100 school rating and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "affordable"} rent. The ${result.commute_am_minutes || "reasonable"} minute commute and ${result.weather_index}/10 weather comfort make it ideal for military families.`
-                                      : result.family_fit_score >= 60
-                                        ? `This neighborhood provides good value with solid schools (${Math.round(result.subscores.schools)}/100) and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "reasonable"} rent. The ${result.commute_am_minutes || "manageable"} minute commute offers decent accessibility to ${base.name}.`
-                                        : `This neighborhood has potential with ${Math.round(result.subscores.schools)}/100 schools and ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "varying"} rent costs. Consider the ${result.commute_am_minutes || "longer"} minute commute carefully for your family's needs.`}
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* Key Highlights */}
-                              <div>
-                                <h4 className="mb-3 text-lg font-semibold text-gray-900">
-                                  Key Highlights
-                                </h4>
-                                <div className="space-y-2">
-                                  <div className="flex items-center gap-2">
-                                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                                    <span className="text-gray-700">
-                                      Family Fit Score: {Math.round(result.family_fit_score)}/100 (
-                                      {result.family_fit_score >= 80
-                                        ? "Excellent"
-                                        : result.family_fit_score >= 60
-                                          ? "Good"
-                                          : "Fair"}
-                                      )
-                                    </span>
+                                <div className="grid gap-4 md:grid-cols-2">
+                                  <div className="rounded-lg bg-white p-4 border border-slate-200">
+                                    <div className="text-sm text-slate-600 mb-1">Family Fit Score</div>
+                                    <div className="text-3xl font-bold text-slate-900">{Math.round(result.family_fit_score)}/100</div>
+                                    <div className="text-xs text-slate-500">
+                                      {result.family_fit_score >= 80 ? "Excellent" : result.family_fit_score >= 60 ? "Good" : "Fair"} overall match
+                                    </div>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <Icon name="GraduationCap" className="h-5 w-5 text-green-600" />
-                                    <span className="text-gray-700">
-                                      School Quality: {Math.round(result.subscores.schools)}/100
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Icon name="Home" className="h-5 w-5 text-blue-600" />
-                                    <span className="text-gray-700">
-                                      Housing Affordability:{" "}
-                                      {Math.round(result.subscores.rentVsBah)}/100
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Icon name="Truck" className="h-5 w-5 text-purple-600" />
-                                    <span className="text-gray-700">
-                                      Commute Convenience: {Math.round(result.subscores.commute)}
-                                      /100
-                                    </span>
+                                  <div className="rounded-lg bg-white p-4 border border-slate-200">
+                                    <div className="text-sm text-slate-600 mb-1">Median Rent</div>
+                                    <div className="text-3xl font-bold text-slate-900">
+                                      ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "N/A"}
+                                    </div>
+                                    <div className="text-xs text-slate-500">per month</div>
                                   </div>
                                 </div>
                               </div>
