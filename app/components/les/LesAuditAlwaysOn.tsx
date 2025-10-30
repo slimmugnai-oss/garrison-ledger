@@ -42,6 +42,9 @@ import LesDataEntryTabs from "./LesDataEntryTabs";
 import LesFindingsAccordion from "./LesFindingsAccordion";
 import UploadReviewStepper from "./UploadReviewStepper";
 import AddLineItemModal from "./AddLineItemModal";
+import LesEditorLayout from "./LesEditorLayout";
+import LesSummarySticky from "./LesSummarySticky";
+import LesSectionCard from "./LesSectionCard";
 
 interface Props {
   tier: Tier;
@@ -319,15 +322,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               }
             } else {
               // Add new FICA item
-              updates.push({
-                id: generateLineItemId(),
-                line_code: "FICA",
-                description: "FICA (Social Security)",
-                amount_cents: calculatedFica,
-                section: "TAX",
-                isCustom: false,
-                isParsed: false,
-              });
+            updates.push({
+              id: generateLineItemId(),
+              line_code: "FICA",
+              description: "FICA (Social Security)",
+              amount_cents: calculatedFica,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            });
             }
           }
 
@@ -346,15 +349,15 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               }
             } else {
               // Add new Medicare item
-              updates.push({
-                id: generateLineItemId(),
-                line_code: "MEDICARE",
-                description: "Medicare Tax",
-                amount_cents: calculatedMedicare,
-                section: "TAX",
-                isCustom: false,
-                isParsed: false,
-              });
+            updates.push({
+              id: generateLineItemId(),
+              line_code: "MEDICARE",
+              description: "Medicare Tax",
+              amount_cents: calculatedMedicare,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            });
             }
           }
 
@@ -639,11 +642,53 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   };
 
   // ============================================================================
+  // HELPER FUNCTIONS FOR NEW LAYOUT
+  // ============================================================================
+
+  // Group line items by section
+  const lineItemsBySection = useMemo(() => {
+    return {
+      ALLOWANCE: lineItems.filter(item => item.section === "ALLOWANCE"),
+      TAX: lineItems.filter(item => item.section === "TAX"),
+      DEDUCTION: lineItems.filter(item => item.section === "DEDUCTION"),
+      ALLOTMENT: lineItems.filter(item => item.section === "ALLOTMENT"),
+      DEBT: lineItems.filter(item => item.section === "DEBT"),
+      ADJUSTMENT: lineItems.filter(item => item.section === "ADJUSTMENT"),
+      OTHER: lineItems.filter(item => item.section === "OTHER"),
+    };
+  }, [lineItems]);
+
+  // Compute section totals
+  const sectionTotals = useMemo(() => {
+    return {
+      ALLOWANCE: lineItemsBySection.ALLOWANCE.reduce((sum, item) => sum + item.amount_cents, 0),
+      TAX: lineItemsBySection.TAX.reduce((sum, item) => sum + item.amount_cents, 0),
+      DEDUCTION: lineItemsBySection.DEDUCTION.reduce((sum, item) => sum + item.amount_cents, 0),
+      ALLOTMENT: lineItemsBySection.ALLOTMENT.reduce((sum, item) => sum + item.amount_cents, 0),
+      DEBT: lineItemsBySection.DEBT.reduce((sum, item) => sum + item.amount_cents, 0),
+      ADJUSTMENT: lineItemsBySection.ADJUSTMENT.reduce((sum, item) => sum + item.amount_cents, 0),
+      OTHER: lineItemsBySection.OTHER.reduce((sum, item) => sum + item.amount_cents, 0),
+    };
+  }, [lineItemsBySection]);
+
+  // Compute net pay
+  const computedNetPay = useMemo(() => {
+    return sectionTotals.ALLOWANCE - sectionTotals.TAX - sectionTotals.DEDUCTION - sectionTotals.ALLOTMENT - sectionTotals.DEBT;
+  }, [sectionTotals]);
+
+  // Handle line item update
+  const handleUpdateItem = useCallback((id: string, amountCents: number) => {
+    setLineItems(prev => prev.map(item => 
+      item.id === id ? { ...item, amount_cents: amountCents } : item
+    ));
+  }, []);
+
+  // ============================================================================
   // RENDER
   // ============================================================================
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-4 py-8">
+    <div className="space-y-6">
       {/* Hero Section - Variance Display */}
       <LesVarianceHero
         variance={result?.totals.variance || null}
@@ -652,133 +697,122 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         year={year}
         onMonthChange={setMonth}
         onYearChange={setYear}
-        netPay={netPay ? Math.round(parseFloat(netPay) * 100) : undefined}
+        netPay={computedNetPay}
         isPremium={tier === "premium" || tier === "staff"}
         loading={loading}
       />
 
-      {/* Entry Mode Tabs */}
-      <div className="space-y-6">
-        <div className="flex gap-2 border-b border-slate-200">
-          <button
-            onClick={() => setEntryMode("manual")}
-            className={`relative px-6 py-3 font-medium transition-colors ${
-              entryMode === "manual"
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <Icon name="Edit" className="mr-2 inline-block h-4 w-4" />
-            Manual Entry
-          </button>
-          <button
-            onClick={() => setEntryMode("upload")}
-            disabled
-            className="relative cursor-not-allowed px-6 py-3 font-medium text-slate-400"
-            title="Coming soon - PDF upload with automatic parsing"
-          >
-            <Icon name="Upload" className="mr-2 inline-block h-4 w-4" />
-            Upload PDF
-            <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">
-              Coming Soon
-            </span>
-          </button>
-              </div>
-
-              {/* Upload Review Wizard (show if items from upload) */}
-              {uploadedItems && uploadedItems.length > 0 && lineItems.length === 0 && (
-                <div className="mb-6">
-                  <UploadReviewStepper
-                    parsedItems={uploadedItems}
-                    onComplete={(items) => {
-                      setLineItems(items);
-                      setUploadedItems(null);
-                    }}
-                    onBack={() => {
-                      setUploadedItems(null);
-                      setLineItems([]);
-                      setEntryMode("upload");
-                    }}
-                  />
-                </div>
-              )}
-
-
-        {/* Data Entry Tabs */}
-        {entryMode === "manual" && (
-          <LesDataEntryTabs
-                  lineItems={lineItems}
-            onLineItemsChange={setLineItems}
-            onAddItem={handleAddItem}
-            onEditItem={handleEditItem}
-            onDeleteItem={handleDeleteItem}
-                  allowEdit={true}
-                />
-        )}
-                  </div>
-
-      {/* Detailed Findings Section */}
-              {result && (
-        <LesFindingsAccordion
-          flags={result.flags}
-          tier={tier}
-          hiddenFlagCount={result.hiddenFlagCount || 0}
-          onUpgrade={() => (window.location.href = "/dashboard/upgrade?feature=paycheck-audit")}
+      {/* New 2-Column Layout */}
+      <LesEditorLayout
+        summary={
+          <LesSummarySticky
+            allowancesTotal={sectionTotals.ALLOWANCE}
+            taxesTotal={sectionTotals.TAX}
+            deductionsTotal={sectionTotals.DEDUCTION}
+            netPay={computedNetPay}
+            variance={result?.totals.variance || null}
+            variancePercent={result?.totals.variance && computedNetPay ? (result.totals.variance / computedNetPay) * 100 : undefined}
+            confidence={
+              result && result.flags
+                ? result.flags.filter(f => f.severity === "red").length === 0
+                  ? result.flags.filter(f => f.severity === "yellow").length === 0
+                    ? "excellent"
+                    : "good"
+                  : "needs_work"
+                : "fair"
+            }
+            flagCount={result?.flags?.length || 0}
+            tier={tier}
+            onSave={handleSavePDF}
+            onPrint={handlePrint}
+            saving={saving}
+          />
+        }
+      >
+        {/* Section Cards */}
+        <LesSectionCard
+          section="ALLOWANCE"
+          label="Pay & Allowances"
+          icon="DollarSign"
+          items={lineItemsBySection.ALLOWANCE}
+          subtotal={sectionTotals.ALLOWANCE}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
         />
-                  )}
 
-                  {/* Action Bar */}
-      {result && (
-        <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-6">
-                    {/* Save Button (Primary) */}
-                    {tier === "premium" || tier === "staff" ? (
-                      <button
-                        onClick={handleSavePDF}
-                        disabled={saving}
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-50"
-                      >
-                        <Icon name="CheckCircle" className="h-5 w-5" />
-                        {saving ? "Saving..." : "Save Audit"}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => (window.location.href = "/dashboard/upgrade")}
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
-                      >
-                        <Icon name="Crown" className="h-5 w-5" />
-                        Upgrade to Save Audits
-                      </button>
-                    )}
+        <LesSectionCard
+          section="TAX"
+          label="Taxes"
+          icon="Landmark"
+          items={lineItemsBySection.TAX}
+          subtotal={sectionTotals.TAX}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+          autoCalcCodes={["FICA", "MEDICARE"]}
+        />
 
-                    {/* Print Button */}
-                    <button
-                      onClick={handlePrint}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors hover:bg-slate-50 print:hidden"
-                    >
-                      <Icon name="Printer" className="h-5 w-5" />
-                      Print / Save PDF
-                    </button>
+        <LesSectionCard
+          section="DEDUCTION"
+          label="Deductions"
+          icon="Calculator"
+          items={lineItemsBySection.DEDUCTION}
+          subtotal={sectionTotals.DEDUCTION}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+        />
 
-                    {/* View Saved Audits Button */}
-                    {(tier === "premium" || tier === "staff") && history.length > 0 && (
-                      <button
-                        onClick={() => {
-                          setHistoryExpanded(!historyExpanded);
-                          setTimeout(() => {
-                            const historyEl = document.getElementById("saved-audits-section");
-                            if (historyEl) {
-                              historyEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                            }
-                          }, 100);
-                        }}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-50"
-                      >
-                        <Icon name="Archive" className="h-5 w-5" />
-                        View Saved ({history.length})
-                      </button>
-                    )}
-                  </div>
-      )}
+        {lineItemsBySection.ALLOTMENT.length > 0 && (
+          <LesSectionCard
+            section="ALLOTMENT"
+            label="Allotments"
+            icon="Banknote"
+            items={lineItemsBySection.ALLOTMENT}
+            subtotal={sectionTotals.ALLOTMENT}
+            onUpdateItem={handleUpdateItem}
+            onDeleteItem={handleDeleteItem}
+            onAddItem={handleAddItem}
+          />
+        )}
+
+        {lineItemsBySection.DEBT.length > 0 && (
+          <LesSectionCard
+            section="DEBT"
+            label="Debts"
+            icon="AlertCircle"
+            items={lineItemsBySection.DEBT}
+            subtotal={sectionTotals.DEBT}
+            onUpdateItem={handleUpdateItem}
+            onDeleteItem={handleDeleteItem}
+            onAddItem={handleAddItem}
+          />
+        )}
+
+        {lineItemsBySection.ADJUSTMENT.length > 0 && (
+          <LesSectionCard
+            section="ADJUSTMENT"
+            label="Adjustments"
+            icon="RefreshCw"
+            items={lineItemsBySection.ADJUSTMENT}
+            subtotal={sectionTotals.ADJUSTMENT}
+            onUpdateItem={handleUpdateItem}
+            onDeleteItem={handleDeleteItem}
+            onAddItem={handleAddItem}
+          />
+        )}
+
+        {/* Findings Panel */}
+        {result && (
+          <LesFindingsAccordion
+            flags={result.flags}
+            tier={tier}
+            hiddenFlagCount={result.hiddenFlagCount || 0}
+            onUpgrade={() => (window.location.href = "/dashboard/upgrade?feature=paycheck-audit")}
+          />
+        )}
+      </LesEditorLayout>
 
       {/* Audit History */}
               {(tier === "premium" || tier === "staff") && (
