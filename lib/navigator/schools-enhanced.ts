@@ -85,40 +85,46 @@ export function analyzeSchoolsComprehensive(
   const high = categorizeByGrade(schools, ["9", "10", "11", "12", "high"]);
   const privateSchools = schools.filter((s) => s.type === "private");
 
+  // Calculate UNIQUE schools per level (a K-12 school counts as 1, not 3)
+  const uniqueElementary = [...new Map(elementary.map(s => [s.name, s])).values()];
+  const uniqueMiddle = [...new Map(middle.map(s => [s.name, s])).values()];
+  const uniqueHigh = [...new Map(high.map(s => [s.name, s])).values()];
+  const uniquePrivate = [...new Map(privateSchools.map(s => [s.name, s])).values()];
+
   // Calculate averages
-  const elemAvg = calculateAverage(elementary);
-  const middleAvg = calculateAverage(middle);
-  const highAvg = calculateAverage(high);
-  const privateAvg = calculateAverage(privateSchools);
+  const elemAvg = calculateAverage(uniqueElementary);
+  const middleAvg = calculateAverage(uniqueMiddle);
+  const highAvg = calculateAverage(uniqueHigh);
+  const privateAvg = calculateAverage(uniquePrivate);
   const overallAvg = calculateAverage(schools);
 
-  // Get top picks per level
+  // Get top picks per level (from unique schools)
   const by_grade: SchoolsByGrade = {
     elementary: {
-      count: elementary.length,
-      schools: elementary,
+      count: uniqueElementary.length,
+      schools: uniqueElementary,
       avg_rating: elemAvg,
-      top_picks: elementary.sort((a, b) => b.rating - a.rating).slice(0, 3),
+      top_picks: [...uniqueElementary].sort((a, b) => b.rating - a.rating).slice(0, 50), // Show all, let UI handle display
     },
     middle: {
-      count: middle.length,
-      schools: middle,
+      count: uniqueMiddle.length,
+      schools: uniqueMiddle,
       avg_rating: middleAvg,
-      top_picks: middle.sort((a, b) => b.rating - a.rating).slice(0, 3),
+      top_picks: [...uniqueMiddle].sort((a, b) => b.rating - a.rating).slice(0, 50),
     },
     high: {
-      count: high.length,
-      schools: high,
+      count: uniqueHigh.length,
+      schools: uniqueHigh,
       avg_rating: highAvg,
-      top_picks: high.sort((a, b) => b.rating - a.rating).slice(0, 3),
+      top_picks: [...uniqueHigh].sort((a, b) => b.rating - a.rating).slice(0, 50),
     },
     private: {
-      count: privateSchools.length,
-      schools: privateSchools,
+      count: uniquePrivate.length,
+      schools: uniquePrivate,
       avg_rating: privateAvg,
       note:
-        privateSchools.length > 0
-          ? `${privateSchools.length} private school options available`
+        uniquePrivate.length > 0
+          ? `${uniquePrivate.length} private school${uniquePrivate.length !== 1 ? 's' : ''} available`
           : "No private schools in immediate area",
     },
   };

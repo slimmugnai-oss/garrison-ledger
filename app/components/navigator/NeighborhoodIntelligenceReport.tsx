@@ -327,7 +327,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       </div>
                     </div>
                     <div className="mb-1 font-semibold text-slate-900">Schools Quality</div>
-                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} schools nearby</div>
+                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} school{schoolsIntel.total_schools !== 1 ? 's' : ''} in area</div>
                     <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                       <div 
                         className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
@@ -1402,7 +1402,7 @@ function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, c
         </div>
       </div>
       
-      <div className="mb-4 text-sm text-slate-600">{count} schools in area</div>
+      <div className="mb-4 text-sm text-slate-600">{count} school{count !== 1 ? 's' : ''} in area</div>
       
       {/* Rating bar */}
       <div className="mb-4 h-3 w-full rounded-full bg-slate-200 overflow-hidden">
