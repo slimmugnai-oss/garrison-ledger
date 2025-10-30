@@ -780,44 +780,49 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           loading={loadingExpected && lineItems.length === 0}
         />
 
-        {lineItemsBySection.ALLOTMENT.length > 0 && (
-          <LesSectionCard
-            section="ALLOTMENT"
-            label="Allotments"
-            icon="Banknote"
-            items={lineItemsBySection.ALLOTMENT}
-            subtotal={sectionTotals.ALLOTMENT}
-            onUpdateItem={handleUpdateItem}
-            onDeleteItem={handleDeleteItem}
-            onAddItem={handleAddItem}
-          />
-        )}
+        <LesSectionCard
+          section="ALLOTMENT"
+          label="Allotments"
+          icon="Banknote"
+          items={lineItemsBySection.ALLOTMENT}
+          subtotal={sectionTotals.ALLOTMENT}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+        />
 
-        {lineItemsBySection.DEBT.length > 0 && (
-          <LesSectionCard
-            section="DEBT"
-            label="Debts"
-            icon="AlertCircle"
-            items={lineItemsBySection.DEBT}
-            subtotal={sectionTotals.DEBT}
-            onUpdateItem={handleUpdateItem}
-            onDeleteItem={handleDeleteItem}
-            onAddItem={handleAddItem}
-          />
-        )}
+        <LesSectionCard
+          section="DEBT"
+          label="Debts"
+          icon="AlertCircle"
+          items={lineItemsBySection.DEBT}
+          subtotal={sectionTotals.DEBT}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+        />
 
-        {lineItemsBySection.ADJUSTMENT.length > 0 && (
-          <LesSectionCard
-            section="ADJUSTMENT"
-            label="Adjustments"
-            icon="RefreshCw"
-            items={lineItemsBySection.ADJUSTMENT}
-            subtotal={sectionTotals.ADJUSTMENT}
-            onUpdateItem={handleUpdateItem}
-            onDeleteItem={handleDeleteItem}
-            onAddItem={handleAddItem}
-          />
-        )}
+        <LesSectionCard
+          section="ADJUSTMENT"
+          label="Adjustments"
+          icon="RefreshCw"
+          items={lineItemsBySection.ADJUSTMENT}
+          subtotal={sectionTotals.ADJUSTMENT}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+        />
+
+        <LesSectionCard
+          section="OTHER"
+          label="Other"
+          icon="File"
+          items={lineItemsBySection.OTHER}
+          subtotal={sectionTotals.OTHER}
+          onUpdateItem={handleUpdateItem}
+          onDeleteItem={handleDeleteItem}
+          onAddItem={handleAddItem}
+        />
       </LesEditorLayout>
 
       {/* Add/Edit Modal */}
