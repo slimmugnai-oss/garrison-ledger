@@ -190,7 +190,7 @@ export async function estimateTaxWithholding(
   );
 
   // State tax
-  const state = await estimateStateTax(taxableIncomeCents, stateOfResidence);
+  const state = await estimateStateTax(taxableIncomeCents, stateOfResidence || null);
 
   // Overall confidence
   const confidence =
