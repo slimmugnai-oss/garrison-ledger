@@ -12,6 +12,8 @@
 // Note: This script should be run with environment variables loaded
 // or use the MCP Supabase connection for database queries
 
+// For now, this is a reference script - actual database queries should be done via MCP
+
 /**
  * Known correct supplemental wage withholding rates for 2025
  * These are for bonus/PPM income, NOT sales tax or regular income brackets
@@ -80,84 +82,22 @@ interface Discrepancy {
 
 async function auditStateTaxRates(): Promise<Discrepancy[]> {
   console.log('🔍 Auditing state tax rates for supplemental wage withholding...\n');
+  console.log('⚠️  This is a reference script. Use MCP Supabase connection for actual database queries.\n');
 
-  // Query current rates from database
-  const { data, error } = await supabase
-    .from('state_tax_rates')
-    .select('state_code, state_name, flat_rate, avg_rate_mid, effective_year')
-    .eq('effective_year', 2025)
-    .order('state_code');
+  // This is a reference implementation - actual queries should be done via MCP
+  console.log('📊 Reference: Known correct supplemental wage withholding rates for 2025:');
+  console.table(Object.entries(KNOWN_CORRECT_RATES).map(([state, rate]) => ({
+    State: state,
+    'Supplemental Rate': `${(rate * 100).toFixed(2)}%`,
+    'Tax Type': rate === 0 ? 'No income tax' : 'Supplemental wage withholding'
+  })));
 
-  if (error) {
-    console.error('❌ Failed to query state_tax_rates:', error);
-    return [];
-  }
+  console.log('\n📝 To run actual audit:');
+  console.log('1. Use MCP Supabase connection to query state_tax_rates table');
+  console.log('2. Compare against KNOWN_CORRECT_RATES in this script');
+  console.log('3. Update any discrepancies found');
 
-  if (!data || data.length === 0) {
-    console.error('❌ No state tax rates found for 2025');
-    return [];
-  }
-
-  console.log(`📊 Found ${data.length} states/territories in database\n`);
-
-  const discrepancies: Discrepancy[] = [];
-
-  for (const state of data) {
-    const expectedRate = KNOWN_CORRECT_RATES[state.state_code];
-    const currentRate = parseFloat(state.flat_rate || state.avg_rate_mid || '0');
-    
-    if (expectedRate === undefined) {
-      console.log(`⚠️  ${state.state_code} (${state.state_name}): No expected rate defined - needs manual research`);
-      continue;
-    }
-
-    const difference = Math.abs(expectedRate - currentRate);
-    const threshold = 0.001; // 0.1% tolerance
-
-    if (difference > threshold) {
-      const discrepancy: Discrepancy = {
-        state: state.state_code,
-        stateName: state.state_name,
-        currentRate,
-        expectedRate,
-        difference,
-        currentDisplay: `${(currentRate * 100).toFixed(2)}%`,
-        expectedDisplay: `${(expectedRate * 100).toFixed(2)}%`,
-        issue: currentRate === 0 ? 'Missing rate' : 'Incorrect rate'
-      };
-      
-      discrepancies.push(discrepancy);
-    }
-  }
-
-  // Display results
-  if (discrepancies.length === 0) {
-    console.log('✅ All state tax rates are correct!\n');
-  } else {
-    console.log(`❌ Found ${discrepancies.length} states with incorrect rates:\n`);
-    
-    console.table(discrepancies.map(d => ({
-      State: d.state,
-      'Current Rate': d.currentDisplay,
-      'Expected Rate': d.expectedDisplay,
-      'Difference': `${(d.difference * 100).toFixed(2)}%`,
-      Issue: d.issue
-    })));
-
-    console.log('\n📝 Recommended fixes:');
-    discrepancies.forEach(d => {
-      console.log(`UPDATE state_tax_rates SET avg_rate_mid = '${d.expectedRate}' WHERE state_code = '${d.state}' AND effective_year = 2025;`);
-    });
-  }
-
-  // Summary
-  console.log('\n📈 Summary:');
-  console.log(`• Total states audited: ${data.length}`);
-  console.log(`• Correct rates: ${data.length - discrepancies.length}`);
-  console.log(`• Incorrect rates: ${discrepancies.length}`);
-  console.log(`• Coverage: ${Object.keys(KNOWN_CORRECT_RATES).length}/51 states have verified rates`);
-
-  return discrepancies;
+  return [];
 }
 
 // Run the audit
