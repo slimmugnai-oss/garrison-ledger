@@ -132,7 +132,7 @@ export default function LesFindingsAccordion({
                     <h4 className="flex items-center gap-2 text-base font-semibold text-slate-800">
                       <Icon name="AlertCircle" className="h-5 w-5 text-red-600" />
                       Critical Issues
-                      <Badge variant="error" className="text-xs">
+                      <Badge variant="danger" className="text-xs">
                         {redFlags.length}
                       </Badge>
                     </h4>
