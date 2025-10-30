@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import LineItemRow from "./LineItemRow";
 import type { DynamicLineItem, LesSection } from "@/app/types/les";
+import { formatCurrency } from "@/lib/utils/currency";
 
 interface LesSectionCardProps {
   section: LesSection;
@@ -60,11 +61,6 @@ export default function LesSectionCard({
   defaultCollapsed = false,
 }: LesSectionCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
-
-  const formatCurrency = (cents: number) => {
-    return `$${(cents / 100).toFixed(2)}`;
-  };
-
   const isEmpty = items.length === 0;
 
   return (

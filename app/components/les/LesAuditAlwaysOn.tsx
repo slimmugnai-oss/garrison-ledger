@@ -38,7 +38,6 @@ import { convertLineItemsToAuditInputs } from "@/lib/les/line-item-converter";
 import { generateLineItemId } from "@/lib/utils/line-item-ids";
 
 import LesVarianceHero from "./LesVarianceHero";
-import LesDataEntryTabs from "./LesDataEntryTabs";
 import LesFindingsAccordion from "./LesFindingsAccordion";
 import UploadReviewStepper from "./UploadReviewStepper";
 import AddLineItemModal from "./AddLineItemModal";

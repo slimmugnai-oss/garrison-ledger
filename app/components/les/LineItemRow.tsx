@@ -13,6 +13,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Icon from "@/app/components/ui/Icon";
 import type { DynamicLineItem } from "@/app/types/les";
+import { formatCurrency } from "@/lib/utils/currency";
 
 interface LineItemRowProps {
   item: DynamicLineItem;
@@ -33,11 +34,6 @@ export default function LineItemRow({
   const [editValue, setEditValue] = useState((item.amount_cents / 100).toFixed(2));
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Format currency for display
-  const formatCurrency = (cents: number) => {
-    return `$${(cents / 100).toFixed(2)}`;
-  };
 
   // Handle edit mode
   const handleEditClick = () => {
@@ -68,10 +64,15 @@ export default function LineItemRow({
       setShowDeleteConfirm(false);
     } else {
       setShowDeleteConfirm(true);
-      // Auto-cancel after 3s
-      setTimeout(() => setShowDeleteConfirm(false), 3000);
     }
   };
+
+  // Auto-cancel delete confirmation after 3s
+  useEffect(() => {
+    if (!showDeleteConfirm) return;
+    const timer = setTimeout(() => setShowDeleteConfirm(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showDeleteConfirm]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -14,10 +14,9 @@ import React, { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import type { Tier } from "@/lib/auth/subscription";
+import { formatCurrency } from "@/lib/utils/currency";
 
-interface LesSummaryS
-
-tickyProps {
+interface LesSummaryStickyProps {
   allowancesTotal: number; // in cents
   taxesTotal: number; // in cents
   deductionsTotal: number; // in cents
@@ -31,10 +30,6 @@ tickyProps {
   onPrint: () => void;
   saving?: boolean;
 }
-
-const formatCurrency = (cents: number) => {
-  return `$${(cents / 100).toFixed(2)}`;
-};
 
 export default function LesSummarySticky({
   allowancesTotal,
