@@ -591,16 +591,14 @@ export default function EnhancedPCSCopilotClient({
                         {claims
                           .reduce((sum, c) => {
                             const totalEntitlements = c.entitlements?.total || 0;
-                            const ppmAmount = c.entitlements?.ppm || 0;
                             const ppmWithholding = c.entitlements?.ppm_withholding;
                             
-                            // Use accurate PPM net payout if available, otherwise estimate
+                            // If PPM withholding was calculated, total already includes net payout
                             if (ppmWithholding?.net_payout) {
-                              // Use the accurate net payout from PPM withholding calculation
-                              const otherEntitlements = totalEntitlements - ppmAmount;
-                              return sum + (otherEntitlements + ppmWithholding.net_payout);
+                              return sum + totalEntitlements; // Already includes net PPM
                             } else {
-                              // Fallback to 25% estimate if no detailed withholding data
+                              // Old claims without withholding: estimate 25% reduction
+                              const ppmAmount = c.entitlements?.ppm || 0;
                               const estimatedWithholding = ppmAmount * 0.25;
                               return sum + (totalEntitlements - estimatedWithholding);
                             }

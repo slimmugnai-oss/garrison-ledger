@@ -374,16 +374,14 @@ export default function PCSClaimClient({
                     {formatCurrency(
                       (() => {
                         const totalEntitlements = claim.entitlements?.total || displaySnapshot?.total_estimated || 0;
-                        const ppmAmount = claim.entitlements?.ppm || 0;
                         const ppmWithholding = claim.entitlements?.ppm_withholding;
                         
-                        // Use accurate PPM net payout if available, otherwise estimate
+                        // If PPM withholding was calculated, total already includes net payout
                         if (ppmWithholding?.net_payout) {
-                          // Use the accurate net payout from PPM withholding calculation
-                          const otherEntitlements = totalEntitlements - ppmAmount;
-                          return otherEntitlements + ppmWithholding.net_payout;
+                          return totalEntitlements; // Already includes net PPM
                         } else {
-                          // Fallback to 25% estimate if no detailed withholding data
+                          // Old claims without withholding: estimate 25% reduction
+                          const ppmAmount = claim.entitlements?.ppm || 0;
                           const estimatedWithholding = ppmAmount * 0.25;
                           return totalEntitlements - estimatedWithholding;
                         }

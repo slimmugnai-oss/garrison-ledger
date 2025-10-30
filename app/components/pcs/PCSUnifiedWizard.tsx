@@ -704,7 +704,22 @@ export default function PCSUnifiedWizard({
               malt: calculations.malt?.amount || 0,
               per_diem: calculations.perDiem?.amount || 0,
               ppm: calculations.ppm?.amount || 0,
-              total: calculations.total || 0,
+              // Recalculate total using net PPM payout if withholding was calculated
+              total: (() => {
+                const baseTotal = 
+                  (calculations.dla?.amount || 0) +
+                  (calculations.tle?.total || 0) +
+                  (calculations.malt?.amount || 0) +
+                  (calculations.perDiem?.amount || 0);
+                
+                // If we have PPM withholding calculation, use net payout
+                if (ppmWithholding?.estimatedNetPayout) {
+                  return baseTotal + ppmWithholding.estimatedNetPayout;
+                } else {
+                  // Otherwise use gross PPM amount
+                  return baseTotal + (calculations.ppm?.amount || 0);
+                }
+              })(),
               // Include PPM withholding data for accurate net payout calculation
               ppm_withholding: ppmWithholding ? {
                 gross_payout: ppmWithholding.gccAmount,
