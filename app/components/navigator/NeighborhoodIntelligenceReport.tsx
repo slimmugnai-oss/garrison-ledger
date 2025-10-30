@@ -682,10 +682,10 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           {/* Amenities Tab */}
           {activeTab === "amenities" && enhanced && (
             <div className="space-y-6">
-              {/* Executive Summary */}
+              {/* Quick Summary */}
               <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
-                <div className="font-semibold text-purple-900 mb-2">Executive Summary</div>
-                <p className="text-slate-700 leading-relaxed">{enhanced.executive_summary}</p>
+                <div className="font-semibold text-purple-900 mb-2">Quick Summary</div>
+                <p className="text-slate-700 leading-relaxed">{enhanced.quick_summary}</p>
               </div>
 
               {/* Key Metrics */}
@@ -719,18 +719,12 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
               {/* Amenity Categories Grid */}
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {renderAmenityCategory("Essentials", enhanced.essentials, "ShoppingCart")}
-                {renderAmenityCategory("Family Activities", enhanced.family_activities, "Users")}
-                {renderAmenityCategory("Healthcare", enhanced.healthcare, "Heart")}
-                {renderAmenityCategory("Dining", enhanced.dining, "Coffee")}
-                {renderAmenityCategory("Fitness", enhanced.fitness, "Zap")}
-                {renderAmenityCategory("Services", enhanced.services, "Briefcase")}
-              </div>
-
-              {/* Bottom Line */}
-              <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
-                <div className="font-semibold text-purple-900 mb-2">Bottom Line</div>
-                <p className="text-slate-700 leading-relaxed">{enhanced.bottom_line}</p>
+                {renderAmenityCategory("Essentials", enhanced.essentials.top_picks, "ShoppingCart")}
+                {renderAmenityCategory("Family Activities", enhanced.family_activities.top_picks, "Users")}
+                {renderAmenityCategory("Healthcare", enhanced.healthcare.top_picks, "Heart")}
+                {renderAmenityCategory("Dining", enhanced.dining.top_picks, "Coffee")}
+                {renderAmenityCategory("Fitness", enhanced.fitness.top_picks, "Zap")}
+                {renderAmenityCategory("Services", enhanced.services.top_picks, "Briefcase")}
               </div>
             </div>
           )}
@@ -814,9 +808,11 @@ function renderAmenityCategory(
   title: string,
   amenities: Array<{
     name: string;
-    count: number;
-    avg_rating: number;
-    distance: number;
+    address: string;
+    rating?: number;
+    user_ratings_total?: number;
+    distance_mi?: number;
+    types?: string[];
   }>,
   iconName: string
 ) {
@@ -842,8 +838,14 @@ function renderAmenityCategory(
                   {amenity.name}
                 </a>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-slate-900">{amenity.avg_rating.toFixed(1)}</span>
-                  <span className="text-xs text-slate-500">({amenity.distance.toFixed(1)} mi)</span>
+                  {amenity.rating && (
+                    <span className="font-semibold text-slate-900">{amenity.rating.toFixed(1)}</span>
+                  )}
+                  {amenity.distance_mi && (
+                    <span className="text-xs text-slate-500">
+                      ({amenity.distance_mi.toFixed(1)} mi)
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
