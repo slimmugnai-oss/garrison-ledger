@@ -19,11 +19,15 @@ import bases from "@/lib/data/bases-seed.json";
 import { logger } from "@/lib/logger";
 import { fetchAmenitiesData } from "@/lib/navigator/amenities";
 import { fetchEnhancedAmenitiesData } from "@/lib/navigator/amenities-enhanced";
+import { analyzeCommuteComprehensive } from "@/lib/navigator/commute-enhanced";
 import { commuteMinutesFromZipToGate } from "@/lib/navigator/distance";
+import { analyzeHousingComprehensive } from "@/lib/navigator/housing-enhanced";
 import { fetchMedianRent, fetchSampleListings } from "@/lib/navigator/housing";
 import { generateNeighborhoodIntelligence } from "@/lib/navigator/neighborhood-intelligence";
+import { analyzeSchoolsComprehensive } from "@/lib/navigator/schools-enhanced";
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from "@/lib/navigator/schools";
 import { familyFitScore100, applyContextBoost } from "@/lib/navigator/score";
+import { analyzeWeatherComprehensive } from "@/lib/navigator/weather-enhanced";
 import { weatherComfortIndex } from "@/lib/navigator/weather";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -262,10 +266,55 @@ export async function POST(request: NextRequest) {
         const lat = parseFloat(geocodeData[0].lat);
         const lon = parseFloat(geocodeData[0].lon);
 
-        // Fetch enhanced amenities data
+        // Fetch enhanced amenities data (30+ categories)
         const enhancedAmenities = await fetchEnhancedAmenitiesData(result.zip, lat, lon);
 
-        // Generate intelligence report
+        // Generate comprehensive intelligence for ALL sections
+        
+        // 1. Schools Intelligence
+        const schoolsIntelligence = analyzeSchoolsComprehensive(
+          result.payload.top_schools,
+          kidsGrades as KidsGrade[]
+        );
+        
+        // 2. Commute Intelligence  
+        const commuteIntelligence = analyzeCommuteComprehensive(
+          result.zip,
+          lat,
+          lon,
+          base.gate.lat,
+          base.gate.lng,
+          result.commute_am_minutes,
+          result.commute_pm_minutes
+        );
+        
+        // 3. Weather Intelligence
+        // Extract temperature from weather note (format: "Current: 67°F, 83% humidity, Mostly cloudy")
+        const tempMatch = result.payload.weather_note.match(/(\d+)°F/);
+        const humidityMatch = result.payload.weather_note.match(/(\d+)% humidity/);
+        const conditionMatch = result.payload.weather_note.match(/humidity, (.+)$/);
+        
+        const currentTemp = tempMatch ? parseInt(tempMatch[1]) : 70;
+        const currentHumidity = humidityMatch ? parseInt(humidityMatch[1]) : 50;
+        const currentCondition = conditionMatch ? conditionMatch[1] : "Moderate";
+        
+        const weatherIntelligence = analyzeWeatherComprehensive(
+          result.zip,
+          currentTemp,
+          currentCondition,
+          currentHumidity
+        );
+        
+        // 4. Housing Intelligence
+        const housingIntelligence = analyzeHousingComprehensive(
+          result.zip,
+          result.median_rent_cents,
+          result.payload.sample_listings,
+          bahMonthlyCents,
+          bedrooms
+        );
+
+        // Generate overall neighborhood intelligence report (executive summary)
         const intelligence = generateNeighborhoodIntelligence({
           zip: result.zip,
           rank,
@@ -295,8 +344,68 @@ export async function POST(request: NextRequest) {
           fitness: enhancedAmenities.fitness,
           services: enhancedAmenities.services,
           spouse_employment: enhancedAmenities.spouse_employment,
+          pets: enhancedAmenities.pets,
+          community: enhancedAmenities.community,
+          home_auto: enhancedAmenities.home_auto,
           total_amenities: enhancedAmenities.total_amenities,
           quick_summary: enhancedAmenities.quick_summary,
+        };
+        
+        // Add comprehensive intelligence for all sections
+        result.payload.schools_intelligence = {
+          total_schools: schoolsIntelligence.total_schools,
+          overall_avg_rating: schoolsIntelligence.overall_avg_rating,
+          by_grade: schoolsIntelligence.by_grade,
+          pcs_flexibility: schoolsIntelligence.pcs_flexibility,
+          executive_summary: schoolsIntelligence.executive_summary,
+          detailed_analysis: schoolsIntelligence.detailed_analysis,
+        };
+        
+        result.payload.commute_intelligence = {
+          best_departure_time: commuteIntelligence.best_departure_time,
+          worst_departure_time: commuteIntelligence.worst_departure_time,
+          traffic_variance: commuteIntelligence.traffic_variance,
+          primary_route_miles: commuteIntelligence.primary_route_miles,
+          alternative_routes_available: commuteIntelligence.alternative_routes_available,
+          annual_fuel_cost: commuteIntelligence.annual_fuel_cost,
+          weekly_time_cost_hours: commuteIntelligence.weekly_time_cost_hours,
+          work_life_balance_score: commuteIntelligence.work_life_balance_score,
+          early_duty_impact: commuteIntelligence.early_duty_impact,
+          late_duty_impact: commuteIntelligence.late_duty_impact,
+          weekend_flexibility: commuteIntelligence.weekend_flexibility,
+          executive_summary: commuteIntelligence.executive_summary,
+          bottom_line: commuteIntelligence.bottom_line,
+        };
+        
+        result.payload.weather_intelligence = {
+          seasonal_breakdown: weatherIntelligence.seasonal_breakdown,
+          best_months: weatherIntelligence.best_months,
+          worst_months: weatherIntelligence.worst_months,
+          extreme_weather_risks: weatherIntelligence.extreme_weather_risks,
+          outdoor_season_months: weatherIntelligence.outdoor_season_months,
+          pool_season: weatherIntelligence.pool_season,
+          park_season: weatherIntelligence.park_season,
+          ac_cost_impact: weatherIntelligence.ac_cost_impact,
+          heating_cost_impact: weatherIntelligence.heating_cost_impact,
+          overall_comfort_score: weatherIntelligence.overall_comfort_score,
+          executive_summary: weatherIntelligence.executive_summary,
+          military_family_considerations: weatherIntelligence.military_family_considerations,
+        };
+        
+        result.payload.housing_intelligence = {
+          property_types: {
+            single_family: { count: housingIntelligence.property_types.single_family.count },
+            townhouse: { count: housingIntelligence.property_types.townhouse.count },
+            apartment: { count: housingIntelligence.property_types.apartment.count },
+          },
+          market_trends: housingIntelligence.market_trends,
+          bah_analysis: housingIntelligence.bah_analysis,
+          pet_friendly_count: housingIntelligence.pet_friendly_count,
+          utilities_included_count: housingIntelligence.utilities_included_count,
+          yard_count: housingIntelligence.yard_count,
+          military_friendly_note: housingIntelligence.military_friendly_note,
+          executive_summary: housingIntelligence.executive_summary,
+          bottom_line: housingIntelligence.bottom_line,
         };
 
         // Apply context-aware score boosting for top 3

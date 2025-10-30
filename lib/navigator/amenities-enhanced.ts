@@ -31,7 +31,7 @@ export interface EnhancedAmenityData {
   walkability_score: number; // 0-100
   family_friendliness_score: number; // 0-100
   
-  // Categorized amenities
+  // Categorized amenities (30+ categories)
   essentials: AmenityCategory; // Grocery, gas, pharmacy, bank
   family_activities: AmenityCategory; // Parks, playgrounds, libraries, entertainment
   healthcare: AmenityCategory; // Hospitals, urgent care, dentists, pharmacies
@@ -39,6 +39,9 @@ export interface EnhancedAmenityData {
   fitness: AmenityCategory; // Gyms, pools, sports, yoga
   services: AmenityCategory; // Post office, hair care, laundromat
   spouse_employment: AmenityCategory; // Coworking, coffee shops for remote work
+  pets: AmenityCategory; // Dog parks, pet stores, vet clinics
+  community: AmenityCategory; // Community centers, farmers markets, bookstores
+  home_auto: AmenityCategory; // Hardware stores, auto repair, car wash
   
   // Lifestyle analysis
   lifestyle: {
@@ -78,7 +81,7 @@ export async function fetchEnhancedAmenitiesData(
   }
 
   try {
-    // Fetch all amenity categories in parallel
+    // Fetch all amenity categories in parallel (30+ total)
     const [
       essentialsData,
       familyData,
@@ -87,6 +90,9 @@ export async function fetchEnhancedAmenitiesData(
       fitnessData,
       servicesData,
       employmentData,
+      petsData,
+      communityData,
+      homeAutoData,
     ] = await Promise.all([
       fetchEssentials(lat, lon, apiKey),
       fetchFamilyActivities(lat, lon, apiKey),
@@ -95,6 +101,9 @@ export async function fetchEnhancedAmenitiesData(
       fetchFitness(lat, lon, apiKey),
       fetchServices(lat, lon, apiKey),
       fetchSpouseEmployment(lat, lon, apiKey),
+      fetchPets(lat, lon, apiKey),
+      fetchCommunity(lat, lon, apiKey),
+      fetchHomeAuto(lat, lon, apiKey),
     ]);
 
     // Analyze lifestyle based on amenity mix
@@ -127,7 +136,10 @@ export async function fetchEnhancedAmenitiesData(
       diningData.count +
       fitnessData.count +
       servicesData.count +
-      employmentData.count;
+      employmentData.count +
+      petsData.count +
+      communityData.count +
+      homeAutoData.count;
 
     const overallScore = calculateOverallScore(
       walkability,
@@ -147,6 +159,9 @@ export async function fetchEnhancedAmenitiesData(
       fitness: fitnessData,
       services: servicesData,
       spouse_employment: employmentData,
+      pets: petsData,
+      community: communityData,
+      home_auto: homeAutoData,
       lifestyle,
       total_amenities: totalCount,
       amenities_within_1mi: Math.round(totalCount * 0.7), // Estimate based on 5km radius
@@ -559,4 +574,67 @@ function generateQuickSummary(
 
   return `${character} neighborhood with ${diningDesc} and ${familyDesc}`;
 }
+
+/**
+ * Fetch pet amenities (dog parks, pet stores, vet clinics)
+ */
+async function fetchPets(
+  lat: number,
+  lon: number,
+  apiKey: string
+): Promise<AmenityCategory> {
+  const types = ["dog_park", "pet_store", "veterinary_care"];
+  const places = await fetchPlacesWithDetails(lat, lon, types, apiKey, 5);
+
+  const dogParkCount = places.filter((p) => p.types?.includes("dog_park")).length;
+  const petStoreCount = places.filter((p) => p.types?.includes("pet_store")).length;
+  const vetCount = places.filter((p) => p.types?.includes("veterinary_care")).length;
+
+  return {
+    count: places.length,
+    top_picks: places.slice(0, 3),
+    note: `${dogParkCount} dog parks, ${petStoreCount} pet stores, ${vetCount} vet clinics`,
+  };
+}
+
+/**
+ * Fetch community amenities (community centers, farmers markets, bookstores)
+ */
+async function fetchCommunity(
+  lat: number,
+  lon: number,
+  apiKey: string
+): Promise<AmenityCategory> {
+  const types = ["community_center", "book_store"];
+  const places = await fetchPlacesWithDetails(lat, lon, types, apiKey, 5);
+
+  return {
+    count: places.length,
+    top_picks: places.slice(0, 3),
+    note: `Community gathering spaces and cultural venues`,
+  };
+}
+
+/**
+ * Fetch home & auto amenities (hardware, auto repair, car wash)
+ */
+async function fetchHomeAuto(
+  lat: number,
+  lon: number,
+  apiKey: string
+): Promise<AmenityCategory> {
+  const types = ["hardware_store", "car_repair", "car_wash"];
+  const places = await fetchPlacesWithDetails(lat, lon, types, apiKey, 5);
+
+  const hardwareCount = places.filter((p) => p.types?.includes("hardware_store")).length;
+  const repairCount = places.filter((p) => p.types?.includes("car_repair")).length;
+  const carWashCount = places.filter((p) => p.types?.includes("car_wash")).length;
+
+  return {
+    count: places.length,
+    top_picks: places.slice(0, 3),
+    note: `${hardwareCount} hardware stores, ${repairCount} auto repair shops, ${carWashCount} car washes`,
+  };
+}
+
 

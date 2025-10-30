@@ -131,8 +131,96 @@ export interface NeighborhoodCard {
       fitness: EnhancedAmenityCategory;
       services: EnhancedAmenityCategory;
       spouse_employment: EnhancedAmenityCategory;
+      pets: EnhancedAmenityCategory;
+      community: EnhancedAmenityCategory;
+      home_auto: EnhancedAmenityCategory;
       total_amenities: number;
       quick_summary: string;
+    };
+    // Comprehensive intelligence for ALL sections
+    schools_intelligence?: {
+      total_schools: number;
+      overall_avg_rating: number;
+      by_grade: {
+        elementary: { count: number; avg_rating: number; top_picks: School[] };
+        middle: { count: number; avg_rating: number; top_picks: School[] };
+        high: { count: number; avg_rating: number; top_picks: School[] };
+        private: { count: number; avg_rating: number };
+      };
+      pcs_flexibility: {
+        score: number;
+        flexibility_note: string;
+      };
+      executive_summary: string;
+      detailed_analysis: string;
+    };
+    commute_intelligence?: {
+      best_departure_time: { hour: number; minutes: number; description: string };
+      worst_departure_time: { hour: number; minutes: number; description: string };
+      traffic_variance: string;
+      primary_route_miles: number;
+      alternative_routes_available: number;
+      annual_fuel_cost: number;
+      weekly_time_cost_hours: number;
+      work_life_balance_score: number;
+      early_duty_impact: string;
+      late_duty_impact: string;
+      weekend_flexibility: string;
+      executive_summary: string;
+      bottom_line: string;
+    };
+    weather_intelligence?: {
+      seasonal_breakdown: Array<{
+        season: string;
+        months: string;
+        avg_temp_range: string;
+        conditions: string;
+        outdoor_activities: string;
+        utility_impact: string;
+      }>;
+      best_months: string[];
+      worst_months: string[];
+      extreme_weather_risks: Array<{
+        type: string;
+        risk_level: string;
+        season: string;
+        preparation_needed: string;
+      }>;
+      outdoor_season_months: number;
+      pool_season: string;
+      park_season: string;
+      ac_cost_impact: string;
+      heating_cost_impact: string;
+      overall_comfort_score: number;
+      executive_summary: string;
+      military_family_considerations: string;
+    };
+    housing_intelligence?: {
+      property_types: {
+        single_family: { count: number };
+        townhouse: { count: number };
+        apartment: { count: number };
+      };
+      market_trends: {
+        price_trend: string;
+        trend_description: string;
+        avg_days_on_market: number;
+        inventory_level: string;
+        competition_level: string;
+        negotiation_leverage: string;
+      };
+      bah_analysis: {
+        properties_at_or_under_bah: number;
+        sweet_spot_range: { min_cents: number; max_cents: number };
+        avg_savings_cents: number | null;
+        recommendation: string;
+      };
+      pet_friendly_count: number;
+      utilities_included_count: number;
+      yard_count: number;
+      military_friendly_note: string;
+      executive_summary: string;
+      bottom_line: string;
     };
   };
 }
