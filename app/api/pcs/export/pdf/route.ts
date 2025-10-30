@@ -104,12 +104,12 @@ export async function POST(request: NextRequest) {
           lastVerified: details.perDiem?.effectiveDate || new Date().toISOString(),
         },
         ppm: {
-          amount: Number(snapshot.ppm_estimate) || Number(details.ppm?.amount) || 0,
+          amount: claim.entitlements?.ppm_withholding?.net_payout || Number(snapshot.ppm_estimate) || Number(details.ppm?.amount) || 0,
           confidence: Number(details.ppm?.confidence) || 0.8,
           source: "JTR",
           lastVerified: new Date().toISOString(),
         },
-        total_entitlements: Number(snapshot.total_estimated) || Number(details.total) || 0,
+        total_entitlements: claim.entitlements?.total || Number(snapshot.total_estimated) || Number(details.total) || 0,
         confidence: {
           overall:
             Number(snapshot.confidence_scores?.overall) ||
