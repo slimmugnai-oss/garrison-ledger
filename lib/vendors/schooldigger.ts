@@ -25,6 +25,9 @@ export async function sdFetch<T>(
     signal: ctrl.signal,
     next: { revalidate: REVALIDATE },
     cache: "force-cache",
+    headers: {
+      "Referer": "https://www.garrisonledger.com",
+    },
   });
   clearTimeout(t);
   if (!res.ok) {
