@@ -180,95 +180,235 @@ export default function BaseNavigatorClient({
             <span className="text-gray-600">{base.name} Navigator</span>
           </nav>
 
-          <div className="overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
-            <div className="p-8">
-              <div className="mb-4 flex items-center gap-3 text-sm text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <Icon name="MapPin" className="h-4 w-4" />
-                  {base.state}
-                </span>
-                <span className="text-slate-600">•</span>
-                <span className="flex items-center gap-1.5">
-                  <Icon name="Shield" className="h-4 w-4" />
-                  {base.branch}
-                </span>
-                <span className="text-slate-600">•</span>
-                <span className="flex items-center gap-1.5">
-                  <Icon name="Key" className="h-4 w-4" />
-                  {base.mha}
-                </span>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)' }}></div>
+            </div>
+            
+            <div className="relative p-8 md:p-10">
+              {/* Mission Header */}
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
+                  <Icon name="Shield" className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">Base Navigator</div>
+                  <div className="text-xs text-slate-500">Premium Military Housing Intelligence</div>
+                </div>
               </div>
-              <h1 className="mb-3 text-3xl font-bold text-white md:text-4xl">
+
+              {/* Base Info Badges */}
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                  <Icon name="MapPin" className="h-4 w-4 text-blue-400" />
+                  <span>{base.state}</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                  <Icon name="Shield" className="h-4 w-4 text-green-400" />
+                  <span>{base.branch}</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                  <Icon name="Key" className="h-4 w-4 text-amber-400" />
+                  <span>MHA {base.mha}</span>
+                </div>
+              </div>
+
+              {/* Main Title */}
+              <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl">
                 {base.name} Navigator
               </h1>
-              <p className="text-lg text-slate-300">
-                Comprehensive neighborhood intelligence to find your perfect home near {base.name}.
+              <p className="max-w-3xl text-lg leading-relaxed text-slate-300">
+                AI-powered neighborhood intelligence analyzing schools, commute, weather, housing, and local amenities to find your perfect home near {base.name}.
               </p>
+
+              {/* Stats Bar */}
+              <div className="mt-8 grid gap-4 border-t border-slate-700 pt-6 md:grid-cols-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
+                    <Icon name="Home" className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Analyzing</div>
+                    <div className="font-bold text-white">5 Neighborhoods</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
+                    <Icon name="BarChart" className="h-5 w-5 text-green-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Data Points</div>
+                    <div className="font-bold text-white">300+ Per ZIP</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
+                    <Icon name="Zap" className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Analysis Time</div>
+                    <div className="font-bold text-white">~30 seconds</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/20">
+                    <Icon name="Shield" className="h-5 w-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-400">Military-Focused</div>
+                    <div className="font-bold text-white">100%</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Streamlined Filters - Mobile Optimized */}
-        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 sm:mb-6">Search Criteria</h2>
-
-          <div className="space-y-6">
-            {/* BAH Input - Single Field */}
-            <div className="max-w-md">
-              <label
-                htmlFor="monthly_bah_input"
-                className="mb-2 block text-base font-medium text-gray-900"
-              >
-                Your Monthly BAH
-              </label>
-              <input
-                id="monthly_bah_input"
-                type="number"
-                value={Math.round(bahMonthlyCents / 100)}
-                onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
-                className="min-h-[56px] w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                placeholder="2500"
-              />
-              <p className="mt-2 text-sm text-gray-600">
-                {bahSource === "auto" && userProfile.rank && base.mha ? (
-                  <>
-                    Auto-filled for {userProfile.rank}
-                    {userProfile.hasDependents ? " with dependents" : " without dependents"} at {base.name} (
-                    {base.mha}). You can adjust if needed.
-                  </>
-                ) : userProfile.rank && userProfile.hasDependents === null ? (
-                  <>
-                    For {base.mha} (check your LES).{" "}
-                    <a href="/dashboard/profile/quick-start" className="text-blue-600 hover:underline">
-                      Update your profile
-                    </a>{" "}
-                    to auto-fill this field.
-                  </>
-                ) : (
-                  <>For {base.mha} (check your LES or update your profile to auto-fill)</>
-                )}
-              </p>
-            </div>
-
-            {/* Comprehensive Analysis Note */}
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <div className="flex items-start gap-3">
-                <Icon name="Info" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-                <p className="text-sm text-blue-900">
-                  <strong>Comprehensive Analysis:</strong> We analyze all property types (2-5 bedrooms) and school grades (K-12) to find the best overall neighborhoods for your family.
-                </p>
+        {/* Mission Control - Enhanced Search Interface */}
+        <div className="mb-10 overflow-hidden rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 shadow-lg">
+          {/* Header */}
+          <div className="border-b-2 border-slate-200 bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-4 md:px-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+                <Icon name="Target" className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Mission Parameters</h2>
+                <div className="text-sm text-slate-300">Set your search criteria to begin analysis</div>
               </div>
             </div>
           </div>
 
-          <button
-            onClick={computeRankings}
-            disabled={loading || bahMonthlyCents === 0}
-            className="mt-6 min-h-[48px] w-full rounded-lg bg-blue-600 px-6 py-4 text-base font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
-          >
-            {loading ? "Computing Rankings..." : "Find Best Neighborhoods"}
-          </button>
-        </div>
+          <div className="p-6 md:p-8">
+            <div className="space-y-8">
+              {/* BAH Input - Enhanced */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                  <label htmlFor="monthly_bah_input" className="text-lg font-bold text-slate-900">
+                    Your Monthly BAH
+                  </label>
+                </div>
+                
+                <div className="max-w-md">
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
+                      <span className="text-2xl font-bold text-slate-400">$</span>
+                    </div>
+                    <input
+                      id="monthly_bah_input"
+                      type="number"
+                      value={Math.round(bahMonthlyCents / 100)}
+                      onChange={(e) => setBahMonthlyCents(Number(e.target.value) * 100)}
+                      className="min-h-[64px] w-full rounded-xl border-2 border-slate-300 bg-white pl-12 pr-4 text-2xl font-bold text-slate-900 shadow-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      placeholder="2500"
+                    />
+                  </div>
+                  
+                  <div className="mt-3 flex items-start gap-2 text-sm text-slate-600">
+                    <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
+                    <p>
+                      {bahSource === "auto" && userProfile.rank && base.mha ? (
+                        <>
+                          <span className="font-semibold text-green-600">✓ Auto-filled</span> for {userProfile.rank}
+                          {userProfile.hasDependents ? " with dependents" : " without dependents"} at {base.mha}. You can adjust if needed.
+                        </>
+                      ) : userProfile.rank && userProfile.hasDependents === null ? (
+                        <>
+                          For {base.mha} (check your LES).{" "}
+                          <a href="/dashboard/profile/quick-start" className="font-semibold text-blue-600 hover:underline">
+                            Update profile
+                          </a>{" "}
+                          to auto-fill.
+                        </>
+                      ) : (
+                        <>For {base.mha} (check your LES or <a href="/dashboard/profile/quick-start" className="font-semibold text-blue-600 hover:underline">update profile</a> to auto-fill)</>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Intelligence Scope */}
+              <div className="rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+                    <Icon name="Search" className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-blue-900">Comprehensive Intelligence Scope</div>
+                    <div className="text-sm text-blue-700">What we analyze for you</div>
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="flex items-start gap-3 rounded-lg bg-white p-4">
+                    <Icon name="Home" className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+                    <div>
+                      <div className="font-semibold text-slate-900">All Property Types</div>
+                      <div className="text-sm text-slate-600">2-5 bedrooms, all housing styles</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 rounded-lg bg-white p-4">
+                    <Icon name="GraduationCap" className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
+                    <div>
+                      <div className="font-semibold text-slate-900">All School Grades</div>
+                      <div className="text-sm text-slate-600">K-12, comprehensive coverage</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 rounded-lg bg-white p-4">
+                    <Icon name="MapPin" className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600" />
+                    <div>
+                      <div className="font-semibold text-slate-900">30+ Amenity Types</div>
+                      <div className="text-sm text-slate-600">From groceries to healthcare</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 rounded-lg bg-white p-4">
+                    <Icon name="Truck" className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+                    <div>
+                      <div className="font-semibold text-slate-900">Real-Time Commute</div>
+                      <div className="text-sm text-slate-600">Traffic patterns & duty impact</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="border-t-2 border-slate-700 bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-6 md:px-8">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center gap-3">
+                  <Icon name="Zap" className="h-6 w-6 text-yellow-400" />
+                  <div>
+                    <div className="font-bold text-white">Ready to find your perfect neighborhood?</div>
+                    <div className="text-sm text-slate-300">Get comprehensive intelligence in ~30 seconds</div>
+                  </div>
+                </div>
+                <button
+                  onClick={computeRankings}
+                  disabled={loading || bahMonthlyCents === 0}
+                  className="group relative min-h-[56px] overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <div className="relative z-10 flex items-center justify-center gap-2">
+                    {loading ? (
+                      <>
+                        <Icon name="Loader" className="h-5 w-5 animate-spin" />
+                        <span>Analyzing Neighborhoods...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="Search" className="h-5 w-5" />
+                        <span>Find Best Neighborhoods</span>
+                      </>
+                    )}
+                  </div>
+                  {!loading && (
+                    <div className="absolute inset-0 -z-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-0 transition-opacity group-hover:opacity-20" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
 
         {/* Enhanced Error State */}
         {error && (
