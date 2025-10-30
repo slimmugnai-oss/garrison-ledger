@@ -191,14 +191,15 @@ async function getStateWithholdingRate(stateCode: string): Promise<{
     if (error || !data) {
       logger.warn("State tax rate not found, using 5% default", { stateCode });
       return {
-        stateRate: 5.0,
+        stateRate: 0.05,
         stateName: stateCode,
       };
     }
 
     // Use flat_rate if available (some states have flat tax)
     // Otherwise use avg_rate_mid (midpoint for progressive states)
-    const rate = parseFloat(data.flat_rate || data.avg_rate_mid || "5.0");
+    // Handle case where rate is 0 (no tax states)
+    const rate = data.flat_rate !== null ? data.flat_rate : (data.avg_rate_mid !== null ? data.avg_rate_mid : 0.05);
 
     return {
       stateRate: rate,
@@ -207,7 +208,7 @@ async function getStateWithholdingRate(stateCode: string): Promise<{
   } catch (error) {
     logger.error("Failed to get state tax rate:", error);
     return {
-      stateRate: 5.0,
+      stateRate: 0.05,
       stateName: stateCode,
     };
   }
