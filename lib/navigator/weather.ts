@@ -10,7 +10,7 @@
 import { getCache, setCache } from "@/lib/cache";
 
 /**
- * Google Weather API Response Types
+ * Google Weather API Response Types (Current Conditions endpoint)
  */
 interface GoogleWeatherResponse {
   temperature?: {
@@ -20,9 +20,15 @@ interface GoogleWeatherResponse {
   weatherCondition?: {
     description?: {
       text: string;
+      languageCode?: string;
     };
+    type?: string;
   };
-  humidity?: number;
+  relativeHumidity?: number;
+  feelsLikeTemperature?: {
+    degrees: number;
+    unit: "CELSIUS" | "FAHRENHEIT";
+  };
 }
 
 interface NominatimGeocodingResponse {
@@ -68,8 +74,8 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
       return result;
     }
 
-    // Step 2: Fetch weather from Google Weather API
-    const weatherUrl = `https://weather.googleapis.com/v1/currentWeather?location.latitude=${coords.lat}&location.longitude=${coords.lon}&key=${apiKey}`;
+    // Step 2: Fetch weather from Google Weather API (Current Conditions endpoint)
+    const weatherUrl = `https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${coords.lat}&location.longitude=${coords.lon}&key=${apiKey}`;
     const weatherResponse = await fetch(weatherUrl);
 
     if (!weatherResponse.ok) {
@@ -240,8 +246,8 @@ function analyzeWeatherData(data: GoogleWeatherResponse): { index10: number; not
     // VALIDATION: Ensure description is a string, never an object
     const description = typeof descriptionObj === "string" ? descriptionObj : "Moderate";
 
-    // Humidity (not in response, use neutral default)
-    const humidity = 50;
+    // Humidity from API response (relativeHumidity field)
+    const humidity = data.relativeHumidity ?? 50;
 
     // Compute comfort index based on current conditions
     let index = 10;
