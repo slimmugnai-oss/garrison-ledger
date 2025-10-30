@@ -44,6 +44,8 @@ import AddLineItemModal from "./AddLineItemModal";
 import LesEditorLayout from "./LesEditorLayout";
 import LesSummarySticky from "./LesSummarySticky";
 import LesSectionCard from "./LesSectionCard";
+import LesFindingsCompact from "./LesFindingsCompact";
+import LesHistoryCompact from "./LesHistoryCompact";
 
 interface Props {
   tier: Tier;
@@ -81,7 +83,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
   const [loadingExpected, setLoadingExpected] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [historyExpanded, setHistoryExpanded] = useState(false);
   const [entryMode, setEntryMode] = useState<"upload" | "manual">("manual");
   const [uploading, setUploading] = useState(false);
   const [uploadedItems, setUploadedItems] = useState<DynamicLineItem[] | null>(null);
@@ -474,16 +475,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
       // Refresh history to show newly saved audit
       await fetchHistory();
 
-      // Auto-expand and scroll to history section
-      setHistoryExpanded(true);
-      setTimeout(() => {
-        const historyEl = document.getElementById("saved-audits-section");
-        if (historyEl) {
-          historyEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        }
-        // Show brief success message
-        alert(successMessage);
-      }, 300);
+      // Show success message
+      alert(successMessage);
     } catch (error) {
       logger.error("[Save] Error:", error);
       alert("Failed to save audit. Please try again.");
@@ -725,6 +718,25 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             onSave={handleSavePDF}
             onPrint={handlePrint}
             saving={saving}
+            findingsSection={
+              result && result.flags && result.flags.length > 0 ? (
+                <LesFindingsCompact
+                  flags={result.flags}
+                  tier={tier}
+                  hiddenFlagCount={result.hiddenFlagCount || 0}
+                  onUpgrade={() => (window.location.href = "/dashboard/upgrade?feature=paycheck-audit")}
+                />
+              ) : undefined
+            }
+            historySection={
+              <LesHistoryCompact
+                history={history}
+                loading={loadingHistory}
+                tier={tier}
+                onSave={result ? handleSavePDF : undefined}
+                saving={saving}
+              />
+            }
           />
         }
       >
@@ -804,115 +816,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             onAddItem={handleAddItem}
           />
         )}
-
-        {/* Findings Panel */}
-        {result && (
-          <LesFindingsAccordion
-            flags={result.flags}
-            tier={tier}
-            hiddenFlagCount={result.hiddenFlagCount || 0}
-            onUpgrade={() => (window.location.href = "/dashboard/upgrade?feature=paycheck-audit")}
-          />
-        )}
       </LesEditorLayout>
-
-      {/* Audit History */}
-              {(tier === "premium" || tier === "staff") && (
-                <div id="saved-audits-section" className="mt-8 border-t pt-6">
-                  {loadingHistory ? (
-                    <div className="py-8 text-center">
-                      <Icon
-                        name="RefreshCw"
-                className="mx-auto h-8 w-8 animate-spin text-slate-400"
-                      />
-              <p className="mt-2 text-sm text-slate-600">Loading saved audits...</p>
-                    </div>
-                  ) : history.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-              <Icon name="File" className="mx-auto mb-3 h-12 w-12 text-slate-400" />
-              <h3 className="mb-2 text-lg font-semibold text-slate-900">
-                        No Saved Audits Yet
-                      </h3>
-              <p className="mb-4 text-sm text-slate-600">
-                        Save your first audit to track pay discrepancies over time.
-                      </p>
-                      {result && (
-                        <button
-                          onClick={handleSavePDF}
-                          disabled={saving}
-                          className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50"
-                        >
-                          <Icon name="Download" className="h-4 w-4" />
-                          {saving ? "Saving..." : "Save Current Audit"}
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => setHistoryExpanded(!historyExpanded)}
-                        className="flex w-full items-center justify-between text-left"
-                      >
-                <h3 className="text-lg font-semibold text-slate-900">Saved Audits</h3>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="info">{history.length}</Badge>
-                          <Icon
-                            name={historyExpanded ? "ChevronUp" : "ChevronDown"}
-                    className="h-5 w-5 text-slate-400"
-                          />
-                        </div>
-                      </button>
-
-                      {historyExpanded && (
-                        <div className="mt-4 space-y-2">
-                          {history.map((audit) => (
-                            <div
-                              key={audit.id}
-                      className="flex items-center justify-between rounded-lg border bg-slate-50 p-3 transition-colors hover:bg-slate-100"
-                            >
-                              <div className="flex-1">
-                        <p className="font-medium text-slate-900">
-                                  {new Date(2000, audit.month - 1).toLocaleString("default", {
-                                    month: "long",
-                                  })}{" "}
-                                  {audit.year}
-                                </p>
-                        <p className="text-xs text-slate-600">
-                                  {new Date(audit.created_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <button
-                          onClick={() => {
-                            // Load audit logic would go here
-                            alert("Load audit functionality coming soon");
-                          }}
-                                  className="flex items-center gap-1 rounded px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50"
-                                >
-                                  <Icon name="Upload" className="h-4 w-4" />
-                                  Load
-                                </button>
-                                <button
-                          onClick={() => {
-                            if (confirm(`Delete audit for ${new Date(2000, audit.month - 1).toLocaleString("default", { month: "short" })} ${audit.year}? This cannot be undone.`)) {
-                              // Delete audit logic would go here
-                              alert("Delete audit functionality coming soon");
-                            }
-                          }}
-                                  className="flex items-center gap-1 rounded px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50"
-                                >
-                                  <Icon name="Trash2" className="h-4 w-4" />
-                                  Delete
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
 
       {/* Add/Edit Modal */}
       <AddLineItemModal

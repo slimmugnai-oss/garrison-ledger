@@ -30,6 +30,9 @@ interface LesSummaryStickyProps {
   onSave: () => void;
   onPrint: () => void;
   saving?: boolean;
+  // Optional sections to show below actions
+  findingsSection?: React.ReactNode;
+  historySection?: React.ReactNode;
 }
 
 export default function LesSummarySticky({
@@ -45,6 +48,8 @@ export default function LesSummarySticky({
   onSave,
   onPrint,
   saving = false,
+  findingsSection,
+  historySection,
 }: LesSummaryStickyProps) {
   const [showProvenance, setShowProvenance] = useState(false);
   const router = useRouter();
@@ -224,6 +229,20 @@ export default function LesSummarySticky({
           Your LES data is encrypted and never stored
         </p>
       </div>
+
+      {/* Optional Findings Section */}
+      {findingsSection && (
+        <div className="border-t border-slate-200">
+          {findingsSection}
+        </div>
+      )}
+
+      {/* Optional History Section */}
+      {historySection && (
+        <div className="border-t border-slate-200">
+          {historySection}
+        </div>
+      )}
     </div>
   );
 }
