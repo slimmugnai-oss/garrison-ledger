@@ -65,16 +65,13 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
         {/* Hero */}
         <div className="mb-16 text-center">
           <h1 className="font-lora mb-4 text-5xl font-bold text-gray-900">Upgrade to Premium</h1>
-          <p className="mb-2 text-2xl text-gray-600">
-            Unlock unlimited access to all 4 premium tools
-          </p>
-          <p className="text-lg text-gray-500">
-            Or buy Ask Our Military Expert question credits as needed
+          <p className="text-2xl text-gray-600">
+            Unlock unlimited access to all 5 premium tools
           </p>
         </div>
 
         {/* Premium Feature Callout - Conditional based on feature parameter */}
-        {feature === "pcs-copilot" ? (
+        {feature === "pcs-copilot" && (
           <div className="mb-8 rounded-xl border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
             <div className="flex items-start gap-4">
               <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600">
@@ -118,45 +115,6 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
               </div>
             </div>
           </div>
-        ) : (
-          <div className="mb-8 rounded-xl border-2 border-indigo-300 bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600">
-                <Icon name="MessageCircle" className="h-7 w-7 text-white" />
-              </div>
-              <div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">
-                  Ask Our Military Expert - Premium Access
-                </h3>
-                <p className="mb-3 text-gray-700">
-                  Upgrade from <span className="font-semibold">5 questions/month</span> to{" "}
-                  <span className="font-bold text-indigo-600">50 questions/month</span>
-                </p>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-center gap-2">
-                    <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                    50 expert answers/month (vs 5 free)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                    Priority response time (~2 seconds)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                    Personalized to YOUR profile (rank, base, family)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Icon name="CheckCircle" className="h-4 w-4 text-green-600" />
-                    Full answer history and follow-up questions
-                  </li>
-                </ul>
-                <p className="mt-3 text-xs text-gray-600">
-                  <strong>Value:</strong> 50 questions × $0.20/question average = $10/month value
-                  for just this feature alone
-                </p>
-              </div>
-            </div>
-          </div>
         )}
 
         {/* Premium Subscription (Primary) */}
@@ -193,17 +151,17 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
               <div className="flex items-start gap-3">
                 <Icon name="CheckCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-600" />
                 <div>
-                  <p className="font-semibold text-gray-900">Full Base Navigator</p>
-                  <p className="text-sm text-gray-600">See ALL neighborhoods, not just top 3</p>
+                  <p className="font-semibold text-gray-900">Base Navigator (Premium Only)</p>
+                  <p className="text-sm text-gray-600">Find the perfect neighborhood with weather, schools, and housing data</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <Icon name="CheckCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-600" />
                 <div>
-                  <p className="font-semibold text-gray-900">Unlimited PCS Tracking</p>
+                  <p className="font-semibold text-gray-900">PCS Copilot (Premium Only)</p>
                   <p className="text-sm text-gray-600">
-                    Track all PCS claims with readiness scoring and calculations
+                    Calculate DLA, TLE, MALT, Per Diem, and PPM reimbursements with AI guidance
                   </p>
                 </div>
               </div>
@@ -217,16 +175,6 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                   <p className="text-sm text-gray-600">
                     Get instant expert answers to ANY military life question—financial, PCS,
                     deployment, career, benefits, base life
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Icon name="CheckCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-600" />
-                <div>
-                  <p className="font-semibold text-gray-900">Premium Intel Cards</p>
-                  <p className="text-sm text-gray-600">
-                    Advanced tax, investment, and benefits guides
                   </p>
                 </div>
               </div>
@@ -310,29 +258,36 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
               </thead>
               <tbody className="divide-y divide-gray-200">
                 <tr>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">LES Audits</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">1/month</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">LES Auditor</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">—</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    Unlimited
+                    ✓ Premium Only
                   </td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">Base Navigator</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">Top 3 results</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">—</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    Full rankings
+                    ✓ Premium Only
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">PCS Tracking</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">Limited</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">PCS Copilot</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">—</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    Unlimited
+                    ✓ Premium Only
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">TDY Copilot</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">—</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ Premium Only
                   </td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    Ask Our Military Expert
+                    Ask Military Expert
                   </td>
                   <td className="px-6 py-4 text-center text-sm text-gray-600">5 questions/month</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
@@ -340,17 +295,37 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                   </td>
                 </tr>
                 <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">Directory</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ Full access
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ Full access
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">Toolkits</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ All hubs
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ All hubs
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">Listening Post</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ Full feed
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ✓ Full feed
+                  </td>
+                </tr>
+                <tr>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">Binder Storage</td>
                   <td className="px-6 py-4 text-center text-sm text-gray-600">1 GB</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
                     5 GB
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">Intel Library</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">Basic cards</td>
-                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    All premium cards
                   </td>
                 </tr>
                 <tr>
