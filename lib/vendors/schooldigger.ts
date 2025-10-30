@@ -133,21 +133,76 @@ export function getSchoolsByZip(
   perPage = 25,
   page = 1
 ): Promise<SchoolDiggerResponse> {
-  // For now, we'll use a simple mapping of ZIP codes to states
-  // In production, you might want to use a more comprehensive ZIP-to-state lookup
+  // Comprehensive ZIP-to-state mapping for military base coverage
   const getStateFromZip = (zip: string): string => {
     const zipNum = parseInt(zip);
-    if (zipNum >= 98000 && zipNum <= 99999) return "WA"; // Washington
-    if (zipNum >= 90000 && zipNum <= 96699) return "CA"; // California
-    if (zipNum >= 10000 && zipNum <= 14999) return "NY"; // New York
-    if (zipNum >= 20000 && zipNum <= 29999) return "DC"; // Washington DC
-    if (zipNum >= 30000 && zipNum <= 39999) return "GA"; // Georgia
-    if (zipNum >= 40000 && zipNum <= 49999) return "KY"; // Kentucky
-    if (zipNum >= 50000 && zipNum <= 59999) return "IA"; // Iowa
-    if (zipNum >= 60000 && zipNum <= 69999) return "IL"; // Illinois
-    if (zipNum >= 70000 && zipNum <= 79999) return "LA"; // Louisiana
-    if (zipNum >= 80000 && zipNum <= 89999) return "CO"; // Colorado
-    return "WA"; // Default to Washington for military bases
+    
+    // California (90000-96199)
+    if (zipNum >= 90000 && zipNum <= 96199) return "CA";
+    
+    // Washington (98000-99499)
+    if (zipNum >= 98000 && zipNum <= 99499) return "WA";
+    
+    // New York (10000-14999)
+    if (zipNum >= 10000 && zipNum <= 14999) return "NY";
+    
+    // DC/MD/VA (20000-22999)
+    if (zipNum >= 20000 && zipNum <= 20599) return "DC";
+    if (zipNum >= 20600 && zipNum <= 21999) return "MD";
+    if (zipNum >= 22000 && zipNum <= 24699) return "VA";
+    
+    // West Virginia (24700-26999)
+    if (zipNum >= 24700 && zipNum <= 26999) return "WV";
+    
+    // North Carolina (27000-28999) - CRITICAL for Fort Liberty (Bragg)
+    if (zipNum >= 27000 && zipNum <= 28999) return "NC";
+    
+    // South Carolina (29000-29999)
+    if (zipNum >= 29000 && zipNum <= 29999) return "SC";
+    
+    // Georgia (30000-31999)
+    if (zipNum >= 30000 && zipNum <= 31999) return "GA";
+    
+    // Florida (32000-34999)
+    if (zipNum >= 32000 && zipNum <= 34999) return "FL";
+    
+    // Alabama (35000-36999)
+    if (zipNum >= 35000 && zipNum <= 36999) return "AL";
+    
+    // Tennessee (37000-38599)
+    if (zipNum >= 37000 && zipNum <= 38599) return "TN";
+    
+    // Kentucky (40000-42799)
+    if (zipNum >= 40000 && zipNum <= 42799) return "KY";
+    
+    // Missouri (63000-65999)
+    if (zipNum >= 63000 && zipNum <= 65999) return "MO";
+    
+    // Kansas (66000-67999)
+    if (zipNum >= 66000 && zipNum <= 67999) return "KS";
+    
+    // Louisiana (70000-71599)
+    if (zipNum >= 70000 && zipNum <= 71599) return "LA";
+    
+    // Oklahoma (73000-74999)
+    if (zipNum >= 73000 && zipNum <= 74999) return "OK";
+    
+    // Texas (75000-79999, 88000-88999)
+    if (zipNum >= 75000 && zipNum <= 79999) return "TX";
+    if (zipNum >= 88000 && zipNum <= 88999) return "TX";
+    
+    // Colorado (80000-81699)
+    if (zipNum >= 80000 && zipNum <= 81699) return "CO";
+    
+    // Hawaii (96700-96899)
+    if (zipNum >= 96700 && zipNum <= 96899) return "HI";
+    
+    // Alaska (99500-99999)
+    if (zipNum >= 99500 && zipNum <= 99999) return "AK";
+    
+    // Default fallback
+    console.warn(`[SCHOOLDIGGER] Unknown ZIP range: ${zip}, defaulting to CA`);
+    return "CA";
   };
 
   return sdFetch<SchoolDiggerResponse>("/schools", {

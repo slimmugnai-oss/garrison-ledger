@@ -15,7 +15,7 @@ import { getSchoolsByZip, type SchoolDiggerSchool } from "@/lib/vendors/schooldi
  */
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   // Cache key versioned for SchoolDigger
-  const cacheKey = `sd:zip:v2:${zip}`;
+  const cacheKey = `sd:zip:v3:${zip}`; // v3: Fixed ZIP-to-state mapping for all states
 
   const cached = await getCache<School[]>(cacheKey);
   if (cached) {
