@@ -12,8 +12,10 @@
 import React, { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import LineItemRow from "./LineItemRow";
+import LineItemSkeleton from "./LineItemSkeleton";
 import type { DynamicLineItem, LesSection } from "@/app/types/les";
 import { formatCurrency } from "@/lib/utils/currency";
+import { SECTION_COLORS, SECTION_ICON_COLORS } from "@/lib/les/section-config";
 
 interface LesSectionCardProps {
   section: LesSection;
@@ -26,27 +28,8 @@ interface LesSectionCardProps {
   onAddItem: (section: LesSection) => void;
   autoCalcCodes?: string[]; // Codes that are auto-calculated
   defaultCollapsed?: boolean;
+  loading?: boolean; // Show skeleton while loading
 }
-
-const SECTION_COLORS: Record<LesSection, string> = {
-  ALLOWANCE: "border-green-200 bg-green-50",
-  TAX: "border-red-200 bg-red-50",
-  DEDUCTION: "border-orange-200 bg-orange-50",
-  ALLOTMENT: "border-blue-200 bg-blue-50",
-  DEBT: "border-gray-200 bg-gray-50",
-  ADJUSTMENT: "border-purple-200 bg-purple-50",
-  OTHER: "border-gray-200 bg-gray-50",
-};
-
-const SECTION_ICON_COLORS: Record<LesSection, string> = {
-  ALLOWANCE: "text-green-600",
-  TAX: "text-red-600",
-  DEDUCTION: "text-orange-600",
-  ALLOTMENT: "text-blue-600",
-  DEBT: "text-gray-600",
-  ADJUSTMENT: "text-purple-600",
-  OTHER: "text-gray-600",
-};
 
 export default function LesSectionCard({
   section,
@@ -59,6 +42,7 @@ export default function LesSectionCard({
   onAddItem,
   autoCalcCodes = [],
   defaultCollapsed = false,
+  loading = false,
 }: LesSectionCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const isEmpty = items.length === 0;
@@ -114,6 +98,9 @@ export default function LesSectionCard({
                 Add {label} Item
               </button>
             </div>
+          ) : loading ? (
+            /* Loading Skeleton */
+            <LineItemSkeleton count={3} />
           ) : (
             /* Line Items */
             <>

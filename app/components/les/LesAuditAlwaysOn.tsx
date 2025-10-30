@@ -738,6 +738,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           onUpdateItem={handleUpdateItem}
           onDeleteItem={handleDeleteItem}
           onAddItem={handleAddItem}
+          loading={loadingExpected && lineItems.length === 0}
         />
 
         <LesSectionCard
@@ -750,6 +751,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           onDeleteItem={handleDeleteItem}
           onAddItem={handleAddItem}
           autoCalcCodes={["FICA", "MEDICARE"]}
+          loading={loadingExpected && lineItems.length === 0}
         />
 
         <LesSectionCard
@@ -761,6 +763,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           onUpdateItem={handleUpdateItem}
           onDeleteItem={handleDeleteItem}
           onAddItem={handleAddItem}
+          loading={loadingExpected && lineItems.length === 0}
         />
 
         {lineItemsBySection.ALLOTMENT.length > 0 && (

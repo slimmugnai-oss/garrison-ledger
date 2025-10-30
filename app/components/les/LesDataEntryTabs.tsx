@@ -10,6 +10,7 @@
 import React, { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import type { DynamicLineItem, LesSection } from "@/app/types/les";
+import { SECTION_LABELS, SECTION_COLORS, SECTION_ICONS } from "@/lib/les/section-config";
 
 interface LesDataEntryTabsProps {
   lineItems: DynamicLineItem[];
@@ -58,36 +59,6 @@ const TABS: Array<{
     description: "Allotments, debts, adjustments"
   }
 ];
-
-const SECTION_LABELS: Record<LesSection, string> = {
-  ALLOWANCE: "Allowances",
-  TAX: "Taxes",
-  DEDUCTION: "Deductions",
-  ALLOTMENT: "Allotments",
-  DEBT: "Debts",
-  ADJUSTMENT: "Adjustments",
-  OTHER: "Other",
-};
-
-const SECTION_COLORS: Record<LesSection, string> = {
-  ALLOWANCE: "border-green-200 bg-green-50",
-  TAX: "border-red-200 bg-red-50",
-  DEDUCTION: "border-orange-200 bg-orange-50",
-  ALLOTMENT: "border-blue-200 bg-blue-50",
-  DEBT: "border-gray-200 bg-gray-50",
-  ADJUSTMENT: "border-purple-200 bg-purple-50",
-  OTHER: "border-gray-200 bg-gray-50",
-};
-
-const SECTION_ICONS: Record<LesSection, string> = {
-  ALLOWANCE: "DollarSign",
-  TAX: "Landmark",
-  DEDUCTION: "Calculator",
-  ALLOTMENT: "Banknote",
-  DEBT: "AlertCircle",
-  ADJUSTMENT: "RefreshCw",
-  OTHER: "File",
-};
 
 export default function LesDataEntryTabs({
   lineItems,

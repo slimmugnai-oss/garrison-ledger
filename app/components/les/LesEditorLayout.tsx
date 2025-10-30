@@ -10,6 +10,7 @@
  */
 
 import React from "react";
+import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 
 interface LesEditorLayoutProps {
   children: React.ReactNode;
@@ -18,25 +19,27 @@ interface LesEditorLayoutProps {
 
 export default function LesEditorLayout({ children, summary }: LesEditorLayoutProps) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Mobile: Summary first */}
-      <div className="mb-6 lg:hidden">
-        {summary}
-      </div>
+    <ErrorBoundary>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        {/* Mobile: Summary first */}
+        <div className="mb-6 lg:hidden">
+          <ErrorBoundary>{summary}</ErrorBoundary>
+        </div>
 
-      {/* Desktop: 2-column grid */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        {/* Main content: Section cards */}
-        <main className="space-y-6">
-          {children}
-        </main>
+        {/* Desktop: 2-column grid */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          {/* Main content: Section cards */}
+          <main className="space-y-6">
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </main>
 
-        {/* Desktop: Sticky summary sidebar */}
-        <aside className="hidden lg:block lg:sticky lg:top-20 h-fit">
-          {summary}
-        </aside>
+          {/* Desktop: Sticky summary sidebar */}
+          <aside className="hidden lg:block lg:sticky lg:top-20 h-fit">
+            <ErrorBoundary>{summary}</ErrorBoundary>
+          </aside>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
 

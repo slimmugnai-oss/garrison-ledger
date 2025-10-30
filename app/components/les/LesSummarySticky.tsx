@@ -11,6 +11,7 @@
  */
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Icon from "@/app/components/ui/Icon";
 import Badge from "@/app/components/ui/Badge";
 import type { Tier } from "@/lib/auth/subscription";
@@ -46,6 +47,7 @@ export default function LesSummarySticky({
   saving = false,
 }: LesSummaryStickyProps) {
   const [showProvenance, setShowProvenance] = useState(false);
+  const router = useRouter();
 
   const isPremium = tier === "premium" || tier === "staff";
 
@@ -206,7 +208,7 @@ export default function LesSummarySticky({
           </>
         ) : (
           <button
-            onClick={() => (window.location.href = "/dashboard/upgrade?feature=les-auditor")}
+            onClick={() => router.push("/dashboard/upgrade?feature=les-auditor")}
             className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
           >
             <Icon name="Crown" className="h-5 w-5" />
