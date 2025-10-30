@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
 import Badge from "@/app/components/ui/Badge";
 import Icon from "@/app/components/ui/Icon";
+import NeighborhoodIntelligenceReport from "@/app/components/navigator/NeighborhoodIntelligenceReport";
 import type {
   BaseSeed,
   NeighborhoodCard,
@@ -558,6 +559,17 @@ export default function BaseNavigatorClient({
                         <div className="mb-6">
                           <div className="flex gap-1 overflow-x-auto border-b border-gray-200 pb-0">
                             {[
+                              // Add Intelligence Report tab for top 3
+                              ...(index < 3 && result.payload.intelligence
+                                ? [
+                                    {
+                                      id: "intelligence",
+                                      label: "📋 Intelligence Report",
+                                      shortLabel: "Intel",
+                                      icon: "File" as const,
+                                    },
+                                  ]
+                                : []),
                               {
                                 id: "overview",
                                 label: "Overview",
@@ -611,6 +623,16 @@ export default function BaseNavigatorClient({
 
                         {/* Tab Content */}
                         <div className="min-h-[400px]">
+                          {/* Intelligence Report Tab (Top 3 only) */}
+                          {(activeTabs[result.zip] || "overview") === "intelligence" &&
+                            result.payload.intelligence && (
+                              <NeighborhoodIntelligenceReport
+                                neighborhood={result}
+                                rank={index + 1}
+                                baseName={base.name}
+                              />
+                            )}
+
                           {(activeTabs[result.zip] || "overview") === "overview" && (
                             <div className="space-y-6">
                               {/* Quick Stats Bar */}

@@ -18,10 +18,12 @@ import { errorResponse, Errors } from "@/lib/api-errors";
 import bases from "@/lib/data/bases-seed.json";
 import { logger } from "@/lib/logger";
 import { fetchAmenitiesData } from "@/lib/navigator/amenities";
+import { fetchEnhancedAmenitiesData } from "@/lib/navigator/amenities-enhanced";
 import { commuteMinutesFromZipToGate } from "@/lib/navigator/distance";
 import { fetchMedianRent, fetchSampleListings } from "@/lib/navigator/housing";
+import { generateNeighborhoodIntelligence } from "@/lib/navigator/neighborhood-intelligence";
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from "@/lib/navigator/schools";
-import { familyFitScore100 } from "@/lib/navigator/score";
+import { familyFitScore100, applyContextBoost } from "@/lib/navigator/score";
 import { weatherComfortIndex } from "@/lib/navigator/weather";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -221,8 +223,114 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Sort by family_fit_score descending and limit to top 5
+    // Sort by family_fit_score descending
     results.sort((a, b) => b.family_fit_score - a.family_fit_score);
+
+    // ENHANCED DATA FOR TOP 3 NEIGHBORHOODS
+    // Generate comprehensive intelligence reports for premium users
+    logger.info("Generating enhanced intelligence for top 3 neighborhoods", {
+      baseCode,
+      userId: userId.substring(0, 8) + "...",
+    });
+
+    for (let i = 0; i < Math.min(3, results.length); i++) {
+      const result = results[i];
+      const rank = i + 1;
+
+      try {
+        // Find geocoded coordinates for this ZIP
+        const geocodeResponse = await fetch(
+          `https://nominatim.openstreetmap.org/search?postalcode=${result.zip}&country=us&format=json&limit=1`,
+          {
+            headers: {
+              "User-Agent": "GarrisonLedger/1.0",
+            },
+          }
+        );
+
+        if (!geocodeResponse.ok) {
+          logger.warn(`Failed to geocode ${result.zip} for enhanced data`);
+          continue;
+        }
+
+        const geocodeData = await geocodeResponse.json();
+        if (geocodeData.length === 0) {
+          logger.warn(`No geocode results for ${result.zip}`);
+          continue;
+        }
+
+        const lat = parseFloat(geocodeData[0].lat);
+        const lon = parseFloat(geocodeData[0].lon);
+
+        // Fetch enhanced amenities data
+        const enhancedAmenities = await fetchEnhancedAmenitiesData(result.zip, lat, lon);
+
+        // Generate intelligence report
+        const intelligence = generateNeighborhoodIntelligence({
+          zip: result.zip,
+          rank,
+          familyFitScore: result.family_fit_score,
+          schools: result.payload.top_schools,
+          schoolScore: result.school_score,
+          kidsGrades: kidsGrades as KidsGrade[],
+          medianRentCents: result.median_rent_cents,
+          bahMonthlyCents,
+          commuteAm: result.commute_am_minutes,
+          commutePm: result.commute_pm_minutes,
+          weatherIndex: result.weather_index,
+          weatherNote: result.payload.weather_note,
+          enhancedAmenities,
+        });
+
+        // Add enhanced data to result
+        result.payload.intelligence = intelligence;
+        result.payload.enhanced_amenities = {
+          overall_score: enhancedAmenities.overall_score,
+          walkability_score: enhancedAmenities.walkability_score,
+          family_friendliness_score: enhancedAmenities.family_friendliness_score,
+          essentials: enhancedAmenities.essentials,
+          family_activities: enhancedAmenities.family_activities,
+          healthcare: enhancedAmenities.healthcare,
+          dining: enhancedAmenities.dining,
+          fitness: enhancedAmenities.fitness,
+          services: enhancedAmenities.services,
+          spouse_employment: enhancedAmenities.spouse_employment,
+          total_amenities: enhancedAmenities.total_amenities,
+          quick_summary: enhancedAmenities.quick_summary,
+        };
+
+        // Apply context-aware score boosting for top 3
+        const boostedScore = applyContextBoost(
+          result.family_fit_score,
+          result.subscores,
+          {
+            hasKids: kidsGrades.length > 0,
+            kidCount: kidsGrades.length,
+            schoolScore10: result.school_score,
+            totalSchools: result.payload.top_schools.length,
+            medianRentCents: result.median_rent_cents,
+            bahMonthlyCents,
+            commuteMin: result.commute_am_minutes,
+            walkabilityScore: enhancedAmenities.walkability_score,
+          }
+        );
+
+        // Update score if boosted
+        if (boostedScore !== result.family_fit_score) {
+          result.family_fit_score = boostedScore;
+        }
+
+        logger.info(`Enhanced intelligence generated for ${result.zip} (Rank #${rank})`, {
+          totalAmenities: enhancedAmenities.total_amenities,
+          confidenceScore: intelligence.confidence_score,
+          finalScore: result.family_fit_score,
+        });
+      } catch (error) {
+        logger.error(`Failed to generate enhanced data for ${result.zip}`, error);
+        // Continue without enhanced data for this ZIP
+      }
+    }
+
     const topResults = results.slice(0, 5);
 
     // Track usage (only for free users, premium is unlimited)

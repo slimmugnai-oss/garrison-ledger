@@ -36,6 +36,40 @@ export interface Listing {
   bathrooms?: number;
 }
 
+export interface PlaceDetail {
+  name: string;
+  address: string;
+  rating?: number;
+  user_ratings_total?: number;
+  distance_mi?: number;
+  types?: string[];
+}
+
+export interface NeighborhoodIntelligence {
+  quick_verdict: string;
+  confidence_score: number;
+  lifestyle: {
+    character: "suburban" | "urban" | "rural" | "mixed";
+    walkability_score: number;
+    family_friendliness: number;
+    dining_scene: "limited" | "moderate" | "excellent";
+    shopping_convenience: "low" | "moderate" | "high";
+  };
+  amenities_summary: string;
+  schools_summary: string;
+  commute_summary: string;
+  quality_of_life_summary: string;
+  bottom_line: string;
+  key_strengths: string[];
+  considerations: string[];
+}
+
+export interface EnhancedAmenityCategory {
+  count: number;
+  top_picks: PlaceDetail[];
+  note: string;
+}
+
 export interface NeighborhoodCard {
   zip: string;
   family_fit_score: number;
@@ -83,6 +117,22 @@ export interface NeighborhoodCard {
       va_facility_distance_mi: number | null;
       military_housing_distance_mi: number | null;
       note: string;
+    };
+    // Enhanced data for top 3 neighborhoods
+    intelligence?: NeighborhoodIntelligence;
+    enhanced_amenities?: {
+      overall_score: number;
+      walkability_score: number;
+      family_friendliness_score: number;
+      essentials: EnhancedAmenityCategory;
+      family_activities: EnhancedAmenityCategory;
+      healthcare: EnhancedAmenityCategory;
+      dining: EnhancedAmenityCategory;
+      fitness: EnhancedAmenityCategory;
+      services: EnhancedAmenityCategory;
+      spouse_employment: EnhancedAmenityCategory;
+      total_amenities: number;
+      quick_summary: string;
     };
   };
 }

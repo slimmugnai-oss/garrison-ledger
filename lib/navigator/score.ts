@@ -215,6 +215,99 @@ function averageDefined(arr: Array<number | null | undefined>): number | null {
 }
 
 /**
+ * Apply context-aware score boosting based on user profile and neighborhood characteristics
+ * Rewards neighborhoods that excel in user's priorities
+ */
+export function applyContextBoost(
+  baseScore: number,
+  subscores: {
+    schools: number;
+    rentVsBah: number;
+    commute: number;
+    amenities: number;
+  },
+  context: {
+    hasKids: boolean;
+    kidCount?: number;
+    schoolScore10: number;
+    totalSchools: number;
+    medianRentCents: number | null;
+    bahMonthlyCents: number;
+    commuteMin: number | null;
+    walkabilityScore?: number;
+  }
+): number {
+  let boost = 0;
+
+  // BOOST 1: Excellent schools with kids
+  if (context.hasKids && context.schoolScore10 >= 8 && subscores.schools >= 80) {
+    boost += 5;
+    console.log("[SCORE_BOOST] +5 for excellent schools with kids");
+  }
+
+  // BOOST 2: Multiple school options (good for PCS flexibility)
+  if (context.hasKids && context.totalSchools >= 5 && context.schoolScore10 >= 7) {
+    boost += 3;
+    console.log("[SCORE_BOOST] +3 for multiple good school options (PCS flexibility)");
+  }
+
+  // BOOST 3: Significant BAH surplus (pocket money)
+  if (context.medianRentCents && context.bahMonthlyCents) {
+    const surplus = context.bahMonthlyCents - context.medianRentCents;
+    const surplusPercent = surplus / context.bahMonthlyCents;
+
+    if (surplusPercent >= 0.2 && subscores.rentVsBah >= 95) {
+      // 20%+ surplus
+      boost += 8;
+      console.log(`[SCORE_BOOST] +8 for major BAH surplus (${Math.round(surplusPercent * 100)}%)`);
+    } else if (surplusPercent >= 0.1) {
+      // 10%+ surplus
+      boost += 4;
+      console.log(`[SCORE_BOOST] +4 for good BAH surplus (${Math.round(surplusPercent * 100)}%)`);
+    }
+  }
+
+  // BOOST 4: Short commute + walkable (work-life balance)
+  if (
+    context.commuteMin &&
+    context.commuteMin < 20 &&
+    context.walkabilityScore &&
+    context.walkabilityScore >= 70
+  ) {
+    boost += 6;
+    console.log("[SCORE_BOOST] +6 for short commute + walkable neighborhood");
+  } else if (context.commuteMin && context.commuteMin < 20) {
+    boost += 3;
+    console.log("[SCORE_BOOST] +3 for short commute");
+  }
+
+  // BOOST 5: Under budget + great schools (exceptional value)
+  if (
+    context.hasKids &&
+    context.medianRentCents &&
+    context.medianRentCents < context.bahMonthlyCents &&
+    context.schoolScore10 >= 8
+  ) {
+    boost += 10;
+    console.log("[SCORE_BOOST] +10 for exceptional value (under budget + great schools)");
+  }
+
+  // BOOST 6: High walkability with young kids (convenience)
+  if (context.hasKids && context.kidCount && context.kidCount >= 2 && context.walkabilityScore && context.walkabilityScore >= 75) {
+    boost += 4;
+    console.log("[SCORE_BOOST] +4 for high walkability with multiple kids");
+  }
+
+  const finalScore = Math.min(100, baseScore + boost);
+
+  if (boost > 0) {
+    console.log(`[SCORE_BOOST] Applied total boost of +${boost} (${baseScore} → ${finalScore})`);
+  }
+
+  return finalScore;
+}
+
+/**
  * Get score breakdown explanation
  */
 export function getScoreBreakdown(score: number): {
