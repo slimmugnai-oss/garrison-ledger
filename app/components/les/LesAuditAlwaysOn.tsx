@@ -260,18 +260,30 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
     if (ficaMedicareGross > 0) {
       // Check what we have in current state
-      const hasFica = lineItems.some((item) => item.line_code === "FICA");
-      const hasMedicare = lineItems.some((item) => item.line_code === "MEDICARE");
+      const ficaItem = lineItems.find((item) => item.line_code === "FICA");
+      const medicareItem = lineItems.find((item) => item.line_code === "MEDICARE");
+      const hasFica = !!ficaItem;
+      const hasMedicare = !!medicareItem;
+      
+      // Check if existing items have zero amounts (need calculation)
+      const ficaNeedsCalculation = !hasFica || ficaItem?.amount_cents === 0;
+      const medicareNeedsCalculation = !hasMedicare || medicareItem?.amount_cents === 0;
 
-      // Only add if missing
-      if (!hasFica || !hasMedicare) {
+      // Add or update if missing or have zero amounts
+      if (ficaNeedsCalculation || medicareNeedsCalculation) {
         setLineItems((prev) => {
           // Double-check in prev state to prevent race conditions
-          const prevHasFica = prev.some((item) => item.line_code === "FICA");
-          const prevHasMedicare = prev.some((item) => item.line_code === "MEDICARE");
+          const prevFicaItem = prev.find((item) => item.line_code === "FICA");
+          const prevMedicareItem = prev.find((item) => item.line_code === "MEDICARE");
+          const prevHasFica = !!prevFicaItem;
+          const prevHasMedicare = !!prevMedicareItem;
+          
+          // Check if existing items have zero amounts (need calculation)
+          const prevFicaNeedsCalculation = !prevHasFica || prevFicaItem?.amount_cents === 0;
+          const prevMedicareNeedsCalculation = !prevHasMedicare || prevMedicareItem?.amount_cents === 0;
 
-          // If both already present, no changes needed
-          if (prevHasFica && prevHasMedicare) {
+          // If both already present with non-zero amounts, no changes needed
+          if (!prevFicaNeedsCalculation && !prevMedicareNeedsCalculation) {
             return prev;
           }
 
@@ -292,32 +304,58 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
           const updates = [...prev];
 
-          if (!prevHasFica) {
+          if (prevFicaNeedsCalculation) {
             // FICA = 6.2% of FICA/Medicare taxable gross (Base Pay + COLA + taxable special pays)
             const calculatedFica = Math.round(prevFicaMedicareGross * 0.062);
-            updates.push({
-              id: generateLineItemId(),
-              line_code: "FICA",
-              description: "FICA (Social Security)",
-              amount_cents: calculatedFica,
-              section: "TAX",
-              isCustom: false,
-              isParsed: false,
-            });
+            
+            if (prevHasFica) {
+              // Update existing FICA item
+              const ficaIndex = updates.findIndex(item => item.line_code === "FICA");
+              if (ficaIndex !== -1) {
+                updates[ficaIndex] = {
+                  ...updates[ficaIndex],
+                  amount_cents: calculatedFica,
+                };
+              }
+            } else {
+              // Add new FICA item
+              updates.push({
+                id: generateLineItemId(),
+                line_code: "FICA",
+                description: "FICA (Social Security)",
+                amount_cents: calculatedFica,
+                section: "TAX",
+                isCustom: false,
+                isParsed: false,
+              });
+            }
           }
 
-          if (!prevHasMedicare) {
+          if (prevMedicareNeedsCalculation) {
             // Medicare = 1.45% of FICA/Medicare taxable gross
             const calculatedMedicare = Math.round(prevFicaMedicareGross * 0.0145);
-            updates.push({
-              id: generateLineItemId(),
-              line_code: "MEDICARE",
-              description: "Medicare Tax",
-              amount_cents: calculatedMedicare,
-              section: "TAX",
-              isCustom: false,
-              isParsed: false,
-            });
+            
+            if (prevHasMedicare) {
+              // Update existing Medicare item
+              const medicareIndex = updates.findIndex(item => item.line_code === "MEDICARE");
+              if (medicareIndex !== -1) {
+                updates[medicareIndex] = {
+                  ...updates[medicareIndex],
+                  amount_cents: calculatedMedicare,
+                };
+              }
+            } else {
+              // Add new Medicare item
+              updates.push({
+                id: generateLineItemId(),
+                line_code: "MEDICARE",
+                description: "Medicare Tax",
+                amount_cents: calculatedMedicare,
+                section: "TAX",
+                isCustom: false,
+                isParsed: false,
+              });
+            }
           }
 
           return updates;
