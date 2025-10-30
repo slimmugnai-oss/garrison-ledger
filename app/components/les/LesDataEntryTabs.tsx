@@ -289,7 +289,7 @@ export default function LesDataEntryTabs({
                 {/* Section Header */}
                 <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <Icon name={tab.icon as any} className="h-5 w-5 text-slate-600" />
+                    <Icon name={SECTION_ICONS[section] as any} className="h-5 w-5 text-slate-600" />
                     <span className="font-semibold text-slate-800">{SECTION_LABELS[section]}</span>
                     <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-600">
                       {items.length}
