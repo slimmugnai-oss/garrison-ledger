@@ -279,7 +279,7 @@ export default function PCSUnifiedWizard({
               amount: ppmData.fica_amount,
               rate: 6.2,
               basis: "6.2% of taxable wages",
-              capped: false,
+              cappedAtYTD: false,
             },
             medicare: {
               amount: ppmData.medicare_amount,
