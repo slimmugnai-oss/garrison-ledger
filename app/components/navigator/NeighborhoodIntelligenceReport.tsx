@@ -273,7 +273,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 id: "amenities",
                 label: "Amenities",
                 fullLabel: "Local Amenities",
-                subtitle: enhanced ? `${enhanced.total_amenities} total • ${enhanced.walkability_score}/100 walkable` : "",
+                subtitle: enhanced ? `${enhanced.total_amenities} total • 10 categories` : "",
                 icon: "MapPin" as const,
                 color: "purple",
               },
@@ -713,15 +713,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   </div>
                 </div>
               </div>
-
-              {/* Bottom Line */}
-              <div className="rounded-xl bg-gradient-to-r from-green-50 to-white p-6 border-l-4 border-green-600 shadow-sm">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon name="Target" className="h-5 w-5 text-green-600" />
-                  <div className="font-bold text-green-900">Bottom Line</div>
-                </div>
-                <p className="text-slate-700 leading-relaxed text-lg">{commuteIntel.bottom_line}</p>
-              </div>
             </div>
           )}
 
@@ -1128,15 +1119,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
                 <p className="text-slate-100 leading-relaxed text-lg">{housingIntel.military_friendly_note}</p>
               </div>
-
-              {/* Bottom Line */}
-              <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon name="Target" className="h-5 w-5 text-slate-600" />
-                  <div className="font-bold text-slate-900">Bottom Line</div>
-                </div>
-                <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.bottom_line}</p>
-              </div>
             </div>
           )}
 
@@ -1218,11 +1200,11 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
               </div>
 
-              {/* Amenity Categories Grid - Enhanced */}
+              {/* Amenity Categories Grid - Enhanced - ALL 10 Categories */}
               <div>
                 <div className="mb-4 flex items-center gap-2">
                   <Icon name="Grid" className="h-5 w-5 text-purple-600" />
-                  <h4 className="text-lg font-bold text-slate-900">Amenity Categories</h4>
+                  <h4 className="text-lg font-bold text-slate-900">All Amenity Categories (10 Total)</h4>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {renderEnhancedAmenityCategory("Essentials", enhanced.essentials.top_picks, enhanced.essentials.count, "ShoppingCart", "purple")}
@@ -1231,6 +1213,10 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   {renderEnhancedAmenityCategory("Dining", enhanced.dining.top_picks, enhanced.dining.count, "Utensils", "amber")}
                   {renderEnhancedAmenityCategory("Fitness", enhanced.fitness.top_picks, enhanced.fitness.count, "Zap", "green")}
                   {renderEnhancedAmenityCategory("Services", enhanced.services.top_picks, enhanced.services.count, "Briefcase", "slate")}
+                  {renderEnhancedAmenityCategory("Spouse Employment", enhanced.spouse_employment.top_picks, enhanced.spouse_employment.count, "Briefcase", "blue")}
+                  {renderEnhancedAmenityCategory("Pet Services", enhanced.pets.top_picks, enhanced.pets.count, "Heart", "green")}
+                  {renderEnhancedAmenityCategory("Community", enhanced.community.top_picks, enhanced.community.count, "Users", "purple")}
+                  {renderEnhancedAmenityCategory("Home & Auto", enhanced.home_auto.top_picks, enhanced.home_auto.count, "Home", "slate")}
                 </div>
               </div>
             </div>
@@ -1238,55 +1224,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         </div>
       </div>
 
-      {/* FINAL RECOMMENDATION - Enhanced Call to Action */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 text-white shadow-2xl">
-        <div className="absolute right-0 top-0 h-64 w-64 opacity-10">
-          <Icon name="Target" className="h-full w-full" />
-        </div>
-        <div className="relative">
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
-              <Icon name="Target" className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold">Final Recommendation</h3>
-              <div className="text-sm text-slate-300">Based on comprehensive analysis</div>
-            </div>
-          </div>
-          <p className="mb-8 text-xl leading-relaxed text-slate-100">
-            {intel.bottom_line}
-          </p>
-          <div className="grid gap-4 border-t border-slate-700 pt-6 md:grid-cols-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
-                <Icon name="CheckCircle" className="h-6 w-6 text-green-400" />
-              </div>
-              <div>
-                <div className="text-sm text-slate-300">Data Verified</div>
-                <div className="font-semibold">Official sources</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
-                <Icon name="Timer" className="h-6 w-6 text-blue-400" />
-              </div>
-              <div>
-                <div className="text-sm text-slate-300">Last Updated</div>
-                <div className="font-semibold">Within 24 hours</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
-                <Icon name="Shield" className="h-6 w-6 text-purple-400" />
-              </div>
-              <div>
-                <div className="text-sm text-slate-300">Military-Focused</div>
-                <div className="font-semibold">Service-member insights</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1374,7 +1311,7 @@ function renderEnhancedAmenityCategory(
     types?: string[];
   }>,
   count: number,
-  iconName: "ShoppingCart" | "Users" | "Heart" | "Utensils" | "Zap" | "Briefcase",
+  iconName: "ShoppingCart" | "Users" | "Heart" | "Utensils" | "Zap" | "Briefcase" | "Home",
   color: string
 ) {
   const colorMap: Record<string, {bg: string; border: string; text: string; icon: string}> = {
