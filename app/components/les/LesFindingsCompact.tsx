@@ -55,7 +55,7 @@ export default function LesFindingsCompact({
         className="flex w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          <Icon name="Flag" className="h-4 w-4 text-slate-600" />
+          <Icon name="AlertCircle" className="h-4 w-4 text-slate-600" />
           <span className="text-sm font-semibold text-slate-900">Findings</span>
         </div>
         <div className="flex items-center gap-2">
