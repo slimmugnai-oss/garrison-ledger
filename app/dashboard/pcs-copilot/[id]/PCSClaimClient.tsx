@@ -350,8 +350,31 @@ export default function PCSClaimClient({
                     )}
                   </div>
                   <div className="text-sm text-slate-600">Total Entitlements</div>
+                </div>
+              </div>
+            </AnimatedCard>
+
+            <AnimatedCard className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="rounded-xl bg-blue-50 p-3">
+                  <Icon name="Calculator" className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-slate-900">
+                    {formatCurrency(
+                      (() => {
+                        const totalEntitlements = claim.entitlements?.total || displaySnapshot?.total_estimated || 0;
+                        const ppmAmount = claim.entitlements?.ppm || 0;
+                        // Estimate net payout: total entitlements - estimated PPM withholding
+                        // For PPM, assume ~25% withholding (federal + state + FICA + Medicare)
+                        const estimatedWithholding = ppmAmount * 0.25;
+                        return totalEntitlements - estimatedWithholding;
+                      })()
+                    )}
+                  </div>
+                  <div className="text-sm text-slate-600">Estimated Net Payout</div>
                   <div className="text-xs text-slate-500 mt-1">
-                    (Net payout varies by PPM withholdings)
+                    (After typical withholdings)
                   </div>
                 </div>
               </div>

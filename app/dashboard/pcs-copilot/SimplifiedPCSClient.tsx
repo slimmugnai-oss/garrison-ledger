@@ -158,7 +158,7 @@ export default function SimplifiedPCSClient({
       </div>
 
       {/* Stats Bar */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+      <div className="mb-8 grid gap-4 sm:grid-cols-4">
         <AnimatedCard className="p-6">
           <div className="flex items-center gap-4">
             <div className="rounded-xl bg-blue-50 p-3">
@@ -195,8 +195,32 @@ export default function SimplifiedPCSClient({
                 ${claims.reduce((sum, c) => sum + (c.entitlements?.total || 0), 0).toLocaleString()}
               </div>
               <div className="text-sm text-slate-600">Total Entitlements</div>
+            </div>
+          </div>
+        </AnimatedCard>
+
+        <AnimatedCard className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="rounded-xl bg-blue-50 p-3">
+              <Icon name="Calculator" className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-black text-slate-900">
+                $
+                {claims
+                  .reduce((sum, c) => {
+                    const totalEntitlements = c.entitlements?.total || 0;
+                    const ppmAmount = c.entitlements?.ppm || 0;
+                    // Estimate net payout: total entitlements - estimated PPM withholding
+                    // For PPM, assume ~25% withholding (federal + state + FICA + Medicare)
+                    const estimatedWithholding = ppmAmount * 0.25;
+                    return sum + (totalEntitlements - estimatedWithholding);
+                  }, 0)
+                  .toLocaleString()}
+              </div>
+              <div className="text-sm text-slate-600">Estimated Net Payout</div>
               <div className="text-xs text-slate-500 mt-1">
-                (Net payout varies by PPM withholdings)
+                (After typical withholdings)
               </div>
             </div>
           </div>
