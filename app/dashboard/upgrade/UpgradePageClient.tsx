@@ -279,13 +279,6 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">TDY Copilot</td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">—</td>
-                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    ✓ Premium Only
-                  </td>
-                </tr>
-                <tr>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     Ask Military Expert
                   </td>
