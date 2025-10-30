@@ -258,9 +258,12 @@ export default function PCSUnifiedWizard({
         // Reconstruct PPMWithholdingResult from saved data
         setPpmWithholding({
           gccAmount: ppmData.gross_payout,
-          estimatedNetPayout: ppmData.net_payout,
-          totalWithholding: ppmData.total_withholding,
-          effectiveWithholdingRate: ppmData.effective_rate,
+          incentivePercentage: 100,
+          source: "Saved from previous calculation",
+          confidence: 90,
+          grossPayout: ppmData.gross_payout,
+          totalAllowedExpenses: 0, // Not stored separately
+          taxableAmount: ppmData.gross_payout, // Approximate
           estimatedWithholding: {
             federal: {
               amount: ppmData.gross_payout * (ppmData.federal_rate / 100),
@@ -287,7 +290,10 @@ export default function PCSUnifiedWizard({
               basis: "1.45% of taxable wages",
             },
           },
-          confidence: 90,
+          totalWithholding: ppmData.total_withholding,
+          estimatedNetPayout: ppmData.net_payout,
+          effectiveWithholdingRate: ppmData.effective_rate,
+          disclaimer: "This is an estimate of DFAS withholding. Actual withholding may vary based on your W-4 elections and year-to-date earnings. This is NOT tax advice.",
           isEstimate: true,
           notTaxAdvice: true,
         });
