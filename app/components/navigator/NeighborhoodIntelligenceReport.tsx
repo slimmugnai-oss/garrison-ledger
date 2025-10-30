@@ -25,19 +25,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
   const weatherIntel = neighborhood.payload.weather_intelligence;
   const housingIntel = neighborhood.payload.housing_intelligence;
 
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-
-  const toggleSection = (section: string) => {
-    setExpandedSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(section)) {
-        next.delete(section);
-      } else {
-        next.add(section);
-      }
-      return next;
-    });
-  };
+  const [activeTab, setActiveTab] = useState<string>("schools");
 
   // If no enhanced data, return null (show standard view)
   if (!intel || !enhanced) {
@@ -137,7 +125,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Schools Score */}
         {schoolsIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-400 hover:shadow-lg" onClick={() => toggleSection("schools")}>
+          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-400 hover:shadow-lg" onClick={() => setActiveTab("schools")}>
             <div className="mb-3 flex items-center justify-between">
               <Icon name="GraduationCap" className="h-8 w-8 text-blue-600" />
               <div className="text-right">
@@ -152,7 +140,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
         {/* Commute Score */}
         {commuteIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-green-400 hover:shadow-lg" onClick={() => toggleSection("commute")}>
+          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-green-400 hover:shadow-lg" onClick={() => setActiveTab("commute")}>
             <div className="mb-3 flex items-center justify-between">
               <Icon name="Truck" className="h-8 w-8 text-green-600" />
               <div className="text-right">
@@ -169,7 +157,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
         {/* Housing Score */}
         {housingIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-lg" onClick={() => toggleSection("housing")}>
+          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-lg" onClick={() => setActiveTab("housing")}>
             <div className="mb-3 flex items-center justify-between">
               <Icon name="Home" className="h-8 w-8 text-slate-700" />
               <div className="text-right">
@@ -184,7 +172,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
         {/* Weather Score */}
         {weatherIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-amber-400 hover:shadow-lg" onClick={() => toggleSection("weather")}>
+          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-amber-400 hover:shadow-lg" onClick={() => setActiveTab("weather")}>
             <div className="mb-3 flex items-center justify-between">
               <Icon name="Sun" className="h-8 w-8 text-amber-600" />
               <div className="text-right">
@@ -245,21 +233,74 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         )}
       </div>
 
-      {/* DETAILED INTELLIGENCE - Expandable Sections */}
-      <div className="space-y-4">
+      {/* DETAILED INTELLIGENCE - Tabbed Sections */}
+      <div className="space-y-6">
         <h3 className="text-2xl font-bold text-slate-900">Detailed Intelligence</h3>
-        <p className="text-sm text-slate-600">Click any section to expand for comprehensive analysis</p>
+        
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="flex gap-1 overflow-x-auto pb-0">
+            {[
+              {
+                id: "schools",
+                label: "Schools Intelligence",
+                subtitle: schoolsIntel ? `${schoolsIntel.total_schools} schools • Avg ${schoolsIntel.overall_avg_rating.toFixed(1)}/10 rating` : "",
+                icon: "GraduationCap" as const,
+              },
+              {
+                id: "commute",
+                label: "Commute Intelligence",
+                subtitle: commuteIntel ? `${commuteIntel.work_life_balance_score}/100 work-life balance • ${commuteIntel.primary_route_miles.toFixed(1)} miles` : "",
+                icon: "Truck" as const,
+              },
+              {
+                id: "weather",
+                label: "Weather & Climate Intelligence",
+                subtitle: weatherIntel ? `${weatherIntel.overall_comfort_score}/100 comfort • ${weatherIntel.outdoor_season_months} months outdoor-friendly` : "",
+                icon: "Sun" as const,
+              },
+              {
+                id: "housing",
+                label: "Housing Market Intelligence",
+                subtitle: housingIntel ? `${housingIntel.bah_analysis.properties_at_or_under_bah} properties at/under BAH • ${housingIntel.market_trends.competition_level} competition` : "",
+                icon: "Home" as const,
+              },
+              {
+                id: "amenities",
+                label: "Local Amenities (30+ Categories)",
+                subtitle: enhanced ? `${enhanced.total_amenities} amenities within 3 miles • Walkability ${enhanced.walkability_score}/100` : "",
+                icon: "MapPin" as const,
+              },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex min-h-[60px] flex-shrink-0 flex-col items-start gap-1 rounded-t-lg px-4 py-3 text-sm transition-colors ${
+                    isActive
+                      ? "border-b-2 border-blue-600 bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 font-semibold">
+                    <Icon name={tab.icon} className="h-4 w-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:inline md:hidden">{tab.label.split(" ")[0]}</span>
+                  </div>
+                  {tab.subtitle && (
+                    <span className="hidden text-xs text-gray-500 md:inline">{tab.subtitle}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-        {/* Schools Section */}
-        {schoolsIntel && (
-          <IntelligenceSection
-            icon="GraduationCap"
-            title="Schools Intelligence"
-            subtitle={`${schoolsIntel.total_schools} schools • Avg ${schoolsIntel.overall_avg_rating.toFixed(1)}/10 rating`}
-            isExpanded={expandedSections.has("schools")}
-            onToggle={() => toggleSection("schools")}
-            color="blue"
-          >
+        {/* Tab Content */}
+        <div className="min-h-[400px]">
+          {/* Schools Tab */}
+          {activeTab === "schools" && schoolsIntel && (
             <div className="space-y-6">
               {/* Executive Summary */}
               <div className="rounded-lg bg-blue-50 p-4 border-l-4 border-blue-600">
@@ -294,21 +335,11 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   />
                 )}
               </div>
-
             </div>
-          </IntelligenceSection>
-        )}
+          )}
 
-        {/* Commute Section */}
-        {commuteIntel && (
-          <IntelligenceSection
-            icon="Truck"
-            title="Commute Intelligence"
-            subtitle={`${commuteIntel.work_life_balance_score}/100 work-life balance • ${commuteIntel.primary_route_miles.toFixed(1)} miles`}
-            isExpanded={expandedSections.has("commute")}
-            onToggle={() => toggleSection("commute")}
-            color="green"
-          >
+          {/* Commute Tab */}
+          {activeTab === "commute" && commuteIntel && (
             <div className="space-y-6">
               {/* Traffic Patterns */}
               <div className="grid gap-4 md:grid-cols-2">
@@ -395,258 +426,167 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <p className="text-slate-700 leading-relaxed">{commuteIntel.bottom_line}</p>
               </div>
             </div>
-          </IntelligenceSection>
-        )}
+          )}
 
-        {/* Weather Section */}
-        {weatherIntel && (
-          <IntelligenceSection
-            icon="Sun"
-            title="Weather & Climate Intelligence"
-            subtitle={`${weatherIntel.overall_comfort_score}/100 comfort • ${weatherIntel.outdoor_season_months} months outdoor-friendly`}
-            isExpanded={expandedSections.has("weather")}
-            onToggle={() => toggleSection("weather")}
-            color="amber"
-          >
+          {/* Weather Tab */}
+          {activeTab === "weather" && weatherIntel && (
             <div className="space-y-6">
-              {/* Seasonal Overview */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {weatherIntel.seasonal_breakdown.map((season) => (
-                  <div key={season.season} className="rounded-lg border-2 border-slate-200 bg-white p-4">
-                    <div className="mb-2 font-bold text-slate-900">{season.season}</div>
-                    <div className="text-2xl font-bold text-amber-600 mb-2">{season.avg_temp_range}</div>
-                    <p className="text-sm text-slate-600 mb-3">{season.conditions}</p>
-                    <div className="text-xs text-slate-500">
-                      <div className="font-semibold mb-1">Activities:</div>
-                      <div>{season.outdoor_activities}</div>
-                    </div>
-                  </div>
-                ))}
+              {/* Executive Summary */}
+              <div className="rounded-lg bg-amber-50 p-4 border-l-4 border-amber-600">
+                <div className="font-semibold text-amber-900 mb-2">Executive Summary</div>
+                <p className="text-slate-700 leading-relaxed">{weatherIntel.executive_summary}</p>
               </div>
 
-              {/* Best/Worst Months */}
+              {/* Climate Overview */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Overall Comfort</div>
+                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.overall_comfort_score}/100</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    {weatherIntel.overall_comfort_score >= 80 ? "Excellent" : weatherIntel.overall_comfort_score >= 60 ? "Good" : "Fair"}
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Outdoor Season</div>
+                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.outdoor_season_months}</div>
+                  <div className="text-xs text-slate-500 mt-1">months per year</div>
+                </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Temperature Range</div>
+                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.temperature_range.low}°-{weatherIntel.temperature_range.high}°F</div>
+                  <div className="text-xs text-slate-500 mt-1">annual range</div>
+                </div>
+              </div>
+
+              {/* Seasonal Breakdown */}
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-lg border-2 border-green-200 bg-green-50 p-6">
+                <div className="rounded-lg border-2 border-green-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
-                    <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <div className="font-bold text-green-900">Best Months</div>
+                    <Icon name="Sun" className="h-5 w-5 text-green-600" />
+                    <div className="font-bold text-slate-900">Best Season</div>
                   </div>
-                  <div className="text-lg font-semibold text-slate-900 mb-2">
-                    {weatherIntel.best_months.join(", ")}
-                  </div>
-                  <p className="text-sm text-slate-700">Ideal weather for outdoor activities and comfortable living</p>
+                  <div className="text-2xl font-bold text-green-600 mb-2">{weatherIntel.best_season.name}</div>
+                  <p className="text-sm text-slate-600">{weatherIntel.best_season.description}</p>
                 </div>
 
-                <div className="rounded-lg border-2 border-red-200 bg-red-50 p-6">
+                <div className="rounded-lg border-2 border-amber-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
-                    <Icon name="XCircle" className="h-5 w-5 text-red-600" />
-                    <div className="font-bold text-red-900">Challenging Months</div>
+                    <Icon name="Cloud" className="h-5 w-5 text-amber-600" />
+                    <div className="font-bold text-slate-900">Challenging Season</div>
                   </div>
-                  <div className="text-lg font-semibold text-slate-900 mb-2">
-                    {weatherIntel.worst_months.join(", ")}
-                  </div>
-                  <p className="text-sm text-slate-700">Prepare for extreme temperatures or challenging conditions</p>
+                  <div className="text-2xl font-bold text-amber-600 mb-2">{weatherIntel.challenging_season.name}</div>
+                  <p className="text-sm text-slate-600">{weatherIntel.challenging_season.description}</p>
                 </div>
               </div>
 
-              {/* Extreme Weather Risks */}
-              {weatherIntel.extreme_weather_risks.length > 0 && (
-                <div className="rounded-lg bg-amber-50 border-2 border-amber-200 p-6">
-                  <div className="mb-4 flex items-center gap-2">
-                    <Icon name="AlertTriangle" className="h-6 w-6 text-amber-600" />
-                    <h4 className="font-bold text-slate-900">Extreme Weather Risks</h4>
+              {/* Military Considerations */}
+              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Shield" className="h-6 w-6" />
+                  <h4 className="font-bold text-lg">Military-Specific Considerations</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <div className="text-sm text-slate-300 mb-1">Physical Training Impact</div>
+                    <div className="font-semibold">{weatherIntel.pt_impact}</div>
                   </div>
-                  <div className="space-y-4">
-                    {weatherIntel.extreme_weather_risks.map((risk, i) => (
-                      <div key={i} className="rounded-lg bg-white p-4 border border-amber-200">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="font-semibold text-slate-900">{risk.type}</div>
-                          <div className={`px-2 py-1 rounded text-xs font-semibold ${
-                            risk.risk_level === "high" ? "bg-red-100 text-red-700" :
-                            risk.risk_level === "moderate" ? "bg-amber-100 text-amber-700" :
-                            "bg-green-100 text-green-700"
-                          }`}>
-                            {risk.risk_level.toUpperCase()}
-                          </div>
-                        </div>
-                        <div className="text-sm text-slate-600 mb-2">Season: {risk.season}</div>
-                        <p className="text-sm text-slate-700">{risk.preparation_needed}</p>
-                      </div>
-                    ))}
+                  <div>
+                    <div className="text-sm text-slate-300 mb-1">Family Activities</div>
+                    <div className="font-semibold">{weatherIntel.family_activities_impact}</div>
                   </div>
                 </div>
-              )}
-            </div>
-          </IntelligenceSection>
-        )}
+              </div>
 
-        {/* Housing Section */}
-        {housingIntel && (
-          <IntelligenceSection
-            icon="Home"
-            title="Housing Market Intelligence"
-            subtitle={`${housingIntel.bah_analysis.properties_at_or_under_bah} properties at/under BAH • ${housingIntel.market_trends.competition_level} competition`}
-            isExpanded={expandedSections.has("housing")}
-            onToggle={() => toggleSection("housing")}
-            color="purple"
-          >
+              {/* Bottom Line */}
+              <div className="rounded-lg bg-amber-50 p-4 border-l-4 border-amber-600">
+                <div className="font-semibold text-amber-900 mb-2">Bottom Line</div>
+                <p className="text-slate-700 leading-relaxed">{weatherIntel.bottom_line}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Housing Tab */}
+          {activeTab === "housing" && housingIntel && (
             <div className="space-y-6">
-              {/* BAH Optimization - Hero */}
-              <div className="rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 p-6 text-white">
-                <div className="mb-4">
-                  <div className="text-sm font-semibold uppercase tracking-wide text-slate-300 mb-1">BAH Optimization</div>
-                  <div className="text-3xl font-bold">{housingIntel.bah_analysis.properties_at_or_under_bah} Properties At/Under BAH</div>
+              {/* Executive Summary */}
+              <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
+                <div className="font-semibold text-slate-900 mb-2">Executive Summary</div>
+                <p className="text-slate-700 leading-relaxed">{housingIntel.executive_summary}</p>
+              </div>
+
+              {/* BAH Analysis */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Properties at/under BAH</div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.bah_analysis.properties_at_or_under_bah}</div>
+                  <div className="text-xs text-slate-500 mt-1">out of {housingIntel.bah_analysis.total_properties} total</div>
                 </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-slate-300 mb-1">Sweet Spot Range</div>
-                    <div className="font-bold">
-                      ${(housingIntel.bah_analysis.sweet_spot_range.min_cents / 100).toFixed(0)} - ${(housingIntel.bah_analysis.sweet_spot_range.max_cents / 100).toFixed(0)}
-                    </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Average Rent</div>
+                  <div className="text-2xl font-bold text-slate-900">${housingIntel.bah_analysis.average_rent.toLocaleString()}</div>
+                  <div className="text-xs text-slate-500 mt-1">per month</div>
+                </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">BAH Coverage</div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.bah_analysis.bah_coverage_percentage}%</div>
+                  <div className="text-xs text-slate-500 mt-1">of properties</div>
+                </div>
+              </div>
+
+              {/* Market Trends */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Icon name="TrendingUp" className="h-5 w-5 text-slate-600" />
+                    <div className="font-bold text-slate-900">Market Competition</div>
                   </div>
-                  <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-slate-300 mb-1">Avg Savings</div>
-                    <div className="font-bold">
-                      {housingIntel.bah_analysis.avg_savings_cents !== null
-                        ? housingIntel.bah_analysis.avg_savings_cents >= 0
-                          ? `$${Math.abs(housingIntel.bah_analysis.avg_savings_cents / 100).toLocaleString()}/mo`
-                          : `-$${Math.abs(housingIntel.bah_analysis.avg_savings_cents / 100).toLocaleString()}/mo`
-                        : "Varies"}
-                    </div>
+                  <div className="text-2xl font-bold text-slate-900 mb-2">{housingIntel.market_trends.competition_level}</div>
+                  <p className="text-sm text-slate-600">{housingIntel.market_trends.competition_description}</p>
+                </div>
+
+                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
+                    <div className="font-bold text-slate-900">Property Types</div>
                   </div>
-                  <div className="rounded-lg bg-white/10 p-4">
-                    <div className="text-sm text-slate-300 mb-1">Strategy</div>
-                    <div className="font-bold text-sm">{housingIntel.bah_analysis.recommendation.split(".")[0]}</div>
+                  <div className="text-sm text-slate-600">
+                    {housingIntel.market_trends.property_types.map((type, i) => (
+                      <span key={i} className="inline-block rounded-full bg-slate-100 px-2 py-1 text-xs mr-2 mb-1">
+                        {type}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
 
               {/* Sample Listings */}
-              {neighborhood.payload.sample_listings && neighborhood.payload.sample_listings.length > 0 && (
-                <div className="space-y-4">
-                  <h4 className="font-bold text-slate-900 text-lg">Available Properties</h4>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {neighborhood.payload.sample_listings.map((listing, i) => (
+              {housingIntel.sample_listings && housingIntel.sample_listings.length > 0 && (
+                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Icon name="Search" className="h-5 w-5 text-slate-600" />
+                    <h4 className="font-bold text-slate-900">Sample Listings</h4>
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {housingIntel.sample_listings.slice(0, 4).map((listing, i) => (
                       <a
                         key={i}
                         href={listing.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group rounded-lg border-2 border-slate-200 bg-white overflow-hidden transition-all hover:border-blue-400 hover:shadow-lg"
+                        className="block rounded-lg border border-slate-200 bg-white p-4 transition-all hover:border-slate-400 hover:shadow-md"
                       >
-                        {listing.photo && (
-                          <div className="h-48 w-full bg-gray-200 overflow-hidden">
-                            <img
-                              src={listing.photo}
-                              alt={listing.title}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                            />
-                          </div>
-                        )}
-                        <div className="p-4">
-                          <div className="text-2xl font-bold text-blue-600 mb-2">
-                            ${(listing.price_cents / 100).toLocaleString()}/mo
-                          </div>
-                          <h5 className="font-semibold text-slate-900 mb-2 line-clamp-2">{listing.title}</h5>
-                          {(listing.bedrooms || listing.bathrooms) && (
-                            <div className="text-sm text-slate-600 mb-3">
-                              {listing.bedrooms && `${listing.bedrooms} bed`}
-                              {listing.bedrooms && listing.bathrooms && " • "}
-                              {listing.bathrooms && `${listing.bathrooms} bath`}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2 text-sm font-medium text-blue-600 group-hover:text-blue-700">
-                            <span>View Listing</span>
-                            <Icon name="ExternalLink" className="h-4 w-4" />
-                          </div>
-                        </div>
+                        <div className="font-semibold text-slate-900">{listing.address}</div>
+                        <div className="text-lg font-bold text-slate-900">${listing.price.toLocaleString()}/mo</div>
+                        <div className="text-sm text-slate-600">{listing.bedrooms} bed • {listing.bathrooms} bath • {listing.sqft.toLocaleString()} sqft</div>
                       </a>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* Market Trends */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-4">
-                  <div className="text-sm text-slate-600 mb-1">Price Trend</div>
-                  <div className={`text-2xl font-bold mb-1 ${
-                    housingIntel.market_trends.price_trend === "rising" ? "text-red-600" :
-                    housingIntel.market_trends.price_trend === "falling" ? "text-green-600" :
-                    "text-slate-900"
-                  }`}>
-                    {housingIntel.market_trends.price_trend.charAt(0).toUpperCase() + housingIntel.market_trends.price_trend.slice(1)}
-                  </div>
-                </div>
-
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-4">
-                  <div className="text-sm text-slate-600 mb-1">Inventory</div>
-                  <div className="text-2xl font-bold text-slate-900 mb-1 capitalize">
-                    {housingIntel.market_trends.inventory_level}
-                  </div>
-                </div>
-
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-4">
-                  <div className="text-sm text-slate-600 mb-1">Your Leverage</div>
-                  <div className="text-2xl font-bold text-slate-900 mb-1 capitalize">
-                    {housingIntel.market_trends.negotiation_leverage}
-                  </div>
-                </div>
-              </div>
-
-              {/* Property Types */}
-              <div className="rounded-lg bg-white border-2 border-slate-200 p-6">
-                <h4 className="font-bold text-slate-900 mb-4">Property Type Breakdown</h4>
-                <div className="space-y-3">
-                  {Object.entries(housingIntel.property_types).map(([type, data]) => {
-                    const totalCount = Object.values(housingIntel.property_types).reduce((sum, t) => sum + t.count, 0);
-                    const percentage = totalCount > 0 ? Math.round((data.count / totalCount) * 100) : 0;
-                    const label = type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                    
-                    if (data.count === 0) return null;
-                    
-                    return (
-                      <div key={type}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-semibold text-slate-900">{label}</span>
-                          <span className="text-sm text-slate-600">{data.count} available • {percentage}%</span>
-                        </div>
-                        <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Military-Friendly Features */}
-              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Shield" className="h-6 w-6" />
-                  <h4 className="font-bold text-lg">Military-Friendly Features</h4>
-                </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Pet-Friendly</div>
-                    <div className="text-2xl font-bold">{housingIntel.pet_friendly_count}</div>
-                    <div className="text-xs text-slate-400">properties</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Utilities Included</div>
-                    <div className="text-2xl font-bold">{housingIntel.utilities_included_count}</div>
-                    <div className="text-xs text-slate-400">properties</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">With Yard</div>
-                    <div className="text-2xl font-bold">{housingIntel.yard_count}</div>
-                    <div className="text-xs text-slate-400">properties</div>
-                  </div>
-                </div>
-              </div>
 
               {/* Bottom Line */}
               <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
@@ -654,56 +594,43 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <p className="text-slate-700 leading-relaxed">{housingIntel.bottom_line}</p>
               </div>
             </div>
-          </IntelligenceSection>
-        )}
+          )}
 
-        {/* Amenities Section */}
-        {enhanced && (
-          <IntelligenceSection
-            icon="MapPin"
-            title="Local Amenities (30+ Categories)"
-            subtitle={`${enhanced.total_amenities} amenities within 3 miles • Walkability ${enhanced.walkability_score}/100`}
-            isExpanded={expandedSections.has("amenities")}
-            onToggle={() => toggleSection("amenities")}
-            color="indigo"
-          >
+          {/* Amenities Tab */}
+          {activeTab === "amenities" && enhanced && (
             <div className="space-y-6">
-              {/* Lifestyle Scores */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg bg-gradient-to-br from-indigo-50 to-white border-2 border-indigo-200 p-6">
-                  <div className="text-sm text-slate-600 mb-2">Walkability</div>
-                  <div className="text-4xl font-bold text-indigo-600 mb-2">{enhanced.walkability_score}</div>
-                  <div className="text-xs text-slate-500">out of 100</div>
-                  <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full"
-                      style={{ width: `${enhanced.walkability_score}%` }}
-                    />
+              {/* Executive Summary */}
+              <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
+                <div className="font-semibold text-purple-900 mb-2">Executive Summary</div>
+                <p className="text-slate-700 leading-relaxed">{enhanced.executive_summary}</p>
+              </div>
+
+              {/* Key Metrics */}
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Total Amenities</div>
+                  <div className="text-2xl font-bold text-slate-900">{enhanced.total_amenities}</div>
+                  <div className="text-xs text-slate-500 mt-1">within 3 miles</div>
+                </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Walkability</div>
+                  <div className="text-2xl font-bold text-slate-900">{enhanced.walkability_score}/100</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    {enhanced.walkability_score >= 80 ? "Excellent" : enhanced.walkability_score >= 60 ? "Good" : "Fair"}
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6">
-                  <div className="text-sm text-slate-600 mb-2">Family-Friendliness</div>
-                  <div className="text-4xl font-bold text-green-600 mb-2">{enhanced.family_friendliness_score}</div>
-                  <div className="text-xs text-slate-500">out of 100</div>
-                  <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full"
-                      style={{ width: `${enhanced.family_friendliness_score}%` }}
-                    />
-                  </div>
+                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Family Friendliness</div>
+                  <div className="text-2xl font-bold text-slate-900">{enhanced.family_friendliness_score}/100</div>
+                  <div className="text-xs text-slate-500 mt-1">out of 100</div>
                 </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6">
-                  <div className="text-sm text-slate-600 mb-2">Overall Amenities</div>
-                  <div className="text-4xl font-bold text-slate-700 mb-2">{enhanced.overall_score}</div>
-                  <div className="text-xs text-slate-500">out of 100</div>
-                  <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
-                      style={{ width: `${enhanced.overall_score}%` }}
-                    />
-                  </div>
+                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Overall Score</div>
+                  <div className="text-2xl font-bold text-slate-900">{enhanced.overall_score}/100</div>
+                  <div className="text-xs text-slate-500 mt-1">out of 100</div>
                 </div>
               </div>
 
@@ -715,14 +642,16 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 {renderAmenityCategory("Dining", enhanced.dining, "Coffee")}
                 {renderAmenityCategory("Fitness", enhanced.fitness, "Zap")}
                 {renderAmenityCategory("Services", enhanced.services, "Briefcase")}
-                {renderAmenityCategory("Spouse Employment", enhanced.spouse_employment, "TrendingUp")}
-                {renderAmenityCategory("Pets", enhanced.pets, "Home")}
-                {renderAmenityCategory("Community", enhanced.community, "Users")}
-                {renderAmenityCategory("Home & Auto", enhanced.home_auto, "Settings")}
+              </div>
+
+              {/* Bottom Line */}
+              <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
+                <div className="font-semibold text-purple-900 mb-2">Bottom Line</div>
+                <p className="text-slate-700 leading-relaxed">{enhanced.bottom_line}</p>
               </div>
             </div>
-          </IntelligenceSection>
-        )}
+          )}
+        </div>
       </div>
 
       {/* FINAL RECOMMENDATION - Call to Action */}
@@ -751,130 +680,87 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
   );
 }
 
-// Expandable Section Component
-interface IntelligenceSectionProps {
-  icon: string;
-  title: string;
-  subtitle: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  color: "blue" | "green" | "amber" | "purple" | "indigo";
-  children: React.ReactNode;
-}
-
-function IntelligenceSection({ icon, title, subtitle, isExpanded, onToggle, color, children }: IntelligenceSectionProps) {
-  const colorClasses = {
-    blue: { border: "border-blue-200", bg: "bg-blue-50", text: "text-blue-600", hover: "hover:border-blue-400" },
-    green: { border: "border-green-200", bg: "bg-green-50", text: "text-green-600", hover: "hover:border-green-400" },
-    amber: { border: "border-amber-200", bg: "bg-amber-50", text: "text-amber-600", hover: "hover:border-amber-400" },
-    purple: { border: "border-slate-200", bg: "bg-slate-50", text: "text-slate-700", hover: "hover:border-slate-400" },
-    indigo: { border: "border-indigo-200", bg: "bg-indigo-50", text: "text-indigo-600", hover: "hover:border-indigo-400" },
-  };
-
-  const colors = colorClasses[color];
-
-  return (
-    <div className={`rounded-xl border-2 ${colors.border} ${isExpanded ? colors.bg : "bg-white"} overflow-hidden transition-all ${colors.hover}`}>
-      <button
-        onClick={onToggle}
-        className="w-full p-6 text-left transition-colors hover:bg-slate-50 flex items-center justify-between"
-      >
-        <div className="flex items-center gap-4">
-          <div className={`rounded-full ${colors.bg} p-3`}>
-            <Icon name={icon as any} className={`h-6 w-6 ${colors.text}`} />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">{title}</h3>
-            <p className="text-sm text-slate-600 mt-1">{subtitle}</p>
-          </div>
-        </div>
-        <Icon 
-          name={isExpanded ? "ChevronUp" : "ChevronDown"} 
-          className="h-6 w-6 text-slate-400 flex-shrink-0"
-        />
-      </button>
-      {isExpanded && (
-        <div className="p-6 pt-0">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Grade Level Card Component
+// Helper Components
 interface GradeLevelCardProps {
   level: string;
   count: number;
   avgRating: number;
-  topSchools: Array<{ name: string; rating: number; distance_mi?: number }>;
+  topSchools: Array<{
+    name: string;
+    rating: number;
+    distance: number;
+  }>;
 }
 
 function GradeLevelCard({ level, count, avgRating, topSchools }: GradeLevelCardProps) {
   return (
-    <div className="rounded-lg border-2 border-slate-200 bg-white p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="font-bold text-slate-900">{level}</div>
+    <div className="rounded-lg border-2 border-blue-200 bg-white p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h4 className="font-bold text-slate-900">{level}</h4>
         <div className="text-right">
           <div className="text-2xl font-bold text-blue-600">{avgRating.toFixed(1)}</div>
           <div className="text-xs text-slate-500">avg rating</div>
         </div>
       </div>
-      <div className="text-sm text-slate-600 mb-3">{count} schools available</div>
+      <div className="mb-3 text-sm text-slate-600">{count} schools in this area</div>
       {topSchools.length > 0 && (
-        <div className="space-y-2">
-          <div className="text-xs font-semibold text-slate-700 uppercase">Top Picks:</div>
-          {topSchools.slice(0, 2).map((school, i) => (
-            <div key={i} className="text-sm">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-900">{school.name}</span>
-                <span className="text-blue-600 font-bold">{school.rating.toFixed(1)}/10</span>
+        <div>
+          <div className="mb-2 text-sm font-semibold text-slate-700">Top Picks:</div>
+          <div className="space-y-1">
+            {topSchools.slice(0, 3).map((school, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-slate-600">{school.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-slate-900">{school.rating.toFixed(1)}</span>
+                  <span className="text-xs text-slate-500">({school.distance.toFixed(1)} mi)</span>
+                </div>
               </div>
-              <div className="text-xs text-slate-500">{school.distance_mi ? `${school.distance_mi.toFixed(1)} mi away` : 'Nearby'}</div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// Amenity Category Renderer
-function renderAmenityCategory(title: string, category: any, iconName: string) {
-  if (!category || category.count === 0) return null;
-
+function renderAmenityCategory(
+  title: string,
+  amenities: Array<{
+    name: string;
+    count: number;
+    avg_rating: number;
+    distance: number;
+  }>,
+  iconName: string
+) {
   return (
-    <div className="rounded-lg border-2 border-slate-200 bg-white p-4 hover:shadow-md transition-shadow">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Icon name={iconName as any} className="h-5 w-5 text-indigo-600" />
-          <span className="font-bold text-slate-900">{title}</span>
-        </div>
-        <span className="text-2xl font-bold text-indigo-600">{category.count}</span>
+    <div className="rounded-lg border-2 border-purple-200 bg-white p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Icon name={iconName as any} className="h-5 w-5 text-purple-600" />
+        <h4 className="font-bold text-slate-900">{title}</h4>
       </div>
-      {category.top_picks && category.top_picks.length > 0 && (
-        <div className="space-y-2">
-          {category.top_picks.slice(0, 2).map((place: any, i: number) => (
-            <a
-              key={i}
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                place.name + (place.address ? " " + place.address : "")
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-sm border-t border-slate-100 pt-2 transition-colors hover:bg-blue-50 rounded px-2 -mx-2 py-2"
-            >
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <span className="font-semibold text-slate-900 line-clamp-1">{place.name}</span>
-                <span className="flex-shrink-0 text-amber-600 font-bold">{place.rating?.toFixed(1) || "N/A"}</span>
+      <div className="mb-3 text-sm text-slate-600">{amenities.length} options nearby</div>
+      {amenities.length > 0 && (
+        <div>
+          <div className="mb-2 text-sm font-semibold text-slate-700">Top Picks:</div>
+          <div className="space-y-1">
+            {amenities.slice(0, 3).map((amenity, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <a
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(amenity.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  {amenity.name}
+                </a>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-slate-900">{amenity.avg_rating.toFixed(1)}</span>
+                  <span className="text-xs text-slate-500">({amenity.distance.toFixed(1)} mi)</span>
+                </div>
               </div>
-              <div className="text-xs text-slate-500 mb-1">{place.distance_mi?.toFixed(1)} mi • {place.reviews || 0} reviews</div>
-              <div className="flex items-center gap-1 text-xs font-medium text-blue-600">
-                <span>Open in Google Maps</span>
-                <Icon name="ExternalLink" className="h-3 w-3" />
-              </div>
-            </a>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
