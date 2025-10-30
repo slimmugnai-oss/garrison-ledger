@@ -620,13 +620,25 @@ export default function PCSClaimClient({
                       ...(claim.travel_method === "ppm"
                         ? [
                             {
-                              label: "Personally Procured Move (PPM)",
-                              amount:
-                                displaySnapshot?.ppm_estimate ||
-                                claim.entitlements?.ppm ||
-                                displaySnapshot?.calculation_details?.ppm?.amount ||
-                                0,
-                              description: `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.form_data?.actual_weight ?? claim.form_data?.estimated_weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
+                              label: claim.entitlements?.ppm_withholding 
+                                ? "Personally Procured Move (PPM) - Net After Withholding"
+                                : "Personally Procured Move (PPM)",
+                              amount: (() => {
+                                // Use net payout if withholding was calculated
+                                if (claim.entitlements?.ppm_withholding?.net_payout) {
+                                  return claim.entitlements.ppm_withholding.net_payout;
+                                }
+                                // Otherwise use gross amount or fallback
+                                return (
+                                  displaySnapshot?.ppm_estimate ||
+                                  claim.entitlements?.ppm ||
+                                  displaySnapshot?.calculation_details?.ppm?.amount ||
+                                  0
+                                );
+                              })(),
+                              description: claim.entitlements?.ppm_withholding
+                                ? `GCC $${claim.entitlements.ppm_withholding.gross_payout.toLocaleString()} - Withholding $${claim.entitlements.ppm_withholding.total_withholding.toLocaleString()} (${claim.entitlements.ppm_withholding.effective_rate.toFixed(1)}%)`
+                                : `Based on ${displaySnapshot?.ppm_weight ?? displaySnapshot?.calculation_details?.ppm?.weight ?? claim.form_data?.actual_weight ?? claim.form_data?.estimated_weight ?? claim.actual_weight ?? claim.estimated_weight ?? 0} lbs`,
                             },
                           ]
                         : []),
