@@ -406,11 +406,15 @@ async function fetchPlacesWithDetails(
     }
   }
 
-  // Sort by rating (if available), then by distance
+  // Sort by quality score: (rating * log(reviews + 1)) - prioritizes high ratings with substantial reviews
+  // This prevents 5-star places with only 1-2 reviews from dominating
   allPlaces.sort((a, b) => {
-    if (a.rating && b.rating) return b.rating - a.rating;
-    if (a.rating) return -1;
-    if (b.rating) return 1;
+    const scoreA = (a.rating || 0) * Math.log10((a.user_ratings_total || 0) + 1);
+    const scoreB = (b.rating || 0) * Math.log10((b.user_ratings_total || 0) + 1);
+    
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    
+    // If quality scores are equal, prefer closer places
     return (a.distance_mi || 99) - (b.distance_mi || 99);
   });
 

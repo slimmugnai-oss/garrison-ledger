@@ -479,16 +479,21 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
             </div>
           )}
 
-          {/* Schools Tab - ENHANCED */}
+          {/* Schools Tab - COMPREHENSIVE */}
           {activeTab === "schools" && schoolsIntel && (
             <div className="space-y-8">
-              {/* Executive Summary */}
+              {/* School Intelligence Overview */}
               <div className="rounded-xl bg-gradient-to-r from-blue-50 to-white p-6 border-l-4 border-blue-600 shadow-sm">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon name="File" className="h-5 w-5 text-blue-600" />
-                  <div className="font-bold text-blue-900">Executive Summary</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+                    <Icon name="GraduationCap" className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-blue-900">School Intelligence Analysis</h4>
+                    <div className="text-sm text-blue-700">Based on {schoolsIntel.total_schools} schools in this area</div>
+                  </div>
                 </div>
-                <p className="text-slate-700 leading-relaxed">{schoolsIntel.executive_summary}</p>
+                <p className="text-slate-700 leading-relaxed text-lg">{schoolsIntel.executive_summary}</p>
               </div>
 
               {/* Overall Rating Visualization */}
@@ -524,13 +529,24 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
               </div>
 
-              {/* Grade Level Breakdown - Enhanced */}
+              {/* Detailed Analysis */}
+              {schoolsIntel.detailed_analysis && (
+                <div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Icon name="Info" className="h-5 w-5 text-blue-600" />
+                    <h4 className="font-bold text-blue-900">Detailed Analysis</h4>
+                  </div>
+                  <p className="text-slate-700 leading-relaxed">{schoolsIntel.detailed_analysis}</p>
+                </div>
+              )}
+
+              {/* Grade Level Breakdown - Show ALL Schools */}
               <div>
                 <div className="mb-4 flex items-center gap-2">
                   <Icon name="GraduationCap" className="h-5 w-5 text-blue-600" />
-                  <h4 className="text-lg font-bold text-slate-900">Schools by Grade Level</h4>
+                  <h4 className="text-lg font-bold text-slate-900">Schools by Grade Level ({schoolsIntel.total_schools} Total)</h4>
                 </div>
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-3">
                   {schoolsIntel.by_grade.elementary.count > 0 && (
                     <EnhancedGradeLevelCard
                       level="Elementary"
@@ -539,6 +555,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       avgRating={schoolsIntel.by_grade.elementary.avg_rating}
                       topSchools={schoolsIntel.by_grade.elementary.top_picks}
                       color="blue"
+                      showAll={true}
                     />
                   )}
                   {schoolsIntel.by_grade.middle.count > 0 && (
@@ -549,6 +566,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       avgRating={schoolsIntel.by_grade.middle.avg_rating}
                       topSchools={schoolsIntel.by_grade.middle.top_picks}
                       color="green"
+                      showAll={true}
                     />
                   )}
                   {schoolsIntel.by_grade.high.count > 0 && (
@@ -559,10 +577,27 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       avgRating={schoolsIntel.by_grade.high.avg_rating}
                       topSchools={schoolsIntel.by_grade.high.top_picks}
                       color="purple"
+                      showAll={true}
                     />
                   )}
                 </div>
               </div>
+
+              {/* Private Schools */}
+              {schoolsIntel.by_grade.private.count > 0 && (
+                <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+                      <Icon name="Star" className="h-6 w-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-slate-900">Private Schools</h4>
+                      <div className="text-sm text-slate-600">{schoolsIntel.by_grade.private.count} schools • {schoolsIntel.by_grade.private.avg_rating.toFixed(1)}/10 avg</div>
+                    </div>
+                  </div>
+                  <p className="text-slate-700">This area has {schoolsIntel.by_grade.private.count} private school options with an average rating of {schoolsIntel.by_grade.private.avg_rating.toFixed(1)}/10.</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -716,16 +751,21 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
             </div>
           )}
 
-          {/* Weather Tab - ENHANCED */}
+          {/* Weather Tab - COMPREHENSIVE */}
           {activeTab === "weather" && weatherIntel && (
             <div className="space-y-8">
-              {/* Executive Summary */}
+              {/* Climate Analysis Overview */}
               <div className="rounded-xl bg-gradient-to-r from-amber-50 to-white p-6 border-l-4 border-amber-600 shadow-sm">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon name="File" className="h-5 w-5 text-amber-600" />
-                  <div className="font-bold text-amber-900">Executive Summary</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600">
+                    <Icon name="Sun" className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-amber-900">Climate Analysis</h4>
+                    <div className="text-sm text-amber-700">Year-round weather intelligence for military families</div>
+                  </div>
                 </div>
-                <p className="text-slate-700 leading-relaxed">{weatherIntel.executive_summary}</p>
+                <p className="text-slate-700 leading-relaxed text-lg">{weatherIntel.executive_summary}</p>
               </div>
 
               {/* Climate Overview - Enhanced */}
@@ -900,16 +940,21 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
             </div>
           )}
 
-          {/* Housing Tab - ENHANCED */}
+          {/* Housing Tab - COMPREHENSIVE */}
           {activeTab === "housing" && housingIntel && (
             <div className="space-y-8">
-              {/* Executive Summary */}
+              {/* Market Intelligence Summary */}
               <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
-                <div className="mb-3 flex items-center gap-2">
-                  <Icon name="File" className="h-5 w-5 text-slate-600" />
-                  <div className="font-bold text-slate-900">Executive Summary</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-600">
+                    <Icon name="Home" className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900">Market Intelligence</h4>
+                    <div className="text-sm text-slate-600">Comprehensive housing analysis for this ZIP</div>
+                  </div>
                 </div>
-                <p className="text-slate-700 leading-relaxed">{housingIntel.executive_summary}</p>
+                <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.executive_summary}</p>
               </div>
 
               {/* BAH Analysis - Visual */}
@@ -1243,9 +1288,10 @@ interface EnhancedGradeLevelCardProps {
     address?: string;
   }>;
   color: string;
+  showAll?: boolean;
 }
 
-function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, color }: EnhancedGradeLevelCardProps) {
+function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, color, showAll = false }: EnhancedGradeLevelCardProps) {
   const colorMap: Record<string, {bg: string; border: string; text: string; icon: string}> = {
     blue: { bg: "bg-blue-50", border: "border-blue-300", text: "text-blue-600", icon: "bg-blue-100" },
     green: { bg: "bg-green-50", border: "border-green-300", text: "text-green-600", icon: "bg-green-100" },
@@ -1280,9 +1326,9 @@ function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, c
 
       {topSchools.length > 0 && (
         <div>
-          <div className="mb-2 text-sm font-bold text-slate-700">Top Picks:</div>
-          <div className="space-y-2">
-            {topSchools.slice(0, 3).map((school, i) => (
+          <div className="mb-3 text-sm font-bold text-slate-700">{showAll ? 'All Schools:' : 'Top Picks:'}</div>
+          <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+            {topSchools.map((school, i) => (
               <div key={i} className="rounded-lg bg-white p-3 shadow-sm">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-semibold text-slate-900 text-sm">{school.name}</span>
@@ -1340,9 +1386,9 @@ function renderEnhancedAmenityCategory(
       
       {amenities.length > 0 && (
         <div>
-          <div className="mb-3 text-sm font-semibold text-slate-700">Top Picks:</div>
-          <div className="space-y-2">
-            {amenities.slice(0, 3).map((amenity, i) => (
+          <div className="mb-3 text-sm font-semibold text-slate-700">Top Picks ({amenities.length > 5 ? '5 of ' + amenities.length : amenities.length}):</div>
+          <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+            {amenities.slice(0, 5).map((amenity, i) => (
               <a
                 key={i}
                 href={`https://www.google.com/maps/search/${encodeURIComponent(amenity.name)}`}
