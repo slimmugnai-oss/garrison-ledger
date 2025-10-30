@@ -702,6 +702,8 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             taxesTotal={sectionTotals.TAX}
             deductionsTotal={sectionTotals.DEDUCTION}
             netPay={computedNetPay}
+            actualNetPay={netPay}
+            onActualNetPayChange={setNetPay}
             variance={result?.totals.variance || null}
             variancePercent={result?.totals.variance && computedNetPay ? (result.totals.variance / computedNetPay) * 100 : undefined}
             confidence={

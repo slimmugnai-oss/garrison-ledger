@@ -21,7 +21,9 @@ interface LesSummaryStickyProps {
   allowancesTotal: number; // in cents
   taxesTotal: number; // in cents
   deductionsTotal: number; // in cents
-  netPay: number; // in cents
+  netPay: number; // in cents (calculated)
+  actualNetPay?: string; // User-entered actual net pay from LES
+  onActualNetPayChange?: (value: string) => void;
   variance: number | null; // in cents
   variancePercent?: number;
   confidence?: "excellent" | "good" | "fair" | "needs_work";
@@ -40,6 +42,8 @@ export default function LesSummarySticky({
   taxesTotal,
   deductionsTotal,
   netPay,
+  actualNetPay,
+  onActualNetPayChange,
   variance,
   variancePercent,
   confidence = "good",
@@ -150,9 +154,37 @@ export default function LesSummarySticky({
 
         {/* Divider */}
         <div className="border-t border-slate-200 pt-3">
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-slate-900">Net Pay</span>
-            <span className="text-2xl font-bold text-slate-900">{formatCurrency(netPay)}</span>
+          <div className="space-y-3">
+            {/* Calculated Net Pay */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-slate-700">Calculated Net</span>
+              <span className="text-xl font-bold text-slate-900">{formatCurrency(netPay)}</span>
+            </div>
+
+            {/* Actual Net Pay Input */}
+            {onActualNetPayChange && (
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                <label htmlFor="actual-net-pay" className="mb-2 block text-xs font-semibold text-blue-900">
+                  Your Actual LES Net Pay
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span>
+                  <input
+                    id="actual-net-pay"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={actualNetPay || ""}
+                    onChange={(e) => onActualNetPayChange(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full rounded-md border-blue-300 pl-7 pr-3 py-2 text-sm font-semibold focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-blue-700">
+                  Enter the "Net Pay" amount from your LES for variance comparison
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
