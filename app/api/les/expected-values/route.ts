@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
 import { buildExpectedSnapshot } from "@/lib/les/expected";
+import { estimateTaxWithholding } from "@/lib/les/tax-estimator";
 import { logger } from "@/lib/logger";
 import { ssot } from "@/lib/ssot";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -59,10 +60,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch full profile to get years of service for base pay calculation
+    // Fetch full profile to get years of service and tax info
     const { data: profile } = await supabaseAdmin
       .from("user_profiles")
-      .select("time_in_service_months")
+      .select("time_in_service_months, filing_status, state_of_residence, w4_allowances, currently_deployed_czte")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -130,14 +131,33 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Calculate tax estimates
+    // Compute taxable income from allowances
+    const basePay = snapshot.expected.base_pay_cents ?? 0;
+    const cola = snapshot.expected.cola_cents ?? 0;
+    const taxableSpecials = (snapshot.expected.specials || [])
+      .filter(sp => ["SDAP", "FSA", "FLPP", "HFP_IDP"].includes(sp.code))
+      .reduce((sum, sp) => sum + sp.cents, 0);
+    
+    const monthlyTaxableIncome = basePay + cola + taxableSpecials; // BAH/BAS are non-taxable
+
+    // Estimate federal and state taxes
+    const taxEstimate = await estimateTaxWithholding({
+      taxableIncomeCents: monthlyTaxableIncome,
+      filingStatus: profile?.filing_status,
+      w4Allowances: profile?.w4_allowances,
+      stateOfResidence: profile?.state_of_residence,
+      czteActive: profile?.currently_deployed_czte || false,
+    });
+
+    console.log("[ExpectedValues] Tax estimate:", taxEstimate);
+
     // Return expected values in cents (will be converted to dollars in UI)
-    // SIMPLIFIED: Only auto-fill allowances (BAH, BAS, etc.)
-    // Taxes are manual entry - we just provide FICA/Medicare for percentage validation
     const isOfficerRank = rank?.toLowerCase().includes("officer") || rank?.startsWith("O");
 
     const response = NextResponse.json({
       // ALLOWANCES (100% accurate from official tables)
-      bah: snapshot.expected.bah_cents ?? 0, // Use nullish coalescing - 0 is valid, only null/undefined becomes 0
+      bah: snapshot.expected.bah_cents ?? 0,
       bas:
         snapshot.expected.bas_cents ??
         (isOfficerRank
@@ -155,13 +175,16 @@ export async function POST(req: NextRequest) {
       // DEDUCTIONS (from profile or official tables)
       tsp: snapshot.expected.tsp_cents || 0,
       sgli: snapshot.expected.sgli_cents || 0,
-      // NO dental auto-fill - users enter actual premium
 
-      // TAXES (for percentage validation only - NOT auto-filled)
-      // These are reference values for checking 6.2% and 1.45% are correct
-      fica_expected_percent: snapshot.expected.fica_cents || 0, // For validation only
-      medicare_expected_percent: snapshot.expected.medicare_cents || 0, // For validation only
-      // NO federal_tax, state_tax, or net_pay auto-fill
+      // TAXES (NEW - Auto-estimated)
+      federal_tax: taxEstimate.federalTaxCents,
+      state_tax: taxEstimate.stateTaxCents,
+      tax_confidence: taxEstimate.confidence, // "high", "medium", "low"
+      tax_method: taxEstimate.method, // "estimated" or "zero_czte"
+
+      // FICA/Medicare for validation
+      fica_expected_percent: snapshot.expected.fica_cents || 0,
+      medicare_expected_percent: snapshot.expected.medicare_cents || 0,
 
       snapshot: {
         paygrade: snapshot.paygrade,

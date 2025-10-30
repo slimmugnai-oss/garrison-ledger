@@ -190,13 +190,13 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
             });
           }
 
-          // Add standard tax line items (user enters actual amounts from LES)
+          // Add standard tax line items (auto-estimated from profile)
           newItems.push(
             {
               id: generateLineItemId(),
               line_code: "TAX_FED",
               description: "Federal Income Tax Withheld",
-              amount_cents: 0,
+              amount_cents: data.federal_tax || 0,
               section: "TAX",
               isCustom: false,
               isParsed: false,
@@ -205,7 +205,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               id: generateLineItemId(),
               line_code: "TAX_STATE",
               description: "State Income Tax Withheld",
-              amount_cents: 0,
+              amount_cents: data.state_tax || 0,
               section: "TAX",
               isCustom: false,
               isParsed: false,
@@ -214,7 +214,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               id: generateLineItemId(),
               line_code: "FICA",
               description: "FICA (Social Security Tax)",
-              amount_cents: 0,
+              amount_cents: 0, // Will be auto-calculated below
               section: "TAX",
               isCustom: false,
               isParsed: false,
@@ -223,12 +223,19 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               id: generateLineItemId(),
               line_code: "MEDICARE",
               description: "Medicare Tax",
-              amount_cents: 0,
+              amount_cents: 0, // Will be auto-calculated below
               section: "TAX",
               isCustom: false,
               isParsed: false,
             }
           );
+
+          logger.info("[LesAuditAlwaysOn] Tax estimates applied:", {
+            federal: data.federal_tax,
+            state: data.state_tax,
+            confidence: data.tax_confidence,
+            method: data.tax_method,
+          });
 
           if (newItems.length > 0) {
             setLineItems(newItems);
@@ -780,6 +787,7 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
           onDeleteItem={handleDeleteItem}
           onAddItem={handleAddItem}
           autoCalcCodes={["FICA", "MEDICARE"]}
+          estimatedCodes={["TAX_FED", "TAX_STATE"]}
           loading={loadingExpected && lineItems.length === 0}
         />
 

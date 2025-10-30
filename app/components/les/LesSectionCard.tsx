@@ -26,7 +26,8 @@ interface LesSectionCardProps {
   onUpdateItem: (id: string, amountCents: number) => void;
   onDeleteItem: (id: string) => void;
   onAddItem: (section: LesSection) => void;
-  autoCalcCodes?: string[]; // Codes that are auto-calculated
+  autoCalcCodes?: string[]; // Codes that are auto-calculated (FICA, Medicare)
+  estimatedCodes?: string[]; // Codes that are estimated from profile (TAX_FED, TAX_STATE)
   defaultCollapsed?: boolean;
   loading?: boolean; // Show skeleton while loading
 }
@@ -41,6 +42,7 @@ export default function LesSectionCard({
   onDeleteItem,
   onAddItem,
   autoCalcCodes = [],
+  estimatedCodes = [],
   defaultCollapsed = false,
   loading = false,
 }: LesSectionCardProps) {
@@ -115,6 +117,12 @@ export default function LesSectionCard({
                     autoCalcWarning={
                       autoCalcCodes.includes(item.line_code)
                         ? "This value is auto-calculated. Manual changes will override the calculation."
+                        : undefined
+                    }
+                    isEstimated={estimatedCodes.includes(item.line_code)}
+                    estimatedWarning={
+                      estimatedCodes.includes(item.line_code)
+                        ? "Estimated based on your profile. Edit to match your actual LES amount."
                         : undefined
                     }
                   />

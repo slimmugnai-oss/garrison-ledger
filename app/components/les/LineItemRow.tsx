@@ -21,6 +21,8 @@ interface LineItemRowProps {
   onDelete: (id: string) => void;
   isAutoCalculated?: boolean;
   autoCalcWarning?: string;
+  isEstimated?: boolean; // Tax estimates from profile
+  estimatedWarning?: string;
 }
 
 export default function LineItemRow({
@@ -29,6 +31,8 @@ export default function LineItemRow({
   onDelete,
   isAutoCalculated = false,
   autoCalcWarning,
+  isEstimated = false,
+  estimatedWarning,
 }: LineItemRowProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState((item.amount_cents / 100).toFixed(2));
@@ -122,6 +126,13 @@ export default function LineItemRow({
               Auto-calc
             </span>
           )}
+          
+          {isEstimated && item.amount_cents > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+              <Icon name="Sparkles" className="h-3 w-3" />
+              Estimated
+            </span>
+          )}
         </div>
         
         <p className="text-sm text-slate-600 truncate mt-0.5">{item.description}</p>
@@ -130,6 +141,13 @@ export default function LineItemRow({
           <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
             <Icon name="AlertTriangle" className="h-3 w-3" />
             {autoCalcWarning}
+          </p>
+        )}
+        
+        {isEstimated && estimatedWarning && isEditing && (
+          <p className="text-xs text-purple-600 mt-1 flex items-center gap-1">
+            <Icon name="Info" className="h-3 w-3" />
+            {estimatedWarning}
           </p>
         )}
       </div>
