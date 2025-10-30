@@ -500,7 +500,13 @@ export async function POST(request: NextRequest) {
       results: topResults,
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     const duration = Date.now() - startTime;
     logger.error("Navigator computation failed", error, {
