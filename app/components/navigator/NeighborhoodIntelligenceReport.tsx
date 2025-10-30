@@ -550,72 +550,126 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
                   <div className="text-sm text-slate-600 mb-1">Properties at/under BAH</div>
                   <div className="text-2xl font-bold text-slate-900">{housingIntel.bah_analysis.properties_at_or_under_bah}</div>
-                  <div className="text-xs text-slate-500 mt-1">out of {housingIntel.bah_analysis.total_properties} total</div>
+                  <div className="text-xs text-slate-500 mt-1">available options</div>
                 </div>
 
                 <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Average Rent</div>
-                  <div className="text-2xl font-bold text-slate-900">${housingIntel.bah_analysis.average_rent.toLocaleString()}</div>
+                  <div className="text-sm text-slate-600 mb-1">Sweet Spot Range</div>
+                  <div className="text-2xl font-bold text-slate-900">
+                    ${Math.round(housingIntel.bah_analysis.sweet_spot_range.min_cents / 100).toLocaleString()}-
+                    ${Math.round(housingIntel.bah_analysis.sweet_spot_range.max_cents / 100).toLocaleString()}
+                  </div>
                   <div className="text-xs text-slate-500 mt-1">per month</div>
                 </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">BAH Coverage</div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.bah_analysis.bah_coverage_percentage}%</div>
-                  <div className="text-xs text-slate-500 mt-1">of properties</div>
+                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Avg Savings</div>
+                  <div className="text-2xl font-bold text-slate-900">
+                    {housingIntel.bah_analysis.avg_savings_cents !== null 
+                      ? `$${Math.round(housingIntel.bah_analysis.avg_savings_cents / 100).toLocaleString()}`
+                      : "N/A"
+                    }
+                  </div>
+                  <div className="text-xs text-slate-500 mt-1">per month</div>
                 </div>
               </div>
 
-              {/* Market Trends */}
-              <div className="grid gap-4 md:grid-cols-2">
+              {/* BAH Recommendation */}
+              <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border-l-4 border-green-600 p-4">
+                <div className="font-semibold text-green-900 mb-2">BAH Recommendation</div>
+                <p className="text-slate-700 leading-relaxed">{housingIntel.bah_analysis.recommendation}</p>
+              </div>
+
+              {/* Property Types */}
+              <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
-                    <Icon name="TrendingUp" className="h-5 w-5 text-slate-600" />
-                    <div className="font-bold text-slate-900">Market Competition</div>
+                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
+                    <div className="font-bold text-slate-900">Single Family</div>
                   </div>
-                  <div className="text-2xl font-bold text-slate-900 mb-2">{housingIntel.market_trends.competition_level}</div>
-                  <p className="text-sm text-slate-600">{housingIntel.market_trends.competition_description}</p>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.single_family.count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
                 </div>
 
                 <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
                     <Icon name="Home" className="h-5 w-5 text-slate-600" />
-                    <div className="font-bold text-slate-900">Property Types</div>
+                    <div className="font-bold text-slate-900">Townhouse</div>
                   </div>
-                  <div className="text-sm text-slate-600">
-                    {housingIntel.market_trends.property_types.map((type, i) => (
-                      <span key={i} className="inline-block rounded-full bg-slate-100 px-2 py-1 text-xs mr-2 mb-1">
-                        {type}
-                      </span>
-                    ))}
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.townhouse.count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
+                </div>
+
+                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
+                    <div className="font-bold text-slate-900">Apartment</div>
+                  </div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.apartment.count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
+                </div>
+              </div>
+
+              {/* Market Trends */}
+              <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="TrendingUp" className="h-5 w-5 text-slate-600" />
+                  <h4 className="font-bold text-slate-900">Market Trends</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Price Trend</div>
+                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.price_trend}</div>
+                    <div className="text-sm text-slate-600 mt-1">{housingIntel.market_trends.trend_description}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Days on Market</div>
+                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.avg_days_on_market} days</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Competition Level</div>
+                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.competition_level}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Negotiation Leverage</div>
+                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.negotiation_leverage}</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Inventory Level</div>
+                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.inventory_level}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Sample Listings */}
-              {housingIntel.sample_listings && housingIntel.sample_listings.length > 0 && (
-                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-6">
-                  <div className="mb-4 flex items-center gap-2">
-                    <Icon name="Search" className="h-5 w-5 text-slate-600" />
-                    <h4 className="font-bold text-slate-900">Sample Listings</h4>
-                  </div>
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {housingIntel.sample_listings.slice(0, 4).map((listing, i) => (
-                      <a
-                        key={i}
-                        href={listing.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block rounded-lg border border-slate-200 bg-white p-4 transition-all hover:border-slate-400 hover:shadow-md"
-                      >
-                        <div className="font-semibold text-slate-900">{listing.address}</div>
-                        <div className="text-lg font-bold text-slate-900">${listing.price.toLocaleString()}/mo</div>
-                        <div className="text-sm text-slate-600">{listing.bedrooms} bed • {listing.bathrooms} bath • {listing.sqft.toLocaleString()} sqft</div>
-                      </a>
-                    ))}
-                  </div>
+              {/* Amenities */}
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Pet Friendly</div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.pet_friendly_count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
                 </div>
-              )}
+
+                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">Utilities Included</div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.utilities_included_count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
+                </div>
+
+                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
+                  <div className="text-sm text-slate-600 mb-1">With Yard</div>
+                  <div className="text-2xl font-bold text-slate-900">{housingIntel.yard_count}</div>
+                  <div className="text-xs text-slate-500 mt-1">properties</div>
+                </div>
+              </div>
+
+              {/* Military Friendly Note */}
+              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Shield" className="h-6 w-6" />
+                  <h4 className="font-bold text-lg">Military-Friendly Housing</h4>
+                </div>
+                <p className="text-slate-100">{housingIntel.military_friendly_note}</p>
+              </div>
 
               {/* Bottom Line */}
               <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
