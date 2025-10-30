@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
             lastVerified: new Date().toISOString(),
           },
           ppm: {
-            amount: claim.entitlements?.ppm || 0,
+            amount: claim.entitlements?.ppm_withholding?.net_payout || claim.entitlements?.ppm || 0,
             confidence: 0.8,
             source: "Claim Data",
             lastVerified: new Date().toISOString(),
