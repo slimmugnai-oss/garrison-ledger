@@ -30,7 +30,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
       {/* BLUF - Bottom Line Up Front */}
       <div className="rounded-lg border-2 border-blue-600 bg-blue-50 p-6">
         <div className="mb-3 flex items-center gap-2">
-          <Icon name="Target" className="h-6 w-6 text-blue-600" />
+          <Icon name="Info" className="h-6 w-6 text-blue-600" />
           <h3 className="text-lg font-bold text-blue-900">Bottom Line Up Front (BLUF)</h3>
         </div>
         <p className="mb-4 text-lg leading-relaxed text-gray-900">{intel.quick_verdict}</p>
@@ -42,7 +42,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Icon name="Award" className="h-5 w-5 text-yellow-600" />
+            <Icon name="Star" className="h-5 w-5 text-yellow-600" />
             <span className="font-semibold text-gray-700">
               Rank #{rank} of {neighborhood.family_fit_score >= 70 ? "excellent" : "good"} options
             </span>
@@ -170,12 +170,12 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           />
 
           {/* Dining */}
-          <AmenitySection title="Dining" icon="Coffee" category={enhanced.dining} color="orange" />
+          <AmenitySection title="Dining" icon="ShoppingCart" category={enhanced.dining} color="orange" />
 
           {/* Fitness */}
           <AmenitySection
             title="Fitness & Recreation"
-            icon="Activity"
+            icon="Heart"
             category={enhanced.fitness}
             color="purple"
           />
@@ -191,7 +191,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           {/* Spouse Employment */}
           <AmenitySection
             title="Spouse Employment"
-            icon="Laptop"
+            icon="Briefcase"
             category={enhanced.spouse_employment}
             color="indigo"
           />
@@ -247,7 +247,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           <Icon
             name={
               intel.bottom_line.startsWith("RECOMMEND")
-                ? "ThumbsUp"
+                ? "CheckCircle"
                 : intel.bottom_line.startsWith("CONSIDER")
                   ? "Info"
                   : "AlertTriangle"
