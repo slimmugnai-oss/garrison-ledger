@@ -285,7 +285,10 @@ export function computeTaxableBases(
  * @param section - Section to filter by
  * @returns Array of codes in that section
  */
-export function getCodesBySection(section: LineCodeDefinition["section"]): string[] {
+export function getCodesBySection(section: LineCodeDefinition["section"] | "OTHER"): string[] {
+  if (section === "OTHER") {
+    return []; // No predefined codes for OTHER section
+  }
   return Object.keys(LINE_CODES).filter((code) => LINE_CODES[code].section === section);
 }
 
