@@ -694,6 +694,21 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
         loading={loading}
       />
 
+      {/* Helper Notice */}
+      <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+        <div className="flex items-start gap-3">
+          <Icon name="Info" className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-blue-900">
+            <p className="font-semibold mb-1">How to enter your LES data</p>
+            <p className="text-blue-800">
+              Your LES groups taxes and deductions together. We separate them for accurate validation:
+              <span className="font-medium"> Taxes</span> (Federal, State, FICA, Medicare) validate against IRS rates.
+              <span className="font-medium"> Deductions</span> (TSP, SGLI) are your voluntary contributions.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* New 2-Column Layout */}
       <LesEditorLayout
         summary={
