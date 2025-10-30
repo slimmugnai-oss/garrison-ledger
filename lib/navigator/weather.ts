@@ -48,12 +48,12 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
 
   console.log(`[DEBUG] Cache miss for weather: ${zip}, fetching from Google Weather API`);
 
-  const apiKey = process.env.GOOGLE_API_KEY;
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
   try {
     // Attempt to fetch real weather data from Google Weather API
     if (!apiKey) {
-      console.warn(`[WEATHER] GOOGLE_API_KEY not configured, using defaults for ${zip}`);
+      console.warn(`[WEATHER] GOOGLE_MAPS_API_KEY not configured, using defaults for ${zip}`);
       const result = getDefaultWeatherForZip(zip);
       await setCache(cacheKey, result, 24 * 3600);
       return result;

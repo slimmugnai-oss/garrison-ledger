@@ -19,9 +19,7 @@ import bases from "@/lib/data/bases-seed.json";
 import { logger } from "@/lib/logger";
 import { fetchAmenitiesData } from "@/lib/navigator/amenities";
 import { commuteMinutesFromZipToGate } from "@/lib/navigator/distance";
-import { fetchDemographicsData } from "@/lib/navigator/demographics";
 import { fetchMedianRent, fetchSampleListings } from "@/lib/navigator/housing";
-import { fetchMilitaryAmenitiesData } from "@/lib/navigator/military";
 import { fetchSchoolsByZip, computeChildWeightedSchoolScore } from "@/lib/navigator/schools";
 import { familyFitScore100 } from "@/lib/navigator/score";
 import { weatherComfortIndex } from "@/lib/navigator/weather";
@@ -91,14 +89,7 @@ export async function POST(request: NextRequest) {
 
     for (const zip of base.candidateZips) {
       // Fetch data in parallel
-      let schoolsData,
-        medianRent,
-        sampleListings,
-        commute,
-        weather,
-        amenitiesData,
-        militaryData,
-        demographicsData;
+      let schoolsData, medianRent, sampleListings, commute, weather, amenitiesData;
 
       try {
         const results = await Promise.all([
@@ -134,41 +125,9 @@ export async function POST(request: NextRequest) {
               note: "Amenities data unavailable",
             };
           }),
-          fetchMilitaryAmenitiesData(zip).catch((err) => {
-            logger.warn(`Military fetch failed for ${zip}`, { error: err });
-            return {
-              military_score: 6,
-              commissary_distance_mi: 20,
-              exchange_distance_mi: 20,
-              va_facility_distance_mi: 25,
-              military_housing_distance_mi: 30,
-              note: "Military facilities data unavailable",
-            };
-          }),
-          fetchDemographicsData(zip).catch((err) => {
-            logger.warn(`Demographics fetch failed for ${zip}`, { error: err });
-            return {
-              demographics_score: 6,
-              population: 25000,
-              median_age: 35,
-              median_income: 75000,
-              diversity_index: 0.6,
-              family_households: 65,
-              note: "Demographics data unavailable",
-            };
-          }),
         ]);
 
-        [
-          schoolsData,
-          medianRent,
-          sampleListings,
-          commute,
-          weather,
-          amenitiesData,
-          militaryData,
-          demographicsData,
-        ] = results;
+        [schoolsData, medianRent, sampleListings, commute, weather, amenitiesData] = results;
       } catch (error) {
         logger.error(`Failed to fetch data for ZIP ${zip}`, error);
         // Continue with next ZIP
@@ -181,7 +140,7 @@ export async function POST(request: NextRequest) {
         kidsGrades as KidsGrade[]
       );
 
-      // Compute family fit score
+      // Compute family fit score (without demographics and military)
       const scoreResult = familyFitScore100({
         schools10: schoolScore10,
         medianRentCents: medianRent,
@@ -190,8 +149,8 @@ export async function POST(request: NextRequest) {
         pmMin: commute.pm,
         weather10: weather.index10,
         amenities10: amenitiesData.amenities_score,
-        demographics10: demographicsData.demographics_score,
-        military10: militaryData.military_score,
+        demographics10: 0, // Removed - not using demographics
+        military10: 0, // Removed - not using military
       });
 
       // Upsert to neighborhood_profiles
@@ -222,23 +181,6 @@ export async function POST(request: NextRequest) {
               hospitals: amenitiesData.hospitals,
               shopping_centers: amenitiesData.shopping_centers,
               note: amenitiesData.note,
-            },
-            demographics_data: {
-              demographics_score: demographicsData.demographics_score,
-              population: demographicsData.population,
-              median_age: demographicsData.median_age,
-              median_income: demographicsData.median_income,
-              diversity_index: demographicsData.diversity_index,
-              family_households: demographicsData.family_households,
-              note: demographicsData.note,
-            },
-            military_data: {
-              military_score: militaryData.military_score,
-              commissary_distance_mi: militaryData.commissary_distance_mi,
-              exchange_distance_mi: militaryData.exchange_distance_mi,
-              va_facility_distance_mi: militaryData.va_facility_distance_mi,
-              military_housing_distance_mi: militaryData.military_housing_distance_mi,
-              note: militaryData.note,
             },
           },
           updated_at: new Date().toISOString(),
@@ -274,23 +216,6 @@ export async function POST(request: NextRequest) {
             hospitals: amenitiesData.hospitals,
             shopping_centers: amenitiesData.shopping_centers,
             note: amenitiesData.note,
-          },
-          demographics_data: {
-            demographics_score: demographicsData.demographics_score,
-            population: demographicsData.population,
-            median_age: demographicsData.median_age,
-            median_income: demographicsData.median_income,
-            diversity_index: demographicsData.diversity_index,
-            family_households: demographicsData.family_households,
-            note: demographicsData.note,
-          },
-          military_data: {
-            military_score: militaryData.military_score,
-            commissary_distance_mi: militaryData.commissary_distance_mi,
-            exchange_distance_mi: militaryData.exchange_distance_mi,
-            va_facility_distance_mi: militaryData.va_facility_distance_mi,
-            military_housing_distance_mi: militaryData.military_housing_distance_mi,
-            note: militaryData.note,
           },
         },
       });
