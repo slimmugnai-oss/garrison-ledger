@@ -703,7 +703,9 @@ export default function PCSUnifiedWizard({
               tle: calculations.tle?.total || 0,
               malt: calculations.malt?.amount || 0,
               per_diem: calculations.perDiem?.amount || 0,
-              ppm: calculations.ppm?.amount || 0,
+              // CRITICAL: Use PPM gross from withholding calculator if available,
+              // not the simplified calculation engine amount ($1,852.50)
+              ppm: ppmWithholding?.gccAmount || calculations.ppm?.amount || 0,
               // Recalculate total using net PPM payout if withholding was calculated
               total: (() => {
                 const baseTotal = 
@@ -716,7 +718,7 @@ export default function PCSUnifiedWizard({
                 if (ppmWithholding?.estimatedNetPayout) {
                   return baseTotal + ppmWithholding.estimatedNetPayout;
                 } else {
-                  // Otherwise use gross PPM amount
+                  // Otherwise use calculation engine's simplified PPM amount
                   return baseTotal + (calculations.ppm?.amount || 0);
                 }
               })(),
