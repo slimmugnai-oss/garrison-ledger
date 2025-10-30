@@ -1462,32 +1462,63 @@ export default function PCSUnifiedWizard({
                   )}
 
                   {/* PPM */}
-                  {calculations.ppm.amount > 0 && (
+                  {(ppmWithholding?.estimatedNetPayout || calculations.ppm.amount > 0) && (
                     <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                       <div>
                         <div className="font-medium text-slate-900">
-                          DIY Move Reimbursement (PPM)
+                          DIY Move Reimbursement (PPM) - Net After Withholding
                         </div>
                         <div className="text-xs text-slate-500">
-                          {calculations.ppm.weight} lbs × {calculations.ppm.distance} miles
-                          {calculations.ppm.weight > calculations.ppm.maxWeight && (
-                            <span className="ml-1 text-orange-600">
-                              (capped at {calculations.ppm.maxWeight.toLocaleString()} lbs for rank)
-                            </span>
+                          {ppmWithholding ? (
+                            <>
+                              GCC ${ppmWithholding.gccAmount.toLocaleString()} - Withholding $
+                              {ppmWithholding.totalWithholding.toLocaleString()} (
+                              {ppmWithholding.effectiveWithholdingRate.toFixed(1)}%)
+                            </>
+                          ) : (
+                            <>
+                              {calculations.ppm.weight} lbs × {calculations.ppm.distance} miles
+                              {calculations.ppm.weight > calculations.ppm.maxWeight && (
+                                <span className="ml-1 text-orange-600">
+                                  (capped at {calculations.ppm.maxWeight.toLocaleString()} lbs for
+                                  rank)
+                                </span>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
                       <div className="text-xl font-bold text-slate-900">
-                        ${calculations.ppm.amount.toLocaleString()}
+                        $
+                        {ppmWithholding
+                          ? ppmWithholding.estimatedNetPayout.toLocaleString()
+                          : calculations.ppm.amount.toLocaleString()}
                       </div>
                     </div>
                   )}
 
                   {/* Total */}
                   <div className="flex items-center justify-between bg-blue-50 p-4">
-                    <div className="text-xl font-bold text-slate-900">Total Entitlement</div>
+                    <div className="text-xl font-bold text-slate-900">
+                      Total {ppmWithholding ? "Net Payout" : "Entitlement"}
+                    </div>
                     <div className="text-3xl font-black text-blue-600">
-                      ${calculations.total.toLocaleString()}
+                      $
+                      {(() => {
+                        const baseTotal =
+                          (calculations.dla?.amount || 0) +
+                          (calculations.tle?.total || 0) +
+                          (calculations.malt?.amount || 0) +
+                          (calculations.perDiem?.amount || 0);
+
+                        // If we have PPM withholding calculation, use net payout
+                        if (ppmWithholding?.estimatedNetPayout) {
+                          return (baseTotal + ppmWithholding.estimatedNetPayout).toLocaleString();
+                        } else {
+                          // Otherwise use calculation engine's total
+                          return calculations.total.toLocaleString();
+                        }
+                      })()}
                     </div>
                   </div>
                 </div>
