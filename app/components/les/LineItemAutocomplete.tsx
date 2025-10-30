@@ -19,13 +19,19 @@ interface Props {
   className?: string;
   placeholder?: string;
   disabled?: boolean;
+  allowedCodes?: string[]; // NEW: Filter to only these codes
 }
 
 /**
  * Generate autocomplete options from LINE_CODES registry
  */
-function getLineCodeOptions(): LineCodeOption[] {
-  return Object.entries(LINE_CODES).map(([code, def]) => ({
+function getLineCodeOptions(allowedCodes?: string[]): LineCodeOption[] {
+  // Filter codes if allowedCodes provided
+  const availableCodes = allowedCodes 
+    ? Object.entries(LINE_CODES).filter(([code]) => allowedCodes.includes(code))
+    : Object.entries(LINE_CODES);
+    
+  return availableCodes.map(([code, def]) => ({
     code,
     description: def.description,
     section: def.section as LesSection,
@@ -59,6 +65,7 @@ export default function LineItemAutocomplete({
   className = "",
   placeholder = "Search line codes...",
   disabled = false,
+  allowedCodes,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,7 +73,7 @@ export default function LineItemAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const allOptions = useMemo(() => getLineCodeOptions(), []);
+  const allOptions = useMemo(() => getLineCodeOptions(allowedCodes), [allowedCodes]);
 
   // Filter options based on search query
   const filteredOptions = useMemo(() => {

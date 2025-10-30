@@ -40,7 +40,6 @@ import { generateLineItemId } from "@/lib/utils/line-item-ids";
 import LesVarianceHero from "./LesVarianceHero";
 import LesDataEntryTabs from "./LesDataEntryTabs";
 import LesFindingsAccordion from "./LesFindingsAccordion";
-import SmartTemplateSelector from "./SmartTemplateSelector";
 import UploadReviewStepper from "./UploadReviewStepper";
 import AddLineItemModal from "./AddLineItemModal";
 
@@ -73,7 +72,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
 
   // Dynamic line items
   const [lineItems, setLineItems] = useState<DynamicLineItem[]>([]);
-  const [templateSelected, setTemplateSelected] = useState(false);
 
   // UI State
   const [saving, setSaving] = useState(false);
@@ -188,6 +186,46 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
               isParsed: false,
             });
           }
+
+          // Add standard tax line items (user enters actual amounts from LES)
+          newItems.push(
+            {
+              id: generateLineItemId(),
+              line_code: "TAX_FED",
+              description: "Federal Income Tax Withheld",
+              amount_cents: 0,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            },
+            {
+              id: generateLineItemId(),
+              line_code: "TAX_STATE",
+              description: "State Income Tax Withheld",
+              amount_cents: 0,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            },
+            {
+              id: generateLineItemId(),
+              line_code: "FICA",
+              description: "FICA (Social Security Tax)",
+              amount_cents: 0,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            },
+            {
+              id: generateLineItemId(),
+              line_code: "MEDICARE",
+              description: "Medicare Tax",
+              amount_cents: 0,
+              section: "TAX",
+              isCustom: false,
+              isParsed: false,
+            }
+          );
 
           if (newItems.length > 0) {
             setLineItems(newItems);
@@ -627,17 +665,6 @@ export function LesAuditAlwaysOn({ tier, userProfile }: Props) {
                 </div>
               )}
 
-              {/* Template Selector (show if no items and no upload review) */}
-              {!uploadedItems && !templateSelected && lineItems.length === 0 && (
-                <div className="mb-6">
-                  <SmartTemplateSelector
-                    onSelect={(items) => {
-                      setLineItems(items);
-                      setTemplateSelected(true);
-                    }}
-                  />
-                </div>
-              )}
 
         {/* Data Entry Tabs */}
         {entryMode === "manual" && (

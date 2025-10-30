@@ -11,7 +11,7 @@ import { useState, useEffect, useRef } from "react";
 import Icon from "@/app/components/ui/Icon";
 import LineItemAutocomplete from "./LineItemAutocomplete";
 import type { DynamicLineItem, LesSection, LineCodeOption } from "@/app/types/les";
-import { LINE_CODES } from "@/lib/les/codes";
+import { LINE_CODES, getCodesBySection } from "@/lib/les/codes";
 
 interface Props {
   isOpen: boolean;
@@ -41,6 +41,11 @@ export default function AddLineItemModal({
   }>({});
 
   const firstInputRef = useRef<HTMLInputElement>(null);
+
+  // Filter codes by section and exclude already-added codes
+  const allowedCodes = defaultSection
+    ? getCodesBySection(defaultSection).filter(code => !existingCodes.includes(code))
+    : undefined;
 
   // Initialize form when editing or opening
   useEffect(() => {
@@ -258,6 +263,7 @@ export default function AddLineItemModal({
               onChange={setCode}
               onSelect={handleCodeSelect}
               placeholder="e.g., FLIGHT_PAY, SDAP, BAH..."
+              allowedCodes={allowedCodes}
             />
             {errors.code && <p className="mt-2 text-sm text-red-600">{errors.code}</p>}
             {code && !LINE_CODES[code.toUpperCase()] && !errors.code && (
