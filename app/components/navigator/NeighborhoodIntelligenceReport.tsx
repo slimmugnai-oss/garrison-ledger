@@ -940,18 +940,106 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
             </div>
           )}
 
-          {/* Housing Tab - COMPREHENSIVE */}
+          {/* Housing Tab - PROPERTY LISTINGS FOCUSED */}
           {activeTab === "housing" && housingIntel && (
             <div className="space-y-8">
-              {/* Market Intelligence Summary */}
+              {/* SECTION 1: AVAILABLE PROPERTIES (TOP PRIORITY) */}
+              {neighborhood.payload.sample_listings && neighborhood.payload.sample_listings.length > 0 && (
+                <div>
+                  <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
+                        <Icon name="Home" className="h-7 w-7 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-2xl font-bold text-slate-900">Available Properties</h4>
+                        <div className="text-sm text-slate-600">{neighborhood.payload.sample_listings.length} listings in this area</div>
+                      </div>
+                    </div>
+                    <a 
+                      href={`https://www.zillow.com/homes/for_rent/${neighborhood.zip}_rb/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+                    >
+                      View All on Zillow
+                      <Icon name="ExternalLink" className="h-4 w-4" />
+                    </a>
+                  </div>
+
+                  {/* Property Cards Grid */}
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {neighborhood.payload.sample_listings.map((listing, i) => (
+                      <a
+                        key={i}
+                        href={listing.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group rounded-xl border-2 border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-400 transition-all duration-300"
+                      >
+                        {/* Property Photo */}
+                        <div className="relative h-48 bg-slate-100 overflow-hidden">
+                          {listing.photo ? (
+                            <img 
+                              src={listing.photo} 
+                              alt={listing.title}
+                              className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                              <Icon name="Home" className="h-16 w-16 text-slate-400" />
+                            </div>
+                          )}
+                          {/* Price Badge */}
+                          <div className="absolute top-3 right-3 rounded-lg bg-blue-600 px-3 py-1 shadow-lg">
+                            <div className="text-lg font-bold text-white">
+                              ${Math.round(listing.price_cents / 100).toLocaleString()}
+                            </div>
+                            <div className="text-xs text-blue-100">/ month</div>
+                          </div>
+                        </div>
+
+                        {/* Property Details */}
+                        <div className="p-4">
+                          <h5 className="mb-3 text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            {listing.title}
+                          </h5>
+                          
+                          {/* Beds/Baths */}
+                          <div className="mb-3 flex items-center gap-4 text-sm text-slate-600">
+                            {listing.bedrooms && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">{listing.bedrooms}</span> bed{listing.bedrooms !== 1 ? 's' : ''}
+                              </div>
+                            )}
+                            {listing.bathrooms && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">{listing.bathrooms}</span> bath{listing.bathrooms !== 1 ? 's' : ''}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* View Details Button */}
+                          <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 group-hover:text-blue-700">
+                            View Details
+                            <Icon name="ExternalLink" className="h-4 w-4" />
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* SECTION 2: Market Intelligence Summary */}
               <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
                 <div className="mb-4 flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-600">
-                    <Icon name="Home" className="h-6 w-6 text-white" />
+                    <Icon name="TrendingUp" className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h4 className="text-xl font-bold text-slate-900">Market Intelligence</h4>
-                    <div className="text-sm text-slate-600">Comprehensive housing analysis for this ZIP</div>
+                    <div className="text-sm text-slate-600">Expert analysis for this neighborhood</div>
                   </div>
                 </div>
                 <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.executive_summary}</p>
