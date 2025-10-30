@@ -705,6 +705,17 @@ export default function PCSUnifiedWizard({
               per_diem: calculations.perDiem?.amount || 0,
               ppm: calculations.ppm?.amount || 0,
               total: calculations.total || 0,
+              // Include PPM withholding data for accurate net payout calculation
+              ppm_withholding: ppmWithholding ? {
+                gross_payout: ppmWithholding.gccAmount,
+                net_payout: ppmWithholding.estimatedNetPayout,
+                total_withholding: ppmWithholding.totalWithholding,
+                effective_rate: ppmWithholding.effectiveWithholdingRate,
+                federal_rate: ppmWithholding.estimatedWithholding.federal.rate,
+                state_rate: ppmWithholding.estimatedWithholding.state.rate,
+                fica_amount: ppmWithholding.estimatedWithholding.fica.amount,
+                medicare_amount: ppmWithholding.estimatedWithholding.medicare.amount,
+              } : null,
             }
           : null,
         // CRITICAL: Include actual_weight and estimated_weight so snapshot stores the entered weight

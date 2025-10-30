@@ -365,10 +365,18 @@ export default function PCSClaimClient({
                       (() => {
                         const totalEntitlements = claim.entitlements?.total || displaySnapshot?.total_estimated || 0;
                         const ppmAmount = claim.entitlements?.ppm || 0;
-                        // Estimate net payout: total entitlements - estimated PPM withholding
-                        // For PPM, assume ~25% withholding (federal + state + FICA + Medicare)
-                        const estimatedWithholding = ppmAmount * 0.25;
-                        return totalEntitlements - estimatedWithholding;
+                        const ppmWithholding = claim.entitlements?.ppm_withholding;
+                        
+                        // Use accurate PPM net payout if available, otherwise estimate
+                        if (ppmWithholding?.net_payout) {
+                          // Use the accurate net payout from PPM withholding calculation
+                          const otherEntitlements = totalEntitlements - ppmAmount;
+                          return otherEntitlements + ppmWithholding.net_payout;
+                        } else {
+                          // Fallback to 25% estimate if no detailed withholding data
+                          const estimatedWithholding = ppmAmount * 0.25;
+                          return totalEntitlements - estimatedWithholding;
+                        }
                       })()
                     )}
                   </div>
