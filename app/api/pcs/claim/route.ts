@@ -160,8 +160,8 @@ export async function POST(req: NextRequest) {
             // This preserves the user's entered weight (e.g., 8250) instead of using calculation result
             ppm_weight:
               body.actual_weight || body.estimated_weight || calculations.ppm?.weight || 0,
-            ppm_estimate: calculations.ppm?.amount || 0,
-            total_estimated: calculations.total || 0,
+            ppm_estimate: body.entitlements?.ppm_withholding?.net_payout || calculations.ppm?.amount || 0,
+            total_estimated: body.entitlements?.total || calculations.total || 0,
             calculation_details: calculations,
             rates_used: {
               dla: calculations.dla?.rateUsed || 0,

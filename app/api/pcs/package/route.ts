@@ -118,12 +118,12 @@ export async function POST(req: NextRequest) {
         lastVerified: new Date().toISOString(),
       },
       ppm: {
-        amount: snapshot?.ppm_amount || 0,
+        amount: claim.entitlements?.ppm_withholding?.net_payout || snapshot?.ppm_amount || 0,
         confidence: 0.8,
         source: "JTR",
         lastVerified: new Date().toISOString(),
       },
-      total_entitlements: snapshot?.total_estimated || 0,
+      total_entitlements: claim.entitlements?.total || snapshot?.total_estimated || 0,
       confidence: { overall: 0.8, dataSources: {} },
     };
 
