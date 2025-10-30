@@ -121,8 +121,11 @@ export async function POST(req: NextRequest) {
     const travelDays = calculations.perDiem.days;
     const perDiemAmount = calculations.perDiem.amount;
     const ppmWeight = calculations.ppm.weight;
-    const ppmEstimate = calculations.ppm.amount;
-    const totalEstimated = calculations.total;
+    
+    // CRITICAL: Use PPM net payout from claim.entitlements if available
+    // Don't use calculation engine's simplified formula
+    const ppmEstimate = claim.entitlements?.ppm_withholding?.net_payout || calculations.ppm.amount;
+    const totalEstimated = claim.entitlements?.total || calculations.total;
 
     // Get total from actual receipts
     const { data: allReceipts } = await supabaseAdmin
