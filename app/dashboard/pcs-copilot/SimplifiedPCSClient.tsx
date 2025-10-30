@@ -19,6 +19,7 @@ interface Claim {
   completion_percentage: number;
   entitlements: {
     total?: number;
+    ppm?: number;
   } | null;
   created_at: string;
 }
