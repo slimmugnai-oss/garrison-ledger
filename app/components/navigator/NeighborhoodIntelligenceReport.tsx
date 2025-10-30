@@ -27,7 +27,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
   const weatherIntel = neighborhood.payload.weather_intelligence;
   const housingIntel = neighborhood.payload.housing_intelligence;
 
-  const [activeTab, setActiveTab] = useState<string>("schools");
+  const [activeTab, setActiveTab] = useState<string>("overview");
 
   // If no enhanced data, return null (show standard view)
   if (!intel || !enhanced) {
@@ -366,65 +366,12 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         )}
       </div>
 
-      {/* QUICK INSIGHTS - Enhanced Strengths & Considerations */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Key Strengths */}
-        {intel.key_strengths.length > 0 && (
-          <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600">
-                <Icon name="CheckCircle" className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Key Strengths</h3>
-                <div className="text-xs text-green-700">What makes this neighborhood great</div>
-              </div>
-            </div>
-            <ul className="space-y-3">
-              {intel.key_strengths.map((strength, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-600">
-                    <Icon name="Check" className="h-3 w-3 text-white" />
-                  </div>
-                  <span className="flex-1 text-slate-700 leading-relaxed">{strength}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Considerations */}
-        {intel.considerations.length > 0 && (
-          <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
-                <Icon name="AlertCircle" className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Considerations</h3>
-                <div className="text-xs text-amber-700">Important factors to keep in mind</div>
-              </div>
-            </div>
-            <ul className="space-y-3">
-              {intel.considerations.map((consideration, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0">
-                    <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <span className="flex-1 text-slate-700 leading-relaxed">{consideration}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
       {/* DETAILED INTELLIGENCE - Enhanced Tabbed Sections */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-2xl font-bold text-slate-900">Detailed Intelligence</h3>
-            <p className="text-sm text-slate-600">Deep-dive analysis across 5 key categories</p>
+            <p className="text-sm text-slate-600">Overview and deep-dive analysis across 5 key categories</p>
           </div>
         </div>
         
@@ -432,6 +379,14 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         <div className="border-b-2 border-gray-200">
           <div className="flex gap-2 overflow-x-auto pb-0">
             {[
+              {
+                id: "overview",
+                label: "Overview",
+                fullLabel: "Overview",
+                subtitle: "At-a-glance summary",
+                icon: "LayoutDashboard" as const,
+                color: "slate",
+              },
               {
                 id: "schools",
                 label: "Schools",
@@ -500,6 +455,180 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
 
         {/* Tab Content - Enhanced Sections */}
         <div className="min-h-[500px]">
+          {/* Overview Tab - NEW */}
+          {activeTab === "overview" && (
+            <div className="space-y-6">
+              {/* Executive Dashboard Grid */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {/* Schools Metric */}
+                {schoolsIntel && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("schools")}
+                    className="group rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white p-6 text-left transition-all hover:border-blue-400 hover:shadow-lg"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <Icon name="GraduationCap" className="h-8 w-8 text-blue-600" />
+                      <div className="text-right">
+                        <div className="text-4xl font-bold text-blue-600">
+                          {schoolsIntel.overall_avg_rating.toFixed(1)}
+                        </div>
+                        <div className="text-xs text-slate-500">out of 10</div>
+                      </div>
+                    </div>
+                    <div className="mb-1 font-semibold text-slate-900">Schools Quality</div>
+                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} schools nearby</div>
+                    <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+                        style={{ width: `${(schoolsIntel.overall_avg_rating / 10) * 100}%` }}
+                      />
+                    </div>
+                  </button>
+                )}
+
+                {/* Commute Metric */}
+                {commuteIntel && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("commute")}
+                    className="group rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 text-left transition-all hover:border-green-400 hover:shadow-lg"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <Icon name="Truck" className="h-8 w-8 text-green-600" />
+                      <div className="text-right">
+                        <div className="text-4xl font-bold text-green-600">
+                          {commuteIntel.work_life_balance_score}
+                        </div>
+                        <div className="text-xs text-slate-500">WLB score</div>
+                      </div>
+                    </div>
+                    <div className="mb-1 font-semibold text-slate-900">Work-Life Balance</div>
+                    <div className="text-sm text-slate-600">{commuteIntel.best_departure_time.minutes}min best time</div>
+                    <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${commuteIntel.work_life_balance_score}%` }}
+                      />
+                    </div>
+                  </button>
+                )}
+
+                {/* Housing Metric */}
+                {housingIntel && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("housing")}
+                    className="group rounded-xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 text-left transition-all hover:border-slate-400 hover:shadow-lg"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <Icon name="Home" className="h-8 w-8 text-slate-700" />
+                      <div className="text-right">
+                        <div className="text-4xl font-bold text-slate-900">
+                          {housingIntel.bah_analysis.properties_at_or_under_bah}
+                        </div>
+                        <div className="text-xs text-slate-500">at/under BAH</div>
+                      </div>
+                    </div>
+                    <div className="mb-1 font-semibold text-slate-900">Housing Options</div>
+                    <div className="text-sm text-slate-600">{housingIntel.market_trends.competition_level} competition</div>
+                    <div className="mt-3 flex items-center gap-2">
+                      {housingIntel.market_trends.competition_level === "low" && (
+                        <span className="text-xs font-semibold text-green-600">🟢 Buyer's Market</span>
+                      )}
+                      {housingIntel.market_trends.competition_level === "moderate" && (
+                        <span className="text-xs font-semibold text-amber-600">🟡 Balanced Market</span>
+                      )}
+                      {housingIntel.market_trends.competition_level === "high" && (
+                        <span className="text-xs font-semibold text-red-600">🔴 Seller's Market</span>
+                      )}
+                    </div>
+                  </button>
+                )}
+
+                {/* Weather Metric */}
+                {weatherIntel && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("weather")}
+                    className="group rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 text-left transition-all hover:border-amber-400 hover:shadow-lg"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <Icon name="Sun" className="h-8 w-8 text-amber-600" />
+                      <div className="text-right">
+                        <div className="text-4xl font-bold text-amber-600">
+                          {weatherIntel.overall_comfort_score}
+                        </div>
+                        <div className="text-xs text-slate-500">comfort</div>
+                      </div>
+                    </div>
+                    <div className="mb-1 font-semibold text-slate-900">Climate Comfort</div>
+                    <div className="text-sm text-slate-600">{weatherIntel.outdoor_season_months} outdoor months</div>
+                    <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-600"
+                        style={{ width: `${weatherIntel.overall_comfort_score}%` }}
+                      />
+                    </div>
+                  </button>
+                )}
+              </div>
+
+              {/* Strengths & Considerations - From Hero Section */}
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Key Strengths */}
+                {intel.key_strengths.length > 0 && (
+                  <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-sm">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600">
+                        <Icon name="CheckCircle" className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">Key Strengths</h3>
+                        <div className="text-xs text-green-700">What makes this neighborhood great</div>
+                      </div>
+                    </div>
+                    <ul className="space-y-3">
+                      {intel.key_strengths.map((strength, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-600">
+                            <Icon name="Check" className="h-3 w-3 text-white" />
+                          </div>
+                          <span className="flex-1 text-slate-700 leading-relaxed">{strength}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Considerations */}
+                {intel.considerations.length > 0 && (
+                  <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
+                        <Icon name="AlertCircle" className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900">Considerations</h3>
+                        <div className="text-xs text-amber-700">Important factors to keep in mind</div>
+                      </div>
+                    </div>
+                    <ul className="space-y-3">
+                      {intel.considerations.map((consideration, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <div className="mt-1 flex-shrink-0">
+                            <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600" />
+                          </div>
+                          <span className="flex-1 text-slate-700 leading-relaxed">{consideration}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Schools Tab - ENHANCED */}
           {activeTab === "schools" && schoolsIntel && (
             <div className="space-y-8">
