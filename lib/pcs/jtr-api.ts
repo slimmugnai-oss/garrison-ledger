@@ -133,12 +133,12 @@ export async function fetchPerDiemRates(
 export async function fetchDLARates(effectiveDate: string): Promise<DLARate[]> {
   try {
     // CRITICAL: Check cache first, but use supabaseAdmin (server-side only)
-    // Check cache first
+    // Check cache first - always get the most recent verified data
     const { data: cached } = await supabaseAdmin
       .from("jtr_rates_cache")
       .select("*")
       .eq("rate_type", "dla")
-      .lte("effective_date", effectiveDate) // FIX: Rate must be effective ON or BEFORE the move date
+      .eq("verification_status", "verified")
       .order("effective_date", { ascending: false })
       .limit(1)
       .maybeSingle();
