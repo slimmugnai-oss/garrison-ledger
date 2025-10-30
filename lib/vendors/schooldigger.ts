@@ -26,7 +26,7 @@ export async function sdFetch<T>(
     next: { revalidate: REVALIDATE },
     cache: "force-cache",
     headers: {
-      "Referer": "https://www.garrisonledger.com",
+      "Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://www.garrisonledger.com",
     },
   });
   clearTimeout(t);
