@@ -34,6 +34,16 @@ interface Claim {
     malt?: number;
     per_diem?: number;
     ppm?: number;
+    ppm_withholding?: {
+      gross_payout: number;
+      net_payout: number;
+      total_withholding: number;
+      effective_rate: number;
+      federal_rate: number;
+      state_rate: number;
+      fica_amount: number;
+      medicare_amount: number;
+    };
   } | null;
   form_data?: {
     tle_origin_nights?: number;
