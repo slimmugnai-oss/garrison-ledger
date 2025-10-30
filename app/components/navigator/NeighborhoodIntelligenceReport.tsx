@@ -688,7 +688,9 @@ interface GradeLevelCardProps {
   topSchools: Array<{
     name: string;
     rating: number;
-    distance: number;
+    grades: string;
+    distance_mi?: number;
+    address?: string;
   }>;
 }
 
@@ -712,7 +714,9 @@ function GradeLevelCard({ level, count, avgRating, topSchools }: GradeLevelCardP
                 <span className="text-slate-600">{school.name}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-slate-900">{school.rating.toFixed(1)}</span>
-                  <span className="text-xs text-slate-500">({school.distance.toFixed(1)} mi)</span>
+                  {school.distance_mi && (
+                    <span className="text-xs text-slate-500">({school.distance_mi.toFixed(1)} mi)</span>
+                  )}
                 </div>
               </div>
             ))}
