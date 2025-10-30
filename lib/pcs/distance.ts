@@ -46,7 +46,7 @@ export async function calculateDistance(
   }
 
   // Try Google Maps if enabled and API key available
-  if (useGoogleMaps && process.env.GOOGLE_MAPS_API_KEY) {
+  if (useGoogleMaps && process.env.GOOGLE_API_KEY) {
     try {
       const googleDistance = await getGoogleMapsDistance(originBase, destinationBase);
       if (googleDistance) {
@@ -112,6 +112,21 @@ function findBase(identifier: string): MilitaryBase | undefined {
 
     // 3. Direct name match (either direction)
     if (baseNameCore.includes(cleanedIdCore) || cleanedIdCore.includes(baseNameCore)) return true;
+    
+    // 3a. Handle partial matches with slashes (e.g., "Shaw AFB" should match "SUMTER/SHAW AFB")
+    if (baseName.includes(cleanedIdCore)) return true;
+    
+    // 3b. Handle cases where base name has state suffix but search doesn't
+    const baseNameWithoutState = baseName.replace(/, [a-z]{2}$/, '');
+    if (baseNameWithoutState.includes(cleanedIdCore)) return true;
+    
+    // 3c. Handle AFB abbreviation in base name (e.g., "shaw afb" should match "sumter/shaw afb")
+    const baseNameWithAFB = baseName.replace(/ air force base/g, ' afb');
+    if (baseNameWithAFB.includes(cleanedIdCore)) return true;
+    
+    // 3d. Handle original search term with AFB (before conversion to "Air Force Base")
+    const originalCleanedId = cleanedId.split('(')[0].trim();
+    if (baseName.includes(originalCleanedId)) return true;
 
     // 4. Legacy name match (what's in parentheses)
     // e.g., "Fort Bragg" should match "Fort Liberty (Bragg)"
@@ -188,7 +203,7 @@ async function getGoogleMapsDistance(
   origin: MilitaryBase,
   destination: MilitaryBase
 ): Promise<number | null> {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) return null;
 
   const url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json");
