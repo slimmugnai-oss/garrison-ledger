@@ -9,6 +9,7 @@
 "use client";
 
 import { useState } from "react";
+
 import Icon from "@/app/components/ui/Icon";
 import type { NeighborhoodCard } from "@/app/types/navigator";
 
@@ -219,8 +220,9 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Schools Score */}
         {schoolsIntel && (
-          <div 
-            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-400 hover:shadow-xl" 
+          <button
+            type="button"
+            className="group relative w-full cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 text-left transition-all hover:border-blue-400 hover:shadow-xl" 
             onClick={() => setActiveTab("schools")}
           >
             <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
@@ -248,13 +250,14 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 />
               </div>
             </div>
-          </div>
+          </button>
         )}
 
         {/* Commute Score */}
         {commuteIntel && (
-          <div 
-            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-green-400 hover:shadow-xl" 
+          <button
+            type="button"
+            className="group relative w-full cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 text-left transition-all hover:border-green-400 hover:shadow-xl" 
             onClick={() => setActiveTab("commute")}
           >
             <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
@@ -284,13 +287,14 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 />
               </div>
             </div>
-          </div>
+          </button>
         )}
 
         {/* Housing Score */}
         {housingIntel && (
-          <div 
-            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-xl" 
+          <button
+            type="button"
+            className="group relative w-full cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 text-left transition-all hover:border-slate-400 hover:shadow-xl" 
             onClick={() => setActiveTab("housing")}
           >
             <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
@@ -323,13 +327,14 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 )}
               </div>
             </div>
-          </div>
+          </button>
         )}
 
         {/* Weather Score */}
         {weatherIntel && (
-          <div 
-            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-amber-400 hover:shadow-xl" 
+          <button
+            type="button"
+            className="group relative w-full cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 text-left transition-all hover:border-amber-400 hover:shadow-xl" 
             onClick={() => setActiveTab("weather")}
           >
             <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
@@ -357,7 +362,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 />
               </div>
             </div>
-          </div>
+          </button>
         )}
       </div>
 
@@ -827,8 +832,8 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                     return (
                       <div key={i} className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
                         <div className="mb-3 flex items-center justify-between">
-                          <div className="font-bold text-slate-900">{season.season}</div>
-                          <Icon name={seasonIcon as any} className="h-6 w-6 text-amber-600" />
+                      <div className="font-bold text-slate-900">{season.season}</div>
+                      <Icon name={seasonIcon as "Sun" | "Cloud"} className="h-6 w-6 text-amber-600" />
                         </div>
                         <div className="mb-2 text-sm font-semibold text-slate-600">{season.months}</div>
                         <div className="mb-3 text-lg font-bold text-slate-700">{season.avg_temp_range}</div>
@@ -1244,7 +1249,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   {renderEnhancedAmenityCategory("Essentials", enhanced.essentials.top_picks, enhanced.essentials.count, "ShoppingCart", "purple")}
                   {renderEnhancedAmenityCategory("Family Activities", enhanced.family_activities.top_picks, enhanced.family_activities.count, "Users", "blue")}
                   {renderEnhancedAmenityCategory("Healthcare", enhanced.healthcare.top_picks, enhanced.healthcare.count, "Heart", "red")}
-                  {renderEnhancedAmenityCategory("Dining", enhanced.dining.top_picks, enhanced.dining.count, "Coffee", "amber")}
+                  {renderEnhancedAmenityCategory("Dining", enhanced.dining.top_picks, enhanced.dining.count, "Utensils", "amber")}
                   {renderEnhancedAmenityCategory("Fitness", enhanced.fitness.top_picks, enhanced.fitness.count, "Zap", "green")}
                   {renderEnhancedAmenityCategory("Services", enhanced.services.top_picks, enhanced.services.count, "Briefcase", "slate")}
                 </div>
@@ -1390,7 +1395,7 @@ function renderEnhancedAmenityCategory(
     types?: string[];
   }>,
   count: number,
-  iconName: string,
+  iconName: "ShoppingCart" | "Users" | "Heart" | "Utensils" | "Zap" | "Briefcase",
   color: string
 ) {
   const colorMap: Record<string, {bg: string; border: string; text: string; icon: string}> = {
@@ -1408,7 +1413,7 @@ function renderEnhancedAmenityCategory(
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.icon}`}>
-            <Icon name={iconName as any} className={`h-5 w-5 ${colors.text}`} />
+            <Icon name={iconName} className={`h-5 w-5 ${colors.text}`} />
           </div>
           <div>
             <h4 className="font-bold text-slate-900">{title}</h4>

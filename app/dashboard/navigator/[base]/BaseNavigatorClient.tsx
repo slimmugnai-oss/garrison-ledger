@@ -10,15 +10,13 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-import AnimatedCard from "@/app/components/ui/AnimatedCard";
-import Badge from "@/app/components/ui/Badge";
-import Icon from "@/app/components/ui/Icon";
 import NeighborhoodIntelligenceReport from "@/app/components/navigator/NeighborhoodIntelligenceReport";
+import AnimatedCard from "@/app/components/ui/AnimatedCard";
+import Icon from "@/app/components/ui/Icon";
 import type {
   BaseSeed,
   NeighborhoodCard,
   NavigatorResponse,
-  KidsGrade,
 } from "@/app/types/navigator";
 import { getScoreBreakdown } from "@/lib/navigator/score";
 
@@ -1284,12 +1282,12 @@ export default function BaseNavigatorClient({
               >
                 Find Best Neighborhoods
               </button>
-              <a
+              <Link
                 href="/dashboard/navigator"
                 className="rounded-lg border border-gray-300 px-8 py-3 font-medium text-gray-700 hover:bg-gray-50"
               >
                 Browse Other Bases
-              </a>
+              </Link>
             </div>
           </div>
         )}
