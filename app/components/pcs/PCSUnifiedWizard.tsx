@@ -252,6 +252,49 @@ export default function PCSUnifiedWizard({
         logger.info("Loaded claim with pre-calculated snapshot", { claimId });
       }
 
+      // CRITICAL: Restore PPM withholding state from saved entitlements
+      if (claim.entitlements?.ppm_withholding) {
+        const ppmData = claim.entitlements.ppm_withholding;
+        // Reconstruct PPMWithholdingResult from saved data
+        setPpmWithholding({
+          gccAmount: ppmData.gross_payout,
+          estimatedNetPayout: ppmData.net_payout,
+          totalWithholding: ppmData.total_withholding,
+          effectiveWithholdingRate: ppmData.effective_rate,
+          estimatedWithholding: {
+            federal: {
+              amount: ppmData.gross_payout * (ppmData.federal_rate / 100),
+              rate: ppmData.federal_rate,
+              basis: "IRS Pub 15 supplemental wage rate",
+            },
+            state: {
+              amount: ppmData.gross_payout * (ppmData.state_rate / 100),
+              rate: ppmData.state_rate,
+              stateName: "State",
+              basis: "State supplemental withholding rate",
+            },
+            fica: {
+              amount: ppmData.fica_amount,
+              rate: 6.2,
+              basis: "6.2% of taxable wages",
+              capped: false,
+            },
+            medicare: {
+              amount: ppmData.medicare_amount,
+              rate: 1.45,
+              basis: "1.45% of taxable wages",
+            },
+          },
+          confidence: 90,
+          isEstimate: true,
+          notTaxAdvice: true,
+        });
+        setPpmGccAmount(ppmData.gross_payout);
+        logger.info("Restored PPM withholding data from saved claim", {
+          netPayout: ppmData.net_payout,
+        });
+      }
+
       // Ensure we're on review step (should already be set, but ensure)
       setCurrentStep("review");
 
