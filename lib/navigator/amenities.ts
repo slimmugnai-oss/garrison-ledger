@@ -25,7 +25,7 @@ export interface AmenityData {
 export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
   console.log(`[DEBUG] fetchAmenitiesData called for ZIP: ${zip}`);
 
-  const cacheKey = `gplaces:amenities:v1:${zip}`; // v1 - consolidated Google API key
+  const cacheKey = `gplaces:amenities:v2:${zip}`; // v1 - consolidated Google API key
   const cached = await getCache<AmenityData>(cacheKey);
   if (cached) {
     console.log(`[DEBUG] Cache hit for amenities: ${zip}`, cached);
@@ -92,7 +92,7 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
  * Geocode ZIP for amenities lookup
  */
 async function geocodeZip(zip: string): Promise<{ lat: number; lon: number }> {
-  const cacheKey = `geocode:amenities:${zip}`;
+  const cacheKey = `geocode:amenities:v2:${zip}`;
   const cached = await getCache<{ lat: number; lon: number }>(cacheKey);
   if (cached) return cached;
 

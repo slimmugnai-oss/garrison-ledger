@@ -44,7 +44,7 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
   console.log(`[DEBUG] weatherComfortIndex called for ZIP: ${zip}`);
 
   // CRITICAL: v4 cache key to bust corrupted old data
-  const cacheKey = `gweather:index:v4:${zip}`;
+  const cacheKey = `gweather:index:v5:${zip}`;
 
   const cached = await getCache<{ index10: number; note: string }>(cacheKey);
   if (cached) {
@@ -104,7 +104,7 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
  * (Reuses geocoding logic but separate cache key)
  */
 async function geocodeZipForWeather(zip: string): Promise<{ lat: number; lon: number }> {
-  const cacheKey = `geocode:weather:${zip}`;
+  const cacheKey = `geocode:weather:v2:${zip}`;
   const cached = await getCache<{ lat: number; lon: number }>(cacheKey);
   if (cached) return cached;
 

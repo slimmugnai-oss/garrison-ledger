@@ -15,7 +15,7 @@ export async function commuteMinutesFromZipToGate(args: {
   zip: string;
   gate: { lat: number; lng: number };
 }): Promise<{ am: number | null; pm: number | null }> {
-  const cacheKey = `gdm:commute:${args.zip}:${args.gate.lat.toFixed(3)},${args.gate.lng.toFixed(3)}`;
+  const cacheKey = `gdm:commute:v2:${args.zip}:${args.gate.lat.toFixed(3)},${args.gate.lng.toFixed(3)}`;
   const cached = await getCache<{ am: number | null; pm: number | null }>(cacheKey);
   if (cached) return cached;
 

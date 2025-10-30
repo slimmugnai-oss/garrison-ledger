@@ -41,7 +41,7 @@ interface ZillowPropertyResponse extends ZillowProperty {}
  * Fetch median rent for ZIP and bedroom count
  */
 export async function fetchMedianRent(zip: string, bedrooms: number): Promise<number | null> {
-  const cacheKey = `zillow:median:${zip}:b${bedrooms}`;
+  const cacheKey = `zillow:median:v2:${zip}:b${bedrooms}`;
   const cached = await getCache<number>(cacheKey);
   if (cached !== null) return cached;
 
@@ -95,7 +95,7 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
  * Fetch sample listings (top 3)
  */
 export async function fetchSampleListings(zip: string, bedrooms: number): Promise<Listing[]> {
-  const cacheKey = `zillow:listings:${zip}:b${bedrooms}`;
+  const cacheKey = `zillow:listings:v2:${zip}:b${bedrooms}`;
   const cached = await getCache<Listing[]>(cacheKey);
   if (cached) return cached;
 
