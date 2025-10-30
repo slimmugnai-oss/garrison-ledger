@@ -3,6 +3,7 @@
  *
  * Magazine-quality presentation for world-class military relocation intelligence
  * Design philosophy: Visual hierarchy, progressive disclosure, emotional engagement
+ * REVAMPED: Enhanced data visualization, better actionability, military-focused insights
  */
 
 "use client";
@@ -53,10 +54,31 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
     return "Moderate Confidence";
   };
 
+  // Helper to get score color
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-blue-600";
+    if (score >= 40) return "text-amber-600";
+    return "text-red-600";
+  };
+
+  // Helper to get score background
+  const getScoreBg = (score: number) => {
+    if (score >= 80) return "bg-green-100";
+    if (score >= 60) return "bg-blue-100";
+    if (score >= 40) return "bg-amber-100";
+    return "bg-red-100";
+  };
+
   return (
     <div className="space-y-8 pb-8">
-      {/* HERO SECTION - Magazine-style visual impact */}
+      {/* MISSION BRIEFING - Enhanced Hero Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-2xl">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)' }}></div>
+        </div>
+
         {/* Rank Badge */}
         <div className="absolute right-8 top-8">
           <div className={`flex items-center gap-2 rounded-full bg-gradient-to-r ${badge.color} px-4 py-2 text-sm font-bold text-white shadow-lg`}>
@@ -65,145 +87,301 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           </div>
         </div>
 
-        {/* Main Verdict */}
+        {/* Mission Header */}
         <div className="mb-6 max-w-3xl">
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
-            <Icon name="MapPin" className="h-4 w-4" />
-            ZIP {neighborhood.zip} • Near {baseName}
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+              <Icon name="Shield" className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">Mission Briefing</div>
+              <div className="text-xs text-slate-500">Intelligence Report for Military Families</div>
+            </div>
           </div>
+
+          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-400">
+            <Icon name="MapPin" className="h-4 w-4" />
+            ZIP {neighborhood.zip} • {baseName}
+          </div>
+
           <h2 className="mb-4 text-3xl font-bold leading-tight md:text-4xl">
             {intel.quick_verdict}
           </h2>
           
-          {/* Confidence Score - Visual */}
-          <div className="flex items-center gap-4">
+          {/* Enhanced Confidence Visualization */}
+          <div className="flex items-center gap-6">
             <div className="flex-shrink-0">
-              <div className="relative h-24 w-24">
-                <svg className="h-24 w-24 -rotate-90 transform">
+              <div className="relative h-28 w-28">
+                {/* Outer ring - gradient */}
+                <svg className="h-28 w-28 -rotate-90 transform">
+                  <defs>
+                    <linearGradient id="confidenceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: intel.confidence_score >= 80 ? '#10b981' : intel.confidence_score >= 60 ? '#3b82f6' : '#f59e0b', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: intel.confidence_score >= 80 ? '#059669' : intel.confidence_score >= 60 ? '#2563eb' : '#d97706', stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
                   <circle
-                    cx="48"
-                    cy="48"
-                    r="40"
-                    stroke="rgba(255,255,255,0.2)"
-                    strokeWidth="8"
+                    cx="56"
+                    cy="56"
+                    r="50"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="10"
                     fill="none"
                   />
                   <circle
-                    cx="48"
-                    cy="48"
-                    r="40"
-                    stroke="white"
-                    strokeWidth="8"
+                    cx="56"
+                    cy="56"
+                    r="50"
+                    stroke="url(#confidenceGradient)"
+                    strokeWidth="10"
                     fill="none"
-                    strokeDasharray={`${2 * Math.PI * 40}`}
-                    strokeDashoffset={`${2 * Math.PI * 40 * (1 - intel.confidence_score / 100)}`}
+                    strokeDasharray={`${2 * Math.PI * 50}`}
+                    strokeDashoffset={`${2 * Math.PI * 50 * (1 - intel.confidence_score / 100)}`}
                     strokeLinecap="round"
+                    className="drop-shadow-lg"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">{intel.confidence_score}</div>
-                    <div className="text-xs text-slate-300">confidence</div>
+                    <div className="text-3xl font-bold">{intel.confidence_score}</div>
+                    <div className="text-xs text-slate-300">of 100</div>
                   </div>
                 </div>
               </div>
             </div>
-            <div>
-              <div className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-400">
-                {getConfidenceLabel(intel.confidence_score)}
+            <div className="flex-1">
+              <div className="mb-2 flex items-center gap-2">
+                <div className={`rounded-full px-3 py-1 text-xs font-bold ${getConfidenceColor(intel.confidence_score)}`}>
+                  {getConfidenceLabel(intel.confidence_score)}
+                </div>
               </div>
-              <div className="text-sm text-slate-300">
-                Based on comprehensive analysis of {enhanced.total_amenities}+ local amenities,
-                {schoolsIntel ? ` ${schoolsIntel.total_schools} schools,` : ""} housing market data, and real-time commute patterns.
+              <div className="text-sm text-slate-300 leading-relaxed">
+                Based on {enhanced.total_amenities}+ amenities,
+                {schoolsIntel && ` ${schoolsIntel.total_schools} schools,`}
+                {housingIntel && ` ${housingIntel.bah_analysis.properties_at_or_under_bah} BAH-friendly properties,`}
+                {weatherIntel && ` ${weatherIntel.outdoor_season_months} outdoor-friendly months,`}
+                {commuteIntel && ` and real-time commute data.`}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Quick Stats Bar */}
+        <div className="grid gap-4 border-t border-slate-700 pt-6 md:grid-cols-4">
+          {commuteIntel && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
+                <Icon name="Truck" className="h-5 w-5 text-green-400" />
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Commute</div>
+                <div className="font-bold">{commuteIntel.best_departure_time.minutes} min best</div>
+              </div>
+            </div>
+          )}
+          {schoolsIntel && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
+                <Icon name="GraduationCap" className="h-5 w-5 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Schools</div>
+                <div className="font-bold">{schoolsIntel.overall_avg_rating.toFixed(1)}/10 avg</div>
+              </div>
+            </div>
+          )}
+          {housingIntel && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-600/20">
+                <Icon name="Home" className="h-5 w-5 text-amber-400" />
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">BAH Options</div>
+                <div className="font-bold">{housingIntel.bah_analysis.properties_at_or_under_bah} properties</div>
+              </div>
+            </div>
+          )}
+          {weatherIntel && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
+                <Icon name="Sun" className="h-5 w-5 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-xs text-slate-400">Weather</div>
+                <div className="font-bold">{weatherIntel.overall_comfort_score}/100 comfort</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* EXECUTIVE DASHBOARD - Key Metrics at a Glance */}
+      {/* EXECUTIVE DASHBOARD - Enhanced Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Schools Score */}
         {schoolsIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-400 hover:shadow-lg" onClick={() => setActiveTab("schools")}>
-            <div className="mb-3 flex items-center justify-between">
-              <Icon name="GraduationCap" className="h-8 w-8 text-blue-600" />
-              <div className="text-right">
-                <div className="text-3xl font-bold text-slate-900">{schoolsIntel.overall_avg_rating.toFixed(1)}</div>
-                <div className="text-xs text-slate-500">avg rating</div>
+          <div 
+            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-400 hover:shadow-xl" 
+            onClick={() => setActiveTab("schools")}
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
+              <Icon name="GraduationCap" className="h-full w-full text-blue-600" />
+            </div>
+            <div className="relative">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                  <Icon name="GraduationCap" className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="text-right">
+                  <div className={`text-4xl font-bold ${getScoreColor(schoolsIntel.overall_avg_rating * 10)}`}>
+                    {schoolsIntel.overall_avg_rating.toFixed(1)}
+                  </div>
+                  <div className="text-xs text-slate-500">out of 10</div>
+                </div>
+              </div>
+              <div className="mb-2 font-semibold text-slate-900">Schools Quality</div>
+              <div className="text-sm text-slate-600">{schoolsIntel.total_schools} schools nearby</div>
+              {/* Progress bar */}
+              <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all"
+                  style={{ width: `${(schoolsIntel.overall_avg_rating / 10) * 100}%` }}
+                />
               </div>
             </div>
-            <div className="mb-1 font-semibold text-slate-900">Schools</div>
-            <div className="text-sm text-slate-600">{schoolsIntel.total_schools} schools nearby</div>
           </div>
         )}
 
         {/* Commute Score */}
         {commuteIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-green-400 hover:shadow-lg" onClick={() => setActiveTab("commute")}>
-            <div className="mb-3 flex items-center justify-between">
-              <Icon name="Truck" className="h-8 w-8 text-green-600" />
-              <div className="text-right">
-                <div className="text-3xl font-bold text-slate-900">{commuteIntel.work_life_balance_score}</div>
-                <div className="text-xs text-slate-500">WLB score</div>
-              </div>
+          <div 
+            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-green-400 hover:shadow-xl" 
+            onClick={() => setActiveTab("commute")}
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
+              <Icon name="Truck" className="h-full w-full text-green-600" />
             </div>
-            <div className="mb-1 font-semibold text-slate-900">Commute</div>
-            <div className="text-sm text-slate-600">
-              {commuteIntel.best_departure_time.minutes}min best time
+            <div className="relative">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+                  <Icon name="Truck" className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="text-right">
+                  <div className={`text-4xl font-bold ${getScoreColor(commuteIntel.work_life_balance_score)}`}>
+                    {commuteIntel.work_life_balance_score}
+                  </div>
+                  <div className="text-xs text-slate-500">WLB score</div>
+                </div>
+              </div>
+              <div className="mb-2 font-semibold text-slate-900">Work-Life Balance</div>
+              <div className="text-sm text-slate-600">
+                {commuteIntel.best_departure_time.minutes}min best time
+              </div>
+              {/* Progress bar */}
+              <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600 transition-all"
+                  style={{ width: `${commuteIntel.work_life_balance_score}%` }}
+                />
+              </div>
             </div>
           </div>
         )}
 
         {/* Housing Score */}
         {housingIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-lg" onClick={() => setActiveTab("housing")}>
-            <div className="mb-3 flex items-center justify-between">
-              <Icon name="Home" className="h-8 w-8 text-slate-700" />
-              <div className="text-right">
-                <div className="text-3xl font-bold text-slate-900">{housingIntel.bah_analysis.properties_at_or_under_bah}</div>
-                <div className="text-xs text-slate-500">at/under BAH</div>
+          <div 
+            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-slate-400 hover:shadow-xl" 
+            onClick={() => setActiveTab("housing")}
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
+              <Icon name="Home" className="h-full w-full text-slate-700" />
+            </div>
+            <div className="relative">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
+                  <Icon name="Home" className="h-6 w-6 text-slate-700" />
+                </div>
+                <div className="text-right">
+                  <div className="text-4xl font-bold text-slate-900">
+                    {housingIntel.bah_analysis.properties_at_or_under_bah}
+                  </div>
+                  <div className="text-xs text-slate-500">at/under BAH</div>
+                </div>
+              </div>
+              <div className="mb-2 font-semibold text-slate-900">Housing Options</div>
+              <div className="text-sm text-slate-600">{housingIntel.market_trends.competition_level} competition</div>
+              {/* Market indicator */}
+              <div className="mt-3 flex items-center gap-2">
+                {housingIntel.market_trends.competition_level === "low" && (
+                  <span className="text-xs font-semibold text-green-600">🟢 Buyer's Market</span>
+                )}
+                {housingIntel.market_trends.competition_level === "moderate" && (
+                  <span className="text-xs font-semibold text-amber-600">🟡 Balanced Market</span>
+                )}
+                {housingIntel.market_trends.competition_level === "high" && (
+                  <span className="text-xs font-semibold text-red-600">🔴 Competitive Market</span>
+                )}
               </div>
             </div>
-            <div className="mb-1 font-semibold text-slate-900">Housing</div>
-            <div className="text-sm text-slate-600">{housingIntel.market_trends.competition_level} competition</div>
           </div>
         )}
 
         {/* Weather Score */}
         {weatherIntel && (
-          <div className="group cursor-pointer rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-amber-400 hover:shadow-lg" onClick={() => setActiveTab("weather")}>
-            <div className="mb-3 flex items-center justify-between">
-              <Icon name="Sun" className="h-8 w-8 text-amber-600" />
-              <div className="text-right">
-                <div className="text-3xl font-bold text-slate-900">{weatherIntel.overall_comfort_score}</div>
-                <div className="text-xs text-slate-500">comfort</div>
+          <div 
+            className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-amber-400 hover:shadow-xl" 
+            onClick={() => setActiveTab("weather")}
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 opacity-5">
+              <Icon name="Sun" className="h-full w-full text-amber-600" />
+            </div>
+            <div className="relative">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100">
+                  <Icon name="Sun" className="h-6 w-6 text-amber-600" />
+                </div>
+                <div className="text-right">
+                  <div className={`text-4xl font-bold ${getScoreColor(weatherIntel.overall_comfort_score)}`}>
+                    {weatherIntel.overall_comfort_score}
+                  </div>
+                  <div className="text-xs text-slate-500">comfort</div>
+                </div>
+              </div>
+              <div className="mb-2 font-semibold text-slate-900">Climate Comfort</div>
+              <div className="text-sm text-slate-600">{weatherIntel.outdoor_season_months} outdoor months</div>
+              {/* Progress bar */}
+              <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all"
+                  style={{ width: `${weatherIntel.overall_comfort_score}%` }}
+                />
               </div>
             </div>
-            <div className="mb-1 font-semibold text-slate-900">Weather</div>
-            <div className="text-sm text-slate-600">{weatherIntel.outdoor_season_months} months outdoor-friendly</div>
           </div>
         )}
       </div>
 
-      {/* QUICK INSIGHTS - Strengths & Considerations Side by Side */}
+      {/* QUICK INSIGHTS - Enhanced Strengths & Considerations */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Key Strengths */}
         {intel.key_strengths.length > 0 && (
           <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-3">
-              <div className="rounded-full bg-green-600 p-2">
-                <Icon name="CheckCircle" className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600">
+                <Icon name="CheckCircle" className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Key Strengths</h3>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Key Strengths</h3>
+                <div className="text-xs text-green-700">What makes this neighborhood great</div>
+              </div>
             </div>
             <ul className="space-y-3">
               {intel.key_strengths.map((strength, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0 rounded-full bg-green-600 p-0.5">
+                  <div className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-600">
                     <Icon name="Check" className="h-3 w-3 text-white" />
                   </div>
-                  <span className="text-slate-700 leading-relaxed">{strength}</span>
+                  <span className="flex-1 text-slate-700 leading-relaxed">{strength}</span>
                 </li>
               ))}
             </ul>
@@ -214,18 +392,21 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         {intel.considerations.length > 0 && (
           <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-3">
-              <div className="rounded-full bg-amber-600 p-2">
-                <Icon name="AlertCircle" className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
+                <Icon name="AlertCircle" className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Considerations</h3>
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Considerations</h3>
+                <div className="text-xs text-amber-700">Important factors to keep in mind</div>
+              </div>
             </div>
             <ul className="space-y-3">
               {intel.considerations.map((consideration, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className="mt-1 flex-shrink-0">
-                    <Icon name="AlertTriangle" className="h-4 w-4 text-amber-600" />
+                    <Icon name="AlertTriangle" className="h-5 w-5 text-amber-600" />
                   </div>
-                  <span className="text-slate-700 leading-relaxed">{consideration}</span>
+                  <span className="flex-1 text-slate-700 leading-relaxed">{consideration}</span>
                 </li>
               ))}
             </ul>
@@ -233,43 +414,58 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
         )}
       </div>
 
-      {/* DETAILED INTELLIGENCE - Tabbed Sections */}
+      {/* DETAILED INTELLIGENCE - Enhanced Tabbed Sections */}
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold text-slate-900">Detailed Intelligence</h3>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-2xl font-bold text-slate-900">Detailed Intelligence</h3>
+            <p className="text-sm text-slate-600">Deep-dive analysis across 5 key categories</p>
+          </div>
+        </div>
         
-        {/* Tab Navigation */}
-        <div className="border-b border-gray-200">
-          <div className="flex gap-1 overflow-x-auto pb-0">
+        {/* Tab Navigation - Enhanced */}
+        <div className="border-b-2 border-gray-200">
+          <div className="flex gap-2 overflow-x-auto pb-0">
             {[
               {
                 id: "schools",
-                label: "Schools Intelligence",
-                subtitle: schoolsIntel ? `${schoolsIntel.total_schools} schools • Avg ${schoolsIntel.overall_avg_rating.toFixed(1)}/10 rating` : "",
+                label: "Schools",
+                fullLabel: "Schools Intelligence",
+                subtitle: schoolsIntel ? `${schoolsIntel.total_schools} schools • ${schoolsIntel.overall_avg_rating.toFixed(1)}/10 avg` : "",
                 icon: "GraduationCap" as const,
+                color: "blue",
               },
               {
                 id: "commute",
-                label: "Commute Intelligence",
-                subtitle: commuteIntel ? `${commuteIntel.work_life_balance_score}/100 work-life balance • ${commuteIntel.primary_route_miles.toFixed(1)} miles` : "",
+                label: "Commute",
+                fullLabel: "Commute Intelligence",
+                subtitle: commuteIntel ? `${commuteIntel.work_life_balance_score}/100 WLB • ${commuteIntel.primary_route_miles.toFixed(1)} mi` : "",
                 icon: "Truck" as const,
+                color: "green",
               },
               {
                 id: "weather",
-                label: "Weather & Climate Intelligence",
-                subtitle: weatherIntel ? `${weatherIntel.overall_comfort_score}/100 comfort • ${weatherIntel.outdoor_season_months} months outdoor-friendly` : "",
+                label: "Weather",
+                fullLabel: "Weather & Climate",
+                subtitle: weatherIntel ? `${weatherIntel.overall_comfort_score}/100 comfort • ${weatherIntel.outdoor_season_months} mo outdoor` : "",
                 icon: "Sun" as const,
+                color: "amber",
               },
               {
                 id: "housing",
-                label: "Housing Market Intelligence",
-                subtitle: housingIntel ? `${housingIntel.bah_analysis.properties_at_or_under_bah} properties at/under BAH • ${housingIntel.market_trends.competition_level} competition` : "",
+                label: "Housing",
+                fullLabel: "Housing Market",
+                subtitle: housingIntel ? `${housingIntel.bah_analysis.properties_at_or_under_bah} at BAH • ${housingIntel.market_trends.competition_level}` : "",
                 icon: "Home" as const,
+                color: "slate",
               },
               {
                 id: "amenities",
-                label: "Local Amenities (30+ Categories)",
-                subtitle: enhanced ? `${enhanced.total_amenities} amenities within 3 miles • Walkability ${enhanced.walkability_score}/100` : "",
+                label: "Amenities",
+                fullLabel: "Local Amenities",
+                subtitle: enhanced ? `${enhanced.total_amenities} total • ${enhanced.walkability_score}/100 walkable` : "",
                 icon: "MapPin" as const,
+                color: "purple",
               },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
@@ -277,19 +473,19 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex min-h-[60px] flex-shrink-0 flex-col items-start gap-1 rounded-t-lg px-4 py-3 text-sm transition-colors ${
+                  className={`flex min-h-[70px] flex-shrink-0 flex-col items-start gap-1 rounded-t-xl px-5 py-3 text-sm transition-all ${
                     isActive
-                      ? "border-b-2 border-blue-600 bg-blue-50 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? `border-b-4 border-${tab.color}-600 bg-${tab.color}-50 text-${tab.color}-700 shadow-lg`
+                      : "border-b-2 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 >
-                  <div className="flex items-center gap-2 font-semibold">
-                    <Icon name={tab.icon} className="h-4 w-4 flex-shrink-0" />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:inline md:hidden">{tab.label.split(" ")[0]}</span>
+                  <div className="flex items-center gap-2 font-bold">
+                    <Icon name={tab.icon} className={`h-5 w-5 flex-shrink-0 ${isActive ? `text-${tab.color}-600` : ''}`} />
+                    <span className="hidden lg:inline">{tab.fullLabel}</span>
+                    <span className="lg:hidden">{tab.label}</span>
                   </div>
                   {tab.subtitle && (
-                    <span className="hidden text-xs text-gray-500 md:inline">{tab.subtitle}</span>
+                    <span className="hidden text-xs text-gray-600 md:inline">{tab.subtitle}</span>
                   )}
                 </button>
               );
@@ -297,228 +493,416 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
           </div>
         </div>
 
-        {/* Tab Content */}
-        <div className="min-h-[400px]">
-          {/* Schools Tab */}
+        {/* Tab Content - Enhanced Sections */}
+        <div className="min-h-[500px]">
+          {/* Schools Tab - ENHANCED */}
           {activeTab === "schools" && schoolsIntel && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Executive Summary */}
-              <div className="rounded-lg bg-blue-50 p-4 border-l-4 border-blue-600">
-                <div className="font-semibold text-blue-900 mb-2">Executive Summary</div>
+              <div className="rounded-xl bg-gradient-to-r from-blue-50 to-white p-6 border-l-4 border-blue-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="FileText" className="h-5 w-5 text-blue-600" />
+                  <div className="font-bold text-blue-900">Executive Summary</div>
+                </div>
                 <p className="text-slate-700 leading-relaxed">{schoolsIntel.executive_summary}</p>
               </div>
 
-              {/* Grade Level Breakdown */}
-              <div className="grid gap-4 md:grid-cols-2">
-                {schoolsIntel.by_grade.elementary.count > 0 && (
-                  <GradeLevelCard
-                    level="Elementary (K-5)"
-                    count={schoolsIntel.by_grade.elementary.count}
-                    avgRating={schoolsIntel.by_grade.elementary.avg_rating}
-                    topSchools={schoolsIntel.by_grade.elementary.top_picks}
+              {/* Overall Rating Visualization */}
+              <div className="rounded-xl border-2 border-blue-200 bg-white p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-slate-600 mb-1">Overall School Quality</div>
+                    <div className="text-4xl font-bold text-blue-600">{schoolsIntel.overall_avg_rating.toFixed(1)}<span className="text-2xl text-slate-400">/10</span></div>
+                  </div>
+                  <div className={`flex h-20 w-20 items-center justify-center rounded-full ${getScoreBg(schoolsIntel.overall_avg_rating * 10)}`}>
+                    <div className={`text-3xl font-bold ${getScoreColor(schoolsIntel.overall_avg_rating * 10)}`}>
+                      {schoolsIntel.overall_avg_rating >= 8 ? "A" : schoolsIntel.overall_avg_rating >= 6 ? "B" : schoolsIntel.overall_avg_rating >= 4 ? "C" : "D"}
+                    </div>
+                  </div>
+                </div>
+                {/* Rating bar with segments */}
+                <div className="relative h-4 w-full rounded-full bg-slate-200 overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 transition-all duration-500"
+                    style={{ width: `${(schoolsIntel.overall_avg_rating / 10) * 100}%` }}
                   />
-                )}
-                {schoolsIntel.by_grade.middle.count > 0 && (
-                  <GradeLevelCard
-                    level="Middle (6-8)"
-                    count={schoolsIntel.by_grade.middle.count}
-                    avgRating={schoolsIntel.by_grade.middle.avg_rating}
-                    topSchools={schoolsIntel.by_grade.middle.top_picks}
-                  />
-                )}
-                {schoolsIntel.by_grade.high.count > 0 && (
-                  <GradeLevelCard
-                    level="High (9-12)"
-                    count={schoolsIntel.by_grade.high.count}
-                    avgRating={schoolsIntel.by_grade.high.avg_rating}
-                    topSchools={schoolsIntel.by_grade.high.top_picks}
-                  />
-                )}
+                  {/* Rating scale markers */}
+                  <div className="absolute inset-0 flex">
+                    {[2, 4, 6, 8].map((mark) => (
+                      <div key={mark} className="flex-1 border-r border-white/30" />
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-2 flex justify-between text-xs text-slate-500">
+                  <span>0 Poor</span>
+                  <span>5 Average</span>
+                  <span>10 Excellent</span>
+                </div>
+              </div>
+
+              {/* Grade Level Breakdown - Enhanced */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="GraduationCap" className="h-5 w-5 text-blue-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Schools by Grade Level</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {schoolsIntel.by_grade.elementary.count > 0 && (
+                    <EnhancedGradeLevelCard
+                      level="Elementary"
+                      grades="K-5"
+                      count={schoolsIntel.by_grade.elementary.count}
+                      avgRating={schoolsIntel.by_grade.elementary.avg_rating}
+                      topSchools={schoolsIntel.by_grade.elementary.top_picks}
+                      color="blue"
+                    />
+                  )}
+                  {schoolsIntel.by_grade.middle.count > 0 && (
+                    <EnhancedGradeLevelCard
+                      level="Middle School"
+                      grades="6-8"
+                      count={schoolsIntel.by_grade.middle.count}
+                      avgRating={schoolsIntel.by_grade.middle.avg_rating}
+                      topSchools={schoolsIntel.by_grade.middle.top_picks}
+                      color="green"
+                    />
+                  )}
+                  {schoolsIntel.by_grade.high.count > 0 && (
+                    <EnhancedGradeLevelCard
+                      level="High School"
+                      grades="9-12"
+                      count={schoolsIntel.by_grade.high.count}
+                      avgRating={schoolsIntel.by_grade.high.avg_rating}
+                      topSchools={schoolsIntel.by_grade.high.top_picks}
+                      color="purple"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           )}
 
-          {/* Commute Tab */}
+          {/* Commute Tab - ENHANCED */}
           {activeTab === "commute" && commuteIntel && (
-            <div className="space-y-6">
-              {/* Traffic Patterns */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-lg border-2 border-green-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="TrendingUp" className="h-5 w-5 text-green-600" />
-                    <div className="font-bold text-slate-900">Best Time</div>
-                  </div>
-                  <div className="text-3xl font-bold text-green-600 mb-2">
-                    {commuteIntel.best_departure_time.hour}:{commuteIntel.best_departure_time.minutes.toString().padStart(2, '0')} AM
-                  </div>
-                  <div className="text-2xl font-semibold text-slate-900 mb-2">
-                    {commuteIntel.best_departure_time.minutes} min
-                  </div>
-                  <p className="text-sm text-slate-600">{commuteIntel.best_departure_time.description}</p>
+            <div className="space-y-8">
+              {/* Commute Timeline Visualization */}
+              <div className="rounded-xl bg-gradient-to-r from-green-50 to-white p-6 border-l-4 border-green-600">
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Timer" className="h-5 w-5 text-green-600" />
+                  <h4 className="text-lg font-bold text-green-900">Your Commute Profile</h4>
                 </div>
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Best Time */}
+                  <div className="rounded-lg border-2 border-green-300 bg-white p-6 shadow-sm">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                        <Icon name="TrendingUp" className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div className="font-bold text-slate-900">Optimal Departure</div>
+                    </div>
+                    <div className="mb-2 flex items-baseline gap-2">
+                      <div className="text-4xl font-bold text-green-600">
+                        {commuteIntel.best_departure_time.hour}:{commuteIntel.best_departure_time.minutes.toString().padStart(2, '0')}
+                      </div>
+                      <div className="text-sm text-slate-600">AM</div>
+                    </div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="text-2xl font-semibold text-slate-900">{commuteIntel.best_departure_time.minutes} min</div>
+                      <div className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">Light Traffic</div>
+                    </div>
+                    <p className="text-sm text-slate-600">{commuteIntel.best_departure_time.description}</p>
+                  </div>
 
-                <div className="rounded-lg border-2 border-red-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="TrendingDown" className="h-5 w-5 text-red-600" />
-                    <div className="font-bold text-slate-900">Avoid This Time</div>
+                  {/* Worst Time */}
+                  <div className="rounded-lg border-2 border-red-300 bg-white p-6 shadow-sm">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                        <Icon name="TrendingDown" className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div className="font-bold text-slate-900">Avoid This Time</div>
+                    </div>
+                    <div className="mb-2 flex items-baseline gap-2">
+                      <div className="text-4xl font-bold text-red-600">
+                        {commuteIntel.worst_departure_time.hour > 12 
+                          ? `${commuteIntel.worst_departure_time.hour - 12}:${commuteIntel.worst_departure_time.minutes.toString().padStart(2, '0')}`
+                          : `${commuteIntel.worst_departure_time.hour}:${commuteIntel.worst_departure_time.minutes.toString().padStart(2, '0')}`
+                        }
+                      </div>
+                      <div className="text-sm text-slate-600">{commuteIntel.worst_departure_time.hour >= 12 ? "PM" : "AM"}</div>
+                    </div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="text-2xl font-semibold text-slate-900">{commuteIntel.worst_departure_time.minutes} min</div>
+                      <div className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700">Heavy Traffic</div>
+                    </div>
+                    <p className="text-sm text-slate-600">{commuteIntel.worst_departure_time.description}</p>
                   </div>
-                  <div className="text-3xl font-bold text-red-600 mb-2">
-                    {commuteIntel.worst_departure_time.hour > 12 
-                      ? `${commuteIntel.worst_departure_time.hour - 12}:${commuteIntel.worst_departure_time.minutes.toString().padStart(2, '0')} PM`
-                      : `${commuteIntel.worst_departure_time.hour}:${commuteIntel.worst_departure_time.minutes.toString().padStart(2, '0')} AM`
-                    }
-                  </div>
-                  <div className="text-2xl font-semibold text-slate-900 mb-2">
-                    {commuteIntel.worst_departure_time.minutes} min
-                  </div>
-                  <p className="text-sm text-slate-600">{commuteIntel.worst_departure_time.description}</p>
                 </div>
               </div>
 
-              {/* Cost Analysis */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg bg-gradient-to-br from-amber-50 to-white border border-amber-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Annual Fuel Cost</div>
-                  <div className="text-2xl font-bold text-slate-900">${commuteIntel.annual_fuel_cost.toLocaleString()}</div>
-                  <div className="text-xs text-slate-500 mt-1">Based on {commuteIntel.primary_route_miles.toFixed(1)} mi route</div>
+              {/* Cost Analysis - Enhanced */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Cost & Time Impact</h4>
                 </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl bg-gradient-to-br from-amber-50 to-white border-2 border-amber-200 p-6">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="DollarSign" className="h-5 w-5 text-amber-600" />
+                      <div className="text-sm font-semibold text-slate-600">Annual Fuel Cost</div>
+                    </div>
+                    <div className="mb-1 text-3xl font-bold text-slate-900">
+                      ${commuteIntel.annual_fuel_cost.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      Based on {commuteIntel.primary_route_miles.toFixed(1)} mi route • ~{Math.round(commuteIntel.annual_fuel_cost / 12)}/month
+                    </div>
+                  </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Weekly Time Cost</div>
-                  <div className="text-2xl font-bold text-slate-900">{commuteIntel.weekly_time_cost_hours.toFixed(1)} hrs</div>
-                  <div className="text-xs text-slate-500 mt-1">In car per week</div>
-                </div>
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="Timer" className="h-5 w-5 text-blue-600" />
+                      <div className="text-sm font-semibold text-slate-600">Weekly Time Cost</div>
+                    </div>
+                    <div className="mb-1 text-3xl font-bold text-slate-900">
+                      {commuteIntel.weekly_time_cost_hours.toFixed(1)} hrs
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      In car per week • ~{Math.round(commuteIntel.weekly_time_cost_hours * 52)} hours/year
+                    </div>
+                  </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Work-Life Balance</div>
-                  <div className="text-2xl font-bold text-slate-900">{commuteIntel.work_life_balance_score}/100</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {commuteIntel.work_life_balance_score >= 80 ? "Excellent" : commuteIntel.work_life_balance_score >= 60 ? "Good" : "Fair"}
+                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                      <div className="text-sm font-semibold text-slate-600">Work-Life Balance</div>
+                    </div>
+                    <div className="mb-1 text-3xl font-bold text-green-600">
+                      {commuteIntel.work_life_balance_score}/100
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {commuteIntel.work_life_balance_score >= 80 ? "Excellent" : commuteIntel.work_life_balance_score >= 60 ? "Good" : "Fair"} quality of life
+                    </div>
+                    {/* Progress bar */}
+                    <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${commuteIntel.work_life_balance_score}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Military Considerations */}
-              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Shield" className="h-6 w-6" />
-                  <h4 className="font-bold text-lg">Military-Specific Considerations</h4>
+              <div className="rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
+                    <Icon name="Shield" className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Military-Specific Considerations</h4>
+                    <div className="text-sm text-slate-300">How this commute affects your service</div>
+                  </div>
                 </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Early Duty (0600)</div>
-                    <div className="font-semibold">{commuteIntel.early_duty_impact}</div>
+                <div className="grid gap-6 md:grid-cols-3">
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="Sun" className="h-5 w-5 text-amber-400" />
+                      <div className="text-sm font-semibold text-slate-300">Early Duty (0600)</div>
+                    </div>
+                    <div className="text-lg font-bold">{commuteIntel.early_duty_impact}</div>
                   </div>
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Late Duty (1900)</div>
-                    <div className="font-semibold">{commuteIntel.late_duty_impact}</div>
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="Moon" className="h-5 w-5 text-blue-400" />
+                      <div className="text-sm font-semibold text-slate-300">Late Duty (1900)</div>
+                    </div>
+                    <div className="text-lg font-bold">{commuteIntel.late_duty_impact}</div>
                   </div>
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Weekend Duty</div>
-                    <div className="font-semibold">{commuteIntel.weekend_flexibility}</div>
+                  <div className="rounded-lg bg-white/10 p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="Calendar" className="h-5 w-5 text-green-400" />
+                      <div className="text-sm font-semibold text-slate-300">Weekend Duty</div>
+                    </div>
+                    <div className="text-lg font-bold">{commuteIntel.weekend_flexibility}</div>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Line */}
-              <div className="rounded-lg bg-green-50 p-4 border-l-4 border-green-600">
-                <div className="font-semibold text-green-900 mb-2">Bottom Line</div>
-                <p className="text-slate-700 leading-relaxed">{commuteIntel.bottom_line}</p>
+              <div className="rounded-xl bg-gradient-to-r from-green-50 to-white p-6 border-l-4 border-green-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="Target" className="h-5 w-5 text-green-600" />
+                  <div className="font-bold text-green-900">Bottom Line</div>
+                </div>
+                <p className="text-slate-700 leading-relaxed text-lg">{commuteIntel.bottom_line}</p>
               </div>
             </div>
           )}
 
-          {/* Weather Tab */}
+          {/* Weather Tab - ENHANCED */}
           {activeTab === "weather" && weatherIntel && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Executive Summary */}
-              <div className="rounded-lg bg-amber-50 p-4 border-l-4 border-amber-600">
-                <div className="font-semibold text-amber-900 mb-2">Executive Summary</div>
+              <div className="rounded-xl bg-gradient-to-r from-amber-50 to-white p-6 border-l-4 border-amber-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="FileText" className="h-5 w-5 text-amber-600" />
+                  <div className="font-bold text-amber-900">Executive Summary</div>
+                </div>
                 <p className="text-slate-700 leading-relaxed">{weatherIntel.executive_summary}</p>
               </div>
 
-              {/* Climate Overview */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Overall Comfort</div>
-                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.overall_comfort_score}/100</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {weatherIntel.overall_comfort_score >= 80 ? "Excellent" : weatherIntel.overall_comfort_score >= 60 ? "Good" : "Fair"}
+              {/* Climate Overview - Enhanced */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Sun" className="h-5 w-5 text-amber-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Climate Overview</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Overall Comfort</div>
+                      <Icon name="Heart" className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className={`mb-2 text-4xl font-bold ${getScoreColor(weatherIntel.overall_comfort_score)}`}>
+                      {weatherIntel.overall_comfort_score}<span className="text-2xl text-slate-400">/100</span>
+                    </div>
+                    <div className="text-sm text-slate-600 mb-3">
+                      {weatherIntel.overall_comfort_score >= 80 ? "Excellent climate" : weatherIntel.overall_comfort_score >= 60 ? "Good climate" : "Fair climate"}
+                    </div>
+                    <div className="h-3 w-full rounded-full bg-slate-200 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+                        style={{ width: `${weatherIntel.overall_comfort_score}%` }}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Outdoor Season</div>
-                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.outdoor_season_months}</div>
-                  <div className="text-xs text-slate-500 mt-1">months per year</div>
-                </div>
+                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Outdoor Season</div>
+                      <Icon name="Activity" className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div className="mb-2 text-4xl font-bold text-green-600">
+                      {weatherIntel.outdoor_season_months}<span className="text-2xl text-slate-400">/12</span>
+                    </div>
+                    <div className="text-sm text-slate-600 mb-3">months per year</div>
+                    <div className="h-3 w-full rounded-full bg-slate-200 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${(weatherIntel.outdoor_season_months / 12) * 100}%` }}
+                      />
+                    </div>
+                  </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Pool Season</div>
-                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.pool_season}</div>
-                  <div className="text-xs text-slate-500 mt-1">usable months</div>
+                  <div className="rounded-xl bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 p-6">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Pool Season</div>
+                      <Icon name="Droplet" className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div className="mb-2 text-3xl font-bold text-purple-600">{weatherIntel.pool_season}</div>
+                    <div className="text-sm text-slate-600">usable months</div>
+                  </div>
                 </div>
               </div>
 
-              {/* Seasonal Breakdown */}
-              <div className="space-y-3">
-                <h4 className="font-bold text-slate-900">Seasonal Breakdown</h4>
-                <div className="grid gap-3 md:grid-cols-2">
-                  {weatherIntel.seasonal_breakdown.map((season, i) => (
-                    <div key={i} className="rounded-lg border-2 border-slate-200 bg-white p-4">
-                      <div className="mb-2 flex items-center justify-between">
-                        <div className="font-bold text-slate-900">{season.season}</div>
-                        <div className="text-sm text-slate-600">{season.months}</div>
+              {/* Seasonal Breakdown - Visual Calendar Style */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Calendar" className="h-5 w-5 text-amber-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Seasonal Breakdown</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {weatherIntel.seasonal_breakdown.map((season, i) => {
+                    const seasonIcons = {
+                      "Spring": "Flower",
+                      "Summer": "Sun",
+                      "Fall": "Leaf",
+                      "Autumn": "Leaf",
+                      "Winter": "Snowflake"
+                    };
+                    const seasonIcon = seasonIcons[season.season as keyof typeof seasonIcons] || "Cloud";
+                    
+                    return (
+                      <div key={i} className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="mb-3 flex items-center justify-between">
+                          <div className="font-bold text-slate-900">{season.season}</div>
+                          <Icon name={seasonIcon as any} className="h-6 w-6 text-amber-600" />
+                        </div>
+                        <div className="mb-2 text-sm font-semibold text-slate-600">{season.months}</div>
+                        <div className="mb-3 text-lg font-bold text-slate-700">{season.avg_temp_range}</div>
+                        <div className="mb-3 text-sm text-slate-600 leading-snug">{season.conditions}</div>
+                        <div className="rounded-lg bg-amber-50 p-2 text-xs text-slate-700">
+                          <span className="font-semibold">Activities:</span> {season.outdoor_activities}
+                        </div>
                       </div>
-                      <div className="mb-2 text-sm text-slate-700">{season.avg_temp_range}</div>
-                      <div className="text-sm text-slate-600">{season.conditions}</div>
-                      <div className="mt-2 text-xs text-slate-500">
-                        Activities: {season.outdoor_activities}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Best/Worst Months */}
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-lg border-2 border-green-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="Sun" className="h-5 w-5 text-green-600" />
+                <div className="rounded-xl border-2 border-green-300 bg-gradient-to-br from-green-50 to-white p-6 shadow-sm">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600">
+                      <Icon name="Sun" className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-bold text-slate-900">Best Months</div>
                   </div>
-                  <div className="text-lg font-semibold text-green-600">
-                    {weatherIntel.best_months.join(", ")}
+                  <div className="flex flex-wrap gap-2">
+                    {weatherIntel.best_months.map((month, i) => (
+                      <div key={i} className="rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
+                        {month}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="rounded-lg border-2 border-amber-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="Cloud" className="h-5 w-5 text-amber-600" />
+                <div className="rounded-xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
+                      <Icon name="Cloud" className="h-6 w-6 text-white" />
+                    </div>
                     <div className="font-bold text-slate-900">Challenging Months</div>
                   </div>
-                  <div className="text-lg font-semibold text-amber-600">
-                    {weatherIntel.worst_months.join(", ")}
+                  <div className="flex flex-wrap gap-2">
+                    {weatherIntel.worst_months.map((month, i) => (
+                      <div key={i} className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
+                        {month}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
               {/* Extreme Weather Risks */}
               {weatherIntel.extreme_weather_risks.length > 0 && (
-                <div className="rounded-lg border-2 border-red-200 bg-white p-6">
+                <div>
                   <div className="mb-4 flex items-center gap-2">
                     <Icon name="AlertTriangle" className="h-5 w-5 text-red-600" />
-                    <h4 className="font-bold text-slate-900">Extreme Weather Risks</h4>
+                    <h4 className="text-lg font-bold text-slate-900">Extreme Weather Risks</h4>
                   </div>
-                  <div className="space-y-3">
+                  <div className="grid gap-4 md:grid-cols-2">
                     {weatherIntel.extreme_weather_risks.map((risk, i) => (
-                      <div key={i} className="rounded-lg bg-red-50 p-3">
-                        <div className="mb-1 flex items-center justify-between">
-                          <div className="font-semibold text-red-900">{risk.type}</div>
-                          <div className="text-sm text-red-700">{risk.risk_level} risk</div>
+                      <div key={i} className="rounded-xl border-2 border-red-200 bg-red-50 p-5">
+                        <div className="mb-3 flex items-center justify-between">
+                          <div className="font-bold text-red-900">{risk.type}</div>
+                          <div className={`rounded-full px-3 py-1 text-xs font-bold ${
+                            risk.risk_level.toLowerCase() === "high" ? "bg-red-600 text-white" :
+                            risk.risk_level.toLowerCase() === "moderate" ? "bg-amber-600 text-white" :
+                            "bg-green-600 text-white"
+                          }`}>
+                            {risk.risk_level} risk
+                          </div>
                         </div>
-                        <div className="text-sm text-slate-700 mb-1">Season: {risk.season}</div>
-                        <div className="text-sm text-slate-600">{risk.preparation_needed}</div>
+                        <div className="mb-2 text-sm text-slate-700">
+                          <span className="font-semibold">Season:</span> {risk.season}
+                        </div>
+                        <div className="rounded-lg bg-white p-3 text-sm text-slate-700">
+                          <span className="font-semibold">Preparation:</span> {risk.preparation_needed}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -526,230 +910,396 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               )}
 
               {/* Military Considerations */}
-              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Shield" className="h-6 w-6" />
-                  <h4 className="font-bold text-lg">Military-Specific Considerations</h4>
+              <div className="rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-600">
+                    <Icon name="Shield" className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Military Family Considerations</h4>
+                    <div className="text-sm text-slate-300">How weather affects military life here</div>
+                  </div>
                 </div>
-                <p className="text-slate-100">{weatherIntel.military_family_considerations}</p>
+                <p className="text-slate-100 leading-relaxed text-lg">{weatherIntel.military_family_considerations}</p>
               </div>
             </div>
           )}
 
-          {/* Housing Tab */}
+          {/* Housing Tab - ENHANCED */}
           {activeTab === "housing" && housingIntel && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Executive Summary */}
-              <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
-                <div className="font-semibold text-slate-900 mb-2">Executive Summary</div>
+              <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="FileText" className="h-5 w-5 text-slate-600" />
+                  <div className="font-bold text-slate-900">Executive Summary</div>
+                </div>
                 <p className="text-slate-700 leading-relaxed">{housingIntel.executive_summary}</p>
               </div>
 
-              {/* BAH Analysis */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Properties at/under BAH</div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.bah_analysis.properties_at_or_under_bah}</div>
-                  <div className="text-xs text-slate-500 mt-1">available options</div>
+              {/* BAH Analysis - Visual */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="DollarSign" className="h-5 w-5 text-green-600" />
+                  <h4 className="text-lg font-bold text-slate-900">BAH Analysis</h4>
                 </div>
-
-                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Sweet Spot Range</div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    ${Math.round(housingIntel.bah_analysis.sweet_spot_range.min_cents / 100).toLocaleString()}-
-                    ${Math.round(housingIntel.bah_analysis.sweet_spot_range.max_cents / 100).toLocaleString()}
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6 shadow-sm">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
+                      <div className="text-sm font-semibold text-slate-600">At/Under BAH</div>
+                    </div>
+                    <div className="mb-1 text-4xl font-bold text-green-600">
+                      {housingIntel.bah_analysis.properties_at_or_under_bah}
+                    </div>
+                    <div className="text-sm text-slate-600">properties available</div>
                   </div>
-                  <div className="text-xs text-slate-500 mt-1">per month</div>
-                </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Avg Savings</div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    {housingIntel.bah_analysis.avg_savings_cents !== null 
-                      ? `$${Math.round(housingIntel.bah_analysis.avg_savings_cents / 100).toLocaleString()}`
-                      : "N/A"
-                    }
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6 shadow-sm">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="Target" className="h-5 w-5 text-blue-600" />
+                      <div className="text-sm font-semibold text-slate-600">Sweet Spot Range</div>
+                    </div>
+                    <div className="mb-1 text-2xl font-bold text-blue-600">
+                      ${Math.round(housingIntel.bah_analysis.sweet_spot_range.min_cents / 100).toLocaleString()}-
+                      {Math.round(housingIntel.bah_analysis.sweet_spot_range.max_cents / 100).toLocaleString()}
+                    </div>
+                    <div className="text-sm text-slate-600">per month</div>
                   </div>
-                  <div className="text-xs text-slate-500 mt-1">per month</div>
+
+                  <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6 shadow-sm">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Icon name="TrendingUp" className="h-5 w-5 text-slate-700" />
+                      <div className="text-sm font-semibold text-slate-600">Avg Savings</div>
+                    </div>
+                    <div className="mb-1 text-3xl font-bold text-slate-900">
+                      {housingIntel.bah_analysis.avg_savings_cents !== null 
+                        ? `$${Math.round(housingIntel.bah_analysis.avg_savings_cents / 100).toLocaleString()}`
+                        : "N/A"
+                      }
+                    </div>
+                    <div className="text-sm text-slate-600">per month</div>
+                  </div>
                 </div>
               </div>
 
               {/* BAH Recommendation */}
-              <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border-l-4 border-green-600 p-4">
-                <div className="font-semibold text-green-900 mb-2">BAH Recommendation</div>
-                <p className="text-slate-700 leading-relaxed">{housingIntel.bah_analysis.recommendation}</p>
+              <div className="rounded-xl bg-gradient-to-r from-green-50 to-white p-6 border-l-4 border-green-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="Lightbulb" className="h-5 w-5 text-green-600" />
+                  <div className="font-bold text-green-900">BAH Recommendation</div>
+                </div>
+                <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.bah_analysis.recommendation}</p>
               </div>
 
-              {/* Property Types */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
-                    <div className="font-bold text-slate-900">Single Family</div>
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.single_family.count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
-                </div>
-
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
-                    <div className="font-bold text-slate-900">Townhouse</div>
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.townhouse.count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
-                </div>
-
-                <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon name="Home" className="h-5 w-5 text-slate-600" />
-                    <div className="font-bold text-slate-900">Apartment</div>
-                  </div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.property_types.apartment.count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
-                </div>
-              </div>
-
-              {/* Market Trends */}
-              <div className="rounded-lg border-2 border-slate-200 bg-white p-6">
+              {/* Property Types - Visual Distribution */}
+              <div>
                 <div className="mb-4 flex items-center gap-2">
-                  <Icon name="TrendingUp" className="h-5 w-5 text-slate-600" />
-                  <h4 className="font-bold text-slate-900">Market Trends</h4>
+                  <Icon name="Home" className="h-5 w-5 text-slate-700" />
+                  <h4 className="text-lg font-bold text-slate-900">Property Type Distribution</h4>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <div className="text-sm text-slate-600 mb-1">Price Trend</div>
-                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.price_trend}</div>
-                    <div className="text-sm text-slate-600 mt-1">{housingIntel.market_trends.trend_description}</div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                        <Icon name="Home" className="h-7 w-7 text-blue-600" />
+                      </div>
+                      <div className="font-bold text-slate-900">Single Family</div>
+                    </div>
+                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.single_family.count}</div>
+                    <div className="text-sm text-slate-600 mb-3">properties</div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-blue-600" style={{ 
+                        width: `${(housingIntel.property_types.single_family.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
+                      }} />
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm text-slate-600 mb-1">Days on Market</div>
-                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.avg_days_on_market} days</div>
+
+                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+                        <Icon name="Home" className="h-7 w-7 text-green-600" />
+                      </div>
+                      <div className="font-bold text-slate-900">Townhouse</div>
+                    </div>
+                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.townhouse.count}</div>
+                    <div className="text-sm text-slate-600 mb-3">properties</div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-green-600" style={{ 
+                        width: `${(housingIntel.property_types.townhouse.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
+                      }} />
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm text-slate-600 mb-1">Competition Level</div>
-                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.competition_level}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-600 mb-1">Negotiation Leverage</div>
-                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.negotiation_leverage}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-600 mb-1">Inventory Level</div>
-                    <div className="font-semibold text-slate-900">{housingIntel.market_trends.inventory_level}</div>
+
+                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
+                        <Icon name="Home" className="h-7 w-7 text-purple-600" />
+                      </div>
+                      <div className="font-bold text-slate-900">Apartment</div>
+                    </div>
+                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.apartment.count}</div>
+                    <div className="text-sm text-slate-600 mb-3">properties</div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-purple-600" style={{ 
+                        width: `${(housingIntel.property_types.apartment.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
+                      }} />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Amenities */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Pet Friendly</div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.pet_friendly_count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
+              {/* Market Trends - Enhanced */}
+              <div className="rounded-xl border-2 border-slate-200 bg-white p-8 shadow-sm">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
+                    <Icon name="TrendingUp" className="h-7 w-7 text-slate-700" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900">Market Trends</h4>
+                    <div className="text-sm text-slate-600">Current market conditions</div>
+                  </div>
                 </div>
-
-                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Utilities Included</div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.utilities_included_count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="mb-2 text-sm font-semibold text-slate-600">Price Trend</div>
+                    <div className="mb-1 text-xl font-bold text-slate-900">{housingIntel.market_trends.price_trend}</div>
+                    <div className="text-sm text-slate-600">{housingIntel.market_trends.trend_description}</div>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="mb-2 text-sm font-semibold text-slate-600">Days on Market</div>
+                    <div className="mb-1 text-xl font-bold text-slate-900">{housingIntel.market_trends.avg_days_on_market} days</div>
+                    <div className="text-xs text-slate-500">Average listing duration</div>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="mb-2 text-sm font-semibold text-slate-600">Competition Level</div>
+                    <div className="mb-2 text-xl font-bold text-slate-900">{housingIntel.market_trends.competition_level}</div>
+                    {housingIntel.market_trends.competition_level === "low" && (
+                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">🟢 Buyer's Market</span>
+                    )}
+                    {housingIntel.market_trends.competition_level === "moderate" && (
+                      <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">🟡 Balanced</span>
+                    )}
+                    {housingIntel.market_trends.competition_level === "high" && (
+                      <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700">🔴 Seller's Market</span>
+                    )}
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="mb-2 text-sm font-semibold text-slate-600">Negotiation Leverage</div>
+                    <div className="text-xl font-bold text-slate-900">{housingIntel.market_trends.negotiation_leverage}</div>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="mb-2 text-sm font-semibold text-slate-600">Inventory Level</div>
+                    <div className="text-xl font-bold text-slate-900">{housingIntel.market_trends.inventory_level}</div>
+                  </div>
                 </div>
+              </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">With Yard</div>
-                  <div className="text-2xl font-bold text-slate-900">{housingIntel.yard_count}</div>
-                  <div className="text-xs text-slate-500 mt-1">properties</div>
+              {/* Property Amenities */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Star" className="h-5 w-5 text-amber-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Property Features</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Icon name="Heart" className="h-6 w-6 text-green-600" />
+                      <div className="text-sm font-semibold text-slate-600">Pet Friendly</div>
+                    </div>
+                    <div className="text-4xl font-bold text-green-600">{housingIntel.pet_friendly_count}</div>
+                    <div className="text-sm text-slate-600">properties</div>
+                  </div>
+
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Icon name="Zap" className="h-6 w-6 text-blue-600" />
+                      <div className="text-sm font-semibold text-slate-600">Utilities Included</div>
+                    </div>
+                    <div className="text-4xl font-bold text-blue-600">{housingIntel.utilities_included_count}</div>
+                    <div className="text-sm text-slate-600">properties</div>
+                  </div>
+
+                  <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Icon name="Home" className="h-6 w-6 text-slate-700" />
+                      <div className="text-sm font-semibold text-slate-600">With Yard</div>
+                    </div>
+                    <div className="text-4xl font-bold text-slate-700">{housingIntel.yard_count}</div>
+                    <div className="text-sm text-slate-600">properties</div>
+                  </div>
                 </div>
               </div>
 
               {/* Military Friendly Note */}
-              <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Shield" className="h-6 w-6" />
-                  <h4 className="font-bold text-lg">Military-Friendly Housing</h4>
+              <div className="rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600">
+                    <Icon name="Shield" className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Military-Friendly Housing</h4>
+                    <div className="text-sm text-slate-300">Landlord and community insights</div>
+                  </div>
                 </div>
-                <p className="text-slate-100">{housingIntel.military_friendly_note}</p>
+                <p className="text-slate-100 leading-relaxed text-lg">{housingIntel.military_friendly_note}</p>
               </div>
 
               {/* Bottom Line */}
-              <div className="rounded-lg bg-slate-50 p-4 border-l-4 border-slate-600">
-                <div className="font-semibold text-slate-900 mb-2">Bottom Line</div>
-                <p className="text-slate-700 leading-relaxed">{housingIntel.bottom_line}</p>
+              <div className="rounded-xl bg-gradient-to-r from-slate-50 to-white p-6 border-l-4 border-slate-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="Target" className="h-5 w-5 text-slate-600" />
+                  <div className="font-bold text-slate-900">Bottom Line</div>
+                </div>
+                <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.bottom_line}</p>
               </div>
             </div>
           )}
 
-          {/* Amenities Tab */}
+          {/* Amenities Tab - ENHANCED */}
           {activeTab === "amenities" && enhanced && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Quick Summary */}
-              <div className="rounded-lg bg-purple-50 p-4 border-l-4 border-purple-600">
-                <div className="font-semibold text-purple-900 mb-2">Quick Summary</div>
+              <div className="rounded-xl bg-gradient-to-r from-purple-50 to-white p-6 border-l-4 border-purple-600 shadow-sm">
+                <div className="mb-3 flex items-center gap-2">
+                  <Icon name="MapPin" className="h-5 w-5 text-purple-600" />
+                  <div className="font-bold text-purple-900">Quick Summary</div>
+                </div>
                 <p className="text-slate-700 leading-relaxed">{enhanced.quick_summary}</p>
               </div>
 
-              {/* Key Metrics */}
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Total Amenities</div>
-                  <div className="text-2xl font-bold text-slate-900">{enhanced.total_amenities}</div>
-                  <div className="text-xs text-slate-500 mt-1">within 3 miles</div>
+              {/* Key Metrics - Visual Dashboard */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="BarChart" className="h-5 w-5 text-purple-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Amenity Scores</h4>
                 </div>
-
-                <div className="rounded-lg bg-gradient-to-br from-green-50 to-white border border-green-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Walkability</div>
-                  <div className="text-2xl font-bold text-slate-900">{enhanced.walkability_score}/100</div>
-                  <div className="text-xs text-slate-500 mt-1">
-                    {enhanced.walkability_score >= 80 ? "Excellent" : enhanced.walkability_score >= 60 ? "Good" : "Fair"}
+                <div className="grid gap-4 md:grid-cols-4">
+                  <div className="rounded-xl bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 p-6 shadow-sm">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Total Amenities</div>
+                      <Icon name="MapPin" className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div className="mb-1 text-4xl font-bold text-purple-600">{enhanced.total_amenities}</div>
+                    <div className="text-sm text-slate-600">within 3 miles</div>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Family Friendliness</div>
-                  <div className="text-2xl font-bold text-slate-900">{enhanced.family_friendliness_score}/100</div>
-                  <div className="text-xs text-slate-500 mt-1">out of 100</div>
-                </div>
+                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6 shadow-sm">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Walkability</div>
+                      <Icon name="Activity" className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div className={`mb-2 text-4xl font-bold ${getScoreColor(enhanced.walkability_score)}`}>
+                      {enhanced.walkability_score}<span className="text-2xl text-slate-400">/100</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${enhanced.walkability_score}%` }}
+                      />
+                    </div>
+                  </div>
 
-                <div className="rounded-lg bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Overall Score</div>
-                  <div className="text-2xl font-bold text-slate-900">{enhanced.overall_score}/100</div>
-                  <div className="text-xs text-slate-500 mt-1">out of 100</div>
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6 shadow-sm">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Family Friendly</div>
+                      <Icon name="Users" className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className={`mb-2 text-4xl font-bold ${getScoreColor(enhanced.family_friendliness_score)}`}>
+                      {enhanced.family_friendliness_score}<span className="text-2xl text-slate-400">/100</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
+                        style={{ width: `${enhanced.family_friendliness_score}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6 shadow-sm">
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="text-sm font-semibold text-slate-600">Overall Score</div>
+                      <Icon name="Star" className="h-5 w-5 text-slate-700" />
+                    </div>
+                    <div className={`mb-2 text-4xl font-bold ${getScoreColor(enhanced.overall_score)}`}>
+                      {enhanced.overall_score}<span className="text-2xl text-slate-400">/100</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-slate-600 to-slate-700"
+                        style={{ width: `${enhanced.overall_score}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Amenity Categories Grid */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {renderAmenityCategory("Essentials", enhanced.essentials.top_picks, "ShoppingCart")}
-                {renderAmenityCategory("Family Activities", enhanced.family_activities.top_picks, "Users")}
-                {renderAmenityCategory("Healthcare", enhanced.healthcare.top_picks, "Heart")}
-                {renderAmenityCategory("Dining", enhanced.dining.top_picks, "Coffee")}
-                {renderAmenityCategory("Fitness", enhanced.fitness.top_picks, "Zap")}
-                {renderAmenityCategory("Services", enhanced.services.top_picks, "Briefcase")}
+              {/* Amenity Categories Grid - Enhanced */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="Grid" className="h-5 w-5 text-purple-600" />
+                  <h4 className="text-lg font-bold text-slate-900">Amenity Categories</h4>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {renderEnhancedAmenityCategory("Essentials", enhanced.essentials.top_picks, enhanced.essentials.count, "ShoppingCart", "purple")}
+                  {renderEnhancedAmenityCategory("Family Activities", enhanced.family_activities.top_picks, enhanced.family_activities.count, "Users", "blue")}
+                  {renderEnhancedAmenityCategory("Healthcare", enhanced.healthcare.top_picks, enhanced.healthcare.count, "Heart", "red")}
+                  {renderEnhancedAmenityCategory("Dining", enhanced.dining.top_picks, enhanced.dining.count, "Coffee", "amber")}
+                  {renderEnhancedAmenityCategory("Fitness", enhanced.fitness.top_picks, enhanced.fitness.count, "Zap", "green")}
+                  {renderEnhancedAmenityCategory("Services", enhanced.services.top_picks, enhanced.services.count, "Briefcase", "slate")}
+                </div>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* FINAL RECOMMENDATION - Call to Action */}
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-2xl">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="rounded-full bg-white p-3">
-            <Icon name="Target" className="h-6 w-6 text-slate-900" />
-          </div>
-          <h3 className="text-2xl font-bold">Final Recommendation</h3>
+      {/* FINAL RECOMMENDATION - Enhanced Call to Action */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 text-white shadow-2xl">
+        <div className="absolute right-0 top-0 h-64 w-64 opacity-10">
+          <Icon name="Target" className="h-full w-full" />
         </div>
-        <p className="text-lg leading-relaxed text-slate-100 mb-6">
-          {intel.bottom_line}
-        </p>
-        <div className="flex items-center gap-4 text-sm text-slate-300">
-          <div className="flex items-center gap-2">
-            <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-            <span>Data verified from official sources</span>
+        <div className="relative">
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 shadow-lg">
+              <Icon name="Target" className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold">Final Recommendation</h3>
+              <div className="text-sm text-slate-300">Based on comprehensive analysis</div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Icon name="Timer" className="h-5 w-5 text-blue-400" />
-            <span>Updated within 24 hours</span>
+          <p className="mb-8 text-xl leading-relaxed text-slate-100">
+            {intel.bottom_line}
+          </p>
+          <div className="grid gap-4 border-t border-slate-700 pt-6 md:grid-cols-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-600/20">
+                <Icon name="CheckCircle" className="h-6 w-6 text-green-400" />
+              </div>
+              <div>
+                <div className="text-sm text-slate-300">Data Verified</div>
+                <div className="font-semibold">Official sources</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
+                <Icon name="Timer" className="h-6 w-6 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-sm text-slate-300">Last Updated</div>
+                <div className="font-semibold">Within 24 hours</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-600/20">
+                <Icon name="Shield" className="h-6 w-6 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-sm text-slate-300">Military-Focused</div>
+                <div className="font-semibold">Service-member insights</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -757,9 +1307,11 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
   );
 }
 
-// Helper Components
-interface GradeLevelCardProps {
+// Enhanced Helper Components
+
+interface EnhancedGradeLevelCardProps {
   level: string;
+  grades: string;
   count: number;
   avgRating: number;
   topSchools: Array<{
@@ -769,32 +1321,55 @@ interface GradeLevelCardProps {
     distance_mi?: number;
     address?: string;
   }>;
+  color: string;
 }
 
-function GradeLevelCard({ level, count, avgRating, topSchools }: GradeLevelCardProps) {
+function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, color }: EnhancedGradeLevelCardProps) {
+  const colorMap: Record<string, {bg: string; border: string; text: string; icon: string}> = {
+    blue: { bg: "bg-blue-50", border: "border-blue-300", text: "text-blue-600", icon: "bg-blue-100" },
+    green: { bg: "bg-green-50", border: "border-green-300", text: "text-green-600", icon: "bg-green-100" },
+    purple: { bg: "bg-purple-50", border: "border-purple-300", text: "text-purple-600", icon: "bg-purple-100" },
+  };
+  const colors = colorMap[color] || colorMap.blue;
+
   return (
-    <div className="rounded-lg border-2 border-blue-200 bg-white p-6">
+    <div className={`rounded-xl border-2 ${colors.border} ${colors.bg} p-6 shadow-sm hover:shadow-md transition-shadow`}>
       <div className="mb-4 flex items-center justify-between">
-        <h4 className="font-bold text-slate-900">{level}</h4>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-blue-600">{avgRating.toFixed(1)}</div>
-          <div className="text-xs text-slate-500">avg rating</div>
+        <div>
+          <h4 className="font-bold text-slate-900">{level}</h4>
+          <div className="text-sm text-slate-600">{grades}</div>
+        </div>
+        <div className={`flex h-14 w-14 items-center justify-center rounded-lg ${colors.icon}`}>
+          <div className="text-center">
+            <div className={`text-2xl font-bold ${colors.text}`}>{avgRating.toFixed(1)}</div>
+            <div className="text-xs text-slate-500">of 10</div>
+          </div>
         </div>
       </div>
-      <div className="mb-3 text-sm text-slate-600">{count} schools in this area</div>
+      
+      <div className="mb-4 text-sm text-slate-600">{count} schools in area</div>
+      
+      {/* Rating bar */}
+      <div className="mb-4 h-3 w-full rounded-full bg-slate-200 overflow-hidden">
+        <div 
+          className={`h-full rounded-full bg-gradient-to-r from-${color}-500 to-${color}-600`}
+          style={{ width: `${(avgRating / 10) * 100}%` }}
+        />
+      </div>
+
       {topSchools.length > 0 && (
         <div>
-          <div className="mb-2 text-sm font-semibold text-slate-700">Top Picks:</div>
-          <div className="space-y-1">
+          <div className="mb-2 text-sm font-bold text-slate-700">Top Picks:</div>
+          <div className="space-y-2">
             {topSchools.slice(0, 3).map((school, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">{school.name}</span>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-slate-900">{school.rating.toFixed(1)}</span>
-                  {school.distance_mi && (
-                    <span className="text-xs text-slate-500">({school.distance_mi.toFixed(1)} mi)</span>
-                  )}
+              <div key={i} className="rounded-lg bg-white p-3 shadow-sm">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="font-semibold text-slate-900 text-sm">{school.name}</span>
+                  <span className={`font-bold ${colors.text}`}>{school.rating.toFixed(1)}</span>
                 </div>
+                {school.distance_mi && (
+                  <div className="text-xs text-slate-500">📍 {school.distance_mi.toFixed(1)} mi away</div>
+                )}
               </div>
             ))}
           </div>
@@ -804,7 +1379,7 @@ function GradeLevelCard({ level, count, avgRating, topSchools }: GradeLevelCardP
   );
 }
 
-function renderAmenityCategory(
+function renderEnhancedAmenityCategory(
   title: string,
   amenities: Array<{
     name: string;
@@ -814,40 +1389,61 @@ function renderAmenityCategory(
     distance_mi?: number;
     types?: string[];
   }>,
-  iconName: string
+  count: number,
+  iconName: string,
+  color: string
 ) {
+  const colorMap: Record<string, {bg: string; border: string; text: string; icon: string}> = {
+    purple: { bg: "bg-purple-50", border: "border-purple-300", text: "text-purple-600", icon: "bg-purple-100" },
+    blue: { bg: "bg-blue-50", border: "border-blue-300", text: "text-blue-600", icon: "bg-blue-100" },
+    red: { bg: "bg-red-50", border: "border-red-300", text: "text-red-600", icon: "bg-red-100" },
+    amber: { bg: "bg-amber-50", border: "border-amber-300", text: "text-amber-600", icon: "bg-amber-100" },
+    green: { bg: "bg-green-50", border: "border-green-300", text: "text-green-600", icon: "bg-green-100" },
+    slate: { bg: "bg-slate-50", border: "border-slate-300", text: "text-slate-600", icon: "bg-slate-100" },
+  };
+  const colors = colorMap[color] || colorMap.purple;
+
   return (
-    <div className="rounded-lg border-2 border-purple-200 bg-white p-6">
-      <div className="mb-4 flex items-center gap-2">
-        <Icon name={iconName as any} className="h-5 w-5 text-purple-600" />
-        <h4 className="font-bold text-slate-900">{title}</h4>
+    <div className={`rounded-xl border-2 ${colors.border} ${colors.bg} p-6 shadow-sm hover:shadow-md transition-shadow`}>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${colors.icon}`}>
+            <Icon name={iconName as any} className={`h-5 w-5 ${colors.text}`} />
+          </div>
+          <div>
+            <h4 className="font-bold text-slate-900">{title}</h4>
+            <div className="text-sm text-slate-600">{count} total</div>
+          </div>
+        </div>
       </div>
-      <div className="mb-3 text-sm text-slate-600">{amenities.length} options nearby</div>
+      
       {amenities.length > 0 && (
         <div>
-          <div className="mb-2 text-sm font-semibold text-slate-700">Top Picks:</div>
-          <div className="space-y-1">
+          <div className="mb-3 text-sm font-semibold text-slate-700">Top Picks:</div>
+          <div className="space-y-2">
             {amenities.slice(0, 3).map((amenity, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <a
-                  href={`https://www.google.com/maps/search/${encodeURIComponent(amenity.name)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  {amenity.name}
-                </a>
-                <div className="flex items-center gap-2">
+              <a
+                key={i}
+                href={`https://www.google.com/maps/search/${encodeURIComponent(amenity.name)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-lg bg-white p-3 shadow-sm hover:shadow-md transition-all"
+              >
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="font-semibold text-slate-900 text-sm hover:text-blue-600 transition-colors">
+                    {amenity.name}
+                  </span>
                   {amenity.rating && (
-                    <span className="font-semibold text-slate-900">{amenity.rating.toFixed(1)}</span>
-                  )}
-                  {amenity.distance_mi && (
-                    <span className="text-xs text-slate-500">
-                      ({amenity.distance_mi.toFixed(1)} mi)
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <Icon name="Star" className="h-3 w-3 text-amber-500" />
+                      <span className="font-bold text-slate-900 text-sm">{amenity.rating.toFixed(1)}</span>
+                    </div>
                   )}
                 </div>
-              </div>
+                {amenity.distance_mi && (
+                  <div className="text-xs text-slate-500">📍 {amenity.distance_mi.toFixed(1)} mi • {amenity.distance_mi < 1 ? "Walking distance" : "Short drive"}</div>
+                )}
+              </a>
             ))}
           </div>
         </div>
