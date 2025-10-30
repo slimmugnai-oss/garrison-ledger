@@ -41,12 +41,22 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       };
     });
 
+    console.log(`[SCHOOLS] Fetched ${schools.length} schools for ZIP ${zip} from SchoolDigger`);
+
     // Cache for 24 hours
     await setCache(cacheKey, schools, 24 * 3600);
     return schools;
   } catch (error) {
-    // Log error but return empty array to avoid breaking the flow
-    console.error("SchoolDigger API error:", error);
+    // Log detailed error for debugging
+    console.error(`[SCHOOLS] SchoolDigger API error for ZIP ${zip}:`, error);
+    
+    // Check if it's an API key issue
+    if (error instanceof Error && error.message.includes("401")) {
+      console.error("[SCHOOLS] CRITICAL: SchoolDigger API authentication failed. Check SCHOOLDIGGER_APP_ID and SCHOOLDIGGER_APP_KEY environment variables.");
+    } else if (error instanceof Error && error.message.includes("timeout")) {
+      console.error("[SCHOOLS] SchoolDigger API timeout - service may be slow or unavailable");
+    }
+    
     return [];
   }
 }

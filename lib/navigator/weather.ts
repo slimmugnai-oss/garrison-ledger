@@ -46,19 +46,47 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
     return cached;
   }
 
-  console.log(`[DEBUG] Cache miss for weather: ${zip}, generating defaults`);
+  console.log(`[DEBUG] Cache miss for weather: ${zip}, fetching from Google Weather API`);
+
+  const apiKey = process.env.GOOGLE_API_KEY;
 
   try {
-    // For now, use default weather data since Google Weather API requires proper setup
-    // This is a temporary solution until Google APIs are properly configured
-    // Always use region-specific defaults regardless of geocoding status
-    const result = getDefaultWeatherForZip(zip);
-    console.log(`[DEBUG] Generated weather result for ${zip}:`, result);
+    // Attempt to fetch real weather data from Google Weather API
+    if (!apiKey) {
+      console.warn(`[WEATHER] GOOGLE_API_KEY not configured, using defaults for ${zip}`);
+      const result = getDefaultWeatherForZip(zip);
+      await setCache(cacheKey, result, 24 * 3600);
+      return result;
+    }
+
+    // Step 1: Geocode ZIP to lat/lon
+    const coords = await geocodeZipForWeather(zip);
+    if (coords.lat === 0 && coords.lon === 0) {
+      console.warn(`[WEATHER] Failed to geocode ZIP ${zip}, using defaults`);
+      const result = getDefaultWeatherForZip(zip);
+      await setCache(cacheKey, result, 24 * 3600);
+      return result;
+    }
+
+    // Step 2: Fetch weather from Google Weather API
+    const weatherUrl = `https://weather.googleapis.com/v1/currentWeather?location.latitude=${coords.lat}&location.longitude=${coords.lon}&key=${apiKey}`;
+    const weatherResponse = await fetch(weatherUrl);
+
+    if (!weatherResponse.ok) {
+      console.warn(`[WEATHER] Google Weather API error ${weatherResponse.status} for ${zip}, using defaults`);
+      const result = getDefaultWeatherForZip(zip);
+      await setCache(cacheKey, result, 24 * 3600);
+      return result;
+    }
+
+    const weatherData = (await weatherResponse.json()) as GoogleWeatherResponse;
+    const result = analyzeWeatherData(weatherData);
+    console.log(`[DEBUG] Fetched real weather for ${zip}:`, result);
     await setCache(cacheKey, result, 24 * 3600);
     return result;
   } catch (error) {
     console.error(`[DEBUG] Error in weatherComfortIndex for ${zip}:`, error);
-    // Fallback to region-specific defaults even on error
+    // Fallback to region-specific defaults on error
     const fallback = getDefaultWeatherForZip(zip);
     console.log(`[DEBUG] Using fallback weather for ${zip}:`, fallback);
     return fallback;

@@ -32,22 +32,56 @@ export async function fetchAmenitiesData(zip: string): Promise<AmenityData> {
     return cached;
   }
 
-  console.log(`[DEBUG] Cache miss for amenities: ${zip}, generating defaults`);
+  console.log(`[DEBUG] Cache miss for amenities: ${zip}, fetching from Google Places API`);
 
-  // Always use region-specific defaults for now
-  // API key check removed since we're using fallbacks regardless
+  const apiKey = process.env.GOOGLE_API_KEY;
 
   try {
-    // Step 1: For now, provide default amenities data since Google Places API requires proper setup
-    // This is a temporary solution until Google APIs are properly configured
-    // Always use region-specific defaults regardless of geocoding status
-    const result = getDefaultAmenitiesForZip(zip);
-    console.log(`[DEBUG] Generated amenities result for ${zip}:`, result);
+    // Attempt to fetch real amenities data from Google Places API
+    if (!apiKey) {
+      console.warn(`[AMENITIES] GOOGLE_API_KEY not configured, using defaults for ${zip}`);
+      const result = getDefaultAmenitiesForZip(zip);
+      await setCache(cacheKey, result, 30 * 24 * 3600);
+      return result;
+    }
+
+    // Step 1: Geocode ZIP to lat/lon
+    const coords = await geocodeZip(zip);
+    if (coords.lat === 0 && coords.lon === 0) {
+      console.warn(`[AMENITIES] Failed to geocode ZIP ${zip}, using defaults`);
+      const result = getDefaultAmenitiesForZip(zip);
+      await setCache(cacheKey, result, 30 * 24 * 3600);
+      return result;
+    }
+
+    // Step 2: Fetch counts for each amenity type in parallel
+    const [grocery, restaurants, gyms, hospitals, shopping] = await Promise.all([
+      fetchPlacesByType(coords.lat, coords.lon, "supermarket", apiKey),
+      fetchPlacesByType(coords.lat, coords.lon, "restaurant", apiKey),
+      fetchPlacesByType(coords.lat, coords.lon, "gym", apiKey),
+      fetchPlacesByType(coords.lat, coords.lon, "hospital", apiKey),
+      fetchPlacesByType(coords.lat, coords.lon, "shopping_mall", apiKey),
+    ]);
+
+    // Step 3: Compute amenities score
+    const score = computeAmenitiesScore(grocery, restaurants, gyms, hospitals, shopping);
+
+    const result: AmenityData = {
+      amenities_score: score,
+      grocery_stores: grocery,
+      restaurants,
+      gyms,
+      hospitals,
+      shopping_centers: shopping,
+      note: `${grocery} groceries, ${restaurants} restaurants, ${gyms} gyms, ${hospitals} hospitals`,
+    };
+
+    console.log(`[DEBUG] Fetched real amenities for ${zip}:`, result);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
   } catch (error) {
     console.error(`[DEBUG] Error in fetchAmenitiesData for ${zip}:`, error);
-    // Fallback to region-specific defaults even on error
+    // Fallback to region-specific defaults on error
     const fallback = getDefaultAmenitiesForZip(zip);
     console.log(`[DEBUG] Using fallback amenities for ${zip}:`, fallback);
     return fallback;

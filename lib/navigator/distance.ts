@@ -19,16 +19,46 @@ export async function commuteMinutesFromZipToGate(args: {
   const cached = await getCache<{ am: number | null; pm: number | null }>(cacheKey);
   if (cached) return cached;
 
+  const apiKey = process.env.GOOGLE_API_KEY;
+
   try {
-    // For now, provide default commute times since Google Distance Matrix API requires proper setup
-    // This is a temporary solution until Google APIs are properly configured
-    // Always use region-specific defaults
-    const result = getDefaultCommuteTimes(args.zip);
+    // Attempt to fetch real commute times from Google Distance Matrix API
+    if (!apiKey) {
+      console.warn(`[COMMUTE] GOOGLE_API_KEY not configured, using defaults for ${args.zip}`);
+      const result = getDefaultCommuteTimes(args.zip);
+      await setCache(cacheKey, result, 24 * 3600);
+      return result;
+    }
+
+    // Calculate AM (8:00) and PM (17:00) commute times in parallel
+    const am8Time = nextWeekdayTime(8, 0);
+    const pm5Time = nextWeekdayTime(17, 0);
+
+    const origin = args.zip; // Google accepts ZIP codes directly
+    const destination = `${args.gate.lat},${args.gate.lng}`;
+
+    const [amMinutes, pmMinutes] = await Promise.all([
+      callDistanceMatrix({ origin, destination, departureTime: am8Time, apiKey }),
+      callDistanceMatrix({ origin, destination, departureTime: pm5Time, apiKey }),
+    ]);
+
+    // If either call failed, use defaults
+    if (amMinutes === null || pmMinutes === null) {
+      console.warn(`[COMMUTE] Google Distance Matrix API failed for ${args.zip}, using defaults`);
+      const result = getDefaultCommuteTimes(args.zip);
+      await setCache(cacheKey, result, 24 * 3600);
+      return result;
+    }
+
+    const result = { am: amMinutes, pm: pmMinutes };
+    console.log(`[DEBUG] Fetched real commute for ${args.zip}:`, result);
     await setCache(cacheKey, result, 24 * 3600); // 24h cache
     return result;
-  } catch {
-    // Fallback to region-specific defaults even on error
-    return getDefaultCommuteTimes(args.zip);
+  } catch (error) {
+    console.error(`[DEBUG] Error in commuteMinutesFromZipToGate for ${args.zip}:`, error);
+    // Fallback to region-specific defaults on error
+    const fallback = getDefaultCommuteTimes(args.zip);
+    return fallback;
   }
 }
 

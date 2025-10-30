@@ -28,14 +28,14 @@ export async function fetchMilitaryAmenitiesData(zip: string): Promise<MilitaryA
     return cached;
   }
 
-  // Always use region-specific defaults for now
-  // API key check removed since we're using fallbacks regardless
-
+  // INTENTIONAL: Military amenities uses region-specific defaults (not a bug)
+  // Searching for military facilities near civilian housing is complex
+  // Better UX to show generic military amenity scores than confusing data
+  // Future: Could integrate DMDC installation database if made available
+  
   try {
-    // For now, provide default military amenities data since Google Places API requires proper setup
-    // This is a temporary solution until Google APIs are properly configured
-    // Always use region-specific defaults regardless of geocoding status
     const result = getDefaultMilitaryForZip(zip);
+    console.log(`[MILITARY] Using regional defaults for ${zip} (intentional design)`, result);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
   } catch {

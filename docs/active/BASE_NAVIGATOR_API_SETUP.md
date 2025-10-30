@@ -18,60 +18,121 @@ Base Navigator uses 4 external APIs:
 
 ---
 
-## ✅ **1. Google Maps API** (Already Working)
+## ✅ **1. Google Unified API** (Weather + Places + Distance Matrix)
 
-**Status:** ✅ **WORKING** - Commute times display correctly
+**Status:** ✅ **LIVE** - All Google services now use single API key
 
-**Verification:** If you see "AM 9min / PM 10min" in Base Navigator, this is working.
+**Environment Variable:** `GOOGLE_API_KEY`
 
-**No action needed!**
+**What It Powers:**
+- **Weather:** Real-time temperature, conditions, humidity
+- **Amenities:** Grocery stores, restaurants, gyms, hospitals within 5km radius
+- **Commute:** AM/PM drive times with traffic to base gate
+
+**Verification:** 
+- Weather shows real temperature (not generic "Moderate climate")
+- Amenities show non-zero counts (not all 0s)
+- Commute shows realistic times based on actual traffic
+
+**APIs Enabled:**
+1. Current Weather API (`weather.googleapis.com/v1/currentWeather`)
+2. Places API (New) (`places.googleapis.com/v1/places:searchNearby`)
+3. Distance Matrix API (`maps.googleapis.com/maps/api/distancematrix`)
+
+**No action needed if already configured!**
 
 ---
 
-## ⚠️ **2. GreatSchools API** (Needs Verification)
+## ✅ **2. SchoolDigger API** (School Ratings)
 
-**Current Status:** May be hitting v1 API (deprecated)
+**Status:** ✅ **LIVE** - Real school data from SchoolDigger
 
-### **Setup Steps:**
+**Environment Variables:**
+- `SCHOOLDIGGER_APP_ID` 
+- `SCHOOLDIGGER_APP_KEY`
 
-1. **Get API Key:**
-   - Go to: https://www.greatschools.org/api/
-   - Sign up for developer account
-   - Request API key (instant approval for basic tier)
-   - You should receive **v2 API key** via email
+**What It Powers:**
+- School names, ratings (0-10 scale), grade ranges
+- Up to 25 schools per ZIP code
+- Public and private schools
+- Distance from ZIP center
 
-2. **Add to Vercel:**
+**Verification:**
+- Schools section shows real school names (not "N/A")
+- Ratings based on SchoolDigger rankStars (1-5 stars → 0-10 scale)
+- See console logs: `[SCHOOLS] Fetched X schools for ZIP`
+
+### **Setup Steps (if not configured):**
+
+1. **Sign Up for SchoolDigger:**
+   - Go to: https://developer.schooldigger.com/
+   - Create developer account
+   - Subscribe to free tier (1,000 requests/month)
+
+2. **Get Credentials:**
+   - After signup, you'll receive `appID` and `appKey`
+   - **Note:** These are NOT the same as API keys - they're URL parameters
+
+3. **Add to Vercel (2 variables needed):**
    ```
-   Name: GREAT_SCHOOLS_API_KEY
-   Value: your-api-key-here
+   Name: SCHOOLDIGGER_APP_ID
+   Value: your-app-id-here
+   
+   Name: SCHOOLDIGGER_APP_KEY
+   Value: your-app-key-here
    ```
-
-3. **Verify It's v2:**
-   - Test endpoint:
-   ```bash
-   curl -H "X-API-Key: YOUR_KEY" \
-     "https://api.greatschools.org/nearby-schools?zip=98498&limit=5"
-   ```
-   - Should return JSON with `{ schools: [...] }`
-   - If you get 410 error, you're using v1 key (deprecated)
 
 ### **Troubleshooting:**
 
-**Error: 410 This API has reached End of Life**
-- You have v1 key, need v2
-- Request new key from GreatSchools
-- Update Vercel env var
-
-**Error: 401 Unauthorized**
-- API key invalid or expired
-- Check email for correct key
+**Error: SchoolDigger API authentication failed**
+- Check both `SCHOOLDIGGER_APP_ID` and `SCHOOLDIGGER_APP_KEY` are set
+- Verify credentials from SchoolDigger dashboard
 - Ensure no extra spaces when copying
+
+**No schools showing:**
+- Check Vercel logs for `[SCHOOLS]` messages
+- May return 0 schools for remote/rural ZIP codes (expected)
+- Falls back to empty array on error (doesn't break page)
 
 ---
 
-## ⚠️ **3. Zillow API via RapidAPI** (Needs Configuration)
+## ℹ️ **3. Demographics Data** (Intentional Defaults)
 
-**Current Status:** Not configured - missing `RAPIDAPI_KEY`
+**Status:** ℹ️ **USING DEFAULTS** - Not a bug, intentional design
+
+**What It Shows:**
+- Population, median age, median income
+- Diversity index, family household percentage
+- Region-specific estimates based on ZIP code
+
+**Why Defaults:**
+- Real demographics APIs (US Census, RapidAPI) are costly or complex
+- Demographics don't change frequently enough to justify real-time API costs
+- Regional defaults provide reasonable estimates for military audience
+
+**Future:** Could integrate US Census API if highly accurate demographics become critical
+
+---
+
+## ℹ️ **4. Military Amenities** (Intentional Defaults)
+
+**Status:** ℹ️ **USING DEFAULTS** - Not a bug, intentional design
+
+**What It Shows:**
+- Military facility proximity score
+- Generic assessments of military housing distance
+- Region-specific estimates
+
+**Why Defaults:**
+- Searching for military facilities near civilian housing is complex
+- No publicly available API for military installation proximity
+- Better UX to show generic scores than confusing/inaccurate data
+
+**Future:** Could integrate DMDC installation database if made available
+
+---
+
+## ⚠️ **DEPRECATED APIS** (No Longer Used)
 
 ### **Setup Steps:**
 
@@ -221,27 +282,34 @@ Base Navigator uses 4 external APIs:
 
 ## ✅ **Summary Checklist**
 
-- [ ] **Google Maps API:** Already working ✅
-- [ ] **GreatSchools API:** 
-  - [ ] Sign up at greatschools.org/api
-  - [ ] Get v2 API key from email
-  - [ ] Add `GREAT_SCHOOLS_API_KEY` to Vercel
-- [ ] **Zillow API:**
-  - [ ] Sign up at rapidapi.com
-  - [ ] Subscribe to Zillow API (free tier)
-  - [ ] Add `RAPIDAPI_KEY` to Vercel
-  - [ ] Add `ZILLOW_RAPIDAPI_HOST` to Vercel (zillow-com1.p.rapidapi.com)
-- [ ] **OpenWeatherMap API:**
-  - [ ] Sign up at openweathermap.org
-  - [ ] Get API key
-  - [ ] Add `OPENWEATHER_API_KEY` to Vercel
-  - [ ] Wait 10 min for key activation
-- [ ] **Redeploy:**
-  - [ ] Vercel Dashboard → Redeploy
-  - [ ] Wait 2 minutes
-- [ ] **Test:**
-  - [ ] Try Base Navigator with JBLM
-  - [ ] Verify schools, housing, weather all show
+### **Required Environment Variables:**
+
+- [x] **`GOOGLE_API_KEY`** - Powers weather, amenities, commute ✅
+- [x] **`SCHOOLDIGGER_APP_ID`** - SchoolDigger authentication ✅
+- [x] **`SCHOOLDIGGER_APP_KEY`** - SchoolDigger authentication ✅
+
+### **Optional (Not Required):**
+
+- Demographics - Uses defaults (intentional)
+- Military Amenities - Uses defaults (intentional)
+
+### **Deployment Checklist:**
+
+- [ ] Verify all 3 environment variables are set in Vercel
+- [ ] Redeploy after adding new variables (Vercel Dashboard → Redeploy)
+- [ ] Test on production at `/dashboard/navigator/nsnor`
+- [ ] Check Vercel logs for success messages:
+  - `[WEATHER] Fetched real weather for ZIP`
+  - `[AMENITIES] Fetched real amenities for ZIP`
+  - `[COMMUTE] Fetched real commute for ZIP`
+  - `[SCHOOLS] Fetched X schools for ZIP`
+
+### **Expected Real Data:**
+
+- **Weather:** Real temperature (e.g., "Current: 62°F, 75% humidity, Cloudy")
+- **Amenities:** Non-zero counts (e.g., "5 groceries, 42 restaurants, 3 gyms, 2 hospitals")
+- **Commute:** Realistic times (e.g., "AM 18min / PM 23min")
+- **Schools:** Real school names with ratings (e.g., "Lakewood Elementary: 8/10")
 
 ---
 

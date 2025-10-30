@@ -43,14 +43,13 @@ export async function fetchDemographicsData(zip: string): Promise<DemographicsDa
     return cached;
   }
 
-  // Always use region-specific defaults for now
-  // API key check removed since we're using fallbacks regardless
-
+  // INTENTIONAL: Demographics uses region-specific defaults (not a bug)
+  // RapidAPI Demographics is costly and not critical for MVP
+  // Future: Could integrate US Census API for real data if needed
+  
   try {
-    // For now, provide default demographics data since RapidAPI Demographics requires proper setup
-    // This is a temporary solution until APIs are properly configured
-    // Always use region-specific defaults
     const result = getDefaultDemographicsForZip(zip);
+    console.log(`[DEMOGRAPHICS] Using regional defaults for ${zip} (intentional design)`, result);
     await setCache(cacheKey, result, 30 * 24 * 3600); // 30 days
     return result;
   } catch {
