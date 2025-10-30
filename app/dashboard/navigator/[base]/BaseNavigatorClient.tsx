@@ -411,10 +411,11 @@ export default function BaseNavigatorClient({
                 return (
                   <AnimatedCard key={result.zip} delay={index * 0.1}>
                     <div
-                      className={`overflow-hidden rounded-2xl border-2 ${rankStyle.border} bg-white transition-all duration-300 hover:shadow-xl ${rankStyle.shadow}`}
+                      className={`overflow-hidden rounded-2xl border-2 border-slate-200 bg-white transition-all duration-300 hover:shadow-lg`}
                     >
-                      {/* Header Section - Mobile Optimized */}
-                      <div className={`${rankStyle.gradient} p-4 text-white sm:p-6`}>
+                      {/* Header Section - Only for results 4-5 */}
+                      {index >= 3 && (
+                        <div className={`${rankStyle.gradient} p-4 text-white sm:p-6`}>
                         <div className="flex items-start justify-between">
                           <div className="min-w-0 flex-1">
                             <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -465,9 +466,10 @@ export default function BaseNavigatorClient({
                             </span>
                           </div>
                         </div>
-                      </div>
+                        </div>
+                      )}
 
-                      {/* Content Section - Tabbed Interface */}
+                      {/* Content Section */}
                       <div className="p-4 sm:p-6">
                         {/* Tab Navigation */}
                         <div className="mb-6">
