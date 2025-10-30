@@ -454,32 +454,76 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
 
                 <div className="rounded-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 p-4">
-                  <div className="text-sm text-slate-600 mb-1">Temperature Range</div>
-                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.temperature_range.low}°-{weatherIntel.temperature_range.high}°F</div>
-                  <div className="text-xs text-slate-500 mt-1">annual range</div>
+                  <div className="text-sm text-slate-600 mb-1">Pool Season</div>
+                  <div className="text-2xl font-bold text-slate-900">{weatherIntel.pool_season}</div>
+                  <div className="text-xs text-slate-500 mt-1">usable months</div>
                 </div>
               </div>
 
               {/* Seasonal Breakdown */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-slate-900">Seasonal Breakdown</h4>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {weatherIntel.seasonal_breakdown.map((season, i) => (
+                    <div key={i} className="rounded-lg border-2 border-slate-200 bg-white p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <div className="font-bold text-slate-900">{season.season}</div>
+                        <div className="text-sm text-slate-600">{season.months}</div>
+                      </div>
+                      <div className="mb-2 text-sm text-slate-700">{season.avg_temp_range}</div>
+                      <div className="text-sm text-slate-600">{season.conditions}</div>
+                      <div className="mt-2 text-xs text-slate-500">
+                        Activities: {season.outdoor_activities}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Best/Worst Months */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-lg border-2 border-green-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
                     <Icon name="Sun" className="h-5 w-5 text-green-600" />
-                    <div className="font-bold text-slate-900">Best Season</div>
+                    <div className="font-bold text-slate-900">Best Months</div>
                   </div>
-                  <div className="text-2xl font-bold text-green-600 mb-2">{weatherIntel.best_season.name}</div>
-                  <p className="text-sm text-slate-600">{weatherIntel.best_season.description}</p>
+                  <div className="text-lg font-semibold text-green-600">
+                    {weatherIntel.best_months.join(", ")}
+                  </div>
                 </div>
 
                 <div className="rounded-lg border-2 border-amber-200 bg-white p-6">
                   <div className="mb-3 flex items-center gap-2">
                     <Icon name="Cloud" className="h-5 w-5 text-amber-600" />
-                    <div className="font-bold text-slate-900">Challenging Season</div>
+                    <div className="font-bold text-slate-900">Challenging Months</div>
                   </div>
-                  <div className="text-2xl font-bold text-amber-600 mb-2">{weatherIntel.challenging_season.name}</div>
-                  <p className="text-sm text-slate-600">{weatherIntel.challenging_season.description}</p>
+                  <div className="text-lg font-semibold text-amber-600">
+                    {weatherIntel.worst_months.join(", ")}
+                  </div>
                 </div>
               </div>
+
+              {/* Extreme Weather Risks */}
+              {weatherIntel.extreme_weather_risks.length > 0 && (
+                <div className="rounded-lg border-2 border-red-200 bg-white p-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Icon name="AlertTriangle" className="h-5 w-5 text-red-600" />
+                    <h4 className="font-bold text-slate-900">Extreme Weather Risks</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {weatherIntel.extreme_weather_risks.map((risk, i) => (
+                      <div key={i} className="rounded-lg bg-red-50 p-3">
+                        <div className="mb-1 flex items-center justify-between">
+                          <div className="font-semibold text-red-900">{risk.type}</div>
+                          <div className="text-sm text-red-700">{risk.risk_level} risk</div>
+                        </div>
+                        <div className="text-sm text-slate-700 mb-1">Season: {risk.season}</div>
+                        <div className="text-sm text-slate-600">{risk.preparation_needed}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Military Considerations */}
               <div className="rounded-lg bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
@@ -487,22 +531,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                   <Icon name="Shield" className="h-6 w-6" />
                   <h4 className="font-bold text-lg">Military-Specific Considerations</h4>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Physical Training Impact</div>
-                    <div className="font-semibold">{weatherIntel.pt_impact}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-slate-300 mb-1">Family Activities</div>
-                    <div className="font-semibold">{weatherIntel.family_activities_impact}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Line */}
-              <div className="rounded-lg bg-amber-50 p-4 border-l-4 border-amber-600">
-                <div className="font-semibold text-amber-900 mb-2">Bottom Line</div>
-                <p className="text-slate-700 leading-relaxed">{weatherIntel.bottom_line}</p>
+                <p className="text-slate-100">{weatherIntel.military_family_considerations}</p>
               </div>
             </div>
           )}
