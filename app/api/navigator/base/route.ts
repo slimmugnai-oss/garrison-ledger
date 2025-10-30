@@ -210,6 +210,36 @@ export async function POST(request: NextRequest) {
             top_schools: topSchools.slice(0, 2),
             sample_listings: sampleListings,
             weather_note: weather.note,
+            commute_text:
+              commute.am && commute.pm
+                ? `AM ${commute.am} min / PM ${commute.pm} min`
+                : "Commute estimate unavailable",
+            amenities_data: {
+              amenities_score: amenitiesData.amenities_score,
+              grocery_stores: amenitiesData.grocery_stores,
+              restaurants: amenitiesData.restaurants,
+              gyms: amenitiesData.gyms,
+              hospitals: amenitiesData.hospitals,
+              shopping_centers: amenitiesData.shopping_centers,
+              note: amenitiesData.note,
+            },
+            demographics_data: {
+              demographics_score: demographicsData.demographics_score,
+              population: demographicsData.population,
+              median_age: demographicsData.median_age,
+              median_income: demographicsData.median_income,
+              diversity_index: demographicsData.diversity_index,
+              family_households: demographicsData.family_households,
+              note: demographicsData.note,
+            },
+            military_data: {
+              military_score: militaryData.military_score,
+              commissary_distance_mi: militaryData.commissary_distance_mi,
+              exchange_distance_mi: militaryData.exchange_distance_mi,
+              va_facility_distance_mi: militaryData.va_facility_distance_mi,
+              military_housing_distance_mi: militaryData.military_housing_distance_mi,
+              note: militaryData.note,
+            },
           },
           updated_at: new Date().toISOString(),
         },
