@@ -113,11 +113,15 @@ export default function DynamicLineItemManager({
     setIsModalOpen(true);
   };
 
-  // Handle edit item
-  const handleEdit = (item: DynamicLineItem) => {
-    setEditingItem(item);
-    setIsModalOpen(true);
-  };
+  // Handle update item (inline editing)
+  const handleUpdate = useCallback(
+    (id: string, amountCents: number) => {
+      onChange(
+        lineItems.map((item) => (item.id === id ? { ...item, amount_cents: amountCents } : item))
+      );
+    },
+    [lineItems, onChange]
+  );
 
   // Handle delete item with undo
   const handleDelete = useCallback(
@@ -282,7 +286,7 @@ export default function DynamicLineItemManager({
                       <LineItemRow
                         key={item.id}
                         item={item}
-                        onEdit={handleEdit}
+                        onUpdate={handleUpdate}
                         onDelete={handleDelete}
                       />
                     ))}
