@@ -440,7 +440,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const topResults = results.slice(0, 5);
+    const topResults = results.slice(0, 3);
 
     // Track usage (only for free users, premium is unlimited)
     if (!isPremium) {

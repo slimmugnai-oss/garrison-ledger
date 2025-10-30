@@ -228,7 +228,7 @@ export default function BaseNavigatorClient({
                   </div>
                   <div>
                     <div className="text-xs text-slate-400">Analyzing</div>
-                    <div className="font-bold text-white">5 Neighborhoods</div>
+                    <div className="font-bold text-white">Top 3 ZIPs</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -665,34 +665,6 @@ export default function BaseNavigatorClient({
                             />
                           )}
 
-                          {/* Overview (for results #4-5 or if no intelligence) */}
-                          {(activeTabs[result.zip] || "overview") === "overview" && (
-                            <div className="space-y-6">
-                              {/* Simplified Overview - Just essentials */}
-                              <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white p-6 border-2 border-slate-200">
-                                <div className="mb-4 flex items-center gap-2">
-                                  <Icon name="MapPin" className="h-5 w-5 text-slate-600" />
-                                  <h4 className="text-lg font-bold text-slate-900">Neighborhood Overview</h4>
-                                </div>
-                                <div className="grid gap-4 md:grid-cols-2">
-                                  <div className="rounded-lg bg-white p-4 border border-slate-200">
-                                    <div className="text-sm text-slate-600 mb-1">Family Fit Score</div>
-                                    <div className="text-3xl font-bold text-slate-900">{Math.round(result.family_fit_score)}/100</div>
-                                    <div className="text-xs text-slate-500">
-                                      {result.family_fit_score >= 80 ? "Excellent" : result.family_fit_score >= 60 ? "Good" : "Fair"} overall match
-                                    </div>
-                                  </div>
-                                  <div className="rounded-lg bg-white p-4 border border-slate-200">
-                                    <div className="text-sm text-slate-600 mb-1">Median Rent</div>
-                                    <div className="text-3xl font-bold text-slate-900">
-                                      ${result.median_rent_cents ? (result.median_rent_cents / 100).toLocaleString() : "N/A"}
-                                    </div>
-                                    <div className="text-xs text-slate-500">per month</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
 
                           {(activeTabs[result.zip] || "overview") === "schools" && (
                             <div className="space-y-6">
