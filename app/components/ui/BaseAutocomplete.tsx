@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 
 import militaryBasesData from "@/lib/data/military-bases.json";
+import basesAllData from "@/lib/data/bases-all.json";
 
 interface MilitaryBase {
   id: string;
@@ -17,6 +18,11 @@ interface MilitaryBase {
 }
 
 const militaryBases = militaryBasesData.bases as MilitaryBase[];
+
+// CRITICAL: Only show bases that are in bases-all.json (135 supported bases with candidate ZIPs)
+const supportedBaseNames = new Set(
+  basesAllData.bases.map((b: any) => b.name.toUpperCase())
+);
 
 interface BaseAutocompleteProps {
   value: string;
@@ -47,6 +53,11 @@ export default function BaseAutocomplete({
     }
 
     const filtered = militaryBases.filter((base) => {
+      // CRITICAL: Only show bases that are in bases-all.json (135 supported bases)
+      if (!supportedBaseNames.has(base.name.toUpperCase())) {
+        return false;
+      }
+
       const input = inputValue.toLowerCase();
 
       // Search name, city, state, branch
