@@ -109,30 +109,49 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
   let bahRateCents: number | null = null;
   let bahSource: "auto" | "manual" = "manual";
 
-  if (profile?.rank && profile?.has_dependents !== null && baseData.mha) {
-    // Normalize rank format to E0X format (handles both "E-7" and "E7" → "E07")
-    let normalizedRank = profile.rank;
+  // Check if we have a paygrade field (not rank title)
+  // We need to query by paygrade, not by rank
+  const { data: profileWithPaygrade } = await supabase
+    .from("user_profiles")
+    .select("paygrade, has_dependents")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (profileWithPaygrade?.paygrade && profileWithPaygrade?.has_dependents !== null && baseData.mha) {
+    // Normalize paygrade format to E0X format (handles "E-7", "E7", "E07" → "E07")
+    let normalizedPaygrade = profileWithPaygrade.paygrade;
     
     // E-7 → E07 (single digit with hyphen)
-    normalizedRank = normalizedRank.replace(/^([EOW])-(\d)$/, "$10$2");
+    normalizedPaygrade = normalizedPaygrade.replace(/^([EOW])-(\d)$/, "$10$2");
     // E7 → E07 (single digit without hyphen)
-    normalizedRank = normalizedRank.replace(/^([EOW])(\d)$/, "$10$2");
+    normalizedPaygrade = normalizedPaygrade.replace(/^([EOW])(\d)$/, "$10$2");
     // E-07 → E07 (already has zero, just remove hyphen)
-    normalizedRank = normalizedRank.replace(/^([EOW])-0(\d)$/, "$10$2");
+    normalizedPaygrade = normalizedPaygrade.replace(/^([EOW])-0(\d)$/, "$10$2");
+    
+    console.log(`[BAH_AUTO_FILL] Querying BAH: MHA=${baseData.mha}, Paygrade=${normalizedPaygrade}, Deps=${profileWithPaygrade.has_dependents}`);
 
-    const { data: bahRate } = await supabase
+    const { data: bahRate, error: bahError } = await supabase
       .from("bah_rates")
       .select("rate_cents")
       .eq("mha", baseData.mha)
-      .eq("paygrade", normalizedRank)
-      .eq("with_dependents", profile.has_dependents)
+      .eq("paygrade", normalizedPaygrade)
+      .eq("with_dependents", profileWithPaygrade.has_dependents)
       .eq("effective_date", "2025-01-01")
       .maybeSingle();
+
+    if (bahError) {
+      console.error(`[BAH_AUTO_FILL] Database error:`, bahError);
+    }
 
     if (bahRate) {
       bahRateCents = bahRate.rate_cents;
       bahSource = "auto";
+      console.log(`[BAH_AUTO_FILL] SUCCESS! BAH = $${bahRate.rate_cents / 100}`);
+    } else {
+      console.log(`[BAH_AUTO_FILL] No BAH rate found for: ${normalizedPaygrade} at ${baseData.mha} with deps=${profileWithPaygrade.has_dependents}`);
     }
+  } else {
+    console.log(`[BAH_AUTO_FILL] Missing data - paygrade: ${profileWithPaygrade?.paygrade}, deps: ${profileWithPaygrade?.has_dependents}, mha: ${baseData.mha}`);
   }
 
   // Get user's watchlist for this base (if exists)

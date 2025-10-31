@@ -373,12 +373,12 @@ export default function BaseNavigatorClient({
                   <div className="mt-3 flex items-start gap-2 text-sm text-slate-600">
                     <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
                     <p>
-                      {bahSource === "auto" && userProfile.rank && base.mha ? (
+                      {bahSource === "auto" && base.mha ? (
                         <>
-                          <span className="font-semibold text-green-600">✓ Auto-filled</span> for {userProfile.rank}
+                          <span className="font-semibold text-green-600">✓ Auto-filled</span> from your profile
                           {userProfile.hasDependents ? " with dependents" : " without dependents"} at {base.mha}. You can adjust if needed.
                         </>
-                      ) : userProfile.rank && userProfile.hasDependents === null ? (
+                      ) : userProfile.hasDependents === null ? (
                         <>
                           For {base.mha} (check your LES).{" "}
                           <a href="/dashboard/profile/quick-start" className="font-semibold text-blue-600 hover:underline">
