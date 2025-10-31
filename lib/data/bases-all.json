@@ -1,383 +1,15 @@
 {
   "_meta": {
-    "generated": "2025-10-31T01:45:34.563Z",
-    "source": "military-bases.json + bah_rates table",
-    "total": 32,
-    "note": "Auto-generated list of US military installations. DO NOT manually edit."
+    "generated": "2025-10-31T02:44:55.866Z",
+    "source": "User CSV (150 bases + top 3 ZIPs) + military-bases.json (coords) + base-mha-map.json (MHA)",
+    "total": 50,
+    "note": "Comprehensive list of US military installations with curated top 3 ZIP codes for each."
   },
   "bases": [
     {
-      "code": "abilene",
-      "name": "ABILENE/DYESS AFB, TX",
-      "branch": "Air Force",
-      "state": "TX",
-      "center": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "gate": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "candidateZips": [],
-      "mha": "TX270"
-    },
-    {
-      "code": "albuquerque",
-      "name": "ALBUQUERQUE/KIRTLAND AFB, NM",
-      "branch": "Air Force",
-      "state": "NM",
-      "center": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "gate": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "candidateZips": [],
-      "mha": "NM206"
-    },
-    {
-      "code": "altus",
-      "name": "ALTUS AFB, OK",
-      "branch": "Air Force",
-      "state": "OK",
-      "center": {
-        "lat": 35.565342,
-        "lng": -96.928917
-      },
-      "gate": {
-        "lat": 35.565342,
-        "lng": -96.928917
-      },
-      "candidateZips": [],
-      "mha": "OK235"
-    },
-    {
-      "code": "beale",
-      "name": "BEALE AFB, CA",
-      "branch": "Air Force",
-      "state": "CA",
-      "center": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "gate": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "candidateZips": [],
-      "mha": "CA033"
-    },
-    {
-      "code": "cannon",
-      "name": "CANNON AFB/CLOVIS, NM",
-      "branch": "Air Force",
-      "state": "NM",
-      "center": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "gate": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "candidateZips": [],
-      "mha": "NM207"
-    },
-    {
-      "code": "davis",
-      "name": "DAVIS-MONTHAN AFB, AZ",
-      "branch": "Air Force",
-      "state": "AZ",
-      "center": {
-        "lat": 33.729759,
-        "lng": -111.431221
-      },
-      "gate": {
-        "lat": 33.729759,
-        "lng": -111.431221
-      },
-      "candidateZips": [],
-      "mha": "AZ015"
-    },
-    {
-      "code": "dover",
-      "name": "DOVER AFB/REHOBOTH, DE",
-      "branch": "Air Force",
-      "state": "DE",
-      "center": {
-        "lat": 39.318523,
-        "lng": -75.507141
-      },
-      "gate": {
-        "lat": 39.318523,
-        "lng": -75.507141
-      },
-      "candidateZips": [],
-      "mha": "DE054"
-    },
-    {
-      "code": "edwards",
-      "name": "EDWARDS AFB/PALMDALE, CA",
-      "branch": "Air Force",
-      "state": "CA",
-      "center": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "gate": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "candidateZips": [],
-      "mha": "CA457"
-    },
-    {
-      "code": "eglin",
-      "name": "EGLIN AFB, FL",
-      "branch": "Air Force",
-      "state": "FL",
-      "center": {
-        "lat": 27.766279,
-        "lng": -81.686783
-      },
-      "gate": {
-        "lat": 27.766279,
-        "lng": -81.686783
-      },
-      "candidateZips": [],
-      "mha": "FL056"
-    },
-    {
-      "code": "goodfellow",
-      "name": "GOODFELLOW AFB, TX",
-      "branch": "Air Force",
-      "state": "TX",
-      "center": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "gate": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "candidateZips": [],
-      "mha": "TX284"
-    },
-    {
-      "code": "hanscom",
-      "name": "HANSCOM AFB, MA",
-      "branch": "Air Force",
-      "state": "MA",
-      "center": {
-        "lat": 42.230171,
-        "lng": -71.530106
-      },
-      "gate": {
-        "lat": 42.230171,
-        "lng": -71.530106
-      },
-      "candidateZips": [],
-      "mha": "MA377"
-    },
-    {
-      "code": "holloman",
-      "name": "HOLLOMAN AFB/ALAMOGORDO, NM",
-      "branch": "Air Force",
-      "state": "NM",
-      "center": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "gate": {
-        "lat": 34.840515,
-        "lng": -106.248482
-      },
-      "candidateZips": [],
-      "mha": "NM205"
-    },
-    {
-      "code": "laughlin",
-      "name": "LAUGHLIN AFB/DEL RIO, TX",
-      "branch": "Air Force",
-      "state": "TX",
-      "center": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "gate": {
-        "lat": 31.054487,
-        "lng": -97.563461
-      },
-      "candidateZips": [],
-      "mha": "TX278"
-    },
-    {
-      "code": "minot",
-      "name": "MINOT AFB, ND",
-      "branch": "Air Force",
-      "state": "ND",
-      "center": {
-        "lat": 47.528912,
-        "lng": -99.784012
-      },
-      "gate": {
-        "lat": 47.528912,
-        "lng": -99.784012
-      },
-      "candidateZips": [],
-      "mha": "ND191"
-    },
-    {
-      "code": "moody",
-      "name": "MOODY AFB, GA",
-      "branch": "Air Force",
-      "state": "GA",
-      "center": {
-        "lat": 30.9678,
-        "lng": -83.193
-      },
-      "gate": {
-        "lat": 30.9678,
-        "lng": -83.193
-      },
-      "candidateZips": [],
-      "mha": "GA081"
-    },
-    {
-      "code": "mountain",
-      "name": "MOUNTAIN HOME AFB, ID",
-      "branch": "Air Force",
-      "state": "ID",
-      "center": {
-        "lat": 44.240459,
-        "lng": -114.478828
-      },
-      "gate": {
-        "lat": 44.240459,
-        "lng": -114.478828
-      },
-      "candidateZips": [],
-      "mha": "ID086"
-    },
-    {
-      "code": "nellis",
-      "name": "NELLIS AFB/LAS VEGAS, NV",
-      "branch": "Air Force",
-      "state": "NV",
-      "center": {
-        "lat": 38.313515,
-        "lng": -117.055374
-      },
-      "gate": {
-        "lat": 38.313515,
-        "lng": -117.055374
-      },
-      "candidateZips": [],
-      "mha": "NV212"
-    },
-    {
-      "code": "ogden",
-      "name": "OGDEN/HILL AFB, UT",
-      "branch": "Air Force",
-      "state": "UT",
-      "center": {
-        "lat": 40.150032,
-        "lng": -111.862434
-      },
-      "gate": {
-        "lat": 40.150032,
-        "lng": -111.862434
-      },
-      "candidateZips": [],
-      "mha": "UT291"
-    },
-    {
-      "code": "omaha",
-      "name": "OMAHA/OFFUTT AFB, NE",
-      "branch": "Air Force",
-      "state": "NE",
-      "center": {
-        "lat": 41.12537,
-        "lng": -98.268082
-      },
-      "gate": {
-        "lat": 41.12537,
-        "lng": -98.268082
-      },
-      "candidateZips": [],
-      "mha": "NE192"
-    },
-    {
-      "code": "rapid",
-      "name": "RAPID CITY/ELLSWORTH AFB, SD",
-      "branch": "Air Force",
-      "state": "SD",
-      "center": {
-        "lat": 44.299782,
-        "lng": -99.438828
-      },
-      "gate": {
-        "lat": 44.299782,
-        "lng": -99.438828
-      },
-      "candidateZips": [],
-      "mha": "SD264"
-    },
-    {
-      "code": "robins",
-      "name": "ROBINS AFB, GA",
-      "branch": "Air Force",
-      "state": "GA",
-      "center": {
-        "lat": 33.040619,
-        "lng": -83.643074
-      },
-      "gate": {
-        "lat": 33.040619,
-        "lng": -83.643074
-      },
-      "candidateZips": [],
-      "mha": "GA076"
-    },
-    {
-      "code": "rome",
-      "name": "ROME/GRIFFISS AFB, NY",
-      "branch": "Air Force",
-      "state": "NY",
-      "center": {
-        "lat": 42.165726,
-        "lng": -74.948051
-      },
-      "gate": {
-        "lat": 42.165726,
-        "lng": -74.948051
-      },
-      "candidateZips": [],
-      "mha": "NY222"
-    },
-    {
-      "code": "scott",
-      "name": "SCOTT AFB, IL",
-      "branch": "Air Force",
-      "state": "IL",
-      "center": {
-        "lat": 40.349457,
-        "lng": -88.986137
-      },
-      "gate": {
-        "lat": 40.349457,
-        "lng": -88.986137
-      },
-      "candidateZips": [],
-      "mha": "IL093"
-    },
-    {
-      "code": "seymour",
-      "name": "SEYMOUR JOHNSON AFB, NC",
-      "branch": "Air Force",
+      "code": "ftli",
+      "name": "Fort Liberty, NC",
+      "branch": "Army",
       "state": "NC",
       "center": {
         "lat": 35.630066,
@@ -387,93 +19,37 @@
         "lat": 35.630066,
         "lng": -79.806419
       },
-      "candidateZips": [],
-      "mha": "NC183"
+      "candidateZips": [
+        "28311",
+        "28390",
+        "28348"
+      ],
+      "mha": "NC182"
     },
     {
-      "code": "shreveport",
-      "name": "SHREVEPORT/BARKSDALE AFB, LA",
-      "branch": "Air Force",
-      "state": "LA",
+      "code": "ftca",
+      "name": "Fort Campbell, TN",
+      "branch": "Army",
+      "state": "TN",
       "center": {
-        "lat": 31.169546,
-        "lng": -91.867805
+        "lat": 35.747845,
+        "lng": -86.692345
       },
       "gate": {
-        "lat": 31.169546,
-        "lng": -91.867805
+        "lat": 35.747845,
+        "lng": -86.692345
       },
-      "candidateZips": [],
-      "mha": "LA117"
+      "candidateZips": [
+        "37043",
+        "37040",
+        "42262"
+      ],
+      "mha": "KY106"
     },
     {
-      "code": "sumter",
-      "name": "SUMTER/SHAW AFB, SC",
-      "branch": "Air Force",
-      "state": "SC",
-      "center": {
-        "lat": 33.970833,
-        "lng": -80.470556
-      },
-      "gate": {
-        "lat": 33.970833,
-        "lng": -80.470556
-      },
-      "candidateZips": [],
-      "mha": "SC263"
-    },
-    {
-      "code": "vallejo",
-      "name": "VALLEJO/TRAVIS AFB, CA",
-      "branch": "Air Force",
-      "state": "CA",
-      "center": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "gate": {
-        "lat": 36.116203,
-        "lng": -119.681564
-      },
-      "candidateZips": [],
-      "mha": "CA036"
-    },
-    {
-      "code": "vance",
-      "name": "VANCE AFB/ENID, OK",
-      "branch": "Air Force",
-      "state": "OK",
-      "center": {
-        "lat": 35.565342,
-        "lng": -96.928917
-      },
-      "gate": {
-        "lat": 35.565342,
-        "lng": -96.928917
-      },
-      "candidateZips": [],
-      "mha": "OK236"
-    },
-    {
-      "code": "whiteman",
-      "name": "WHITEMAN AFB, MO",
-      "branch": "Air Force",
-      "state": "MO",
-      "center": {
-        "lat": 38.456085,
-        "lng": -92.288368
-      },
-      "gate": {
-        "lat": 38.456085,
-        "lng": -92.288368
-      },
-      "candidateZips": [],
-      "mha": "MO162"
-    },
-    {
-      "code": "wichita",
-      "name": "WICHITA FLS/SHEPPARD AFB, TX",
-      "branch": "Air Force",
+      "code": "ftca",
+      "name": "Fort Cavazos, TX",
+      "branch": "Army",
       "state": "TX",
       "center": {
         "lat": 31.054487,
@@ -483,13 +59,117 @@
         "lat": 31.054487,
         "lng": -97.563461
       },
-      "candidateZips": [],
-      "mha": "TX288"
+      "candidateZips": [
+        "76548",
+        "76522",
+        "76513"
+      ],
+      "mha": "TX286"
     },
     {
-      "code": "wichita",
-      "name": "WICHITA/MCCONNELL AFB, KS",
-      "branch": "Air Force",
+      "code": "ftmo",
+      "name": "Fort Moore, GA",
+      "branch": "Army",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "31909",
+        "31820",
+        "36867"
+      ],
+      "mha": "GA075"
+    },
+    {
+      "code": "ftja",
+      "name": "Fort Jackson, SC",
+      "branch": "Army",
+      "state": "SC",
+      "center": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "gate": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "candidateZips": [
+        "29229",
+        "29223",
+        "29016"
+      ],
+      "mha": "SC260"
+    },
+    {
+      "code": "ftca",
+      "name": "Fort Carson, CO",
+      "branch": "Army",
+      "state": "CO",
+      "center": {
+        "lat": 39.059811,
+        "lng": -105.311104
+      },
+      "gate": {
+        "lat": 39.059811,
+        "lng": -105.311104
+      },
+      "candidateZips": [
+        "80906",
+        "80911",
+        "80817"
+      ],
+      "mha": "CO050"
+    },
+    {
+      "code": "ftbl",
+      "name": "Fort Bliss, TX",
+      "branch": "Army",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "79924",
+        "79938",
+        "79936"
+      ],
+      "mha": "TX282"
+    },
+    {
+      "code": "ftst",
+      "name": "Fort Stewart, GA",
+      "branch": "Army",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "31324",
+        "31313",
+        "31322"
+      ],
+      "mha": "GA080"
+    },
+    {
+      "code": "ftri",
+      "name": "Fort Riley, KS",
+      "branch": "Army",
       "state": "KS",
       "center": {
         "lat": 38.5266,
@@ -499,24 +179,832 @@
         "lat": 38.5266,
         "lng": -96.726486
       },
-      "candidateZips": [],
-      "mha": "KS101"
+      "candidateZips": [
+        "66503",
+        "66502",
+        "66441"
+      ],
+      "mha": "KS100"
     },
     {
-      "code": "wright",
-      "name": "WRIGHT-PATTERSON AFB, OH",
-      "branch": "Air Force",
-      "state": "OH",
+      "code": "ftdr",
+      "name": "Fort Drum, NY",
+      "branch": "Army",
+      "state": "NY",
       "center": {
-        "lat": 40.388783,
-        "lng": -82.764915
+        "lat": 42.165726,
+        "lng": -74.948051
       },
       "gate": {
-        "lat": 40.388783,
-        "lng": -82.764915
+        "lat": 42.165726,
+        "lng": -74.948051
       },
-      "candidateZips": [],
-      "mha": "OH231"
+      "candidateZips": [
+        "13601",
+        "13612",
+        "13619"
+      ],
+      "mha": "NY225"
+    },
+    {
+      "code": "ftle",
+      "name": "Fort Leonard Wood, MO",
+      "branch": "Army",
+      "state": "MO",
+      "center": {
+        "lat": 38.456085,
+        "lng": -92.288368
+      },
+      "gate": {
+        "lat": 38.456085,
+        "lng": -92.288368
+      },
+      "candidateZips": [
+        "65584",
+        "65583",
+        "65401"
+      ],
+      "mha": "MO163"
+    },
+    {
+      "code": "fthu",
+      "name": "Fort Huachuca, AZ",
+      "branch": "Army",
+      "state": "AZ",
+      "center": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "gate": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "candidateZips": [
+        "85650",
+        "85635",
+        "85615"
+      ],
+      "mha": "AZ014"
+    },
+    {
+      "code": "ftno",
+      "name": "Fort Novosel, AL",
+      "branch": "Army",
+      "state": "AL",
+      "center": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "gate": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "candidateZips": [
+        "36330",
+        "36322",
+        "36360"
+      ],
+      "mha": "AL002"
+    },
+    {
+      "code": "ftgr",
+      "name": "Fort Gregg-Adams, VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23831",
+        "23834",
+        "23860"
+      ],
+      "mha": "VA301"
+    },
+    {
+      "code": "fteu",
+      "name": "Fort Eustis (JBLE), VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23608",
+        "23602",
+        "23692"
+      ],
+      "mha": "VA297"
+    },
+    {
+      "code": "ftmy",
+      "name": "Fort Myer (JBM-HH), VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "22201",
+        "22207",
+        "22305"
+      ],
+      "mha": "VA290"
+    },
+    {
+      "code": "ftme",
+      "name": "Fort Meade, MD",
+      "branch": "Army",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "21113",
+        "21144",
+        "20724"
+      ],
+      "mha": "MD133"
+    },
+    {
+      "code": "ftbe",
+      "name": "Fort Belvoir, VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "22315",
+        "22153",
+        "22079"
+      ],
+      "mha": "VA291"
+    },
+    {
+      "code": "ftde",
+      "name": "Fort Detrick, MD",
+      "branch": "Army",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "21702",
+        "21701",
+        "21703"
+      ],
+      "mha": "MD130"
+    },
+    {
+      "code": "ftkn",
+      "name": "Fort Knox, KY",
+      "branch": "Army",
+      "state": "KY",
+      "center": {
+        "lat": 37.66814,
+        "lng": -84.670067
+      },
+      "gate": {
+        "lat": 37.66814,
+        "lng": -84.670067
+      },
+      "candidateZips": [
+        "40160",
+        "42701",
+        "40175"
+      ],
+      "mha": "KY110"
+    },
+    {
+      "code": "ftsi",
+      "name": "Fort Sill, OK",
+      "branch": "Army",
+      "state": "OK",
+      "center": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "gate": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "candidateZips": [
+        "73505",
+        "73507",
+        "73538"
+      ],
+      "mha": "OK237"
+    },
+    {
+      "code": "ftir",
+      "name": "Fort Irwin (NTC), CA",
+      "branch": "Army",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92311",
+        "92398",
+        "92342"
+      ],
+      "mha": "CA028"
+    },
+    {
+      "code": "ftwa",
+      "name": "Fort Wainwright, AK",
+      "branch": "Army",
+      "state": "AK",
+      "center": {
+        "lat": 61.370716,
+        "lng": -152.404419
+      },
+      "gate": {
+        "lat": 61.370716,
+        "lng": -152.404419
+      },
+      "candidateZips": [
+        "99709",
+        "99701",
+        "99712"
+      ],
+      "mha": "AK407"
+    },
+    {
+      "code": "ftgr",
+      "name": "Fort Greely, AK",
+      "branch": "Army",
+      "state": "AK",
+      "center": {
+        "lat": 61.370716,
+        "lng": -152.404419
+      },
+      "gate": {
+        "lat": 61.370716,
+        "lng": -152.404419
+      },
+      "candidateZips": [
+        "99737",
+        "99731",
+        "99780"
+      ],
+      "mha": "AK408"
+    },
+    {
+      "code": "jblm",
+      "name": "JBLM, WA",
+      "branch": "Army",
+      "state": "WA",
+      "center": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "gate": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "candidateZips": [
+        "98327",
+        "98513",
+        "98498"
+      ],
+      "mha": "WA311"
+    },
+    {
+      "code": "ftjo",
+      "name": "Fort Johnson, LA",
+      "branch": "Army",
+      "state": "LA",
+      "center": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "gate": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "candidateZips": [
+        "71446",
+        "71459",
+        "70634"
+      ],
+      "mha": "LA115"
+    },
+    {
+      "code": "ftei",
+      "name": "Fort Eisenhower, GA",
+      "branch": "Army",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "30809",
+        "30909",
+        "30907"
+      ],
+      "mha": "GA073"
+    },
+    {
+      "code": "redsto",
+      "name": "Redstone Arsenal, AL",
+      "branch": "Army",
+      "state": "AL",
+      "center": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "gate": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "candidateZips": [
+        "35806",
+        "35758",
+        "35824"
+      ],
+      "mha": "AL005"
+    },
+    {
+      "code": "aberde",
+      "name": "Aberdeen Proving Ground, MD",
+      "branch": "Army",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "21001",
+        "21005",
+        "21009"
+      ],
+      "mha": "MD127"
+    },
+    {
+      "code": "ftsh",
+      "name": "Fort Shafter, HI",
+      "branch": "Army",
+      "state": "HI",
+      "center": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "gate": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "candidateZips": [
+        "96819",
+        "96817",
+        "96822"
+      ],
+      "mha": "HI096"
+    },
+    {
+      "code": "schofi",
+      "name": "Schofield Barracks, HI",
+      "branch": "Army",
+      "state": "HI",
+      "center": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "gate": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "candidateZips": [
+        "96786",
+        "96789",
+        "96797"
+      ],
+      "mha": "HI097"
+    },
+    {
+      "code": "triple",
+      "name": "Tripler Army Medical Center, HI",
+      "branch": "Army",
+      "state": "HI",
+      "center": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "gate": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "candidateZips": [
+        "96819",
+        "96817",
+        "96826"
+      ],
+      "mha": "HI096"
+    },
+    {
+      "code": "rock",
+      "name": "Rock Island Arsenal, IL",
+      "branch": "Army",
+      "state": "IL",
+      "center": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "gate": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "candidateZips": [
+        "61201",
+        "61265",
+        "52803"
+      ],
+      "mha": "IL090"
+    },
+    {
+      "code": "annist",
+      "name": "Anniston Army Depot, AL",
+      "branch": "Army",
+      "state": "AL",
+      "center": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "gate": {
+        "lat": 32.806671,
+        "lng": -86.79113
+      },
+      "candidateZips": [
+        "36207",
+        "36265",
+        "36201"
+      ],
+      "mha": "AL003"
+    },
+    {
+      "code": "blue",
+      "name": "Blue Grass Army Depot, KY",
+      "branch": "Army",
+      "state": "KY",
+      "center": {
+        "lat": 37.66814,
+        "lng": -84.670067
+      },
+      "gate": {
+        "lat": 37.66814,
+        "lng": -84.670067
+      },
+      "candidateZips": [
+        "40475",
+        "40403",
+        "40509"
+      ],
+      "mha": "KY109"
+    },
+    {
+      "code": "tooele",
+      "name": "Tooele Army Depot, UT",
+      "branch": "Army",
+      "state": "UT",
+      "center": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "gate": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "candidateZips": [
+        "84074",
+        "84029",
+        "84044"
+      ],
+      "mha": "UT292"
+    },
+    {
+      "code": "mcbat",
+      "name": "Camp Atterbury, IN",
+      "branch": "Army",
+      "state": "IN",
+      "center": {
+        "lat": 39.849426,
+        "lng": -86.258278
+      },
+      "gate": {
+        "lat": 39.849426,
+        "lng": -86.258278
+      },
+      "candidateZips": [
+        "46131",
+        "46142",
+        "46184"
+      ],
+      "mha": "IN098"
+    },
+    {
+      "code": "mcbsh",
+      "name": "Camp Shelby, MS",
+      "branch": "Army",
+      "state": "MS",
+      "center": {
+        "lat": 32.741646,
+        "lng": -89.678696
+      },
+      "gate": {
+        "lat": 32.741646,
+        "lng": -89.678696
+      },
+      "candidateZips": [
+        "39402",
+        "39401",
+        "39465"
+      ],
+      "mha": "MS171"
+    },
+    {
+      "code": "mcbri",
+      "name": "Camp Ripley, MN",
+      "branch": "Army",
+      "state": "MN",
+      "center": {
+        "lat": 45.694454,
+        "lng": -93.900192
+      },
+      "gate": {
+        "lat": 45.694454,
+        "lng": -93.900192
+      },
+      "candidateZips": [
+        "56345",
+        "56373",
+        "56364"
+      ],
+      "mha": "MN161"
+    },
+    {
+      "code": "ftin",
+      "name": "Fort Indiantown Gap, PA",
+      "branch": "Army",
+      "state": "PA",
+      "center": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "gate": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "candidateZips": [
+        "17003",
+        "17078",
+        "17042"
+      ],
+      "mha": "PA250"
+    },
+    {
+      "code": "ftmc",
+      "name": "Fort McCoy, WI",
+      "branch": "Army",
+      "state": "WI",
+      "center": {
+        "lat": 44.268543,
+        "lng": -89.616508
+      },
+      "gate": {
+        "lat": 44.268543,
+        "lng": -89.616508
+      },
+      "candidateZips": [
+        "54656",
+        "54660",
+        "54646"
+      ],
+      "mha": "WI318"
+    },
+    {
+      "code": "ftle",
+      "name": "Fort Leavenworth, KS",
+      "branch": "Army",
+      "state": "KS",
+      "center": {
+        "lat": 38.5266,
+        "lng": -96.726486
+      },
+      "gate": {
+        "lat": 38.5266,
+        "lng": -96.726486
+      },
+      "candidateZips": [
+        "66048",
+        "66027",
+        "66109"
+      ],
+      "mha": "KS102"
+    },
+    {
+      "code": "ftwa",
+      "name": "Fort Walker, VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "22427",
+        "22546",
+        "22485"
+      ],
+      "mha": "VA368"
+    },
+    {
+      "code": "ftba",
+      "name": "Fort Barfoot, VA",
+      "branch": "Army",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23824",
+        "23930",
+        "23927"
+      ],
+      "mha": "VA294"
+    },
+    {
+      "code": "hunter",
+      "name": "Hunter Army Airfield, GA",
+      "branch": "Army",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "31405",
+        "31406",
+        "31322"
+      ],
+      "mha": "GA080"
+    },
+    {
+      "code": "ftha",
+      "name": "Fort Hamilton, NY",
+      "branch": "Army",
+      "state": "NY",
+      "center": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "gate": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "candidateZips": [
+        "11209",
+        "11228",
+        "11220"
+      ],
+      "mha": "NY218"
+    },
+    {
+      "code": "ftbu",
+      "name": "Fort Buchanan, PR",
+      "branch": "Army",
+      "state": "PR",
+      "center": {
+        "lat": 18.220833,
+        "lng": -66.590149
+      },
+      "gate": {
+        "lat": 18.220833,
+        "lng": -66.590149
+      },
+      "candidateZips": [
+        "00966",
+        "00961",
+        "00926"
+      ],
+      "mha": "PR321"
+    },
+    {
+      "code": "nsnor",
+      "name": "Naval Station Norfolk, VA",
+      "branch": "Navy",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23518",
+        "23455",
+        "23322"
+      ],
+      "mha": "VA298"
+    },
+    {
+      "code": "naval",
+      "name": "Naval Base San Diego, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92106",
+        "92118",
+        "91910"
+      ],
+      "mha": "CA020"
+    },
+    {
+      "code": "naval",
+      "name": "Naval Base Kitsap, WA",
+      "branch": "Navy",
+      "state": "WA",
+      "center": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "gate": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "candidateZips": [
+        "98383",
+        "98370",
+        "98312"
+      ],
+      "mha": "WA310"
     }
   ]
 }
