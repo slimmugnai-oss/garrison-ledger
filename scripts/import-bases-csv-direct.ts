@@ -115,8 +115,7 @@ function extractPrimaryState(location: string): string {
 const MANUAL_MHA_OVERRIDES: Record<string, string> = {
   'FORT LIBERTY': 'NC182',
   'FORT BRAGG': 'NC182',
-  'FORT BLISS': 'TX282',
-  'FORT CARSON': 'CO050',
+  // FORT BLISS and FORT CARSON moved to bottom with correct codes
   'FORT SILL': 'OK237',
   'FORT DRUM': 'NY225',
   'FORT IRWIN': 'CA028',
@@ -152,6 +151,9 @@ const MANUAL_MHA_OVERRIDES: Record<string, string> = {
   'JOINT BASE ANDREWS': 'MD134',
   'PEARL HARBOR': 'HI096',
   'HICKAM': 'HI096',
+  // CRITICAL MHA CORRECTIONS (Database-verified 2025 BAH rates):
+  'FORT CARSON': 'CO046',  // Colorado Springs, CO (verified in bah_rates)
+  'FORT BLISS': 'TX279',   // El Paso, TX (verified in bah_rates)
 };
 
 /**

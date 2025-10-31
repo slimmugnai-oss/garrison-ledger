@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated": "2025-10-31T03:04:19.189Z",
+    "generated": "2025-10-31T03:14:48.852Z",
     "source": "User CSV (150 bases + top 3 ZIPs) + military-bases.json (coords) + base-mha-map.json (MHA)",
     "total": 135,
     "note": "Comprehensive list of US military installations with curated top 3 ZIP codes for each."
@@ -124,7 +124,7 @@
         "80911",
         "80817"
       ],
-      "mha": "CO050"
+      "mha": "CO046"
     },
     {
       "code": "bliss",
@@ -144,7 +144,7 @@
         "79938",
         "79936"
       ],
-      "mha": "TX282"
+      "mha": "TX279"
     },
     {
       "code": "stewart",
