@@ -15,8 +15,10 @@ import type {
   KidsGrade,
 } from "@/app/types/navigator";
 import { errorResponse, Errors } from "@/lib/api-errors";
-import bases from "@/lib/data/bases-seed.json";
+import basesAllData from "@/lib/data/bases-all.json";
 import { logger } from "@/lib/logger";
+
+const bases = basesAllData.bases;
 import { fetchAmenitiesData } from "@/lib/navigator/amenities";
 import { fetchEnhancedAmenitiesData } from "@/lib/navigator/amenities-enhanced";
 import { analyzeCommuteComprehensive } from "@/lib/navigator/commute-enhanced";
