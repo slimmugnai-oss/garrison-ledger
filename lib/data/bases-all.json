@@ -3005,6 +3005,286 @@
         "19904",
         "19934"
       ]
+    },
+    {
+      "name": "DENVER/BUCKLEY SFB, CO",
+      "code": "buckley",
+      "branch": "Space Force",
+      "state": "CO",
+      "mha": "CO047",
+      "center": {
+        "lat": 39.717,
+        "lng": -104.752
+      },
+      "gate": {
+        "lat": 39.717,
+        "lng": -104.752
+      },
+      "candidateZips": [
+        "80011",
+        "80010",
+        "80012"
+      ]
+    },
+    {
+      "name": "COLORADO SPRINGS/PETERSON SFB, CO",
+      "code": "peterson",
+      "branch": "Space Force",
+      "state": "CO",
+      "mha": "CO046",
+      "center": {
+        "lat": 38.825,
+        "lng": -104.701
+      },
+      "gate": {
+        "lat": 38.825,
+        "lng": -104.701
+      },
+      "candidateZips": [
+        "80915",
+        "80906",
+        "80909"
+      ]
+    },
+    {
+      "name": "VANDENBERG SFB, CA",
+      "code": "vandenberg",
+      "branch": "Space Force",
+      "state": "CA",
+      "mha": "CA391",
+      "center": {
+        "lat": 34.741,
+        "lng": -120.572
+      },
+      "gate": {
+        "lat": 34.741,
+        "lng": -120.572
+      },
+      "candidateZips": [
+        "93436",
+        "93454",
+        "93460"
+      ]
+    },
+    {
+      "name": "PATRICK SFB, FL",
+      "code": "patrick",
+      "branch": "Space Force",
+      "state": "FL",
+      "mha": "FL057",
+      "center": {
+        "lat": 28.235,
+        "lng": -80.61
+      },
+      "gate": {
+        "lat": 28.235,
+        "lng": -80.61
+      },
+      "candidateZips": [
+        "32925",
+        "32937",
+        "32935"
+      ]
+    },
+    {
+      "name": "SCHRIEVER SFB, CO",
+      "code": "schriever",
+      "branch": "Space Force",
+      "state": "CO",
+      "mha": "CO046",
+      "center": {
+        "lat": 38.805,
+        "lng": -104.527
+      },
+      "gate": {
+        "lat": 38.805,
+        "lng": -104.527
+      },
+      "candidateZips": [
+        "80817",
+        "80840",
+        "80911"
+      ]
+    },
+    {
+      "name": "CAPE CANAVERAL SPACE FORCE STATION, FL",
+      "code": "canaveral",
+      "branch": "Space Force",
+      "state": "FL",
+      "mha": "FL057",
+      "center": {
+        "lat": 28.489,
+        "lng": -80.577
+      },
+      "gate": {
+        "lat": 28.489,
+        "lng": -80.577
+      },
+      "candidateZips": [
+        "32920",
+        "32922",
+        "32931"
+      ]
+    },
+    {
+      "name": "NAVAL STATION MAYPORT, FL",
+      "code": "mayport",
+      "branch": "Navy",
+      "state": "FL",
+      "mha": "FL059",
+      "center": {
+        "lat": 30.391,
+        "lng": -81.425
+      },
+      "gate": {
+        "lat": 30.391,
+        "lng": -81.425
+      },
+      "candidateZips": [
+        "32233",
+        "32225",
+        "32250"
+      ]
+    },
+    {
+      "name": "NAS NORTH ISLAND, CA",
+      "code": "northisland",
+      "branch": "Navy",
+      "state": "CA",
+      "mha": "CA020",
+      "center": {
+        "lat": 32.699,
+        "lng": -117.215
+      },
+      "gate": {
+        "lat": 32.699,
+        "lng": -117.215
+      },
+      "candidateZips": [
+        "92118",
+        "92106",
+        "92135"
+      ]
+    },
+    {
+      "name": "HURLBURT FIELD, FL",
+      "code": "hurlburt",
+      "branch": "USAF",
+      "state": "FL",
+      "mha": "FL056",
+      "center": {
+        "lat": 30.428,
+        "lng": -86.689
+      },
+      "gate": {
+        "lat": 30.428,
+        "lng": -86.689
+      },
+      "candidateZips": [
+        "32544",
+        "32547",
+        "32578"
+      ]
+    },
+    {
+      "name": "TYNDALL AFB, FL",
+      "code": "tyndall",
+      "branch": "USAF",
+      "state": "FL",
+      "mha": "FL062",
+      "center": {
+        "lat": 30.07,
+        "lng": -85.575
+      },
+      "gate": {
+        "lat": 30.07,
+        "lng": -85.575
+      },
+      "candidateZips": [
+        "32403",
+        "32404",
+        "32408"
+      ]
+    },
+    {
+      "name": "MINOT AFB, ND",
+      "code": "minot",
+      "branch": "USAF",
+      "state": "ND",
+      "mha": "ND196",
+      "center": {
+        "lat": 48.416,
+        "lng": -101.358
+      },
+      "gate": {
+        "lat": 48.416,
+        "lng": -101.358
+      },
+      "candidateZips": [
+        "58701",
+        "58703",
+        "58704"
+      ]
+    },
+    {
+      "name": "MALMSTROM SFB/GREAT FALLS, MT",
+      "code": "malmstrom",
+      "branch": "USAF",
+      "state": "MT",
+      "mha": "MT176",
+      "center": {
+        "lat": 47.506,
+        "lng": -111.183
+      },
+      "gate": {
+        "lat": 47.506,
+        "lng": -111.183
+      },
+      "candidateZips": [
+        "59404",
+        "59405",
+        "59401"
+      ]
+    },
+    {
+      "name": "BEALE AFB, CA",
+      "code": "beale",
+      "branch": "USAF",
+      "state": "CA",
+      "mha": "CA038",
+      "center": {
+        "lat": 39.136,
+        "lng": -121.437
+      },
+      "gate": {
+        "lat": 39.136,
+        "lng": -121.437
+      },
+      "candidateZips": [
+        "95903",
+        "95948",
+        "95993"
+      ]
+    },
+    {
+      "name": "KIRTLAND AFB, NM",
+      "code": "kirtland",
+      "branch": "USAF",
+      "state": "NM",
+      "mha": "NM204",
+      "center": {
+        "lat": 35.04,
+        "lng": -106.61
+      },
+      "gate": {
+        "lat": 35.04,
+        "lng": -106.61
+      },
+      "candidateZips": [
+        "87117",
+        "87123",
+        "87121"
+      ]
     }
   ]
 }
