@@ -1032,12 +1032,12 @@
       "branch": "Army",
       "state": "MI",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 42.491,
+        "lng": -83.137
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 42.491,
+        "lng": -83.137
       },
       "candidateZips": [
         "48092",
@@ -1112,12 +1112,12 @@
       "branch": "Army",
       "state": "WY",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 42.283,
+        "lng": -104.75
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 42.283,
+        "lng": -104.75
       },
       "candidateZips": [
         "82214",
@@ -1152,12 +1152,12 @@
       "branch": "Army",
       "state": "DC",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 38.868,
+        "lng": -77.016
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 38.868,
+        "lng": -77.016
       },
       "candidateZips": [
         "20024",
@@ -1272,12 +1272,12 @@
       "branch": "Army",
       "state": "MI",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 44.664,
+        "lng": -84.712
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 44.664,
+        "lng": -84.712
       },
       "candidateZips": [
         "49738",
@@ -1292,12 +1292,12 @@
       "branch": "Army",
       "state": "OR",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 46.05,
+        "lng": -123.938
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 46.05,
+        "lng": -123.938
       },
       "candidateZips": [
         "97146",
@@ -1332,12 +1332,12 @@
       "branch": "Army",
       "state": "OH",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.332,
+        "lng": -81.051
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.332,
+        "lng": -81.051
       },
       "candidateZips": [
         "44266",
@@ -1352,12 +1352,12 @@
       "branch": "Joint",
       "state": "MA",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.66,
+        "lng": -70.524
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.66,
+        "lng": -70.524
       },
       "candidateZips": [
         "02536",
@@ -1372,12 +1372,12 @@
       "branch": "Army",
       "state": "IA",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.688,
+        "lng": -93.691
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.688,
+        "lng": -93.691
       },
       "candidateZips": [
         "50131",
@@ -1632,12 +1632,12 @@
       "branch": "Navy",
       "state": "ME",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 43.086,
+        "lng": -70.734
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 43.086,
+        "lng": -70.734
       },
       "candidateZips": [
         "03904",
@@ -1832,12 +1832,12 @@
       "branch": "Navy",
       "state": "RI",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.527,
+        "lng": -71.327
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.527,
+        "lng": -71.327
       },
       "candidateZips": [
         "02840",
@@ -2032,12 +2032,12 @@
       "branch": "Navy",
       "state": "CT",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.382,
+        "lng": -72.089
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 41.382,
+        "lng": -72.089
       },
       "candidateZips": [
         "06340",
@@ -2572,12 +2572,12 @@
       "branch": "USMC",
       "state": "DC",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 38.879,
+        "lng": -76.997
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 38.879,
+        "lng": -76.997
       },
       "candidateZips": [
         "20003",
@@ -2652,12 +2652,12 @@
       "branch": "Joint",
       "state": "NJ",
       "center": {
-        "lat": 0,
-        "lng": 0
+        "lat": 40.032,
+        "lng": -74.592
       },
       "gate": {
-        "lat": 0,
-        "lng": 0
+        "lat": 40.032,
+        "lng": -74.592
       },
       "candidateZips": [
         "08060",
@@ -3051,7 +3051,7 @@
       "code": "vandenberg",
       "branch": "Space Force",
       "state": "CA",
-      "mha": "CA391",
+      "mha": "CA026",
       "center": {
         "lat": 34.741,
         "lng": -120.572
@@ -3229,7 +3229,7 @@
     {
       "name": "MALMSTROM SFB/GREAT FALLS, MT",
       "code": "malmstrom",
-      "branch": "USAF",
+      "branch": "Space Force",
       "state": "MT",
       "mha": "MT176",
       "center": {
