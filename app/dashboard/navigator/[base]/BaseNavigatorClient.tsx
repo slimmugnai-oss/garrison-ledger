@@ -19,6 +19,7 @@ import type {
   NavigatorResponse,
 } from "@/app/types/navigator";
 import { getScoreBreakdown } from "@/lib/navigator/score";
+import { generateHiddenSEOContent } from "@/lib/seo/base-faq";
 
 interface Props {
   base: BaseSeed;
@@ -1344,6 +1345,56 @@ export default function BaseNavigatorClient({
           </div>
         </div>
       </div>
+
+      {/* Hidden SEO Content Section - Collapsed by default, crawlable for search engines */}
+      <SEOContentSection base={base} />
     </main>
+  );
+}
+
+/**
+ * SEO Content Section - Hidden by default for clean UI, but crawlable by search engines
+ */
+function SEOContentSection({ base }: { base: BaseSeed }) {
+  const seoContent = generateHiddenSEOContent(base);
+  const baseName = base.name.split(',')[0].trim();
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-12">
+      <details className="group rounded-xl border-2 border-slate-200 bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-6 py-4 font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-sm uppercase tracking-wide text-slate-600">📚 Additional PCS Planning Resources</span>
+            <Icon name="ChevronDown" className="h-5 w-5 text-slate-400 transition-transform group-open:rotate-180" />
+          </div>
+        </summary>
+        
+        <div className="space-y-6 border-t border-slate-200 px-6 py-6">
+          {/* About This Base */}
+          <div>
+            <h2 className="mb-3 text-lg font-bold text-slate-900">About {baseName}</h2>
+            <p className="leading-relaxed text-slate-700">{seoContent.aboutBase}</p>
+          </div>
+
+          {/* PCS Planning Guide */}
+          <div>
+            <h2 className="mb-3 text-lg font-bold text-slate-900">PCS Planning for {baseName}</h2>
+            <p className="leading-relaxed text-slate-700">{seoContent.pcsPlanning}</p>
+          </div>
+
+          {/* Housing Guide */}
+          <div>
+            <h2 className="mb-3 text-lg font-bold text-slate-900">Housing Guide for {baseName}</h2>
+            <p className="leading-relaxed text-slate-700">{seoContent.housingGuide}</p>
+          </div>
+
+          {/* Schools Guide */}
+          <div>
+            <h2 className="mb-3 text-lg font-bold text-slate-900">Schools Near {baseName}</h2>
+            <p className="leading-relaxed text-slate-700">{seoContent.schoolsGuide}</p>
+          </div>
+        </div>
+      </details>
+    </div>
   );
 }

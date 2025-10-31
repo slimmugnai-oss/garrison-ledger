@@ -1,6 +1,9 @@
 import { MetadataRoute } from "next";
 
 import { SITE_URL } from "@/lib/seo-config";
+import basesAllData from "@/lib/data/bases-all.json";
+
+const bases = basesAllData.bases;
 
 /**
  * Dynamic sitemap generation for Garrison Ledger
@@ -148,5 +151,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  return [...publicPages, ...hubPages, ...protectedPages];
+  // All 164 Base Navigator pages - SEO GOLDMINE!
+  const baseNavigatorPages: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE_URL}/dashboard/navigator`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    },
+    ...bases.map((base) => ({
+      url: `${SITE_URL}/dashboard/navigator/${base.code}`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8, // High priority - target military PCS search traffic
+    })),
+  ];
+
+  return [...publicPages, ...hubPages, ...protectedPages, ...baseNavigatorPages];
 }

@@ -14,6 +14,18 @@ import { redirect } from "next/navigation";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import basesAllData from "@/lib/data/bases-all.json";
+import { 
+  generateSEOTitle, 
+  generateSEODescription, 
+  generateOGTitle, 
+  generateOGDescription 
+} from "@/lib/seo/base-keywords";
+import {
+  generatePlaceSchema,
+  generateWebPageSchema,
+  generateFAQSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/seo/base-schema";
 
 const bases = basesAllData.bases;
 
@@ -37,9 +49,71 @@ export async function generateMetadata({
     return { title: "Base Navigator" };
   }
 
+  // Generate SEO-optimized metadata
+  const seoTitle = generateSEOTitle(baseData);
+  const seoDescription = generateSEODescription(baseData);
+  const ogTitle = generateOGTitle(baseData);
+  const ogDescription = generateOGDescription(baseData);
+  const baseUrl = `https://www.garrisonledger.com/dashboard/navigator/${baseData.code}`;
+  const baseName = baseData.name.split(',')[0].trim();
+
   return {
-    title: `${baseData.name} Navigator | Garrison Ledger`,
-    description: `Find the best neighborhoods near ${baseData.name}. Compare schools, housing costs vs BAH, commute times, and weather.`,
+    title: seoTitle,
+    description: seoDescription,
+    
+    // Open Graph
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      url: baseUrl,
+      siteName: 'Garrison Ledger',
+      type: 'website',
+      images: [
+        {
+          url: '/og-base-navigator.png', // TODO: Create base-specific OG images
+          width: 1200,
+          height: 630,
+          alt: `${baseName} Neighborhood Guide for Military Families`,
+        },
+      ],
+      locale: 'en_US',
+    },
+    
+    // Twitter Card
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDescription,
+      images: ['/og-base-navigator.png'],
+    },
+    
+    // Additional SEO
+    keywords: [
+      `${baseName} housing`,
+      `${baseName} schools`,
+      `${baseName} neighborhoods`,
+      `PCS to ${baseName}`,
+      `${baseName} BAH`,
+      `best neighborhoods near ${baseName}`,
+      `${baseName} military housing`,
+      `${baseName} off base housing`,
+      `${baseData.state} military base`,
+    ],
+    
+    alternates: {
+      canonical: baseUrl,
+    },
+    
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   };
 }
 
@@ -162,8 +236,32 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
     .eq("base_code", baseCode)
     .maybeSingle();
 
+  // Generate schema.org structured data for SEO
+  const placeSchema = generatePlaceSchema(baseData);
+  const webPageSchema = generateWebPageSchema(baseData);
+  const faqSchema = generateFAQSchema(baseData);
+  const breadcrumbSchema = generateBreadcrumbSchema(baseData);
+
   return (
     <>
+      {/* Schema.org Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <Header />
       <BaseNavigatorClient
         base={baseData}
