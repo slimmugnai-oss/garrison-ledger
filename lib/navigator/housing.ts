@@ -28,6 +28,14 @@ interface ZillowProperty {
   latitude?: number;
   longitude?: number;
   rentZestimate?: number;
+  
+  // Enhanced fields for Option 4
+  homeType?: string; // "SINGLE_FAMILY", "TOWNHOUSE", "APARTMENT", "CONDO"
+  livingArea?: number; // Square footage
+  lotAreaValue?: number; // Lot size in sqft
+  yearBuilt?: number;
+  timeOnZillow?: number; // Days on market
+  petPolicy?: string; // "Cats allowed", "Dogs allowed", etc.
 }
 
 interface ZillowSearchResponse {
@@ -92,10 +100,34 @@ export async function fetchMedianRent(zip: string, bedrooms: number): Promise<nu
 }
 
 /**
- * Fetch sample listings (top 3)
+ * Normalize Zillow home type to user-friendly string
+ */
+function normalizeHomeType(homeType?: string): string | undefined {
+  if (!homeType) return undefined;
+  
+  const type = homeType.toUpperCase();
+  if (type.includes('SINGLE') || type.includes('FAMILY')) return 'House';
+  if (type.includes('TOWNHOUSE') || type.includes('TOWN')) return 'Townhouse';
+  if (type.includes('APARTMENT') || type.includes('APT')) return 'Apartment';
+  if (type.includes('CONDO')) return 'Condo';
+  
+  return homeType; // Return as-is if unknown
+}
+
+/**
+ * Detect if property is pet-friendly from policy string
+ */
+function isPetFriendly(petPolicy?: string): boolean {
+  if (!petPolicy) return false;
+  const policy = petPolicy.toLowerCase();
+  return policy.includes('cat') || policy.includes('dog') || policy.includes('pet');
+}
+
+/**
+ * Fetch sample listings (top 6 for Option 4)
  */
 export async function fetchSampleListings(zip: string, bedrooms: number): Promise<Listing[]> {
-  const cacheKey = `zillow:listings:v2:${zip}:b${bedrooms}`;
+  const cacheKey = `zillow:listings:v3:${zip}:b${bedrooms}`; // v3: More listings + enhanced data
   const cached = await getCache<Listing[]>(cacheKey);
   if (cached) return cached;
 
@@ -123,9 +155,9 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
 
     const data = await response.json() as ZillowSearchResponse;
     
-    // Parse listings (adjust to actual API structure)
+    // Parse listings with ENHANCED DATA (Option 4)
     const listings: Listing[] = (data.props || [])
-      .slice(0, 3)
+      .slice(0, 6) // CHANGED: 3 → 6 listings
       .map((p) => ({
         title: p.address?.streetAddress || p.streetAddress || 'Listing',
         price_cents: (p.price || p.unformattedPrice || 0) * 100,
@@ -133,7 +165,15 @@ export async function fetchSampleListings(zip: string, bedrooms: number): Promis
         photo: p.imgSrc || p.photos?.[0],
         zip: p.address?.zipcode || zip,
         bedrooms: p.bedrooms,
-        bathrooms: p.bathrooms
+        bathrooms: p.bathrooms,
+        
+        // ENHANCED DATA (Option 4)
+        property_type: normalizeHomeType(p.homeType),
+        sqft: p.livingArea,
+        lot_sqft: p.lotAreaValue,
+        year_built: p.yearBuilt,
+        pet_friendly: isPetFriendly(p.petPolicy),
+        days_on_market: p.timeOnZillow,
       }));
 
     await setCache(cacheKey, listings, 24 * 3600); // 24h cache

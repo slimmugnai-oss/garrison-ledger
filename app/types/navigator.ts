@@ -45,6 +45,14 @@ export interface Listing {
   zip?: string;
   bedrooms?: number;
   bathrooms?: number;
+  
+  // Enhanced data for Option 4
+  property_type?: string; // "House", "Townhouse", "Apartment", "Condo"
+  sqft?: number; // Square footage
+  lot_sqft?: number; // Lot size
+  year_built?: number;
+  pet_friendly?: boolean;
+  days_on_market?: number;
 }
 
 export interface PlaceDetail {

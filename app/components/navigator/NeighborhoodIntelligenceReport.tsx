@@ -956,7 +956,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       </div>
                       <div>
                         <h4 className="text-2xl font-bold text-slate-900">Available Properties</h4>
-                        <div className="text-sm text-slate-600">{neighborhood.payload.sample_listings.length} listings in this area</div>
+                        <div className="text-sm text-slate-600">{neighborhood.payload.sample_listings.length} featured listings</div>
                       </div>
                     </div>
                     <a 
@@ -970,7 +970,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                     </a>
                   </div>
 
-                  {/* Property Cards Grid */}
+                  {/* Property Cards Grid - OPTION 4: 6 listings with enhanced badges */}
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {neighborhood.payload.sample_listings.map((listing, i) => (
                       <a
@@ -1000,16 +1000,35 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                             </div>
                             <div className="text-xs text-blue-100">/ month</div>
                           </div>
+                          
+                          {/* Pet Friendly Badge (Option 4) */}
+                          {listing.pet_friendly && (
+                            <div className="absolute top-3 left-3 rounded-full bg-green-600 px-3 py-1 shadow-lg">
+                              <div className="flex items-center gap-1 text-xs font-semibold text-white">
+                                <Icon name="Heart" className="h-3 w-3" />
+                                Pet Friendly
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Property Details */}
                         <div className="p-4">
-                          <h5 className="mb-3 text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                          <h5 className="mb-2 text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                             {listing.title}
                           </h5>
                           
-                          {/* Beds/Baths */}
-                          <div className="mb-3 flex items-center gap-4 text-sm text-slate-600">
+                          {/* Property Type Badge (Option 4) */}
+                          {listing.property_type && (
+                            <div className="mb-3">
+                              <span className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                                {listing.property_type}
+                              </span>
+                            </div>
+                          )}
+                          
+                          {/* Beds/Baths + Sqft (Option 4) */}
+                          <div className="mb-3 flex items-center gap-3 flex-wrap text-sm text-slate-600">
                             {listing.bedrooms && (
                               <div className="flex items-center gap-1">
                                 <span className="font-semibold">{listing.bedrooms}</span> bed{listing.bedrooms !== 1 ? 's' : ''}
@@ -1018,6 +1037,11 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                             {listing.bathrooms && (
                               <div className="flex items-center gap-1">
                                 <span className="font-semibold">{listing.bathrooms}</span> bath{listing.bathrooms !== 1 ? 's' : ''}
+                              </div>
+                            )}
+                            {listing.sqft && (
+                              <div className="flex items-center gap-1">
+                                <span className="font-semibold">{listing.sqft.toLocaleString()}</span> sqft
                               </div>
                             )}
                           </div>
@@ -1103,62 +1127,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 <p className="text-slate-700 leading-relaxed text-lg">{housingIntel.bah_analysis.recommendation}</p>
               </div>
 
-              {/* Property Types - Visual Distribution */}
-              <div>
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Home" className="h-5 w-5 text-slate-700" />
-                  <h4 className="text-lg font-bold text-slate-900">Property Type Distribution</h4>
-                </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                        <Icon name="Home" className="h-7 w-7 text-blue-600" />
-                      </div>
-                      <div className="font-bold text-slate-900">Single Family</div>
-                    </div>
-                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.single_family.count}</div>
-                    <div className="text-sm text-slate-600 mb-3">properties</div>
-                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full rounded-full bg-blue-600" style={{ 
-                        width: `${(housingIntel.property_types.single_family.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
-                      }} />
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                        <Icon name="Home" className="h-7 w-7 text-green-600" />
-                      </div>
-                      <div className="font-bold text-slate-900">Townhouse</div>
-                    </div>
-                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.townhouse.count}</div>
-                    <div className="text-sm text-slate-600 mb-3">properties</div>
-                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full rounded-full bg-green-600" style={{ 
-                        width: `${(housingIntel.property_types.townhouse.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
-                      }} />
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                        <Icon name="Home" className="h-7 w-7 text-purple-600" />
-                      </div>
-                      <div className="font-bold text-slate-900">Apartment</div>
-                    </div>
-                    <div className="mb-2 text-4xl font-bold text-slate-900">{housingIntel.property_types.apartment.count}</div>
-                    <div className="text-sm text-slate-600 mb-3">properties</div>
-                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full rounded-full bg-purple-600" style={{ 
-                        width: `${(housingIntel.property_types.apartment.count / (housingIntel.property_types.single_family.count + housingIntel.property_types.townhouse.count + housingIntel.property_types.apartment.count)) * 100}%` 
-                      }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
 
               {/* Market Trends - Enhanced */}
               <div className="rounded-xl border-2 border-slate-200 bg-white p-8 shadow-sm">
@@ -1206,41 +1174,6 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                 </div>
               </div>
 
-              {/* Property Amenities */}
-              <div>
-                <div className="mb-4 flex items-center gap-2">
-                  <Icon name="Star" className="h-5 w-5 text-amber-600" />
-                  <h4 className="text-lg font-bold text-slate-900">Property Features</h4>
-                </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border-2 border-green-200 p-6">
-                    <div className="mb-3 flex items-center gap-2">
-                      <Icon name="Heart" className="h-6 w-6 text-green-600" />
-                      <div className="text-sm font-semibold text-slate-600">Pet Friendly</div>
-                    </div>
-                    <div className="text-4xl font-bold text-green-600">{housingIntel.pet_friendly_count}</div>
-                    <div className="text-sm text-slate-600">properties</div>
-                  </div>
-
-                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 p-6">
-                    <div className="mb-3 flex items-center gap-2">
-                      <Icon name="Zap" className="h-6 w-6 text-blue-600" />
-                      <div className="text-sm font-semibold text-slate-600">Utilities Included</div>
-                    </div>
-                    <div className="text-4xl font-bold text-blue-600">{housingIntel.utilities_included_count}</div>
-                    <div className="text-sm text-slate-600">properties</div>
-                  </div>
-
-                  <div className="rounded-xl bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 p-6">
-                    <div className="mb-3 flex items-center gap-2">
-                      <Icon name="Home" className="h-6 w-6 text-slate-700" />
-                      <div className="text-sm font-semibold text-slate-600">With Yard</div>
-                    </div>
-                    <div className="text-4xl font-bold text-slate-700">{housingIntel.yard_count}</div>
-                    <div className="text-sm text-slate-600">properties</div>
-                  </div>
-                </div>
-              </div>
 
               {/* Military Friendly Note */}
               <div className="rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white shadow-xl">
