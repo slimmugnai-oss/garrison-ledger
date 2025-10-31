@@ -333,21 +333,29 @@ function ensureUnique(proposedCode: string, baseName: string, state: string): st
 }
 
 async function main() {
-  console.log('🔄 Importing 150 bases from CSV...\n');
+  console.log('🔄 Importing bases from CSV v2...\n');
   
-  const csvPath = '/Users/slim/Desktop/Top_US_military_bases_and_best_nearby_zip_codes.csv';
+  const csvPath = '/Users/slim/Desktop/top_150_us_military_bases_best_nearby_zip_codes_v2.csv';
   const rows = parseCSV(csvPath);
   
   console.log(`Found ${rows.length} bases in CSV\n`);
   
   const baseSeeds: BaseSeed[] = [];
   const warnings: string[] = [];
+  const seenBases = new Set<string>(); // Track to skip duplicates
   
   for (const row of rows) {
     if (!row.Base || !row.Zip1) {
-      console.log(`⚠️  Skipping incomplete row`);
+      continue; // Skip empty/incomplete rows silently
+    }
+    
+    // Skip duplicates (case-insensitive)
+    const baseKey = row.Base.toLowerCase();
+    if (seenBases.has(baseKey)) {
+      console.log(`⚠️  DUPLICATE SKIPPED: ${row.Base}`);
       continue;
     }
+    seenBases.add(baseKey);
     
     const state = extractPrimaryState(row.Location);
     if (!state) {
@@ -377,10 +385,28 @@ async function main() {
     // Use CSV name as-is (cleaner than military-bases.json)
     const name = `${row.Base}, ${state}`;
     
+    // Correct branch assignment (CSV has some classification errors)
+    let branch = row.Branch;
+    
+    // JBLM is Joint (Army/Air Force), not just Army
+    if (row.Base.includes('JBLM') || row.Base.includes('Joint Base Lewis-McChord')) {
+      branch = 'Joint';
+    }
+    
+    // All "Joint Base" facilities are Joint
+    if (row.Base.includes('Joint Base') || row.Base.startsWith('JB ') || row.Base.startsWith('JEB ')) {
+      branch = 'Joint';
+    }
+    
+    // JB Pearl Harbor-Hickam is Joint (Navy/Air Force)
+    if (row.Base.includes('Pearl Harbor') && row.Base.includes('Hickam')) {
+      branch = 'Joint';
+    }
+    
     baseSeeds.push({
       code,
       name,
-      branch: row.Branch,
+      branch,
       state,
       center: { lat, lng },
       gate: { lat, lng },

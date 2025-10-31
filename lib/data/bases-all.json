@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "generated": "2025-10-31T02:54:19.970Z",
+    "generated": "2025-10-31T03:02:54.779Z",
     "source": "User CSV (150 bases + top 3 ZIPs) + military-bases.json (coords) + base-mha-map.json (MHA)",
-    "total": 50,
+    "total": 133,
     "note": "Comprehensive list of US military installations with curated top 3 ZIP codes for each."
   },
   "bases": [
@@ -489,7 +489,7 @@
     {
       "code": "jblm",
       "name": "JBLM, WA",
-      "branch": "Army",
+      "branch": "Joint",
       "state": "WA",
       "center": {
         "lat": 47.400902,
@@ -947,6 +947,486 @@
       "mha": "PR321"
     },
     {
+      "code": "white",
+      "name": "White Sands Missile Range, NM",
+      "branch": "Army",
+      "state": "NM",
+      "center": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "gate": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "candidateZips": [
+        "88011",
+        "88012",
+        "88310"
+      ],
+      "mha": "NM209"
+    },
+    {
+      "code": "yuma",
+      "name": "Yuma Proving Ground, AZ",
+      "branch": "Army",
+      "state": "AZ",
+      "center": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "gate": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "candidateZips": [
+        "85365",
+        "85364",
+        "85367"
+      ],
+      "mha": "MD127"
+    },
+    {
+      "code": "dugway",
+      "name": "Dugway Proving Ground, UT",
+      "branch": "Army",
+      "state": "UT",
+      "center": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "gate": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "candidateZips": [
+        "84074",
+        "84029",
+        "84044"
+      ],
+      "mha": "MD127"
+    },
+    {
+      "code": "hunter_ca",
+      "name": "Fort Hunter Liggett, CA",
+      "branch": "Army",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93928",
+        "93451",
+        "93926"
+      ],
+      "mha": "AZ014"
+    },
+    {
+      "code": "detroit",
+      "name": "Detroit Arsenal, MI",
+      "branch": "Army",
+      "state": "MI",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "48092",
+        "48088",
+        "48066"
+      ],
+      "mha": "MI142"
+    },
+    {
+      "code": "carlisle",
+      "name": "Carlisle Barracks, PA",
+      "branch": "Army",
+      "state": "PA",
+      "center": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "gate": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "candidateZips": [
+        "17013",
+        "17015",
+        "17050"
+      ],
+      "mha": "PA247"
+    },
+    {
+      "code": "presidio",
+      "name": "Presidio of Monterey (DLI), CA",
+      "branch": "Army",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93940",
+        "93955",
+        "93950"
+      ],
+      "mha": "CA039"
+    },
+    {
+      "code": "mcbblan",
+      "name": "Camp Blanding, FL",
+      "branch": "Army",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32091",
+        "32043",
+        "32065"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbguer",
+      "name": "Camp Guernsey, WY",
+      "branch": "Army",
+      "state": "WY",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "82214",
+        "82070",
+        "82009"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbswif",
+      "name": "Camp Swift, TX",
+      "branch": "Army",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "78602",
+        "78621",
+        "78615"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcnair",
+      "name": "Fort McNair, DC",
+      "branch": "Army",
+      "state": "DC",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "20024",
+        "20003",
+        "22202"
+      ],
+      "mha": "AL001"
+    },
+    {
+      "code": "west",
+      "name": "West Point (USMA), NY",
+      "branch": "Army",
+      "state": "NY",
+      "center": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "gate": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "candidateZips": [
+        "10996",
+        "10928",
+        "12518"
+      ],
+      "mha": "NY217"
+    },
+    {
+      "code": "usag",
+      "name": "USAG Miami (SOUTHCOM), FL",
+      "branch": "Army",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "33172",
+        "33178",
+        "33126"
+      ],
+      "mha": "FL061"
+    },
+    {
+      "code": "mcbbull",
+      "name": "Camp Bullis, TX",
+      "branch": "Army",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "78257",
+        "78256",
+        "78015"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "pope",
+      "name": "Pope Army Airfield, NC",
+      "branch": "Army",
+      "state": "NC",
+      "center": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "gate": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "candidateZips": [
+        "28308",
+        "28303",
+        "28311"
+      ],
+      "mha": "NC182"
+    },
+    {
+      "code": "red",
+      "name": "Red River Army Depot, TX",
+      "branch": "Army",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "75501",
+        "75503",
+        "71854"
+      ],
+      "mha": "MD135"
+    },
+    {
+      "code": "mcbgray",
+      "name": "Camp Grayling, MI",
+      "branch": "Army",
+      "state": "MI",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "49738",
+        "49686",
+        "48629"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbrile",
+      "name": "Camp Rilea, OR",
+      "branch": "Army",
+      "state": "OR",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "97146",
+        "97138",
+        "97103"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbsan",
+      "name": "Camp San Luis Obispo, CA",
+      "branch": "Army",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93405",
+        "93422",
+        "93401"
+      ],
+      "mha": "CA392"
+    },
+    {
+      "code": "mcbjame",
+      "name": "Camp James A. Garfield, OH",
+      "branch": "Army",
+      "state": "OH",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "44266",
+        "44240",
+        "44202"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "joint",
+      "name": "Joint Base Cape Cod, MA",
+      "branch": "Joint",
+      "state": "MA",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "02536",
+        "02532",
+        "02601"
+      ],
+      "mha": "MA124"
+    },
+    {
+      "code": "mcbdodg",
+      "name": "Camp Dodge, IA",
+      "branch": "Army",
+      "state": "IA",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "50131",
+        "50322",
+        "50266"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbbeau",
+      "name": "Camp Beauregard, LA",
+      "branch": "Army",
+      "state": "LA",
+      "center": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "gate": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "candidateZips": [
+        "71360",
+        "71301",
+        "71405"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcbmerr",
+      "name": "Camp Merrill, GA",
+      "branch": "Army",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "30533",
+        "30028",
+        "30528"
+      ],
+      "mha": "NC178"
+    },
+    {
       "code": "nsnorf",
       "name": "Naval Station Norfolk, VA",
       "branch": "Navy",
@@ -1005,6 +1485,1186 @@
         "98312"
       ],
       "mha": "WA310"
+    },
+    {
+      "code": "nas",
+      "name": "NAS Jacksonville, FL",
+      "branch": "Navy",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32073",
+        "32065",
+        "32222"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nas_fl",
+      "name": "NAS Pensacola, FL",
+      "branch": "Navy",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32507",
+        "32506",
+        "32526"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nas_wa",
+      "name": "NAS Whidbey Island, WA",
+      "branch": "Navy",
+      "state": "WA",
+      "center": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "gate": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "candidateZips": [
+        "98277",
+        "98239",
+        "98221"
+      ],
+      "mha": "WA312"
+    },
+    {
+      "code": "nas_ca",
+      "name": "NAS Lemoore, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93245",
+        "93230",
+        "93266"
+      ],
+      "mha": "CA023"
+    },
+    {
+      "code": "nsgrea",
+      "name": "Naval Station Great Lakes, IL",
+      "branch": "Navy",
+      "state": "IL",
+      "center": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "gate": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "candidateZips": [
+        "60044",
+        "60048",
+        "60031"
+      ],
+      "mha": "IL092"
+    },
+    {
+      "code": "nsa",
+      "name": "NSA Mid-South, TN",
+      "branch": "Navy",
+      "state": "TN",
+      "center": {
+        "lat": 35.747845,
+        "lng": -86.692345
+      },
+      "gate": {
+        "lat": 35.747845,
+        "lng": -86.692345
+      },
+      "candidateZips": [
+        "38053",
+        "38002",
+        "38016"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nsa_md",
+      "name": "NSA Bethesda (Walter Reed), MD",
+      "branch": "Navy",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "20814",
+        "20817",
+        "20852"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nsport",
+      "name": "Portsmouth Naval Shipyard, ME",
+      "branch": "Navy",
+      "state": "ME",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "03904",
+        "03801",
+        "03903"
+      ],
+      "mha": "VA298"
+    },
+    {
+      "code": "nas_md",
+      "name": "NAS Patuxent River, MD",
+      "branch": "Navy",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "20619",
+        "20650",
+        "20653"
+      ],
+      "mha": "MD135"
+    },
+    {
+      "code": "nsa_ca",
+      "name": "NSA Monterey (NPS), CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93940",
+        "93950",
+        "93955"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nbvc",
+      "name": "NBVC Port Hueneme, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93041",
+        "93033",
+        "93035"
+      ],
+      "mha": "CA393"
+    },
+    {
+      "code": "nas_nv",
+      "name": "NAS Fallon, NV",
+      "branch": "Navy",
+      "state": "NV",
+      "center": {
+        "lat": 38.313515,
+        "lng": -117.055374
+      },
+      "gate": {
+        "lat": 38.313515,
+        "lng": -117.055374
+      },
+      "candidateZips": [
+        "89406",
+        "89408",
+        "89403"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nsa_in",
+      "name": "NSA Crane, IN",
+      "branch": "Navy",
+      "state": "IN",
+      "center": {
+        "lat": 39.849426,
+        "lng": -86.258278
+      },
+      "gate": {
+        "lat": 39.849426,
+        "lng": -86.258278
+      },
+      "candidateZips": [
+        "47462",
+        "47403",
+        "47401"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nas_ms",
+      "name": "NAS Meridian, MS",
+      "branch": "Navy",
+      "state": "MS",
+      "center": {
+        "lat": 32.741646,
+        "lng": -89.678696
+      },
+      "gate": {
+        "lat": 32.741646,
+        "lng": -89.678696
+      },
+      "candidateZips": [
+        "39305",
+        "39301",
+        "39326"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nas_tx",
+      "name": "NAS JRB Fort Worth, TX",
+      "branch": "Navy",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "76127",
+        "76179",
+        "76054"
+      ],
+      "mha": "KS102"
+    },
+    {
+      "code": "nas_la",
+      "name": "NAS JRB New Orleans, LA",
+      "branch": "Navy",
+      "state": "LA",
+      "center": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "gate": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "candidateZips": [
+        "70037",
+        "70058",
+        "70072"
+      ],
+      "mha": "LA116"
+    },
+    {
+      "code": "nsb",
+      "name": "NSB Kings Bay, GA",
+      "branch": "Navy",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "31558",
+        "31547",
+        "32034"
+      ],
+      "mha": "GA074"
+    },
+    {
+      "code": "nsnewp",
+      "name": "Naval Station Newport, RI",
+      "branch": "Navy",
+      "state": "RI",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "02840",
+        "02842",
+        "02871"
+      ],
+      "mha": "VA297"
+    },
+    {
+      "code": "nsever",
+      "name": "Naval Station Everett, WA",
+      "branch": "Navy",
+      "state": "WA",
+      "center": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "gate": {
+        "lat": 47.400902,
+        "lng": -121.490494
+      },
+      "candidateZips": [
+        "98201",
+        "98275",
+        "98036"
+      ],
+      "mha": "WA307"
+    },
+    {
+      "code": "nas_va",
+      "name": "NAS Oceana, VA",
+      "branch": "Navy",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23454",
+        "23455",
+        "23456"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nspoin",
+      "name": "Naval Base Point Loma, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92106",
+        "92107",
+        "92110"
+      ],
+      "mha": "NM205"
+    },
+    {
+      "code": "nas2",
+      "name": "NAS Corpus Christi, TX",
+      "branch": "Navy",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "78418",
+        "78414",
+        "78374"
+      ],
+      "mha": "TX275"
+    },
+    {
+      "code": "nas3",
+      "name": "NAS Kingsville, TX",
+      "branch": "Navy",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [
+        "78363",
+        "78362",
+        "78380"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "nsa_pa",
+      "name": "NSA Mechanicsburg, PA",
+      "branch": "Navy",
+      "state": "PA",
+      "center": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "gate": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "candidateZips": [
+        "17050",
+        "17055",
+        "17011"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nsa2",
+      "name": "NSA Philadelphia, PA",
+      "branch": "Navy",
+      "state": "PA",
+      "center": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "gate": {
+        "lat": 40.590752,
+        "lng": -77.209755
+      },
+      "candidateZips": [
+        "19112",
+        "19145",
+        "19147"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nws",
+      "name": "NWS Yorktown, VA",
+      "branch": "Navy",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23692",
+        "23693",
+        "23690"
+      ],
+      "mha": "NJ200"
+    },
+    {
+      "code": "nssubm",
+      "name": "Naval Submarine Base New London, CT",
+      "branch": "Navy",
+      "state": "CT",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "06340",
+        "06355",
+        "06439"
+      ],
+      "mha": "CT049"
+    },
+    {
+      "code": "nas4",
+      "name": "NAS Key West, FL",
+      "branch": "Navy",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "33040",
+        "33042",
+        "33036"
+      ],
+      "mha": "NV211"
+    },
+    {
+      "code": "jeb",
+      "name": "JEB Little Creek–Fort Story, VA",
+      "branch": "Joint",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23455",
+        "23451",
+        "23454"
+      ],
+      "mha": "AR010"
+    },
+    {
+      "code": "nsa_fl",
+      "name": "NSA Panama City, FL",
+      "branch": "Navy",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32408",
+        "32407",
+        "32413"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nsa3",
+      "name": "NSA Orlando, FL",
+      "branch": "Navy",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32827",
+        "32832",
+        "32822"
+      ],
+      "mha": "MO160"
+    },
+    {
+      "code": "nsa_ny",
+      "name": "NSA Saratoga Springs, NY",
+      "branch": "Navy",
+      "state": "NY",
+      "center": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "gate": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "candidateZips": [
+        "12866",
+        "12020",
+        "12831"
+      ],
+      "mha": "CO046"
+    },
+    {
+      "code": "nswc",
+      "name": "NSWC Dahlgren (NSF Dahlgren), VA",
+      "branch": "Navy",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "22485",
+        "22448",
+        "22451"
+      ],
+      "mha": "VA368"
+    },
+    {
+      "code": "nsf",
+      "name": "NSF Indian Head, MD",
+      "branch": "Navy",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "20640",
+        "20603",
+        "20745"
+      ],
+      "mha": "MD134"
+    },
+    {
+      "code": "nbvc_ca",
+      "name": "NBVC Point Mugu, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93042",
+        "93041",
+        "93035"
+      ],
+      "mha": "WI359"
+    },
+    {
+      "code": "naws",
+      "name": "NAWS China Lake, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "93555",
+        "93556",
+        "93301"
+      ],
+      "mha": "CA021"
+    },
+    {
+      "code": "nws_ca",
+      "name": "NWS Seal Beach, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "90740",
+        "92649",
+        "90803"
+      ],
+      "mha": "NJ200"
+    },
+    {
+      "code": "naf",
+      "name": "NAF El Centro, CA",
+      "branch": "Navy",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92243",
+        "92231",
+        "92227"
+      ],
+      "mha": "CA420"
+    },
+    {
+      "code": "lejeune",
+      "name": "MCB Camp Lejeune, NC",
+      "branch": "USMC",
+      "state": "NC",
+      "center": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "gate": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "candidateZips": [
+        "28546",
+        "28460",
+        "28584"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "mcasrive",
+      "name": "MCAS New River, NC",
+      "branch": "USMC",
+      "state": "NC",
+      "center": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "gate": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "candidateZips": [
+        "28540",
+        "28546",
+        "28460"
+      ],
+      "mha": "VA297"
+    },
+    {
+      "code": "mcaspoin",
+      "name": "MCAS Cherry Point, NC",
+      "branch": "USMC",
+      "state": "NC",
+      "center": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "gate": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "candidateZips": [
+        "28532",
+        "28562",
+        "28570"
+      ],
+      "mha": "NC177"
+    },
+    {
+      "code": "pendleton",
+      "name": "MCB Camp Pendleton, CA",
+      "branch": "USMC",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92058",
+        "92057",
+        "92672"
+      ],
+      "mha": "CA024"
+    },
+    {
+      "code": "mcasmira",
+      "name": "MCAS Miramar, CA",
+      "branch": "USMC",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92126",
+        "92131",
+        "92117"
+      ],
+      "mha": "NC177"
+    },
+    {
+      "code": "mcagcc",
+      "name": "MCAGCC Twentynine Palms, CA",
+      "branch": "USMC",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92284",
+        "92277",
+        "92252"
+      ],
+      "mha": "CA032"
+    },
+    {
+      "code": "mclb",
+      "name": "MCLB Albany, GA",
+      "branch": "USMC",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [
+        "31721",
+        "31707",
+        "31705"
+      ],
+      "mha": "GA072"
+    },
+    {
+      "code": "mclb_ca",
+      "name": "MCLB Barstow, CA",
+      "branch": "USMC",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92311",
+        "92395",
+        "92392"
+      ],
+      "mha": "CA028"
+    },
+    {
+      "code": "mcrd",
+      "name": "MCRD Parris Island, SC",
+      "branch": "USMC",
+      "state": "SC",
+      "center": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "gate": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "candidateZips": [
+        "29910",
+        "29902",
+        "29935"
+      ],
+      "mha": "SC258"
+    },
+    {
+      "code": "mcrd_ca",
+      "name": "MCRD San Diego, CA",
+      "branch": "USMC",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [
+        "92110",
+        "92103",
+        "92101"
+      ],
+      "mha": "CA038"
+    },
+    {
+      "code": "mcb",
+      "name": "MCB Quantico, VA",
+      "branch": "USMC",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "22554",
+        "22172",
+        "22134"
+      ],
+      "mha": "VA296"
+    },
+    {
+      "code": "mcb_hi",
+      "name": "MCB Hawaii (Kaneohe Bay), HI",
+      "branch": "USMC",
+      "state": "HI",
+      "center": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "gate": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "candidateZips": [
+        "96744",
+        "96734",
+        "96795"
+      ],
+      "mha": "OR242"
+    },
+    {
+      "code": "mcasbeau",
+      "name": "MCAS Beaufort, SC",
+      "branch": "USMC",
+      "state": "SC",
+      "center": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "gate": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "candidateZips": [
+        "29906",
+        "29907",
+        "29902"
+      ],
+      "mha": "SC258"
+    },
+    {
+      "code": "mcsf",
+      "name": "MCSF Blount Island, FL",
+      "branch": "USMC",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32226",
+        "32218",
+        "32277"
+      ],
+      "mha": "SC258"
+    },
+    {
+      "code": "mcasyuma",
+      "name": "MCAS Yuma, AZ",
+      "branch": "USMC",
+      "state": "AZ",
+      "center": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "gate": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "candidateZips": [
+        "85365",
+        "85364",
+        "85367"
+      ],
+      "mha": "NC177"
+    },
+    {
+      "code": "mcbbarr",
+      "name": "Marine Barracks Washington, DC",
+      "branch": "USMC",
+      "state": "DC",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "20003",
+        "20002",
+        "22314"
+      ],
+      "mha": "PA247"
+    },
+    {
+      "code": "mcbelmo",
+      "name": "Camp Elmore, VA",
+      "branch": "USMC",
+      "state": "VA",
+      "center": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "gate": {
+        "lat": 37.769337,
+        "lng": -78.169968
+      },
+      "candidateZips": [
+        "23511",
+        "23508",
+        "23455"
+      ],
+      "mha": "NC178"
+    },
+    {
+      "code": "joint_sc",
+      "name": "Joint Base Charleston, SC",
+      "branch": "Joint",
+      "state": "SC",
+      "center": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "gate": {
+        "lat": 33.856892,
+        "lng": -80.945007
+      },
+      "candidateZips": [
+        "29445",
+        "29486",
+        "29420"
+      ],
+      "mha": "SC259"
+    },
+    {
+      "code": "joint_nj",
+      "name": "Joint Base McGuire-Dix-Lakehurst, NJ",
+      "branch": "Joint",
+      "state": "NJ",
+      "center": {
+        "lat": 0,
+        "lng": 0
+      },
+      "gate": {
+        "lat": 0,
+        "lng": 0
+      },
+      "candidateZips": [
+        "08060",
+        "08054",
+        "08015"
+      ],
+      "mha": "NJ204"
+    },
+    {
+      "code": "wrightpa",
+      "name": "Wright-Patterson AFB, OH",
+      "branch": "USAF",
+      "state": "OH",
+      "center": {
+        "lat": 40.388783,
+        "lng": -82.764915
+      },
+      "gate": {
+        "lat": 40.388783,
+        "lng": -82.764915
+      },
+      "candidateZips": [
+        "45434",
+        "45431",
+        "45324"
+      ],
+      "mha": "OH231"
+    },
+    {
+      "code": "eglin",
+      "name": "Eglin AFB, FL",
+      "branch": "USAF",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [
+        "32578",
+        "32580",
+        "32539"
+      ],
+      "mha": "FL056"
     }
   ]
 }
