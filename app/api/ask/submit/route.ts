@@ -10,6 +10,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
+import { generateProactiveGuidance } from "@/lib/ask/proactive-advisor";
+import type { ProactiveAnalysis } from "@/lib/ask/proactive-advisor";
+import { getCachedResponse } from "@/lib/ask/response-cache";
+import { orchestrateTools } from "@/lib/ask/tool-orchestrator";
 import { logger } from "@/lib/logger";
 import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
 import { ssot } from "@/lib/ssot";
@@ -22,6 +26,7 @@ const supabase = createClient(
 interface SubmitRequest {
   question: string;
   templateId?: string;
+  sessionId?: string; // Multi-turn conversation support
 }
 
 interface AnswerResponse {
@@ -44,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: SubmitRequest = await request.json();
-    const { question, templateId } = body;
+    const { question, templateId, sessionId } = body;
 
     if (!question?.trim()) {
       return NextResponse.json({ error: "Question is required" }, { status: 400 });
@@ -85,6 +90,39 @@ export async function POST(request: NextRequest) {
 
     const startTime = Date.now();
 
+    // 🚀 PERFORMANCE: Check cache for common questions (skip for personal context)
+    const isPersonalQuestion = /\b(my|i|me|mine)\s/i.test(question);
+    if (!isPersonalQuestion) {
+      const cachedResponse = await getCachedResponse(question);
+      if (cachedResponse) {
+        logger.info("[Performance] Returning cached response (200ms vs 2000ms)");
+        
+        // Still decrement credit and save to history
+        await supabase
+          .from("ask_credits")
+          .update({
+            credits_remaining: credits.credits_remaining - 1,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("user_id", userId);
+
+        return NextResponse.json({
+          success: true,
+          answer: cachedResponse.answer,
+          credits_remaining: credits.credits_remaining - 1,
+          tier: userTier,
+          cached: true,
+          cacheAge: Math.floor(
+            (Date.now() - new Date(cachedResponse.cachedAt).getTime()) / (1000 * 60 * 60)
+          ),
+        });
+      }
+    }
+
+    // 🆕 MULTI-TURN: Get or create conversation session
+    const conversation = await getOrCreateConversation(userId, sessionId);
+    const conversationContext = await getConversationContext(conversation.id);
+
     // Query official data sources (pass userId for personalization)
     const dataSources = await queryOfficialSources(question, userId);
 
@@ -107,8 +145,15 @@ export async function POST(request: NextRequest) {
     // Determine mode (strict vs advisory)
     const mode = dataSources.length > 0 ? "strict" : "advisory";
 
-    // Generate AI answer with RAG context
-    const answer = await generateAnswer(question, dataSources, ragChunks, mode, userTier);
+    // Generate AI answer with RAG context + conversation context
+    const answer = await generateAnswer(
+      question,
+      dataSources,
+      ragChunks,
+      mode,
+      userTier,
+      conversationContext
+    );
 
     const responseTime = Date.now() - startTime;
 
@@ -143,11 +188,50 @@ export async function POST(request: NextRequest) {
       logger.error("Failed to save question:", saveError);
     }
 
+    // 🆕 MULTI-TURN: Save message to conversation
+    await saveConversationMessage(
+      conversation.id,
+      userId,
+      question,
+      answer,
+      responseTime,
+      conversation.total_questions + 1
+    );
+
+    // 🆕 MULTI-TURN: Update conversation metadata
+    await updateConversationMetadata(conversation.id, answer, dataSources);
+
+    // 🆕 PROACTIVE: Generate comprehensive proactive guidance
+    const suggestedFollowups = generateFollowupSuggestions(question, answer, conversationContext);
+    
+    const userProfileData = dataSources.find((s) => s.table === "user_profile")?.data || {};
+    const proactiveGuidance = generateProactiveGuidance(
+      question,
+      userProfileData,
+      dataSources,
+      conversationContext.previousQuestions
+    );
+
+    // 🔧 TOOL ORCHESTRATION: Recommend relevant Garrison Ledger tools
+    const toolOrchestration = orchestrateTools(
+      question,
+      userProfileData,
+      dataSources,
+      conversationContext.previousQuestions
+    );
+
     return NextResponse.json({
       success: true,
       answer,
       credits_remaining: credits.credits_remaining - 1,
       tier: userTier,
+      sessionId: conversation.session_id, // Return session ID for client
+      conversationId: conversation.id,
+      suggestedFollowups, // Quick follow-ups
+      proactiveInsights: proactiveGuidance.insights, // Deep proactive analysis
+      suggestedQuestions: proactiveGuidance.suggestedQuestions, // Related topics
+      recommendedTools: proactiveGuidance.toolsToUse, // Tool handoffs
+      toolOrchestration: toolOrchestration, // Smart tool triggering
     });
   } catch (error) {
     logger.error("Ask submit error:", error);
@@ -158,12 +242,19 @@ export async function POST(request: NextRequest) {
 /**
  * Generate AI answer using Gemini 2.5 Flash with RAG context
  */
+interface ConversationContext {
+  previousQuestions: Array<{ question: string; answer: string; timestamp: string }>;
+  conversationTopic?: string;
+  totalTurns: number;
+}
+
 async function generateAnswer(
   question: string,
   dataSources: DataSource[],
   ragChunks: RetrievedChunk[],
   mode: "strict" | "advisory",
-  userTier: string
+  userTier: string,
+  conversationContext?: ConversationContext
 ): Promise<AnswerResponse> {
   const rateLimit =
     ssot.features.askAssistant.rateLimits[
@@ -180,7 +271,7 @@ async function generateAnswer(
     data: source.data,
   }));
 
-  const prompt = buildPrompt(question, contextData, ragChunks, mode, maxTokens);
+  const prompt = buildPrompt(question, contextData, ragChunks, mode, maxTokens, conversationContext);
 
   // Use GEMINI_API_KEY (consistent with explainer and other AI features)
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -271,11 +362,40 @@ function buildPrompt(
   contextData: DataSource[],
   ragChunks: RetrievedChunk[],
   mode: string,
-  maxTokens: number
+  maxTokens: number,
+  conversationContext?: ConversationContext
 ): string {
   // Check if user profile is in context
   const userProfile = contextData.find((source) => source.table === "user_profile");
   const hasUserProfile = !!userProfile;
+
+  // Build conversation context section
+  const conversationContextSection =
+    conversationContext && conversationContext.previousQuestions.length > 0
+      ? `
+🔄 CONVERSATION CONTEXT (Multi-Turn Mode):
+You are currently in an ongoing conversation with this user. Here are the previous ${conversationContext.previousQuestions.length} question(s) and answer(s):
+
+${conversationContext.previousQuestions
+  .map(
+    (qa, idx) => `
+[Q${idx + 1}]: ${qa.question}
+[A${idx + 1}]: ${qa.answer.substring(0, 300)}...
+`
+  )
+  .join("\n")}
+
+**CRITICAL: Use this conversation context to:**
+1. Reference previous answers (e.g., "As I mentioned about your BAH earlier...")
+2. Build on previous topics (if they asked about TSP, now asking about retirement = related)
+3. Avoid repeating information you already provided
+4. Maintain conversation coherence and continuity
+5. Suggest logical next questions based on conversation flow
+
+Topic being discussed: ${conversationContext.conversationTopic || "General military life"}
+Total questions in this session: ${conversationContext.totalTurns}
+`
+      : "";
 
   const basePrompt = `You are an expert military financial and lifestyle advisor with comprehensive knowledge of:
 - Military pay, allowances, and benefits (BAH, BAS, TSP, SGLI, etc.)
@@ -487,4 +607,254 @@ function parseStructuredAnswer(
 function estimateTokens(answer: AnswerResponse): number {
   const text = JSON.stringify(answer);
   return Math.ceil(text.length / 4); // Rough estimate: 4 chars per token
+}
+
+/**
+ * Get or create conversation session
+ */
+async function getOrCreateConversation(
+  userId: string,
+  sessionId?: string
+): Promise<{ id: string; session_id: string; total_questions: number }> {
+  // If sessionId provided, try to find existing active conversation
+  if (sessionId) {
+    const { data: existing } = await supabase
+      .from("ask_conversations")
+      .select("id, session_id, total_questions")
+      .eq("session_id", sessionId)
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .single();
+
+    if (existing) {
+      logger.info(`[Multi-Turn] Found existing conversation: ${existing.id}`);
+      return existing;
+    }
+  }
+
+  // Create new conversation
+  const newSessionId = sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  const { data: newConversation, error } = await supabase
+    .from("ask_conversations")
+    .insert({
+      user_id: userId,
+      session_id: newSessionId,
+      total_questions: 0,
+      is_active: true,
+    })
+    .select("id, session_id, total_questions")
+    .single();
+
+  if (error || !newConversation) {
+    logger.error("[Multi-Turn] Failed to create conversation:", error);
+    // Fallback to minimal conversation object
+    return {
+      id: "fallback",
+      session_id: newSessionId,
+      total_questions: 0,
+    };
+  }
+
+  logger.info(`[Multi-Turn] Created new conversation: ${newConversation.id}`);
+  return newConversation;
+}
+
+/**
+ * Get recent conversation context (last 5 Q&As)
+ */
+async function getConversationContext(conversationId: string): Promise<ConversationContext> {
+  if (conversationId === "fallback") {
+    return { previousQuestions: [], totalTurns: 0 };
+  }
+
+  // Get last 5 messages from this conversation
+  const { data: messages } = await supabase
+    .from("ask_conversation_messages")
+    .select("content, answer_data, message_type, message_order, created_at")
+    .eq("conversation_id", conversationId)
+    .order("message_order", { ascending: false })
+    .limit(10); // Get last 10 messages (5 Q&A pairs)
+
+  if (!messages || messages.length === 0) {
+    return { previousQuestions: [], totalTurns: 0 };
+  }
+
+  // Group into Q&A pairs
+  const qaPairs: Array<{ question: string; answer: string; timestamp: string }> = [];
+
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.message_type === "question") {
+      // Find corresponding answer
+      const answerMsg = messages.find(
+        (m) =>
+          m.message_type === "answer" && m.message_order === msg.message_order + 1
+      );
+
+      if (answerMsg && answerMsg.answer_data) {
+        const answerData = typeof answerMsg.answer_data === "string" 
+          ? JSON.parse(answerMsg.answer_data) 
+          : answerMsg.answer_data;
+        
+        qaPairs.push({
+          question: msg.content,
+          answer: answerData.bottomLine?.join(" ") || "Answer not available",
+          timestamp: msg.created_at,
+        });
+      }
+    }
+  }
+
+  // Get conversation metadata
+  const { data: conversation } = await supabase
+    .from("ask_conversations")
+    .select("conversation_topic, total_questions")
+    .eq("id", conversationId)
+    .single();
+
+  return {
+    previousQuestions: qaPairs.slice(0, 5), // Last 5 Q&A pairs
+    conversationTopic: conversation?.conversation_topic,
+    totalTurns: conversation?.total_questions || 0,
+  };
+}
+
+/**
+ * Save message to conversation
+ */
+async function saveConversationMessage(
+  conversationId: string,
+  userId: string,
+  question: string,
+  answer: AnswerResponse,
+  responseTime: number,
+  messageOrder: number
+): Promise<void> {
+  if (conversationId === "fallback") return;
+
+  try {
+    // Save question message
+    await supabase.from("ask_conversation_messages").insert({
+      conversation_id: conversationId,
+      user_id: userId,
+      message_type: "question",
+      content: question,
+      message_order: messageOrder * 2 - 1, // Odd numbers for questions (1, 3, 5...)
+    });
+
+    // Save answer message
+    await supabase.from("ask_conversation_messages").insert({
+      conversation_id: conversationId,
+      user_id: userId,
+      message_type: "answer",
+      content: answer.bottomLine.join("\n"),
+      answer_data: answer,
+      confidence_score: answer.confidence,
+      mode: answer.mode,
+      sources_used: answer.sources,
+      response_time_ms: responseTime,
+      message_order: messageOrder * 2, // Even numbers for answers (2, 4, 6...)
+    });
+
+    logger.info(`[Multi-Turn] Saved Q&A to conversation ${conversationId}`);
+  } catch (error) {
+    logger.error("[Multi-Turn] Failed to save message:", error);
+    // Don't throw - let the request complete even if conversation save fails
+  }
+}
+
+/**
+ * Update conversation metadata
+ */
+async function updateConversationMetadata(
+  conversationId: string,
+  answer: AnswerResponse,
+  dataSources: DataSource[]
+): Promise<void> {
+  if (conversationId === "fallback") return;
+
+  try {
+    // Detect conversation topic from sources and answer
+    const topics = new Set<string>();
+    if (dataSources.some((s) => s.table === "bah_rates")) topics.add("housing");
+    if (dataSources.some((s) => s.table === "military_pay_tables")) topics.add("pay");
+    if (answer.bottomLine.some((line) => /tsp|retirement/i.test(line))) topics.add("retirement");
+    if (answer.bottomLine.some((line) => /pcs|move|relocation/i.test(line))) topics.add("pcs");
+    if (answer.bottomLine.some((line) => /deploy/i.test(line))) topics.add("deployment");
+
+    const conversationTopic = Array.from(topics)[0] || "general";
+
+    await supabase
+      .from("ask_conversations")
+      .update({
+        total_questions: supabase.rpc("increment", { row_id: conversationId }), // Increment counter
+        conversation_topic: conversationTopic,
+        last_activity_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Extend 24 hours
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", conversationId);
+
+    logger.info(`[Multi-Turn] Updated conversation ${conversationId} metadata`);
+  } catch (error) {
+    logger.error("[Multi-Turn] Failed to update conversation metadata:", error);
+  }
+}
+
+/**
+ * Generate suggested follow-up questions
+ */
+function generateFollowupSuggestions(
+  question: string,
+  answer: AnswerResponse,
+  conversationContext: ConversationContext
+): Array<{ text: string; category: string; priority: number }> {
+  const suggestions: Array<{ text: string; category: string; priority: number }> = [];
+
+  // Suggest deeper dive on current topic
+  if (answer.bottomLine.length > 2) {
+    suggestions.push({
+      text: "Can you explain that in more detail with specific examples?",
+      category: "deeper",
+      priority: 80,
+    });
+  }
+
+  // Suggest tool handoffs if available
+  if (answer.toolHandoffs && answer.toolHandoffs.length > 0) {
+    suggestions.push({
+      text: `Want me to walk you through using ${answer.toolHandoffs[0].tool}?`,
+      category: "tool_handoff",
+      priority: 90,
+    });
+  }
+
+  // Suggest related topics based on conversation
+  if (/bah|housing/i.test(question)) {
+    suggestions.push({
+      text: "Should I live on-base or off-base to maximize savings?",
+      category: "related",
+      priority: 70,
+    });
+  }
+
+  if (/tsp|retirement/i.test(question)) {
+    suggestions.push({
+      text: "How should I allocate my TSP based on my age?",
+      category: "related",
+      priority: 75,
+    });
+  }
+
+  if (/pcs|move/i.test(question)) {
+    suggestions.push({
+      text: "What's my total PCS budget and timeline?",
+      category: "related",
+      priority: 75,
+    });
+  }
+
+  // Limit to top 3 suggestions
+  return suggestions.sort((a, b) => b.priority - a.priority).slice(0, 3);
 }
