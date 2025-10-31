@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "generated": "2025-10-31T03:02:54.779Z",
+    "generated": "2025-10-31T03:04:19.189Z",
     "source": "User CSV (150 bases + top 3 ZIPs) + military-bases.json (coords) + base-mha-map.json (MHA)",
-    "total": 133,
+    "total": 135,
     "note": "Comprehensive list of US military installations with curated top 3 ZIP codes for each."
   },
   "bases": [
@@ -2007,6 +2007,26 @@
       "mha": "NJ200"
     },
     {
+      "code": "jb",
+      "name": "JB Pearl Harbor–Hickam, HI",
+      "branch": "Joint",
+      "state": "HI",
+      "center": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "gate": {
+        "lat": 21.094318,
+        "lng": -157.498337
+      },
+      "candidateZips": [
+        "96818",
+        "96819",
+        "96701"
+      ],
+      "mha": "HI096"
+    },
+    {
       "code": "nssubm",
       "name": "Naval Submarine Base New London, CT",
       "branch": "Navy",
@@ -2585,6 +2605,26 @@
         "23455"
       ],
       "mha": "NC178"
+    },
+    {
+      "code": "joint_md",
+      "name": "Joint Base Andrews, MD",
+      "branch": "Joint",
+      "state": "MD",
+      "center": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "gate": {
+        "lat": 39.063946,
+        "lng": -76.802101
+      },
+      "candidateZips": [
+        "20735",
+        "20772",
+        "20613"
+      ],
+      "mha": "MD134"
     },
     {
       "code": "joint_sc",

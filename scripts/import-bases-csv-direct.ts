@@ -149,6 +149,9 @@ const MANUAL_MHA_OVERRIDES: Record<string, string> = {
   'NORFOLK': 'VA298',
   'NAVAL BASE SAN DIEGO': 'CA020',
   'NAVAL BASE KITSAP': 'WA310',
+  'JOINT BASE ANDREWS': 'MD134',
+  'PEARL HARBOR': 'HI096',
+  'HICKAM': 'HI096',
 };
 
 /**
