@@ -53,7 +53,7 @@ export default async function BaseNavigatorMainPage() {
               <div className="mb-8 flex flex-wrap justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>32 military bases</span>
+                  <span>164 military bases</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
@@ -79,7 +79,7 @@ export default async function BaseNavigatorMainPage() {
                 Base Navigator is a Premium Feature
               </h2>
               <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-700">
-                Access comprehensive intelligence on 32 major US military installations
+                Access comprehensive intelligence on 164 US military installations
                 with real-time data on housing, schools, and neighborhoods.
               </p>
               <div className="mb-8 rounded-lg bg-white p-6 text-left shadow-sm">
@@ -87,7 +87,7 @@ export default async function BaseNavigatorMainPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>32 major US military installations with full data</span>
+                    <span>164 US military installations with full data</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
