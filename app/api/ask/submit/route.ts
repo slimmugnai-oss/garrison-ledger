@@ -11,7 +11,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { queryOfficialSources } from "@/lib/ask/data-query-engine";
 import type { DataSource } from "@/lib/ask/data-query-engine";
 import { generateProactiveGuidance } from "@/lib/ask/proactive-advisor";
-import type { ProactiveAnalysis } from "@/lib/ask/proactive-advisor";
 import { getCachedResponse } from "@/lib/ask/response-cache";
 import { orchestrateTools } from "@/lib/ask/tool-orchestrator";
 import { logger } from "@/lib/logger";
@@ -363,39 +362,11 @@ function buildPrompt(
   ragChunks: RetrievedChunk[],
   mode: string,
   maxTokens: number,
-  conversationContext?: ConversationContext
+  _conversationContext?: ConversationContext
 ): string {
   // Check if user profile is in context
   const userProfile = contextData.find((source) => source.table === "user_profile");
   const hasUserProfile = !!userProfile;
-
-  // Build conversation context section
-  const conversationContextSection =
-    conversationContext && conversationContext.previousQuestions.length > 0
-      ? `
-🔄 CONVERSATION CONTEXT (Multi-Turn Mode):
-You are currently in an ongoing conversation with this user. Here are the previous ${conversationContext.previousQuestions.length} question(s) and answer(s):
-
-${conversationContext.previousQuestions
-  .map(
-    (qa, idx) => `
-[Q${idx + 1}]: ${qa.question}
-[A${idx + 1}]: ${qa.answer.substring(0, 300)}...
-`
-  )
-  .join("\n")}
-
-**CRITICAL: Use this conversation context to:**
-1. Reference previous answers (e.g., "As I mentioned about your BAH earlier...")
-2. Build on previous topics (if they asked about TSP, now asking about retirement = related)
-3. Avoid repeating information you already provided
-4. Maintain conversation coherence and continuity
-5. Suggest logical next questions based on conversation flow
-
-Topic being discussed: ${conversationContext.conversationTopic || "General military life"}
-Total questions in this session: ${conversationContext.totalTurns}
-`
-      : "";
 
   const basePrompt = `You are an expert military financial and lifestyle advisor with comprehensive knowledge of:
 - Military pay, allowances, and benefits (BAH, BAS, TSP, SGLI, etc.)
@@ -808,7 +779,7 @@ async function updateConversationMetadata(
 function generateFollowupSuggestions(
   question: string,
   answer: AnswerResponse,
-  conversationContext: ConversationContext
+  _conversationContext: ConversationContext
 ): Array<{ text: string; category: string; priority: number }> {
   const suggestions: Array<{ text: string; category: string; priority: number }> = [];
 

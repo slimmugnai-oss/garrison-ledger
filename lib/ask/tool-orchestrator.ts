@@ -42,9 +42,8 @@ export interface OrchestrationResult {
 export function detectRelevantTools(
   question: string,
   userProfile: Record<string, unknown>,
-  dataSources: DataSource[]
+  _dataSources: DataSource[]
 ): OrchestrationResult {
-  const questionLower = question.toLowerCase();
   const triggers: ToolTrigger[] = [];
 
   // ============================================================================
@@ -453,7 +452,7 @@ function buildDefaultExplainer(tool?: ToolTrigger): string {
  */
 export function generateQuickActions(
   question: string,
-  answer: unknown
+  _answer: unknown
 ): Array<{ label: string; url: string; icon: string }> {
   const actions: Array<{ label: string; url: string; icon: string }> = [];
 
@@ -506,17 +505,14 @@ export function generateQuickActions(
  * (For analytics - helps prioritize tool development)
  */
 export function trackToolRecommendation(
-  tool: string,
-  question: string,
-  clicked: boolean
+  _tool: string,
+  _question: string,
+  _clicked: boolean
 ): void {
   // Placeholder for analytics tracking
   // In production: log to analytics_events table
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export { detectRelevantTools, orchestrateTools, generateQuickActions };
+// All functions already exported above with 'export' keyword
+// No need for redundant export statement at end
 

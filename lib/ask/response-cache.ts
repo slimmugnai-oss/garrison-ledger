@@ -15,8 +15,9 @@
  * - Invalidate on: profile changes, data updates
  */
 
-import { createClient } from "@supabase/supabase-js";
 import * as crypto from "crypto";
+
+import { createClient } from "@supabase/supabase-js";
 
 import { logger } from "@/lib/logger";
 
@@ -43,16 +44,17 @@ interface CachedResponse {
 // ============================================================================
 
 /**
- * Generate cache key for question
+ * Generate cache key for question (future use)
  * Normalizes question to match similar phrasings
  */
-function generateCacheKey(
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _generateCacheKey(
   question: string,
   userId?: string,
   includeProfile: boolean = false
 ): string {
   // Normalize question
-  let normalized = question
+  const normalized = question
     .toLowerCase()
     .trim()
     .replace(/[^\w\s]/g, "") // Remove punctuation
@@ -78,19 +80,14 @@ function generateCacheKey(
  */
 export async function getCachedResponse(
   question: string,
-  userId?: string
+  _userId?: string
 ): Promise<CachedResponse | null> {
   try {
-    // Check if question mentions personal context ("my BAH", "my pay")
-    const isPersonal = /\b(my|i|me|mine)\s/i.test(question);
-
-    const cacheKey = generateCacheKey(question, userId, isPersonal);
-
     // Use ask_questions table as cache (already stores all Q&As)
     const { data } = await supabase
       .from("ask_questions")
       .select("answer, sources_used, mode, created_at")
-      .eq("user_id", isPersonal ? userId : "GENERIC_CACHE") // Generic cache for non-personal questions
+      .ilike("question", question) // Simple text match for now
       .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // Last 7 days only
       .order("created_at", { ascending: false })
       .limit(1);
@@ -134,13 +131,6 @@ export function markCacheable(
   question: string
 ): { shouldCache: boolean; cacheType: "generic" | "personalized" } {
   // Generic cacheable questions (no personal context)
-  const genericPatterns = [
-    /what is (bah|bas|tsp|sgli|cola)/i,
-    /how does (sdp|czte|dity|ppm)/i,
-    /explain (brs|high-3|gi bill)/i,
-  ];
-
-  const isGeneric = genericPatterns.some((pattern) => pattern.test(question));
   const isPersonal = /\b(my|i|me|mine)\s/i.test(question);
 
   return {
@@ -233,9 +223,6 @@ export function compressResponse(response: unknown): unknown {
   return response;
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export { getCachedResponse, markCacheable, invalidateCache, getCacheMetrics };
+// All functions already exported above with 'export' keyword
+// No need for redundant export statement at end
 

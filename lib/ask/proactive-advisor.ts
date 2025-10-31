@@ -47,7 +47,7 @@ export interface ProactiveAnalysis {
 export function detectFinancialOpportunities(
   question: string,
   userProfile: Record<string, unknown>,
-  dataSources: DataSource[]
+  _dataSources: DataSource[]
 ): ProactiveInsight[] {
   const opportunities: ProactiveInsight[] = [];
 
@@ -86,7 +86,7 @@ export function detectFinancialOpportunities(
 
   // Check if asking about BAH and might benefit from off-base living
   if (question.toLowerCase().includes("bah") || question.toLowerCase().includes("housing")) {
-    const bahSource = dataSources.find((s) => s.table === "bah_rates");
+    const bahSource = _dataSources.find((s) => s.table === "bah_rates");
     if (bahSource && bahSource.data.rates && Array.isArray(bahSource.data.rates)) {
       opportunities.push({
         type: "suggestion",
@@ -131,8 +131,8 @@ export function detectFinancialOpportunities(
  */
 export function detectRedFlags(
   question: string,
-  userProfile: Record<string, unknown>,
-  dataSources: DataSource[]
+  _userProfile: Record<string, unknown>,
+  _dataSources: DataSource[]
 ): ProactiveInsight[] {
   const redFlags: ProactiveInsight[] = [];
 
@@ -217,7 +217,7 @@ export function detectRedFlags(
  */
 export function recommendTools(
   question: string,
-  userProfile: Record<string, unknown>
+  _userProfile: Record<string, unknown>
 ): Array<{ tool: string; url: string; reason: string }> {
   const tools: Array<{ tool: string; url: string; reason: string }> = [];
 
@@ -361,7 +361,7 @@ export function detectDeadlines(
  */
 export function suggestRelatedTopics(
   question: string,
-  conversationHistory: Array<{ question: string; answer: string }>
+  _conversationHistory: Array<{ question: string; answer: string }>
 ): string[] {
   const suggestions: string[] = [];
 
