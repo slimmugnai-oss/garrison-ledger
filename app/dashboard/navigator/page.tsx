@@ -87,23 +87,23 @@ export default async function BaseNavigatorMainPage() {
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>32 major US military installations</span>
+                    <span>32 major US military installations with full data</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>Real-time housing market analysis vs BAH rates</span>
+                    <span>BAH-optimized neighborhood rankings</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>School ratings and district boundaries</span>
+                    <span>Real-time housing market intelligence</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>Weather patterns and climate data</span>
+                    <span>School ratings and commute analysis</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="CheckCircle" className="h-5 w-5 text-green-600" />
-                    <span>Commute analysis and neighborhood rankings</span>
+                    <span>Weather patterns and local climate data</span>
                   </li>
                 </ul>
               </div>
