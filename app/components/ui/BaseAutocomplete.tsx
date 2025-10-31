@@ -95,8 +95,8 @@ export default function BaseAutocomplete({
 
   // Handle base selection
   const selectBase = (base: MilitaryBase) => {
-    // Always include state to ensure MHA code detection works
-    const fullName = `${base.name}, ${base.state}`;
+    // Use base name as-is (it already includes state in format like "SUMTER/SHAW AFB, SC")
+    const fullName = base.name;
     onChange(fullName);
     onSelect?.(fullName); // NEW: trigger navigation or other callback
     setIsOpen(false);

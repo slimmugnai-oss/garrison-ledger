@@ -38,27 +38,49 @@ export interface BaseInfo {
  * Used by BaseSearch component to navigate after autocomplete selection
  */
 export function getBaseCodeFromName(fullName: string): BaseInfo | null {
-  // Format from BaseAutocomplete: "Fort Liberty, NC" or "Shaw AFB, SC"
-  const parts = fullName.split(",").map((s) => s.trim());
-  if (parts.length !== 2) return null;
-
-  const [baseName, state] = parts;
-
-  // Find matching base in military-bases.json
+  console.log('[BASE_CODE_MAP] Looking up:', fullName);
+  
+  // Format from BaseAutocomplete can be:
+  // - "SUMTER/SHAW AFB, SC" (already has state in name)
+  // - "Fort Liberty, NC" (state added separately)
+  // - "ABILENE/DYESS AFB, TX, TX" (DOUBLE STATE BUG!)
+  
+  // Remove duplicate state if present (e.g., "NAME, TX, TX" → "NAME, TX")
+  const cleanedName = fullName.replace(/, ([A-Z]{2}), \1$/, ', $1');
+  
+  // Military-bases.json names are like "SUMTER/SHAW AFB, SC" (state already in name!)
+  // So we need to match against the FULL name from military-bases.json directly
+  
+  // Find exact match in military-bases.json
   const base = militaryBases.find((b) => {
-    // Exact name match
-    if (b.name.toLowerCase() === baseName.toLowerCase()) return true;
-
-    // Check if base name contains the search term (handles partial matches)
-    if (b.name.toLowerCase().includes(baseName.toLowerCase()) && b.state === state) return true;
+    // Try exact match first (case-insensitive)
+    if (b.name.toLowerCase() === cleanedName.toLowerCase()) {
+      console.log('[BASE_CODE_MAP] Exact match:', b.name);
+      return true;
+    }
+    
+    // Try matching just the base part before the comma
+    const baseNamePart = cleanedName.split(',')[0].trim();
+    if (b.name.toLowerCase().includes(baseNamePart.toLowerCase())) {
+      console.log('[BASE_CODE_MAP] Partial match:', b.name, 'for', baseNamePart);
+      return true;
+    }
 
     // Check aliases (e.g., "Fort Bragg" → "Fort Liberty")
-    if (b.aliases && b.aliases.some((a) => a.toLowerCase() === baseName.toLowerCase())) return true;
+    if (b.aliases && b.aliases.some((a) => cleanedName.toLowerCase().includes(a.toLowerCase()))) {
+      console.log('[BASE_CODE_MAP] Alias match:', b.name);
+      return true;
+    }
 
     return false;
   });
 
-  if (!base) return null;
+  if (!base) {
+    console.log('[BASE_CODE_MAP] No match found for:', cleanedName);
+    return null;
+  }
+  
+  console.log('[BASE_CODE_MAP] Found base:', base.name);
 
   // Generate code from ID (already in slug format: "fort-liberty-nc" → "ftlb")
   // Or use a smarter abbreviation
