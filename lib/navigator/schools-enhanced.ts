@@ -164,45 +164,121 @@ export function analyzeSchoolsComprehensive(
 }
 
 /**
- * Categorize schools by grade level keywords with smart filtering
- * Prevents "High School" from appearing in Elementary section
+ * Parse grade range from string like "9-12" or "K-5" or "PK-5"
+ * Returns the lowest and highest numeric grade (0 = K/PK, -1 = PK)
+ */
+function parseGradeRange(gradeStr: string): { min: number; max: number } {
+  const cleaned = gradeStr.trim().toUpperCase();
+  
+  // Handle PK (Pre-K)
+  if (cleaned.includes("PK")) {
+    const match = cleaned.match(/PK-?(\d+)/);
+    if (match) {
+      return { min: -1, max: parseInt(match[1]) };
+    }
+    return { min: -1, max: -1 }; // PK only
+  }
+  
+  // Handle K (Kindergarten)
+  if (cleaned.includes("K")) {
+    const match = cleaned.match(/K-?(\d+)/);
+    if (match) {
+      return { min: 0, max: parseInt(match[1]) };
+    }
+    return { min: 0, max: 0 }; // K only
+  }
+  
+  // Handle numeric ranges like "9-12" or "6-8"
+  const numericMatch = cleaned.match(/(\d+)-(\d+)/);
+  if (numericMatch) {
+    return {
+      min: parseInt(numericMatch[1]),
+      max: parseInt(numericMatch[2]),
+    };
+  }
+  
+  // Single grade number
+  const singleMatch = cleaned.match(/(\d+)/);
+  if (singleMatch) {
+    const num = parseInt(singleMatch[1]);
+    return { min: num, max: num };
+  }
+  
+  // Fallback
+  return { min: -999, max: -999 };
+}
+
+/**
+ * Categorize schools by grade level with STRICT grade-range checking
+ * Prevents high schools (9-12) from appearing in elementary (K-5)
  */
 function categorizeByGrade(schools: School[], keywords: string[]): School[] {
   return schools.filter((school) => {
-    const grades = school.grades.toLowerCase();
+    const grades = school.grades;
     const name = school.name.toLowerCase();
     
-    // Check if grades match the keywords
-    const gradesMatch = keywords.some((kw) => grades.includes(kw.toLowerCase()));
-    if (!gradesMatch) return false;
+    // Parse actual grade range
+    const range = parseGradeRange(grades);
     
-    // SMART FILTER: Don't show schools with misleading names in wrong sections
-    // If categorizing for elementary, exclude schools with "high school" in name UNLESS it's clearly K-12
+    // Check if this is for ELEMENTARY (K-5)
     if (keywords.includes("K") || keywords.includes("elementary")) {
-      // Exclude if name says "high school" or "middle school" UNLESS grades explicitly show K-5 range
-      if (name.includes("high school") && !grades.includes("k") && !grades.includes("pk")) {
+      // Elementary should ONLY include schools that serve K-5
+      // If school starts at grade 6 or higher, EXCLUDE IT
+      if (range.min >= 6) {
+        return false; // Too old for elementary
+      }
+      // If school ONLY serves high school (9-12), EXCLUDE IT
+      if (range.min >= 9) {
+        return false; // Definitely not elementary
+      }
+      // If school name says "high school" or "high", exclude unless it's K-12
+      if ((name.includes("high school") || name.includes(" high ")) && range.min >= 9) {
         return false;
       }
-      if (name.includes("middle school") && !grades.includes("k") && !grades.includes("pk")) {
-        return false;
+      // Must serve at least some elementary grades (K-5)
+      if (range.max >= 5 && range.min <= 5) {
+        return true;
       }
+      if (range.min <= 5) {
+        return true;
+      }
+      return false;
     }
     
-    // If categorizing for middle, exclude "high school" unless it clearly serves middle grades
+    // Check if this is for MIDDLE (6-8)
     if (keywords.includes("6") || keywords.includes("middle")) {
-      if (name.includes("high school") && !grades.includes("6") && !grades.includes("7") && !grades.includes("8")) {
+      // If school ONLY serves high school (9-12), EXCLUDE IT
+      if (range.min >= 9) {
+        return false; // Too old for middle
+      }
+      // If school name says "high school" or "high", exclude unless it serves 6-8
+      if ((name.includes("high school") || name.includes(" high ")) && range.min >= 9) {
         return false;
       }
+      // Must serve at least some middle grades (6-8)
+      if (range.min <= 8 && range.max >= 6) {
+        return true;
+      }
+      return false;
     }
     
-    // If categorizing for high school, exclude "elementary" or "middle school" from name
+    // Check if this is for HIGH SCHOOL (9-12)
     if (keywords.includes("9") || keywords.includes("high")) {
-      if (name.includes("elementary") && !grades.includes("9") && !grades.includes("10")) {
-        return false;
+      // If school ONLY serves elementary/middle (K-8), EXCLUDE IT
+      if (range.max < 9) {
+        return false; // Too young for high school
       }
+      // Must serve at least some high school grades (9-12)
+      if (range.min <= 12 && range.max >= 9) {
+        return true;
+      }
+      return false;
     }
     
-    return true;
+    // Default: check if grades match keywords (fallback)
+    const gradesLower = grades.toLowerCase();
+    const gradesMatch = keywords.some((kw) => gradesLower.includes(kw.toLowerCase()));
+    return gradesMatch;
   });
 }
 
