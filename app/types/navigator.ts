@@ -24,6 +24,17 @@ export interface School {
   distance_mi?: number;
   address?: string;
   type?: string;
+  
+  // Enhanced data from SchoolDigger API
+  school_id?: string;
+  enrollment?: number;
+  phone?: string;
+  website_url?: string;
+  is_charter?: boolean;
+  is_magnet?: boolean;
+  is_title_i?: boolean;
+  state_rank?: number; // Percentile (0-100, higher is better)
+  district_name?: string;
 }
 
 export interface Listing {

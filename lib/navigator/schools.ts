@@ -15,7 +15,7 @@ import { getSchoolsByZip, type SchoolDiggerSchool } from "@/lib/vendors/schooldi
  */
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   // Cache key versioned for SchoolDigger
-  const cacheKey = `sd:zip:v6:${zip}`; // v6: District-based filtering (shows schools kids can actually attend)
+  const cacheKey = `sd:zip:v7:${zip}`; // v7: Rich school data (enrollment, rankings, program types)
 
   const cached = await getCache<School[]>(cacheKey);
   if (cached) {
@@ -59,10 +59,19 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
 
     console.log(`[SCHOOLS] Filtered ${response.schoolList.length} → ${districtSchools.length} schools (primary district only)`);
 
-    // STEP 3: Parse to our School format
+    // STEP 3: Parse to our School format with RICH DATA
     const schools: School[] = districtSchools.map((s) => {
       const rating = convertSchoolDiggerRating(s);
       const grades = formatGradeRange(s.lowGrade, s.highGrade);
+      
+      // Extract latest yearly details (enrollment, demographics)
+      const latestYear = s.schoolYearlyDetails?.[0];
+      
+      // Calculate state rank percentile from rankHistory
+      const latestRank = s.rankHistory?.[0];
+      const stateRankPercentile = latestRank?.rankStatewidePercentage 
+        ? Math.round(latestRank.rankStatewidePercentage)
+        : undefined;
 
       return {
         name: s.schoolName || "Unknown School",
@@ -71,6 +80,17 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
         address: s.address.html || formatAddress(s.address),
         type: s.isPrivate ? "private" : "public",
         distance_mi: s.distance || 0,
+        
+        // ENHANCED DATA - Now available for rich UI!
+        school_id: s.schoolid,
+        enrollment: latestYear?.numberOfStudents,
+        phone: s.phone,
+        website_url: s.url,
+        is_charter: s.isCharterSchool === "Yes",
+        is_magnet: s.isMagnetSchool === "Yes",
+        is_title_i: s.isTitleISchool === "Yes",
+        state_rank: stateRankPercentile,
+        district_name: s.district?.districtName,
       };
     });
 

@@ -408,26 +408,29 @@ function generateSchoolsExecutiveSummary(
 
 /**
  * Generate detailed analysis by grade level
+ * SMART: Avoids mentioning the same school multiple times
  */
 function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: KidsGrade[]): string {
   const parts: string[] = [];
+  const mentionedSchools = new Set<string>(); // Track schools we've already mentioned
 
   // Elementary analysis
   if (kidsGrades.length === 0 || kidsGrades.includes("elem")) {
     if (byGrade.elementary.count > 0) {
       const topSchool = byGrade.elementary.top_picks[0];
-      if (topSchool && topSchool.rating >= 8) {
+      if (topSchool && topSchool.rating >= 8 && !mentionedSchools.has(topSchool.name)) {
+        mentionedSchools.add(topSchool.name);
         const additionalCount = byGrade.elementary.count - 1;
         parts.push(
           `Elementary: ${topSchool.name} leads with ${topSchool.rating.toFixed(1)}/10 rating${additionalCount > 0 ? `, ${additionalCount} additional option${additionalCount !== 1 ? 's' : ''} available` : ''}.`
         );
       } else if (byGrade.elementary.count >= 3) {
         parts.push(
-          `Elementary: ${byGrade.elementary.count} schools in district, average ${byGrade.elementary.avg_rating.toFixed(1)}/10, multiple options for flexibility.`
+          `Elementary: ${byGrade.elementary.count} schools in district, average ${byGrade.elementary.avg_rating.toFixed(1)}/10.`
         );
       } else if (byGrade.elementary.count > 0) {
         parts.push(
-          `Elementary: ${byGrade.elementary.count} school${byGrade.elementary.count !== 1 ? 's' : ''} in district (avg ${byGrade.elementary.avg_rating.toFixed(1)}/10).`
+          `Elementary: ${byGrade.elementary.count} school${byGrade.elementary.count !== 1 ? 's' : ''} available (avg ${byGrade.elementary.avg_rating.toFixed(1)}/10).`
         );
       }
     }
@@ -437,13 +440,20 @@ function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: Ki
   if (kidsGrades.length === 0 || kidsGrades.includes("middle")) {
     if (byGrade.middle.count > 0) {
       const topSchool = byGrade.middle.top_picks[0];
-      if (topSchool && topSchool.rating >= 8) {
+      // Only mention if we haven't already mentioned this school in elementary section
+      if (topSchool && topSchool.rating >= 8 && !mentionedSchools.has(topSchool.name)) {
+        mentionedSchools.add(topSchool.name);
         parts.push(
           `Middle: ${topSchool.name} (${topSchool.rating.toFixed(1)}/10) highly rated.`
         );
-      } else if (byGrade.middle.count > 0) {
+      } else if (byGrade.middle.count > 0 && !mentionedSchools.has(topSchool?.name || '')) {
         parts.push(
-          `Middle: ${byGrade.middle.count} school${byGrade.middle.count !== 1 ? 's' : ''} in district, ${byGrade.middle.avg_rating.toFixed(1)}/10 average.`
+          `Middle: ${byGrade.middle.count} school${byGrade.middle.count !== 1 ? 's' : ''} available, ${byGrade.middle.avg_rating.toFixed(1)}/10 average.`
+        );
+      } else if (mentionedSchools.has(topSchool?.name || '')) {
+        // School already mentioned, just note the grade coverage
+        parts.push(
+          `Middle: ${byGrade.middle.count} school${byGrade.middle.count !== 1 ? 's' : ''} (avg ${byGrade.middle.avg_rating.toFixed(1)}/10).`
         );
       }
     }
@@ -453,17 +463,24 @@ function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: Ki
   if (kidsGrades.length === 0 || kidsGrades.includes("high")) {
     if (byGrade.high.count > 0) {
       const topSchool = byGrade.high.top_picks[0];
-      if (topSchool && topSchool.rating >= 8) {
+      // Only mention if we haven't already mentioned this school
+      if (topSchool && topSchool.rating >= 8 && !mentionedSchools.has(topSchool.name)) {
+        mentionedSchools.add(topSchool.name);
         parts.push(`High: ${topSchool.name} (${topSchool.rating.toFixed(1)}/10) strong option.`);
-      } else if (byGrade.high.count > 0) {
-        parts.push(`High: ${byGrade.high.count} school${byGrade.high.count !== 1 ? 's' : ''} in district, ${byGrade.high.avg_rating.toFixed(1)}/10 average.`);
+      } else if (byGrade.high.count > 0 && !mentionedSchools.has(topSchool?.name || '')) {
+        parts.push(`High: ${byGrade.high.count} school${byGrade.high.count !== 1 ? 's' : ''} available, ${byGrade.high.avg_rating.toFixed(1)}/10 average.`);
+      } else if (mentionedSchools.has(topSchool?.name || '')) {
+        // School already mentioned, just note the grade coverage
+        parts.push(
+          `High: ${byGrade.high.count} school${byGrade.high.count !== 1 ? 's' : ''} (avg ${byGrade.high.avg_rating.toFixed(1)}/10).`
+        );
       }
     }
   }
 
   // Private school note
   if (byGrade.private.count > 0) {
-    parts.push(`${byGrade.private.count} private school alternatives available.`);
+    parts.push(`${byGrade.private.count} private school alternative${byGrade.private.count !== 1 ? 's' : ''} available.`);
   }
 
   return parts.join(" ");

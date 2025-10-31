@@ -1377,6 +1377,16 @@ interface EnhancedGradeLevelCardProps {
     grades: string;
     distance_mi?: number;
     address?: string;
+    // Enhanced data
+    school_id?: string;
+    enrollment?: number;
+    phone?: string;
+    website_url?: string;
+    is_charter?: boolean;
+    is_magnet?: boolean;
+    is_title_i?: boolean;
+    state_rank?: number;
+    district_name?: string;
   }>;
   color: string;
   showAll?: boolean;
@@ -1417,16 +1427,81 @@ function EnhancedGradeLevelCard({ level, grades, count, avgRating, topSchools, c
 
       {topSchools.length > 0 && (
         <div>
-          <div className="mb-3 text-sm font-bold text-slate-700">{showAll ? 'All Schools:' : 'Top Picks:'}</div>
-          <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+          <div className="mb-4 text-sm font-bold text-slate-700">{showAll ? 'All Schools:' : 'Top Picks:'}</div>
+          <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
             {topSchools.map((school, i) => (
-              <div key={i} className="rounded-lg bg-white p-3 shadow-sm">
-                <div className="mb-1 flex items-center justify-between">
-                  <span className="font-semibold text-slate-900 text-sm">{school.name}</span>
-                  <span className={`font-bold ${colors.text}`}>{school.rating.toFixed(1)}</span>
+              <div key={i} className="group rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm hover:shadow-lg hover:border-blue-400 transition-all">
+                {/* School Header */}
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <h5 className="font-bold text-slate-900 text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors">
+                      {school.name}
+                    </h5>
+                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                      <span className="text-xs text-slate-600">{school.grades}</span>
+                      {school.enrollment && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                          {school.enrollment.toLocaleString()} students
+                        </span>
+                      )}
+                      {school.is_charter && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold">
+                          Charter
+                        </span>
+                      )}
+                      {school.is_magnet && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">
+                          Magnet
+                        </span>
+                      )}
+                      {school.is_title_i && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">
+                          Title I
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Rating Badge */}
+                  <div className={`flex flex-col items-center justify-center rounded-lg ${colors.bg} px-3 py-2 min-w-[60px]`}>
+                    <div className={`text-2xl font-bold ${colors.text}`}>{school.rating.toFixed(1)}</div>
+                    <div className="text-xs text-slate-600">/ 10</div>
+                  </div>
                 </div>
-                {school.distance_mi && (
-                  <div className="text-xs text-slate-500">📍 {school.distance_mi.toFixed(1)} mi away</div>
+
+                {/* School Details Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  {school.state_rank && (
+                    <div className="flex items-center gap-2">
+                      <Icon name="TrendingUp" className="h-4 w-4 text-amber-500" />
+                      <div className="text-xs">
+                        <div className="font-semibold text-slate-900">Top {school.state_rank}%</div>
+                        <div className="text-slate-500">in state</div>
+                      </div>
+                    </div>
+                  )}
+                  {school.distance_mi !== undefined && school.distance_mi > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Icon name="MapPin" className="h-4 w-4 text-slate-500" />
+                      <div className="text-xs">
+                        <div className="font-semibold text-slate-900">{school.distance_mi.toFixed(1)} mi</div>
+                        <div className="text-slate-500">from ZIP</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                {school.website_url && (
+                  <a 
+                    href={school.website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    View School Profile
+                    <Icon name="ExternalLink" className="h-3 w-3" />
+                  </a>
                 )}
               </div>
             ))}
