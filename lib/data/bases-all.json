@@ -1,0 +1,522 @@
+{
+  "_meta": {
+    "generated": "2025-10-31T01:45:34.563Z",
+    "source": "military-bases.json + bah_rates table",
+    "total": 32,
+    "note": "Auto-generated list of US military installations. DO NOT manually edit."
+  },
+  "bases": [
+    {
+      "code": "abilene",
+      "name": "ABILENE/DYESS AFB, TX",
+      "branch": "Air Force",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [],
+      "mha": "TX270"
+    },
+    {
+      "code": "albuquerque",
+      "name": "ALBUQUERQUE/KIRTLAND AFB, NM",
+      "branch": "Air Force",
+      "state": "NM",
+      "center": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "gate": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "candidateZips": [],
+      "mha": "NM206"
+    },
+    {
+      "code": "altus",
+      "name": "ALTUS AFB, OK",
+      "branch": "Air Force",
+      "state": "OK",
+      "center": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "gate": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "candidateZips": [],
+      "mha": "OK235"
+    },
+    {
+      "code": "beale",
+      "name": "BEALE AFB, CA",
+      "branch": "Air Force",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [],
+      "mha": "CA033"
+    },
+    {
+      "code": "cannon",
+      "name": "CANNON AFB/CLOVIS, NM",
+      "branch": "Air Force",
+      "state": "NM",
+      "center": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "gate": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "candidateZips": [],
+      "mha": "NM207"
+    },
+    {
+      "code": "davis",
+      "name": "DAVIS-MONTHAN AFB, AZ",
+      "branch": "Air Force",
+      "state": "AZ",
+      "center": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "gate": {
+        "lat": 33.729759,
+        "lng": -111.431221
+      },
+      "candidateZips": [],
+      "mha": "AZ015"
+    },
+    {
+      "code": "dover",
+      "name": "DOVER AFB/REHOBOTH, DE",
+      "branch": "Air Force",
+      "state": "DE",
+      "center": {
+        "lat": 39.318523,
+        "lng": -75.507141
+      },
+      "gate": {
+        "lat": 39.318523,
+        "lng": -75.507141
+      },
+      "candidateZips": [],
+      "mha": "DE054"
+    },
+    {
+      "code": "edwards",
+      "name": "EDWARDS AFB/PALMDALE, CA",
+      "branch": "Air Force",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [],
+      "mha": "CA457"
+    },
+    {
+      "code": "eglin",
+      "name": "EGLIN AFB, FL",
+      "branch": "Air Force",
+      "state": "FL",
+      "center": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "gate": {
+        "lat": 27.766279,
+        "lng": -81.686783
+      },
+      "candidateZips": [],
+      "mha": "FL056"
+    },
+    {
+      "code": "goodfellow",
+      "name": "GOODFELLOW AFB, TX",
+      "branch": "Air Force",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [],
+      "mha": "TX284"
+    },
+    {
+      "code": "hanscom",
+      "name": "HANSCOM AFB, MA",
+      "branch": "Air Force",
+      "state": "MA",
+      "center": {
+        "lat": 42.230171,
+        "lng": -71.530106
+      },
+      "gate": {
+        "lat": 42.230171,
+        "lng": -71.530106
+      },
+      "candidateZips": [],
+      "mha": "MA377"
+    },
+    {
+      "code": "holloman",
+      "name": "HOLLOMAN AFB/ALAMOGORDO, NM",
+      "branch": "Air Force",
+      "state": "NM",
+      "center": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "gate": {
+        "lat": 34.840515,
+        "lng": -106.248482
+      },
+      "candidateZips": [],
+      "mha": "NM205"
+    },
+    {
+      "code": "laughlin",
+      "name": "LAUGHLIN AFB/DEL RIO, TX",
+      "branch": "Air Force",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [],
+      "mha": "TX278"
+    },
+    {
+      "code": "minot",
+      "name": "MINOT AFB, ND",
+      "branch": "Air Force",
+      "state": "ND",
+      "center": {
+        "lat": 47.528912,
+        "lng": -99.784012
+      },
+      "gate": {
+        "lat": 47.528912,
+        "lng": -99.784012
+      },
+      "candidateZips": [],
+      "mha": "ND191"
+    },
+    {
+      "code": "moody",
+      "name": "MOODY AFB, GA",
+      "branch": "Air Force",
+      "state": "GA",
+      "center": {
+        "lat": 30.9678,
+        "lng": -83.193
+      },
+      "gate": {
+        "lat": 30.9678,
+        "lng": -83.193
+      },
+      "candidateZips": [],
+      "mha": "GA081"
+    },
+    {
+      "code": "mountain",
+      "name": "MOUNTAIN HOME AFB, ID",
+      "branch": "Air Force",
+      "state": "ID",
+      "center": {
+        "lat": 44.240459,
+        "lng": -114.478828
+      },
+      "gate": {
+        "lat": 44.240459,
+        "lng": -114.478828
+      },
+      "candidateZips": [],
+      "mha": "ID086"
+    },
+    {
+      "code": "nellis",
+      "name": "NELLIS AFB/LAS VEGAS, NV",
+      "branch": "Air Force",
+      "state": "NV",
+      "center": {
+        "lat": 38.313515,
+        "lng": -117.055374
+      },
+      "gate": {
+        "lat": 38.313515,
+        "lng": -117.055374
+      },
+      "candidateZips": [],
+      "mha": "NV212"
+    },
+    {
+      "code": "ogden",
+      "name": "OGDEN/HILL AFB, UT",
+      "branch": "Air Force",
+      "state": "UT",
+      "center": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "gate": {
+        "lat": 40.150032,
+        "lng": -111.862434
+      },
+      "candidateZips": [],
+      "mha": "UT291"
+    },
+    {
+      "code": "omaha",
+      "name": "OMAHA/OFFUTT AFB, NE",
+      "branch": "Air Force",
+      "state": "NE",
+      "center": {
+        "lat": 41.12537,
+        "lng": -98.268082
+      },
+      "gate": {
+        "lat": 41.12537,
+        "lng": -98.268082
+      },
+      "candidateZips": [],
+      "mha": "NE192"
+    },
+    {
+      "code": "rapid",
+      "name": "RAPID CITY/ELLSWORTH AFB, SD",
+      "branch": "Air Force",
+      "state": "SD",
+      "center": {
+        "lat": 44.299782,
+        "lng": -99.438828
+      },
+      "gate": {
+        "lat": 44.299782,
+        "lng": -99.438828
+      },
+      "candidateZips": [],
+      "mha": "SD264"
+    },
+    {
+      "code": "robins",
+      "name": "ROBINS AFB, GA",
+      "branch": "Air Force",
+      "state": "GA",
+      "center": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "gate": {
+        "lat": 33.040619,
+        "lng": -83.643074
+      },
+      "candidateZips": [],
+      "mha": "GA076"
+    },
+    {
+      "code": "rome",
+      "name": "ROME/GRIFFISS AFB, NY",
+      "branch": "Air Force",
+      "state": "NY",
+      "center": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "gate": {
+        "lat": 42.165726,
+        "lng": -74.948051
+      },
+      "candidateZips": [],
+      "mha": "NY222"
+    },
+    {
+      "code": "scott",
+      "name": "SCOTT AFB, IL",
+      "branch": "Air Force",
+      "state": "IL",
+      "center": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "gate": {
+        "lat": 40.349457,
+        "lng": -88.986137
+      },
+      "candidateZips": [],
+      "mha": "IL093"
+    },
+    {
+      "code": "seymour",
+      "name": "SEYMOUR JOHNSON AFB, NC",
+      "branch": "Air Force",
+      "state": "NC",
+      "center": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "gate": {
+        "lat": 35.630066,
+        "lng": -79.806419
+      },
+      "candidateZips": [],
+      "mha": "NC183"
+    },
+    {
+      "code": "shreveport",
+      "name": "SHREVEPORT/BARKSDALE AFB, LA",
+      "branch": "Air Force",
+      "state": "LA",
+      "center": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "gate": {
+        "lat": 31.169546,
+        "lng": -91.867805
+      },
+      "candidateZips": [],
+      "mha": "LA117"
+    },
+    {
+      "code": "sumter",
+      "name": "SUMTER/SHAW AFB, SC",
+      "branch": "Air Force",
+      "state": "SC",
+      "center": {
+        "lat": 33.970833,
+        "lng": -80.470556
+      },
+      "gate": {
+        "lat": 33.970833,
+        "lng": -80.470556
+      },
+      "candidateZips": [],
+      "mha": "SC263"
+    },
+    {
+      "code": "vallejo",
+      "name": "VALLEJO/TRAVIS AFB, CA",
+      "branch": "Air Force",
+      "state": "CA",
+      "center": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "gate": {
+        "lat": 36.116203,
+        "lng": -119.681564
+      },
+      "candidateZips": [],
+      "mha": "CA036"
+    },
+    {
+      "code": "vance",
+      "name": "VANCE AFB/ENID, OK",
+      "branch": "Air Force",
+      "state": "OK",
+      "center": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "gate": {
+        "lat": 35.565342,
+        "lng": -96.928917
+      },
+      "candidateZips": [],
+      "mha": "OK236"
+    },
+    {
+      "code": "whiteman",
+      "name": "WHITEMAN AFB, MO",
+      "branch": "Air Force",
+      "state": "MO",
+      "center": {
+        "lat": 38.456085,
+        "lng": -92.288368
+      },
+      "gate": {
+        "lat": 38.456085,
+        "lng": -92.288368
+      },
+      "candidateZips": [],
+      "mha": "MO162"
+    },
+    {
+      "code": "wichita",
+      "name": "WICHITA FLS/SHEPPARD AFB, TX",
+      "branch": "Air Force",
+      "state": "TX",
+      "center": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "gate": {
+        "lat": 31.054487,
+        "lng": -97.563461
+      },
+      "candidateZips": [],
+      "mha": "TX288"
+    },
+    {
+      "code": "wichita",
+      "name": "WICHITA/MCCONNELL AFB, KS",
+      "branch": "Air Force",
+      "state": "KS",
+      "center": {
+        "lat": 38.5266,
+        "lng": -96.726486
+      },
+      "gate": {
+        "lat": 38.5266,
+        "lng": -96.726486
+      },
+      "candidateZips": [],
+      "mha": "KS101"
+    },
+    {
+      "code": "wright",
+      "name": "WRIGHT-PATTERSON AFB, OH",
+      "branch": "Air Force",
+      "state": "OH",
+      "center": {
+        "lat": 40.388783,
+        "lng": -82.764915
+      },
+      "gate": {
+        "lat": 40.388783,
+        "lng": -82.764915
+      },
+      "candidateZips": [],
+      "mha": "OH231"
+    }
+  ]
+}

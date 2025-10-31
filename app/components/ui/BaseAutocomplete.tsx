@@ -21,6 +21,7 @@ const militaryBases = militaryBasesData.bases as MilitaryBase[];
 interface BaseAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
+  onSelect?: (baseName: string) => void; // NEW: callback when base is selected
   placeholder?: string;
   className?: string;
 }
@@ -28,6 +29,7 @@ interface BaseAutocompleteProps {
 export default function BaseAutocomplete({
   value,
   onChange,
+  onSelect,
   placeholder = "e.g., Fort Liberty, NC (optional)",
   className = "w-full border border-border rounded-lg px-3 py-2",
 }: BaseAutocompleteProps) {
@@ -96,6 +98,7 @@ export default function BaseAutocomplete({
     // Always include state to ensure MHA code detection works
     const fullName = `${base.name}, ${base.state}`;
     onChange(fullName);
+    onSelect?.(fullName); // NEW: trigger navigation or other callback
     setIsOpen(false);
     setHighlightedIndex(-1);
     inputRef.current?.blur();

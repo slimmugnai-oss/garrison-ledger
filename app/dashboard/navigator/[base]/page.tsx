@@ -13,7 +13,9 @@ import { redirect } from "next/navigation";
 
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
-import bases from "@/lib/data/bases-seed.json";
+import basesAllData from "@/lib/data/bases-all.json";
+
+const bases = basesAllData.bases;
 
 import BaseNavigatorClient from "./BaseNavigatorClient";
 
@@ -46,10 +48,10 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
   if (!user) redirect("/sign-in");
 
   const { base } = await params;
-  const baseCode = base.toUpperCase();
+  const baseCode = base.toLowerCase(); // Codes are now lowercase (e.g., "shaw", "ftlb")
 
   // Find base data
-  const baseData = bases.find((b) => b.code === baseCode);
+  const baseData = bases.find((b) => b.code.toLowerCase() === baseCode);
 
   if (!baseData) {
     return (
@@ -108,8 +110,15 @@ export default async function BaseNavigatorPage({ params }: { params: Promise<{ 
   let bahSource: "auto" | "manual" = "manual";
 
   if (profile?.rank && profile?.has_dependents !== null && baseData.mha) {
-    // Normalize rank format (E-6 → E06, O-3 → O03, etc.)
-    const normalizedRank = profile.rank.replace(/^([EOW])-(\d)$/, "$10$2");
+    // Normalize rank format to E0X format (handles both "E-7" and "E7" → "E07")
+    let normalizedRank = profile.rank;
+    
+    // E-7 → E07 (single digit with hyphen)
+    normalizedRank = normalizedRank.replace(/^([EOW])-(\d)$/, "$10$2");
+    // E7 → E07 (single digit without hyphen)
+    normalizedRank = normalizedRank.replace(/^([EOW])(\d)$/, "$10$2");
+    // E-07 → E07 (already has zero, just remove hyphen)
+    normalizedRank = normalizedRank.replace(/^([EOW])-0(\d)$/, "$10$2");
 
     const { data: bahRate } = await supabase
       .from("bah_rates")

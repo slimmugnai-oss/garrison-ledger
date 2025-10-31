@@ -8,7 +8,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import NeighborhoodIntelligenceReport from "@/app/components/navigator/NeighborhoodIntelligenceReport";
 import AnimatedCard from "@/app/components/ui/AnimatedCard";
@@ -44,6 +44,9 @@ export default function BaseNavigatorClient({
 }: Props) {
   // Single filter: BAH
   const [bahMonthlyCents, setBahMonthlyCents] = useState(250000);
+  
+  // Ranking preference
+  const [rankBy, setRankBy] = useState<'family' | 'schools' | 'commute' | 'affordable' | 'weather'>('family');
 
   // Results
   const [results, setResults] = useState<NeighborhoodCard[]>([]);
@@ -73,6 +76,33 @@ export default function BaseNavigatorClient({
       setWatchedZips(initialWatchlist.zips);
     }
   }, [initialWatchlist?.zips]);
+
+  /**
+   * Sort results based on ranking preference
+   */
+  const sortedResults = useMemo(() => {
+    if (results.length === 0) return [];
+
+    return [...results].sort((a, b) => {
+      switch (rankBy) {
+        case 'schools':
+          return (b.payload.schools_intelligence?.overall_avg_rating || 0) - 
+                 (a.payload.schools_intelligence?.overall_avg_rating || 0);
+        case 'commute':
+          return (a.payload.commute_intelligence?.primary_route_miles || 999) - 
+                 (b.payload.commute_intelligence?.primary_route_miles || 999);
+        case 'affordable':
+          return (b.payload.housing_intelligence?.bah_analysis.avg_savings_cents || 0) - 
+                 (a.payload.housing_intelligence?.bah_analysis.avg_savings_cents || 0);
+        case 'weather':
+          return (b.payload.weather_intelligence?.overall_comfort_score || 0) - 
+                 (a.payload.weather_intelligence?.overall_comfort_score || 0);
+        default:
+          // family (default)
+          return b.family_fit_score - a.family_fit_score;
+      }
+    });
+  }, [results, rankBy]);
 
   /**
    * Compute rankings
@@ -157,9 +187,9 @@ export default function BaseNavigatorClient({
   //   }
   // }, []);
 
-  // Determine which results to show (gating)
-  const visibleResults = results; // Always show all results (max 5 from API)
-  // No pagination needed - API returns max 5 results
+  // Determine which results to show (sorted by user preference)
+  const visibleResults = sortedResults; // Use sorted results based on rankBy preference
+  // No pagination needed - API returns max 3 results
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -280,6 +310,42 @@ export default function BaseNavigatorClient({
 
           <div className="p-6 md:p-8">
             <div className="space-y-8">
+              {/* Rank By Dropdown - NEW */}
+              <div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Icon name="BarChart" className="h-5 w-5 text-blue-600" />
+                  <label htmlFor="rank_by_select" className="text-lg font-bold text-slate-900">
+                    Rank By
+                  </label>
+                </div>
+                
+                <div className="max-w-md">
+                  <select
+                    id="rank_by_select"
+                    value={rankBy}
+                    onChange={(e) => setRankBy(e.target.value as typeof rankBy)}
+                    className="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3.5 text-base font-medium text-slate-900 shadow-sm transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  >
+                    <option value="family">Family Fit Score (Balanced)</option>
+                    <option value="schools">Best Schools</option>
+                    <option value="commute">Shortest Commute</option>
+                    <option value="affordable">Most Affordable</option>
+                    <option value="weather">Best Weather</option>
+                  </select>
+                  
+                  <div className="mt-3 flex items-start gap-2 text-sm text-slate-600">
+                    <Icon name="Info" className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
+                    <p>
+                      {rankBy === 'family' && 'Balanced scoring across all factors (default)'}
+                      {rankBy === 'schools' && 'Prioritizes highest-rated school districts'}
+                      {rankBy === 'commute' && 'Prioritizes shortest distance to base'}
+                      {rankBy === 'affordable' && 'Prioritizes maximum BAH savings'}
+                      {rankBy === 'weather' && 'Prioritizes most comfortable climate'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* BAH Input - Enhanced */}
               <div>
                 <div className="mb-4 flex items-center gap-2">
@@ -496,10 +562,20 @@ export default function BaseNavigatorClient({
             {/* Header */}
             <div className="mb-8">
               <h2 className="font-lora mb-2 text-2xl font-bold text-gray-900">
-                Top {results.length} Neighborhoods Ranked
+                Top {sortedResults.length} Neighborhoods 
+                {rankBy !== 'family' && ` - Ranked by ${rankBy === 'schools' ? 'Best Schools' : rankBy === 'commute' ? 'Shortest Commute' : rankBy === 'affordable' ? 'Most Affordable' : 'Best Weather'}`}
               </h2>
               <p className="text-gray-600">
-                The best ZIP codes for your family, ranked by our comprehensive scoring algorithm.
+                {rankBy === 'family' 
+                  ? 'Comprehensive scoring across all factors for balanced decision-making.' 
+                  : rankBy === 'schools'
+                  ? 'Neighborhoods with the highest-rated school districts first.'
+                  : rankBy === 'commute'
+                  ? 'Closest neighborhoods to base for minimal commute time.'
+                  : rankBy === 'affordable'
+                  ? 'Maximum BAH savings and housing affordability.'
+                  : 'Most comfortable year-round climate and weather conditions.'
+                }
               </p>
             </div>
 
