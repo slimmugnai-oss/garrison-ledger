@@ -164,12 +164,45 @@ export function analyzeSchoolsComprehensive(
 }
 
 /**
- * Categorize schools by grade level keywords
+ * Categorize schools by grade level keywords with smart filtering
+ * Prevents "High School" from appearing in Elementary section
  */
 function categorizeByGrade(schools: School[], keywords: string[]): School[] {
   return schools.filter((school) => {
     const grades = school.grades.toLowerCase();
-    return keywords.some((kw) => grades.includes(kw.toLowerCase()));
+    const name = school.name.toLowerCase();
+    
+    // Check if grades match the keywords
+    const gradesMatch = keywords.some((kw) => grades.includes(kw.toLowerCase()));
+    if (!gradesMatch) return false;
+    
+    // SMART FILTER: Don't show schools with misleading names in wrong sections
+    // If categorizing for elementary, exclude schools with "high school" in name UNLESS it's clearly K-12
+    if (keywords.includes("K") || keywords.includes("elementary")) {
+      // Exclude if name says "high school" or "middle school" UNLESS grades explicitly show K-5 range
+      if (name.includes("high school") && !grades.includes("k") && !grades.includes("pk")) {
+        return false;
+      }
+      if (name.includes("middle school") && !grades.includes("k") && !grades.includes("pk")) {
+        return false;
+      }
+    }
+    
+    // If categorizing for middle, exclude "high school" unless it clearly serves middle grades
+    if (keywords.includes("6") || keywords.includes("middle")) {
+      if (name.includes("high school") && !grades.includes("6") && !grades.includes("7") && !grades.includes("8")) {
+        return false;
+      }
+    }
+    
+    // If categorizing for high school, exclude "elementary" or "middle school" from name
+    if (keywords.includes("9") || keywords.includes("high")) {
+      if (name.includes("elementary") && !grades.includes("9") && !grades.includes("10")) {
+        return false;
+      }
+    }
+    
+    return true;
   });
 }
 
