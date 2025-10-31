@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
 
     if (countError) {
       logger.error("[AskDocUpload] Error checking quota:", countError);
-      return errorResponse(Errors.internal("Failed to check upload quota"));
+      return NextResponse.json(
+        { error: "Failed to check upload quota" },
+        { status: 500 }
+      );
     }
 
     if ((count || 0) >= monthlyQuota) {
@@ -164,12 +167,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     logger.error("[AskDocUpload] Upload failed:", error);
-    
-    if (error instanceof Error) {
-      return errorResponse(Errors.internal(error.message));
-    }
-    
-    return errorResponse(Errors.internal("Document upload failed"));
+    return NextResponse.json(
+      { error: "Document upload failed" },
+      { status: 500 }
+    );
   }
 }
 

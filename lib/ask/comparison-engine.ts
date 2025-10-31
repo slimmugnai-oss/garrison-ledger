@@ -193,6 +193,8 @@ export async function compareBenefits(
   userSituation?: {
     age?: number;
     years_to_retirement?: number;
+    years_of_service?: number;
+    plans_20_year_retirement?: boolean;
     risk_tolerance?: "low" | "medium" | "high";
     has_dependents?: boolean;
   }
@@ -204,7 +206,7 @@ export async function compareBenefits(
   } else if (benefitType === "gi_bill") {
     return compareGIBillOptions(userSituation);
   } else if (benefitType === "retirement_systems") {
-    return compareRetirementSystems(userSituation);
+    return compareRetirementSystems(userSituation as any); // Type cast for flexibility
   }
 
   // Default fallback

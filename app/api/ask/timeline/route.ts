@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     logger.info(`[Timeline] Generating ${type} timeline for ${eventDate}`);
 
-    const timeline = generateTimeline(new Date(eventDate), type, options);
+    const timeline = generateTimeline(type, new Date(eventDate), options);
 
     return NextResponse.json({
       success: true,
@@ -45,7 +45,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     logger.error("[Timeline] Generation failed:", error);
-    return errorResponse(Errors.internal("Timeline generation failed"));
+    return NextResponse.json(
+      { error: "Timeline generation failed" },
+      { status: 500 }
+    );
   }
 }
 

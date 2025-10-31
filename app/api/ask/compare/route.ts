@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     logger.error("[AskCompare] Comparison failed:", error);
-    return errorResponse(Errors.internal("Comparison failed"));
+    return NextResponse.json(
+      { error: "Comparison failed" },
+      { status: 500 }
+    );
   }
 }
 

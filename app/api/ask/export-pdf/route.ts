@@ -97,7 +97,10 @@ export async function GET(req: NextRequest) {
     });
 
     // Return PDF as downloadable file
-    return new NextResponse(result.pdfBuffer, {
+    // Convert Buffer to Uint8Array for Response body
+    const uint8Array = new Uint8Array(result.pdfBuffer);
+    
+    return new Response(uint8Array, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${result.fileName}"`,
@@ -106,12 +109,10 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     logger.error("[PDF Export] Export failed:", error);
-    
-    if (error instanceof Error) {
-      return errorResponse(Errors.internal(error.message));
-    }
-    
-    return errorResponse(Errors.internal("PDF export failed"));
+    return NextResponse.json(
+      { error: "PDF export failed" },
+      { status: 500 }
+    );
   }
 }
 
