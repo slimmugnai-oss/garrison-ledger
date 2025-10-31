@@ -247,37 +247,89 @@ function findCoordinates(baseName: string, state: string): { lat: number; lng: n
 }
 
 /**
- * Generate base code from name
+ * Generate UNIQUE base code from name
+ * Tracks used codes to prevent duplicates
  */
-function generateBaseCode(baseName: string): string {
+const usedCodes = new Set<string>();
+
+function generateBaseCode(baseName: string, state: string): string {
   const clean = baseName.toLowerCase().replace(/[^a-z0-9\s]/g, '');
   const words = clean.split(/\s+/);
   
-  // Special cases
-  if (baseName.includes('JBLM')) return 'jblm';
+  // Special cases first
+  if (baseName.includes('JBLM')) return ensureUnique('jblm', baseName, state);
   
-  // Fort X → ftx (first 2 letters of fort name)
+  // Fort X → use full fort name or abbreviation
   if (words[0] === 'fort' && words[1]) {
-    return `ft${words[1].substring(0, 2)}`;
+    // Use more of the fort name to reduce collisions
+    const fortName = words[1];
+    
+    // Try full name first if short
+    if (fortName.length <= 8) {
+      const code = ensureUnique(fortName, baseName, state);
+      if (code) return code;
+    }
+    
+    // Otherwise use ft + first 4 letters
+    return ensureUnique(`ft${fortName.substring(0, 4)}`, baseName, state);
   }
   
-  // Naval Station X → nsx
-  if (words.includes('naval') && words.includes('station')) {
-    const city = words.find(w => w !== 'naval' && w !== 'station' && w !== 'base');
-    return city ? `ns${city.substring(0, 3)}` : 'naval';
+  // Naval Station/Base X → nsx
+  if (words.includes('naval')) {
+    const city = words.find(w => !['naval', 'station', 'base'].includes(w));
+    if (city) {
+      return ensureUnique(`ns${city.substring(0, 4)}`, baseName, state);
+    }
   }
   
-  // Marine Corps Base / Camp X → mcbx
-  if (words.includes('marine') || words.includes('camp') || baseName.includes('MCAS')) {
-    if (baseName.includes('Pendleton')) return 'pendleton';
-    if (baseName.includes('Lejeune')) return 'lejeune';
-    if (baseName.includes('MCAS')) return words[words.length - 2] || words[0];
+  // Marine Corps Base / Camp X
+  if (words.includes('marine') || baseName.includes('MCAS') || baseName.includes('Camp')) {
+    if (baseName.includes('Pendleton')) return ensureUnique('pendleton', baseName, state);
+    if (baseName.includes('Lejeune')) return ensureUnique('lejeune', baseName, state);
+    if (baseName.includes('MCAS')) {
+      const loc = words[words.length - 1];
+      return ensureUnique(`mcas${loc.substring(0, 4)}`, baseName, state);
+    }
     const loc = words.find(w => !['marine', 'corps', 'base', 'camp'].includes(w));
-    return loc ? `mcb${loc.substring(0, 2)}` : 'mcb';
+    return ensureUnique(loc ? `mcb${loc.substring(0, 4)}` : 'mcb', baseName, state);
   }
   
-  // Default: first significant word
-  return words[0].substring(0, 6);
+  // Arsenal, Depot, Medical Center, etc.
+  if (words.includes('arsenal') || words.includes('depot') || words.includes('medical') || words.includes('barracks')) {
+    const identifier = words.find(w => !['arsenal', 'depot', 'army', 'medical', 'center', 'barracks'].includes(w));
+    if (identifier) {
+      return ensureUnique(identifier.substring(0, 8), baseName, state);
+    }
+  }
+  
+  // Default: first significant word (full if unique)
+  return ensureUnique(words[0].substring(0, 8), baseName, state);
+}
+
+/**
+ * Ensure code is unique by adding state suffix if needed
+ */
+function ensureUnique(proposedCode: string, baseName: string, state: string): string {
+  if (!usedCodes.has(proposedCode)) {
+    usedCodes.add(proposedCode);
+    return proposedCode;
+  }
+  
+  // Code already used - add state suffix
+  const withState = `${proposedCode}_${state.toLowerCase()}`;
+  if (!usedCodes.has(withState)) {
+    usedCodes.add(withState);
+    return withState;
+  }
+  
+  // Still collision - add number
+  let counter = 2;
+  while (usedCodes.has(`${proposedCode}${counter}`)) {
+    counter++;
+  }
+  const finalCode = `${proposedCode}${counter}`;
+  usedCodes.add(finalCode);
+  return finalCode;
 }
 
 async function main() {
@@ -316,8 +368,8 @@ async function main() {
     const coords = findCoordinates(row.Base, state);
     const { lat, lng } = coords || STATE_CENTROIDS[state] || { lat: 0, lng: 0 };
     
-    // Generate code
-    const code = generateBaseCode(row.Base);
+    // Generate UNIQUE code
+    const code = generateBaseCode(row.Base, state);
     
     // Build candidate ZIPs
     const candidateZips = [row.Zip1, row.Zip2, row.Zip3].filter(z => z && z.length === 5);

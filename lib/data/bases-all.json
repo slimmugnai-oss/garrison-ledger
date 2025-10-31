@@ -1,13 +1,13 @@
 {
   "_meta": {
-    "generated": "2025-10-31T02:44:55.866Z",
+    "generated": "2025-10-31T02:54:19.970Z",
     "source": "User CSV (150 bases + top 3 ZIPs) + military-bases.json (coords) + base-mha-map.json (MHA)",
     "total": 50,
     "note": "Comprehensive list of US military installations with curated top 3 ZIP codes for each."
   },
   "bases": [
     {
-      "code": "ftli",
+      "code": "liberty",
       "name": "Fort Liberty, NC",
       "branch": "Army",
       "state": "NC",
@@ -27,7 +27,7 @@
       "mha": "NC182"
     },
     {
-      "code": "ftca",
+      "code": "campbell",
       "name": "Fort Campbell, TN",
       "branch": "Army",
       "state": "TN",
@@ -47,7 +47,7 @@
       "mha": "KY106"
     },
     {
-      "code": "ftca",
+      "code": "cavazos",
       "name": "Fort Cavazos, TX",
       "branch": "Army",
       "state": "TX",
@@ -67,7 +67,7 @@
       "mha": "TX286"
     },
     {
-      "code": "ftmo",
+      "code": "moore",
       "name": "Fort Moore, GA",
       "branch": "Army",
       "state": "GA",
@@ -87,7 +87,7 @@
       "mha": "GA075"
     },
     {
-      "code": "ftja",
+      "code": "jackson",
       "name": "Fort Jackson, SC",
       "branch": "Army",
       "state": "SC",
@@ -107,7 +107,7 @@
       "mha": "SC260"
     },
     {
-      "code": "ftca",
+      "code": "carson",
       "name": "Fort Carson, CO",
       "branch": "Army",
       "state": "CO",
@@ -127,7 +127,7 @@
       "mha": "CO050"
     },
     {
-      "code": "ftbl",
+      "code": "bliss",
       "name": "Fort Bliss, TX",
       "branch": "Army",
       "state": "TX",
@@ -147,7 +147,7 @@
       "mha": "TX282"
     },
     {
-      "code": "ftst",
+      "code": "stewart",
       "name": "Fort Stewart, GA",
       "branch": "Army",
       "state": "GA",
@@ -167,7 +167,7 @@
       "mha": "GA080"
     },
     {
-      "code": "ftri",
+      "code": "riley",
       "name": "Fort Riley, KS",
       "branch": "Army",
       "state": "KS",
@@ -187,7 +187,7 @@
       "mha": "KS100"
     },
     {
-      "code": "ftdr",
+      "code": "drum",
       "name": "Fort Drum, NY",
       "branch": "Army",
       "state": "NY",
@@ -207,7 +207,7 @@
       "mha": "NY225"
     },
     {
-      "code": "ftle",
+      "code": "leonard",
       "name": "Fort Leonard Wood, MO",
       "branch": "Army",
       "state": "MO",
@@ -227,7 +227,7 @@
       "mha": "MO163"
     },
     {
-      "code": "fthu",
+      "code": "huachuca",
       "name": "Fort Huachuca, AZ",
       "branch": "Army",
       "state": "AZ",
@@ -247,7 +247,7 @@
       "mha": "AZ014"
     },
     {
-      "code": "ftno",
+      "code": "novosel",
       "name": "Fort Novosel, AL",
       "branch": "Army",
       "state": "AL",
@@ -267,7 +267,7 @@
       "mha": "AL002"
     },
     {
-      "code": "ftgr",
+      "code": "ftgreg",
       "name": "Fort Gregg-Adams, VA",
       "branch": "Army",
       "state": "VA",
@@ -287,7 +287,7 @@
       "mha": "VA301"
     },
     {
-      "code": "fteu",
+      "code": "eustis",
       "name": "Fort Eustis (JBLE), VA",
       "branch": "Army",
       "state": "VA",
@@ -307,7 +307,7 @@
       "mha": "VA297"
     },
     {
-      "code": "ftmy",
+      "code": "myer",
       "name": "Fort Myer (JBM-HH), VA",
       "branch": "Army",
       "state": "VA",
@@ -327,7 +327,7 @@
       "mha": "VA290"
     },
     {
-      "code": "ftme",
+      "code": "meade",
       "name": "Fort Meade, MD",
       "branch": "Army",
       "state": "MD",
@@ -347,7 +347,7 @@
       "mha": "MD133"
     },
     {
-      "code": "ftbe",
+      "code": "belvoir",
       "name": "Fort Belvoir, VA",
       "branch": "Army",
       "state": "VA",
@@ -367,7 +367,7 @@
       "mha": "VA291"
     },
     {
-      "code": "ftde",
+      "code": "detrick",
       "name": "Fort Detrick, MD",
       "branch": "Army",
       "state": "MD",
@@ -387,7 +387,7 @@
       "mha": "MD130"
     },
     {
-      "code": "ftkn",
+      "code": "knox",
       "name": "Fort Knox, KY",
       "branch": "Army",
       "state": "KY",
@@ -407,7 +407,7 @@
       "mha": "KY110"
     },
     {
-      "code": "ftsi",
+      "code": "sill",
       "name": "Fort Sill, OK",
       "branch": "Army",
       "state": "OK",
@@ -427,7 +427,7 @@
       "mha": "OK237"
     },
     {
-      "code": "ftir",
+      "code": "irwin",
       "name": "Fort Irwin (NTC), CA",
       "branch": "Army",
       "state": "CA",
@@ -447,7 +447,7 @@
       "mha": "CA028"
     },
     {
-      "code": "ftwa",
+      "code": "ftwain",
       "name": "Fort Wainwright, AK",
       "branch": "Army",
       "state": "AK",
@@ -467,7 +467,7 @@
       "mha": "AK407"
     },
     {
-      "code": "ftgr",
+      "code": "greely",
       "name": "Fort Greely, AK",
       "branch": "Army",
       "state": "AK",
@@ -507,7 +507,7 @@
       "mha": "WA311"
     },
     {
-      "code": "ftjo",
+      "code": "johnson",
       "name": "Fort Johnson, LA",
       "branch": "Army",
       "state": "LA",
@@ -527,7 +527,7 @@
       "mha": "LA115"
     },
     {
-      "code": "ftei",
+      "code": "fteise",
       "name": "Fort Eisenhower, GA",
       "branch": "Army",
       "state": "GA",
@@ -547,7 +547,7 @@
       "mha": "GA073"
     },
     {
-      "code": "redsto",
+      "code": "redstone",
       "name": "Redstone Arsenal, AL",
       "branch": "Army",
       "state": "AL",
@@ -567,7 +567,7 @@
       "mha": "AL005"
     },
     {
-      "code": "aberde",
+      "code": "aberdeen",
       "name": "Aberdeen Proving Ground, MD",
       "branch": "Army",
       "state": "MD",
@@ -587,7 +587,7 @@
       "mha": "MD127"
     },
     {
-      "code": "ftsh",
+      "code": "shafter",
       "name": "Fort Shafter, HI",
       "branch": "Army",
       "state": "HI",
@@ -607,7 +607,7 @@
       "mha": "HI096"
     },
     {
-      "code": "schofi",
+      "code": "schofiel",
       "name": "Schofield Barracks, HI",
       "branch": "Army",
       "state": "HI",
@@ -627,7 +627,7 @@
       "mha": "HI097"
     },
     {
-      "code": "triple",
+      "code": "tripler",
       "name": "Tripler Army Medical Center, HI",
       "branch": "Army",
       "state": "HI",
@@ -667,7 +667,7 @@
       "mha": "IL090"
     },
     {
-      "code": "annist",
+      "code": "anniston",
       "name": "Anniston Army Depot, AL",
       "branch": "Army",
       "state": "AL",
@@ -727,7 +727,7 @@
       "mha": "UT292"
     },
     {
-      "code": "mcbat",
+      "code": "mcbatte",
       "name": "Camp Atterbury, IN",
       "branch": "Army",
       "state": "IN",
@@ -747,7 +747,7 @@
       "mha": "IN098"
     },
     {
-      "code": "mcbsh",
+      "code": "mcbshel",
       "name": "Camp Shelby, MS",
       "branch": "Army",
       "state": "MS",
@@ -767,7 +767,7 @@
       "mha": "MS171"
     },
     {
-      "code": "mcbri",
+      "code": "mcbripl",
       "name": "Camp Ripley, MN",
       "branch": "Army",
       "state": "MN",
@@ -787,7 +787,7 @@
       "mha": "MN161"
     },
     {
-      "code": "ftin",
+      "code": "ftindi",
       "name": "Fort Indiantown Gap, PA",
       "branch": "Army",
       "state": "PA",
@@ -807,7 +807,7 @@
       "mha": "PA250"
     },
     {
-      "code": "ftmc",
+      "code": "mccoy",
       "name": "Fort McCoy, WI",
       "branch": "Army",
       "state": "WI",
@@ -827,7 +827,7 @@
       "mha": "WI318"
     },
     {
-      "code": "ftle",
+      "code": "ftleav",
       "name": "Fort Leavenworth, KS",
       "branch": "Army",
       "state": "KS",
@@ -847,7 +847,7 @@
       "mha": "KS102"
     },
     {
-      "code": "ftwa",
+      "code": "walker",
       "name": "Fort Walker, VA",
       "branch": "Army",
       "state": "VA",
@@ -867,7 +867,7 @@
       "mha": "VA368"
     },
     {
-      "code": "ftba",
+      "code": "barfoot",
       "name": "Fort Barfoot, VA",
       "branch": "Army",
       "state": "VA",
@@ -907,7 +907,7 @@
       "mha": "GA080"
     },
     {
-      "code": "ftha",
+      "code": "hamilton",
       "name": "Fort Hamilton, NY",
       "branch": "Army",
       "state": "NY",
@@ -927,7 +927,7 @@
       "mha": "NY218"
     },
     {
-      "code": "ftbu",
+      "code": "buchanan",
       "name": "Fort Buchanan, PR",
       "branch": "Army",
       "state": "PR",
@@ -947,7 +947,7 @@
       "mha": "PR321"
     },
     {
-      "code": "nsnor",
+      "code": "nsnorf",
       "name": "Naval Station Norfolk, VA",
       "branch": "Navy",
       "state": "VA",
@@ -967,7 +967,7 @@
       "mha": "VA298"
     },
     {
-      "code": "naval",
+      "code": "nssan",
       "name": "Naval Base San Diego, CA",
       "branch": "Navy",
       "state": "CA",
@@ -987,7 +987,7 @@
       "mha": "CA020"
     },
     {
-      "code": "naval",
+      "code": "nskits",
       "name": "Naval Base Kitsap, WA",
       "branch": "Navy",
       "state": "WA",

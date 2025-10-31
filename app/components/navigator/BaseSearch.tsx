@@ -90,11 +90,11 @@ export default function BaseSearch() {
           <div className="flex flex-wrap gap-2">
             {[
               "Fort Liberty, NC",
-              "Camp Pendleton, CA",
+              "Fort Campbell, TN",
               "JBLM, WA",
               "Naval Station Norfolk, VA",
-              "Shaw AFB, SC",
               "Fort Cavazos, TX",
+              "Fort Carson, CO",
             ].map((baseName) => (
               <button
                 key={baseName}
