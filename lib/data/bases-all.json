@@ -2805,6 +2805,206 @@
         "62226",
         "62234"
       ]
+    },
+    {
+      "name": "SAN ANTONIO/LACKLAND AFB, TX",
+      "code": "lackland",
+      "branch": "USAF",
+      "state": "TX",
+      "mha": "TX273",
+      "center": {
+        "lat": 29.385,
+        "lng": -98.618
+      },
+      "gate": {
+        "lat": 29.385,
+        "lng": -98.618
+      },
+      "candidateZips": [
+        "78236",
+        "78245",
+        "78227"
+      ]
+    },
+    {
+      "name": "OKLAHOMA CITY/TINKER AFB, OK",
+      "code": "tinker",
+      "branch": "USAF",
+      "state": "OK",
+      "mha": "OK234",
+      "center": {
+        "lat": 35.415,
+        "lng": -97.387
+      },
+      "gate": {
+        "lat": 35.415,
+        "lng": -97.387
+      },
+      "candidateZips": [
+        "73145",
+        "73110",
+        "73135"
+      ]
+    },
+    {
+      "name": "TAMPA/MACDILL AFB, FL",
+      "code": "macdill",
+      "branch": "USAF",
+      "state": "FL",
+      "mha": "FL060",
+      "center": {
+        "lat": 27.849,
+        "lng": -82.503
+      },
+      "gate": {
+        "lat": 27.849,
+        "lng": -82.503
+      },
+      "candidateZips": [
+        "33611",
+        "33609",
+        "33616"
+      ]
+    },
+    {
+      "name": "PHOENIX/LUKE AFB, AZ",
+      "code": "luke",
+      "branch": "USAF",
+      "state": "AZ",
+      "mha": "AZ008",
+      "center": {
+        "lat": 33.535,
+        "lng": -112.383
+      },
+      "gate": {
+        "lat": 33.535,
+        "lng": -112.383
+      },
+      "candidateZips": [
+        "85309",
+        "85338",
+        "85037"
+      ]
+    },
+    {
+      "name": "VALLEJO/TRAVIS AFB, CA",
+      "code": "travis",
+      "branch": "USAF",
+      "state": "CA",
+      "mha": "CA391",
+      "center": {
+        "lat": 38.263,
+        "lng": -121.927
+      },
+      "gate": {
+        "lat": 38.263,
+        "lng": -121.927
+      },
+      "candidateZips": [
+        "94533",
+        "94535",
+        "94534"
+      ]
+    },
+    {
+      "name": "SAN ANTONIO/RANDOLPH AFB, TX",
+      "code": "randolph",
+      "branch": "USAF",
+      "state": "TX",
+      "mha": "TX273",
+      "center": {
+        "lat": 29.53,
+        "lng": -98.279
+      },
+      "gate": {
+        "lat": 29.53,
+        "lng": -98.279
+      },
+      "candidateZips": [
+        "78148",
+        "78108",
+        "78109"
+      ]
+    },
+    {
+      "name": "DAVIS-MONTHAN AFB, AZ",
+      "code": "davismonthan",
+      "branch": "USAF",
+      "state": "AZ",
+      "mha": "AZ013",
+      "center": {
+        "lat": 32.167,
+        "lng": -110.883
+      },
+      "gate": {
+        "lat": 32.167,
+        "lng": -110.883
+      },
+      "candidateZips": [
+        "85706",
+        "85730",
+        "85747"
+      ]
+    },
+    {
+      "name": "OGDEN/HILL AFB, UT",
+      "code": "hill",
+      "branch": "USAF",
+      "state": "UT",
+      "mha": "UT293",
+      "center": {
+        "lat": 41.124,
+        "lng": -111.973
+      },
+      "gate": {
+        "lat": 41.124,
+        "lng": -111.973
+      },
+      "candidateZips": [
+        "84037",
+        "84041",
+        "84015"
+      ]
+    },
+    {
+      "name": "OMAHA/OFFUTT AFB, NE",
+      "code": "offutt",
+      "branch": "USAF",
+      "state": "NE",
+      "mha": "NE190",
+      "center": {
+        "lat": 41.118,
+        "lng": -95.915
+      },
+      "gate": {
+        "lat": 41.118,
+        "lng": -95.915
+      },
+      "candidateZips": [
+        "68123",
+        "68147",
+        "68157"
+      ]
+    },
+    {
+      "name": "DOVER AFB/REHOBOTH, DE",
+      "code": "dover",
+      "branch": "USAF",
+      "state": "DE",
+      "mha": "DE052",
+      "center": {
+        "lat": 39.13,
+        "lng": -75.466
+      },
+      "gate": {
+        "lat": 39.13,
+        "lng": -75.466
+      },
+      "candidateZips": [
+        "19901",
+        "19904",
+        "19934"
+      ]
     }
   ]
 }
