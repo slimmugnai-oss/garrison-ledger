@@ -2705,6 +2705,106 @@
         "32539"
       ],
       "mha": "FL056"
+    },
+    {
+      "name": "SUMTER/SHAW AFB, SC",
+      "code": "shaw",
+      "branch": "USAF",
+      "state": "SC",
+      "mha": "SC263",
+      "center": {
+        "lat": 33.973,
+        "lng": -80.471
+      },
+      "gate": {
+        "lat": 33.973,
+        "lng": -80.471
+      },
+      "candidateZips": [
+        "29150",
+        "29152",
+        "29154"
+      ]
+    },
+    {
+      "name": "ABILENE/DYESS AFB, TX",
+      "code": "dyess",
+      "branch": "USAF",
+      "state": "TX",
+      "mha": "TX271",
+      "center": {
+        "lat": 32.421,
+        "lng": -99.855
+      },
+      "gate": {
+        "lat": 32.421,
+        "lng": -99.855
+      },
+      "candidateZips": [
+        "79601",
+        "79602",
+        "79606"
+      ]
+    },
+    {
+      "name": "SEYMOUR JOHNSON AFB, NC",
+      "code": "seymour",
+      "branch": "USAF",
+      "state": "NC",
+      "mha": "NC177",
+      "center": {
+        "lat": 35.339,
+        "lng": -77.961
+      },
+      "gate": {
+        "lat": 35.339,
+        "lng": -77.961
+      },
+      "candidateZips": [
+        "27530",
+        "27534",
+        "27577"
+      ]
+    },
+    {
+      "name": "NELLIS AFB/LAS VEGAS, NV",
+      "code": "nellis",
+      "branch": "USAF",
+      "state": "NV",
+      "mha": "NV211",
+      "center": {
+        "lat": 36.236,
+        "lng": -115.034
+      },
+      "gate": {
+        "lat": 36.236,
+        "lng": -115.034
+      },
+      "candidateZips": [
+        "89115",
+        "89110",
+        "89130"
+      ]
+    },
+    {
+      "name": "SCOTT AFB, IL",
+      "code": "scott",
+      "branch": "USAF",
+      "state": "IL",
+      "mha": "IL089",
+      "center": {
+        "lat": 38.543,
+        "lng": -89.852
+      },
+      "gate": {
+        "lat": 38.543,
+        "lng": -89.852
+      },
+      "candidateZips": [
+        "62225",
+        "62226",
+        "62234"
+      ]
     }
   ]
 }
