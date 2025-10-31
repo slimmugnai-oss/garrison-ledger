@@ -327,7 +327,7 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                       </div>
                     </div>
                     <div className="mb-1 font-semibold text-slate-900">Schools Quality</div>
-                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} school{schoolsIntel.total_schools !== 1 ? 's' : ''} in area</div>
+                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} school{schoolsIntel.total_schools !== 1 ? 's' : ''} in district</div>
                     <div className="mt-3 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                       <div 
                         className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
@@ -489,8 +489,8 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
                     <Icon name="GraduationCap" className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-blue-900">School Intelligence Analysis</h4>
-                    <div className="text-sm text-blue-700">Based on {schoolsIntel.total_schools} schools in this area</div>
+                    <h4 className="text-xl font-bold text-blue-900">School District Intelligence</h4>
+                    <div className="text-sm text-blue-700">{schoolsIntel.total_schools} school{schoolsIntel.total_schools !== 1 ? 's' : ''} in your district</div>
                   </div>
                 </div>
                 <p className="text-slate-700 leading-relaxed text-lg">{schoolsIntel.executive_summary}</p>
@@ -544,7 +544,10 @@ export default function NeighborhoodIntelligenceReport({ neighborhood, rank, bas
               <div>
                 <div className="mb-4 flex items-center gap-2">
                   <Icon name="GraduationCap" className="h-5 w-5 text-blue-600" />
-                  <h4 className="text-lg font-bold text-slate-900">Schools by Grade Level ({schoolsIntel.total_schools} Total)</h4>
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-900">Schools in Your District</h4>
+                    <div className="text-sm text-slate-600">{schoolsIntel.total_schools} school{schoolsIntel.total_schools !== 1 ? 's' : ''} your children can attend</div>
+                  </div>
                 </div>
                 <div className="grid gap-6 md:grid-cols-3">
                   {schoolsIntel.by_grade.elementary.count > 0 && (

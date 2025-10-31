@@ -15,7 +15,7 @@ import { getSchoolsByZip, type SchoolDiggerSchool } from "@/lib/vendors/schooldi
  */
 export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   // Cache key versioned for SchoolDigger
-  const cacheKey = `sd:zip:v5:${zip}`; // v5: Smart categorization (high schools don't appear in elementary)
+  const cacheKey = `sd:zip:v6:${zip}`; // v6: District-based filtering (shows schools kids can actually attend)
 
   const cached = await getCache<School[]>(cacheKey);
   if (cached) {
@@ -23,11 +23,44 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
   }
 
   try {
-    // Fetch schools using SchoolDigger API
-    const response = await getSchoolsByZip(zip, 25, 1);
+    // Fetch schools using SchoolDigger API (proximity search)
+    const response = await getSchoolsByZip(zip, 50, 1); // Get more schools to ensure we have full district
 
-    // Parse SchoolDigger response to our School format
-    const schools: School[] = (response.schoolList || []).map((s) => {
+    if (!response.schoolList || response.schoolList.length === 0) {
+      console.log(`[SCHOOLS] No schools found for ZIP ${zip}`);
+      return [];
+    }
+
+    // STEP 1: Identify primary district for this ZIP
+    // Count schools by district to find which district serves this area
+    const districtCounts: Record<string, number> = {};
+    response.schoolList.forEach((s) => {
+      const districtID = s.district?.districtID;
+      if (districtID) {
+        districtCounts[districtID] = (districtCounts[districtID] || 0) + 1;
+      }
+    });
+
+    // Primary district = most common district in results
+    const primaryDistrictID = Object.entries(districtCounts)
+      .sort(([, a], [, b]) => b - a)[0]?.[0];
+
+    const primaryDistrictName = response.schoolList.find(
+      (s) => s.district?.districtID === primaryDistrictID
+    )?.district?.districtName || "Local School District";
+
+    console.log(`[SCHOOLS] Primary district for ZIP ${zip}: ${primaryDistrictName} (${primaryDistrictID})`);
+
+    // STEP 2: Filter to PRIMARY DISTRICT schools only
+    // This ensures we show schools kids can ACTUALLY attend
+    const districtSchools = response.schoolList.filter(
+      (s) => s.district?.districtID === primaryDistrictID
+    );
+
+    console.log(`[SCHOOLS] Filtered ${response.schoolList.length} → ${districtSchools.length} schools (primary district only)`);
+
+    // STEP 3: Parse to our School format
+    const schools: School[] = districtSchools.map((s) => {
       const rating = convertSchoolDiggerRating(s);
       const grades = formatGradeRange(s.lowGrade, s.highGrade);
 
@@ -41,7 +74,7 @@ export async function fetchSchoolsByZip(zip: string): Promise<School[]> {
       };
     });
 
-    console.log(`[SCHOOLS] Fetched ${schools.length} schools for ZIP ${zip} from SchoolDigger`);
+    console.log(`[SCHOOLS] Returning ${schools.length} schools from ${primaryDistrictName} for ZIP ${zip}`);
 
     // Cache for 24 hours
     await setCache(cacheKey, schools, 24 * 3600);

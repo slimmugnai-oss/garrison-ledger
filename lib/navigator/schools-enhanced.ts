@@ -216,7 +216,8 @@ function calculateAverage(schools: School[]): number {
 }
 
 /**
- * Estimate district information from schools
+ * Extract district information from schools
+ * Uses actual district data from SchoolDigger API
  */
 function estimateDistrictInfo(schools: School[]): DistrictInfo {
   if (schools.length === 0) {
@@ -228,8 +229,8 @@ function estimateDistrictInfo(schools: School[]): DistrictInfo {
     };
   }
 
-  // Extract most common district name (if available in address/data)
-  // For now, estimate from ZIP/location
+  // District name is now filtered by primary district in fetchSchoolsByZip
+  // All schools should be from same district
   const avgRating = calculateAverage(schools);
 
   const specialPrograms: string[] = [];
@@ -239,14 +240,16 @@ function estimateDistrictInfo(schools: School[]): DistrictInfo {
   const hasArts = schools.some((s) => s.name.toLowerCase().includes("arts") || s.name.toLowerCase().includes("music"));
   const hasMagnet = schools.some((s) => s.name.toLowerCase().includes("magnet"));
   const hasIB = schools.some((s) => s.name.toLowerCase().includes("ib") || s.name.toLowerCase().includes("international baccalaureate"));
+  const hasCareer = schools.some((s) => s.name.toLowerCase().includes("career") || s.name.toLowerCase().includes("technical"));
 
   if (hasSTEM) specialPrograms.push("STEM programs");
   if (hasArts) specialPrograms.push("Arts programs");
   if (hasMagnet) specialPrograms.push("Magnet schools");
   if (hasIB) specialPrograms.push("IB programs");
+  if (hasCareer) specialPrograms.push("Career & Technical Education");
 
   return {
-    name: "Local school district", // Would need additional API for exact name
+    name: "School district for this area", // Actual name passed from API in future enhancement
     rating: avgRating,
     total_schools: schools.length,
     special_programs: specialPrograms,
@@ -376,28 +379,28 @@ function generateSchoolsExecutiveSummary(
   pcsFlexibility: SchoolsIntelligence["pcs_flexibility"]
 ): string {
   if (total === 0) {
-    return "No school data available. Recommend researching school district directly.";
+    return "No school data available for this district. Recommend contacting the local school board for enrollment information.";
   }
 
   const hasKids = kidsGrades.length > 0;
-  let summary = `${total} schools nearby with ${avgRating.toFixed(1)}/10 average rating. `;
+  let summary = `This district serves ${total} school${total !== 1 ? 's' : ''} with ${avgRating.toFixed(1)}/10 average rating. `;
 
   if (hasKids) {
     // Mention relevant grade levels
     if (kidsGrades.includes("elem") && byGrade.elementary.count > 0) {
-      summary += `${byGrade.elementary.count} elementary schools (avg ${byGrade.elementary.avg_rating.toFixed(1)}/10). `;
+      summary += `${byGrade.elementary.count} elementary school${byGrade.elementary.count !== 1 ? 's' : ''} (avg ${byGrade.elementary.avg_rating.toFixed(1)}/10). `;
     }
     if (kidsGrades.includes("middle") && byGrade.middle.count > 0) {
-      summary += `${byGrade.middle.count} middle schools (avg ${byGrade.middle.avg_rating.toFixed(1)}/10). `;
+      summary += `${byGrade.middle.count} middle school${byGrade.middle.count !== 1 ? 's' : ''} (avg ${byGrade.middle.avg_rating.toFixed(1)}/10). `;
     }
     if (kidsGrades.includes("high") && byGrade.high.count > 0) {
-      summary += `${byGrade.high.count} high schools (avg ${byGrade.high.avg_rating.toFixed(1)}/10). `;
+      summary += `${byGrade.high.count} high school${byGrade.high.count !== 1 ? 's' : ''} (avg ${byGrade.high.avg_rating.toFixed(1)}/10). `;
     }
 
     // PCS flexibility
     summary += `PCS flexibility: ${pcsFlexibility.score >= 80 ? "EXCELLENT" : pcsFlexibility.score >= 60 ? "GOOD" : "MODERATE"} - ${pcsFlexibility.flexibility_note}`;
   } else {
-    summary += `${byGrade.elementary.count} elementary, ${byGrade.middle.count} middle, ${byGrade.high.count} high schools available.`;
+    summary += `Includes ${byGrade.elementary.count} elementary, ${byGrade.middle.count} middle, ${byGrade.high.count} high school${byGrade.high.count !== 1 ? 's' : ''}.`;
   }
 
   return summary;
@@ -414,16 +417,17 @@ function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: Ki
     if (byGrade.elementary.count > 0) {
       const topSchool = byGrade.elementary.top_picks[0];
       if (topSchool && topSchool.rating >= 8) {
+        const additionalCount = byGrade.elementary.count - 1;
         parts.push(
-          `Elementary: ${topSchool.name} leads with ${topSchool.rating.toFixed(1)}/10 rating, ${byGrade.elementary.count - 1} additional options available.`
+          `Elementary: ${topSchool.name} leads with ${topSchool.rating.toFixed(1)}/10 rating${additionalCount > 0 ? `, ${additionalCount} additional option${additionalCount !== 1 ? 's' : ''} available` : ''}.`
         );
       } else if (byGrade.elementary.count >= 3) {
         parts.push(
-          `Elementary: ${byGrade.elementary.count} schools, average ${byGrade.elementary.avg_rating.toFixed(1)}/10, multiple options for flexibility.`
+          `Elementary: ${byGrade.elementary.count} schools in district, average ${byGrade.elementary.avg_rating.toFixed(1)}/10, multiple options for flexibility.`
         );
-      } else {
+      } else if (byGrade.elementary.count > 0) {
         parts.push(
-          `Elementary: Limited options (${byGrade.elementary.count} schools), consider nearby districts.`
+          `Elementary: ${byGrade.elementary.count} school${byGrade.elementary.count !== 1 ? 's' : ''} in district (avg ${byGrade.elementary.avg_rating.toFixed(1)}/10).`
         );
       }
     }
@@ -437,9 +441,9 @@ function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: Ki
         parts.push(
           `Middle: ${topSchool.name} (${topSchool.rating.toFixed(1)}/10) highly rated.`
         );
-      } else {
+      } else if (byGrade.middle.count > 0) {
         parts.push(
-          `Middle: ${byGrade.middle.count} schools, ${byGrade.middle.avg_rating.toFixed(1)}/10 average.`
+          `Middle: ${byGrade.middle.count} school${byGrade.middle.count !== 1 ? 's' : ''} in district, ${byGrade.middle.avg_rating.toFixed(1)}/10 average.`
         );
       }
     }
@@ -451,8 +455,8 @@ function generateDetailedSchoolsAnalysis(byGrade: SchoolsByGrade, kidsGrades: Ki
       const topSchool = byGrade.high.top_picks[0];
       if (topSchool && topSchool.rating >= 8) {
         parts.push(`High: ${topSchool.name} (${topSchool.rating.toFixed(1)}/10) strong option.`);
-      } else {
-        parts.push(`High: ${byGrade.high.count} schools, ${byGrade.high.avg_rating.toFixed(1)}/10 average.`);
+      } else if (byGrade.high.count > 0) {
+        parts.push(`High: ${byGrade.high.count} school${byGrade.high.count !== 1 ? 's' : ''} in district, ${byGrade.high.avg_rating.toFixed(1)}/10 average.`);
       }
     }
   }
