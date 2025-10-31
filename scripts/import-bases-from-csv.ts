@@ -113,7 +113,7 @@ function findMatchingBase(baseName: string, location: string): MilitaryBase | nu
     b.aliases && b.aliases.some(a => a.toUpperCase().includes(baseNameUpper))
   );
   
-  return match;
+  return match || null;
 }
 
 /**
