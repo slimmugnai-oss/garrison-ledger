@@ -55,11 +55,108 @@ export default function TimelineGeneratorFixed() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ feature: "timeline", metadata: { type: timelineType, eventDate } }),
       });
+      const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      
       const questions = {
-        pcs: `I'm PCSing on ${eventDate}. Create a detailed 180-day timeline with all tasks I need to complete, organized by date. Include: orders processing, housing search, school enrollment, finance appointments, moving company booking, final out-processing, and everything else.`,
-        deployment: `I'm deploying on ${eventDate}. Create a pre-deployment timeline with all preparation tasks: financial prep, legal documents, family care plan, deployment briefings, gear issue, medical checkups, and everything else I need to do before wheels up.`,
-        transition: `I'm separating/retiring on ${eventDate}. Create a transition timeline with: TAP class, resume writing, job search, VA benefits filing, final medical, out-processing, and all civilian transition tasks.`,
-        career: `Create a career progression timeline for reaching my next rank/milestone by ${eventDate}. Include: PME completion, awards needed, time-in-grade requirements, evaluation timelines, and promotion board prep.`,
+        pcs: `TODAY IS ${today}. My PCS report date is ${new Date(eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+
+Create a COMPREHENSIVE 180-day PCS countdown timeline with SPECIFIC tasks, exact dates, and official resources.
+
+REQUIREMENTS:
+- Work backward from my report date to create a chronological task list
+- Include EXACT dates for each milestone (e.g., "By January 15, 2026: ...")
+- Add official links/resources (DFAS.mil, Move.mil, DPS, finance office contacts)
+- Categorize tasks: Orders | Finance | Housing | Household Goods | Schools | Travel | Final Out
+- Be thorough - minimum 15-20 major milestones with subtasks
+
+CRITICAL TASKS TO INCLUDE:
+- Review PCS orders (180 days out) - link to MyPCS app
+- Finance in-processing appointment (150 days) - what to bring
+- House hunting trip authorization (120 days) - eligibility, process
+- HHG weight estimate + booking deadline (90 days) - link to Move.mil
+- School enrollment windows (60 days) - state-specific requirements
+- Advance DLA/TLE requests (45 days) - how to file
+- Final out-processing checklist (30 days) - base-specific
+- Travel voucher prep (day of arrival) - what receipts to keep
+
+Include links to official resources like DFAS, Move.mil, MilitaryOneSource, and base-specific pages.`,
+
+        deployment: `TODAY IS ${today}. My deployment date is ${new Date(eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+
+Create a DETAILED pre-deployment preparation timeline with specific tasks, dates, and resources.
+
+REQUIREMENTS:
+- Chronological task list from today until deployment
+- Exact dates for each task
+- Official links (TRICARE, finance, legal, medical)
+- Minimum 12-15 major tasks with subtasks
+
+CRITICAL TASKS:
+- Unit pre-deployment briefing schedule
+- SGLI beneficiary review (link to VA.gov)
+- Power of Attorney (General + Special) - link to legal office
+- TRICARE enrollment verification
+- Financial preparation (SDP setup, allotments, SCRA protections)
+- Family Care Plan (if dependents)
+- Medical/dental checkups + deployment health assessments
+- Wills + estate documents update
+- Deployment gear issue schedule
+- Training pipeline + certification deadlines
+- Vehicle storage/shipping arrangements
+- Final family prep (communication plan, emergency contacts)
+
+Link to official resources: MilitaryOneSource, TRICARE, VA.gov, installation legal office.`,
+
+        transition: `TODAY IS ${today}. My separation/retirement date is ${new Date(eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+
+Create a COMPREHENSIVE transition timeline from military to civilian life with specific tasks, dates, and resources.
+
+REQUIREMENTS:
+- Chronological from today to separation + 90 days after
+- Exact deadlines for each step
+- Official links (VA.gov, eBenefits, TAP, DOL)
+- Minimum 20 major milestones
+
+CRITICAL TASKS:
+- TAP class registration + attendance (mandatory 365 days out)
+- VA benefits pre-filing (BDD program 180-90 days out)
+- Resume writing + LinkedIn optimization (150 days)
+- Job search strategy + networking (120 days)
+- Federal job application (USAJOBS.gov) timeline (90 days)
+- Terminal leave calculation + submission (60 days)
+- Final medical exams + disability claims (60 days)
+- TRICARE to civilian insurance transition
+- TSP rollover decisions (link to TSP.gov)
+- GI Bill transfer/certification
+- Final out-processing checklist by installation
+- DD-214 verification + copies
+- 90-day post-separation checklist (unemployment, healthcare, benefits verification)
+
+Link to: VA.gov, eBenefits.va.gov, USAJOBS.gov, TAP resources, DOL Veterans Employment.`,
+
+        career: `TODAY IS ${today}. My target milestone date is ${new Date(eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.
+
+Create a SPECIFIC career progression timeline for achieving my next rank/goal with exact requirements, dates, and resources.
+
+REQUIREMENTS:
+- Reverse-engineer from goal date to today
+- Include TIG/TIS requirements
+- PME completion deadlines
+- Evaluation cycle milestones
+- Award/decoration requirements
+
+CRITICAL MILESTONES:
+- Time-in-grade requirement verification
+- PME enrollment + completion deadlines (link to service-specific PME sites)
+- Evaluation cycle dates (when to prep PRF/EPR/FITREP)
+- Awards package submission windows
+- Board appearance dates + prep timeline
+- Physical fitness test schedule
+- Required certifications/schools
+- Mentorship/networking checkpoints
+- Promotion packet assembly deadline
+
+Be service-specific and link to official career progression guides for Army/Navy/Air Force/Marines.`,
       };
 
       const response = await fetch("/api/ask/submit", {

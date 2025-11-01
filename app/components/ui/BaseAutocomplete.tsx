@@ -19,8 +19,10 @@ interface MilitaryBase {
 
 const militaryBases = militaryBasesData.bases as MilitaryBase[];
 
-// CRITICAL: Only show bases that are in bases-all.json (135 supported bases with candidate ZIPs)
-const supportedBaseNames = new Set(basesAllData.bases.map((b: any) => b.name.toUpperCase()));
+// UPDATED: Show ALL bases for Compare tool (AI can handle any base, even without cached data)
+// Original restriction (135 supported) was for Base Navigator's external data fetching
+// For Ask Military Expert Compare feature, we want full coverage
+const supportedBaseNames = new Set(militaryBasesData.bases.map((b: MilitaryBase) => b.name.toUpperCase()));
 
 interface BaseAutocompleteProps {
   value: string;
