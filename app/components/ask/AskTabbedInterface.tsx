@@ -33,7 +33,7 @@ const TABS: TabConfig[] = [
   {
     id: "compare",
     label: "Compare",
-    icon: "GitCompare",
+    icon: "BarChart",
     description: "Compare bases, benefits, or career paths side-by-side",
   },
   {
@@ -45,7 +45,7 @@ const TABS: TabConfig[] = [
   {
     id: "history",
     label: "History",
-    icon: "History",
+    icon: "MessageCircle",
     description: "Review your past conversations and saved answers",
   },
 ];
