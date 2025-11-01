@@ -9,16 +9,16 @@ import { currentUser } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import Icon from "@/app/components/ui/Icon";
+import AskTabbedInterface from "@/app/components/ask/AskTabbedInterface";
 
 export const metadata: Metadata = {
   title: "Ask Our Military Expert - 24/7 Military Life Advisor | Garrison Ledger",
   description:
-    "Get instant expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life. 2,300+ knowledge sources + official data. ~2 second response time.",
+    "Get instant expert answers to ANY military life question—financial, PCS, deployment, career, benefits, base life. Upload documents, compare options, generate timelines. 3,300+ knowledge sources + official data.",
   keywords: [
     "military financial advisor",
     "ask military expert",
@@ -200,8 +200,8 @@ export default async function AskAssistantPage() {
 
         {/* Main Content */}
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          {/* Client Component - Enhanced Layout */}
-          <AskAssistantClient />
+          {/* Tabbed Interface - Ask, Upload, Compare, Timeline, History */}
+          <AskTabbedInterface />
 
           {/* Example Questions Section */}
           <section className="mt-16">
