@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index, follow">
+  <title>Poll Results - FamilyMedia Guide</title>
+  <style>
+    /* FamilyMedia Brand Colors */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #FDFBF5;
+      color: #2F3A45;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 4px 12px rgba(47, 58, 69, 0.08);
+      margin-bottom: 24px;
+    }
+    
+    /* Header with FamilyMedia branding */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .logo-container {
+      margin-bottom: 20px;
+    }
+    
+    .logo-container img {
+      width: 220px;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .checkmark-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    .checkmark-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+    
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2F3A45;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    
+    .subtitle {
+      font-size: 18px;
+      color: #6c757d;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .description {
+      font-size: 15px;
+      color: #6c757d;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    
+    /* Interactive Poll Section */
+    .poll-voting {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    
+    .poll-question {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2F3A45;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .vote-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .vote-option {
+      background: #ffffff;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+    
+    .vote-option:hover {
+      border-color: #10B981;
+      background: #f0fdf4;
+      transform: translateX(4px);
+    }
+    
+    .vote-option.selected {
+      border-color: #10B981;
+      background: #E8F5E8;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .vote-option.selected::after {
+      content: '✓';
+      position: absolute;
+      right: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #10B981;
+    }
+    
+    .vote-radio {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #dee2e6;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    
+    .vote-option.selected .vote-radio {
+      border-color: #10B981;
+      background: #10B981;
+    }
+    
+    .vote-option.selected .vote-radio::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+    
+    .vote-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2F3A45;
+      flex: 1;
+    }
+    
+    .change-vote-hint {
+      text-align: center;
+      font-size: 13px;
+      color: #6c757d;
+      margin-top: 12px;
+      font-style: italic;
+    }
+    
+    /* Poll Results Section */
+    .poll-results {
+      margin: 32px 0;
+    }
+    
+    .results-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2F3A45;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .poll-item {
+      margin-bottom: 20px;
+    }
+    
+    .poll-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    
+    .poll-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2F3A45;
+    }
+    
+    .poll-count {
+      font-size: 13px;
+      color: #6c757d;
+    }
+    
+    .poll-bar-container {
+      background: #f3f4f6;
+      border-radius: 8px;
+      height: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .poll-bar {
+      background: linear-gradient(90deg, #10B981, #059669);
+      height: 100%;
+      transition: width 0.8s ease-out;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 8px 0 0 8px;
+    }
+    
+    .poll-bar.your-vote {
+      background: linear-gradient(90deg, #1e293b, #0F172A);
+      box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.2);
+    }
+    
+    /* Thank You Message */
+    .thank-you {
+      background: #E8F5E8;
+      border-left: 4px solid #10B981;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+    
+    .thank-you p {
+      font-size: 15px;
+      color: #2F3A45;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+    
+    .thank-you strong {
+      color: #059669;
+    }
+    
+    /* CTA Buttons */
+    .cta-section {
+      text-align: center;
+      margin-top: 32px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin: 8px;
+    }
+    
+    .btn-primary {
+      background: #2F3A45;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(47, 58, 69, 0.2);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(47, 58, 69, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #10B981;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #dee2e6;
+    }
+    
+    .footer p {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
+    
+    .footer a {
+      color: #2F3A45;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    
+    /* Responsive */
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 20px 16px;
+      }
+      
+      .card {
+        padding: 28px 20px;
+      }
+      
+      h1 {
+        font-size: 26px;
+      }
+      
+      .btn {
+        display: block;
+        margin: 8px 0;
+      }
+      
+      .vote-option {
+        padding: 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-container">
+          <img src="https://i.imgur.com/YourFamilyLogoHere.png" alt="Family Magazine Logo" style="background: transparent; mix-blend-mode: multiply;">
+        </div>
+        
+        <div class="checkmark-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6L9 17L4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        
+        <h1 id="mainTitle">Thanks for Voting!</h1>
+        <p class="subtitle" id="personalMessage">Your answer has been recorded</p>
+        <p class="description">See how the military community is answering this month's poll question.</p>
+      </div>
+      
+      <!-- Interactive Poll Voting -->
+      <div class="poll-voting">
+        <h2 class="poll-question">What's your biggest military finance question right now?</h2>
+        <div class="vote-options" id="voteOptions">
+          <div class="vote-option" data-answer="tsp">
+            <div class="vote-radio"></div>
+            <div class="vote-label">How do I optimize my TSP allocations?</div>
+          </div>
+          <div class="vote-option" data-answer="housing">
+            <div class="vote-radio"></div>
+            <div class="vote-label">Should I use my VA loan or save it?</div>
+          </div>
+          <div class="vote-option" data-answer="retirement">
+            <div class="vote-radio"></div>
+            <div class="vote-label">How does BRS vs High-3 affect my retirement?</div>
+          </div>
+        </div>
+        <p class="change-vote-hint">Click any option to vote or change your answer</p>
+      </div>
+      
+      <!-- Poll Results -->
+      <div class="poll-results">
+        <h2 class="results-title">Community Poll Results</h2>
+        
+        <div class="poll-item">
+          <div class="poll-header">
+            <span class="poll-label">How do I optimize my TSP allocations?</span>
+            <span class="poll-count" id="count1">142 votes</span>
+          </div>
+          <div class="poll-bar-container">
+            <div class="poll-bar" id="bar1" style="width:0%">
+              <span id="percent1">45%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="poll-item">
+          <div class="poll-header">
+            <span class="poll-label">Should I use my VA loan or save it?</span>
+            <span class="poll-count" id="count2">98 votes</span>
+          </div>
+          <div class="poll-bar-container">
+            <div class="poll-bar" id="bar2" style="width:0%">
+              <span id="percent2">31%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="poll-item">
+          <div class="poll-header">
+            <span class="poll-label">How does BRS vs High-3 affect retirement?</span>
+            <span class="poll-count" id="count3">76 votes</span>
+          </div>
+          <div class="poll-bar-container">
+            <div class="poll-bar" id="bar3" style="width:0%">
+              <span id="percent3">24%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Thank You Message (Dynamic) -->
+      <div class="thank-you" id="thankYouBox">
+        <p id="thankYouMessage">
+          <strong>Great question!</strong> This is one of the most important financial decisions for military families. FamilyMedia partners with experts to bring you trusted resources and tools to help you make informed decisions.
+        </p>
+      </div>
+      
+      <!-- Share Your Story Section -->
+      <div style="background:#f8f9fa; border-radius:12px; padding:24px; margin:24px 0;">
+        <h3 style="margin:0 0 12px 0; font-size:20px; font-weight:700; color:#2F3A45; text-align:center;">Share Your Success Story</h3>
+        <p style="margin:0 0 20px 0; font-size:15px; color:#2F3A45; text-align:center; max-width:500px; margin-left:auto; margin-right:auto;">
+          Did Garrison Ledger help you save thousands on a PCS? Optimize your TSP? Make a smart housing decision? We want to hear from you!
+        </p>
+        <div style="text-align:center;">
+          <a href="mailto:support@garrisonledger.com?subject=Success%20Story%20Submission&body=I'd%20like%20to%20share%20my%20success%20story%20with%20Garrison%20Ledger%3A%0A%0A" class="btn btn-secondary">Share Your Story via Email</a>
+        </div>
+      </div>
+      
+      <!-- CTAs -->
+      <div class="cta-section">
+        <a href="https://familymedia.com?utm_source=poll&utm_medium=landing&utm_campaign=202511_Newsletter" class="btn btn-primary">Return to FamilyMedia.com</a>
+        <a href="https://garrisonledger.com/dashboard?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_Newsletter" class="btn btn-secondary" id="toolCTA">Explore Financial Tools</a>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <p>This poll is part of the <strong>FamilyMedia Guide Newsletter</strong></p>
+      <p>Sponsored by <a href="https://garrisonledger.com?utm_source=familymedia&utm_medium=poll_footer&utm_campaign=202511" target="_blank">Garrison Ledger</a> - Military Financial Intelligence</p>
+      <p style="margin-top: 16px;">
+        <a href="https://familymedia.com?utm_source=poll&utm_medium=footer&utm_campaign=202511">Visit FamilyMedia.com</a> | 
+        <a href="https://familymedia.com/newsletter?utm_source=poll&utm_medium=footer&utm_campaign=202511">Subscribe to Newsletter</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Poll data
+    const pollData = {
+      tsp: { 
+        label: 'How do I optimize my TSP allocations?',
+        count: 142,
+        message: '<strong>Smart choice!</strong> TSP optimization is one of the highest-impact financial decisions you can make. The difference between good and great allocation can mean hundreds of thousands at retirement.',
+        toolUrl: 'https://garrisonledger.com/dashboard/tools/tsp-modeler?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_tsp'
+      },
+      housing: { 
+        label: 'Should I use my VA loan or save it?',
+        count: 98,
+        message: '<strong>Great question!</strong> The VA loan is one of your most valuable military benefits. Understanding when to use it (and when to save it) can save you tens of thousands over your career.',
+        toolUrl: 'https://garrisonledger.com/dashboard/tools/house-hacking?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_housing'
+      },
+      retirement: { 
+        label: 'How does BRS vs High-3 affect retirement?',
+        count: 76,
+        message: '<strong>Critical question!</strong> BRS vs High-3 is one of the most important financial decisions in your military career. The right choice depends on your career timeline and retirement goals.',
+        toolUrl: 'https://garrisonledger.com/dashboard/ask?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_retirement'
+      }
+    };
+
+    // Current user vote
+    let currentVote = null;
+
+    // Get URL parameter
+    function getUrlParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Calculate percentages
+    function calculatePercentages() {
+      const total = pollData.tsp.count + pollData.housing.count + pollData.retirement.count;
+      return {
+        tsp: Math.round((pollData.tsp.count / total) * 100),
+        housing: Math.round((pollData.housing.count / total) * 100),
+        retirement: Math.round((pollData.retirement.count / total) * 100)
+      };
+    }
+
+    // Update poll results visualization
+    function updatePollResults() {
+      const percentages = calculatePercentages();
+      
+      // Update percentages and counts
+      document.getElementById('count1').textContent = pollData.tsp.count + ' votes';
+      document.getElementById('percent1').textContent = percentages.tsp + '%';
+      
+      document.getElementById('count2').textContent = pollData.housing.count + ' votes';
+      document.getElementById('percent2').textContent = percentages.housing + '%';
+      
+      document.getElementById('count3').textContent = pollData.retirement.count + ' votes';
+      document.getElementById('percent3').textContent = percentages.retirement + '%';
+      
+      // Animate bars
+      setTimeout(function() {
+        document.getElementById('bar1').style.width = percentages.tsp + '%';
+        document.getElementById('bar2').style.width = percentages.housing + '%';
+        document.getElementById('bar3').style.width = percentages.retirement + '%';
+      }, 100);
+      
+      // Highlight user's vote
+      document.getElementById('bar1').classList.remove('your-vote');
+      document.getElementById('bar2').classList.remove('your-vote');
+      document.getElementById('bar3').classList.remove('your-vote');
+      
+      if (currentVote === 'tsp') {
+        document.getElementById('bar1').classList.add('your-vote');
+      } else if (currentVote === 'housing') {
+        document.getElementById('bar2').classList.add('your-vote');
+      } else if (currentVote === 'retirement') {
+        document.getElementById('bar3').classList.add('your-vote');
+      }
+    }
+
+    // Update personalized content
+    function updatePersonalizedContent(answer) {
+      if (answer && pollData[answer]) {
+        const data = pollData[answer];
+        
+        // Update messages
+        document.getElementById('personalMessage').textContent = 'Your vote: ' + data.label;
+        document.getElementById('thankYouMessage').innerHTML = data.message;
+        document.getElementById('toolCTA').href = data.toolUrl;
+      }
+    }
+
+    // Handle vote selection
+    function selectVote(answer) {
+      // If changing vote, adjust counts
+      if (currentVote && currentVote !== answer) {
+        pollData[currentVote].count--;
+      }
+      
+      // If new vote or different vote, increment
+      if (!currentVote || currentVote !== answer) {
+        pollData[answer].count++;
+      }
+      
+      // Update current vote
+      currentVote = answer;
+      
+      // Update visual selection
+      const options = document.querySelectorAll('.vote-option');
+      options.forEach(function(option) {
+        option.classList.remove('selected');
+      });
+      document.querySelector('[data-answer="' + answer + '"]').classList.add('selected');
+      
+      // Update results
+      updatePollResults();
+      updatePersonalizedContent(answer);
+      
+      // Update URL without reload
+      const newUrl = window.location.pathname + '?answer=' + answer;
+      window.history.replaceState(null, '', newUrl);
+    }
+
+    // Initialize page
+    function init() {
+      const initialAnswer = getUrlParameter('answer');
+      
+      // Set initial vote if from URL
+      if (initialAnswer && pollData[initialAnswer]) {
+        currentVote = initialAnswer;
+        document.querySelector('[data-answer="' + initialAnswer + '"]').classList.add('selected');
+        updatePersonalizedContent(initialAnswer);
+      } else {
+        // First visit without vote
+        document.getElementById('mainTitle').textContent = 'Community Poll';
+        document.getElementById('personalMessage').textContent = 'Cast your vote and see the results!';
+      }
+      
+      // Show initial results
+      updatePollResults();
+      
+      // Add click handlers to vote options
+      const voteOptions = document.querySelectorAll('.vote-option');
+      voteOptions.forEach(function(option) {
+        option.addEventListener('click', function() {
+          const answer = this.getAttribute('data-answer');
+          selectVote(answer);
+        });
+      });
+    }
+
+    // Run on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
