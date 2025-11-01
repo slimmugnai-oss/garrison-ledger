@@ -183,111 +183,7 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden items-center gap-1 lg:flex">
-              <SignedIn>
-                {/* Dashboard Dropdown */}
-                <div
-                  className="relative"
-                  onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
-                  onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
-                >
-                  <button
-                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
-                      isActivePath("/dashboard")
-                        ? "text-slate-900 dark:text-white"
-                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-                    }`}
-                  >
-                    Dashboard
-                    <Icon
-                      name="ChevronDown"
-                      className={`ml-1 h-4 w-4 transition-transform ${dashboardOpen ? "rotate-180" : ""}`}
-                    />
-                    {isActivePath("/dashboard") && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
-                    )}
-                  </button>
-                  {dashboardOpen && (
-                    <div
-                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
-                      onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
-                      onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
-                    >
-                      <div className="p-3">
-                        <Link
-                          href="/dashboard"
-                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
-                            pathname === "/dashboard"
-                              ? "bg-blue-50 dark:bg-blue-900/20"
-                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
-                          }`}
-                        >
-                          <Icon
-                            name="LayoutDashboard"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
-                          />
-                          <div>
-                            <div
-                              className={`text-sm font-semibold ${pathname === "/dashboard" ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
-                            >
-                              Dashboard Home
-                            </div>
-                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                              Your mission overview
-                            </div>
-                          </div>
-                        </Link>
-                        <Link
-                          href="/dashboard/binder"
-                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
-                            isActivePath("/dashboard/binder")
-                              ? "bg-blue-50 dark:bg-blue-900/20"
-                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
-                          }`}
-                        >
-                          <Icon
-                            name="FolderOpen"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
-                          />
-                          <div>
-                            <div
-                              className={`text-sm font-semibold ${isActivePath("/dashboard/binder") ? "text-blue-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
-                            >
-                              Binder
-                            </div>
-                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                              Secure documents
-                            </div>
-                          </div>
-                        </Link>
-                        <Link
-                          href="/dashboard/settings"
-                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
-                            isActivePath("/dashboard/settings")
-                              ? "bg-blue-50 dark:bg-blue-900/20"
-                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
-                          }`}
-                        >
-                          <Icon
-                            name="Settings"
-                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-600"
-                          />
-                          <div>
-                            <div
-                              className={`text-sm font-semibold ${isActivePath("/dashboard/settings") ? "text-blue-600" : "text-slate-900 group-hover:text-gray-600 dark:text-white"}`}
-                            >
-                              Settings
-                            </div>
-                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                              Profile & preferences
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Premium Tools Dropdown */}
+              {/* Premium Tools Dropdown */}
                 <div
                   className="relative"
                   onMouseEnter={() => handleDropdownMouseEnter("premium", setPremiumToolsOpen)}
@@ -596,6 +492,110 @@ export default function Header() {
                             </div>
                             <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
                               Career transition planning
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+              <SignedIn>
+                {/* Dashboard Dropdown */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
+                  onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
+                >
+                  <button
+                    className={`group relative flex items-center rounded-lg px-4 py-2 font-semibold transition-all ${
+                      isActivePath("/dashboard")
+                        ? "text-slate-900 dark:text-white"
+                        : "text-gray-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                    }`}
+                  >
+                    Dashboard
+                    <Icon
+                      name="ChevronDown"
+                      className={`ml-1 h-4 w-4 transition-transform ${dashboardOpen ? "rotate-180" : ""}`}
+                    />
+                    {isActivePath("/dashboard") && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-slate-700 to-slate-900" />
+                    )}
+                  </button>
+                  {dashboardOpen && (
+                    <div
+                      className="animate-in fade-in slide-in-from-top-2 absolute left-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl duration-200 dark:border-slate-700 dark:bg-slate-800"
+                      onMouseEnter={() => handleDropdownMouseEnter("dashboard", setDashboardOpen)}
+                      onMouseLeave={() => handleDropdownMouseLeave("dashboard", setDashboardOpen)}
+                    >
+                      <div className="p-3">
+                        <Link
+                          href="/dashboard"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            pathname === "/dashboard"
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="LayoutDashboard"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${pathname === "/dashboard" ? "text-blue-600" : "text-slate-900 group-hover:text-blue-600 dark:text-white"}`}
+                            >
+                              Dashboard Home
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Your mission overview
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/binder"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/binder")
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="FolderOpen"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/binder") ? "text-blue-600" : "text-slate-900 group-hover:text-purple-600 dark:text-white"}`}
+                            >
+                              Binder
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Secure documents
+                            </div>
+                          </div>
+                        </Link>
+                        <Link
+                          href="/dashboard/settings"
+                          className={`group flex items-start gap-3 rounded-lg px-3 py-3 transition-all ${
+                            isActivePath("/dashboard/settings")
+                              ? "bg-blue-50 dark:bg-blue-900/20"
+                              : "hover:bg-gray-50 dark:hover:bg-slate-700/50"
+                          }`}
+                        >
+                          <Icon
+                            name="Settings"
+                            className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-600"
+                          />
+                          <div>
+                            <div
+                              className={`text-sm font-semibold ${isActivePath("/dashboard/settings") ? "text-blue-600" : "text-slate-900 group-hover:text-gray-600 dark:text-white"}`}
+                            >
+                              Settings
+                            </div>
+                            <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                              Profile & preferences
                             </div>
                           </div>
                         </Link>
