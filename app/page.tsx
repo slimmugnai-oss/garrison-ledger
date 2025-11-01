@@ -38,7 +38,7 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="font-lora mb-6 text-5xl font-bold text-gray-900 lg:text-6xl">
-              Military Financial Intelligence Platform
+              Take Command of Your Military Life
             </h1>
             <p className="mb-8 text-xl text-gray-600">
               5 premium tools built for military families. Audit your pay. Navigate bases. Track
