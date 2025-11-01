@@ -84,28 +84,21 @@ export const logger = {
       context: context ? sanitizeForLogging(context) : undefined
     });
 
-    // Send to Sentry in production (if configured)
-    if (process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+    // Send to Sentry in production (if configured and installed)
+    if (process.env.NODE_ENV === 'production' && typeof window === 'undefined' && process.env.SENTRY_DSN) {
       // Server-side only (avoid double-reporting)
-      import('@sentry/nextjs').then(Sentry => {
-        if (Sentry && process.env.SENTRY_DSN) {
+      // Note: Requires npm install @sentry/nextjs
+      try {
+        // @ts-ignore - Sentry package optional
+        import('@sentry/nextjs').then(Sentry => {
           Sentry.captureException(error instanceof Error ? error : new Error(message), {
-            contexts: {
-              custom: sanitizeForLogging(context) as Record<string, unknown>
-            },
-            tags: {
-              source: context?.source as string || 'unknown',
-              severity: 'error'
-            },
-            extra: {
-              message,
-              timestamp: new Date().toISOString()
-            }
+            contexts: { custom: sanitizeForLogging(context) as Record<string, unknown> },
+            tags: { source: context?.source as string || 'unknown' }
           });
-        }
-      }).catch(() => {
+        }).catch(() => {});
+      } catch {
         // Sentry not installed - silent fail
-      });
+      }
     }
   }
 };
