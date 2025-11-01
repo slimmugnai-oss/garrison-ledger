@@ -16,7 +16,7 @@ import Icon from "./components/ui/Icon";
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",
   description:
-    "5 premium tools for military families: LES Auditor catches pay errors, Base Navigator finds neighborhoods, PCS Copilot maximizes DITY profit, Ask Military Expert (4,900+ sources) answers any question with document analysis, base comparison, and timeline planning.",
+    "4 premium tools for military families: LES Auditor catches pay errors, Base Navigator finds neighborhoods, PCS Copilot maximizes DITY profit, Ask Military Expert (4,900+ sources) answers any question with document analysis, base comparison, and timeline planning.",
 };
 
 export default async function Home() {
@@ -41,7 +41,7 @@ export default async function Home() {
               Take Command of Your Military Life
             </h1>
             <p className="mb-8 text-xl text-gray-600">
-              5 premium tools built for military families. Audit your pay. Navigate bases. Track
+              4 premium tools built for military families. Audit your pay. Navigate bases. Track
               moves. Get expert answers. Always-current intel.
             </p>
 

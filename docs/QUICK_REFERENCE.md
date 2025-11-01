@@ -4,14 +4,14 @@
 
 ---
 
-## 🗺️ SITEMAP: 32 Pages, 9 Categories
+## 🗺️ SITEMAP: 31 Pages, 9 Categories
 
 **View live:** `/dashboard/admin?tab=sitemap`
 
 - **Home & Core** (2): `/`, `/about`
 - **Dashboard** (2): `/dashboard`, `/dashboard/admin`
 - **Profile** (1): `/profile`
-- **Premium Tools** (5): LES Auditor, PCS Copilot, Base Navigator, TDY Copilot, Intel Library
+- **Premium Tools** (4): LES Auditor, PCS Copilot, Base Navigator, Ask Military Expert
 - **Calculators** (6): TSP, PCS Planner, House Hacking, Career, On-Base Savings, SDP
 - **Resources** (3): Listening Post, Directory, Refer & Earn
 - **Toolkits** (4): PCS Hub, Career Hub, Deployment, On-Base Shopping
@@ -30,8 +30,8 @@
 ### Admin (8 tables)
 `admin_actions`, `system_alerts`, `error_logs`, `user_tags`, `feature_flags`, `system_config`, `site_pages`, `page_health_checks`
 
-### Premium Tools (11 tables)
-`les_uploads`, `les_audits`, `les_flags`, `expected_pay_snapshot`, `pcs_copilot_sessions`, `pcs_copilot_scenarios`, `navigator_locations`, `navigator_preferences`, `base_external_data_cache`, `tdy_sessions`, `tdy_scenarios`
+### Premium Tools (9 tables)
+`les_uploads`, `les_audits`, `les_flags`, `expected_pay_snapshot`, `pcs_copilot_sessions`, `pcs_copilot_scenarios`, `navigator_locations`, `navigator_preferences`, `base_external_data_cache`
 
 ### Data Sources (13 tables)
 `military_pay_tables`, `bah_rates`, `sgli_rates`, `payroll_tax_constants`, `state_tax_rates`, `conus_cola_rates`, `oconus_cola_rates`, `base_external_data_cache`, `neighborhood_profiles`, `entitlements_data`, `jtr_rules`, `content_blocks`, `feed_items`

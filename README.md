@@ -65,7 +65,7 @@ See [`docs/README.md`](./docs/README.md) for complete documentation index.
 Garrison Ledger provides comprehensive military financial planning through:
 
 1. **Ask Assistant** - Q&A virtual assistant with official DFAS/VA/TSP data sources
-2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator, TDY Copilot
+2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator
 3. **Intel Library** - Live BAH/BAS/COLA data with 203 base guides worldwide
 4. **Calculator Suite** - 6 military-specific financial calculators
 
@@ -84,7 +84,7 @@ Garrison Ledger provides comprehensive military financial planning through:
 ### **Key Systems**
 
 1. **Ask Assistant** - Q&A virtual assistant with official military data
-2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator, TDY Copilot
+2. **Premium Tools Suite** - LES Auditor, PCS Copilot, Base Navigator
 3. **Intel Library** - Live BAH/BAS/COLA data with 203 base guides
 4. **Calculator Suite** - 6 military-specific financial calculators
 5. **Admin Dashboard** - Complete 6-tab administrative interface
@@ -99,7 +99,6 @@ Garrison Ledger provides comprehensive military financial planning through:
 - ✅ LES Auditor pay verification and error detection
 - ✅ PCS Copilot complete relocation planning
 - ✅ Base Navigator with 203 bases worldwide
-- ✅ TDY Copilot travel planning and reimbursement
 - ✅ 6 financial calculator tools (TSP, SDP, House Hacking, etc.)
 - ✅ Intel Library with live BAH/BAS/COLA data
 - ✅ Premium subscription tiers
@@ -184,7 +183,7 @@ GOOGLE_API_KEY=
 - ✅ LES Auditor Pay Verification Tool
 - ✅ PCS Copilot Complete Planning System
 - ✅ Base Navigator with 203 Bases Worldwide
-- ✅ TDY Copilot Travel Planning
+- ✅ Ask Military Expert (RAG system with 4,900+ sources)
 - ✅ Admin Dashboard Complete (6 tabs)
 - ✅ Gemini 2.0 Flash Integration (97% cost reduction)
 

@@ -66,7 +66,7 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
         <div className="mb-16 text-center">
           <h1 className="font-lora mb-4 text-5xl font-bold text-gray-900">Upgrade to Premium</h1>
           <p className="text-2xl text-gray-600">
-            Unlock unlimited access to all 5 premium tools
+            Unlock unlimited access to all 4 premium tools
           </p>
         </div>
 

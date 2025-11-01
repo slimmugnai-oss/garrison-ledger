@@ -67,7 +67,7 @@ const sitePages: SitePage[] = [
     dependencies: { apis: ['/api/user-profile'] }
   },
 
-  // Premium Tools (5)
+  // Premium Tools (4)
   {
     path: '/dashboard/paycheck-audit',
     title: 'LES Auditor',

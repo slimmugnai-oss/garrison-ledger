@@ -2,7 +2,7 @@
 
 ## 📋 Executive Summary
 
-The **Sitemap System** provides complete visibility into all 31 platform pages, tracking their health, performance, and analytics. Built to ensure the Garrison Ledger platform remains fast, functional, and optimized for military families.
+The **Sitemap System** provides complete visibility into all 30 platform pages, tracking their health, performance, and analytics. Built to ensure the Garrison Ledger platform remains fast, functional, and optimized for military families.
 
 **Status:** ✅ **COMPLETE - Phase 1 Deployed**  
 **Date:** October 22, 2025
@@ -14,7 +14,7 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 **Problem:** No centralized view of all platform pages, their health status, or performance metrics.
 
 **Solution:** A comprehensive sitemap system integrated into the admin dashboard that:
-- ✅ **Tracks all 31 pages** across 9 categories
+- ✅ **Tracks all 30 pages** across 9 categories
 - ✅ **Monitors health status** (🟢 Healthy, 🟡 Warning, 🔴 Error)
 - ✅ **Checks availability** with automated health checks
 - ✅ **Analyzes performance** (response times, load speeds)
@@ -23,7 +23,7 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 
 ---
 
-## 📊 Platform Sitemap (31 Pages)
+## 📊 Platform Sitemap (30 Pages)
 
 ### Home & Core (2 pages)
 1. `/` - Home page (Public)
@@ -36,12 +36,11 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 ### Profile (1 page)
 5. `/dashboard/profile/setup` - Profile Setup (Free tier)
 
-### Premium Tools (5 pages)
+### Premium Tools (4 pages)
 6. `/dashboard/paycheck-audit` - LES Auditor (Premium)
 7. `/dashboard/pcs-copilot` - PCS Copilot (Premium)
 8. `/dashboard/navigator` - Base Navigator (Premium)
-9. `/dashboard/tdy-voucher` - TDY Copilot (Premium)
-10. `/dashboard/intel` - Intel Library (Premium)
+9. `/dashboard/ask` - Ask Military Expert (Premium)
 
 ### Calculators (6 pages)
 11. `/dashboard/tools/tsp-modeler` - TSP Calculator (Free)
@@ -77,7 +76,7 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 31. `/dashboard/admin` - Admin Dashboard (Admin only)
 32. `/dashboard/admin/briefing` - Admin Briefing (Admin only)
 
-**Total: 32 pages** (31 user-facing + 1 admin briefing)
+**Total: 31 pages** (30 user-facing + 1 admin briefing)
 
 ---
 
@@ -311,7 +310,7 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 1. Go to Admin Dashboard → Sitemap tab (Press `6`)
 2. Click "Health Checks" sub-tab
 3. Click "Run Health Check" button
-4. Wait for all 31 pages to be checked (~30-60 seconds)
+4. Wait for all 30 pages to be checked (~30-60 seconds)
 5. Review results (healthy/warning/error breakdown)
 
 ### View Page Details
@@ -524,13 +523,13 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 - RLS policies for security
 
 ### Seed Data
-✅ **COMPLETE:** All 31 pages seeded via SQL
+✅ **COMPLETE:** All 30 pages seeded via SQL
 
 **Categories:**
 - Home & Core: 2 pages
 - Dashboard: 2 pages
 - Profile: 1 page
-- Premium Tools: 5 pages
+- Premium Tools: 4 pages
 - Calculators: 6 pages
 - Resources: 3 pages
 - Toolkits: 4 pages
@@ -610,7 +609,7 @@ The **Sitemap System** provides complete visibility into all 31 platform pages, 
 
 ## 🎯 Success Criteria
 
-✅ **Complete Visibility** - All 31 pages tracked  
+✅ **Complete Visibility** - All 30 pages tracked  
 ✅ **Health Monitoring** - Automated checks working  
 ✅ **Performance Tracking** - Response times recorded  
 ✅ **Analytics Integration** - View counts updating  

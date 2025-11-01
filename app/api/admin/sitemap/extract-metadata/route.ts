@@ -19,7 +19,6 @@ const routeToFilePath: Record<string, string> = {
   "/dashboard/paycheck-audit": "app/dashboard/paycheck-audit/page.tsx",
   "/dashboard/pcs-copilot": "app/dashboard/pcs-copilot/page.tsx",
   "/dashboard/navigator": "app/dashboard/navigator/page.tsx",
-  "/dashboard/tdy-voucher": "app/dashboard/tdy-voucher/page.tsx",
   "/dashboard/ask": "app/dashboard/ask/page.tsx",
   "/dashboard/tools/tsp-modeler": "app/dashboard/tools/tsp-modeler/page.tsx",
   "/dashboard/tools/sdp-strategist": "app/dashboard/tools/sdp-strategist/page.tsx",

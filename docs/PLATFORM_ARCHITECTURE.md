@@ -45,12 +45,11 @@ GARRISON LEDGER (/)
 ├─ 👤 PROFILE (1 page)
 │  └─ /profile (14 questions → auto-fills 4 calculators)
 │
-├─ 👑 PREMIUM TOOLS (5 pages) 💎
-│  ├─ /dashboard/les-auditor (catch pay errors)
+├─ 👑 PREMIUM TOOLS (4 pages) 💎
+│  ├─ /dashboard/paycheck-audit (catch pay errors)
 │  ├─ /dashboard/pcs-copilot (maximize DITY profit)
-│  ├─ /dashboard/base-navigator (find neighborhoods)
-│  ├─ /dashboard/tdy-copilot (travel vouchers)
-│  └─ /dashboard/intel-library (live financial data)
+│  ├─ /dashboard/navigator (find neighborhoods)
+│  └─ /dashboard/ask (military expert assistant)
 │
 ├─ 🧮 CALCULATORS (6 pages) 🆓+💎
 │  ├─ /tools/tsp-calculator ⭐ auto-fill
@@ -196,7 +195,7 @@ ADMIN DASHBOARD (/dashboard/admin)
 │  └─ 🛠️ Tools Analytics
 │     ├─ LES Auditor usage (uploads, audits, flags, success rate)
 │     ├─ PCS Copilot usage (sessions, scenarios, avg time)
-│     ├─ TDY Copilot usage (sessions, completion rate)
+│     ├─ Base Navigator usage (searches, external API calls)
 │     └─ API: /api/admin/analytics/tools
 │
 ├─ TAB 3: 👥 PERSONNEL (Press 3)
@@ -391,11 +390,6 @@ USER INPUT
     │      │     ├─ Weather (1-day cache)
     │      │     ├─ Housing (30-day cache)
     │      │     └─ Schools (30-day cache)
-    │      │
-    │      └─ TDY Copilot
-    │         ├─ Session → tdy_sessions
-    │         ├─ Scenarios → tdy_scenarios
-    │         └─ Lookup → jtr_rules
     │
     └─ Admin Dashboard Access
            │
@@ -533,12 +527,7 @@ NEW USER JOURNEY
        │  ├─ See weather/housing/schools
        │  └─ Find perfect neighborhood
        │
-       ├─ TDY Copilot
-       │  ├─ Plan travel
-       │  ├─ Calculate per diem
-       │  └─ Build voucher
-       │
-       └─ Intel Library (Premium Features)
+       └─ Ask Military Expert (Premium Features)
           ├─ Advanced data cards
           ├─ Historical trends
           └─ Custom analysis
@@ -619,7 +608,7 @@ MONITORING SYSTEMS
 ├─ TOOLS METRICS
 │  ├─ LES Auditor (uploads, audits, flags, success rate)
 │  ├─ PCS Copilot (sessions, scenarios, avg time)
-│  ├─ TDY Copilot (sessions, completion rate)
+│  ├─ Base Navigator (searches, API calls, cache hits)
 │  └─ Calculators (sessions, completions, conversion)
 │
 ├─ SYSTEM HEALTH
