@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Poll Results - FamilyMedia Guide',
+  title: 'Poll Results - Family Magazine Guide',
   description: 'See how the military community answered this month\'s poll question',
   robots: 'index, follow',
 };
