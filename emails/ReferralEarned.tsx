@@ -31,12 +31,12 @@ export const ReferralEarned = ({
   return (
     <Html>
       <Head />
-      <Preview>You earned ${creditsEarned}! Your referral upgraded to premium.</Preview>
+      <Preview>You earned $10! Your referral upgraded to premium.</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Success Header */}
           <Section style={header}>
-            <Heading style={headerTitle}>You Earned ${creditsEarned}!</Heading>
+            <Heading style={headerTitle}>You Earned $10!</Heading>
             <Text style={headerSubtitle}>Your battle buddy just upgraded to premium</Text>
           </Section>
 
@@ -47,14 +47,14 @@ export const ReferralEarned = ({
             </Text>
 
             <Text style={text}>
-              {referredUserName} just upgraded to premium using your referral code, and we've
-              credited your account with <strong>${creditsEarned}.00</strong>.
+              A friend just upgraded to premium using your referral code, and we've
+              credited your account with <strong>$10.00</strong>.
             </Text>
 
             {/* Credit Balance Card */}
             <Section style={creditCard}>
               <Text style={creditLabel}>Your Credit Balance</Text>
-              <Heading style={creditAmount}>${totalCredits}.00</Heading>
+              <Heading style={creditAmount}>${totalCredits.toFixed(2)}</Heading>
               <Text style={creditSubtext}>
                 Use your credits towards premium subscription or keep referring to earn more!
               </Text>

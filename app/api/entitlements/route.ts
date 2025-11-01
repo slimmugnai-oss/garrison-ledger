@@ -63,24 +63,9 @@ export async function GET(req: NextRequest) {
 
     logger.info("[Entitlements] Data fetched", { rankGroup, dependencyStatus, year });
 
-    // Type assertion to help TypeScript understand the selected fields
-    const entitlementData = data as {
-      rank_group: string;
-      dependency_status: string;
-      weight_allowance: number;
-      dla_rate: number;
-      effective_year: number;
-    };
-
     return NextResponse.json({
       success: true,
-      data: {
-        rank_group: entitlementData.rank_group,
-        dependency_status: entitlementData.dependency_status,
-        weight_allowance: entitlementData.weight_allowance,
-        dla_rate: entitlementData.dla_rate,
-        effective_year: entitlementData.effective_year,
-      },
+      data: data,
     });
   } catch (error) {
     return errorResponse(error);

@@ -29,13 +29,13 @@ export const ReferralReceived = ({
   return (
     <Html>
       <Head />
-      <Preview>Welcome gift: ${creditsReceived} credit added to your account</Preview>
+      <Preview>Welcome gift: $10 credit added to your account</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Welcome Header */}
           <Section style={header}>
             <Heading style={headerTitle}>Welcome to Premium!</Heading>
-            <Text style={headerSubtitle}>You just earned ${creditsReceived} credit</Text>
+            <Text style={headerSubtitle}>You just earned $10 credit</Text>
           </Section>
 
           {/* Main Content */}
@@ -45,15 +45,15 @@ export const ReferralReceived = ({
             </Text>
 
             <Text style={text}>
-              Thanks for upgrading to premium! Since you joined using {referrerName}'s referral
-              code, we've added <strong>${creditsReceived}.00</strong> to your account as a welcome
+              Thanks for upgrading to premium! Since you joined using a friend's referral
+              code, we've added <strong>$10.00</strong> to your account as a welcome
               gift.
             </Text>
 
             {/* Credit Balance Card */}
             <Section style={creditCard}>
               <Text style={creditLabel}>Your Welcome Credit</Text>
-              <Heading style={creditAmount}>${creditsReceived}.00</Heading>
+              <Heading style={creditAmount}>$10.00</Heading>
               <Text style={creditSubtext}>
                 This credit is automatically applied to your subscription
               </Text>
