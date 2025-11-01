@@ -8,6 +8,7 @@
  */
 
 import { getCache, setCache } from "@/lib/cache";
+import { circuitBreakers } from "@/lib/circuit-breaker";
 
 /**
  * Google Weather API Response Types (Current Conditions endpoint)
@@ -74,19 +75,24 @@ export async function weatherComfortIndex(zip: string): Promise<{ index10: numbe
       return result;
     }
 
-    // Step 2: Fetch weather from Google Weather API (Current Conditions endpoint)
-    const weatherUrl = `https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${coords.lat}&location.longitude=${coords.lon}&key=${apiKey}`;
-    const weatherResponse = await fetch(weatherUrl);
+    // Step 2: Fetch weather from Google Weather API with Circuit Breaker
+    const defaultFallback = getDefaultWeatherForZip(zip);
+    
+    const result = await circuitBreakers.weather.execute(
+      async () => {
+        const weatherUrl = `https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${coords.lat}&location.longitude=${coords.lon}&key=${apiKey}`;
+        const weatherResponse = await fetch(weatherUrl);
 
-    if (!weatherResponse.ok) {
-      console.warn(`[WEATHER] Google Weather API error ${weatherResponse.status} for ${zip}, using defaults`);
-      const result = getDefaultWeatherForZip(zip);
-      await setCache(cacheKey, result, 24 * 3600);
-      return result;
-    }
+        if (!weatherResponse.ok) {
+          throw new Error(`Google Weather API error ${weatherResponse.status}`);
+        }
 
-    const weatherData = (await weatherResponse.json()) as GoogleWeatherResponse;
-    const result = analyzeWeatherData(weatherData);
+        const weatherData = (await weatherResponse.json()) as GoogleWeatherResponse;
+        return analyzeWeatherData(weatherData);
+      },
+      defaultFallback // Fallback if circuit is OPEN
+    );
+
     console.log(`[DEBUG] Fetched real weather for ${zip}:`, result);
     await setCache(cacheKey, result, 24 * 3600);
     return result;

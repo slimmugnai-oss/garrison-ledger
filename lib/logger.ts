@@ -72,7 +72,7 @@ export const logger = {
 
   /**
    * Error logging - always logs
-   * Should be sent to error tracking service (TODO: Add Sentry/etc)
+   * Automatically sends to Sentry in production (if configured)
    */
   error: (message: string, error?: unknown, context?: Record<string, unknown>) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -84,10 +84,29 @@ export const logger = {
       context: context ? sanitizeForLogging(context) : undefined
     });
 
-    // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.captureException(error, { contexts: { custom: context } });
-    // }
+    // Send to Sentry in production (if configured)
+    if (process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+      // Server-side only (avoid double-reporting)
+      import('@sentry/nextjs').then(Sentry => {
+        if (Sentry && process.env.SENTRY_DSN) {
+          Sentry.captureException(error instanceof Error ? error : new Error(message), {
+            contexts: {
+              custom: sanitizeForLogging(context) as Record<string, unknown>
+            },
+            tags: {
+              source: context?.source as string || 'unknown',
+              severity: 'error'
+            },
+            extra: {
+              message,
+              timestamp: new Date().toISOString()
+            }
+          });
+        }
+      }).catch(() => {
+        // Sentry not installed - silent fail
+      });
+    }
   }
 };
 

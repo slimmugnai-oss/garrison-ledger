@@ -31,6 +31,7 @@ import { compareLesToExpected } from "@/lib/les/compare";
 import { buildExpectedSnapshot } from "@/lib/les/expected";
 import { parseLesPdf } from "@/lib/les/parse";
 import { logger } from "@/lib/logger";
+import { scanFile, isMalwareScanningEnabled } from "@/lib/security/malware-scan";
 import { ssot } from "@/lib/ssot";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -158,7 +159,67 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // ==========================================================================
-    // 4. ⚠️ CRITICAL: PARSE IN-MEMORY ONLY - ZERO STORAGE
+    // 4. MALWARE SCANNING (If VirusTotal API configured)
+    // ==========================================================================
+    if (isMalwareScanningEnabled()) {
+      logger.info('[LES Upload] Scanning file for malware', {
+        userId: userId.substring(0, 8) + '...',
+        fileName: file.name,
+        fileSize: file.size
+      });
+
+      const scanResult = await scanFile(buffer, file.name, {
+        timeout: 30000,
+        skipIfNoApiKey: true // Fail-open if API key not set
+      });
+
+      if (!scanResult.safe) {
+        logger.error('[LES Upload] MALWARE DETECTED', {
+          userId: userId.substring(0, 8) + '...',
+          fileName: file.name,
+          scanId: scanResult.scanId,
+          details: scanResult.details
+        });
+
+        // Quarantine the file metadata (not the actual file - zero storage policy)
+        await supabaseAdmin.from('quarantined_files').insert({
+          user_id: userId,
+          filename: file.name,
+          file_size: file.size,
+          mime_type: file.type,
+          scan_id: scanResult.scanId,
+          scan_result: scanResult as any,
+          threat_details: scanResult.details,
+          upload_route: '/api/les/upload'
+        });
+
+        // Log security event
+        await supabaseAdmin.from('error_logs').insert({
+          level: 'error',
+          source: 'malware_scan',
+          message: 'Malware detected in LES upload',
+          user_id: userId,
+          metadata: {
+            filename: file.name,
+            scan_id: scanResult.scanId,
+            threats: scanResult.stats
+          }
+        });
+
+        throw Errors.invalidInput(
+          'File failed security scan. This file may contain malware and has been blocked for your safety.'
+        );
+      }
+
+      logger.info('[LES Upload] File passed malware scan', {
+        userId: userId.substring(0, 8) + '...',
+        scanId: scanResult.scanId,
+        stats: scanResult.stats
+      });
+    }
+
+    // ==========================================================================
+    // 5. ⚠️ CRITICAL: PARSE IN-MEMORY ONLY - ZERO STORAGE
     // ==========================================================================
     const now = new Date();
     const month = now.getUTCMonth() + 1;
