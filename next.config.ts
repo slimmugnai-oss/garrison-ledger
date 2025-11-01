@@ -51,6 +51,8 @@ const nextConfig: NextConfig = {
               "font-src 'self' data:",
               "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.dev https://*.clerk.accounts.dev https://clerk.garrisonledger.com https://www.googletagmanager.com https://*.googletagmanager.com https://vercel.live https://*.google-analytics.com https://*.analytics.google.com",
               "frame-src 'self' https://js.stripe.com https://accounts.google.com https://*.clerk.dev https://*.clerk.accounts.dev https://clerk.garrisonledger.com https://vercel.live",
+              "worker-src 'self' blob:",
+              "child-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
