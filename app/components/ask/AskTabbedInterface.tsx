@@ -56,18 +56,18 @@ export default function AskTabbedInterface() {
   const activeTabConfig = TABS.find((t) => t.id === activeTab);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-lg">
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 bg-gray-50">
-        <div className="flex overflow-x-auto">
+    <div className="bg-white">
+      {/* Tab Navigation - Prominent, Clean */}
+      <div className="border-b border-slate-200 mb-6">
+        <div className="flex overflow-x-auto -mb-px">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-all ${
                 activeTab === tab.id
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                  ? "border-slate-900 text-slate-900 bg-slate-50"
+                  : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <Icon name={tab.icon} className="h-5 w-5" />
@@ -77,15 +77,8 @@ export default function AskTabbedInterface() {
         </div>
       </div>
 
-      {/* Tab Description */}
-      {activeTabConfig && (
-        <div className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-3">
-          <p className="text-sm text-gray-700">{activeTabConfig.description}</p>
-        </div>
-      )}
-
-      {/* Tab Content */}
-      <div className="p-6">
+      {/* Tab Content - Full Width, Clean */}
+      <div>
         {activeTab === "ask" && <AskAssistantClient />}
         {activeTab === "upload" && <DocumentUpload />}
         {activeTab === "compare" && <ComparisonToolFixed />}

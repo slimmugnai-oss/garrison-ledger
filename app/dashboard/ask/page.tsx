@@ -160,38 +160,29 @@ export default async function AskAssistantPage() {
       />
 
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-slate-800 to-slate-700 py-16 text-white">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-                <Icon name="Sparkles" className="h-4 w-4 text-yellow-400" />
-                <span className="text-sm font-semibold text-yellow-400">EXPERT MODE ACTIVE</span>
+      <main className="min-h-screen bg-white">
+        {/* Slim Hero Bar */}
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900">Ask Military Expert</h1>
+                <p className="text-sm text-slate-600 mt-1">
+                  24/7 AI advisor with {knowledgeSourcesFormatted} knowledge sources + official data
+                </p>
               </div>
-
-              <h1 className="font-lora mb-6 text-5xl font-bold leading-tight">
-                Ask Our Military Expert
-              </h1>
-
-              <p className="mb-8 text-xl leading-relaxed text-blue-100">
-                Your 24/7 military life advisor. Get instant, expert answers to ANY military life
-                question; financial, PCS, deployment, career, benefits, base life.
-              </p>
-
-              {/* Trust Badges */}
-              <div className="mb-8 flex flex-wrap justify-center gap-6 text-sm">
+              <div className="hidden sm:flex items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>{knowledgeSourcesFormatted} knowledge sources</span>
+                  <Icon name="Database" className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600">{knowledgeSourcesFormatted} sources</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>Official DFAS/VA/TSP data</span>
+                  <Icon name="Timer" className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600">~2 sec response</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Icon name="CheckCircle" className="h-5 w-5 text-green-400" />
-                  <span>&lt;2 sec response time</span>
+                  <Icon name="Shield" className="h-4 w-4 text-slate-400" />
+                  <span className="text-slate-600">DFAS/VA/JTR data</span>
                 </div>
               </div>
             </div>
@@ -199,220 +190,45 @@ export default async function AskAssistantPage() {
         </section>
 
         {/* Main Content */}
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
           {/* Tabbed Interface - Ask, Upload, Compare, Timeline, History */}
           <AskTabbedInterface />
 
-          {/* Example Questions Section */}
-          <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
-              See What Our Expert Can Answer
+          {/* How It Works - Clean, Minimal */}
+          <section className="mt-12 mb-16">
+            <h2 className="mb-6 text-center text-xl font-semibold text-slate-900">
+              How It Works
             </h2>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Financial Questions */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                  <span className="text-2xl">💰</span>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="text-center p-6">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
+                  <span className="text-lg font-bold text-slate-700">1</span>
                 </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Financial</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"What's my BAH as an E-5 at Fort Hood with dependents?"</p>
-                  <p>"How does the Savings Deposit Program work?"</p>
-                  <p>"Should I take the SRB or invest in TSP?"</p>
-                </div>
-              </div>
-
-              {/* PCS & Moving */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
-                  <span className="text-2xl">🚚</span>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">PCS & Moving</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"How do I maximize DITY move profit?"</p>
-                  <p>"What's my weight allowance for PCS?"</p>
-                  <p>"When should I start house hunting?"</p>
-                </div>
-              </div>
-
-              {/* Deployment */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-                  <span className="text-2xl">🎖️</span>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Deployment</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"How does combat zone tax exclusion work?"</p>
-                  <p>"What should I do with my TSP during deployment?"</p>
-                  <p>"How to prepare family financially for deployment?"</p>
-                </div>
-              </div>
-
-              {/* Career */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                  <span className="text-2xl">💼</span>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Career</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"When should I submit my promotion packet?"</p>
-                  <p>"Should I reenlist or separate?"</p>
-                  <p>"How to maximize military retirement benefits?"</p>
-                </div>
-              </div>
-
-              {/* Base Life */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                  <span className="text-2xl">🏠</span>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Base Life</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"Should I live on-base or off-base?"</p>
-                  <p>"How to maximize commissary savings?"</p>
-                  <p>"What's the best school district near base?"</p>
-                </div>
-              </div>
-
-              {/* Benefits */}
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
-                  <span className="text-2xl">🎓</span>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">Benefits</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>"How to transfer GI Bill to spouse?"</p>
-                  <p>"TRICARE Select vs Prime comparison?"</p>
-                  <p>"VA loan requirements for active duty?"</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* How It Works Section */}
-          <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
-              How Ask Our Military Expert Works
-            </h2>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
-                  <span className="text-2xl font-bold text-indigo-600">1</span>
-                </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Ask Anything</h3>
-                <p className="text-gray-600">
-                  Type your question about military pay, PCS, deployment, career, benefits, or base
-                  life
+                <h3 className="mb-2 text-base font-semibold text-slate-900">Ask Your Question</h3>
+                <p className="text-sm text-slate-600">
+                  Type anything about military life - finance, PCS, deployment, career, benefits
                 </p>
               </div>
 
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
-                  <span className="text-2xl font-bold text-indigo-600">2</span>
+              <div className="text-center p-6">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
+                  <span className="text-lg font-bold text-slate-700">2</span>
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Get Expert Answer</h3>
-                <p className="text-gray-600">
-                  Our AI expert analyzes {knowledgeSourcesFormatted}+ knowledge sources + official
-                  data + your profile
+                <h3 className="mb-2 text-base font-semibold text-slate-900">AI Analyzes</h3>
+                <p className="text-sm text-slate-600">
+                  Searches {knowledgeSourcesFormatted} sources + official DFAS/VA data + your profile
                 </p>
               </div>
 
-              <div className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
-                  <span className="text-2xl font-bold text-indigo-600">3</span>
+              <div className="text-center p-6">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
+                  <span className="text-lg font-bold text-slate-700">3</span>
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Take Action</h3>
-                <p className="text-gray-600">
-                  Receive personalized guidance with next steps, tools, and verification checklists
+                <h3 className="mb-2 text-base font-semibold text-slate-900">Get Answer</h3>
+                <p className="text-sm text-slate-600">
+                  Personalized guidance with citations, next steps, and verification checklist
                 </p>
-              </div>
-            </div>
-          </section>
-
-          {/* Social Proof Section */}
-          <section className="mt-16">
-            <h2 className="mb-8 text-center text-3xl font-bold text-gray-900">
-              What Military Families Say
-            </h2>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-                    <span className="text-sm font-semibold text-indigo-600">MJ</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">SGT Mike Johnson</p>
-                    <p className="text-sm text-gray-600">E-5, 82nd Airborne</p>
-                  </div>
-                </div>
-                <p className="text-gray-700">
-                  "I asked about my BAH calculation and got a detailed answer in 10 seconds with the
-                  exact DFAS rates. This saved me a 30-minute phone call to finance."
-                </p>
-              </div>
-
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-                    <span className="text-sm font-semibold text-indigo-600">SW</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">TSgt Sarah Williams</p>
-                    <p className="text-sm text-gray-600">Air Force, 6 years TIS</p>
-                  </div>
-                </div>
-                <p className="text-gray-700">
-                  "The PCS advice was incredible—specific to MY situation as an E-6 with kids moving
-                  OCONUS. Not generic Google results."
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* Trust Indicators */}
-          <section className="mt-16">
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-8">
-              <h3 className="mb-6 text-center text-2xl font-bold text-gray-900">
-                Why Trust Our Military Expert
-              </h3>
-
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <div className="text-center">
-                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                    <Icon name="Database" className="h-6 w-6 text-green-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">
-                    {knowledgeSourcesFormatted} Knowledge Sources
-                  </p>
-                  <p className="text-xs text-gray-600">Embedded military expertise</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                    <Icon name="Shield" className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">Official Data</p>
-                  <p className="text-xs text-gray-600">DFAS, VA, TSP, JTR sources</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                    <Icon name="Timer" className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">~2 Sec Response</p>
-                  <p className="text-xs text-gray-600">Lightning fast answers</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-100">
-                    <Icon name="Star" className="h-6 w-6 text-yellow-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">9.2/10 Quality</p>
-                  <p className="text-xs text-gray-600">User satisfaction rating</p>
-                </div>
               </div>
             </div>
           </section>
