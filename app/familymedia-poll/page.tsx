@@ -446,7 +446,7 @@ function PollContent() {
           {/* Header */}
           <div className="poll-header">
             <div className="logo-container">
-              <img src="https://i.imgur.com/YourFamilyLogoHere.png" alt="Family Magazine Logo" />
+              <img src="https://i.imgur.com/6j2ekyX.png" alt="Family Magazine Logo" />
             </div>
             
             <div className="checkmark-icon">
