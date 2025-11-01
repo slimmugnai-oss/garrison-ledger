@@ -1,158 +1,217 @@
 /**
- * DFAS ANNOUNCEMENTS SCRAPER
- *
- * Scrapes DFAS.mil for:
- * - BAH rate updates
- * - Military pay raises
- * - Policy announcements
- * - Tax updates (FICA, Medicare)
- *
- * Runs: Daily via cron job
- * Stores: dynamic_feeds table (type: 'dfas_announcement')
+ * DFAS ANNOUNCEMENTS SCRAPER (REAL DATA CONNECTION)
+ * 
+ * Scrapes DFAS.mil for official announcements:
+ * - Pay table updates
+ * - BAH rate changes
+ * - BAS rate updates
+ * - Retirement pay announcements
+ * - Important policy changes
+ * 
+ * Updates: Daily cron job
+ * Storage: dynamic_feeds table (type: 'dfas_announcement')
  */
 
-import { logger } from "@/lib/logger";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import * as cheerio from 'cheerio';
+import { createClient } from '@supabase/supabase-js';
 
-export interface DFASAnnouncement {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+interface DFASAnnouncement {
   title: string;
   url: string;
-  publishedDate: string;
-  category: "bah_update" | "pay_raise" | "tax_update" | "policy_change" | "other";
+  date: string;
+  category: string;
   summary: string;
-  impact: "high" | "medium" | "low";
-  affectedPopulation: string; // "All service members", "E-1 to E-5", "OCONUS only", etc.
 }
 
 /**
- * Scrape DFAS announcements
- * In production: Use Cheerio or Puppeteer to scrape DFAS.mil
- * For now: Placeholder with manual tracking
+ * Main scraper function - fetches DFAS announcements
  */
 export async function scrapeDFASAnnouncements(): Promise<DFASAnnouncement[]> {
-  logger.info("[DFAS Scraper] Starting DFAS announcements scrape");
-
   try {
-    // In production: Actual web scraping
-    // const response = await fetch("https://www.dfas.mil/news");
-    // const html = await response.text();
-    // const $ = cheerio.load(html);
-    // Extract announcements from HTML...
+    console.log('[DFAS Scraper] Starting scrape of DFAS.mil...');
 
-    // For Phase 2: Placeholder with known important announcements
-    const announcements: DFASAnnouncement[] = [
-      {
-        title: "2025 BAH Rates Published",
-        url: "https://www.dfas.mil/militarymembers/payentitlements/bah",
-        publishedDate: "2025-01-01",
-        category: "bah_update",
-        summary: "Updated BAH rates for 2025. Most locations increased 4-6%.",
-        impact: "high",
-        affectedPopulation: "All service members receiving BAH",
+    // DFAS News & Updates page
+    const dfasNewsUrl = 'https://www.dfas.mil/news';
+    
+    const response = await fetch(dfasNewsUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; GarrisonLedger/1.0; +https://garrisonledger.com)',
       },
-      {
-        title: "2025 Military Pay Raise: 5.2%",
-        url: "https://www.dfas.mil/militarymembers/payentitlements/pay-tables",
-        publishedDate: "2025-01-01",
-        category: "pay_raise",
-        summary: "2025 military pay tables reflect 5.2% across-the-board increase.",
-        impact: "high",
-        affectedPopulation: "All active duty service members",
-      },
-      {
-        title: "FICA Tax Rate Unchanged for 2025",
-        url: "https://www.irs.gov/taxtopics/tc751",
-        publishedDate: "2024-11-01",
-        category: "tax_update",
-        summary: "Social Security tax remains 6.2%, Medicare remains 1.45% for 2025.",
-        impact: "low",
-        affectedPopulation: "All taxpayers",
-      },
-    ];
-
-    logger.info(`[DFAS Scraper] Found ${announcements.length} announcements`);
-
-    return announcements;
-  } catch (error) {
-    logger.error("[DFAS Scraper] Scrape failed:", error);
-    return [];
-  }
-}
-
-/**
- * Process and store DFAS announcements
- */
-export async function processDFASAnnouncements(): Promise<{
-  processed: number;
-  new: number;
-  updated: number;
-}> {
-  try {
-    const announcements = await scrapeDFASAnnouncements();
-
-    let newCount = 0;
-    let updatedCount = 0;
-
-    for (const announcement of announcements) {
-      // Check if announcement already exists
-      const { data: existing } = await supabaseAdmin
-        .from("dynamic_feeds")
-        .select("id")
-        .eq("feed_type", "dfas_announcement")
-        .eq("source_url", announcement.url)
-        .single();
-
-      if (existing) {
-        // Update existing
-        await supabaseAdmin
-          .from("dynamic_feeds")
-          .update({
-            title: announcement.title,
-            summary: announcement.summary,
-            metadata: {
-              category: announcement.category,
-              impact: announcement.impact,
-              affectedPopulation: announcement.affectedPopulation,
-            },
-            last_checked: new Date().toISOString(),
-          })
-          .eq("id", existing.id);
-
-        updatedCount++;
-      } else {
-        // Insert new
-        await supabaseAdmin.from("dynamic_feeds").insert({
-          feed_type: "dfas_announcement",
-          source_name: "DFAS",
-          source_url: announcement.url,
-          title: announcement.title,
-          summary: announcement.summary,
-          published_at: announcement.publishedDate,
-          metadata: {
-            category: announcement.category,
-            impact: announcement.impact,
-            affectedPopulation: announcement.affectedPopulation,
-          },
-          is_active: true,
-        });
-
-        newCount++;
-      }
-    }
-
-    logger.info(`[DFAS Scraper] Processed ${announcements.length} announcements`, {
-      new: newCount,
-      updated: updatedCount,
     });
 
-    return {
-      processed: announcements.length,
-      new: newCount,
-      updated: updatedCount,
-    };
+    if (!response.ok) {
+      throw new Error(`DFAS fetch failed: ${response.status} ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    const announcements: DFASAnnouncement[] = [];
+
+    // Parse news articles
+    $('.news-item, .article-item, .post-item').each((_, element) => {
+      const $el = $(element);
+      
+      const title = $el.find('h2, h3, .title, .headline').first().text().trim();
+      const relativeUrl = $el.find('a').first().attr('href');
+      const dateText = $el.find('.date, .publish-date, time').first().text().trim();
+      const summaryText = $el.find('p, .summary, .excerpt').first().text().trim();
+
+      if (title && relativeUrl) {
+        const fullUrl = relativeUrl.startsWith('http') 
+          ? relativeUrl 
+          : `https://www.dfas.mil${relativeUrl}`;
+
+        const category = categorizeDFASAnnouncement(title, summaryText);
+
+        announcements.push({
+          title,
+          url: fullUrl,
+          date: parseDate(dateText) || new Date().toISOString(),
+          category,
+          summary: summaryText || '',
+        });
+      }
+    });
+
+    console.log(`[DFAS Scraper] Found ${announcements.length} announcements`);
+    return announcements;
   } catch (error) {
-    logger.error("[DFAS Scraper] Processing failed:", error);
+    console.error('[DFAS Scraper] Error:', error);
     throw error;
   }
 }
 
+/**
+ * Categorize announcement by keywords
+ */
+function categorizeDFASAnnouncement(title: string, summary: string): string {
+  const text = `${title} ${summary}`.toLowerCase();
+
+  if (text.includes('pay table') || text.includes('military pay')) return 'PAY_UPDATE';
+  if (text.includes('bah') || text.includes('housing allowance')) return 'BAH_UPDATE';
+  if (text.includes('bas') || text.includes('subsistence')) return 'BAS_UPDATE';
+  if (text.includes('retirement') || text.includes('retiree')) return 'RETIREMENT';
+  if (text.includes('tax') || text.includes('w-2') || text.includes('1099')) return 'TAX';
+  if (text.includes('policy') || text.includes('regulation')) return 'POLICY';
+  
+  return 'GENERAL';
+}
+
+/**
+ * Parse various date formats from DFAS
+ */
+function parseDate(dateText: string): string | null {
+  if (!dateText) return null;
+
+  try {
+    // Common formats: "January 15, 2025", "01/15/2025", "2025-01-15"
+    const date = new Date(dateText);
+    
+    if (!isNaN(date.getTime())) {
+      return date.toISOString();
+    }
+  } catch {
+    // Parsing failed
+  }
+
+  return null;
+}
+
+/**
+ * Save announcements to database (dynamic_feeds table)
+ */
+export async function saveDFASAnnouncements(announcements: DFASAnnouncement[]): Promise<void> {
+  try {
+    console.log(`[DFAS Scraper] Saving ${announcements.length} announcements to database...`);
+
+    for (const announcement of announcements) {
+      // Check if already exists (by URL)
+      const { data: existing } = await supabase
+        .from('dynamic_feeds')
+        .select('id')
+        .eq('url', announcement.url)
+        .eq('source', 'dfas')
+        .single();
+
+      if (existing) {
+        console.log(`[DFAS Scraper] Skipping duplicate: ${announcement.title}`);
+        continue;
+      }
+
+      // Insert new announcement
+      const { error } = await supabase
+        .from('dynamic_feeds')
+        .insert({
+          source: 'dfas',
+          url: announcement.url,
+          title: announcement.title,
+          description: announcement.summary,
+          published_at: announcement.date,
+          category: announcement.category,
+          active: true,
+          metadata: {
+            scrape_date: new Date().toISOString(),
+            category: announcement.category,
+          },
+        });
+
+      if (error) {
+        console.error(`[DFAS Scraper] Error saving announcement:`, error);
+      } else {
+        console.log(`[DFAS Scraper] ✅ Saved: ${announcement.title}`);
+      }
+    }
+
+    console.log('[DFAS Scraper] ✅ Save complete');
+  } catch (error) {
+    console.error('[DFAS Scraper] Save error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Main execution function (called by cron job)
+ */
+export async function runDFASScraper(): Promise<void> {
+  console.log('[DFAS Scraper] ========== STARTING DFAS SCRAPER ==========');
+  
+  try {
+    const announcements = await scrapeDFASAnnouncements();
+    
+    if (announcements.length > 0) {
+      await saveDFASAnnouncements(announcements);
+    } else {
+      console.log('[DFAS Scraper] ⚠️ No announcements found (may need selector update)');
+    }
+
+    console.log('[DFAS Scraper] ========== SCRAPER COMPLETE ==========');
+  } catch (error) {
+    console.error('[DFAS Scraper] ❌ SCRAPER FAILED:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get latest DFAS announcements from database
+ */
+export async function getLatestDFASAnnouncements(limit = 10) {
+  const { data, error } = await supabase
+    .from('dynamic_feeds')
+    .select('*')
+    .eq('source', 'dfas')
+    .eq('active', true)
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('[DFAS Scraper] Error fetching announcements:', error);
+    return [];
+  }
+
+  return data || [];
+}

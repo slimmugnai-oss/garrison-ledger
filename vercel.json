@@ -1,54 +1,16 @@
 {
   "crons": [
     {
-      "path": "/api/enrich/batch",
-      "schedule": "0 2 * * 0"
+      "path": "/api/cron/dfas",
+      "schedule": "0 11 * * *"
     },
     {
-      "path": "/api/feeds/refresh?source=BAH,COLA",
-      "schedule": "0 3 * * *"
+      "path": "/api/cron/jtr",
+      "schedule": "0 13 * * 1"
     },
     {
-      "path": "/api/feeds/refresh?source=IRS_TSP_LIMITS",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/feeds/refresh?source=TRICARE_COSTS,BAS,MILEAGE_RATE",
-      "schedule": "0 5 * * 0"
-    },
-    {
-      "path": "/api/emails/weekly-digest",
-      "schedule": "0 19 * * 0"
-    },
-    {
-      "path": "/api/cron/onboarding-sequence",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/ingest/feeds",
-      "schedule": "0 7 * * *"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/library",
-      "destination": "/dashboard/intel",
-      "permanent": false
-    },
-    {
-      "source": "/dashboard/library",
-      "destination": "/dashboard/intel",
-      "permanent": false
-    },
-    {
-      "source": "/base-guides",
-      "destination": "/dashboard/navigator/jblm",
-      "permanent": false
-    },
-    {
-      "source": "/base-guides/compare",
-      "destination": "/dashboard/navigator/jblm",
-      "permanent": false
+      "path": "/api/cron/va",
+      "schedule": "0 12 * * *"
     }
   ]
 }
