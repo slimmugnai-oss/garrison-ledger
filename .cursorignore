@@ -44,7 +44,6 @@ toolkit-integration/
 # Research & Review (not active code)
 research/
 review/
-newsletter-workspace/
 
 # Migration History (archive)
 supabase-migrations/*.sql

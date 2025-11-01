@@ -16,7 +16,7 @@ import Icon from "./components/ui/Icon";
 export const metadata = {
   title: "Garrison Ledger - Military Financial Intelligence Platform",
   description:
-    "4 premium tools for military families: LES Auditor catches pay errors automatically, Base Navigator finds your perfect neighborhood, PCS Copilot maximizes DITY profit, Ask Assistant answers military finance questions with official data.",
+    "5 premium tools for military families: LES Auditor catches pay errors, Base Navigator finds neighborhoods, PCS Copilot maximizes DITY profit, Ask Military Expert (4,900+ sources) answers any question with document analysis, base comparison, and timeline planning.",
 };
 
 export default async function Home() {
@@ -41,7 +41,7 @@ export default async function Home() {
               Military Financial Intelligence Platform
             </h1>
             <p className="mb-8 text-xl text-gray-600">
-              4 premium tools built for military families. Audit your pay. Navigate bases. Track
+              5 premium tools built for military families. Audit your pay. Navigate bases. Track
               moves. Get expert answers. Always-current intel.
             </p>
 
@@ -52,8 +52,7 @@ export default async function Home() {
                 </button>
               </SignUpButton>
               <p className="mt-3 text-sm text-gray-600">
-                Free tier includes: 5 Ask Assistant questions/month, 1 LES audit/month, basic
-                calculators
+                Free tier includes: Ask Military Expert (5 questions + 1 upload + 2 compares + 2 timelines/month), basic calculators, full directory access
               </p>
             </SignedOut>
 
@@ -120,7 +119,7 @@ export default async function Home() {
                   </button>
                 </SignUpButton>
                 <p className="mt-3 text-sm text-slate-300">
-                  5 free questions/month • No credit card required
+                  Free: 5 questions, 1 upload, 2 compares, 2 timelines/month • No credit card
                 </p>
               </SignedOut>
 
@@ -513,7 +512,7 @@ export default async function Home() {
               </li>
               <li className="flex items-center gap-3">
                 <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />
-                <span className="text-gray-700">50 Ask Our Military Expert questions/month</span>
+                <span className="text-gray-700">Unlimited Ask Military Expert (questions, uploads, compares, timelines)</span>
               </li>
               <li className="flex items-center gap-3">
                 <Icon name="CheckCircle" className="h-5 w-5 flex-shrink-0 text-green-600" />

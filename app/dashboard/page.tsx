@@ -304,9 +304,9 @@ export default async function Dashboard() {
 
                     {/* Description */}
                     <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-700">
-                      <strong>24/7 military life advisor.</strong> Financial questions, PCS
-                      decisions, deployment prep, career guidance, benefits, base life—get instant
-                      expert answers backed by official data.
+                      <strong>All-knowing military advisor.</strong> Ask questions, upload documents 
+                      (LES, orders, contracts), compare bases, generate PCS/deployment timelines. 
+                      Covers finance, career, relationships, mental health, and transition planning.
                     </p>
 
                     {/* Stats Row */}
@@ -320,7 +320,7 @@ export default async function Dashboard() {
                           ⭐⭐⭐⭐⭐ 98% helpful rating
                         </span>
                         <span className="text-xs font-bold text-gray-900">
-                          {isPremium ? "50 questions/mo" : "5 free/mo"}
+                          {isPremium ? "∞ Unlimited" : "5Q+1U+2C+2T/mo"}
                         </span>
                       </div>
                     </div>

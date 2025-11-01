@@ -170,11 +170,12 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                 <Icon name="CheckCircle" className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-600" />
                 <div>
                   <p className="font-semibold text-gray-900">
-                    50 Ask Our Military Expert Questions/Month
+                    Ask Military Expert - Unlimited Access
                   </p>
                   <p className="text-sm text-gray-600">
-                    Get instant expert answers to ANY military life question—financial, PCS,
-                    deployment, career, benefits, base life
+                    Unlimited questions, document uploads, base comparisons, and timeline generators. 
+                    4,900+ knowledge sources covering finance, PCS, deployment, career, relationships, 
+                    mental health, and transition planning
                   </p>
                 </div>
               </div>
@@ -280,11 +281,38 @@ export default function UpgradePageClient({ pricingData, feature }: UpgradePageC
                 </tr>
                 <tr>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    Ask Military Expert
+                    Ask Military Expert - Questions
                   </td>
-                  <td className="px-6 py-4 text-center text-sm text-gray-600">5 questions/month</td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">5/month</td>
                   <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
-                    50 questions/month
+                    ∞ Unlimited
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    Document Upload & Analysis
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">1/month</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ∞ Unlimited
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    Base Comparison Tool
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">2/month</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ∞ Unlimited
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    Timeline Generator
+                  </td>
+                  <td className="px-6 py-4 text-center text-sm text-gray-600">2/month</td>
+                  <td className="px-6 py-4 text-center text-sm font-semibold text-green-600">
+                    ∞ Unlimited
                   </td>
                 </tr>
                 <tr>
