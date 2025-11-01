@@ -4,6 +4,8 @@ import OnboardingFeatures from "@/emails/OnboardingFeatures";
 import OnboardingPremium from "@/emails/OnboardingPremium";
 import OnboardingWelcome from "@/emails/OnboardingWelcome";
 import PCSChecklist from "@/emails/PCSChecklist";
+import ReferralEarned from "@/emails/ReferralEarned";
+import ReferralReceived from "@/emails/ReferralReceived";
 import WeeklyDigest from "@/emails/WeeklyDigest";
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.garrisonledger.com";
@@ -35,6 +37,39 @@ export async function renderPCSChecklist(): Promise<string> {
   return render(<PCSChecklist baseUrl={baseUrl} />);
 }
 
+// Referral Emails
+export async function renderReferralEarned(
+  userName: string,
+  referredUserName: string,
+  creditsEarned: number,
+  totalCredits: number
+): Promise<string> {
+  return render(
+    <ReferralEarned
+      userName={userName}
+      referredUserName={referredUserName}
+      creditsEarned={creditsEarned}
+      totalCredits={totalCredits}
+      baseUrl={baseUrl}
+    />
+  );
+}
+
+export async function renderReferralReceived(
+  userName: string,
+  creditsReceived: number,
+  referrerName: string
+): Promise<string> {
+  return render(
+    <ReferralReceived
+      userName={userName}
+      creditsReceived={creditsReceived}
+      referrerName={referrerName}
+      baseUrl={baseUrl}
+    />
+  );
+}
+
 /**
  * Get email template subject lines
  * Updated for 3-email sequence (Days 0, 3, 7)
@@ -51,6 +86,10 @@ export function getEmailSubject(template: string, userName?: string): string {
     // Recurring & Lead Magnets
     weekly_digest: `${name}, Your Weekly Military Finance Update`,
     pcs_checklist: "Your PCS Financial Checklist",
+
+    // Referral notifications
+    referral_earned: `You Earned $10! ${name}, Your Referral Just Upgraded`,
+    referral_received: `Welcome to Premium + $10 Credit!`,
   };
 
   return subjects[template] || "Update from Garrison Ledger";

@@ -14,6 +14,7 @@ import { ensureUserExists } from "@/lib/ensure-user-exists";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 import ProfileSummaryWidget from "../components/dashboard/ProfileSummaryWidget";
+import ReferralProgress from "../components/dashboard/ReferralProgress";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import AnimatedCard from "../components/ui/AnimatedCard";
@@ -101,6 +102,11 @@ export default async function Dashboard() {
               profile={profile || {}}
               userName={user.firstName || "Service Member"}
             />
+          </div>
+
+          {/* Referral Progress Widget */}
+          <div className="mb-12">
+            <ReferralProgress userId={user.id} />
           </div>
 
           {/* 4 Premium Tools - Hero Section */}
