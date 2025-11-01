@@ -42,13 +42,7 @@ export async function stripImageMetadata(buffer: Buffer): Promise<Buffer> {
 
     const cleanBuffer = await sharp.default(buffer)
       .rotate() // Auto-rotate based on EXIF orientation (before stripping)
-      .withMetadata({
-        // @ts-ignore - sharp types may vary by version
-        exif: {},
-        icc: {},
-        xmp: {},
-        iptc: {}
-      })
+      .withMetadata() // Remove all metadata by calling with no arguments
       .toBuffer();
 
     const sizeDiff = buffer.length - cleanBuffer.length;
