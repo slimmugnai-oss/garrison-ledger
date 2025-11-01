@@ -4,8 +4,8 @@ import { useState } from "react";
 import Icon from "@/app/components/ui/Icon";
 import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
 import DocumentUpload from "@/app/components/ask/DocumentUpload";
-import ComparisonTool from "@/app/components/ask/ComparisonTool";
-import TimelineGenerator from "@/app/components/ask/TimelineGenerator";
+import ComparisonToolFixed from "@/app/components/ask/ComparisonToolFixed";
+import TimelineGeneratorFixed from "@/app/components/ask/TimelineGeneratorFixed";
 import ConversationHistory from "@/app/components/ask/ConversationHistory";
 
 type Tab = "ask" | "upload" | "compare" | "timeline" | "history";
@@ -88,36 +88,8 @@ export default function AskTabbedInterface() {
       <div className="p-6">
         {activeTab === "ask" && <AskAssistantClient />}
         {activeTab === "upload" && <DocumentUpload />}
-        {activeTab === "compare" && (
-          <ComparisonTool
-            type="bases"
-            options={[
-              { id: "fort-hood", name: "Fort Hood, TX", type: "bases" },
-              { id: "fort-bragg", name: "Fort Bragg, NC", type: "bases" },
-              { id: "ramstein", name: "Ramstein AB, Germany", type: "bases" },
-            ]}
-            onCompare={async (ids) => {
-              const res = await fetch("/api/ask/compare", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type: "bases", itemIds: ids }),
-              });
-              return res.json();
-            }}
-          />
-        )}
-        {activeTab === "timeline" && (
-          <TimelineGenerator
-            onGenerate={async (type, eventDate, options) => {
-              const res = await fetch("/api/ask/timeline", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type, eventDate, options }),
-              });
-              return res.json();
-            }}
-          />
-        )}
+        {activeTab === "compare" && <ComparisonToolFixed />}
+        {activeTab === "timeline" && <TimelineGeneratorFixed />}
         {activeTab === "history" && <ConversationHistory messages={[]} />}
       </div>
     </div>
