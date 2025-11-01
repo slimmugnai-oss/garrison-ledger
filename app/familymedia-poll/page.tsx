@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 interface PollOption {
@@ -16,7 +16,7 @@ interface PollData {
   retirement: PollOption;
 }
 
-export default function FamilyMediaPoll() {
+function PollContent() {
   const searchParams = useSearchParams();
   const [currentVote, setCurrentVote] = useState<string | null>(null);
   const [pollData, setPollData] = useState<PollData>({
@@ -555,7 +555,7 @@ export default function FamilyMediaPoll() {
           {!currentVote && (
             <div className="thank-you">
               <p>
-                <strong>Great question!</strong> This is one of the most important financial decisions for military families. FamilyMedia partners with experts to bring you trusted resources and tools to help you make informed decisions.
+                <strong>Great question!</strong> This is one of the most important financial decisions for military families. Family Magazine partners with experts to bring you trusted resources and tools to help you make informed decisions.
               </p>
             </div>
           )}
@@ -593,7 +593,7 @@ export default function FamilyMediaPoll() {
         
         {/* Footer */}
         <div className="poll-footer">
-          <p>This poll is part of the <strong>FamilyMedia Guide Newsletter</strong></p>
+          <p>This poll is part of the <strong>Family Magazine Guide Newsletter</strong></p>
           <p>
             Sponsored by <a href="https://garrisonledger.com?utm_source=familymedia&utm_medium=poll_footer&utm_campaign=202511" target="_blank" rel="noopener">Garrison Ledger</a> - Military Financial Intelligence
           </p>
@@ -604,6 +604,25 @@ export default function FamilyMediaPoll() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function FamilyMediaPoll() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        color: '#6c757d'
+      }}>
+        Loading poll...
+      </div>
+    }>
+      <PollContent />
+    </Suspense>
   );
 }
 
