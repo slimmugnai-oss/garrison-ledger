@@ -20,29 +20,42 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch user's question history (last 50 questions)
-    const { data: questions, error } = await supabase
-      .from("ask_questions")
-      .select("*")
+    // Fetch user's recent conversations with messages
+    const { data: conversations, error: convError } = await supabase
+      .from("ask_conversations")
+      .select("id, session_id, started_at, conversation_topic")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(50);
+      .eq("is_active", true)
+      .order("last_activity_at", { ascending: false })
+      .limit(10);
 
-    if (error) {
-      console.error("Failed to fetch question history:", error);
-      return NextResponse.json({ error: "Failed to fetch history" }, { status: 500 });
+    if (convError) {
+      console.error("Failed to fetch conversations:", convError);
     }
 
-    // Parse answer JSON for each question
-    const parsedQuestions = questions?.map((q) => ({
-      ...q,
-      answer: typeof q.answer === "string" ? JSON.parse(q.answer) : q.answer,
-    }));
+    // Fetch messages for these conversations
+    const conversationsWithMessages = [];
+    
+    if (conversations && conversations.length > 0) {
+      for (const conv of conversations) {
+        const { data: messages } = await supabase
+          .from("ask_conversation_messages")
+          .select("id, message_type, content, created_at")
+          .eq("conversation_id", conv.id)
+          .order("message_order", { ascending: true })
+          .limit(20);
+
+        conversationsWithMessages.push({
+          ...conv,
+          messages: messages || [],
+        });
+      }
+    }
 
     return NextResponse.json({
       success: true,
-      questions: parsedQuestions || [],
-      total: parsedQuestions?.length || 0,
+      conversations: conversationsWithMessages,
+      total: conversationsWithMessages.length,
     });
   } catch (error) {
     console.error("Question history error:", error);

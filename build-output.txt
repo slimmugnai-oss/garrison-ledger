@@ -1,0 +1,317 @@
+
+> garrison-ledger@0.1.0 prebuild
+> echo 'Skipping prebuild for Vercel'
+
+Skipping prebuild for Vercel
+
+> garrison-ledger@0.1.0 build
+> NODE_OPTIONS='--max-old-space-size=8192' next build
+
+   ▲ Next.js 15.5.4
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 18.6s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/359) ...
+   Generating static pages (89/359) 
+   Generating static pages (179/359) 
+Error fetching sitemap: Error: Dynamic server usage: Route /api/admin/sitemap couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (.next/server/chunks/5873.js:1:23405)
+    at m (.next/server/chunks/6802.js:1:11036)
+    at f (.next/server/chunks/698.js:20:2880)
+    at async y (.next/server/chunks/698.js:22:5042)
+    at async y (.next/server/app/api/admin/sitemap/route.js:1:621) {
+  description: "Route /api/admin/sitemap couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error getting current user: Error: Dynamic server usage: Route /dashboard/admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at s (.next/server/chunks/5873.js:1:23405)
+    at m (.next/server/chunks/6802.js:1:11036)
+    at f (.next/server/chunks/698.js:20:2880)
+    at async y (.next/server/chunks/698.js:22:5042)
+    at async f (.next/server/app/dashboard/admin/engagement/page.js:2:7519)
+    at async n (.next/server/app/dashboard/admin/page.js:1:4350) {
+  description: "Route /dashboard/admin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (269/359) 
+[INFO] [PlatformStats] Platform stats fetched {
+  users: 5,
+  totalPlans: 0,
+  weeklyPlans: 0,
+  contentBlocks: 410,
+  knowledgeSources: 4935,
+  lastUpdated: '2025-11-01T03:52:10.651Z'
+}
+ ✓ Generating static pages (359/359)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                       Size  First Load JS  Revalidate  Expire
+┌ ƒ /                                          2.16 kB         176 kB
+├ ○ /_not-found                                   1 kB         103 kB
+├ ○ /admin/content-audit                       3.24 kB         177 kB
+├ ƒ /admin/feeds                                 204 B         174 kB
+├ ƒ /admin/intel-triage                          204 B         174 kB
+├ ƒ /api/admin/audit-content                     529 B         102 kB
+├ ƒ /api/admin/backfill-profiles                 529 B         102 kB
+├ ƒ /api/admin/check-freshness                   529 B         102 kB
+├ ƒ /api/admin/clear-navigator-cache             529 B         102 kB
+├ ƒ /api/admin/content-blocks                    529 B         102 kB
+├ ƒ /api/admin/content-pending                   529 B         102 kB
+├ ƒ /api/admin/content-reject                    529 B         102 kB
+├ ƒ /api/admin/data-sources                      529 B         102 kB
+├ ƒ /api/admin/data-sources/refresh              529 B         102 kB
+├ ƒ /api/admin/data-sources/test                 529 B         102 kB
+├ ƒ /api/admin/embed-official                    529 B         102 kB
+├ ƒ /api/admin/error-logs                        529 B         102 kB
+├ ƒ /api/admin/feature-flags                     529 B         102 kB
+├ ƒ /api/admin/feed-items                        529 B         102 kB
+├ ƒ /api/admin/import-bah                        529 B         102 kB
+├ ƒ /api/admin/listening-post/refresh            529 B         102 kB
+├ ƒ /api/admin/pcs-metrics                       529 B         102 kB
+├ ƒ /api/admin/rag-analytics                     529 B         102 kB
+├ ƒ /api/admin/sitemap                           529 B         102 kB
+├ ƒ /api/admin/sitemap/analytics                 529 B         102 kB
+├ ƒ /api/admin/sitemap/broken-links              529 B         102 kB
+├ ƒ /api/admin/sitemap/check-health              529 B         102 kB
+├ ƒ /api/admin/sitemap/extract-metadata          529 B         102 kB
+├ ƒ /api/admin/sitemap/sync-analytics            529 B         102 kB
+├ ƒ /api/admin/system-config                     529 B         102 kB
+├ ƒ /api/admin/tickets                           529 B         102 kB
+├ ƒ /api/admin/users/[userId]                    529 B         102 kB
+├ ƒ /api/admin/users/[userId]/entitlement        529 B         102 kB
+├ ƒ /api/admin/users/[userId]/suspend            529 B         102 kB
+├ ƒ /api/admin/users/search                      529 B         102 kB
+├ ƒ /api/admin/users/sync-status                 529 B         102 kB
+├ ƒ /api/ai/recommendations                      529 B         102 kB
+├ ƒ /api/analytics/dashboard                     529 B         102 kB
+├ ƒ /api/analytics/track                         529 B         102 kB
+├ ƒ /api/ask/compare                             529 B         102 kB
+├ ƒ /api/ask/coverage-request                    529 B         102 kB
+├ ƒ /api/ask/credits                             529 B         102 kB
+├ ƒ /api/ask/credits/purchase                    529 B         102 kB
+├ ƒ /api/ask/feedback                            529 B         102 kB
+├ ƒ /api/ask/history                             529 B         102 kB
+├ ƒ /api/ask/pcs-context                         529 B         102 kB
+├ ƒ /api/ask/submit                              529 B         102 kB
+├ ƒ /api/ask/templates                           529 B         102 kB
+├ ƒ /api/ask/timeline                            529 B         102 kB
+├ ƒ /api/ask/upload-document                     529 B         102 kB
+├ ƒ /api/bah/lookup                              529 B         102 kB
+├ ƒ /api/billing/portal                          529 B         102 kB
+├ ƒ /api/binder/delete                           529 B         102 kB
+├ ƒ /api/binder/list                             529 B         102 kB
+├ ƒ /api/binder/move                             529 B         102 kB
+├ ƒ /api/binder/reminders                        529 B         102 kB
+├ ƒ /api/binder/rename                           529 B         102 kB
+├ ƒ /api/binder/set-expiry                       529 B         102 kB
+├ ƒ /api/binder/share/access/[token]             529 B         102 kB
+├ ƒ /api/binder/share/create                     529 B         102 kB
+├ ƒ /api/binder/share/list                       529 B         102 kB
+├ ƒ /api/binder/share/revoke                     529 B         102 kB
+├ ƒ /api/binder/upload-url                       529 B         102 kB
+├ ƒ /api/bookmarks                               529 B         102 kB
+├ ƒ /api/calculator-scenarios                    529 B         102 kB
+├ ƒ /api/campaigns/bulk-send                     529 B         102 kB
+├ ƒ /api/campaigns/test-send                     529 B         102 kB
+├ ƒ /api/collaboration                           529 B         102 kB
+├ ƒ /api/contact                                 529 B         102 kB
+├ ƒ /api/content/analytics                       529 B         102 kB
+├ ƒ /api/content/personalized                    529 B         102 kB
+├ ƒ /api/content/personalized-advanced           529 B         102 kB
+├ ƒ /api/content/recompute-asof                  529 B         102 kB
+├ ƒ /api/content/related                         529 B         102 kB
+├ ƒ /api/content/search                          529 B         102 kB
+├ ƒ /api/content/share                           529 B         102 kB
+├ ƒ /api/content/track                           529 B         102 kB
+├ ƒ /api/content/trending                        529 B         102 kB
+├ ƒ /api/cron/dfas                               529 B         102 kB
+├ ƒ /api/cron/jtr                                529 B         102 kB
+├ ƒ /api/cron/onboarding-sequence                529 B         102 kB
+├ ƒ /api/cron/va                                 529 B         102 kB
+├ ƒ /api/curate                                  529 B         102 kB
+├ ƒ /api/directory/admin                         529 B         102 kB
+├ ƒ /api/directory/providers                     529 B         102 kB
+├ ƒ /api/email-results                           529 B         102 kB
+├ ƒ /api/emails/onboarding                       529 B         102 kB
+├ ƒ /api/emails/weekly-digest                    529 B         102 kB
+├ ƒ /api/enrich/batch                            529 B         102 kB
+├ ƒ /api/enrich/convert                          529 B         102 kB
+├ ƒ /api/enrich/triage                           529 B         102 kB
+├ ƒ /api/entitlements                            529 B         102 kB
+├ ƒ /api/explain                                 529 B         102 kB
+├ ƒ /api/explain/check-quota                     529 B         102 kB
+├ ƒ /api/feeds/refresh                           529 B         102 kB
+├ ƒ /api/feeds/status                            529 B         102 kB
+├ ƒ /api/generate-guide                          529 B         102 kB
+├ ƒ /api/ingest/feeds                            529 B         102 kB
+├ ƒ /api/lead-capture                            529 B         102 kB
+├ ƒ /api/lead-magnet                             529 B         102 kB
+├ ƒ /api/lead-magnets/pcs-checklist              529 B         102 kB
+├ ƒ /api/les/audit                               529 B         102 kB
+├ ƒ /api/les/audit-manual                        529 B         102 kB
+├ ƒ /api/les/audit/[id]                          529 B         102 kB
+├ ƒ /api/les/audit/[id]/clone                    529 B         102 kB
+├ ƒ /api/les/audit/[id]/delete                   529 B         102 kB
+├ ƒ /api/les/audit/[id]/export                   529 B         102 kB
+├ ƒ /api/les/audit/compute                       529 B         102 kB
+├ ƒ /api/les/audit/save                          529 B         102 kB
+├ ƒ /api/les/audit/search                        529 B         102 kB
+├ ƒ /api/les/data-freshness                      529 B         102 kB
+├ ƒ /api/les/expected-values                     529 B         102 kB
+├ ƒ /api/les/export/excel                        529 B         102 kB
+├ ƒ /api/les/export/pdf                          529 B         102 kB
+├ ƒ /api/les/history                             529 B         102 kB
+├ ƒ /api/les/upload                              529 B         102 kB
+├ ƒ /api/les/upload/[uploadId]/add-items         529 B         102 kB
+├ ƒ /api/les/upload/[uploadId]/lines             529 B         102 kB
+├ ƒ /api/les/upload/[uploadId]/lines/[lineId]    529 B         102 kB
+├ ƒ /api/library                                 529 B         102 kB
+├ ƒ /api/library/can-view                        529 B         102 kB
+├ ƒ /api/library/enhanced                        529 B         102 kB
+├ ƒ /api/library/record-view                     529 B         102 kB
+├ ƒ /api/listening-post                          529 B         102 kB
+├ ƒ /api/navigator/analyze-listing               529 B         102 kB
+├ ƒ /api/navigator/base                          529 B         102 kB
+├ ƒ /api/navigator/watchlist                     529 B         102 kB
+├ ƒ /api/pcs/ai-explanation                      529 B         102 kB
+├ ƒ /api/pcs/calculate                           529 B         102 kB
+├ ƒ /api/pcs/calculate-distance                  529 B         102 kB
+├ ƒ /api/pcs/calculate-ppm-withholding           529 B         102 kB
+├ ƒ /api/pcs/check                               529 B         102 kB
+├ ƒ /api/pcs/claim                               529 B         102 kB
+├ ƒ /api/pcs/claims/[id]                         529 B         102 kB
+├ ƒ /api/pcs/claims/export                       529 B         102 kB
+├ ƒ /api/pcs/claims/library                      529 B         102 kB
+├ ƒ /api/pcs/cost-comparison                     529 B         102 kB
+├ ƒ /api/pcs/cost-comparison/calculate           529 B         102 kB
+├ ƒ /api/pcs/document-status/[id]                529 B         102 kB
+├ ƒ /api/pcs/documents/delete                    529 B         102 kB
+├ ƒ /api/pcs/documents/list                      529 B         102 kB
+├ ƒ /api/pcs/documents/process                   529 B         102 kB
+├ ƒ /api/pcs/documents/upload                    529 B         102 kB
+├ ƒ /api/pcs/estimate                            529 B         102 kB
+├ ƒ /api/pcs/explain                             529 B         102 kB
+├ ƒ /api/pcs/export/excel                        529 B         102 kB
+├ ƒ /api/pcs/export/html                         529 B         102 kB
+├ ƒ /api/pcs/export/pdf                          529 B         102 kB
+├ ƒ /api/pcs/package                             529 B         102 kB
+├ ƒ /api/pcs/per-diem-lookup                     529 B         102 kB
+├ ƒ /api/pcs/planner/bases                       529 B         102 kB
+├ ƒ /api/pcs/planner/compare                     529 B         102 kB
+├ ƒ /api/pcs/report-actual                       529 B         102 kB
+├ ƒ /api/pcs/upload                              529 B         102 kB
+├ ƒ /api/pcs/validate                            529 B         102 kB
+├ ƒ /api/profile/quick-start                     529 B         102 kB
+├ ƒ /api/ratings                                 529 B         102 kB
+├ ƒ /api/referral                                529 B         102 kB
+├ ƒ /api/referrals/convert                       529 B         102 kB
+├ ƒ /api/referrals/leaderboard                   529 B         102 kB
+├ ƒ /api/referrals/track                         529 B         102 kB
+├ ƒ /api/saved-models                            529 B         102 kB
+├ ƒ /api/share-calculation                       529 B         102 kB
+├ ○ /api/stats/platform                          529 B         102 kB          5m      1y
+├ ƒ /api/stripe/create-checkout-session          529 B         102 kB
+├ ƒ /api/stripe/webhook                          529 B         102 kB
+├ ƒ /api/subscription-status                     529 B         102 kB
+├ ƒ /api/support/refund                          529 B         102 kB
+├ ƒ /api/track                                   529 B         102 kB
+├ ƒ /api/user-profile                            529 B         102 kB
+├ ƒ /api/user/premium-status                     529 B         102 kB
+├ ƒ /api/webhooks/clerk                          529 B         102 kB
+├ ƒ /api/webhooks/resend                         529 B         102 kB
+├ ○ /base-guides                                 529 B         102 kB
+├ ○ /career-hub                                  570 B         174 kB
+├ ○ /case-studies                                570 B         174 kB
+├ ƒ /case-studies/[slug]                         570 B         174 kB
+├ ○ /contact                                   2.24 kB         176 kB
+├ ○ /contact/success                           2.91 kB         177 kB
+├ ƒ /content/[id]                                530 B         174 kB
+├ ƒ /dashboard                                 2.45 kB         176 kB
+├ ƒ /dashboard/admin                           23.2 kB         197 kB
+├ ƒ /dashboard/admin/ai-monitoring               570 B         174 kB
+├ ƒ /dashboard/admin/ask-analytics               204 B         174 kB
+├ ƒ /dashboard/admin/assessments                 529 B         102 kB
+├ ƒ /dashboard/admin/base-analytics              187 B         174 kB
+├ ○ /dashboard/admin/briefing                  47.9 kB         222 kB
+├ ƒ /dashboard/admin/campaigns                 4.62 kB         180 kB
+├ ○ /dashboard/admin/content-review            3.54 kB         177 kB
+├ ƒ /dashboard/admin/data-sources                570 B         174 kB
+├ ƒ /dashboard/admin/engagement                  570 B         174 kB
+├ ƒ /dashboard/admin/events                      179 B         174 kB
+├ ƒ /dashboard/admin/health                      570 B         174 kB
+├ ○ /dashboard/admin/intel-analytics           3.91 kB         178 kB
+├ ƒ /dashboard/admin/leads                       570 B         174 kB
+├ ƒ /dashboard/admin/pcs-copilot               2.27 kB         176 kB
+├ ○ /dashboard/admin/providers                 1.99 kB         176 kB
+├ ƒ /dashboard/admin/rag-analytics             3.44 kB         113 kB
+├ ƒ /dashboard/admin/revenue                     570 B         174 kB
+├ ƒ /dashboard/admin/sb-diagnostics              529 B         102 kB
+├ ƒ /dashboard/admin/support                    1.4 kB         175 kB
+├ ƒ /dashboard/admin/users                       570 B         174 kB
+├ ƒ /dashboard/ask                             18.2 kB         210 kB
+├ ○ /dashboard/binder                          10.1 kB         193 kB
+├ ○ /dashboard/directory                       6.08 kB         180 kB
+├ ○ /dashboard/library                         10.5 kB         184 kB
+├ ○ /dashboard/listening-post                  4.17 kB         178 kB
+├ ƒ /dashboard/navigator                          2 kB         194 kB
+├ ● /dashboard/navigator/[base]                18.4 kB         192 kB
+├   ├ /dashboard/navigator/liberty
+├   ├ /dashboard/navigator/campbell
+├   ├ /dashboard/navigator/cavazos
+├   └ [+161 more paths]
+├ ƒ /dashboard/paycheck-audit                    15 kB         189 kB
+├ ƒ /dashboard/paycheck-audit/[id]             3.87 kB         178 kB
+├ ƒ /dashboard/paycheck-audit/[id]/summary     4.31 kB         114 kB
+├ ƒ /dashboard/paycheck-audit/compare           2.5 kB         176 kB
+├ ƒ /dashboard/pcs-copilot                     2.91 kB         218 kB
+├ ƒ /dashboard/pcs-copilot/[id]                5.33 kB         185 kB
+├ ƒ /dashboard/pcs-copilot/[id]/edit           1.73 kB         153 kB
+├ ƒ /dashboard/pcs-copilot/[id]/summary        4.81 kB         115 kB
+├ ƒ /dashboard/pcs-copilot/library             35.4 kB         150 kB
+├ ○ /dashboard/profile/quick-start             3.94 kB         114 kB
+├ ○ /dashboard/profile/setup                   18.5 kB         150 kB
+├ ƒ /dashboard/referrals                       2.92 kB         177 kB
+├ ƒ /dashboard/settings                          977 B         175 kB
+├ ○ /dashboard/spouse                            529 B         102 kB
+├ ƒ /dashboard/support                         2.24 kB         176 kB
+├ ○ /dashboard/support/refund                  1.23 kB         175 kB
+├ ƒ /dashboard/tools                             570 B         174 kB
+├ ƒ /dashboard/tools/house-hacking              5.1 kB         179 kB
+├ ƒ /dashboard/tools/on-base-savings           5.01 kB         179 kB
+├ ƒ /dashboard/tools/pcs-planner               5.93 kB         180 kB
+├ ƒ /dashboard/tools/salary-calculator         7.47 kB         181 kB
+├ ƒ /dashboard/tools/sdp-strategist            4.64 kB         178 kB
+├ ƒ /dashboard/tools/tsp-modeler               5.27 kB         179 kB
+├ ƒ /dashboard/upgrade                         3.54 kB         177 kB
+├ ○ /dashboard/upgrade/success                   511 B         102 kB
+├ ○ /deployment                                  570 B         174 kB
+├ ○ /disclosures                                 191 B         174 kB
+├ ○ /on-base-shopping                            570 B         174 kB
+├ ○ /pcs-hub                                     531 B         174 kB
+├ ○ /privacy                                     205 B         174 kB
+├ ○ /privacy/cookies                             205 B         174 kB
+├ ○ /privacy/do-not-sell                         205 B         174 kB
+├ ○ /robots.txt                                  529 B         102 kB
+├ ƒ /share/[token]                             1.92 kB         109 kB
+├ ƒ /sign-in/[[...sign-in]]                    2.29 kB         138 kB
+├ ƒ /sign-up/[[...sign-up]]                    2.29 kB         138 kB
+├ ○ /sitemap.xml                                 529 B         102 kB
+└ ƒ /tools/[tool]/view/[shareId]                 201 B         174 kB
++ First Load JS shared by all                   102 kB
+  ├ chunks/1255-ad92d48e3e7ce61a.js            45.5 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js        54.2 kB
+  └ other shared chunks (total)                2.05 kB
+
+
+ƒ Middleware                                   82.2 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

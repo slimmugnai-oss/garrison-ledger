@@ -6,7 +6,7 @@ import AskAssistantClient from "@/app/components/ask/AskAssistantClient";
 import DocumentUpload from "@/app/components/ask/DocumentUpload";
 import ComparisonToolFixed from "@/app/components/ask/ComparisonToolFixed";
 import TimelineGeneratorFixed from "@/app/components/ask/TimelineGeneratorFixed";
-import ConversationHistory from "@/app/components/ask/ConversationHistory";
+import ConversationHistoryWrapper from "@/app/components/ask/ConversationHistoryWrapper";
 
 type Tab = "ask" | "upload" | "compare" | "timeline" | "history";
 
@@ -83,7 +83,7 @@ export default function AskTabbedInterface() {
         {activeTab === "upload" && <DocumentUpload />}
         {activeTab === "compare" && <ComparisonToolFixed />}
         {activeTab === "timeline" && <TimelineGeneratorFixed />}
-        {activeTab === "history" && <ConversationHistory messages={[]} />}
+        {activeTab === "history" && <ConversationHistoryWrapper />}
       </div>
     </div>
   );
