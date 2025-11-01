@@ -149,6 +149,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
+    {
+      url: `${SITE_URL}/dashboard/referrals`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
   ];
 
   // All 164 Base Navigator pages - SEO GOLDMINE!
