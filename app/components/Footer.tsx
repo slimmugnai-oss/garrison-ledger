@@ -65,7 +65,7 @@ export default function Footer() {
                   href="/dashboard/ask"
                   className="text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 >
-                  Ask Assistant
+                  Ask Military Expert
                 </Link>
               </li>
             </ul>
