@@ -166,7 +166,7 @@ export default function Header() {
             <Link href="/" className="group flex items-center gap-2 sm:gap-3">
               <div className="relative">
                 <img 
-                  src="/Garrison Ledger Logo.png" 
+                  src="/garrison-ledger-shield.png" 
                   alt="Garrison Ledger Shield"
                   className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110 sm:h-11 sm:w-11"
                 />

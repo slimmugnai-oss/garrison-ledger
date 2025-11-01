@@ -27,7 +27,7 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
             <div className="flex items-center">
               <Link href="/" className="group flex items-center gap-2 transition-colors hover:opacity-80">
                 <img 
-                  src="/Garrison Ledger Logo.png" 
+                  src="/garrison-ledger-shield.png" 
                   alt="Garrison Ledger Shield"
                   className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110"
                 />
