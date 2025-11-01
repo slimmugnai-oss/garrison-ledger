@@ -441,24 +441,23 @@
       <div style="background:#f8f9fa; border-radius:12px; padding:24px; margin:24px 0;">
         <h3 style="margin:0 0 12px 0; font-size:20px; font-weight:700; color:#2F3A45; text-align:center;">Share Your Success Story</h3>
         <p style="margin:0 0 20px 0; font-size:15px; color:#2F3A45; text-align:center; max-width:500px; margin-left:auto; margin-right:auto;">
-          Did Garrison Ledger help you save thousands on a PCS? Optimize your TSP? Make a smart housing decision? We want to hear from you!
+          Have smart financial strategies helped you maximize your PCS benefits? Optimize your TSP? Make a savvy housing decision? We want to hear from you!
         </p>
         <div style="text-align:center;">
-          <a href="mailto:support@garrisonledger.com?subject=Success%20Story%20Submission&body=I'd%20like%20to%20share%20my%20success%20story%20with%20Garrison%20Ledger%3A%0A%0A" class="btn btn-secondary">Share Your Story via Email</a>
+          <a href="mailto:info@familymedia.com?subject=Success%20Story%20Submission&body=I'd%20like%20to%20share%20my%20military%20finance%20success%20story%3A%0A%0A" class="btn btn-secondary">Share Your Story via Email</a>
         </div>
       </div>
       
       <!-- CTAs -->
       <div class="cta-section">
         <a href="https://familymedia.com?utm_source=poll&utm_medium=landing&utm_campaign=202511_Newsletter" class="btn btn-primary">Return to FamilyMedia.com</a>
-        <a href="https://garrisonledger.com/dashboard?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_Newsletter" class="btn btn-secondary" id="toolCTA">Explore Financial Tools</a>
       </div>
     </div>
     
     <!-- Footer -->
     <div class="footer">
       <p>This poll is part of the <strong>Family Magazine Guide Newsletter</strong></p>
-      <p>Sponsored by <a href="https://garrisonledger.com?utm_source=familymedia&utm_medium=poll_footer&utm_campaign=202511" target="_blank">Garrison Ledger</a> - Military Financial Intelligence</p>
+      <p>Presented by <strong>Family Magazine</strong></p>
       <p style="margin-top: 16px;">
         <a href="https://familymedia.com?utm_source=poll&utm_medium=footer&utm_campaign=202511">Visit FamilyMedia.com</a> | 
         <a href="https://familymedia.com/newsletter?utm_source=poll&utm_medium=footer&utm_campaign=202511">Subscribe to Newsletter</a>
@@ -473,19 +472,19 @@
         label: 'How do I optimize my TSP allocations?',
         count: 142,
         message: '<strong>Smart choice!</strong> TSP optimization is one of the highest-impact financial decisions you can make. The difference between good and great allocation can mean hundreds of thousands at retirement.',
-        toolUrl: 'https://garrisonledger.com/dashboard/tools/tsp-modeler?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_tsp'
+        toolUrl: 'https://www.tsp.gov'
       },
       housing: { 
         label: 'Should I use my VA loan or save it?',
         count: 98,
         message: '<strong>Great question!</strong> The VA loan is one of your most valuable military benefits. Understanding when to use it (and when to save it) can save you tens of thousands over your career.',
-        toolUrl: 'https://garrisonledger.com/dashboard/tools/house-hacking?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_housing'
+        toolUrl: 'https://www.va.gov/housing-assistance/home-loans/'
       },
       retirement: { 
         label: 'How does BRS vs High-3 affect retirement?',
         count: 76,
         message: '<strong>Critical question!</strong> BRS vs High-3 is one of the most important financial decisions in your military career. The right choice depends on your career timeline and retirement goals.',
-        toolUrl: 'https://garrisonledger.com/dashboard/ask?utm_source=familymedia&utm_medium=poll&utm_campaign=202511_retirement'
+        toolUrl: 'https://www.militaryonesource.mil/financial-legal/'
       }
     };
 
@@ -551,7 +550,6 @@
         // Update messages
         document.getElementById('personalMessage').textContent = 'Your vote: ' + data.label;
         document.getElementById('thankYouMessage').innerHTML = data.message;
-        document.getElementById('toolCTA').href = data.toolUrl;
       }
     }
 

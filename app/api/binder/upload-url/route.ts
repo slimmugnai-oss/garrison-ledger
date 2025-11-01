@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
 
 export const runtime = "nodejs";
@@ -66,6 +67,27 @@ export async function POST(req: NextRequest) {
 
     const supabase = getAdminClient();
 
+    // RATE LIMITING: Prevent upload spam (100/day free, 1000/day premium)
+    // Check tier first
+    const { data: entitlement } = await supabase
+      .from('entitlements')
+      .select('tier, status')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
+      ? 'premium'
+      : 'free';
+    
+    const limit = tier === 'premium' ? 1000 : 100;
+    const rateLimitResult = await checkAndIncrement(userId, '/api/binder/upload-url', limit);
+    
+    if (!rateLimitResult.allowed) {
+      throw Errors.rateLimitExceeded(
+        `Daily file upload limit reached (${limit}/day). ${tier === 'free' ? 'Upgrade to Premium for higher limits.' : ''}`
+      );
+    }
+
   // Ensure user profile exists
   const { error: profileError } = await supabase
     .from("profiles")
@@ -96,17 +118,7 @@ export async function POST(req: NextRequest) {
 
     const currentUsage = existingFiles?.reduce((sum, f) => sum + (f.size_bytes || 0), 0) || 0;
     
-    // Get user's tier to determine storage limit
-    const { data: entitlement } = await supabase
-      .from('entitlements')
-      .select('tier, status')
-      .eq('user_id', userId)
-      .maybeSingle();
-    
-    const tier = entitlement?.tier === 'premium' && entitlement?.status === 'active' 
-      ? 'premium'
-      : 'free';
-    
+    // Use tier from rate limiting check above for storage limit
     let storageLimit = FREE_STORAGE_LIMIT;
     if (tier === 'premium') {
       storageLimit = PREMIUM_STORAGE_LIMIT;

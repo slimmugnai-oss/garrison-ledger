@@ -9,12 +9,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           {/* Brand with Authority */}
           <div>
-            <div className="mb-4 text-xl font-bold text-slate-900 dark:text-white">
-              <Icon name="Shield" className="mr-1 inline h-5 w-5" /> Garrison Ledger
+            <div className="mb-4">
+              <img 
+                src="/Garrison Ledger Logo.png" 
+                alt="Garrison Ledger - Built for Military Families"
+                className="h-auto w-48 dark:brightness-0 dark:invert"
+              />
             </div>
-            <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-400">
-              Intelligent planning for military life.
-            </p>
             {/* Authority Signals */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">

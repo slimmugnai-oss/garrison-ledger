@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
 import { calculatePCSClaim, type FormData } from "@/lib/pcs/calculation-engine";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -44,6 +45,21 @@ export async function POST(req: NextRequest) {
 
     if (!isPremium) {
       throw Errors.premiumRequired("PCS Money Copilot is available for Premium members only.");
+    }
+
+    // RATE LIMITING: Even premium users get limits to prevent abuse
+    // Premium: 100 estimates/day (generous but prevents bot abuse)
+    const rateLimitResult = await checkAndIncrement(userId, '/api/pcs/estimate', 100);
+
+    if (!rateLimitResult.allowed) {
+      logger.warn('[PCSEstimate] Rate limit exceeded', {
+        userId: userId.substring(0, 8) + '...',
+        tier,
+        count: rateLimitResult.count
+      });
+      throw Errors.rateLimitExceeded(
+        'Daily limit reached (100 PCS estimates/day). Please contact support if you need higher limits.'
+      );
     }
 
     const body: EstimateRequest = await req.json();

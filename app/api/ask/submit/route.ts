@@ -13,6 +13,7 @@ import type { DataSource } from "@/lib/ask/data-query-engine";
 import { generateProactiveGuidance } from "@/lib/ask/proactive-advisor";
 import { getCachedResponse } from "@/lib/ask/response-cache";
 import { orchestrateTools } from "@/lib/ask/tool-orchestrator";
+import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
 import { hybridSearch, type RetrievedChunk } from "@/lib/rag/retrieval-engine";
 import { ssot } from "@/lib/ssot";
@@ -85,7 +86,31 @@ export async function POST(request: NextRequest) {
       .single();
 
     const userTier = entitlement?.tier === "premium" ? "premium" : "free";
-    const _rateLimit = ssot.features.askAssistant.rateLimits[userTier];
+    
+    // RATE LIMITING: Prevent abuse even with credits
+    // Free: 50 questions/day, Premium: 500 questions/day
+    const rateLimitResult = await checkAndIncrement(
+      userId,
+      '/api/ask/submit',
+      userTier === 'premium' ? 500 : 50
+    );
+
+    if (!rateLimitResult.allowed) {
+      logger.warn('[AskSubmit] Rate limit exceeded', {
+        userId: userId.substring(0, 8) + '...',
+        tier: userTier,
+        count: rateLimitResult.count
+      });
+      
+      return NextResponse.json(
+        {
+          error: `Daily question limit reached (${rateLimitResult.count}). Please try again tomorrow.`,
+          credits_remaining: credits.credits_remaining,
+          tier: userTier
+        },
+        { status: 429 }
+      );
+    }
 
     const startTime = Date.now();
 

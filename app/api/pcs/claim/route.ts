@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -70,6 +71,12 @@ export async function POST(req: NextRequest) {
 
     if (!isPremium) {
       throw Errors.premiumRequired("PCS Money Copilot is available for Premium members only");
+    }
+
+    // RATE LIMITING: Prevent PCS claim creation spam (50/day for premium users)
+    const rateLimitResult = await checkAndIncrement(userId, '/api/pcs/claim/create', 50);
+    if (!rateLimitResult.allowed) {
+      throw Errors.rateLimitExceeded('Daily PCS claim limit reached (50/day)');
     }
 
     const body = await req.json();

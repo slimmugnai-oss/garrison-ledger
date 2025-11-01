@@ -62,11 +62,22 @@ export default function Header() {
           <div className="flex flex-shrink-0 items-center">
             <Link
               href="/"
-              className="flex items-center gap-2 text-xl font-bold text-primary transition-colors hover:text-blue-700"
+              className="group flex items-center gap-2 transition-colors hover:opacity-80"
             >
-              <Icon name="BarChart" className="h-6 w-6" />
-              <span className="hidden sm:inline">Garrison Ledger</span>
-              <span className="sm:hidden">GL</span>
+              <img 
+                src="/Garrison Ledger Logo.png" 
+                alt="Garrison Ledger Shield"
+                className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110"
+              />
+              <div className="hidden sm:block">
+                <div className="text-lg font-bold text-slate-900">
+                  Garrison Ledger
+                </div>
+                <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500">
+                  Built for Military Families
+                </div>
+              </div>
+              <span className="sm:hidden text-lg font-bold text-slate-900">GL</span>
             </Link>
           </div>
 

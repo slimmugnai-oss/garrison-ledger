@@ -25,10 +25,21 @@ export default function ToolkitHeader({ title, description, currentPage }: Toolk
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-primary hover:text-info transition-colors flex items-center">
-                <Icon name="BarChart" className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">Garrison Ledger</span>
-                <span className="sm:hidden">GL</span>
+              <Link href="/" className="group flex items-center gap-2 transition-colors hover:opacity-80">
+                <img 
+                  src="/Garrison Ledger Logo.png" 
+                  alt="Garrison Ledger Shield"
+                  className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110"
+                />
+                <div className="hidden sm:block">
+                  <div className="text-lg font-bold text-slate-900">
+                    Garrison Ledger
+                  </div>
+                  <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500">
+                    Built for Military Families
+                  </div>
+                </div>
+                <span className="sm:hidden text-lg font-bold text-slate-900">GL</span>
               </Link>
             </div>
 

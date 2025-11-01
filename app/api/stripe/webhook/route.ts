@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { auditLogger } from "@/lib/audit-logger";
 import { logger } from "@/lib/logger";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -9,6 +10,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   const body = await req.text();
   const sig = req.headers.get("stripe-signature")!;
 
@@ -21,7 +23,44 @@ export async function POST(req: NextRequest) {
     return new Response("Webhook signature verification failed", { status: 400 });
   }
 
-  logger.info("Stripe webhook received", { eventType: event.type });
+  logger.info("Stripe webhook received", { eventType: event.type, eventId: event.id });
+
+  // ==========================================================================
+  // IDEMPOTENCY CHECK - Prevent duplicate processing
+  // ==========================================================================
+  const { data: existing } = await supabaseAdmin
+    .from('stripe_webhook_events')
+    .select('id, status')
+    .eq('event_id', event.id)
+    .maybeSingle();
+
+  if (existing) {
+    logger.info('[StripeWebhook] Duplicate event ignored', { 
+      eventId: event.id, 
+      eventType: event.type,
+      previousStatus: existing.status 
+    });
+    return NextResponse.json({ 
+      received: true, 
+      duplicate: true,
+      message: 'Event already processed' 
+    });
+  }
+
+  // Record event start (prevents concurrent processing of same event)
+  const { error: insertError } = await supabaseAdmin
+    .from('stripe_webhook_events')
+    .insert({
+      event_id: event.id,
+      event_type: event.type,
+      payload: event as unknown as Record<string, unknown>,
+      status: 'processed'
+    });
+
+  if (insertError) {
+    logger.error('[StripeWebhook] Failed to record event', insertError, { eventId: event.id });
+    // Continue anyway - idempotency is best-effort
+  }
 
   // Handle the event
   switch (event.type) {
@@ -99,6 +138,19 @@ export async function POST(req: NextRequest) {
                 packSize,
                 priceCents,
               });
+
+              // AUDIT LOG: Record credit pack purchase
+              await auditLogger.logPayment(
+                userId,
+                'credit_pack_purchased',
+                session.payment_intent as string,
+                'success',
+                {
+                  pack_size: packSize,
+                  price_cents: priceCents,
+                  stripe_session_id: session.id
+                }
+              );
             }
           }
         } else if (session.subscription) {
@@ -156,6 +208,19 @@ export async function POST(req: NextRequest) {
             });
             // Don't fail the webhook if referral processing fails
           }
+
+          // AUDIT LOG: Record subscription creation
+          await auditLogger.logPayment(
+            userId,
+            'subscription_created',
+            session.subscription as string,
+            'success',
+            {
+              tier,
+              stripe_customer_id: session.customer as string,
+              price_id: priceId
+            }
+          );
         }
       }
 
@@ -172,6 +237,13 @@ export async function POST(req: NextRequest) {
     case "customer.subscription.deleted":
       const subscription = event.data.object as Stripe.Subscription;
 
+      // Get user ID before canceling
+      const { data: entitlementToCancel } = await supabaseAdmin
+        .from("entitlements")
+        .select("user_id")
+        .eq("stripe_subscription_id", subscription.id)
+        .maybeSingle();
+
       // Revoke premium access
       await supabaseAdmin
         .from("entitlements")
@@ -181,10 +253,38 @@ export async function POST(req: NextRequest) {
         })
         .eq("stripe_subscription_id", subscription.id);
 
+      // AUDIT LOG: Record subscription cancellation
+      if (entitlementToCancel) {
+        await auditLogger.logPayment(
+          entitlementToCancel.user_id,
+          'subscription_canceled',
+          subscription.id,
+          'success',
+          {
+            stripe_subscription_id: subscription.id,
+            canceled_at: new Date().toISOString()
+          }
+        );
+      }
+
       break;
 
     default:
+      logger.info('[StripeWebhook] Unhandled event type', { eventType: event.type });
   }
+
+  // Update processing time
+  const processingTime = Date.now() - startTime;
+  await supabaseAdmin
+    .from('stripe_webhook_events')
+    .update({ processing_time_ms: processingTime })
+    .eq('event_id', event.id);
+
+  logger.info('[StripeWebhook] Event processed successfully', {
+    eventId: event.id,
+    eventType: event.type,
+    processingTimeMs: processingTime
+  });
 
   return NextResponse.json({ received: true });
 }

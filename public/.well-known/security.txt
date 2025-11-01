@@ -1,0 +1,47 @@
+Contact: mailto:security@garrisonledger.com
+Expires: 2026-11-01T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://www.garrisonledger.com/.well-known/security.txt
+Policy: https://www.garrisonledger.com/security-policy
+Acknowledgments: https://www.garrisonledger.com/security-acknowledgments
+
+# Garrison Ledger Security Contact
+# 
+# We take the security of our platform and the privacy of our military
+# community very seriously. If you've discovered a security vulnerability,
+# please report it responsibly.
+#
+# SCOPE:
+# - Authentication bypass
+# - SQL injection
+# - Cross-user data access (RLS bypass)
+# - Payment system vulnerabilities
+# - PII data exposure
+# - XSS/CSRF vulnerabilities
+#
+# OUT OF SCOPE:
+# - Social engineering
+# - Physical security
+# - DoS/DDoS (use Vercel's abuse contact)
+# - Third-party service issues (report to them)
+#
+# SAFE HARBOR:
+# We will not pursue legal action against security researchers who:
+# - Make a good faith effort to avoid privacy violations and data destruction
+# - Only interact with their own test accounts
+# - Do not exploit the vulnerability beyond proof-of-concept
+# - Report the issue privately to security@garrisonledger.com
+#
+# RESPONSE TIMELINE:
+# - Initial response: Within 48 hours
+# - Status update: Within 7 days
+# - Resolution timeline: Varies by severity (critical: <24h, high: <7 days)
+#
+# RECOGNITION:
+# With your permission, we'll acknowledge your contribution on our
+# Security Acknowledgments page (https://www.garrisonledger.com/security-acknowledgments)
+#
+# ENCRYPTION:
+# PGP Key: [TO BE ADDED]
+# Fingerprint: [TO BE ADDED]
+

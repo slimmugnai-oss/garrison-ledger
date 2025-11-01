@@ -165,17 +165,18 @@ export default function Header() {
             {/* Logo - Premium Brand */}
             <Link href="/" className="group flex items-center gap-2 sm:gap-3">
               <div className="relative">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl sm:h-11 sm:w-11 sm:rounded-xl sm:shadow-lg">
-                  <Icon name="Shield" className="h-5 w-5 text-white drop-shadow-md sm:h-6 sm:w-6" />
-                </div>
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 blur-md transition-all duration-300 group-hover:opacity-30 sm:rounded-xl" />
+                <img 
+                  src="/Garrison Ledger Logo.png" 
+                  alt="Garrison Ledger Shield"
+                  className="h-9 w-9 object-contain transition-all duration-300 group-hover:scale-110 sm:h-11 sm:w-11"
+                />
               </div>
               <div className="hidden sm:block">
-                <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-lg font-bold text-transparent dark:from-white dark:via-slate-100 dark:to-white sm:text-xl">
+                <div className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
                   Garrison Ledger
                 </div>
                 <div className="-mt-1 text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400">
-                  Military Financial Intelligence
+                  Built for Military Families
                 </div>
               </div>
             </Link>

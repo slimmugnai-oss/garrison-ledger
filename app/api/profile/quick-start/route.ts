@@ -9,6 +9,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { errorResponse, Errors } from "@/lib/api-errors";
+import { checkAndIncrement } from "@/lib/limits";
 import { logger } from "@/lib/logger";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -21,6 +22,12 @@ export async function POST(request: NextRequest) {
 
     if (!userId) {
       throw Errors.unauthorized();
+    }
+
+    // RATE LIMITING: Prevent rapid profile update spam (20/day for all users)
+    const rateLimitResult = await checkAndIncrement(userId, '/api/profile/quick-start', 20);
+    if (!rateLimitResult.allowed) {
+      throw Errors.rateLimitExceeded('Daily profile update limit reached (20/day)');
     }
 
     const body = await request.json();
