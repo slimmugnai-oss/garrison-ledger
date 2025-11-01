@@ -25,7 +25,12 @@ export type AnalyticsEvent =
   | 'les_parse_fail'
   | 'les_audit_run'
   | 'les_flag_clicked'
-  | 'les_copy_template';
+  | 'les_copy_template'
+  | 'homepage_section_viewed'
+  | 'homepage_cta_clicked'
+  | 'homepage_scroll_depth'
+  | 'homepage_tool_interest'
+  | 'homepage_time_on_page';
 
 interface EventProperties {
   [key: string]: string | number | boolean | undefined;
