@@ -6,8 +6,8 @@
  * Uses the Ask AI to generate timelines instead of separate endpoint
  */
 
-import { useState } from "react";
-import { Calendar, Loader2, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, Loader2, ChevronRight, AlertCircle } from "lucide-react";
 
 type TimelineType = "pcs" | "deployment" | "transition" | "career";
 
@@ -16,14 +16,45 @@ export default function TimelineGeneratorFixed() {
   const [eventDate, setEventDate] = useState<string>("");
   const [generating, setGenerating] = useState(false);
   const [timeline, setTimeline] = useState<string | null>(null);
+  const [quota, setQuota] = useState<{ used: number; limit: number } | null>(null);
+  const [quotaError, setQuotaError] = useState<string | null>(null);
+
+  // Fetch quota on mount
+  useEffect(() => {
+    async function fetchQuota() {
+      try {
+        const res = await fetch("/api/ask/quota?feature=timeline");
+        const data = await res.json();
+        if (data.success) {
+          setQuota({ used: data.used, limit: data.limit });
+        }
+      } catch (error) {
+        console.error("Failed to fetch quota:", error);
+      }
+    }
+    fetchQuota();
+  }, []);
 
   const handleGenerate = async () => {
     if (!eventDate) return;
 
+    // Check quota before generating
+    if (quota && quota.used >= quota.limit) {
+      setQuotaError(`You've used all ${quota.limit} free timelines this month. Upgrade to Premium for unlimited timelines.`);
+      return;
+    }
+
     setGenerating(true);
     setTimeline(null);
+    setQuotaError(null);
 
     try {
+      // Track timeline usage first
+      await fetch("/api/ask/track-usage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feature: "timeline", metadata: { type: timelineType, eventDate } }),
+      });
       const questions = {
         pcs: `I'm PCSing on ${eventDate}. Create a detailed 180-day timeline with all tasks I need to complete, organized by date. Include: orders processing, housing search, school enrollment, finance appointments, moving company booking, final out-processing, and everything else.`,
         deployment: `I'm deploying on ${eventDate}. Create a pre-deployment timeline with all preparation tasks: financial prep, legal documents, family care plan, deployment briefings, gear issue, medical checkups, and everything else I need to do before wheels up.`,
@@ -43,6 +74,10 @@ export default function TimelineGeneratorFixed() {
 
       if (data.success && data.answer) {
         setTimeline(data.answer.bottomLine.join("\n\n"));
+        // Update quota count
+        if (quota) {
+          setQuota({ ...quota, used: quota.used + 1 });
+        }
       } else {
         setTimeline("Timeline generation failed. Please try again.");
       }
@@ -60,16 +95,45 @@ export default function TimelineGeneratorFixed() {
 
   return (
     <div className="w-full space-y-6">
-      {/* Header */}
-      <div className="flex items-center">
-        <Calendar className="h-6 w-6 text-blue-600 mr-3" />
-        <div>
-          <h3 className="text-xl font-bold text-slate-800">Timeline Generator</h3>
-          <p className="text-sm text-slate-600">
-            Create a personalized timeline for your PCS, deployment, or transition
-          </p>
+      {/* Header with Quota */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <Calendar className="h-6 w-6 text-blue-600 mr-3" />
+          <div>
+            <h3 className="text-xl font-bold text-slate-800">Timeline Generator</h3>
+            <p className="text-sm text-slate-600">
+              Create a personalized timeline for your PCS, deployment, or transition
+            </p>
+          </div>
         </div>
+        {quota && (
+          <div className="text-sm">
+            <span className={`font-semibold ${quota.used >= quota.limit ? "text-red-600" : "text-slate-700"}`}>
+              {quota.limit - quota.used} of {quota.limit} free
+            </span>
+            <span className="text-slate-500 ml-1">this month</span>
+          </div>
+        )}
       </div>
+
+      {/* Quota Error / Upgrade Prompt */}
+      {quotaError && (
+        <div className="border border-amber-300 rounded-lg p-4 bg-amber-50">
+          <div className="flex items-start">
+            <AlertCircle className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-semibold text-amber-900 mb-2">Limit Reached</p>
+              <p className="text-sm text-amber-800 mb-3">{quotaError}</p>
+              <a
+                href="/dashboard/upgrade"
+                className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors"
+              >
+                Upgrade to Premium
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Timeline Type Selection */}
       <div>
